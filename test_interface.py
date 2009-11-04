@@ -9,6 +9,12 @@ import re
 import gtk
 import pango
 
+def load_image(path):
+    pix = gtk.gdk.pixbuf_new_from_file(path)
+    avatar = gtk.Image()
+    avatar.set_from_pixbuf(pix)
+    del pix
+    return avatar
 
 class TweetList(gtk.ScrolledWindow):
     def __init__(self):
@@ -90,40 +96,55 @@ class TweetList(gtk.ScrolledWindow):
 class UpdateBox(gtk.VBox):
     def __init__(self):
         gtk.VBox.__init__(self, False, 2)
-        chat = gtk.Label()
-        chat.set_use_markup(True)
-        chat.set_alignment(0, 0.5)
-        chat.set_markup('<span size="medium"><b>What are you doing?</b></span>')
-        chat.set_justify(gtk.JUSTIFY_LEFT)
+        label = gtk.Label()
+        label.set_use_markup(True)
+        label.set_alignment(0, 0.5)
+        label.set_markup('<span size="medium"><b>What are you doing?</b></span>')
+        label.set_justify(gtk.JUSTIFY_LEFT)
         
         self.num_chars = gtk.Label()
         self.num_chars.set_use_markup(True)
         self.num_chars.set_markup('<span size="14000" foreground="#999"><b>140</b></span>')
         
+        frame = gtk.Frame()
         self.update_text = gtk.TextView()
-        self.update_text.set_border_width(1)
+        self.update_text.set_border_width(2)
+        self.update_text.set_left_margin(2)
+        self.update_text.set_right_margin(2)
         self.update_text.set_wrap_mode(gtk.WRAP_WORD)
         self.update_text.get_buffer().connect("changed", self.count_chars)
+        frame.add(self.update_text)
         
-        btn_url = gtk.Button('url')
-        btn_pic = gtk.Button('pic')
+        btn_url = gtk.Button()
+        btn_url.set_image(load_image('cut.png'))
+        btn_url.set_tooltip_text('Shorten URL')
+        btn_pic = gtk.Button()
+        btn_pic.set_image(load_image('photos.png'))
+        btn_pic.set_tooltip_text('Upload Pic')
+        btn_clr = gtk.Button()
+        btn_clr.set_image(load_image('clear.png'))
+        btn_clr.set_tooltip_text('Clear Box')
         btn_upd = gtk.Button('Update')
         
         top = gtk.HBox(False)
-        top.pack_start(chat, True, True, 3)
+        top.pack_start(label, True, True, 3)
         top.pack_start(self.num_chars, False, False, 3)
         
-        middle = gtk.HBox(False)
-        middle.pack_start(self.update_text, True, True, 3)
+        buttonbox = gtk.HBox(False)
+        buttonbox.pack_start(btn_url, False, False, 0)
+        buttonbox.pack_start(btn_pic, False, False, 0)
+        buttonbox.pack_start(btn_clr, False, False, 0)
         
-        buttonbox = gtk.HButtonBox()
-        middle.pack_start(btn_upd, False, False, 2)
-        buttonbox.pack_start(btn_url, False, False, 2)
-        buttonbox.pack_start(btn_pic, False, False, 2)
+        vbox = gtk.VBox(False)
+        vbox.pack_start(btn_upd, True, True, 0)
+        vbox.pack_start(buttonbox, False, False, 0)
+        
+        bottom = gtk.HBox(False)
+        bottom.pack_start(frame, True, True, 3)
+        bottom.pack_start(vbox, False, False, 3)
         
         self.pack_start(top, False, False, 2)
-        self.pack_start(middle, True, True, 2)
-        #self.pack_start(buttonbox, True, True, 2)
+        self.pack_start(bottom, True, True, 2)
         self.show_all()
     
     def count_chars(self, widget):
@@ -145,7 +166,14 @@ class Prueba(gtk.Window):
         self.set_position(gtk.WIN_POS_CENTER)
         self.connect('destroy', gtk.main_quit)
         self.connect('size-request', self.size_request)
+        self.vbox = None
         
+        self.main_window()
+        
+    def login_window(self):
+        pass
+        
+    def main_window(self):
         self.timeline = TweetList()
         self.replies = TweetList()
         self.direct = TweetList()
@@ -154,7 +182,7 @@ class Prueba(gtk.Window):
         self.updatebox = UpdateBox()
         
         self.statusbar = gtk.Statusbar()
-        self.statusbar.push(0, '103/150 API calls. Next reset: 08:05 pm')
+        self.statusbar.push(0, '103 API calls remain. Next reset: 08:05 pm')
         
         self.notebook = gtk.Notebook()
         self.notebook.append_page(self.timeline, gtk.Label('Home'))
@@ -162,32 +190,42 @@ class Prueba(gtk.Window):
         self.notebook.append_page(self.direct, gtk.Label('Messages'))
         self.notebook.append_page(self.favorites, gtk.Label('Favorites'))
         
-        vbox = gtk.VBox(False, 5)
-        vbox.pack_start(self.notebook, True, True, 0)
-        vbox.pack_start(self.updatebox, False, False, 0)
-        vbox.pack_start(self.statusbar, False, False, 0)
+        if (self.vbox is not None): self.remove(self.vbox)
         
-        self.add(vbox)
+        self.vbox = gtk.VBox(False, 5)
+        self.vbox.pack_start(self.notebook, True, True, 0)
+        self.vbox.pack_start(self.updatebox, False, False, 0)
+        self.vbox.pack_start(self.statusbar, False, False, 0)
+        
+        self.add(self.vbox)
         self.show_all()
-        
-        self.timeline.add_tweet('usuario', '00:00:00', 'Mitter', 
-            'Mi primera lista se llamara: quiero que me pegues una gripe, una que nos deje en cama por semanas corridas. jajajajajajajaja')
-        self.timeline.add_tweet('pedroperez', '00:00:00', 'Cliente2', 
-            'Probando un tweet normalongo... Dummy')
-        self.timeline.add_tweet('satanas', '00:00:00', 'Otroahi', 
-            'Hell yeah!!!')
-        self.timeline.add_tweet('satanas', '00:00:00', 'Otroahi', 
-            'Probando #hashtags, #probando... #probando!!!')
-        self.timeline.add_tweet('satanas', '00:00:00', 'Otroahi', 
-            'Probando @menciones, @meeencionesss, @mentadas... @coladas!!! la @tuya por sia')
-        
+            
     def size_request(self, widget, event, data=None):
         """Callback when the window changes its sizes. We use it to set the
         proper word-wrapping for the message column."""
         
         w, h = self.get_size()
         self.timeline.update_wrap(w)
+        self.replies.update_wrap(w)
+        self.direct.update_wrap(w)
+        self.favorites.update_wrap(w)
         return
     
-Prueba()
+p = Prueba()
+p.timeline.add_tweet('usuario', '00:00:00', 'Mitter', 
+    'Mi primera lista se llamara: quiero que me pegues una gripe, una que nos deje en cama por semanas corridas. jajajajajajajaja')
+p.timeline.add_tweet('pedroperez', '00:00:00', 'Cliente2', 
+    'Probando un tweet normalongo... Dummy')
+p.timeline.add_tweet('satanas', '00:00:00', 'Otroahi', 
+    'Hell yeah!!!')
+p.timeline.add_tweet('satanas', '00:00:00', 'Otroahi', 
+    'Probando #hashtags, #probando... #probando!!!')
+p.timeline.add_tweet('satanas', '00:00:00', 'Otroahi', 
+    'Probando @menciones, @meeencionesss, @mentadas... @coladas!!! la @tuya por sia')
+
+p.replies.add_tweet('xxx', '00:00:00', 'web',
+    '@satanas Interesting: Collecting Headlines Funnier Than This http://ff.im/-aVIFW')
+
+p.direct.add_tweet('xxx', '00:00:00', 'web',
+    'Could, would, should, might, maybe, ought to, perhaps. These words do not exist in Agile')
 gtk.main()

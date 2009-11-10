@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Interfaz Gráfica Tonta para Turpial en PyGTK
+# Vista para Turpial en PyGTK (Interfaz Gráfica Tonta)
 #
 # Author: Wil Alvarez (aka Satanas)
 # Nov 08, 2009
@@ -10,7 +10,25 @@ import re
 import gtk
 import time
 import pango
+import urllib
+import logging
 
+# a=time.strptime('Sat Nov 07 14:55:06 +0000 2009', '%a %b %d %H:%M:%S +0000 %Y')
+# time.mktime(a) -> Tiempo en segundos
+# time.timezone -> Diferencia Horaria
+# 
+# time.strftime('%b %d, %I:%M %P', )
+# time.strftime('%b %d, %H:%M', a)
+log = logging.getLogger('View')
+
+def convert_time(timestamp):
+    print timestamp, len(timestamp)
+    print '%a %b %d %H:%M:%S +0000 %Y'
+    
+    a = time.strptime(timestamp, '%a %b %d %H:%M:%S +0000 %Y')
+    sec = time.mktime(a) - time.timezone
+    return time.strftime('%b %d, %I:%M %P', sec)
+    
 def load_image(path):
     pix = gtk.gdk.pixbuf_new_from_file(path)
     avatar = gtk.Image()
@@ -31,6 +49,7 @@ class TweetList(gtk.ScrolledWindow):
         
         self.hashtag_pattern = re.compile('\#(.*?)[\W]')
         self.mention_pattern = re.compile('\@(.*?)[\W]')
+        self.client_pattern = re.compile('<a href="(.*?)">(.*?)</a>')
         
         self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.add(self.list)
@@ -55,6 +74,13 @@ class TweetList(gtk.ScrolledWindow):
         column.set_attributes(cell_avatar, pixbuf=0)
         self.list.append_column(column)
         
+    def client_detect(self, text):
+        if text == 'web': return text
+        
+        rtn = self.client_pattern.search(text)
+        if rtn: return rtn.groups()[1]
+        return 'unknown'
+        
     def __highlight_hashtags(self, text):
         hashtags = self.hashtag_pattern.findall(text)
         if len(hashtags) == 0: return text
@@ -76,7 +102,7 @@ class TweetList(gtk.ScrolledWindow):
         return text
         
     def update_wrap(self, val):
-        self.cell_tweet.set_property('wrap-width', val - 60)
+        self.cell_tweet.set_property('wrap-width', val - 80)
         iter = self.model.get_iter_first()
         
         while iter:
@@ -85,19 +111,32 @@ class TweetList(gtk.ScrolledWindow):
             iter = self.model.iter_next(iter)
         
     def add_tweet(self, username, datetime, client, message, avatar=None):
+        #log.debug('Adding Tweet: %s' % message)
         pix = gtk.gdk.pixbuf_new_from_file('unknown.png')
-        user = '<small>@%s hace %s desde <i>%s</i></small>' % (username, datetime, client)
-        message = '<span size="9000">%s</span>\n%s' % (message, user)
-        
+        message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)
         message = self.__highlight_mentions(message)
+        interline = '<span size="2000">\n\n</span>'
+        footer = '<span size="small" foreground="#999">hace %s desde %s</span>' % (datetime, client)
         
-        self.model.append([pix, username, datetime, client, message])
+        tweet = message + interline + footer
+        #urllib.urlretrieve(avatar, username+'.png')
+        #pix = gtk.gdk.pixbuf_new_from_file(username+'.png')
+        self.model.append([pix, username, datetime, client, tweet])
         del pix
         
     def update_tweets(self, arr_tweets):
         for tweet in arr_tweets:
-            self.add_tweet(tweet['user']['screen_name'], 'XXX', 'Cliente', tweet['text'])
+            if tweet.has_key('user'):
+                user = tweet['user']['screen_name']
+                image = tweet['user']['profile_image_url']
+            else:
+                user = tweet['sender']['screen_name']
+                image = tweet['sender']['profile_image_url']
+            client = self.client_detect(tweet['source'])
+            #convert_time(tweet['created_at'])
+            log.debug('Adding Tweet: %s' % tweet)
+            self.add_tweet(user, 'xxx', client, tweet['text'], image)
         
 class UpdateBox(gtk.VBox):
     def __init__(self):
@@ -168,7 +207,7 @@ class Main(gtk.Window):
         gtk.Window.__init__(self)
         
         self.controller = controller
-        self.set_title('Turpial: 1era Prueba de concepto')
+        self.set_title('Turpial: 2da Prueba de concepto')
         self.set_size_request(60, 60)
         self.set_default_size(320, 480)
         self.set_position(gtk.WIN_POS_CENTER)
@@ -192,7 +231,7 @@ class Main(gtk.Window):
         lbl_user = gtk.Label()
         lbl_user.set_justify(gtk.JUSTIFY_LEFT)
         lbl_user.set_use_markup(True)
-        lbl_user.set_markup('<span background="#C00" foreground="#FFF" size="small">Username</span>')
+        lbl_user.set_markup('<span size="small">Username</span>')
         
         lbl_pass = gtk.Label()
         lbl_pass.set_justify(gtk.JUSTIFY_LEFT)
@@ -204,7 +243,6 @@ class Main(gtk.Window):
         password.set_visibility(False)
         
         self.btn_signup = gtk.Button('Conectar')
-        
         
         table = gtk.Table(8,1,False)
         
@@ -268,11 +306,25 @@ class Main(gtk.Window):
         
         self.add(self.vbox)
         self.show_all()
-            
+    
+    def update_timeline(self, tweets):
+        self.timeline.update_tweets(tweets)
+        
+        #self.timeline.add_tweet('pupu', 'xxx', 'mierda', 'Hola joe')
+        
+    def update_replies(self, tweets):
+        self.replies.update_tweets(tweets)
+        
+    def update_favorites(self, tweets):
+        self.favorites.update_tweets(tweets)
+        
+    def update_direct(self, tweets):
+        self.direct.update_tweets(tweets)
+        
     def size_request(self, widget, event, data=None):
         """Callback when the window changes its sizes. We use it to set the
         proper word-wrapping for the message column."""
-        if self.mode < 2:  return
+        if self.mode < 2: return
         
         w, h = self.get_size()
         self.timeline.update_wrap(w)
@@ -280,21 +332,4 @@ class Main(gtk.Window):
         self.direct.update_wrap(w)
         self.favorites.update_wrap(w)
         return
-'''
-p.timeline.add_tweet('usuario', '00:00:00', 'Mitter', 
-    'Mi primera lista se llamara: quiero que me pegues una gripe, una que nos deje en cama por semanas corridas. jajajajajajajaja')
-p.timeline.add_tweet('pedroperez', '00:00:00', 'Cliente2', 
-    'Probando un tweet normalongo... Dummy')
-p.timeline.add_tweet('satanas', '00:00:00', 'Otroahi', 
-    'Hell yeah!!!')
-p.timeline.add_tweet('satanas', '00:00:00', 'Otroahi', 
-    'Probando #hashtags, #probando... #probando!!!')
-p.timeline.add_tweet('satanas', '00:00:00', 'Otroahi', 
-    'Probando @menciones, @meeencionesss, @mentadas... @coladas!!! la @tuya por sia')
-
-p.replies.add_tweet('xxx', '00:00:00', 'web',
-    '@satanas Interesting: Collecting Headlines Funnier Than This http://ff.im/-aVIFW')
-
-p.direct.add_tweet('xxx', '00:00:00', 'web',
-    'Could, would, should, might, maybe, ought to, perhaps. These words do not exist in Agile')
-'''
+        

@@ -1,0 +1,5 @@
+Nov 09, 2009:
+    + Agregada función para mostrar fecha como la de DT (not working)
+    + Agregada función para detectar el nombre del cliente
+    + Iniciada descarga de imagen de contactos
+    ---- commit ----

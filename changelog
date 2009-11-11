@@ -1,3 +1,10 @@
+Nov 11, 2009:
+    + Creado widget LoginLabel para mostrar los mensajes de error de la pantalla de login
+    + Agreados controles de login a la desactivación durante el inicio de sesión
+    + Mejorado mensaje de estado de las api calls
+    + Agregada respuesta de la caja de texto de contraseña al presionar enter
+    ---- commit ----
+    
 Nov 09, 2009:
     + Agregada función para mostrar fecha como la de DT (not working)
     + Agregada función para detectar el nombre del cliente

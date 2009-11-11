@@ -9,6 +9,7 @@
 import re
 import gtk
 import time
+import cairo
 import pango
 import urllib
 import logging
@@ -36,6 +37,43 @@ def load_image(path):
     del pix
     return avatar
 
+class LoginLabel(gtk.DrawingArea):
+    def __init__(self, parent):
+        gtk.DrawingArea.__init__(self)
+        self.par = parent
+        self.error = None
+        self.active = False
+        self.connect('expose-event', self.expose)
+        self.set_size_request(30, 25)
+    
+    def set_error(self, error):
+        self.error = error
+        self.active = True
+        self.queue_draw()
+        
+    def expose(self, widget, event):
+        cr = widget.window.cairo_create()
+        cr.set_line_width(0.8)
+        rect = self.get_allocation()
+        
+        cr.rectangle(event.area.x, event.area.y, event.area.width, event.area.height)
+        cr.clip()
+        
+        cr.rectangle(0, 0, rect.width, rect.height)
+        if not self.active: return
+        
+        cr.set_source_rgb(0, 0, 0)
+        cr.fill()
+        cr.select_font_face('Courier', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        cr.set_font_size(12)
+        cr.set_source_rgb(1, 0.87, 0)
+        cr.move_to(10, 15)
+        
+        cr.text_path(self.error)
+        cr.stroke()
+        
+        #cr.show_text(self.error)
+        
 class TweetList(gtk.ScrolledWindow):
     def __init__(self):
         gtk.ScrolledWindow.__init__(self)
@@ -223,10 +261,8 @@ class Main(gtk.Window):
         self.mode = 1
         if self.vbox is not None: self.remove(self.vbox)
         
-        self.message = gtk.Label()
-        self.message.set_use_markup(True)
-        self.message.set_alignment(0, 0.5)
-        self.message.set_justify(gtk.JUSTIFY_LEFT)
+        #avatar = load_image('turpial.png')
+        self.message = LoginLabel(self)
         
         lbl_user = gtk.Label()
         lbl_user.set_justify(gtk.JUSTIFY_LEFT)
@@ -238,19 +274,20 @@ class Main(gtk.Window):
         lbl_pass.set_use_markup(True)
         lbl_pass.set_markup('<span size="small">Password</span>')
         
-        username = gtk.Entry()
-        password = gtk.Entry()
-        password.set_visibility(False)
+        self.username = gtk.Entry()
+        self.password = gtk.Entry()
+        self.password.set_visibility(False)
         
         self.btn_signup = gtk.Button('Conectar')
         
         table = gtk.Table(8,1,False)
         
-        table.attach(self.message,0,1,1,2,gtk.FILL,gtk.FILL, 20, 0)
+        #table.attach(avatar,0,1,0,1,gtk.FILL,gtk.FILL, 20, 10)
+        table.attach(self.message,0,1,1,2,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 3)
         table.attach(lbl_user,0,1,2,3,gtk.EXPAND,gtk.FILL,0,0)
-        table.attach(username,0,1,3,4,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 0)
+        table.attach(self.username,0,1,3,4,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 0)
         table.attach(lbl_pass,0,1,4,5,gtk.EXPAND,gtk.FILL, 0, 5)
-        table.attach(password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 0)
+        table.attach(self.password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 0)
         #table.attach(alignRem,0,1,6,7,gtk.EXPAND,gtk.FILL,0, 0)
         table.attach(self.btn_signup,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 30)
         
@@ -260,23 +297,29 @@ class Main(gtk.Window):
         self.add(self.vbox)
         self.show_all()
         
-        self.btn_signup.connect('clicked', self.request_login, username, password)
+        self.btn_signup.connect('clicked', self.request_login, self.username, self.password)
+        self.password.connect('activate', self.request_login, self.username, self.password)
         
     def request_login(self, widget, username, password):
         self.btn_signup.set_sensitive(False)
+        self.username.set_sensitive(False)
+        self.password.set_sensitive(False)
         gtk.main_iteration(False)
         self.controller.signup(username.get_text(), password.get_text())
         
     def cancel_login(self, error):
-        e = '<span background="#C00" foreground="#FFF" size="small">%s</span>' % error
-        self.message.set_markup(e)
+        #e = '<span background="#C00" foreground="#FFF" size="small">%s</span>' % error
+        self.message.set_error(error)
         self.btn_signup.set_sensitive(True)
+        self.username.set_sensitive(True)
+        self.password.set_sensitive(True)
         
     def update_rate_limits(self, val):
-        t = time.strftime('%H:%M:%S', time.gmtime(val['reset_time_in_seconds']))
+        tsec = val['reset_time_in_seconds'] - time.timezone
+        t = time.strftime('%I:%M %P', time.gmtime(tsec))
         hits = val['remaining_hits']
         limit = val['hourly_limit']
-        status = "%s/%s API calls remain. Next reset at %s" % (hits, limit, t)
+        status = "%s of %s API calls. Next reset: %s" % (hits, limit, t)
         self.statusbar.push(0, status)
         
     def show_main(self):
@@ -289,7 +332,7 @@ class Main(gtk.Window):
         self.updatebox = UpdateBox()
         
         self.statusbar = gtk.Statusbar()
-        self.statusbar.push(0, '103 API calls remain. Next reset: 08:05 pm')
+        self.statusbar.push(0, 'Turpial')
         
         self.notebook = gtk.Notebook()
         self.notebook.append_page(self.timeline, gtk.Label('Home'))

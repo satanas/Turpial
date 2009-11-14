@@ -1,3 +1,10 @@
+Nov 13, 2009:
+    + Estructuradas las vistas en una carpeta 'ui'
+    + Creado módulo para vista en modo texto (cmdline)
+    + Creado módulo para funciones utilitarias (util)
+    + Comenzado login en la interfaz de modo texto
+    ---- commit ----
+    
 Nov 11, 2009:
     + Creado widget LoginLabel para mostrar los mensajes de error de la pantalla de login
     + Agreados controles de login a la desactivación durante el inicio de sesión

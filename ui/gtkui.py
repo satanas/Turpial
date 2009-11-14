@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 # Vista para Turpial en PyGTK (Interfaz Gráfica Tonta)

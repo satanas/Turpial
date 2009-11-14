@@ -7,15 +7,15 @@
 
 import time
 import logging
-from ptt import *
-from ui_gtk import Main
+from api import *
+from ui import *
 
 logging.basicConfig(level=logging.DEBUG)
 
 class Turpial:
     def __init__(self):
         self.twitter = None
-        self.ui = Main(self)
+        self.ui = cmdline.Main(self)
         self.agent = 'Turpial'
         
         self.log = logging.getLogger('Controller')

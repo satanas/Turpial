@@ -1,3 +1,14 @@
+Nov 16, 2009:
+    + Refactorizado el método show_people por show_profile para mostrar el perfil completo
+    + Implementada funcionalidad para actualizar perfil (bio, location, url y name)
+    + Creada y refactorizada función validate_message para que soporte el límite de caracteres como parámtetro
+    + Agregados mensajes de ayuda para algunos comandos (update, delete, fav, unfav, tweet, exit, EOF)
+    + Implementadas funciones para mute/unmute usuarios
+    + Implementada función para obtener el timestamp de los tweets (from mitter)
+    * Falta corregir el problema con el timestamp
+    * Falta poner el timer para que se actualicen las listas automagicamente
+    ---- commit ----
+    
 Nov 15, 2009:
     + Reimplementada consola usando el módulo cmd de Python
     + Implementada funcionalidad para actualizar estado (cmdline) y marcar/desmarcar favoritos

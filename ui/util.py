@@ -7,6 +7,7 @@
 
 import re
 import time
+import datetime
 
 HASHTAG_PATTERN = re.compile('\#(.*?)[\W]')
 MENTION_PATTERN = re.compile('\@(.*?)[\W]')
@@ -30,3 +31,26 @@ def get_rates(val):
     hits = val['remaining_hits']
     limit = val['hourly_limit']
     return "%s of %s API calls. Next reset: %s" % (hits, limit, t)
+
+def get_timestamp(tweet):
+    # Tue Mar 13 00:12:41 +0000 2007
+    date_info = tweet['created_at'].split()
+    month_names = [None, 'Jan', 'Feb','Mar','Apr','May','Jun','Jul',
+        'Aug','Sep','Oct','Nov','Dec']
+    month = month_names.index(date_info[1])
+    day = int(date_info[2])
+    year = int(date_info[5])
+    
+    time_info = date_info[3].split(':')
+    hour = int(time_info[0])
+    minute = int(time_info[1])
+    second = int(time_info[2])
+    
+    d = datetime.datetime(year, month, day, hour, minute, second)
+    z = time.mktime(d.timetuple()) - time.timezone
+    tm = time.strftime('%b %d, %I:%M %P', time.gmtime(z))
+    #print tweet['created_at']
+    #print z
+    #print time.gmtime(z)
+    #print tm
+    return tm

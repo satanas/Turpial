@@ -38,7 +38,7 @@ class Main(cmd.Cmd):
         
     def do_show(self, arg):
         if arg == 'tweets':
-            self.show_tweets(self.controller.tweets)
+            self.show_tweets(self.controller.get_timeline())
         elif arg == 'replies':
             self.show_tweets(self.controller.replies)
         elif arg == 'directs':
@@ -51,6 +51,8 @@ class Main(cmd.Cmd):
             self.show_rate_limits()
         elif arg == 'trends':
             self.show_trends(self.controller.get_trends())
+        elif arg == 'profile':
+            self.show_profile([self.controller.profile])
         else:
             self.default('')
     
@@ -63,26 +65,12 @@ class Main(cmd.Cmd):
         query = args[1]
         
         if stype == 'people':
-            self.show_people(self.controller.search_people(query))
+            self.show_profile(self.controller.search_people(query))
         
     def do_tweet(self, status):
-        if status == '':
-            print 'Debes escribir algun mensaje para postear.'
+        if not self.validate_message(status):
             print 'Tu estado NO fue actualizado.'
             return
-        
-        if len(status) > 160:
-            print 'Tu mensaje tiene mas de 160 caracteres y Twitter lo' \
-                'rechazara. Intenta acortar algunas URLs antes de postear.'
-            print 'Tu estado NO fue actualizado.'
-            return
-        
-        if len(status) > 140:
-            resp = raw_input('El mensaje supera los 140 caracteres, ¿Deseas ' \
-                'cortarlo? [Y/n]')
-            if resp.lower() == 'n':
-                print 'Tu estado NO fue actualizado'
-                return
         
         self.controller.update_status(status)
         
@@ -111,17 +99,54 @@ class Main(cmd.Cmd):
         self.controller.unset_favorite(twid)
         
     def do_direct(self, line):
-        if len(line) < 2: 
+        if len(line.split()) < 2: 
             self.help_direct()
             return
         user = line.split()[0]
         message = line.replace(user + ' ', '')
+        if not self.validate_message(message):
+            print 'NO se envio ningun mensaje.'
+            return
         self.controller.send_direct(user, message)
         
-    def do_EOF(self, line):
-        return self.do_exit()
+    def do_update(self, args):
+        if len(args.split()) < 2: 
+            self.help_update()
+            return
+        field = args.split()[0]
+        value = args.replace(field + ' ', '')
         
-    def do_exit(self):
+        if field == 'bio':
+            if not self.validate_message(value, 160):
+                print 'NO se actualizo la bio.'
+                return
+            self.controller.update_profile(new_bio=value)
+        elif field == 'location':
+            if not self.validate_message(value, 30):
+                print 'NO se actualizo la ubicacion.'
+                return
+            self.controller.update_profile(new_location=value)
+        elif field == 'url':
+            if not self.validate_message(value, 100):
+                print 'NO se actualizo la URL.'
+                return
+            self.controller.update_profile(new_url=value)
+        elif field == 'name':
+            if not self.validate_message(value, 20):
+                print 'NO se actualizo el nombre.'
+                return
+            self.controller.update_profile(new_name=value)
+        
+    def do_mute(self, user):
+        self.controller.mute(user)
+        
+    def do_unmute(self, user):
+        self.controller.unmute(user)
+        
+    def do_EOF(self, line):
+        return self.do_exit('')
+        
+    def do_exit(self, line):
         print
         log.debug('Desconectando')
         self.controller.signout()
@@ -138,7 +163,8 @@ class Main(cmd.Cmd):
     def help_search(self):
         print '\n'.join(['Ejecuta una busqueda en Twitter',
             'search <type> <query>',
-            '  <type>: Tipo de busqueda a realizar. Valores posibles: people',
+            '  <type>: Tipo de busqueda a realizar. Valores ' \
+                'posibles: people',
             '  <query>: La cadena que se desea buscar'
         ])
         
@@ -148,6 +174,44 @@ class Main(cmd.Cmd):
             '  <user>: Nombre del usuario. Ej: pedroperez',
             '  <message>: Mensaje que se desea enviar'
         ])
+        
+    def help_update(self):
+        print '\n'.join(['Actualiza datos del usuario',
+            'update <field> <value>',
+            '  <field>: Campo que se desea actualizar. Valores ' \
+                'posibles: bio, location, url, name',
+            '  <value>: El nuevo valor para el campo seleccionado'
+        ])
+    
+    def help_delete(self):
+        print '\n'.join(['Borra un estado (tweet)',
+            'delete <num>',
+            '  <num>: Numero en pantalla del estado (tweet) que desea borrar',
+        ])
+        
+    def help_fav(self):
+        print '\n'.join(['Marca un estado (tweet) como favorito',
+            'fav <num>',
+            '  <num>: Numero en pantalla del estado (tweet) que desea marcar',
+        ])
+        
+    def help_unfav(self):
+        print '\n'.join(['Desmarca un estado (tweet) de los favoritos',
+            'unfav <num>',
+            '  <num>: Numero en pantalla del estado (tweet) que desea desmarcar',
+        ])
+        
+    def help_tweet(self):
+        print '\n'.join(['Actualiza el estado del usuario',
+            'tweet <message>',
+            '  <message>: Mensaje que desea postear',
+        ])
+        
+    def help_exit(self):
+        print 'Salir de Turpial'
+    
+    def help_EOF(self):
+        print 'Salir de Turpial'
         
     def get_tweet_id(self, num):
         if num == '': return None
@@ -159,14 +223,23 @@ class Main(cmd.Cmd):
         
         return arr[num]['id']
         
-    def get_timestamp(self, tweet):
-        return tweet['created_at'][0:19]
-        #print ttime, type(ttime)
-        #t = ttime[0:19] + ttime[25:]
-        #a = time.strptime(t, '%a %b %d %H:%M:%S %Y')
-        a = time.strptime(tweet['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
-        sec = time.mktime(a) - time.timezone
-        return time.strftime('%b %d, %I:%M %P', sec)
+    def validate_message(self, text, limit=140):
+        if text == '':
+            print 'Debes escribir algun mensaje.'
+            return False
+        
+        if len(text) > 160:
+            print 'Tu mensaje tiene mas de 160 caracteres y Twitter ' \
+                'lo rechazara. Intenta acortar algunas URLs antes ' \
+                'de postear.'
+            return False
+        
+        if len(text) > limit:
+            resp = raw_input('El mensaje supera los 140 caracteres y ' \
+            'Twitter lo truncara. ¿Deseas continuar? [Y/n]')
+            if resp.lower() == 'n':
+                return False
+        return True
         
     def show_main(self):
         self.cmdloop()
@@ -187,18 +260,18 @@ class Main(cmd.Cmd):
         arr_tweets.reverse()
         
         for tweet in arr_tweets:
-            timestamp = self.get_timestamp(tweet)
+            timestamp = util.get_timestamp(tweet)
             
             if tweet.has_key('user'):
                 user = tweet['user']['screen_name']
             else:
                 user = tweet['sender']['screen_name']
             
-            if tweet.has_key('client'):
+            if tweet.has_key('source'):
                 client = util.detect_client(tweet['source'])
-                header = "%d. @%s el %s desde %s" % (count, user, timestamp, client)
+                header = "%d. @%s - %s desde %s" % (count, user, timestamp, client)
             else:
-                header = "%d. @%s el %s" % (count, user, timestamp)
+                header = "%d. @%s - %s" % (count, user, timestamp)
             
             print header
             print '-' * len(header)
@@ -217,17 +290,18 @@ class Main(cmd.Cmd):
         for t in trends['trends']:
             topten += t['name'] + '  '
         print topten
-    
-    def show_people(self, people):
+            
+    def show_profile(self, people):
         for p in people:
-            if p['protected']:
-                protected = '<protected>'
-            else:
-                protected = ''
-            header = "@%s: %s (id=%s) %s" % (p['screen_name'], p['name'], p['id'], protected)
+            protected = ''
+            if p['protected']: protected = '<protected>'
+            
+            header = "@%s (%s) %s" % (p['screen_name'], p['name'], protected)
             print header
             print '-' * len(header)
+            print "URL: %s" % p['url']
             print "Location: %s" % p ['location']
+            print "Bio: %s" % p ['description']
             if p.has_key('status'): print "Last: %s\n" % p['status']['text']
             
 

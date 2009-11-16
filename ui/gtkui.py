@@ -7,7 +7,7 @@
 
 import re
 import gtk
-import time
+#import time
 import cairo
 import pango
 import urllib

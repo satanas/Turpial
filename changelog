@@ -1,3 +1,13 @@
+Nov 15, 2009:
+    + Reimplementada consola usando el módulo cmd de Python
+    + Implementada funcionalidad para actualizar estado (cmdline) y marcar/desmarcar favoritos
+    + Agregado soporte para borrar tweets y enviar mensajes directos
+    ---- commit ----
+    
+Nov 14, 2009:
+    + Implementados comandos básicos para mostrar timeline, replies, directs, favs, rate_limits, trends, buscar personas
+    + Implementada funcionalidad para tuitear, con validación de 140 caracteres (aun con bugs)
+    
 Nov 13, 2009:
     + Estructuradas las vistas en una carpeta 'ui'
     + Creado módulo para vista en modo texto (cmdline)

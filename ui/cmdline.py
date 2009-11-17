@@ -53,6 +53,10 @@ class Main(cmd.Cmd):
             self.show_trends(self.controller.get_trends())
         elif arg == 'profile':
             self.show_profile([self.controller.profile])
+        elif arg == 'following':
+            self.show_following(self.controller.get_following())
+        elif arg == 'followers':
+            self.show_followers(self.controller.get_followers())
         else:
             self.default('')
     
@@ -143,6 +147,12 @@ class Main(cmd.Cmd):
     def do_unmute(self, user):
         self.controller.unmute(user)
         
+    def do_follow(self, user):
+        self.controller.follow(user)
+        
+    def do_unfollow(self, user):
+        self.controller.unfollow(user)
+        
     def do_EOF(self, line):
         return self.do_exit('')
         
@@ -157,7 +167,8 @@ class Main(cmd.Cmd):
         print '\n'.join(['Muestra los distintos mensajes del usuario',
             'show <arg>',
             '  <arg>: Lo que se desea ver. Valores posibles: tweets, ' \
-            'replies, directs, favs, rates, trends',
+            'replies, directs, favs, rates, trends, profile, following, ' \
+            'followers',
         ])
         
     def help_search(self):
@@ -206,6 +217,33 @@ class Main(cmd.Cmd):
             'tweet <message>',
             '  <message>: Mensaje que desea postear',
         ])
+        
+    def help_follow(self):
+        print '\n'.join(['Seguir a una persona',
+            'follow <user>',
+            '  <user>: Persona a la que desea seguir',
+        ])
+        
+    def help_unfollow(self):
+        print '\n'.join(['Dejar de seguir a una persona',
+            'unfollow <user>',
+            '  <user>: Persona que ya no se desea seguir',
+        ])
+        
+    def help_mute(self):
+        print '\n'.join(['Silencia los mensajes de una persona sin bloquearla',
+            'mute <user>',
+            '  <user>: Persona a la que se desea silenciar',
+        ])
+        
+    def help_unmute(self):
+        print '\n'.join(['Visualiza los mensajes de una persona previamente silenciada',
+            'unmute <user>',
+            '  <user>: Persona cuyos mensajes se desean leer de nuevo',
+        ])
+        
+    def help_help(self):
+        print 'Muestra la ayuda'
         
     def help_exit(self):
         print 'Salir de Turpial'
@@ -294,14 +332,30 @@ class Main(cmd.Cmd):
     def show_profile(self, people):
         for p in people:
             protected = ''
+            following = ''
             if p['protected']: protected = '<protected>'
+            if p['following']: protected = '<following>'
             
-            header = "@%s (%s) %s" % (p['screen_name'], p['name'], protected)
+            header = "@%s (%s) %s %s" % (p['screen_name'], p['name'], 
+                following, protected)
             print header
             print '-' * len(header)
             print "URL: %s" % p['url']
             print "Location: %s" % p ['location']
             print "Bio: %s" % p ['description']
             if p.has_key('status'): print "Last: %s\n" % p['status']['text']
-            
+        
+    def show_following(self, people):
+        total = len(people)
+        self.show_profile(people)
+        if total > 1: suffix = 'personas' 
+        else: suffix = 'persona'
+        print "Estas siguiendo a %d %s" % (total, suffix)
+        
+    def show_followers(self, people):
+        total = len(people)
+        self.show_profile(people)
+        if total > 1: suffix = 'personas' 
+        else: suffix = 'persona'
+        print "Te siguen %d %s" % (total, suffix)
 

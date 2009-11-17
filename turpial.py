@@ -96,6 +96,12 @@ class Turpial:
         self.__update_rate_limits()
         return self.rate_limits
         
+    def get_following(self):
+        return self.twitter.statuses.friends()
+        
+    def get_followers(self):
+        return self.twitter.statuses.followers()
+        
     def search_people(self, query):
         query = urllib.quote(query)
         return self.twitter.users.search(q=query)
@@ -153,6 +159,14 @@ class Turpial:
         if user in self.muted_users: 
             self.muted_users.remove(user)
             self.log.debug('Desmuteando a %s' % user)
+        
+    def follow(self, user):
+        self.twitter.friendships.create(screen_name=user)
+        self.log.debug('Follow to %s' % user)
+        
+    def unfollow(self, user):
+        self.twitter.friendships.destroy(screen_name=user)
+        self.log.debug('Unfollow to %s' % user)
         
 if __name__ == '__main__':
     t = Turpial()

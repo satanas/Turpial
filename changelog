@@ -8,6 +8,10 @@ Nov 16, 2009:
     * Falta corregir el problema con el timestamp
     * Falta poner el timer para que se actualicen las listas automagicamente
     ---- commit ----
+    + Implementado follow/unfollow
+    + Implementado código para ver followers y following
+    + Creados mensajes de ayuda para todos los comandos hasta la fecha
+    ---- commit ----
     
 Nov 15, 2009:
     + Reimplementada consola usando el módulo cmd de Python

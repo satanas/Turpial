@@ -3,6 +3,8 @@ Nov 17, 2009:
     + Optimizadas llamadas a show_rates para que no hagan una llamada a la API sino que muestren el valor de la variable
     + Agregados archivos readme y licencia GPL 3
     ---- commit ----
+    + Corregido problema con las actualizaciones automáticas
+    ---- commit ----
 
 Nov 16, 2009:
     + Refactorizado el método show_people por show_profile para mostrar el perfil completo

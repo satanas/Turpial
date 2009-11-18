@@ -54,6 +54,9 @@ class Turpial:
         self.tweets = self.twitter.statuses.friends_timeline()
         if rate: self.update_rate_limits()
         self.ui.update_timeline(self.get_timeline())
+        
+        self.timer_tl = threading.Timer(300, self.__update_timeline)
+        self.timer_tl.start()
     
     def __update_replies(self, rate=True):
         #self.log.debug('Actualizando Replies')
@@ -61,12 +64,18 @@ class Turpial:
         if rate: self.update_rate_limits()
         self.ui.update_replies(self.replies)
         
+        self.timer_rp = threading.Timer(600, self.__update_replies)
+        self.timer_rp.start()
+        
     def __update_directs(self, rate=True):
         #self.log.debug('Actualizando Directs')
         self.directs = self.twitter.direct_messages()
         self.directs_sent = self.twitter.direct_messages.sent()
         if rate: self.update_rate_limits()
         self.ui.update_directs(self.directs, self.directs_sent)
+        
+        self.timer_dm = threading.Timer(900, self.__update_directs)
+        self.timer_dm.start()
         
     def __update_favs(self, rate=True):
         #self.log.debug('Actualizando Favorites')
@@ -83,13 +92,6 @@ class Turpial:
             self.__update_replies(False)
             self.__update_favs(False)
             self.__update_directs()
-            
-            self.timer_tl = threading.Timer(300, self.__update_timeline)
-            self.timer_tl.start()
-            self.timer_rp = threading.Timer(600, self.__update_replies)
-            self.timer_rp.start()
-            self.timer_dm = threading.Timer(900, self.__update_directs)
-            self.timer_dm.start()
             
             self.ui.show_main()
             self.ui.update_rate_limits(self.rate_limits)

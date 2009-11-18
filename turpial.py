@@ -15,6 +15,7 @@ from api import *
 from ui import *
 
 logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger('Controller')
 
 class Turpial:
     def __init__(self):
@@ -33,8 +34,7 @@ class Turpial:
         self.rate_limits = []
         self.muted_users = []
         
-        self.log = logging.getLogger('Controller')
-        self.log.debug('Iniciando Turpial')
+        log.debug('Iniciando Turpial')
         self.ui.show_login()
         self.ui.main_loop()
     
@@ -50,16 +50,16 @@ class Turpial:
     # ==============================================================
     
     def __update_timeline(self, rate=True):
-        #self.log.debug('Actualizando Timeline')
+        #log.debug('Actualizando Timeline')
         self.tweets = self.twitter.statuses.friends_timeline()
         if rate: self.update_rate_limits()
         self.ui.update_timeline(self.get_timeline())
         
-        self.timer_tl = threading.Timer(300, self.__update_timeline)
+        self.timer_tl = threading.Timer(200, self.__update_timeline)
         self.timer_tl.start()
     
     def __update_replies(self, rate=True):
-        #self.log.debug('Actualizando Replies')
+        #log.debug('Actualizando Replies')
         self.replies = self.twitter.statuses.mentions()
         if rate: self.update_rate_limits()
         self.ui.update_replies(self.replies)
@@ -68,7 +68,7 @@ class Turpial:
         self.timer_rp.start()
         
     def __update_directs(self, rate=True):
-        #self.log.debug('Actualizando Directs')
+        #log.debug('Actualizando Directs')
         self.directs = self.twitter.direct_messages()
         self.directs_sent = self.twitter.direct_messages.sent()
         if rate: self.update_rate_limits()
@@ -78,7 +78,7 @@ class Turpial:
         self.timer_dm.start()
         
     def __update_favs(self, rate=True):
-        #self.log.debug('Actualizando Favorites')
+        #log.debug('Actualizando Favorites')
         self.favs = self.twitter.favorites()
         if rate: self.update_rate_limits()
         self.ui.update_favs(self.favs)
@@ -97,11 +97,16 @@ class Turpial:
             self.ui.update_rate_limits(self.rate_limits)
             
         except TwitterError, error:
-            self.log.debug('Error verificando credenciales %s' % error)
+            log.debug('Error verificando credenciales %s' % error)
             self.ui.cancel_login('Login info not valid')
             
     def signout(self):
+        log.debug('Desconectando')
         self.twitter.account.end_session()
+        log.debug('Terminando hilos')
+        self.timer_tl.cancel()
+        self.timer_rp.cancel()
+        self.timer_dm.cancel()
         
     def get_trends(self):
         return self.search.trends()
@@ -166,20 +171,20 @@ class Turpial:
     def mute(self, user):
         if user not in self.muted_users: 
             self.muted_users.append(user)
-            self.log.debug('Muteando a %s' % user)
+            log.debug('Muteando a %s' % user)
             
     def unmute(self, user):
         if user in self.muted_users: 
             self.muted_users.remove(user)
-            self.log.debug('Desmuteando a %s' % user)
+            log.debug('Desmuteando a %s' % user)
         
     def follow(self, user):
         self.twitter.friendships.create(screen_name=user)
-        self.log.debug('Follow to %s' % user)
+        log.debug('Follow to %s' % user)
         
     def unfollow(self, user):
         self.twitter.friendships.destroy(screen_name=user)
-        self.log.debug('Unfollow to %s' % user)
+        log.debug('Unfollow to %s' % user)
         
 if __name__ == '__main__':
     t = Turpial()

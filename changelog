@@ -5,6 +5,9 @@ Nov 17, 2009:
     ---- commit ----
     + Corregido problema con las actualizaciones automáticas
     ---- commit ----
+    + Cancelados hilos de actualización al salir del programa
+    + Refactorizada variable de log para el controlador
+    ---- commit ----
 
 Nov 16, 2009:
     + Refactorizado el método show_people por show_profile para mostrar el perfil completo

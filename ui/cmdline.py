@@ -170,7 +170,6 @@ class Main(cmd.Cmd):
         
     def do_exit(self, line):
         print
-        log.debug('Desconectando')
         self.controller.signout()
         log.debug('Adios')
         return True

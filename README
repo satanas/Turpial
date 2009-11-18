@@ -1,0 +1,56 @@
+Turpial
+=======
+
+Es un cliente Twitter multi-interfaz, orientado a ser una alternativa a los 
+clientes de Twitter más populares. Está inspirado por la interfaz y 
+funcionalidad de DestroyTwitter pero con el objetivo de tener al menos una 
+interfaz en línea de comandos, una GTK pura y una más innovadora y bleeding-edge
+usando diferentes recursos y tecnologías como Cairo y Webkit, entre otras.
+
+No son solo ganas de reinventar la rueda, considerando que DestroyTwitter,
+TweetDeck et al. están disponibles en Linux, la idea es desarrollar un cliente 
+que se integre mejor con el escritorio GNOME y tal vez con menos requisitos de 
+hardware; considerando que Adobe Air no corre en entornos de escritorio 
+ligeros como Fluxbox, OpenBox, etc (solo KDE y GNOME).
+
+Actualmente Turpial se encuentra en estado de desarrollo intenso, por lo que 
+pueden presentarse errores y fallos inesperados. Asímismo se invita a los 
+usuarios que detecten algún fallo que lo reporten a cualquiera de las siguientes
+direcciones: 
+
+wil.alejandro at gmail.com < Wil Alvarez >
+meza.eleazar at gmail.com < Eleazar Meza >
+
+Turpial ha sido publicado bajo una licencia GPL v3. Vea el archivo COPYING para
+más detalles o visite http://www.gnu.org/licenses/gpl-3.0.html
+
+Requisitos
+==========
+
+Turpial necesita los siguientes paquetes para funcionar correctamente:
+
+  * python >= 2.5
+  * python-simplejson >= 2.0.x
+  
+Una instalación estándar de Python (como la que viene en la mayoría de las
+distribuciones GNU/Linux) es más que suficiente. El módulo de python para 
+simplejson se puede instalar en las distribuciones basadas en Debian con el
+siguiente comando (como superusuario):
+
+# aptitude install python-simplejson
+
+Ejecutar Turpial
+================
+
+Para ejecutar Turpial en un ambiente GNU/Linux basta con otorgar permisos de
+ejecución al archivo y correr el script turpial.py (desde la carpeta de
+Turpial como usuario regular):
+
+$ chmod +x turpial.py
+$ ./turpial.py
+
+Al momento de esta publicación Turpial no recibe parámetros de inicio y la única
+interfaz disponible es la de línea de comandos. Basta con escribir "help" en la
+consola para obtener una lista de comandos disponibles o "help <comando>" para
+una ayuda detallada para el <comando> seleccionado.
+

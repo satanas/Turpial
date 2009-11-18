@@ -9,6 +9,8 @@
 #import time
 import urllib
 import logging
+import threading
+
 from api import *
 from ui import *
 
@@ -45,43 +47,53 @@ class Turpial:
             if twt['user']['screen_name'] not in self.muted_users:
                tweets.append(twt)
         return tweets
-    
     # ==============================================================
     
     def __update_timeline(self, rate=True):
+        #self.log.debug('Actualizando Timeline')
         self.tweets = self.twitter.statuses.friends_timeline()
         if rate: self.update_rate_limits()
+        self.ui.update_timeline(self.get_timeline())
     
     def __update_replies(self, rate=True):
+        #self.log.debug('Actualizando Replies')
         self.replies = self.twitter.statuses.mentions()
         if rate: self.update_rate_limits()
+        self.ui.update_replies(self.replies)
         
     def __update_directs(self, rate=True):
+        #self.log.debug('Actualizando Directs')
         self.directs = self.twitter.direct_messages()
         self.directs_sent = self.twitter.direct_messages.sent()
         if rate: self.update_rate_limits()
+        self.ui.update_directs(self.directs, self.directs_sent)
         
     def __update_favs(self, rate=True):
+        #self.log.debug('Actualizando Favorites')
         self.favs = self.twitter.favorites()
         if rate: self.update_rate_limits()
+        self.ui.update_favs(self.favs)
         
     def signin(self, username, password):
-        #self.ui.show_main()
-        #self.ui.cancel_login('Login info not valid')
-        #return
         self.twitter = Twitter(email=username, password=password, agent=self.agent)
         try:
             self.profile = self.twitter.account.verify_credentials()
+            
             self.__update_timeline(False)
-            #self.__update_replies(False)
+            self.__update_replies(False)
+            self.__update_favs(False)
             self.__update_directs()
             
+            self.timer_tl = threading.Timer(300, self.__update_timeline)
+            self.timer_tl.start()
+            self.timer_rp = threading.Timer(600, self.__update_replies)
+            self.timer_rp.start()
+            self.timer_dm = threading.Timer(900, self.__update_directs)
+            self.timer_dm.start()
+            
             self.ui.show_main()
-            self.ui.update_timeline(self.get_timeline())
-            #self.ui.update_replies(self.replies)
-            #self.ui.update_directs(self.direct, self.direct_sent)
-            #self.ui.update_favorites(self.favs)
             self.ui.update_rate_limits(self.rate_limits)
+            
         except TwitterError, error:
             self.log.debug('Error verificando credenciales %s' % error)
             self.ui.cancel_login('Login info not valid')
@@ -109,7 +121,6 @@ class Turpial:
     def update_status(self, text):
         rtn = self.twitter.statuses.update(status=text)
         self.tweets.insert(0, rtn)
-        #return self.tweets[0]
         
     def destroy_status(self, tweet_id):
         item = None

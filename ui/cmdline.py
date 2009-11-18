@@ -30,11 +30,23 @@ class Main(cmd.Cmd):
     def update_timeline(self, tweets):
         pass
         
+    def update_replies(self, tweets):
+        pass
+        
+    def update_favs(self, tweets):
+        pass
+        
+    def update_directs(self, recv, sent):
+        pass
+        
     def update_rate_limits(self, rates):
         pass
         
     def default(self, line):
         print '\n'.join(['Comando no encontrado.', INTRO[1], INTRO[2]])
+        
+    def emptyline(self):
+        pass
         
     def do_show(self, arg):
         if arg == 'tweets':
@@ -320,8 +332,7 @@ class Main(cmd.Cmd):
         self.show_rate_limits()
         
     def show_rate_limits(self):
-        rates = self.controller.update_rate_limits()
-        print util.get_rates(rates)
+        print util.get_rates(self.controller.rate_limits)
     
     def show_trends(self, trends):
         topten = ''

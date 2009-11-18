@@ -1,3 +1,9 @@
+Nov 17, 2009:
+    + Implementados timer para actualización automática de tweets
+    + Optimizadas llamadas a show_rates para que no hagan una llamada a la API sino que muestren el valor de la variable
+    + Agregados archivos readme y licencia GPL 3
+    ---- commit ----
+
 Nov 16, 2009:
     + Refactorizado el método show_people por show_profile para mostrar el perfil completo
     + Implementada funcionalidad para actualizar perfil (bio, location, url y name)
@@ -6,7 +12,6 @@ Nov 16, 2009:
     + Implementadas funciones para mute/unmute usuarios
     + Implementada función para obtener el timestamp de los tweets (from mitter)
     * Falta corregir el problema con el timestamp
-    * Falta poner el timer para que se actualicen las listas automagicamente
     ---- commit ----
     + Implementado follow/unfollow
     + Implementado código para ver followers y following

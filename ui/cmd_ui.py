@@ -11,7 +11,7 @@ import getpass
 import logging
 import datetime
 
-log = logging.getLogger('Cmdline')
+log = logging.getLogger('Cmd')
 INTRO = [
     'Bienvenido a Turpial, un cliente Twitter para GNU/Linux.', 
     'Escriba "help" para obtener una lista de los comandos disponibles.',
@@ -121,7 +121,7 @@ class Main(cmd.Cmd):
         user = line.split()[0]
         message = line.replace(user + ' ', '')
         if not self.validate_message(message):
-            print 'NO se envio ningun mensaje.'
+            print u'NO se envió ningun mensaje.'
             return
         self.controller.send_direct(user, message)
         
@@ -134,22 +134,22 @@ class Main(cmd.Cmd):
         
         if field == 'bio':
             if not self.validate_message(value, 160):
-                print 'NO se actualizo la bio.'
+                print u'NO se actualizó la bio.'
                 return
             self.controller.update_profile(new_bio=value)
         elif field == 'location':
             if not self.validate_message(value, 30):
-                print 'NO se actualizo la ubicacion.'
+                print u'NO se actualizó la ubicacion.'
                 return
             self.controller.update_profile(new_location=value)
         elif field == 'url':
             if not self.validate_message(value, 100):
-                print 'NO se actualizo la URL.'
+                print u'NO se actualizó la URL.'
                 return
             self.controller.update_profile(new_url=value)
         elif field == 'name':
             if not self.validate_message(value, 20):
-                print 'NO se actualizo el nombre.'
+                print u'NO se actualizó el nombre.'
                 return
             self.controller.update_profile(new_name=value)
         
@@ -185,13 +185,13 @@ class Main(cmd.Cmd):
     def help_search(self):
         print '\n'.join(['Ejecuta una busqueda en Twitter',
             'search <type> <query>',
-            '  <type>: Tipo de busqueda a realizar. Valores ' \
+            u'  <type>: Tipo de búsqueda a realizar. Valores ' \
                 'posibles: people',
             '  <query>: La cadena que se desea buscar'
         ])
         
     def help_direct(self):
-        print '\n'.join(['Envia un mensaje directo a un usuario',
+        print '\n'.join([u'Envía un mensaje directo a un usuario',
             'direct <user> <message>',
             '  <user>: Nombre del usuario. Ej: pedroperez',
             '  <message>: Mensaje que se desea enviar'
@@ -208,19 +208,19 @@ class Main(cmd.Cmd):
     def help_delete(self):
         print '\n'.join(['Borra un estado (tweet)',
             'delete <num>',
-            '  <num>: Numero en pantalla del estado (tweet) que desea borrar',
+            u'  <num>: Número en pantalla del estado (tweet) que desea borrar',
         ])
         
     def help_fav(self):
         print '\n'.join(['Marca un estado (tweet) como favorito',
             'fav <num>',
-            '  <num>: Numero en pantalla del estado (tweet) que desea marcar',
+            u'  <num>: Número en pantalla del estado (tweet) que desea marcar',
         ])
         
     def help_unfav(self):
         print '\n'.join(['Desmarca un estado (tweet) de los favoritos',
             'unfav <num>',
-            '  <num>: Numero en pantalla del estado (tweet) que desea desmarcar',
+            u'  <num>: Número en pantalla del estado (tweet) que desea desmarcar',
         ])
         
     def help_tweet(self):
@@ -279,7 +279,7 @@ class Main(cmd.Cmd):
         
         if len(text) > 160:
             print 'Tu mensaje tiene mas de 160 caracteres y Twitter ' \
-                'lo rechazara. Intenta acortar algunas URLs antes ' \
+                u'lo rechazará. Intenta acortarlo un poco antes ' \
                 'de postear.'
             return False
         
@@ -294,9 +294,13 @@ class Main(cmd.Cmd):
         self.cmdloop()
         
     def show_login(self):
-        usuario = raw_input('Username: ')
-        password = getpass.unix_getpass()
-        log.debug('Autenticando')
+        try:
+            usuario = raw_input('Username: ')
+            password = getpass.unix_getpass()
+        except EOFError:
+            self.do_exit('')
+            exit(0)
+        log.info('Autenticando')
         self.controller.signin(usuario, password)
     
     def cancel_login(self, error):
@@ -316,8 +320,8 @@ class Main(cmd.Cmd):
             else:
                 user = tweet['sender']['screen_name']
             
-            if tweet.has_key('source'):
-                client = util.detect_client(tweet['source'])
+            client = util.detect_client(tweet)
+            if client:
                 header = "%d. @%s - %s desde %s" % (count, user, timestamp, client)
             else:
                 header = "%d. @%s - %s" % (count, user, timestamp)

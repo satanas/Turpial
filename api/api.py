@@ -65,12 +65,11 @@ class TwitterCall(object):
 
         headers = {}
         if (self.agent):
-            headers["X-Twitter-Client"] = self.agent
+            #headers["X-Twitter-Client"] = self.agent
             headers["User-Agent"] = self.agent
         if (self.username):
             headers["Authorization"] = "Basic " + b64encode("%s:%s" %(
                 self.username, self.password))
-
         req = urllib2.Request(
                 "http://%s/%s.%s%s" %(self.domain, uri, self.format, argStr),
                 argData, headers

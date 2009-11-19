@@ -1,3 +1,14 @@
+Nov 19, 2009:
+    + Cambiado el nombre de proceso a 'turpial'
+    + Agregado soporte para manejar opciones al momento de la ejecución (debug e interface)
+    + Interceptados errores en modo texto al salir durante el login
+    + Modificada la interfaz gtk para que soporte el nuevo modelo y controlador
+    + Agregado logo a la pantalla de login
+    ---- commit ----
+    
+Nov 18, 2009:
+    ==== Primer Release Oficial v0.6 ====
+    
 Nov 17, 2009:
     + Implementados timer para actualización automática de tweets
     + Optimizadas llamadas a show_rates para que no hagan una llamada a la API sino que muestren el valor de la variable
@@ -16,7 +27,6 @@ Nov 16, 2009:
     + Agregados mensajes de ayuda para algunos comandos (update, delete, fav, unfav, tweet, exit, EOF)
     + Implementadas funciones para mute/unmute usuarios
     + Implementada función para obtener el timestamp de los tweets (from mitter)
-    * Falta corregir el problema con el timestamp
     ---- commit ----
     + Implementado follow/unfollow
     + Implementado código para ver followers y following

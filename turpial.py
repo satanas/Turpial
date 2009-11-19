@@ -6,23 +6,49 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 8, 2009
 
-#import time
 import urllib
 import logging
 import threading
 
 from api import *
 from ui import *
+from optparse import OptionParser
 
-logging.basicConfig(level=logging.DEBUG)
-log = logging.getLogger('Controller')
+try:
+    import ctypes
+    libc = ctypes.CDLL('libc.so.6')
+    libc.prctl(15, 'turpial', 0, 0)
+except:
+    pass
 
 class Turpial:
     def __init__(self):
+        parser = OptionParser()
+        parser.add_option('-d', '--debug', dest='debug', action='store_true',
+            help='Debug Mode', default=False)
+        parser.add_option('-i', '--interface', dest='interface',
+            help='Select interface to use. (cmd|gtk)', default='text')
+        
+        (options, _) = parser.parse_args()
+        
+        if options.debug: 
+            logging.basicConfig(level=logging.DEBUG)
+        else:
+            logging.basicConfig(level=logging.INFO)
+        self.log = logging.getLogger('Controller')
+        
+        self.interface = options.interface
+        if options.interface == 'gtk':
+            self.ui = gtk_ui.Main(self)
+        else:
+            self.ui = cmd_ui.Main(self)
+            
         self.twitter = None
         self.search = Twitter(domain="search.twitter.com")
-        self.ui = cmdline.Main(self)
         self.agent = 'Turpial'
+        self.timer_tl = None
+        self.timer_rp = None
+        self.timer_dm = None
         
         # Esto deberia ir en el modelo
         self.profile = None
@@ -33,8 +59,9 @@ class Turpial:
         self.favs = []
         self.rate_limits = []
         self.muted_users = []
+        # ==============================
         
-        log.debug('Iniciando Turpial')
+        self.log.debug('Iniciando Turpial')
         self.ui.show_login()
         self.ui.main_loop()
     
@@ -50,7 +77,7 @@ class Turpial:
     # ==============================================================
     
     def __update_timeline(self, rate=True):
-        #log.debug('Actualizando Timeline')
+        if self.interface != 'cmd': self.log.debug('Actualizando Timeline')
         self.tweets = self.twitter.statuses.friends_timeline()
         if rate: self.update_rate_limits()
         self.ui.update_timeline(self.get_timeline())
@@ -59,7 +86,7 @@ class Turpial:
         self.timer_tl.start()
     
     def __update_replies(self, rate=True):
-        #log.debug('Actualizando Replies')
+        if self.interface != 'cmd': self.log.debug('Actualizando Replies')
         self.replies = self.twitter.statuses.mentions()
         if rate: self.update_rate_limits()
         self.ui.update_replies(self.replies)
@@ -68,7 +95,7 @@ class Turpial:
         self.timer_rp.start()
         
     def __update_directs(self, rate=True):
-        #log.debug('Actualizando Directs')
+        if self.interface != 'cmd': self.log.debug('Actualizando Directs')
         self.directs = self.twitter.direct_messages()
         self.directs_sent = self.twitter.direct_messages.sent()
         if rate: self.update_rate_limits()
@@ -78,7 +105,7 @@ class Turpial:
         self.timer_dm.start()
         
     def __update_favs(self, rate=True):
-        #log.debug('Actualizando Favorites')
+        if self.interface != 'cmd': self.log.debug('Actualizando Favorites')
         self.favs = self.twitter.favorites()
         if rate: self.update_rate_limits()
         self.ui.update_favs(self.favs)
@@ -97,16 +124,16 @@ class Turpial:
             self.ui.update_rate_limits(self.rate_limits)
             
         except TwitterError, error:
-            log.debug('Error verificando credenciales %s' % error)
-            self.ui.cancel_login('Login info not valid')
+            self.log.debug('Error verificando credenciales %s' % error)
+            self.ui.cancel_login(u'Información de usuario inválida')
             
     def signout(self):
-        log.debug('Desconectando')
-        self.twitter.account.end_session()
-        log.debug('Terminando hilos')
-        self.timer_tl.cancel()
-        self.timer_rp.cancel()
-        self.timer_dm.cancel()
+        self.log.debug('Desconectando')
+        if self.twitter: self.twitter.account.end_session()
+        self.log.debug('Terminando hilos')
+        if self.timer_tl: self.timer_tl.cancel()
+        if self.timer_rp: self.timer_rp.cancel()
+        if self.timer_dm: self.timer_dm.cancel()
         
     def get_trends(self):
         return self.search.trends()
@@ -171,20 +198,20 @@ class Turpial:
     def mute(self, user):
         if user not in self.muted_users: 
             self.muted_users.append(user)
-            log.debug('Muteando a %s' % user)
+            self.log.debug('Muteando a %s' % user)
             
     def unmute(self, user):
         if user in self.muted_users: 
             self.muted_users.remove(user)
-            log.debug('Desmuteando a %s' % user)
+            self.log.debug('Desmuteando a %s' % user)
         
     def follow(self, user):
         self.twitter.friendships.create(screen_name=user)
-        log.debug('Follow to %s' % user)
+        self.log.debug('Follow to %s' % user)
         
     def unfollow(self, user):
         self.twitter.friendships.destroy(screen_name=user)
-        log.debug('Unfollow to %s' % user)
+        self.log.debug('Unfollow to %s' % user)
         
 if __name__ == '__main__':
     t = Turpial()

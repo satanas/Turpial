@@ -1,25 +1,21 @@
 # -*- coding: utf-8 -*-
 
-# Vista para Turpial en PyGTK (Interfaz Gráfica Tonta)
+# Vista para Turpial en PyGTK
 #
 # Author: Wil Alvarez (aka Satanas)
 # Nov 08, 2009
 
+import os
 import re
 import gtk
-#import time
+import util
+import time
 import cairo
 import pango
 import urllib
 import logging
 
-# a=time.strptime('Sat Nov 07 14:55:06 +0000 2009', '%a %b %d %H:%M:%S +0000 %Y')
-# time.mktime(a) -> Tiempo en segundos
-# time.timezone -> Diferencia Horaria
-# 
-# time.strftime('%b %d, %I:%M %P', )
-# time.strftime('%b %d, %H:%M', a)
-log = logging.getLogger('View')
+log = logging.getLogger('Gtk')
 
 def convert_time(timestamp):
     print timestamp, len(timestamp)
@@ -29,8 +25,10 @@ def convert_time(timestamp):
     sec = time.mktime(a) - time.timezone
     return time.strftime('%b %d, %I:%M %P', sec)
     
-def load_image(path):
-    pix = gtk.gdk.pixbuf_new_from_file(path)
+def load_image(path, pixbuf=False):
+    img_path = os.path.join('pixmaps', path)
+    pix = gtk.gdk.pixbuf_new_from_file(img_path)
+    if pixbuf: return pix
     avatar = gtk.Image()
     avatar.set_from_pixbuf(pix)
     del pix
@@ -149,12 +147,15 @@ class TweetList(gtk.ScrolledWindow):
         
     def add_tweet(self, username, datetime, client, message, avatar=None):
         #log.debug('Adding Tweet: %s' % message)
-        pix = gtk.gdk.pixbuf_new_from_file('unknown.png')
+        pix = load_image('unknown.png', pixbuf=True)
         message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)
         message = self.__highlight_mentions(message)
         interline = '<span size="2000">\n\n</span>'
-        footer = '<span size="small" foreground="#999">hace %s desde %s</span>' % (datetime, client)
+        if client:
+            footer = '<span size="small" foreground="#999">%s desde %s</span>' % (datetime, client)
+        else:
+            footer = '<span size="small" foreground="#999">%s</span>' % (datetime)
         
         tweet = message + interline + footer
         #urllib.urlretrieve(avatar, username+'.png')
@@ -170,10 +171,11 @@ class TweetList(gtk.ScrolledWindow):
             else:
                 user = tweet['sender']['screen_name']
                 image = tweet['sender']['profile_image_url']
-            client = self.client_detect(tweet['source'])
-            #convert_time(tweet['created_at'])
-            log.debug('Adding Tweet: %s' % tweet)
-            self.add_tweet(user, 'xxx', client, tweet['text'], image)
+                
+            client = util.detect_client(tweet)
+            timestamp = util.get_timestamp(tweet)
+            
+            self.add_tweet(user, timestamp, client, tweet['text'], image)
         
 class UpdateBox(gtk.VBox):
     def __init__(self):
@@ -244,14 +246,25 @@ class Main(gtk.Window):
         gtk.Window.__init__(self)
         
         self.controller = controller
-        self.set_title('Turpial: 2da Prueba de concepto')
+        self.set_title('Turpial')
         self.set_size_request(60, 60)
         self.set_default_size(320, 480)
         self.set_position(gtk.WIN_POS_CENTER)
-        self.connect('destroy', gtk.main_quit)
+        self.connect('destroy', self.quit)
         self.connect('size-request', self.size_request)
         self.mode = 0
         self.vbox = None
+        
+        self.timeline = TweetList()
+        self.replies = TweetList()
+        self.direct = TweetList()
+        self.favorites = TweetList()
+        
+    def quit(self, widget):
+        self.controller.signout()
+        log.debug('Adios')
+        gtk.main_quit()
+        exit(0)
         
     def main_loop(self):
         gtk.main()
@@ -260,7 +273,7 @@ class Main(gtk.Window):
         self.mode = 1
         if self.vbox is not None: self.remove(self.vbox)
         
-        #avatar = load_image('turpial.png')
+        avatar = load_image('logo.png')
         self.message = LoginLabel(self)
         
         lbl_user = gtk.Label()
@@ -281,7 +294,7 @@ class Main(gtk.Window):
         
         table = gtk.Table(8,1,False)
         
-        #table.attach(avatar,0,1,0,1,gtk.FILL,gtk.FILL, 20, 10)
+        table.attach(avatar,0,1,0,1,gtk.FILL,gtk.FILL, 20, 10)
         table.attach(self.message,0,1,1,2,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 3)
         table.attach(lbl_user,0,1,2,3,gtk.EXPAND,gtk.FILL,0,0)
         table.attach(self.username,0,1,3,4,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 0)
@@ -304,7 +317,7 @@ class Main(gtk.Window):
         self.username.set_sensitive(False)
         self.password.set_sensitive(False)
         gtk.main_iteration(False)
-        self.controller.signup(username.get_text(), password.get_text())
+        self.controller.signin(username.get_text(), password.get_text())
         
     def cancel_login(self, error):
         #e = '<span background="#C00" foreground="#FFF" size="small">%s</span>' % error
@@ -313,20 +326,9 @@ class Main(gtk.Window):
         self.username.set_sensitive(True)
         self.password.set_sensitive(True)
         
-    def update_rate_limits(self, val):
-        tsec = val['reset_time_in_seconds'] - time.timezone
-        t = time.strftime('%I:%M %P', time.gmtime(tsec))
-        hits = val['remaining_hits']
-        limit = val['hourly_limit']
-        status = "%s of %s API calls. Next reset: %s" % (hits, limit, t)
-        self.statusbar.push(0, status)
-        
     def show_main(self):
+        log.debug('Cargando ventana principal')
         self.mode = 2
-        self.timeline = TweetList()
-        self.replies = TweetList()
-        self.direct = TweetList()
-        self.favorites = TweetList()
         
         self.updatebox = UpdateBox()
         
@@ -357,11 +359,19 @@ class Main(gtk.Window):
     def update_replies(self, tweets):
         self.replies.update_tweets(tweets)
         
-    def update_favorites(self, tweets):
+    def update_favs(self, tweets):
         self.favorites.update_tweets(tweets)
         
-    def update_direct(self, tweets):
-        self.direct.update_tweets(tweets)
+    def update_directs(self, sent, recv):
+        self.direct.update_tweets(sent)
+        
+    def update_rate_limits(self, val):
+        tsec = val['reset_time_in_seconds'] - time.timezone
+        t = time.strftime('%I:%M %P', time.gmtime(tsec))
+        hits = val['remaining_hits']
+        limit = val['hourly_limit']
+        status = "%s of %s API calls. Next reset: %s" % (hits, limit, t)
+        self.statusbar.push(0, status)
         
     def size_request(self, widget, event, data=None):
         """Callback when the window changes its sizes. We use it to set the

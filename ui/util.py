@@ -13,11 +13,13 @@ HASHTAG_PATTERN = re.compile('\#(.*?)[\W]')
 MENTION_PATTERN = re.compile('\@(.*?)[\W]')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
 
-def detect_client(text):
+def detect_client(tweet):
+    if not tweet.has_key('source'): return None
+    text = tweet['source']
     if text == 'web': return text
     rtn = CLIENT_PATTERN.search(text)
     if rtn: return rtn.groups()[1]
-    return 'unknown'
+    return None
     
 def detect_hashtags(text):
     return HASHTAG_PATTERN.findall(text)
@@ -31,6 +33,13 @@ def get_rates(val):
     hits = val['remaining_hits']
     limit = val['hourly_limit']
     return "%s of %s API calls. Next reset: %s" % (hits, limit, t)
+
+# a=time.strptime('Sat Nov 07 14:55:06 +0000 2009', '%a %b %d %H:%M:%S +0000 %Y')
+# time.mktime(a) -> Tiempo en segundos
+# time.timezone -> Diferencia Horaria
+# 
+# time.strftime('%b %d, %I:%M %P', )
+# time.strftime('%b %d, %H:%M', a)
 
 def get_timestamp(tweet):
     # Tue Mar 13 00:12:41 +0000 2007

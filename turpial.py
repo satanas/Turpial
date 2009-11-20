@@ -27,7 +27,7 @@ class Turpial:
         parser.add_option('-d', '--debug', dest='debug', action='store_true',
             help='Debug Mode', default=False)
         parser.add_option('-i', '--interface', dest='interface',
-            help='Select interface to use. (cmd|gtk)', default='text')
+            help='Select interface to use. (cmd|gtk)', default='cmd')
         
         (options, _) = parser.parse_args()
         

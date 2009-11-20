@@ -21,6 +21,7 @@ class PicDownloader(threading.Thread):
         
     def run(self):
         ext = self.url[-3:]
+        if ext == '': ext = 'png'
         filename = self.url[self.url.rfind('/') + 1:]
         fullname = os.path.join('pixmaps', filename)
 

@@ -21,14 +21,6 @@ gtk.gdk.threads_init()
 
 log = logging.getLogger('Gtk')
 
-def convert_time(timestamp):
-    print timestamp, len(timestamp)
-    print '%a %b %d %H:%M:%S +0000 %Y'
-    
-    a = time.strptime(timestamp, '%a %b %d %H:%M:%S +0000 %Y')
-    sec = time.mktime(a) - time.timezone
-    return time.strftime('%b %d, %I:%M %P', sec)
-    
 def load_image(path, pixbuf=False):
     img_path = os.path.join('pixmaps', path)
     pix = gtk.gdk.pixbuf_new_from_file(img_path)
@@ -113,15 +105,8 @@ class TweetList(gtk.ScrolledWindow):
         column.set_attributes(cell_avatar, pixbuf=0)
         self.list.append_column(column)
         
-    def client_detect(self, text):
-        if text == 'web': return text
-        
-        rtn = self.client_pattern.search(text)
-        if rtn: return rtn.groups()[1]
-        return 'unknown'
-        
     def __highlight_hashtags(self, text):
-        hashtags = self.hashtag_pattern.findall(text)
+        hashtags = util.detect_hashtags(text)
         if len(hashtags) == 0: return text
         
         for h in hashtags:
@@ -131,7 +116,7 @@ class TweetList(gtk.ScrolledWindow):
         return text
         
     def __highlight_mentions(self, text):
-        mentions = self.mention_pattern.findall(text)
+        mentions = util.detect_mentions(text)
         if len(mentions) == 0: return text
         
         for h in mentions:

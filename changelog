@@ -5,6 +5,8 @@ Nov 19, 2009:
     + Modificada la interfaz gtk para que soporte el nuevo modelo y controlador
     + Agregado logo a la pantalla de login
     ---- commit ----
+    + Iniciado el proceso de descarga de imágenes de usuarios
+    ---- commit ----
     
 Nov 18, 2009:
     ==== Primer Release Oficial v0.6 ====

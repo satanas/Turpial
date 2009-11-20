@@ -15,6 +15,10 @@ import pango
 import urllib
 import logging
 
+from pic_downloader import *
+
+gtk.gdk.threads_init()
+
 log = logging.getLogger('Gtk')
 
 def convert_time(timestamp):
@@ -145,9 +149,19 @@ class TweetList(gtk.ScrolledWindow):
             self.model.row_changed(path, iter)
             iter = self.model.iter_next(iter)
         
-    def add_tweet(self, username, datetime, client, message, avatar=None):
+    def add_tweet(self, username, datetime, client, message, avatar):
         #log.debug('Adding Tweet: %s' % message)
-        pix = load_image('unknown.png', pixbuf=True)
+        log.debug('User image %s' % avatar)
+        
+        filename = avatar[avatar.rfind('/') + 1:]
+        fullname = os.path.join('pixmaps', filename)
+        if os.path.isfile(fullname):
+            pix = load_image(filename, pixbuf=True)
+        else:
+            p = PicDownloader(avatar, username, self.update_user_pic)
+            p.start()
+            pix = load_image('unknown.png', pixbuf=True)
+            
         message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)
         message = self.__highlight_mentions(message)
@@ -158,10 +172,20 @@ class TweetList(gtk.ScrolledWindow):
             footer = '<span size="small" foreground="#999">%s</span>' % (datetime)
         
         tweet = message + interline + footer
-        #urllib.urlretrieve(avatar, username+'.png')
-        #pix = gtk.gdk.pixbuf_new_from_file(username+'.png')
         self.model.append([pix, username, datetime, client, tweet])
         del pix
+        
+    def update_user_pic(self, user, filename):
+        pix = load_image(filename, pixbuf=True)
+        iter = self.model.get_iter_first()
+        while iter:
+            u = self.model.get_value(iter, 1)
+            if u == user:
+                self.model.set_value(iter, 0, pix)
+                break
+            iter = self.model.iter_next(iter)
+        del pix
+            
         
     def update_tweets(self, arr_tweets):
         for tweet in arr_tweets:
@@ -261,9 +285,9 @@ class Main(gtk.Window):
         self.favorites = TweetList()
         
     def quit(self, widget):
+        gtk.main_quit()
         self.controller.signout()
         log.debug('Adios')
-        gtk.main_quit()
         exit(0)
         
     def main_loop(self):

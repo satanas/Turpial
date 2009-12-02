@@ -14,8 +14,9 @@ import cairo
 import pango
 import urllib
 import logging
+import gobject
 
-from pic_downloader import *
+#from pic_downloader import *
 
 gtk.gdk.threads_init()
 
@@ -68,7 +69,7 @@ class LoginLabel(gtk.DrawingArea):
         #cr.show_text(self.error)
         
 class TweetList(gtk.ScrolledWindow):
-    def __init__(self):
+    def __init__(self, label=''):
         gtk.ScrolledWindow.__init__(self)
         
         self.list = gtk.TreeView()
@@ -77,6 +78,8 @@ class TweetList(gtk.ScrolledWindow):
         self.list.set_level_indentation(0)
         self.list.set_rules_hint(True)
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
+        
+        self.label = gtk.Label(label)
         
         self.hashtag_pattern = re.compile('\#(.*?)[\W]')
         self.mention_pattern = re.compile('\@(.*?)[\W]')
@@ -126,6 +129,7 @@ class TweetList(gtk.ScrolledWindow):
         return text
         
     def update_wrap(self, val):
+        #self.label.set_size_request(val, -1)
         self.cell_tweet.set_property('wrap-width', val - 80)
         iter = self.model.get_iter_first()
         
@@ -140,12 +144,14 @@ class TweetList(gtk.ScrolledWindow):
         
         filename = avatar[avatar.rfind('/') + 1:]
         fullname = os.path.join('pixmaps', filename)
-        if os.path.isfile(fullname):
-            pix = load_image(filename, pixbuf=True)
-        else:
-            p = PicDownloader(avatar, username, self.update_user_pic)
-            p.start()
-            pix = load_image('unknown.png', pixbuf=True)
+        #if os.path.isfile(fullname):
+        #    pix = load_image(filename, pixbuf=True)
+        #else:
+            #p = PicDownloader(avatar, username, self.update_user_pic)
+            #p.start()
+            #pix = load_image('unknown.png', pixbuf=True)
+        #    pass
+        pix = load_image('unknown.png', pixbuf=True)
             
         message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)
@@ -158,7 +164,7 @@ class TweetList(gtk.ScrolledWindow):
         
         tweet = message + interline + footer
         self.model.append([pix, username, datetime, client, tweet])
-        del pix
+        #del pix
         
     def update_user_pic(self, user, filename):
         pix = load_image(filename, pixbuf=True)
@@ -186,9 +192,18 @@ class TweetList(gtk.ScrolledWindow):
             
             self.add_tweet(user, timestamp, client, tweet['text'], image)
         
-class UpdateBox(gtk.VBox):
-    def __init__(self):
-        gtk.VBox.__init__(self, False, 2)
+class UpdateBox(gtk.Window):
+    def __init__(self, parent):
+        gtk.Window.__init__(self)
+        
+        self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
+        self.set_title('Update Status')
+        self.set_default_size(500, 120)
+        self.set_transient_for(parent)
+        self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        #w.add(u)
+        #w.show_all()
+        
         label = gtk.Label()
         label.set_use_markup(True)
         label.set_alignment(0, 0.5)
@@ -199,50 +214,68 @@ class UpdateBox(gtk.VBox):
         self.num_chars.set_use_markup(True)
         self.num_chars.set_markup('<span size="14000" foreground="#999"><b>140</b></span>')
         
-        frame = gtk.Frame()
         self.update_text = gtk.TextView()
         self.update_text.set_border_width(2)
         self.update_text.set_left_margin(2)
         self.update_text.set_right_margin(2)
         self.update_text.set_wrap_mode(gtk.WRAP_WORD)
         self.update_text.get_buffer().connect("changed", self.count_chars)
-        frame.add(self.update_text)
+        update = gtk.Frame()
+        update.add(self.update_text)
+        updatebox = gtk.HBox(False)
+        updatebox.pack_start(update, True, True, 3)
         
         btn_url = gtk.Button()
         btn_url.set_image(load_image('cut.png'))
         btn_url.set_tooltip_text('Shorten URL')
+        btn_url.set_relief(gtk.RELIEF_NONE)
         btn_pic = gtk.Button()
         btn_pic.set_image(load_image('photos.png'))
         btn_pic.set_tooltip_text('Upload Pic')
+        btn_pic.set_relief(gtk.RELIEF_NONE)
         btn_clr = gtk.Button()
         btn_clr.set_image(load_image('clear.png'))
         btn_clr.set_tooltip_text('Clear Box')
+        btn_clr.set_relief(gtk.RELIEF_NONE)
         btn_upd = gtk.Button('Update')
+        chk_short = gtk.CheckButton('Autocortado de URLs')
+        
+        btn_clr.connect('clicked', self.clear)
+        btn_upd.connect('clicked', self.update)
         
         top = gtk.HBox(False)
-        top.pack_start(label, True, True, 3)
-        top.pack_start(self.num_chars, False, False, 3)
+        top.pack_start(label, True, True, 5)
+        top.pack_start(self.num_chars, False, False, 5)
+        
+        self.waiting = CairoWaiting(self)
+        self.waiting.start()
         
         buttonbox = gtk.HBox(False)
+        buttonbox.pack_start(chk_short, False, False, 0)
+        buttonbox.pack_start(gtk.HSeparator(), False, False, 2)
         buttonbox.pack_start(btn_url, False, False, 0)
         buttonbox.pack_start(btn_pic, False, False, 0)
         buttonbox.pack_start(btn_clr, False, False, 0)
-        
-        vbox = gtk.VBox(False)
-        vbox.pack_start(btn_upd, True, True, 0)
-        vbox.pack_start(buttonbox, False, False, 0)
+        buttonbox.pack_start(gtk.HSeparator(), False, False, 2)
+        buttonbox.pack_start(btn_upd, False, False, 0)
+        abuttonbox = gtk.Alignment(1, 0.5)
+        abuttonbox.add(buttonbox)
         
         bottom = gtk.HBox(False)
-        bottom.pack_start(frame, True, True, 3)
-        bottom.pack_start(vbox, False, False, 3)
+        bottom.pack_start(self.waiting, False, False, 5)
+        bottom.pack_start(abuttonbox, True, True, 5)
         
-        self.pack_start(top, False, False, 2)
-        self.pack_start(bottom, True, True, 2)
+        vbox = gtk.VBox(False)
+        vbox.pack_start(top, False, False, 2)
+        vbox.pack_start(updatebox, True, True, 2)
+        vbox.pack_start(bottom, False, False, 3)
+        
+        self.add(vbox)
         self.show_all()
     
     def count_chars(self, widget):
-        buf = self.update_text.get_buffer()
-        remain = 140 - buf.get_char_count()
+        buffer = self.update_text.get_buffer()
+        remain = 140 - buffer.get_char_count()
         
         if remain >= 20: color = "#999"
         elif 0 < remain < 20: color = "#d4790d"
@@ -250,13 +283,143 @@ class UpdateBox(gtk.VBox):
         
         self.num_chars.set_markup('<span size="14000" foreground="%s"><b>%i</b></span>' % (color, remain))
         
+    def clear(self, widget):
+        self.update_text.get_buffer().set_text('')
+        
+    def update(self, widget):
+        buffer = self.update_text.get_buffer()
+        start, end = buffer.get_bounds()
+        print buffer.get_text(start, end)
+        self.waiting.stop()
+        buffer.set_text('')
+        self.destroy()
+        
+class CairoWaiting(gtk.DrawingArea):
+    def __init__(self, parent):
+        gtk.DrawingArea.__init__(self)
+        self.par = parent
+        self.active = False
+        self.connect('expose-event', self.expose)
+        self.set_size_request(16, 16)
+        self.timer = None
+        self.count = 0
+    
+    def start(self):
+        self.active = True
+        self.timer = gobject.timeout_add(150, self.update)
+        self.queue_draw()
+        
+    def stop(self):
+        self.active = False
+        self.queue_draw()
+        gobject.source_remove(self.timer)
+        
+    def update(self):
+        self.count += 1
+        if self.count > 3: self.count = 0
+        self.queue_draw()
+        return True
+        
+    def expose(self, widget, event):
+        cr = widget.window.cairo_create()
+        cr.set_line_width(0.8)
+        rect = self.get_allocation()
+        
+        cr.rectangle(event.area.x, event.area.y, event.area.width, event.area.height)
+        cr.clip()
+        
+        cr.rectangle(0, 0, rect.width, rect.height)
+        if not self.active: return
+        
+        img = 'wait-%i.png' % (self.count + 1)
+        pix = load_image(img, True)
+        cr.set_source_pixbuf(pix, 0, 0)
+        cr.paint()
+        del pix
+        
+        #cr.text_path(self.error)
+        #cr.stroke()
+        
+class Dock(gtk.Alignment):
+    def __init__(self, parent):
+        gtk.Alignment.__init__(self, 0.5, 0.5)
+        
+        self.mainwin = parent
+        self.mode = 'single'
+        self.btn_home = gtk.Button()
+        self.btn_home.set_image(load_image('button-test-single.png'))
+        self.btn_home.set_relief(gtk.RELIEF_NONE)
+        self.btn_home.set_tooltip_text('Home')
+        self.btn_favs = gtk.Button()
+        self.btn_favs.set_image(load_image('button-test-single.png'))
+        self.btn_favs.set_relief(gtk.RELIEF_NONE)
+        self.btn_favs.set_tooltip_text('Favoritos')
+        self.btn_lists = gtk.Button()
+        self.btn_lists.set_image(load_image('button-test-single.png'))
+        self.btn_lists.set_relief(gtk.RELIEF_NONE)
+        self.btn_lists.set_tooltip_text('Listas')
+        self.btn_update = gtk.Button()
+        self.btn_update.set_image(load_image('button-update-single.png'))
+        self.btn_update.set_relief(gtk.RELIEF_NONE)
+        self.btn_update.set_tooltip_text('Actualizar Estado')
+        self.btn_search = gtk.Button()
+        self.btn_search.set_image(load_image('button-test-single.png'))
+        self.btn_search.set_relief(gtk.RELIEF_NONE)
+        self.btn_search.set_tooltip_text('Buscar')
+        self.btn_profile = gtk.Button()
+        self.btn_profile.set_image(load_image('button-test-single.png'))
+        self.btn_profile.set_relief(gtk.RELIEF_NONE)
+        self.btn_profile.set_tooltip_text('Perfil')
+        self.btn_settings = gtk.Button()
+        self.btn_settings.set_image(load_image('button-test-single.png'))
+        self.btn_settings.set_relief(gtk.RELIEF_NONE)
+        self.btn_settings.set_tooltip_text('Preferencias')
+        
+        self.btn_home.connect('clicked', self.switch_mode)
+        self.btn_update.connect('clicked', self.show_update)
+        
+        box = gtk.HBox()
+        box.pack_start(self.btn_home, False, False)
+        box.pack_start(self.btn_favs, False, False)
+        box.pack_start(self.btn_lists, False, False)
+        box.pack_start(self.btn_update, False, False)
+        box.pack_start(self.btn_search, False, False)
+        box.pack_start(self.btn_profile, False, False)
+        box.pack_start(self.btn_settings, False, False)
+        
+        self.add(box)
+        self.show_all()
+        
+    def show_update(self, widget):
+        u = UpdateBox(self.mainwin)
+        
+    def switch_mode(self, widget):
+        if self.mode == 'single':
+            self.mode = 'wide'
+            self.btn_home.set_image(load_image('button-test.png'))
+            self.btn_favs.set_image(load_image('button-test.png'))
+            self.btn_lists.set_image(load_image('button-test.png'))
+            self.btn_update.set_image(load_image('button-update.png'))
+            self.btn_search.set_image(load_image('button-test.png'))
+            self.btn_profile.set_image(load_image('button-test.png'))
+            self.btn_settings.set_image(load_image('button-test.png'))
+        else:
+            self.mode = 'single'
+            self.btn_home.set_image(load_image('button-test-single.png'))
+            self.btn_favs.set_image(load_image('button-test-single.png'))
+            self.btn_lists.set_image(load_image('button-test-single.png'))
+            self.btn_update.set_image(load_image('button-update-single.png'))
+            self.btn_search.set_image(load_image('button-test-single.png'))
+            self.btn_profile.set_image(load_image('button-test-single.png'))
+            self.btn_settings.set_image(load_image('button-test-single.png'))
+        
 class Main(gtk.Window):
     def __init__(self, controller):
         gtk.Window.__init__(self)
         
         self.controller = controller
         self.set_title('Turpial')
-        self.set_size_request(60, 60)
+        self.set_size_request(280, 350)
         self.set_default_size(320, 480)
         self.set_position(gtk.WIN_POS_CENTER)
         self.connect('destroy', self.quit)
@@ -264,10 +427,10 @@ class Main(gtk.Window):
         self.mode = 0
         self.vbox = None
         
-        self.timeline = TweetList()
-        self.replies = TweetList()
-        self.direct = TweetList()
-        self.favorites = TweetList()
+        self.timeline = TweetList('Home')
+        self.replies = TweetList('Replies')
+        self.direct = TweetList('Direct')
+        self.favorites = TweetList('Favs')
         
     def quit(self, widget):
         gtk.main_quit()
@@ -336,25 +499,31 @@ class Main(gtk.Window):
         self.password.set_sensitive(True)
         
     def show_main(self):
+        #self.set_size_request(620, 480)
+        #self.set_position(gtk.WIN_POS_CENTER)
         log.debug('Cargando ventana principal')
         self.mode = 2
         
-        self.updatebox = UpdateBox()
+        self.dock = Dock(self)
         
         self.statusbar = gtk.Statusbar()
         self.statusbar.push(0, 'Turpial')
         
         self.notebook = gtk.Notebook()
-        self.notebook.append_page(self.timeline, gtk.Label('Home'))
-        self.notebook.append_page(self.replies, gtk.Label('Replies'))
-        self.notebook.append_page(self.direct, gtk.Label('Messages'))
-        self.notebook.append_page(self.favorites, gtk.Label('Favorites'))
+        #self.notebook.set_scrollable(True)
+        self.notebook.append_page(self.timeline, self.timeline.label)
+        self.notebook.append_page(self.replies, self.replies.label)
+        self.notebook.append_page(self.direct, self.direct.label)
+        #self.notebook.append_page(self.favorites, self.favorites.label)
+        self.notebook.set_tab_label_packing(self.timeline, True, True, gtk.PACK_START)
+        self.notebook.set_tab_label_packing(self.replies, True, True, gtk.PACK_START)
+        self.notebook.set_tab_label_packing(self.direct, True, True, gtk.PACK_START)
         
         if (self.vbox is not None): self.remove(self.vbox)
         
         self.vbox = gtk.VBox(False, 5)
         self.vbox.pack_start(self.notebook, True, True, 0)
-        self.vbox.pack_start(self.updatebox, False, False, 0)
+        self.vbox.pack_start(self.dock, False, False, 0)
         self.vbox.pack_start(self.statusbar, False, False, 0)
         
         self.add(self.vbox)

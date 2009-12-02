@@ -111,6 +111,7 @@ class Turpial:
         self.ui.update_favs(self.favs)
         
     def signin(self, username, password):
+        '''
         self.twitter = Twitter(email=username, password=password, agent=self.agent)
         try:
             self.profile = self.twitter.account.verify_credentials()
@@ -126,7 +127,9 @@ class Turpial:
         except TwitterError, error:
             self.log.debug('Error verificando credenciales %s' % error)
             self.ui.cancel_login(u'Información de usuario inválida')
-            
+        '''
+        self.ui.show_main()
+        
     def signout(self):
         self.log.debug('Desconectando')
         if self.twitter: self.twitter.account.end_session()

@@ -1,3 +1,12 @@
+Dic 2, 2009:
+    + Mejorado el código de El Dock para alinearlo y cambiarlo en caliente entre single/wide workspace
+    + Mejorado el diálogo de actualizar estado según el esquema discutido
+    ---- commit ----
+    
+Nov 29, 2009:
+    + Construido control cairo para indicar progreso de los servicios (arco giratorio)
+    + Reestructurada caja para actualizar estado
+    
 Nov 19, 2009:
     + Cambiado el nombre de proceso a 'turpial'
     + Agregado soporte para manejar opciones al momento de la ejecución (debug e interface)

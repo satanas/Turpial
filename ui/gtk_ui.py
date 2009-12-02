@@ -5,8 +5,6 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 08, 2009
 
-import os
-import re
 import gtk
 import util
 import time
@@ -21,15 +19,6 @@ import gobject
 gtk.gdk.threads_init()
 
 log = logging.getLogger('Gtk')
-
-def load_image(path, pixbuf=False):
-    img_path = os.path.join('pixmaps', path)
-    pix = gtk.gdk.pixbuf_new_from_file(img_path)
-    if pixbuf: return pix
-    avatar = gtk.Image()
-    avatar.set_from_pixbuf(pix)
-    del pix
-    return avatar
 
 class LoginLabel(gtk.DrawingArea):
     def __init__(self, parent):
@@ -80,10 +69,6 @@ class TweetList(gtk.ScrolledWindow):
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
         
         self.label = gtk.Label(label)
-        
-        self.hashtag_pattern = re.compile('\#(.*?)[\W]')
-        self.mention_pattern = re.compile('\@(.*?)[\W]')
-        self.client_pattern = re.compile('<a href="(.*?)">(.*?)</a>')
         
         self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.add(self.list)
@@ -142,16 +127,16 @@ class TweetList(gtk.ScrolledWindow):
         #log.debug('Adding Tweet: %s' % message)
         log.debug('User image %s' % avatar)
         
-        filename = avatar[avatar.rfind('/') + 1:]
-        fullname = os.path.join('pixmaps', filename)
+        #filename = avatar[avatar.rfind('/') + 1:]
+        #fullname = os.path.join('pixmaps', filename)
         #if os.path.isfile(fullname):
-        #    pix = load_image(filename, pixbuf=True)
+        #    pix = util.load_image(filename, pixbuf=True)
         #else:
             #p = PicDownloader(avatar, username, self.update_user_pic)
             #p.start()
-            #pix = load_image('unknown.png', pixbuf=True)
+            #pix = util.load_image('unknown.png', pixbuf=True)
         #    pass
-        pix = load_image('unknown.png', pixbuf=True)
+        pix = util.load_image('unknown.png', pixbuf=True)
             
         message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)
@@ -164,10 +149,10 @@ class TweetList(gtk.ScrolledWindow):
         
         tweet = message + interline + footer
         self.model.append([pix, username, datetime, client, tweet])
-        #del pix
+        del pix
         
     def update_user_pic(self, user, filename):
-        pix = load_image(filename, pixbuf=True)
+        pix = util.load_image(filename, pixbuf=True)
         iter = self.model.get_iter_first()
         while iter:
             u = self.model.get_value(iter, 1)
@@ -226,15 +211,15 @@ class UpdateBox(gtk.Window):
         updatebox.pack_start(update, True, True, 3)
         
         btn_url = gtk.Button()
-        btn_url.set_image(load_image('cut.png'))
+        btn_url.set_image(util.load_image('cut.png'))
         btn_url.set_tooltip_text('Shorten URL')
         btn_url.set_relief(gtk.RELIEF_NONE)
         btn_pic = gtk.Button()
-        btn_pic.set_image(load_image('photos.png'))
+        btn_pic.set_image(util.load_image('photos.png'))
         btn_pic.set_tooltip_text('Upload Pic')
         btn_pic.set_relief(gtk.RELIEF_NONE)
         btn_clr = gtk.Button()
-        btn_clr.set_image(load_image('clear.png'))
+        btn_clr.set_image(util.load_image('clear.png'))
         btn_clr.set_tooltip_text('Clear Box')
         btn_clr.set_relief(gtk.RELIEF_NONE)
         btn_upd = gtk.Button('Update')
@@ -294,6 +279,80 @@ class UpdateBox(gtk.Window):
         buffer.set_text('')
         self.destroy()
         
+class Home(gtk.VBox):
+    def __init__(self, mode='single'):
+        gtk.VBox.__init__(self)
+        
+        self.timeline = TweetList('Home')
+        self.replies = TweetList('Replies')
+        self.direct = TweetList('Direct')
+        self.change_mode(mode)
+        
+    def change_mode(self, mode):
+        for child in self.get_children():
+            self.remove(child)
+        
+        if mode == 'wide':
+            wrapper = gtk.HBox(True)
+            
+            tbox = gtk.VBox(False)
+            tbox.pack_start(gtk.Label('Home'), False, False)
+            if self.timeline.get_parent(): 
+                self.timeline.reparent(tbox)
+            else:
+                tbox.pack_start(self.timeline, True, True)
+            wrapper.pack_start(tbox)
+            
+            rbox = gtk.VBox(False)
+            rbox.pack_start(gtk.Label('Replies'), False, False)
+            if self.replies.get_parent(): 
+                self.replies.reparent(rbox)
+            else:
+                rbox.pack_start(self.replies, True, True)
+            wrapper.pack_start(rbox)
+                
+            dbox = gtk.VBox(False)
+            dbox.pack_start(gtk.Label('Direct'), False, False)
+            if self.direct.get_parent(): 
+                self.direct.reparent(dbox)
+            else:
+                dbox.pack_start(self.direct, True, True)
+            wrapper.pack_start(dbox)
+        else:
+            wrapper = gtk.Notebook()
+            if self.timeline.get_parent(): 
+                self.timeline.reparent(wrapper)
+                wrapper.set_tab_label(self.timeline, self.timeline.label)
+            else:
+                wrapper.append_page(self.timeline, self.timeline.label)
+            if self.replies.get_parent(): 
+                self.replies.reparent(wrapper)
+                wrapper.set_tab_label(self.replies, self.replies.label)
+            else:
+                wrapper.append_page(self.replies, self.replies.label)
+            if self.direct.get_parent(): 
+                self.direct.reparent(wrapper)
+                wrapper.set_tab_label(self.direct, self.direct.label)
+            else:
+                wrapper.append_page(self.direct, self.direct.label)
+            
+            wrapper.set_tab_label_packing(self.timeline, True, True, gtk.PACK_START)
+            wrapper.set_tab_label_packing(self.replies, True, True, gtk.PACK_START)
+            wrapper.set_tab_label_packing(self.direct, True, True, gtk.PACK_START)
+            
+        self.add(wrapper)
+        self.show_all()
+        
+    def update_wrap(self, width, mode):
+        if mode == 'single':
+            w = width
+        else:
+            w = width / 3
+        print w, mode
+        self.timeline.update_wrap(w)
+        self.replies.update_wrap(w)
+        self.direct.update_wrap(w)
+        
 class CairoWaiting(gtk.DrawingArea):
     def __init__(self, parent):
         gtk.DrawingArea.__init__(self)
@@ -332,7 +391,7 @@ class CairoWaiting(gtk.DrawingArea):
         if not self.active: return
         
         img = 'wait-%i.png' % (self.count + 1)
-        pix = load_image(img, True)
+        pix = util.load_image(img, True)
         cr.set_source_pixbuf(pix, 0, 0)
         cr.paint()
         del pix
@@ -341,41 +400,33 @@ class CairoWaiting(gtk.DrawingArea):
         #cr.stroke()
         
 class Dock(gtk.Alignment):
-    def __init__(self, parent):
+    def __init__(self, parent, mode='single'):
         gtk.Alignment.__init__(self, 0.5, 0.5)
         
         self.mainwin = parent
-        self.mode = 'single'
         self.btn_home = gtk.Button()
-        self.btn_home.set_image(load_image('button-test-single.png'))
         self.btn_home.set_relief(gtk.RELIEF_NONE)
         self.btn_home.set_tooltip_text('Home')
         self.btn_favs = gtk.Button()
-        self.btn_favs.set_image(load_image('button-test-single.png'))
         self.btn_favs.set_relief(gtk.RELIEF_NONE)
         self.btn_favs.set_tooltip_text('Favoritos')
         self.btn_lists = gtk.Button()
-        self.btn_lists.set_image(load_image('button-test-single.png'))
         self.btn_lists.set_relief(gtk.RELIEF_NONE)
         self.btn_lists.set_tooltip_text('Listas')
         self.btn_update = gtk.Button()
-        self.btn_update.set_image(load_image('button-update-single.png'))
         self.btn_update.set_relief(gtk.RELIEF_NONE)
         self.btn_update.set_tooltip_text('Actualizar Estado')
         self.btn_search = gtk.Button()
-        self.btn_search.set_image(load_image('button-test-single.png'))
         self.btn_search.set_relief(gtk.RELIEF_NONE)
         self.btn_search.set_tooltip_text('Buscar')
         self.btn_profile = gtk.Button()
-        self.btn_profile.set_image(load_image('button-test-single.png'))
         self.btn_profile.set_relief(gtk.RELIEF_NONE)
         self.btn_profile.set_tooltip_text('Perfil')
         self.btn_settings = gtk.Button()
-        self.btn_settings.set_image(load_image('button-test-single.png'))
         self.btn_settings.set_relief(gtk.RELIEF_NONE)
         self.btn_settings.set_tooltip_text('Preferencias')
         
-        self.btn_home.connect('clicked', self.switch_mode)
+        self.btn_home.connect('clicked', self.mainwin.switch_mode)
         self.btn_update.connect('clicked', self.show_update)
         
         box = gtk.HBox()
@@ -387,31 +438,30 @@ class Dock(gtk.Alignment):
         box.pack_start(self.btn_profile, False, False)
         box.pack_start(self.btn_settings, False, False)
         
+        self.change_mode(mode)
         self.add(box)
         self.show_all()
         
     def show_update(self, widget):
         u = UpdateBox(self.mainwin)
         
-    def switch_mode(self, widget):
-        if self.mode == 'single':
-            self.mode = 'wide'
-            self.btn_home.set_image(load_image('button-test.png'))
-            self.btn_favs.set_image(load_image('button-test.png'))
-            self.btn_lists.set_image(load_image('button-test.png'))
-            self.btn_update.set_image(load_image('button-update.png'))
-            self.btn_search.set_image(load_image('button-test.png'))
-            self.btn_profile.set_image(load_image('button-test.png'))
-            self.btn_settings.set_image(load_image('button-test.png'))
+    def change_mode(self, mode):
+        if mode == 'wide':
+            self.btn_home.set_image(util.load_image('button-test.png'))
+            self.btn_favs.set_image(util.load_image('button-test.png'))
+            self.btn_lists.set_image(util.load_image('button-test.png'))
+            self.btn_update.set_image(util.load_image('button-update.png'))
+            self.btn_search.set_image(util.load_image('button-test.png'))
+            self.btn_profile.set_image(util.load_image('button-test.png'))
+            self.btn_settings.set_image(util.load_image('button-test.png'))
         else:
-            self.mode = 'single'
-            self.btn_home.set_image(load_image('button-test-single.png'))
-            self.btn_favs.set_image(load_image('button-test-single.png'))
-            self.btn_lists.set_image(load_image('button-test-single.png'))
-            self.btn_update.set_image(load_image('button-update-single.png'))
-            self.btn_search.set_image(load_image('button-test-single.png'))
-            self.btn_profile.set_image(load_image('button-test-single.png'))
-            self.btn_settings.set_image(load_image('button-test-single.png'))
+            self.btn_home.set_image(util.load_image('button-test-single.png'))
+            self.btn_favs.set_image(util.load_image('button-test-single.png'))
+            self.btn_lists.set_image(util.load_image('button-test-single.png'))
+            self.btn_update.set_image(util.load_image('button-update-single.png'))
+            self.btn_search.set_image(util.load_image('button-test-single.png'))
+            self.btn_profile.set_image(util.load_image('button-test-single.png'))
+            self.btn_settings.set_image(util.load_image('button-test-single.png'))
         
 class Main(gtk.Window):
     def __init__(self, controller):
@@ -421,16 +471,15 @@ class Main(gtk.Window):
         self.set_title('Turpial')
         self.set_size_request(280, 350)
         self.set_default_size(320, 480)
+        self.set_icon(util.load_image('turpial_icon.png', True))
         self.set_position(gtk.WIN_POS_CENTER)
         self.connect('destroy', self.quit)
         self.connect('size-request', self.size_request)
         self.mode = 0
+        self.workspace = 'wide'
         self.vbox = None
-        
-        self.timeline = TweetList('Home')
-        self.replies = TweetList('Replies')
-        self.direct = TweetList('Direct')
-        self.favorites = TweetList('Favs')
+        self.contentbox = gtk.VBox(False)
+        self.contenido = Home(self.workspace)
         
     def quit(self, widget):
         gtk.main_quit()
@@ -445,7 +494,7 @@ class Main(gtk.Window):
         self.mode = 1
         if self.vbox is not None: self.remove(self.vbox)
         
-        avatar = load_image('logo.png')
+        avatar = util.load_image('logo.png')
         self.message = LoginLabel(self)
         
         lbl_user = gtk.Label()
@@ -504,44 +553,34 @@ class Main(gtk.Window):
         log.debug('Cargando ventana principal')
         self.mode = 2
         
-        self.dock = Dock(self)
-        
+        self.contentbox.add(self.contenido)
+        self.dock = Dock(self, self.workspace)
         self.statusbar = gtk.Statusbar()
         self.statusbar.push(0, 'Turpial')
-        
-        self.notebook = gtk.Notebook()
-        #self.notebook.set_scrollable(True)
-        self.notebook.append_page(self.timeline, self.timeline.label)
-        self.notebook.append_page(self.replies, self.replies.label)
-        self.notebook.append_page(self.direct, self.direct.label)
-        #self.notebook.append_page(self.favorites, self.favorites.label)
-        self.notebook.set_tab_label_packing(self.timeline, True, True, gtk.PACK_START)
-        self.notebook.set_tab_label_packing(self.replies, True, True, gtk.PACK_START)
-        self.notebook.set_tab_label_packing(self.direct, True, True, gtk.PACK_START)
-        
         if (self.vbox is not None): self.remove(self.vbox)
         
         self.vbox = gtk.VBox(False, 5)
-        self.vbox.pack_start(self.notebook, True, True, 0)
+        self.vbox.pack_start(self.contentbox, True, True, 0)
         self.vbox.pack_start(self.dock, False, False, 0)
         self.vbox.pack_start(self.statusbar, False, False, 0)
         
         self.add(self.vbox)
+        self.switch_mode()
         self.show_all()
+        self.contenido.timeline.add_tweet('pupu', 'xxx', 'cliente', 'Hola joe', None)
     
     def update_timeline(self, tweets):
-        self.timeline.update_tweets(tweets)
-        
+        self.contenido.timeline.update_tweets(tweets)
         #self.timeline.add_tweet('pupu', 'xxx', 'mierda', 'Hola joe')
         
     def update_replies(self, tweets):
-        self.replies.update_tweets(tweets)
+        self.contenido.replies.update_tweets(tweets)
         
     def update_favs(self, tweets):
-        self.favorites.update_tweets(tweets)
+        self.contenido.favorites.update_tweets(tweets)
         
     def update_directs(self, sent, recv):
-        self.direct.update_tweets(sent)
+        self.contenido.direct.update_tweets(sent)
         
     def update_rate_limits(self, val):
         tsec = val['reset_time_in_seconds'] - time.timezone
@@ -550,6 +589,19 @@ class Main(gtk.Window):
         limit = val['hourly_limit']
         status = "%s of %s API calls. Next reset: %s" % (hits, limit, t)
         self.statusbar.push(0, status)
+    
+    def switch_mode(self, widget=None):
+        if self.workspace == 'single':
+            self.workspace = 'wide'
+            self.set_size_request(800, 350)
+            self.resize(900, 480)
+        else:
+            self.workspace = 'single'
+            self.set_size_request(280, 350)
+            self.resize(320, 480)
+        self.dock.change_mode(self.workspace)
+        self.contenido.change_mode(self.workspace)
+        self.show_all()
         
     def size_request(self, widget, event, data=None):
         """Callback when the window changes its sizes. We use it to set the
@@ -557,9 +609,6 @@ class Main(gtk.Window):
         if self.mode < 2: return
         
         w, h = self.get_size()
-        self.timeline.update_wrap(w)
-        self.replies.update_wrap(w)
-        self.direct.update_wrap(w)
-        self.favorites.update_wrap(w)
+        self.contenido.update_wrap(w, self.workspace)
         return
         

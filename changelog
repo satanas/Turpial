@@ -2,6 +2,15 @@ Dic 2, 2009:
     + Mejorado el código de El Dock para alinearlo y cambiarlo en caliente entre single/wide workspace
     + Mejorado el diálogo de actualizar estado según el esquema discutido
     ---- commit ----
+    + Agregado icono a la aplicación
+    + Agregada (nuevamente :s) la función load_image al módulo util.py
+    + Limpiada la vista gtk de los imports innecesarios
+    + Implementada nueva estructura de cajas en la vista para soportar los modos de trabajo
+    + Creado el widget Home, responsable de mostrar el timeline, las menciones y los mensajes directos
+    + Implementado método 'change_mode' para cambiar el modo entre wide y single del widget Home
+    + Actualizados los métodos de update de la vista para soportar la nueva estructura de cajas
+    + Implementado cambio 'en caliente' de los modos de trabajo wide y single
+    ---- commit ----
     
 Nov 29, 2009:
     + Construido control cairo para indicar progreso de los servicios (arco giratorio)

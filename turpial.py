@@ -111,14 +111,14 @@ class Turpial:
         self.ui.update_favs(self.favs)
         
     def signin(self, username, password):
-        '''
+        
         self.twitter = Twitter(email=username, password=password, agent=self.agent)
         try:
             self.profile = self.twitter.account.verify_credentials()
             
             self.__update_timeline(False)
             self.__update_replies(False)
-            self.__update_favs(False)
+            #self.__update_favs(False)
             self.__update_directs()
             
             self.ui.show_main()
@@ -127,16 +127,16 @@ class Turpial:
         except TwitterError, error:
             self.log.debug('Error verificando credenciales %s' % error)
             self.ui.cancel_login(u'Información de usuario inválida')
-        '''
-        self.ui.show_main()
+        
+        #self.ui.show_main()
         
     def signout(self):
-        self.log.debug('Desconectando')
-        if self.twitter: self.twitter.account.end_session()
         self.log.debug('Terminando hilos')
         if self.timer_tl: self.timer_tl.cancel()
         if self.timer_rp: self.timer_rp.cancel()
         if self.timer_dm: self.timer_dm.cancel()
+        self.log.debug('Desconectando')
+        if self.twitter: self.twitter.account.end_session()
         
     def get_trends(self):
         return self.search.trends()

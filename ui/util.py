@@ -5,7 +5,9 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 13, 2009
 
+import os
 import re
+import gtk
 import time
 import datetime
 
@@ -13,6 +15,15 @@ HASHTAG_PATTERN = re.compile('\#(.*?)[\W]')
 MENTION_PATTERN = re.compile('\@(.*?)[\W]')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
 
+def load_image(path, pixbuf=False):
+    img_path = os.path.join('pixmaps', path)
+    pix = gtk.gdk.pixbuf_new_from_file(img_path)
+    if pixbuf: return pix
+    avatar = gtk.Image()
+    avatar.set_from_pixbuf(pix)
+    del pix
+    return avatar
+    
 def detect_client(tweet):
     if not tweet.has_key('source'): return None
     text = tweet['source']

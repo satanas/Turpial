@@ -57,6 +57,8 @@ class Turpial:
         self.directs = []
         self.directs_sent = []
         self.favs = []
+        self.followers = []
+        self.following = []
         self.rate_limits = []
         self.muted_users = []
         # ==============================
@@ -116,10 +118,10 @@ class Turpial:
         try:
             self.profile = self.twitter.account.verify_credentials()
             
-            self.__update_timeline(False)
-            self.__update_replies(False)
-            #self.__update_favs(False)
-            self.__update_directs()
+            #self.__update_timeline(False)
+            #self.__update_replies(False)
+            #self.__update_directs()
+            self.__update_favs()
             
             self.ui.show_main()
             self.ui.update_rate_limits(self.rate_limits)
@@ -189,13 +191,13 @@ class Turpial:
         self.twitter.direct_messages.new(screen_name=user, text=msg)
         
     def update_profile(self, new_name=None, new_url=None, new_bio=None, new_location=None):
-        if new_name is not None:
+        if new_name is not None and new_name != self.profile['name']:
             self.twitter.account.update_profile(name=new_name)
-        if new_url is not None:
+        if new_url is not None and new_url != self.profile['url']:
             self.twitter.account.update_profile(url=new_url)
-        if new_bio is not None:
+        if new_bio is not None and new_bio != self.profile['description']:
             self.twitter.account.update_profile(description=new_bio)
-        if new_location is not None:
+        if new_location is not None and new_location != self.profile['location']:
             self.twitter.account.update_profile(location=new_location)
     
     def mute(self, user):

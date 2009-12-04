@@ -1,3 +1,11 @@
+Dic 3, 2009:
+    + Implementados widgets PeopleList y PeopleIcons para presentar los contactos del usuario
+    + Creada la función update_wrap para los widgets PeopleList y PeopleIcons
+    + Agregado tooltip con información detallada de los contactos para PeopleIcons
+    + Agregada validación al update_profile para que no se actualice un campo si es igual al actual
+    + Creado formulario de perfil de usuario para completar el trio de ese apartado (falta que guarde)
+    ---- commit ----
+    
 Dic 2, 2009:
     + Mejorado el código de El Dock para alinearlo y cambiarlo en caliente entre single/wide workspace
     + Mejorado el diálogo de actualizar estado según el esquema discutido
@@ -11,6 +19,9 @@ Dic 2, 2009:
     + Actualizados los métodos de update de la vista para soportar la nueva estructura de cajas
     + Implementado cambio 'en caliente' de los modos de trabajo wide y single
     ---- commit ----
+    + Agregada nueva excepción para problemas de red a la API
+    + Corregido el posicionamiento de las ventanas al pasar de un modo a otro (single/wide)
+    + Creada clase abstracta Wrapper para representar cada una de las ventanas
     
 Nov 29, 2009:
     + Construido control cairo para indicar progreso de los servicios (arco giratorio)

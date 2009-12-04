@@ -87,7 +87,9 @@ class TwitterCall(object):
                 raise TwitterError(
                     "Twitter sent status %i for URL: %s.%s using parameters: (%s)\ndetails: %s" %(
                         e.code, uri, self.format, encoded_kwargs, e.fp.read()))
-
+        except urllib2.URLError, e:
+            raise TwitterError("Problem to connect to twitter.com. Check network status.\nDetails: %s" %(e))
+            
 class Twitter(TwitterCall):
     """
     The minimalist yet fully featured Twitter API class.

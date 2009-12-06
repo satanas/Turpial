@@ -10,8 +10,9 @@ import urllib
 import logging
 import threading
 
-from api import *
 from ui import *
+from api import *
+from services import *
 from optparse import OptionParser
 
 try:
@@ -49,6 +50,7 @@ class Turpial:
         self.timer_tl = None
         self.timer_rp = None
         self.timer_dm = None
+        self.httpserv = HTTPServices()
         
         # Esto deberia ir en el modelo
         self.profile = None
@@ -112,15 +114,18 @@ class Turpial:
         if rate: self.update_rate_limits()
         self.ui.update_favs(self.favs)
         
+    def start_services(self):
+        self.httpserv.start()
+        
     def signin(self, username, password):
         
         self.twitter = Twitter(email=username, password=password, agent=self.agent)
         try:
             self.profile = self.twitter.account.verify_credentials()
             
-            #self.__update_timeline(False)
-            #self.__update_replies(False)
-            #self.__update_directs()
+            self.__update_timeline(False)
+            self.__update_replies(False)
+            self.__update_directs()
             self.__update_favs()
             
             self.ui.show_main()
@@ -137,6 +142,7 @@ class Turpial:
         if self.timer_tl: self.timer_tl.cancel()
         if self.timer_rp: self.timer_rp.cancel()
         if self.timer_dm: self.timer_dm.cancel()
+        self.httpserv.quit()
         self.log.debug('Desconectando')
         if self.twitter: self.twitter.account.end_session()
         
@@ -217,6 +223,14 @@ class Turpial:
     def unfollow(self, user):
         self.twitter.friendships.destroy(screen_name=user)
         self.log.debug('Unfollow to %s' % user)
+        
+    def short_url(self, text, callback):
+        service = 'tr.im'
+        self.httpserv.short_url(service, text, callback)
+        #return self.shorten.short(service, text)
+    
+    def download_user_pic(self, user, pic_url, callback):
+        self.httpserv.download_pic(user, pic_url, callback)
         
 if __name__ == '__main__':
     t = Turpial()

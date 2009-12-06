@@ -1,3 +1,19 @@
+Dic 5, 2009:
+    + Implementado código para tuitear desde la interfaz gtk
+    + Creado módulo para acortar urls (URLShorten)
+    + Implementada funcionalidad de cortar urls en el controlador
+    + Agregado comando en modo consola para soportar el cortado de urls
+    + Creada clase HTTPServices para manejar de manera asíncrona (hilos) y centralizada las solicitudes HTTP
+    + Implementado servicio para cortar URLs (modo gráfico, modo texto)
+    + Implementado servicio para descargar avatares de usuario
+    + Implementada cola para la gestión de los avatares de usuario
+    + Refactorizado código de la vista gtk para que actualice (según petición) los avatares de los usuarios
+    + Escapados caracteres que ofende a pango en los tweets para evitar errores
+    + Agregada función load_avatar al módulo útil
+    + Estructurado código para actualizar avatares con un solo callback (mainwin) en todas las vistas respectivas
+    + Probada la actualización correcta de avatares en Home, Favoritos y Profile
+    ---- commit ----
+    
 Dic 3, 2009:
     + Implementados widgets PeopleList y PeopleIcons para presentar los contactos del usuario
     + Creada la función update_wrap para los widgets PeopleList y PeopleIcons

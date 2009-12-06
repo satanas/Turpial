@@ -5,6 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 08, 2009
 
+import os
 import gtk
 import util
 import time
@@ -70,8 +71,10 @@ class LoginLabel(gtk.DrawingArea):
         #cr.show_text(self.error)
         
 class TweetList(gtk.ScrolledWindow):
-    def __init__(self, label=''):
+    def __init__(self, mainwin, label=''):
         gtk.ScrolledWindow.__init__(self)
+        
+        self.mainwin = mainwin
         
         self.list = gtk.TreeView()
         self.list.set_headers_visible(False)
@@ -135,21 +138,20 @@ class TweetList(gtk.ScrolledWindow):
             self.model.row_changed(path, iter)
             iter = self.model.iter_next(iter)
         
-    def add_tweet(self, username, datetime, client, message, avatar):
-        #log.debug('Adding Tweet: %s' % message)
-        #log.debug('User image %s' % avatar)
-        
-        #filename = avatar[avatar.rfind('/') + 1:]
-        #fullname = os.path.join('pixmaps', filename)
-        #if os.path.isfile(fullname):
-        #    pix = util.load_image(filename, pixbuf=True)
-        #else:
-            #p = PicDownloader(avatar, username, self.update_user_pic)
-            #p.start()
-            #pix = util.load_image('unknown.png', pixbuf=True)
-        #    pass
-        pix = util.load_image('unknown.png', pixbuf=True)
+    def add_tweet(self, tweet):
+        if tweet.has_key('user'):
+            username = tweet['user']['screen_name']
+            avatar = tweet['user']['profile_image_url']
+        else:
+            username = tweet['sender']['screen_name']
+            avatar = tweet['sender']['profile_image_url']
             
+        client = util.detect_client(tweet)
+        datetime = util.get_timestamp(tweet)
+        
+        pix = self.mainwin.request_user_avatar(username, avatar)
+        
+        message = gobject.markup_escape_text(tweet['text'])
         message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)
         message = self.__highlight_mentions(message)
@@ -163,31 +165,20 @@ class TweetList(gtk.ScrolledWindow):
         self.model.append([pix, username, datetime, client, tweet])
         del pix
         
-    def update_user_pic(self, user, filename):
-        pix = util.load_image(filename, pixbuf=True)
+    def update_user_pic(self, user, pic):
+        # Evaluar si es más eficiente esto o cargar toda la lista cada vez
+        pix = util.load_avatar(pic)
         iter = self.model.get_iter_first()
         while iter:
             u = self.model.get_value(iter, 1)
             if u == user:
                 self.model.set_value(iter, 0, pix)
-                break
             iter = self.model.iter_next(iter)
         del pix
-            
         
     def update_tweets(self, arr_tweets):
         for tweet in arr_tweets:
-            if tweet.has_key('user'):
-                user = tweet['user']['screen_name']
-                image = tweet['user']['profile_image_url']
-            else:
-                user = tweet['sender']['screen_name']
-                image = tweet['sender']['profile_image_url']
-                
-            client = util.detect_client(tweet)
-            timestamp = util.get_timestamp(tweet)
-            
-            self.add_tweet(user, timestamp, client, tweet['text'], image)
+            self.add_tweet(tweet)
         
 class PeopleList(gtk.ScrolledWindow):
     def __init__(self, label=''):
@@ -243,7 +234,6 @@ class PeopleList(gtk.ScrolledWindow):
         
         pix = util.load_image('unknown.png', pixbuf=True)
         
-        print p
         # Escape pango markup
         for key in ['url', 'location', 'description', 'name', 'screen_name']:
             if not p.has_key(key) or p[key] is None: continue
@@ -262,7 +252,6 @@ class PeopleList(gtk.ScrolledWindow):
                 gobject.markup_escape_text(p['status']['text']))
         profile += status
         
-        print profile
         self.model.append([pix, profile, p['screen_name'], p['name'], p['url'], 
             p['location'], p['description'], status, protected, following])
         del pix
@@ -272,16 +261,16 @@ class PeopleList(gtk.ScrolledWindow):
             self.add_profile(p)
             
 class PeopleIcons(gtk.ScrolledWindow):
-    def __init__(self, label='', named=False):
+    def __init__(self, mainwin, label='', named=False):
         gtk.ScrolledWindow.__init__(self)
         
+        self.mainwin = mainwin
         self.named = named
         self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.set_shadow_type(gtk.SHADOW_IN)
         
-        # avatar, pango_profile, pango_name, screen_name, name, url, location, bio, status, protected, following
-        #self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str, str, str, str, str, str, str)
-        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
+        # avatar, screen_name, pango_profile, pango_name
+        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str)
         
         self.list = gtk.IconView(self.model)
         self.list.set_pixbuf_column(0)
@@ -291,7 +280,7 @@ class PeopleIcons(gtk.ScrolledWindow):
         self.list.set_column_spacing(10)
         
         if self.named:
-            self.list.set_markup_column(2)
+            self.list.set_markup_column(3)
             self.list.set_columns(2)
             self.list.set_item_width(120)
         else:
@@ -314,7 +303,7 @@ class PeopleIcons(gtk.ScrolledWindow):
         
         pix = model.get_value(iter, 0)
         tooltip.set_icon(pix)
-        tooltip.set_markup(model.get_value(iter, 1))
+        tooltip.set_markup(model.get_value(iter, 2))
         del pix
         
         return True
@@ -332,7 +321,9 @@ class PeopleIcons(gtk.ScrolledWindow):
         if p['protected']: protected = '&lt;protected&gt;'
         if p['following']: protected = '&lt;following&gt;'
         
-        pix = util.load_image('unknown.png', pixbuf=True)
+        pic = p['profile_image_url']
+        username = p['screen_name']
+        pix = self.mainwin.request_user_avatar(username, pic)
         
         # Escape pango markup
         for key in ['url', 'location', 'description', 'name', 'screen_name']:
@@ -361,9 +352,18 @@ class PeopleIcons(gtk.ScrolledWindow):
         profile += '</span>'
         
         pangoname = '<span size="9000">@%s</span>' % p['screen_name']
-        #self.model.append([pix, profile, pangoname, p['screen_name'], p['name'], p['url'], 
-        #    p['location'], p['description'], status, protected, following])
-        self.model.append([pix, profile, pangoname])
+        self.model.append([pix, username, profile, pangoname])
+        del pix
+        
+    def update_user_pic(self, user, pic):
+        # Evaluar si es más eficiente esto o cargar toda la lista cada vez
+        pix = util.load_avatar(pic)
+        iter = self.model.get_iter_first()
+        while iter:
+            u = self.model.get_value(iter, 1)
+            if u == user:
+                self.model.set_value(iter, 0, pix)
+            iter = self.model.iter_next(iter)
         del pix
         
     def update_profiles(self, people):
@@ -371,10 +371,12 @@ class PeopleIcons(gtk.ScrolledWindow):
             self.add_profile(p)
             
 class UserForm(gtk.VBox):
-    def __init__(self, label='', profile=None):
+    def __init__(self, mainwin, label='', profile=None):
         gtk.VBox.__init__(self, False)
         
         label_width = 75
+        self.mainwin = mainwin
+        self.user = None
         self.label = gtk.Label(label)
         
         self.user_pic = gtk.Button()
@@ -454,7 +456,12 @@ class UserForm(gtk.VBox):
         self.pack_start(submit_box, False, False)
         
     def update(self, profile):
-        self.user_pic.set_image(util.load_image('unknown.png'))
+        self.user = profile['screen_name']
+        pix = self.mainwin.request_user_avatar(self.user, profile['profile_image_url'])
+        avatar = gtk.Image()
+        avatar.set_from_pixbuf(pix)
+        self.user_pic.set_image(avatar)
+        del pix
         self.screen_name.set_markup('<b>@%s</b>' % profile['screen_name'])
         self.tweets_count.set_markup('<span size="9000">%i Tweets</span>' % profile['statuses_count'])
         self.following_count.set_markup('<span size="9000">%i Following</span>' % profile['friends_count'])
@@ -464,18 +471,25 @@ class UserForm(gtk.VBox):
         self.url.set_text(profile['url'])
         buffer = self.bio.get_buffer()
         buffer.set_text(profile['description'])
-
+    
+    def update_user_pic(self, user, pic):
+        if self.user != user: return
+        pix = util.load_avatar(pic, True)
+        self.user_pic.set_image(pix)
+        
 class UpdateBox(gtk.Window):
     def __init__(self, parent):
         gtk.Window.__init__(self)
         
+        self.controller = parent.controller
+        
         self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.set_title('Update Status')
-        self.set_default_size(500, 120)
+        self.set_resizable(False)
+        #self.set_default_size(500, 120)
+        self.set_size_request(500, 150)
         self.set_transient_for(parent)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-        #w.add(u)
-        #w.show_all()
         
         label = gtk.Label()
         label.set_use_markup(True)
@@ -493,41 +507,54 @@ class UpdateBox(gtk.Window):
         self.update_text.set_right_margin(2)
         self.update_text.set_wrap_mode(gtk.WRAP_WORD)
         self.update_text.get_buffer().connect("changed", self.count_chars)
-        update = gtk.Frame()
-        update.add(self.update_text)
-        updatebox = gtk.HBox(False)
-        updatebox.pack_start(update, True, True, 3)
         
-        btn_url = gtk.Button()
-        btn_url.set_image(util.load_image('cut.png'))
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        scroll.set_shadow_type(gtk.SHADOW_IN)
+        scroll.add(self.update_text)
+        
+        updatebox = gtk.HBox(False)
+        updatebox.pack_start(scroll, True, True, 3)
+        
+        
+        self.url = gtk.Entry()
+        btn_url = gtk.Button('Shorten URL')
         btn_url.set_tooltip_text('Shorten URL')
-        btn_url.set_relief(gtk.RELIEF_NONE)
-        btn_pic = gtk.Button()
-        btn_pic.set_image(util.load_image('photos.png'))
+        #btn_url.set_relief(gtk.RELIEF_NONE)
+        #btn_url.set_image(util.load_image('cut.png'))
+        
+        btn_pic = gtk.Button('Upload Pic')
         btn_pic.set_tooltip_text('Upload Pic')
-        btn_pic.set_relief(gtk.RELIEF_NONE)
+        #btn_pic.set_relief(gtk.RELIEF_NONE)
+        #btn_pic.set_image(util.load_image('photos.png'))
+        
+        tools = gtk.HBox(False)
+        tools.pack_start(self.url, True, True, 3)
+        tools.pack_start(btn_url, False, False)
+        tools.pack_start(gtk.HSeparator(), False, False)
+        tools.pack_start(btn_pic, False, False, 3)
+        
+        self.toolbox = gtk.Expander()
+        self.toolbox.set_label('Opciones')
+        self.toolbox.set_expanded(False)
+        self.toolbox.add(tools)
+        
         btn_clr = gtk.Button()
         btn_clr.set_image(util.load_image('clear.png'))
         btn_clr.set_tooltip_text('Clear Box')
         btn_clr.set_relief(gtk.RELIEF_NONE)
         btn_upd = gtk.Button('Update')
         chk_short = gtk.CheckButton('Autocortado de URLs')
-        
-        btn_clr.connect('clicked', self.clear)
-        btn_upd.connect('clicked', self.update)
+        chk_short.set_sensitive(False)
         
         top = gtk.HBox(False)
         top.pack_start(label, True, True, 5)
         top.pack_start(self.num_chars, False, False, 5)
         
         self.waiting = CairoWaiting(self)
-        self.waiting.start()
         
         buttonbox = gtk.HBox(False)
         buttonbox.pack_start(chk_short, False, False, 0)
-        buttonbox.pack_start(gtk.HSeparator(), False, False, 2)
-        buttonbox.pack_start(btn_url, False, False, 0)
-        buttonbox.pack_start(btn_pic, False, False, 0)
         buttonbox.pack_start(btn_clr, False, False, 0)
         buttonbox.pack_start(gtk.HSeparator(), False, False, 2)
         buttonbox.pack_start(btn_upd, False, False, 0)
@@ -541,10 +568,17 @@ class UpdateBox(gtk.Window):
         vbox = gtk.VBox(False)
         vbox.pack_start(top, False, False, 2)
         vbox.pack_start(updatebox, True, True, 2)
-        vbox.pack_start(bottom, False, False, 3)
+        vbox.pack_start(bottom, False, False, 2)
+        vbox.pack_start(self.toolbox, False, False, 2)
         
         self.add(vbox)
         self.show_all()
+        
+        btn_clr.connect('clicked', self.clear)
+        btn_upd.connect('clicked', self.update)
+        btn_url.connect('clicked', self.short_url)
+        btn_pic.connect('clicked', self.upload_pic)
+        self.toolbox.connect('activate', self.show_options)
     
     def count_chars(self, widget):
         buffer = self.update_text.get_buffer()
@@ -562,18 +596,64 @@ class UpdateBox(gtk.Window):
     def update(self, widget):
         buffer = self.update_text.get_buffer()
         start, end = buffer.get_bounds()
-        print buffer.get_text(start, end)
-        self.waiting.stop()
-        buffer.set_text('')
+        tweet = buffer.get_text(start, end)
+        log.debug('Nuevo Tweet: %s' % tweet)
+        ## self.controller.update_status(tweet)
         self.destroy()
         
+    def short_url(self, widget):
+        self.waiting.start()
+        
+        #short = self.controller.short_url(self.url.get_text()) + ' '
+        self.controller.short_url(self.url.get_text(), self.update_shorten_url)
+        
+    def update_shorten_url(self, short):
+        buffer = self.update_text.get_buffer()
+        end_offset = buffer.get_property('cursor-position')
+        start_offset = end_offset - 1
+        
+        end = buffer.get_iter_at_offset(end_offset)
+        start = buffer.get_iter_at_offset(start_offset)
+        text = buffer.get_text(start, end)
+        
+        if (text != ' ') and (start_offset > 0): short = ' ' + short
+        
+        buffer.insert_at_cursor(short)
+        self.url.set_text('')
+        self.waiting.stop()
+        self.toolbox.set_expanded(False)
+        
+    def upload_pic(self, widget):
+        filtro = gtk.FileFilter()
+        filtro.set_name('PNG, JPEG & GIF Images')
+        filtro.add_pattern('*.png')
+        filtro.add_pattern('*.gif')
+        filtro.add_pattern('*.jpg')
+        filtro.add_pattern('*.jpeg')
+        
+        dia = gtk.FileChooserDialog(title='Seleccione la imagen que desea subir',
+            parent=self, action=gtk.FILE_CHOOSER_ACTION_OPEN, 
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                gtk.STOCK_OK, gtk.RESPONSE_OK))
+        dia.add_filter(filtro)
+        resp = dia.run()
+        
+        if resp == gtk.RESPONSE_OK:
+            log.debug('Subiendo Imagen: %s' % dia.get_filename())
+            ## self.controller.upload_pic(dia.get_filename())
+        dia.destroy()
+        
+    def show_options(self, widget, event=None):
+        self.url.set_text('')
+        self.url.grab_focus()
+        
 class Home(gtk.VBox):
-    def __init__(self, mode='single'):
+    def __init__(self, mainwin, mode='single'):
         gtk.VBox.__init__(self)
         
-        self.timeline = TweetList('Home')
-        self.replies = TweetList('Replies')
-        self.direct = TweetList('Direct')
+        self.timeline = TweetList(mainwin, 'Home')
+        self.replies = TweetList(mainwin, 'Replies')
+        self.direct = TweetList(mainwin, 'Direct')
         self.change_mode(mode)
         
     def change_mode(self, mode):
@@ -642,10 +722,11 @@ class Home(gtk.VBox):
         self.direct.update_wrap(w)
         
 class Favorites(Wrapper):
-    def __init__(self):
+    def __init__(self, mainwin):
         Wrapper.__init__(self)
         
-        self.favorites = TweetList('Favorites')
+        self.mainwin = mainwin
+        self.favorites = TweetList(mainwin, 'Favorites')
         wrapper = gtk.HBox(False)
         wrapper.pack_start(self.favorites, True, True)
         self.pack_start(gtk.Label('Favorites'), False, False)
@@ -655,13 +736,14 @@ class Favorites(Wrapper):
     def update_wrap(self, width, mode):
         self.favorites.update_wrap(width)
     # self.show_followers(self.controller.get_followers())
+    
 class Profile(Wrapper):
-    def __init__(self, mode='single'):
+    def __init__(self, mainwin, mode='single'):
         Wrapper.__init__(self)
         
-        self.user_form = UserForm('Profile')
-        self.following = PeopleIcons('Following')
-        self.followers = PeopleIcons('Followers')
+        self.user_form = UserForm(mainwin, 'Profile')
+        self.following = PeopleIcons(mainwin, 'Following')
+        self.followers = PeopleIcons(mainwin, 'Followers')
         self.change_mode(mode)
         
     def change_mode(self, mode):
@@ -703,7 +785,7 @@ class Profile(Wrapper):
                 wrapper.append_page(self.user_form, self.user_form.label)
             #bbbox = gtk.VBox(False)
             #wrapper.append_page(bbbox, gtk.Label('Profile'))
-            print self.following
+            
             if self.following.get_parent(): 
                 self.following.reparent(wrapper)
                 wrapper.set_tab_label(self.following, self.following.label)
@@ -792,6 +874,7 @@ class Dock(gtk.Alignment):
         gtk.Alignment.__init__(self, 0.5, 0.5)
         
         self.mainwin = parent
+        
         self.btn_home = gtk.Button()
         self.btn_home.set_relief(gtk.RELIEF_NONE)
         self.btn_home.set_tooltip_text('Home')
@@ -871,10 +954,15 @@ class Main(gtk.Window):
         self.vbox = None
         self.contentbox = gtk.VBox(False)
         
-        self.home = Home(self.workspace)
-        self.favs = Favorites()
-        self.profile = Profile()
+        self.user_pics = {}
+        self.queued_pics = []
+        
+        self.home = Home(self, self.workspace)
+        self.favs = Favorites(self)
+        self.profile = Profile(self)
         self.contenido = self.home
+        
+        self.dock = Dock(self, self.workspace)
         
     def quit(self, widget):
         gtk.main_quit()
@@ -953,7 +1041,7 @@ class Main(gtk.Window):
         self.profile.set_followers(self.controller.get_followers())
         
         self.contentbox.add(self.contenido)
-        self.dock = Dock(self, self.workspace)
+        
         self.statusbar = gtk.Statusbar()
         self.statusbar.push(0, 'Turpial')
         if (self.vbox is not None): self.remove(self.vbox)
@@ -966,6 +1054,8 @@ class Main(gtk.Window):
         self.add(self.vbox)
         self.switch_mode()
         self.show_all()
+        
+        self.controller.start_services()
         
     def show_home(self, widget):
         self.contentbox.remove(self.contenido)
@@ -1002,6 +1092,58 @@ class Main(gtk.Window):
         limit = val['hourly_limit']
         status = "%s of %s API calls. Next reset: %s" % (hits, limit, t)
         self.statusbar.push(0, status)
+        
+    def request_user_avatar(self, user, pic_url):
+        pic = pic_url.replace('http://', '0_')
+        pic = pic.replace('/', '_')
+        
+        if user in self.user_pics: 
+            return util.load_avatar(self.user_pics[user])
+        if pic in self.queued_pics: 
+            return util.load_image('unknown.png', pixbuf=True)
+        
+        log.debug('Solicitando imagen de usuario %s' % user)
+        self.queued_pics.append(pic)
+        self.controller.download_user_pic(user, pic_url, self.update_user_avatar)
+        return util.load_image('unknown.png', pixbuf=True)
+        
+    def update_user_avatar(self, user, pic):
+        log.debug('Actualizando imagen de usuario %s' % user)
+        self.resize_avatar(pic)
+        
+        self.home.timeline.update_user_pic(user, pic)
+        self.home.replies.update_user_pic(user, pic)
+        self.home.direct.update_user_pic(user, pic)
+        self.favs.favorites.update_user_pic(user, pic)
+        self.profile.following.update_user_pic(user, pic)
+        self.profile.followers.update_user_pic(user, pic)
+        self.profile.user_form.update_user_pic(user, pic)
+        
+        self.user_pics[user] = pic
+        self.queued_pics.remove(pic)
+        
+    def resize_avatar(self, pic):
+        ext = pic[-3:].lower()
+        fullname = os.path.join('/tmp', pic)
+        pix = gtk.gdk.pixbuf_new_from_file(fullname)
+        pw = pix.get_width()
+        ph = pix.get_height()
+        
+        if pw >= ph:
+            ratio = float(ph)/pw
+            fw = util.AVATAR_SIZE
+            fh = int(fw * ratio)
+        else:
+            ratio = float(pw)/ph
+            fh = util.AVATAR_SIZE
+            fw = int(fh * ratio)
+        
+        img = pix.scale_simple(fw, fh, gtk.gdk.INTERP_BILINEAR)
+        type = ext
+        if ext == 'jpg': type = 'jpeg'
+        if img: img.save(fullname, type)
+        del pix
+        del img
     
     def switch_mode(self, widget=None):
         cur_x, cur_y = self.get_position()

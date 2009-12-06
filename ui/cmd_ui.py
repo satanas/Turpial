@@ -165,6 +165,9 @@ class Main(cmd.Cmd):
     def do_unfollow(self, user):
         self.controller.unfollow(user)
         
+    def do_short(self, url):
+        self.controller.short_url(url, self.show_shorten_url)
+        
     def do_EOF(self, line):
         return self.do_exit('')
         
@@ -251,6 +254,12 @@ class Main(cmd.Cmd):
         print '\n'.join(['Visualiza los mensajes de una persona previamente silenciada',
             'unmute <user>',
             '  <user>: Persona cuyos mensajes se desean leer de nuevo',
+        ])
+        
+    def help_short(self):
+        print '\n'.join(['Corta una URL con el servicio seleccionado en las preferencias de usuario',
+            'short <url>',
+            '  <url>: URL que se desea cortar',
         ])
         
     def help_help(self):
@@ -372,4 +381,7 @@ class Main(cmd.Cmd):
         if total > 1: suffix = 'personas' 
         else: suffix = 'persona'
         print "Te siguen %d %s" % (total, suffix)
+        
+    def show_shorten_url(self, text):
+        print "URL Cortada:", text
 

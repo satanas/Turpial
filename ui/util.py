@@ -11,6 +11,8 @@ import gtk
 import time
 import datetime
 
+AVATAR_SIZE = 48
+
 HASHTAG_PATTERN = re.compile('\#(.*?)[\W]')
 MENTION_PATTERN = re.compile('\@(.*?)[\W]')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
@@ -19,6 +21,15 @@ def load_image(path, pixbuf=False):
     img_path = os.path.join('pixmaps', path)
     pix = gtk.gdk.pixbuf_new_from_file(img_path)
     if pixbuf: return pix
+    avatar = gtk.Image()
+    avatar.set_from_pixbuf(pix)
+    del pix
+    return avatar
+    
+def load_avatar(path, image=False):
+    img_path = os.path.join('/tmp', path)
+    pix = gtk.gdk.pixbuf_new_from_file(img_path)
+    if not image: return pix
     avatar = gtk.Image()
     avatar.set_from_pixbuf(pix)
     del pix

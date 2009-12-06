@@ -1,3 +1,13 @@
+Dic 6, 2009:
+    + Eliminado del repositorio el código del antiguo pic_downloader
+    + Implementado menú contextual para los TweetList con funciones para reply, retweet, save and delete
+    + Centralizado en Main el manejo del UpdateBox
+    + Implementados métodos show y close para updatebox y corregido bug al cerrar
+    + Implementados métodos para Reply y Retweet
+    + Implementada funcionalidad de reply en el controlador
+    + Implementados métodos para delete, fav y unfav
+    ---- commit ----
+    
 Dic 5, 2009:
     + Implementado código para tuitear desde la interfaz gtk
     + Creado módulo para acortar urls (URLShorten)
@@ -9,7 +19,7 @@ Dic 5, 2009:
     + Implementada cola para la gestión de los avatares de usuario
     + Refactorizado código de la vista gtk para que actualice (según petición) los avatares de los usuarios
     + Escapados caracteres que ofende a pango en los tweets para evitar errores
-    + Agregada función load_avatar al módulo útil
+    + Agregada función load_avatar al módulo util
     + Estructurado código para actualizar avatares con un solo callback (mainwin) en todas las vistas respectivas
     + Probada la actualización correcta de avatares en Home, Favoritos y Profile
     ---- commit ----

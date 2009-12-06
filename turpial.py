@@ -124,8 +124,8 @@ class Turpial:
             self.profile = self.twitter.account.verify_credentials()
             
             self.__update_timeline(False)
-            self.__update_replies(False)
-            self.__update_directs()
+            #self.__update_replies(False)
+            #self.__update_directs()
             self.__update_favs()
             
             self.ui.show_main()
@@ -163,8 +163,11 @@ class Turpial:
         query = urllib.quote(query)
         return self.twitter.users.search(q=query)
     
-    def update_status(self, text):
-        rtn = self.twitter.statuses.update(status=text)
+    def update_status(self, text, reply_to=None):
+        if reply_to:
+            rtn = self.twitter.statuses.update(status=text)
+        else:
+            rtn = self.twitter.statuses.update(status=text, in_reply_to_status_id=reply_to)
         self.tweets.insert(0, rtn)
         
     def destroy_status(self, tweet_id):
@@ -227,7 +230,6 @@ class Turpial:
     def short_url(self, text, callback):
         service = 'tr.im'
         self.httpserv.short_url(service, text, callback)
-        #return self.shorten.short(service, text)
     
     def download_user_pic(self, user, pic_url, callback):
         self.httpserv.download_pic(user, pic_url, callback)

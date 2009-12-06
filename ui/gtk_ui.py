@@ -15,8 +15,6 @@ import urllib
 import logging
 import gobject
 
-#from pic_downloader import *
-
 gtk.gdk.threads_init()
 
 log = logging.getLogger('Gtk')
@@ -89,8 +87,8 @@ class TweetList(gtk.ScrolledWindow):
         self.set_shadow_type(gtk.SHADOW_IN)
         self.add(self.list)
         
-        # avatar, username, datetime, client, message
-        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str)
+        # avatar, username, datetime, client, pango_message, real_message, id, favorited, in_reply_to
+        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str, str, str, bool, str)
         self.list.set_model(self.model)
         cell_avatar = gtk.CellRendererPixbuf()
         cell_avatar.set_property('yalign', 0)
@@ -107,6 +105,8 @@ class TweetList(gtk.ScrolledWindow):
         column.set_attributes(self.cell_tweet, markup=4)
         column.set_attributes(cell_avatar, pixbuf=0)
         self.list.append_column(column)
+        
+        self.list.connect("button-release-event", self.__popup_menu)
         
     def __highlight_hashtags(self, text):
         hashtags = util.detect_hashtags(text)
@@ -128,6 +128,88 @@ class TweetList(gtk.ScrolledWindow):
             text = text.replace(torep, cad)
         return text
         
+    def __popup_menu(self, widget, event):
+        model, row = widget.get_selection().get_selected()
+        if (row is None): return False
+        
+        if (event.button == 3):
+            user = model.get_value(row, 1)
+            msg = model.get_value(row, 5)
+            id = model.get_value(row, 6)
+            fav = model.get_value(row, 7)
+            in_reply_to = model.get_value(row, 8)
+            
+            re = "@%s " % user
+            rt = "RT @%s %s" % (user, msg)
+            
+            profile = self.mainwin.user_profile
+            
+            reply = gtk.MenuItem('Reply')
+            retweet = gtk.MenuItem('Retweet')
+            save = gtk.MenuItem('+ Fav')
+            unsave = gtk.MenuItem('- Fav')
+            delete = gtk.MenuItem('Delete')
+            open = gtk.MenuItem('Open')
+            search = gtk.MenuItem('Search')
+            
+            '''
+            menumail = gtk.ImageMenuItem(_('Send Mail'))
+            menumail.set_image(gtk.image_new_from_stock(
+                    'stock-inbox', gtk.ICON_SIZE_MENU))
+                    
+            menublock = gtk.ImageMenuItem('')
+            if (data.blocked):
+                menublock.get_child().set_text(_('Unblock contact'))
+                menublock.set_image(gtk.image_new_from_stock(
+                    gtk.STOCK_REFRESH, gtk.ICON_SIZE_MENU))
+            else:
+                menublock.get_child().set_text(_('Block contact'))
+                menublock.set_image(gtk.image_new_from_stock(
+                    gtk.STOCK_STOP, gtk.ICON_SIZE_MENU))
+            
+            menuremove = gtk.ImageMenuItem(_('Remove contact'))
+            menuremove.set_image(gtk.image_new_from_stock(
+                    gtk.STOCK_DELETE, gtk.ICON_SIZE_MENU))
+            '''
+            #open_menu = gtk.Menu()
+            #for item in open_menu_items:
+            #    open_menu.append(item)
+            
+            menu = gtk.Menu()
+            if profile['screen_name'] != user:
+                menu.append(reply)
+                menu.append(retweet)
+            else:
+                menu.append(delete)
+            
+            if fav:
+                menu.append(unsave)
+            else:
+                menu.append(save)
+            #menu.append(open)
+            #menu.append(search)
+            
+            reply.connect('activate', self.__show_update_box, user, in_reply_to)
+            retweet.connect('activate', self.__show_update_box, msg)
+            delete.connect('activate', self.__delete, id)
+            save.connect('activate', self.__fav, True, id)
+            unsave.connect('activate', self.__fav, False, id)
+            
+            menu.show_all()
+            menu.popup(None, None, None, event.button ,event.time)
+        
+    def __show_update_box(self, widget, text, in_reply_id=None):
+        self.mainwin.show_update_box(text, in_reply_id)
+        
+    def __delete(self, widget, id):
+        self.mainwin.do_delete(id)
+    
+    def __fav(self, widget, fav, id):
+        if fav:
+            self.mainwin.do_fav(id)
+        else:
+            self.mainwin.do_unfav(id)
+    
     def update_wrap(self, val):
         #self.label.set_size_request(val, -1)
         self.cell_tweet.set_property('wrap-width', val - 80)
@@ -150,8 +232,9 @@ class TweetList(gtk.ScrolledWindow):
         datetime = util.get_timestamp(tweet)
         
         pix = self.mainwin.request_user_avatar(username, avatar)
-        
+        print 'message', tweet['text']
         message = gobject.markup_escape_text(tweet['text'])
+        #message = tweet['text']
         message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)
         message = self.__highlight_mentions(message)
@@ -161,8 +244,9 @@ class TweetList(gtk.ScrolledWindow):
         else:
             footer = '<span size="small" foreground="#999">%s</span>' % (datetime)
         
-        tweet = message + interline + footer
-        self.model.append([pix, username, datetime, client, tweet])
+        pango_twt = message + interline + footer
+        self.model.append([pix, username, datetime, client, pango_twt, tweet['text'],
+            tweet['id'], tweet['favorited'], tweet['in_reply_to_status_id']])
         del pix
         
     def update_user_pic(self, user, pic):
@@ -455,6 +539,8 @@ class UserForm(gtk.VBox):
         self.pack_start(form, False, False)
         self.pack_start(submit_box, False, False)
         
+        submit.connect('clicked', self.save_user_profile)
+        
     def update(self, profile):
         self.user = profile['screen_name']
         pix = self.mainwin.request_user_avatar(self.user, profile['profile_image_url'])
@@ -477,12 +563,17 @@ class UserForm(gtk.VBox):
         pix = util.load_avatar(pic, True)
         self.user_pic.set_image(pix)
         
+    def save_user_profile(self, widget):
+        self.real_name
+        self.location
+        self.url
+        self.bio
+        
 class UpdateBox(gtk.Window):
     def __init__(self, parent):
         gtk.Window.__init__(self)
         
-        self.controller = parent.controller
-        
+        self.mainwin = parent
         self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.set_title('Update Status')
         self.set_resizable(False)
@@ -506,7 +597,7 @@ class UpdateBox(gtk.Window):
         self.update_text.set_left_margin(2)
         self.update_text.set_right_margin(2)
         self.update_text.set_wrap_mode(gtk.WRAP_WORD)
-        self.update_text.get_buffer().connect("changed", self.count_chars)
+        buffer = self.update_text.get_buffer()
         
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -515,7 +606,6 @@ class UpdateBox(gtk.Window):
         
         updatebox = gtk.HBox(False)
         updatebox.pack_start(scroll, True, True, 3)
-        
         
         self.url = gtk.Entry()
         btn_url = gtk.Button('Shorten URL')
@@ -572,14 +662,31 @@ class UpdateBox(gtk.Window):
         vbox.pack_start(self.toolbox, False, False, 2)
         
         self.add(vbox)
-        self.show_all()
         
+        self.connect('delete-event', self.close)
+        buffer.connect("changed", self.count_chars)
         btn_clr.connect('clicked', self.clear)
         btn_upd.connect('clicked', self.update)
         btn_url.connect('clicked', self.short_url)
         btn_pic.connect('clicked', self.upload_pic)
         self.toolbox.connect('activate', self.show_options)
     
+    def show(self, default='', id=None):
+        self.in_reply_to = id
+        self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        buffer = self.update_text.get_buffer()
+        buffer.set_text(default)
+        self.show_all()
+        
+    def close(self, widget=None, event=None):
+        buffer = self.update_text.get_buffer()
+        buffer.set_text('')
+        self.url.set_text('')
+        self.waiting.stop()
+        self.toolbox.set_expanded(False)
+        self.hide()
+        return True
+        
     def count_chars(self, widget):
         buffer = self.update_text.get_buffer()
         remain = 140 - buffer.get_char_count()
@@ -598,14 +705,12 @@ class UpdateBox(gtk.Window):
         start, end = buffer.get_bounds()
         tweet = buffer.get_text(start, end)
         log.debug('Nuevo Tweet: %s' % tweet)
-        ## self.controller.update_status(tweet)
-        self.destroy()
+        ## self.mainwin.do_update_status(tweet, self.in_reply_to)
+        self.close()
         
     def short_url(self, widget):
         self.waiting.start()
-        
-        #short = self.controller.short_url(self.url.get_text()) + ' '
-        self.controller.short_url(self.url.get_text(), self.update_shorten_url)
+        self.mainwin.do_short_url(self.url.get_text(), self.update_shorten_url)
         
     def update_shorten_url(self, short):
         buffer = self.update_text.get_buffer()
@@ -619,9 +724,7 @@ class UpdateBox(gtk.Window):
         if (text != ' ') and (start_offset > 0): short = ' ' + short
         
         buffer.insert_at_cursor(short)
-        self.url.set_text('')
-        self.waiting.stop()
-        self.toolbox.set_expanded(False)
+        self.close()
         
     def upload_pic(self, widget):
         filtro = gtk.FileFilter()
@@ -640,7 +743,7 @@ class UpdateBox(gtk.Window):
         
         if resp == gtk.RESPONSE_OK:
             log.debug('Subiendo Imagen: %s' % dia.get_filename())
-            ## self.controller.upload_pic(dia.get_filename())
+            ## self.mainwin.do_upload_pic(dia.get_filename())
         dia.destroy()
         
     def show_options(self, widget, event=None):
@@ -735,7 +838,6 @@ class Favorites(Wrapper):
         
     def update_wrap(self, width, mode):
         self.favorites.update_wrap(width)
-    # self.show_followers(self.controller.get_followers())
     
 class Profile(Wrapper):
     def __init__(self, mainwin, mode='single'):
@@ -841,7 +943,7 @@ class CairoWaiting(gtk.DrawingArea):
     def stop(self):
         self.active = False
         self.queue_draw()
-        gobject.source_remove(self.timer)
+        if self.timer is not None: gobject.source_remove(self.timer)
         
     def update(self):
         self.count += 1
@@ -917,7 +1019,7 @@ class Dock(gtk.Alignment):
         self.show_all()
         
     def show_update(self, widget):
-        u = UpdateBox(self.mainwin)
+        self.mainwin.show_update_box()
         
     def change_mode(self, mode):
         if mode == 'wide':
@@ -949,20 +1051,30 @@ class Main(gtk.Window):
         self.set_position(gtk.WIN_POS_CENTER)
         self.connect('destroy', self.quit)
         self.connect('size-request', self.size_request)
+        
         self.mode = 0
-        self.workspace = 'wide'
         self.vbox = None
+        self.workspace = 'wide'
         self.contentbox = gtk.VBox(False)
         
         self.user_pics = {}
         self.queued_pics = []
         
+        self.user_profile = None
         self.home = Home(self, self.workspace)
         self.favs = Favorites(self)
         self.profile = Profile(self)
         self.contenido = self.home
+        self.updatebox = UpdateBox(self)
         
         self.dock = Dock(self, self.workspace)
+        
+        #for dirpath, dirnames, filenames in os.walk('/tmp'):
+        #    for name in filenames:
+        #        suffix = os.path.splitext(name)[1]
+        #        if suffix not in ('.png', '.jpeg', '.jpg', '.gif'): continue
+        #        log.debug('Cargada imagen %s' % name)
+        #        self.user_pics.append(name)
         
     def quit(self, widget):
         gtk.main_quit()
@@ -1004,7 +1116,6 @@ class Main(gtk.Window):
         table.attach(self.username,0,1,3,4,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 0)
         table.attach(lbl_pass,0,1,4,5,gtk.EXPAND,gtk.FILL, 0, 5)
         table.attach(self.password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 0)
-        #table.attach(alignRem,0,1,6,7,gtk.EXPAND,gtk.FILL,0, 0)
         table.attach(self.btn_signup,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 30)
         
         self.vbox = gtk.VBox(False, 5)
@@ -1031,11 +1142,10 @@ class Main(gtk.Window):
         self.password.set_sensitive(True)
         
     def show_main(self):
-        #self.set_size_request(620, 480)
-        #self.set_position(gtk.WIN_POS_CENTER)
         log.debug('Cargando ventana principal')
         self.mode = 2
         
+        self.user_profile = self.controller.profile
         self.profile.set_user_profile(self.controller.profile)
         self.profile.set_following(self.controller.get_following())
         self.profile.set_followers(self.controller.get_followers())
@@ -1072,6 +1182,12 @@ class Main(gtk.Window):
         self.contenido = self.profile
         self.contentbox.add(self.contenido)
     
+    def show_update_box(self, default='', id=None):
+        if self.updatebox.get_property('visible'): 
+            self.updatebox.present()
+            return
+        self.updatebox.show(default, id)
+        
     def update_timeline(self, tweets):
         self.home.timeline.update_tweets(tweets)
         #self.timeline.add_tweet('pupu', 'xxx', 'mierda', 'Hola joe')
@@ -1097,6 +1213,11 @@ class Main(gtk.Window):
         pic = pic_url.replace('http://', '0_')
         pic = pic.replace('/', '_')
         
+        fullname = os.path.join('/tmp', pic)
+        if os.path.isfile(fullname):
+            log.debug('Encontrada imagen de usuario %s' % user)
+            self.user_pics[user] = pic
+            return util.load_avatar(self.user_pics[user])
         if user in self.user_pics: 
             return util.load_avatar(self.user_pics[user])
         if pic in self.queued_pics: 
@@ -1121,6 +1242,24 @@ class Main(gtk.Window):
         
         self.user_pics[user] = pic
         self.queued_pics.remove(pic)
+        
+    def do_fav(self, id):
+        log.debug('Marcando tweet %s como favorito' % id)
+        
+    def do_unfav(self, id):
+        log.debug('Desmarcando tweet %s como favorito' % id)
+        
+    def do_delete(self, id):
+        log.debug('Borrando tweet %s' % id)
+        
+    def do_short_url(self, url, callback):
+        self.controller.short_url(url, callback)
+        
+    def do_upload_pic(self, filename):
+        self.controller.upload_pic(filename)
+        
+    def do_update_status(self, tweet, in_reply_id):
+        self.controller.update_status(tweet, in_reply_id)
         
     def resize_avatar(self, pic):
         ext = pic[-3:].lower()

@@ -1,3 +1,9 @@
+Dic 16, 2009:
+    + Agregados iconos temporales al Dock
+    + Corregida visualización de imágenes de los contactos (el nuevo método devuelve una url y no un pixbuf)
+    + Corregidos errores menores
+    ---- commit ----
+    
 Dic 15, 2009:
     + Eliminados hilos de actualización automática en el controlador
     + Iniciada nueva estructura para actualización de perfil, following y followers

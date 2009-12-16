@@ -117,8 +117,7 @@ class BaseGui:
         #self.__controller.upload_pic(filename)
         
     def request_update_status(self, text, in_reply_id):
-        log.debug('Nuevo Tweet: %s' % text)
-        # self.__controller.update_status(text, in_reply_id)
+        self.__controller.update_status(text, in_reply_id)
         
     def request_update_profile(self, new_name, new_url, new_bio, new_loc):
         self.__controller.update_profile(self, new_name, new_url, new_bio, new_loc)

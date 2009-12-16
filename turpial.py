@@ -68,24 +68,13 @@ class Turpial:
         self.log.debug('Iniciando Turpial')
         self.ui.show_login()
         self.ui.main_loop()
-    
-    # Lo que sigue a continuación también debería ir en el modelo
-    # ==============================================================
-    def get_timeline(self):
-        if len(self.muted_users) == 0: return self.tweets
-        tweets = []
-        for twt in self.tweets:
-            if twt['user']['screen_name'] not in self.muted_users:
-               tweets.append(twt)
-        return tweets
-    # ==============================================================
-    
+        
     def __update_timeline(self, rate=True):
         if self.interface != 'cmd': self.log.debug('Actualizando Timeline')
         self.tweets = self.twitter.statuses.friends_timeline()
         if rate: self.update_rate_limits()
         self.ui.update_timeline(self.get_timeline())
-    
+        
     def __update_replies(self, rate=True):
         if self.interface != 'cmd': self.log.debug('Actualizando Replies')
         self.replies = self.twitter.statuses.mentions()
@@ -153,6 +142,14 @@ class Turpial:
         self.log.debug('Desconectando')
         if self.twitter: self.twitter.account.end_session()
         
+    def get_timeline(self):
+        if len(self.muted_users) == 0: return self.tweets
+        tweets = []
+        for twt in self.tweets:
+            if twt['user']['screen_name'] not in self.muted_users:
+               tweets.append(twt)
+        return tweets
+        
     def get_trends(self):
         return self.search.trends()
         
@@ -165,6 +162,7 @@ class Turpial:
             rtn = self.twitter.statuses.update(status=text)
         else:
             rtn = self.twitter.statuses.update(status=text, in_reply_to_status_id=reply_to)
+        self.log.debug(u'Nuevo tweet %s' % text)
         self.tweets.insert(0, rtn)
         self.ui.update_timeline(self.get_timeline())
         

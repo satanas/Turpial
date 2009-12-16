@@ -368,7 +368,7 @@ class PeopleIcons(gtk.ScrolledWindow):
         
         self.list = gtk.IconView(self.model)
         self.list.set_pixbuf_column(0)
-        self.list.set_has_tooltip(True)
+        #self.list.set_has_tooltip(True)
         self.list.set_orientation(gtk.ORIENTATION_VERTICAL)
         self.list.set_selection_mode(gtk.SELECTION_SINGLE)
         self.list.set_column_spacing(10)
@@ -461,7 +461,11 @@ class PeopleIcons(gtk.ScrolledWindow):
         
         pic = p['profile_image_url']
         username = p['screen_name']
-        pix = self.mainwin.request_user_avatar(username, pic)
+        filename = self.mainwin.request_user_avatar(username, pic)
+        if filename is None:
+            pix = util.load_image('unknown.png', True)
+        else:
+            pix = util.load_avatar(filename)
         
         # Escape pango markup
         for key in ['url', 'location', 'description', 'name', 'screen_name']:
@@ -489,7 +493,7 @@ class PeopleIcons(gtk.ScrolledWindow):
         
         profile += '</span>'
         pangoname = '<span size="9000">@%s</span>' % p['screen_name']
-        print type(pix), type(username), type(profile), type(pangoname), type(follow)
+        print pix, type(pix), username, type(username), type(profile), type(pangoname), type(follow)
         self.model.append([pix, username, profile, pangoname, follow])
         del pix
         
@@ -1077,21 +1081,21 @@ class Dock(gtk.Alignment):
         
     def change_mode(self, mode):
         if mode == 'wide':
-            self.btn_home.set_image(util.load_image('button-test.png'))
-            self.btn_favs.set_image(util.load_image('button-test.png'))
-            self.btn_lists.set_image(util.load_image('button-test.png'))
+            self.btn_home.set_image(util.load_image('home.png'))
+            self.btn_favs.set_image(util.load_image('favorites.png'))
+            self.btn_lists.set_image(util.load_image('lists.png'))
             self.btn_update.set_image(util.load_image('button-update.png'))
-            self.btn_search.set_image(util.load_image('button-test.png'))
-            self.btn_profile.set_image(util.load_image('button-test.png'))
-            self.btn_settings.set_image(util.load_image('button-test.png'))
+            self.btn_search.set_image(util.load_image('search.png'))
+            self.btn_profile.set_image(util.load_image('profile.png'))
+            self.btn_settings.set_image(util.load_image('settings.png'))
         else:
-            self.btn_home.set_image(util.load_image('button-test-single.png'))
-            self.btn_favs.set_image(util.load_image('button-test-single.png'))
-            self.btn_lists.set_image(util.load_image('button-test-single.png'))
+            self.btn_home.set_image(util.load_image('home-single.png'))
+            self.btn_favs.set_image(util.load_image('favorites-single.png'))
+            self.btn_lists.set_image(util.load_image('lists-single.png'))
             self.btn_update.set_image(util.load_image('button-update-single.png'))
-            self.btn_search.set_image(util.load_image('button-test-single.png'))
-            self.btn_profile.set_image(util.load_image('button-test-single.png'))
-            self.btn_settings.set_image(util.load_image('button-test-single.png'))
+            self.btn_search.set_image(util.load_image('search-single.png'))
+            self.btn_profile.set_image(util.load_image('profile-single.png'))
+            self.btn_settings.set_image(util.load_image('settings-single.png'))
         
 class Main(BaseGui, gtk.Window):
     def __init__(self, controller):

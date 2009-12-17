@@ -71,7 +71,7 @@ class BaseGui:
         
         fullname = os.path.join('/tmp', pic)
         if os.path.isfile(fullname):
-            log.debug('Encontrada imagen de usuario %s' % user)
+            #log.debug('Encontrada imagen de usuario %s' % user)
             self.__user_pics[user] = pic
             return self.__user_pics[user]
         if user in self.__user_pics: 
@@ -83,6 +83,9 @@ class BaseGui:
         self.__queued_pics.append(pic)
         self.__controller.download_user_pic(user, pic_url, self.__done_user_avatar)
         return None
+        
+    def request_retweet(self, id):
+        self.__controller.retweet(id)
         
     def request_fav(self, id):
         self.__controller.set_favorite(id)
@@ -106,7 +109,7 @@ class BaseGui:
         log.debug('Enviando mensaje directo a %s' % user)
         # self.__controller.send_direct(user, message)
         
-    def request_delete(self, id):
+    def request_destroy_status(self, id):
         self.__controller.destroy_status(id)
         
     def request_short_url(self, longurl, callback):
@@ -124,10 +127,10 @@ class BaseGui:
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
-    ''' Estos métodos deben ser llamados por la clase hija cada cierto tiempo '''
+    # Estos métodos deben ser llamados por la clase hija cada cierto tiempo
     
     def download_timeline(self):
-        self.__controller._update_timeline()
+        return self.__controller._update_timeline()
         
     def download_replies(self):
         self.__controller._update_replies()
@@ -136,7 +139,7 @@ class BaseGui:
         self.__controller._update_directs()
         
     def download_favorites(self):
-        self.__controller._update_directs()
+        self.__controller._update_favorites()
         
     def download_following(self):
         self.__controller._update_following()

@@ -155,7 +155,7 @@ class Twitter(TwitterCall):
     """
     def __init__(
         self, email=None, password=None, format="json", domain="twitter.com",
-        agent=None):
+        uri="", agent=None):
         """
         Create a new twitter API connector using the specified
         credentials (email and password). Format specifies the output
@@ -163,6 +163,6 @@ class Twitter(TwitterCall):
         """
         if (format not in ("json", "xml")):
             raise TwitterError("Unknown data format '%s'" %(format))
-        TwitterCall.__init__(self, email, password, format, domain, "", agent)
+        TwitterCall.__init__(self, email, password, format, domain, uri, agent)
 
 __all__ = ["Twitter", "TwitterError"]

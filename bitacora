@@ -1,3 +1,15 @@
+Dic 17, 2009:
+    + Corregido error con imagen del perfil de usuario al momento de cargar una existente
+    + Actualizada la función friends_timeline por home_timeline (que contiene retweets y count)
+    + Corregido error al cortar URL. Se cerraba la ventana de update
+    + Mostrado el screen_name del usuario en las respuestas
+    + Corregido el error al procesar los favs
+    + Modificada la api de turpial para agregar soporte a la nueva api de twitter
+    + Agregado soporte para retweet oficial xD
+    + Agregado timer gtk para actualizar el timeline
+    * Actualizado timeline después de marcar/desmarcar un tweet como favorito
+    ---- commit ----
+    
 Dic 16, 2009:
     + Agregados iconos temporales al Dock
     + Corregida visualización de imágenes de los contactos (el nuevo método devuelve una url y no un pixbuf)

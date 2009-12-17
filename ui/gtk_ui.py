@@ -85,8 +85,8 @@ class TweetList(gtk.ScrolledWindow):
         self.set_shadow_type(gtk.SHADOW_IN)
         self.add(self.list)
         
-        # avatar, username, datetime, client, pango_message, real_message, id, favorited, in_reply_to
-        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str, str, str, bool, str)
+        # avatar, username, datetime, client, pango_message, real_message, id, favorited, in_reply_to_id, in_reply_to_user, retweet_by
+        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str, str, str, bool, str, str, str)
         self.list.set_model(self.model)
         cell_avatar = gtk.CellRendererPixbuf()
         cell_avatar.set_property('yalign', 0)
@@ -135,7 +135,6 @@ class TweetList(gtk.ScrolledWindow):
             msg = model.get_value(row, 5)
             id = model.get_value(row, 6)
             fav = model.get_value(row, 7)
-            in_reply_to = model.get_value(row, 8)
             
             re = "@%s " % user
             rt = "RT @%s %s" % (user, msg)
@@ -143,6 +142,7 @@ class TweetList(gtk.ScrolledWindow):
             profile = self.mainwin.request_user_profile()
             
             reply = gtk.MenuItem('Reply')
+            retweet_old = gtk.MenuItem('Retweet (Old Fashion Way)')
             retweet = gtk.MenuItem('Retweet')
             save = gtk.MenuItem('+ Fav')
             unsave = gtk.MenuItem('- Fav')
@@ -176,6 +176,7 @@ class TweetList(gtk.ScrolledWindow):
             menu = gtk.Menu()
             if profile['screen_name'] != user:
                 menu.append(reply)
+                menu.append(retweet_old)
                 menu.append(retweet)
             else:
                 menu.append(delete)
@@ -187,8 +188,9 @@ class TweetList(gtk.ScrolledWindow):
             #menu.append(open)
             #menu.append(search)
             
-            reply.connect('activate', self.__show_update_box, re, in_reply_to)
-            retweet.connect('activate', self.__show_update_box, rt)
+            reply.connect('activate', self.__show_update_box, re, id, user)
+            retweet.connect('activate', self.__retweet, id)
+            retweet_old.connect('activate', self.__show_update_box, rt)
             delete.connect('activate', self.__delete, id)
             save.connect('activate', self.__fav, True, id)
             unsave.connect('activate', self.__fav, False, id)
@@ -196,11 +198,14 @@ class TweetList(gtk.ScrolledWindow):
             menu.show_all()
             menu.popup(None, None, None, event.button ,event.time)
         
-    def __show_update_box(self, widget, text, in_reply_id=None):
-        self.mainwin.show_update_box(text, in_reply_id)
+    def __show_update_box(self, widget, text, in_reply_id='', in_reply_user=''):
+        self.mainwin.show_update_box(text, in_reply_id, in_reply_user)
+        
+    def __retweet(self, widget, id):
+        self.mainwin.request_retweet(id)
         
     def __delete(self, widget, id):
-        self.mainwin.request_delete(id)
+        self.mainwin.request_destroy_status(id)
     
     def __fav(self, widget, fav, id):
         if fav:
@@ -233,6 +238,7 @@ class TweetList(gtk.ScrolledWindow):
         #print 'message', tweet['text']
         #message = gobject.markup_escape_text(tweet['text'])
         message = tweet['text']
+        message = message.replace('&', '&amp;')
         message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)
         message = self.__highlight_mentions(message)
@@ -242,21 +248,26 @@ class TweetList(gtk.ScrolledWindow):
         if client:
             footer += ' desde %s' % client
         
-        in_reply_to = ''
+        in_reply_to_id = ''
+        in_reply_to_user = ''
         if tweet.has_key('in_reply_to_status_id') and tweet['in_reply_to_status_id']:
-            in_reply_to = tweet['in_reply_to_status_id']
-            footer += ' en respuesta a %s' % in_reply_to
+            in_reply_to_id = tweet['in_reply_to_status_id']
+            in_reply_to_user = tweet['in_reply_to_screen_name']
+            footer += ' en respuesta a %s' % in_reply_to_user
+        
+        retweet_by = ''
+        if tweet.has_key('retweeted_status'):
+            retweet_by = tweet['retweeted_status']['user']['screen_name']
+            footer += '\nRetweeted by %s' % retweet_by
             
         footer += '</span>'
-        #else:
-        #    footer = '<span size="small" foreground="#999">%s</span>' % (datetime)
         
         fav = False
-        if tweet.has_key('favorited'): fav = True
+        if tweet.has_key('favorited'): fav = tweet['favorited']
         
         pango_twt = message + interline + footer
         self.model.append([pix, username, datetime, client, pango_twt, tweet['text'],
-            tweet['id'], fav, in_reply_to])
+            tweet['id'], fav, in_reply_to_id, in_reply_to_user, retweet_by])
         del pix
         
     def update_user_pic(self, user, pic):
@@ -271,6 +282,7 @@ class TweetList(gtk.ScrolledWindow):
         del pix
         
     def update_tweets(self, arr_tweets):
+        self.model.clear()
         for tweet in arr_tweets:
             self.add_tweet(tweet)
         
@@ -493,7 +505,6 @@ class PeopleIcons(gtk.ScrolledWindow):
         
         profile += '</span>'
         pangoname = '<span size="9000">@%s</span>' % p['screen_name']
-        print pix, type(pix), username, type(username), type(profile), type(pangoname), type(follow)
         self.model.append([pix, username, profile, pangoname, follow])
         del pix
         
@@ -601,7 +612,7 @@ class UserForm(gtk.VBox):
         
     def update(self, profile):
         self.user = profile['screen_name']
-        pix = self.mainwin.request_user_avatar(self.user, profile['profile_image_url'])
+        pix = self.mainwin.get_user_avatar(self.user, profile['profile_image_url'])
         avatar = gtk.Image()
         avatar.set_from_pixbuf(pix)
         self.user_pic.set_image(avatar)
@@ -640,11 +651,11 @@ class UpdateBox(gtk.Window):
         self.set_transient_for(parent)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
-        label = gtk.Label()
-        label.set_use_markup(True)
-        label.set_alignment(0, 0.5)
-        label.set_markup('<span size="medium"><b>What are you doing?</b></span>')
-        label.set_justify(gtk.JUSTIFY_LEFT)
+        self.label = gtk.Label()
+        self.label.set_use_markup(True)
+        self.label.set_alignment(0, 0.5)
+        self.label.set_markup('<span size="medium"><b>What\'s happening?</b></span>')
+        self.label.set_justify(gtk.JUSTIFY_LEFT)
         
         self.num_chars = gtk.Label()
         self.num_chars.set_use_markup(True)
@@ -696,7 +707,7 @@ class UpdateBox(gtk.Window):
         chk_short.set_sensitive(False)
         
         top = gtk.HBox(False)
-        top.pack_start(label, True, True, 5)
+        top.pack_start(self.label, True, True, 5)
         top.pack_start(self.num_chars, False, False, 5)
         
         self.waiting = CairoWaiting(self)
@@ -729,17 +740,22 @@ class UpdateBox(gtk.Window):
         btn_pic.connect('clicked', self.upload_pic)
         self.toolbox.connect('activate', self.show_options)
     
-    def show(self, default='', id=None):
-        self.in_reply_to = id
+    def show(self, text, id, user):
+        self.in_reply_id = id
+        self.in_reply_user = user
+        if id != '' and user != '':
+            self.label.set_markup('<span size="medium"><b>Reply to %s</b></span>' % user)
+        
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         buffer = self.update_text.get_buffer()
-        buffer.set_text(default)
+        buffer.set_text(text)
         self.show_all()
         
     def close(self, widget=None, event=None):
         buffer = self.update_text.get_buffer()
         buffer.set_text('')
         self.url.set_text('')
+        self.label.set_markup('<span size="medium"><b>What\'s happening?</b></span>')
         self.waiting.stop()
         self.toolbox.set_expanded(False)
         self.hide()
@@ -763,7 +779,7 @@ class UpdateBox(gtk.Window):
         start, end = buffer.get_bounds()
         tweet = buffer.get_text(start, end)
         
-        self.mainwin.request_update_status(tweet, self.in_reply_to)
+        self.mainwin.request_update_status(tweet, self.in_reply_id)
         self.close()
         
     def short_url(self, widget):
@@ -782,7 +798,8 @@ class UpdateBox(gtk.Window):
         if (text != ' ') and (start_offset > 0): short = ' ' + short
         
         buffer.insert_at_cursor(short)
-        self.close()
+        self.waiting.stop()
+        self.toolbox.set_expanded(False)
         
     def upload_pic(self, widget):
         filtro = gtk.FileFilter()
@@ -1190,10 +1207,6 @@ class Main(BaseGui, gtk.Window):
         log.debug('Cargando ventana principal')
         self.mode = 2
         
-        #self.profile.set_user_profile(self.controller.profile)
-        #self.profile.set_following(self.controller.get_following())
-        #self.profile.set_followers(self.controller.get_followers())
-        
         self.contentbox.add(self.contenido)
         
         self.statusbar = gtk.Statusbar()
@@ -1208,6 +1221,8 @@ class Main(BaseGui, gtk.Window):
         self.add(self.vbox)
         self.switch_mode()
         self.show_all()
+        
+        gobject.timeout_add(3*60*1000, self.download_timeline)
         
     def show_home(self, widget):
         self.contentbox.remove(self.contenido)
@@ -1224,31 +1239,38 @@ class Main(BaseGui, gtk.Window):
         self.contenido = self.profile
         self.contentbox.add(self.contenido)
     
-    def show_update_box(self, default='', id=None):
+    def show_update_box(self, text='', id='', user=''):
         if self.updatebox.get_property('visible'): 
             self.updatebox.present()
             return
-        self.updatebox.show(default, id)
+        self.updatebox.show(text, id, user)
         
     def update_timeline(self, tweets):
+        log.debug(u'Actualizando el timeline')
         self.home.timeline.update_tweets(tweets)
         
     def update_replies(self, tweets):
+        log.debug(u'Actualizando las replies')
         self.home.replies.update_tweets(tweets)
         
     def update_favs(self, tweets):
+        log.debug(u'Actualizando favoritos')
         self.favs.favorites.update_tweets(tweets)
         
     def update_directs(self, sent, recv):
+        log.debug(u'Actualizando mensajes directos')
         self.home.direct.update_tweets(sent)
         
     def update_user_profile(self, profile):
+        log.debug(u'Actualizando perfil del usuario')
         self.profile.set_user_profile(profile)
         
     def update_following(self, people):
+        log.debug(u'Actualizando following')
         self.profile.set_following(people)
         
     def update_followers(self, people):
+        log.debug(u'Actualizando followers')
         self.profile.set_followers(people)
         
     def update_rate_limits(self, val):

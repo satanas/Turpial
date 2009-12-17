@@ -27,5 +27,7 @@ POST_ACTIONS = [
 
     # Block Methods, Friendship Methods, Favorite Methods
     'create', 
+    
+    'retweet',
 
 ]

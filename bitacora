@@ -3,6 +3,10 @@ Dic 16, 2009:
     + Corregida visualización de imágenes de los contactos (el nuevo método devuelve una url y no un pixbuf)
     + Corregidos errores menores
     ---- commit ----
+    + Ahora el método get_timeline es de uso interno del controlador
+    + Eliminados todos los get del controlador y reemplazados por _update
+    + Creados los métodos para descargar y actualizar los trends/topics
+    ---- commit ----
     
 Dic 15, 2009:
     + Eliminados hilos de actualización automática en el controlador

@@ -37,9 +37,6 @@ class BaseGui:
     # Common methods to all interfaces
     # ------------------------------------------------------------
     
-    def get_user_profile(self):
-        return self.__controller.profile
-        
     def resize_avatar(self, pic):
         ext = pic[-3:].lower()
         fullname = os.path.join('/tmp', pic)
@@ -64,6 +61,9 @@ class BaseGui:
         
     def request_signout(self):
         self.__controller.signout()
+        
+    def request_user_profile(self):
+        return self.__controller.profile
         
     def request_user_avatar(self, user, pic_url):
         pic = pic_url.replace('http://', '0_')
@@ -113,14 +113,42 @@ class BaseGui:
         self.__controller.short_url(longurl, callback)
         
     def request_upload_pic(self, filename):
-        print filename
-        #self.__controller.upload_pic(filename)
+        self.__controller.upload_pic(filename)
         
     def request_update_status(self, text, in_reply_id):
         self.__controller.update_status(text, in_reply_id)
         
     def request_update_profile(self, new_name, new_url, new_bio, new_loc):
         self.__controller.update_profile(self, new_name, new_url, new_bio, new_loc)
+        
+    # ------------------------------------------------------------
+    # Timer Methods
+    # ------------------------------------------------------------
+    ''' Estos métodos deben ser llamados por la clase hija cada cierto tiempo '''
+    
+    def download_timeline(self):
+        self.__controller._update_timeline()
+        
+    def download_replies(self):
+        self.__controller._update_replies()
+        
+    def download_directs(self):
+        self.__controller._update_directs()
+        
+    def download_favorites(self):
+        self.__controller._update_directs()
+        
+    def download_following(self):
+        self.__controller._update_following()
+        
+    def download_followers(self):
+        self.__controller._update_followers()
+        
+    def download_trends(self):
+        self.__controller._update_trends()
+        
+    def download_topics(self):
+        self.__controller._update_topics()
         
     # ------------------------------------------------------------
     # Methods to be overwritten
@@ -163,5 +191,11 @@ class BaseGui:
         raise NotImplementedError
         
     def update_user_profile(self, profile):
+        raise NotImplementedError
+        
+    def update_trends(self, trends):
+        raise NotImplementedError
+        
+    def update_topics(self, topics):
         raise NotImplementedError
         

@@ -140,7 +140,7 @@ class TweetList(gtk.ScrolledWindow):
             re = "@%s " % user
             rt = "RT @%s %s" % (user, msg)
             
-            profile = self.mainwin.get_user_profile()
+            profile = self.mainwin.request_user_profile()
             
             reply = gtk.MenuItem('Reply')
             retweet = gtk.MenuItem('Retweet')

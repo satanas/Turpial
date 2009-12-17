@@ -47,9 +47,6 @@ class Turpial:
         self.twitter = None
         self.search = Twitter(domain="search.twitter.com")
         self.agent = 'Turpial'
-        #self.timer_tl = None
-        #self.timer_rp = None
-        #self.timer_dm = None
         self.httpserv = HTTPServices()
         
         # Esto deberia ir en el modelo
@@ -69,44 +66,61 @@ class Turpial:
         self.ui.show_login()
         self.ui.main_loop()
         
-    def __update_timeline(self, rate=True):
+    def __get_timeline(self):
+        if len(self.muted_users) == 0: return self.tweets
+        tweets = []
+        for twt in self.tweets:
+            if twt['user']['screen_name'] not in self.muted_users:
+               tweets.append(twt)
+        return tweets
+        
+    def _update_timeline(self, rate=True):
         if self.interface != 'cmd': self.log.debug('Actualizando Timeline')
         self.tweets = self.twitter.statuses.friends_timeline()
-        if rate: self.update_rate_limits()
-        self.ui.update_timeline(self.get_timeline())
+        if rate: self._update_rate_limits()
+        self.ui.update_timeline(self.__get_timeline())
         
-    def __update_replies(self, rate=True):
+    def _update_trends(self):
+        return self.search.trends()
+        
+    def _update_topics(self):
+        pass
+        #return self.search.trends()
+        
+    def _update_replies(self, rate=True):
         if self.interface != 'cmd': self.log.debug('Actualizando Replies')
         self.replies = self.twitter.statuses.mentions()
-        if rate: self.update_rate_limits()
+        if rate: self._update_rate_limits()
         self.ui.update_replies(self.replies)
         
-    def __update_directs(self, rate=True):
+    def _update_directs(self, rate=True):
         if self.interface != 'cmd': self.log.debug('Actualizando Directs')
         self.directs = self.twitter.direct_messages()
-        self.directs_sent = self.twitter.direct_messages.sent()
-        if rate: self.update_rate_limits()
+        #self.directs_sent = self.twitter.direct_messages.sent()
+        if rate: self._update_rate_limits()
         self.ui.update_directs(self.directs, self.directs_sent)
         
-    def __update_favs(self, rate=True):
+    def _update_favs(self, rate=True):
         if self.interface != 'cmd': self.log.debug('Actualizando Favorites')
         self.favs = self.twitter.favorites()
-        if rate: self.update_rate_limits()
+        if rate: self._update_rate_limits()
         self.ui.update_favs(self.favs)
         
-    def __update_following(self, rate=True):
+    def _update_following(self, rate=True):
         if self.interface != 'cmd': self.log.debug('Actualizando Following')
         self.following = self.twitter.statuses.friends()
-        if rate: self.update_rate_limits()
+        if rate: self._update_rate_limits()
         self.ui.update_following(self.following)
         
-    def __update_followers(self):
+    def _update_followers(self):
         if self.interface != 'cmd': self.log.debug('Actualizando Followers')
         self.followers = self.twitter.statuses.followers()
-        if rate: self.update_rate_limits()
+        if rate: self._update_rate_limits()
         self.ui.update_followers(self.followers)
         
-        return self.twitter.statuses.followers()
+    def _update_rate_limits(self):
+        self.rate_limits = self.twitter.account.rate_limit_status()
+        self.ui.update_rate_limits(self.rate_limits)
         
     def start_services(self):
         self.httpserv.start()
@@ -119,15 +133,15 @@ class Turpial:
             
             self.ui.show_main()
             
-            self.__update_timeline(False)
-            #self.__update_replies(False)
-            #self.__update_directs()
-            #self.__update_favs()
-            self.__update_following()
-            #self.__update_followers()
+            self._update_timeline(False)
+            #self._update_replies(False)
+            #self._update_directs()
+            #self._update_favs()
+            self._update_following()
+            #self._update_followers()
             
             self.ui.update_user_profile(self.profile)
-            self.ui.update_rate_limits(self.rate_limits)
+            #self.ui.update_rate_limits(self.rate_limits)
             
             self.start_services()
             
@@ -142,17 +156,6 @@ class Turpial:
         self.log.debug('Desconectando')
         if self.twitter: self.twitter.account.end_session()
         
-    def get_timeline(self):
-        if len(self.muted_users) == 0: return self.tweets
-        tweets = []
-        for twt in self.tweets:
-            if twt['user']['screen_name'] not in self.muted_users:
-               tweets.append(twt)
-        return tweets
-        
-    def get_trends(self):
-        return self.search.trends()
-        
     def search_people(self, query):
         query = urllib.quote(query)
         return self.twitter.users.search(q=query)
@@ -164,7 +167,7 @@ class Turpial:
             rtn = self.twitter.statuses.update(status=text, in_reply_to_status_id=reply_to)
         self.log.debug(u'Nuevo tweet %s' % text)
         self.tweets.insert(0, rtn)
-        self.ui.update_timeline(self.get_timeline())
+        self.ui.update_timeline(self.__get_timeline())
         
     def destroy_status(self, tweet_id):
         item = None
@@ -175,8 +178,8 @@ class Turpial:
                 break
         if item: self.tweets.remove(item)
         self.log.debug('Destruido tweet %s' % tweet_id)
-        self.ui.update_timeline(self.get_timeline())
-        
+        self.ui.update_timeline(self.__get_timeline())
+    '''
     def update_rate_limits(self):
         self.rate_limits = self.twitter.account.rate_limit_status()
         return self.rate_limits
@@ -188,7 +191,8 @@ class Turpial:
     def update_followers(self):
         #self.followers = self.twitter.statuses.followers()
         self.ui.update_followers(self.followers)
-        
+    '''
+    
     def set_favorite(self, tweet_id):
         rtn = self.twitter.favorites.create(id=tweet_id)
         self.log.debug('Marcado como favorito el tweet %s' % tweet_id)
@@ -225,13 +229,13 @@ class Turpial:
         if user not in self.muted_users: 
             self.muted_users.append(user)
             self.log.debug('Muteando a %s' % user)
-            self.ui.update_timeline(self.get_timeline())
+            self.ui.update_timeline(self.__get_timeline())
             
     def unmute(self, user):
         if user in self.muted_users: 
             self.muted_users.remove(user)
             self.log.debug('Desmuteando a %s' % user)
-            self.ui.update_timeline(self.get_timeline())
+            self.ui.update_timeline(self.__get_timeline())
         
     def follow(self, user):
         rtn = self.twitter.friendships.create(screen_name=user)
@@ -256,6 +260,9 @@ class Turpial:
     
     def download_user_pic(self, user, pic_url, callback):
         self.httpserv.download_pic(user, pic_url, callback)
+        
+    def upload_pic(self, path):
+        pass
         
 if __name__ == '__main__':
     t = Turpial()

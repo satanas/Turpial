@@ -1,3 +1,10 @@
+Dic 18, 2009:
+    + Agregado soporte para reconocimiento de urls en la vista
+    + Agregado menú contextual para abrir las urls de un tweet
+    + Agregado un mensaje de depuración en la API para intentar detectar errores en la carga de JSON
+    + Implementado manejo de excepciones al pedir el rate limits y el perfil del usuario
+    ---- commit ----
+    
 Dic 17, 2009:
     + Corregido error con imagen del perfil de usuario al momento de cargar una existente
     + Actualizada la función friends_timeline por home_timeline (que contiene retweets y count)

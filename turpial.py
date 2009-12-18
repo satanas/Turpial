@@ -121,8 +121,11 @@ class Turpial:
         self.ui.update_followers(self.followers)
         
     def _update_rate_limits(self):
-        self.rate_limits = self.twitter.account.rate_limit_status()
-        self.ui.update_rate_limits(self.rate_limits)
+        try:
+            self.rate_limits = self.twitter.account.rate_limit_status()
+            self.ui.update_rate_limits(self.rate_limits)
+        except ValueError, error:
+            self.log.debug(u'Ocurrió un error intentanto actualizar el rate limits.\nDetalle: %s' % error)
         
     def start_services(self):
         self.httpserv.start()
@@ -151,6 +154,9 @@ class Turpial:
         except TwitterError, error:
             self.log.debug('Error verificando credenciales %s' % error)
             self.ui.cancel_login(u'Información de usuario inválida')
+        except ValueError, error:
+            self.log.debug('Error obteniendo las credenciales %s' % error)
+            self.ui.cancel_login(u'Imposible obtener su perfil')
         
     def signout(self):
         self.httpserv.quit()

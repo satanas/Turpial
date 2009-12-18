@@ -11,6 +11,7 @@ import cairo
 import pango
 import logging
 import gobject
+import webbrowser
 
 from base_ui import *
 gtk.gdk.threads_init()
@@ -127,6 +128,15 @@ class TweetList(gtk.ScrolledWindow):
             text = text.replace(torep, cad)
         return text
         
+    def __highlight_urls(self, text):
+        urls = util.detect_urls(text)
+        if len(urls) == 0: return text
+        
+        for u in urls:
+            cad = '<span foreground="#FF6633">%s</span>' % u
+            text = text.replace(u, cad)
+        return text
+        
     def __popup_menu(self, widget, event):
         model, row = widget.get_selection().get_selected()
         if (row is None): return False
@@ -148,12 +158,16 @@ class TweetList(gtk.ScrolledWindow):
             save = gtk.MenuItem('+ Fav')
             unsave = gtk.MenuItem('- Fav')
             delete = gtk.MenuItem('Delete')
-            open = gtk.MenuItem('Open')
+            open = gtk.MenuItem('Open URL')
             search = gtk.MenuItem('Search')
             
-            #open_menu = gtk.Menu()
-            #for item in open_menu_items:
-            #    open_menu.append(item)
+            urls = util.detect_urls(msg)
+            open_menu = gtk.Menu()
+            for u in urls:
+                urlmenu = gtk.MenuItem(u)
+                urlmenu.connect('activate', self.__open_url, u)
+                open_menu.append(urlmenu)
+            open.set_submenu(open_menu)
             
             menu = gtk.Menu()
             if profile['screen_name'] != user:
@@ -167,7 +181,7 @@ class TweetList(gtk.ScrolledWindow):
                 menu.append(unsave)
             else:
                 menu.append(save)
-            #menu.append(open)
+            if len(urls) > 0: menu.append(open)
             #menu.append(search)
             
             reply.connect('activate', self.__show_update_box, re, id, user)
@@ -179,6 +193,10 @@ class TweetList(gtk.ScrolledWindow):
             
             menu.show_all()
             menu.popup(None, None, None, event.button ,event.time)
+        
+    def __open_url(self, widget, url):
+        log.debug('Opening url %s' % url)
+        webbrowser.open(url)
         
     def __show_update_box(self, widget, text, in_reply_id='', in_reply_user=''):
         self.mainwin.show_update_box(text, in_reply_id, in_reply_user)
@@ -225,6 +243,7 @@ class TweetList(gtk.ScrolledWindow):
         message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)
         message = self.__highlight_mentions(message)
+        message = self.__highlight_urls(message)
         interline = '<span size="2000">\n\n</span>'
         
         footer = '<span size="small" foreground="#999">%s' % datetime

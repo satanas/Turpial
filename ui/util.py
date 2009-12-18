@@ -16,6 +16,7 @@ AVATAR_SIZE = 48
 HASHTAG_PATTERN = re.compile('\#(.+?)[\W]')
 MENTION_PATTERN = re.compile('\@(.+?)[\W]')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
+URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_().]*[-A-Za-z0-9+&@#/%?=~_()])')
 
 def load_image(path, pixbuf=False):
     img_path = os.path.join('pixmaps', path)
@@ -48,6 +49,13 @@ def detect_hashtags(text):
     
 def detect_mentions(text):
     return MENTION_PATTERN.findall(text)
+    
+def detect_urls(text):
+    urls = []
+    temp = URL_PATTERN.findall(text)
+    for u in temp:
+        urls.append(u[0])
+    return urls
     
 def get_rates(val):
     tsec = val['reset_time_in_seconds'] - time.timezone

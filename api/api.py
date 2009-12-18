@@ -77,7 +77,9 @@ class TwitterCall(object):
         try:
             handle = urllib2.urlopen(req)
             if "json" == self.format:
-                return json.loads(handle.read())
+                x = handle.read()
+                print 'API call:', x
+                return json.loads(x)
             else:
                 return handle.read()
         except urllib2.HTTPError, e:

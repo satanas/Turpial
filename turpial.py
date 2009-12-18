@@ -77,7 +77,7 @@ class Turpial:
         
     def _update_timeline(self, rate=True):
         if self.interface != 'cmd': self.log.debug('Descargando Timeline')
-        self.tweets = self.twitter.statuses.home_timeline(count=60)
+        self.tweets = self.twitterapi.statuses.home_timeline(count=60)
         if rate: self._update_rate_limits()
         self.ui.update_timeline(self.__get_timeline())
         return True
@@ -138,8 +138,8 @@ class Turpial:
             
             self._update_timeline(False)
             #self._update_replies(False)
-            #self._update_directs()
-            #self._update_favorites()
+            self._update_directs(False)
+            #self._update_favorites(False)
             self._update_following()
             #self._update_followers()
             
@@ -188,32 +188,33 @@ class Turpial:
         
     def set_favorite(self, tweet_id):
         rtn = self.twitter.favorites.create(id=tweet_id)
-        self.log.debug('Marcado como favorito el tweet %s' % tweet_id)
         self.favs.insert(0, rtn)
         index = None
         for twt in self.tweets:
-            if tweet_id == twt['id']:
+            if tweet_id == str(twt['id']):
                 index = self.tweets.index(twt)
                 break
-        if index: self.tweets[index]['favorited'] = True
+        if index is not None: self.tweets[index]['favorited'] = True
+        
+        self.log.debug('Marcado como favorito el tweet %s' % tweet_id)
         self.ui.update_favs(self.favs)
         self.ui.update_timeline(self.__get_timeline())
     
     def unset_favorite(self, tweet_id):
-        item = None
         rtn = self.twitter.favorites.destroy(id=tweet_id)
+        item = None
         for fav in self.favs:
-            if tweet_id == fav['id']:
+            if tweet_id == str(fav['id']):
                 item = fav
                 break
         if item: self.favs.remove(item)
         
         index = None
         for twt in self.tweets:
-            if tweet_id == twt['id']:
+            if tweet_id == str(twt['id']):
                 index = self.tweets.index(twt)
                 break
-        if index: self.tweets[index]['favorited'] = False
+        if index is not None: self.tweets[index]['favorited'] = False
         
         self.log.debug('Desmarcado como favorito el tweet %s' % tweet_id)
         self.ui.update_favs(self.favs)

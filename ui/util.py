@@ -13,8 +13,8 @@ import datetime
 
 AVATAR_SIZE = 48
 
-HASHTAG_PATTERN = re.compile('\#(.*?)[\W]')
-MENTION_PATTERN = re.compile('\@(.*?)[\W]')
+HASHTAG_PATTERN = re.compile('\#(.+?)[\W]')
+MENTION_PATTERN = re.compile('\@(.+?)[\W]')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
 
 def load_image(path, pixbuf=False):
@@ -78,10 +78,34 @@ def get_timestamp(tweet):
     second = int(time_info[2])
     
     d = datetime.datetime(year, month, day, hour, minute, second)
+    
+    i_hate_timezones = time.timezone
+    if (time.daylight): i_hate_timezones = time.altzone
+    
+    dt = datetime.datetime(*d.timetuple()[:-3]) - datetime.timedelta(seconds=i_hate_timezones)
+    t = dt.timetuple()
+    
+    return time.strftime('%b %d, %I:%M %p', t)
+    '''
     z = time.mktime(d.timetuple()) - time.timezone
-    tm = time.strftime('%b %d, %I:%M %P', time.gmtime(z))
+    print time.mktime(d.timetuple()), '-', time.timezone, '=', z
+    w = time.gmtime(z)
+    print type(w), w
+    tm = time.strftime('%b %d, %I:%M %p', w)
+    print tm
     #print tweet['created_at']
     #print z
     #print time.gmtime(z)
     #print tm
     return tm
+    
+    print len(tweet['created_at']), tweet['created_at']
+    t = datetime.datetime.strptime(tweet['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
+    i_hate_timezones = time.timezone
+    if (time.daylight):
+        i_hate_timezones = time.altzone
+    dt = datetime.datetime(*t[:-3]) - datetime.timedelta(seconds=i_hate_timezones)
+    t = dt.timetuple()
+    
+    return time.strftime('%b %d, %I:%M %p', t)
+    '''

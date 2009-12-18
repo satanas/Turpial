@@ -86,7 +86,8 @@ class TweetList(gtk.ScrolledWindow):
         self.add(self.list)
         
         # avatar, username, datetime, client, pango_message, real_message, id, favorited, in_reply_to_id, in_reply_to_user, retweet_by
-        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str, str, str, bool, str, str, str)
+        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str, str, str, 
+            bool, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT)
         self.list.set_model(self.model)
         cell_avatar = gtk.CellRendererPixbuf()
         cell_avatar.set_property('yalign', 0)
@@ -142,7 +143,7 @@ class TweetList(gtk.ScrolledWindow):
             profile = self.mainwin.request_user_profile()
             
             reply = gtk.MenuItem('Reply')
-            retweet_old = gtk.MenuItem('Retweet (Old Fashion Way)')
+            retweet_old = gtk.MenuItem('Retweet')
             retweet = gtk.MenuItem('Retweet')
             save = gtk.MenuItem('+ Fav')
             unsave = gtk.MenuItem('- Fav')
@@ -150,25 +151,6 @@ class TweetList(gtk.ScrolledWindow):
             open = gtk.MenuItem('Open')
             search = gtk.MenuItem('Search')
             
-            '''
-            menumail = gtk.ImageMenuItem(_('Send Mail'))
-            menumail.set_image(gtk.image_new_from_stock(
-                    'stock-inbox', gtk.ICON_SIZE_MENU))
-                    
-            menublock = gtk.ImageMenuItem('')
-            if (data.blocked):
-                menublock.get_child().set_text(_('Unblock contact'))
-                menublock.set_image(gtk.image_new_from_stock(
-                    gtk.STOCK_REFRESH, gtk.ICON_SIZE_MENU))
-            else:
-                menublock.get_child().set_text(_('Block contact'))
-                menublock.set_image(gtk.image_new_from_stock(
-                    gtk.STOCK_STOP, gtk.ICON_SIZE_MENU))
-            
-            menuremove = gtk.ImageMenuItem(_('Remove contact'))
-            menuremove.set_image(gtk.image_new_from_stock(
-                    gtk.STOCK_DELETE, gtk.ICON_SIZE_MENU))
-            '''
             #open_menu = gtk.Menu()
             #for item in open_menu_items:
             #    open_menu.append(item)
@@ -177,7 +159,7 @@ class TweetList(gtk.ScrolledWindow):
             if profile['screen_name'] != user:
                 menu.append(reply)
                 menu.append(retweet_old)
-                menu.append(retweet)
+                #menu.append(retweet)
             else:
                 menu.append(delete)
             
@@ -214,7 +196,6 @@ class TweetList(gtk.ScrolledWindow):
             self.mainwin.request_unfav(id)
     
     def update_wrap(self, val):
-        #self.label.set_size_request(val, -1)
         self.cell_tweet.set_property('wrap-width', val - 80)
         iter = self.model.get_iter_first()
         
@@ -224,6 +205,9 @@ class TweetList(gtk.ScrolledWindow):
             iter = self.model.iter_next(iter)
         
     def add_tweet(self, tweet):
+        #print tweet
+        #print
+        
         if tweet.has_key('user'):
             username = tweet['user']['screen_name']
             avatar = tweet['user']['profile_image_url']
@@ -236,9 +220,8 @@ class TweetList(gtk.ScrolledWindow):
         
         pix = self.mainwin.get_user_avatar(username, avatar)
         #print 'message', tweet['text']
-        #message = gobject.markup_escape_text(tweet['text'])
-        message = tweet['text']
-        message = message.replace('&', '&amp;')
+        message = gobject.markup_escape_text(tweet['text'])
+        #message = tweet['text']
         message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)
         message = self.__highlight_mentions(message)
@@ -248,14 +231,15 @@ class TweetList(gtk.ScrolledWindow):
         if client:
             footer += ' desde %s' % client
         
-        in_reply_to_id = ''
-        in_reply_to_user = ''
-        if tweet.has_key('in_reply_to_status_id') and tweet['in_reply_to_status_id']:
+        in_reply_to_id = None
+        in_reply_to_user = None
+        if tweet.has_key('in_reply_to_status_id'):
             in_reply_to_id = tweet['in_reply_to_status_id']
             in_reply_to_user = tweet['in_reply_to_screen_name']
-            footer += ' en respuesta a %s' % in_reply_to_user
+            if in_reply_to_user:
+                footer += ' en respuesta a %s' % in_reply_to_user
         
-        retweet_by = ''
+        retweet_by = None
         if tweet.has_key('retweeted_status'):
             retweet_by = tweet['retweeted_status']['user']['screen_name']
             footer += '\nRetweeted by %s' % retweet_by

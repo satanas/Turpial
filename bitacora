@@ -9,6 +9,10 @@ Dic 17, 2009:
     + Agregado timer gtk para actualizar el timeline
     * Actualizado timeline después de marcar/desmarcar un tweet como favorito
     ---- commit ----
+    + Corregido error con el patrón de las menciones/hastags. Ahora se valida al menos un caracter después del símbolo
+    + Resuelto el bug que no permitía actualizar los tweets después de marcar/desmarcar como favorito
+    + Resuelto el bug del datetime de los tweets
+    ---- commit ----
     
 Dic 16, 2009:
     + Agregados iconos temporales al Dock

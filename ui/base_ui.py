@@ -169,7 +169,10 @@ class BaseGui:
     def cancel_login(self):
         raise NotImplementedError
         
-    def update_timeline(self):
+    def update_tweet(self, tweet):
+        raise NotImplementedError
+        
+    def update_timeline(self, tweets):
         raise NotImplementedError
         
     def update_replies(self, replies):

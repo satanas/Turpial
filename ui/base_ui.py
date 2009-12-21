@@ -127,6 +127,12 @@ class BaseGui:
     def request_search_topic(self, topic):
         self.__controller.search_topic(topic)
         
+    def request_search_people(self, query):
+        self.__controller.search_people(query)
+        
+    def request_trends(self):
+        self.__controller._update_trends()
+        
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
@@ -149,12 +155,6 @@ class BaseGui:
         
     def download_followers(self):
         self.__controller._update_followers()
-        
-    def download_trends(self):
-        self.__controller._update_trends()
-        
-    def download_topics(self):
-        self.__controller._update_topics()
         
     def download_rates(self):
         self.__controller._update_rate_limits()
@@ -205,7 +205,7 @@ class BaseGui:
     def update_user_profile(self, profile):
         raise NotImplementedError
         
-    def update_trends(self, trends):
+    def update_trends(self, current, day, week):
         raise NotImplementedError
         
     def update_search_topics(self, topics):

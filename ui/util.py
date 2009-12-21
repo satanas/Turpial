@@ -9,6 +9,7 @@ import os
 import re
 import gtk
 import time
+import gobject
 import datetime
 
 AVATAR_SIZE = 48
@@ -96,3 +97,39 @@ def get_timestamp(tweet):
     t = dt.timetuple()
     
     return time.strftime('%b %d, %I:%M %p', t)
+    
+def get_pango_profile(p):
+    protected = ''
+    following = ''
+    if p['protected']: 
+        protected = '&lt;p&gt;'
+    if p['following']: 
+        following = '&lt;f&gt;'
+            
+    # Escape pango markup
+    for key in ['url', 'location', 'description', 'name', 'screen_name']:
+        if not p.has_key(key) or p[key] is None: continue
+        p[key] = gobject.markup_escape_text(p[key])
+        
+    profile = '<b>@%s</b> (%s) %s %s\n' % (p['screen_name'], p['name'], 
+            following, protected)
+    
+    profile += '<span size="8000">'
+    if not p['url'] is None: 
+        profile += "<b>URL:</b> %s\n" % p['url']
+        
+    if not p['location'] is None:
+        profile += "<b>Location:</b> %s\n" % p['location']
+        
+    if not p['description'] is None:
+        profile += "<b>Bio:</b> %s\n" % p['description']
+    
+    if p.has_key('status'): 
+        profile += '<span size="2000">\n</span>'
+        status = '<span foreground="#999"><b>Last:</b> %s...</span>\n' % (
+            gobject.markup_escape_text(p['status']['text'][:20]))
+        profile += status
+    
+    profile += '</span>'
+    
+    return profile

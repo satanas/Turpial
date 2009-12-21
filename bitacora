@@ -1,6 +1,15 @@
+Dic 21, 2009:
+    + Implementada nueva estructura de directorios y archivos para separar cada parte del UI
+    + Creado widget TrendingBox y Trending
+    + Implementada visualización e interacción con los trending topics (se busca y otorga da el foco a search)
+    + Terminado widget PeopleList e implementada la búsqueda de usuarios
+    + Ahora se limpia el modelo con cada nueva búsqueda (PeopleList y PeopleIcon)
+    + Implementada la búsqueda de usuarios usando el PeopleList
+    + Agregados iconos para el elemento 'About' del Dock
+    ---- commit ----
+    
 Dic 20, 2009:
     + Ahora la API devuelve None si ha ocurrido algún error para no disparar una excepción y cancelar la ejecución del programa
-    * Implementando nueva estructura de directorios y archivos para separar cada parte del UI
     ---- commit ----
     
 Dic 19, 2009:

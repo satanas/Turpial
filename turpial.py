@@ -39,7 +39,7 @@ class Turpial:
         
         self.interface = options.interface
         if options.interface == 'gtk':
-            self.ui = gtk_ui.Main(self)
+            self.ui = gtk_ui_main.Main(self)
         else:
             self.ui = cmd_ui.Main(self)
             
@@ -81,11 +81,10 @@ class Turpial:
         return True
         
     def _update_trends(self):
-        return self.search.trends()
-        
-    def _update_topics(self):
-        pass
-        #return self.search.trends()
+        current = self.search.trends.current()
+        day = self.search.trends.daily()
+        week = self.search.trends.weekly()
+        self.ui.update_trends(current, day, week)
         
     def _update_replies(self):
         if self.interface != 'cmd': self.log.debug('Descargando Replies')
@@ -136,8 +135,9 @@ class Turpial:
             #self._update_replies()
             #self._update_directs()
             #self._update_favorites()
-            #self._update_following()
-            #self._update_followers()
+            self._update_following()
+            self._update_followers()
+            self._update_trends()
             self._update_rate_limits()
             
             self.ui.update_user_profile(self.profile)
@@ -160,7 +160,8 @@ class Turpial:
     def search_people(self, query):
         query = urllib.quote(query)
         self.log.debug(u'Buscando personas con %s' % query)
-        return self.twitter.users.search(q=query)
+        people = self.twitter.users.search(q=query)
+        self.ui.update_search_people(people)
         
     def search_topic(self, topic):
         topic = urllib.quote(topic)[:140]

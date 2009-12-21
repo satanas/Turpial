@@ -64,23 +64,25 @@ def get_rates(val):
     limit = val['hourly_limit']
     return "%s of %s API calls. Next reset: %s" % (hits, limit, t)
 
-# a=time.strptime('Sat Nov 07 14:55:06 +0000 2009', '%a %b %d %H:%M:%S +0000 %Y')
-# time.mktime(a) -> Tiempo en segundos
-# time.timezone -> Diferencia Horaria
-# 
-# time.strftime('%b %d, %I:%M %P', )
-# time.strftime('%b %d, %H:%M', a)
-
 def get_timestamp(tweet):
-    # Tue Mar 13 00:12:41 +0000 2007
-    date_info = tweet['created_at'].split()
+    # Tue Mar 13 00:12:41 +0000 2007 -> Tweets normales
+    # Wed, 08 Apr 2009 19:22:10 +0000 -> Busquedas
     month_names = [None, 'Jan', 'Feb','Mar','Apr','May','Jun','Jul',
         'Aug','Sep','Oct','Nov','Dec']
-    month = month_names.index(date_info[1])
-    day = int(date_info[2])
-    year = int(date_info[5])
     
-    time_info = date_info[3].split(':')
+    date_info = tweet['created_at'].split()
+    
+    if date_info[1] in month_names:
+        month = month_names.index(date_info[1])
+        day = int(date_info[2])
+        year = int(date_info[5])
+        time_info = date_info[3].split(':')
+    else:
+        month = month_names.index(date_info[2])
+        day = int(date_info[1])
+        year = int(date_info[3])
+        time_info = date_info[4].split(':')
+        
     hour = int(time_info[0])
     minute = int(time_info[1])
     second = int(time_info[2])
@@ -94,26 +96,3 @@ def get_timestamp(tweet):
     t = dt.timetuple()
     
     return time.strftime('%b %d, %I:%M %p', t)
-    '''
-    z = time.mktime(d.timetuple()) - time.timezone
-    print time.mktime(d.timetuple()), '-', time.timezone, '=', z
-    w = time.gmtime(z)
-    print type(w), w
-    tm = time.strftime('%b %d, %I:%M %p', w)
-    print tm
-    #print tweet['created_at']
-    #print z
-    #print time.gmtime(z)
-    #print tm
-    return tm
-    
-    print len(tweet['created_at']), tweet['created_at']
-    t = datetime.datetime.strptime(tweet['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
-    i_hate_timezones = time.timezone
-    if (time.daylight):
-        i_hate_timezones = time.altzone
-    dt = datetime.datetime(*t[:-3]) - datetime.timedelta(seconds=i_hate_timezones)
-    t = dt.timetuple()
-    
-    return time.strftime('%b %d, %I:%M %p', t)
-    '''

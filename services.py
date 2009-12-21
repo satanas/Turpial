@@ -60,7 +60,12 @@ class HTTPServices(threading.Thread):
                 filename = filename.replace('/', '_')
                 fullname = os.path.join('/tmp', filename)
                 
-                f = urllib2.urlopen(args['url']).read()
+                try:
+                    f = urllib2.urlopen(args['url']).read()
+                except:
+                    self.register(args, callback)
+                    continue
+                    
                 file = open(fullname, 'w+')
                 file.write(f)
                 file.close()

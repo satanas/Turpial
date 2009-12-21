@@ -8,7 +8,6 @@
 
 import urllib
 import logging
-import threading
 
 from ui import *
 from api import *
@@ -75,10 +74,9 @@ class Turpial:
                tweets.append(twt)
         return tweets
         
-    def _update_timeline(self, rate=True):
+    def _update_timeline(self):
         if self.interface != 'cmd': self.log.debug('Descargando Timeline')
         self.tweets = self.twitterapi.statuses.home_timeline(count=60)
-        if rate: self._update_rate_limits()
         self.ui.update_timeline(self.__get_timeline())
         return True
         
@@ -89,35 +87,30 @@ class Turpial:
         pass
         #return self.search.trends()
         
-    def _update_replies(self, rate=True):
+    def _update_replies(self):
         if self.interface != 'cmd': self.log.debug('Descargando Replies')
         self.replies = self.twitter.statuses.mentions()
-        if rate: self._update_rate_limits()
         self.ui.update_replies(self.replies)
         
-    def _update_directs(self, rate=True):
+    def _update_directs(self):
         if self.interface != 'cmd': self.log.debug('Descargando Directs')
         self.directs = self.twitter.direct_messages()
         #self.directs_sent = self.twitter.direct_messages.sent()
-        if rate: self._update_rate_limits()
         self.ui.update_directs(self.directs, self.directs_sent)
         
-    def _update_favorites(self, rate=True):
+    def _update_favorites(self):
         if self.interface != 'cmd': self.log.debug('Descargando Favorites')
         self.favs = self.twitter.favorites()
-        if rate: self._update_rate_limits()
         self.ui.update_favs(self.favs)
         
     def _update_following(self, rate=True):
         if self.interface != 'cmd': self.log.debug('Descargando Following')
         self.following = self.twitter.statuses.friends()
-        if rate: self._update_rate_limits()
         self.ui.update_following(self.following)
         
     def _update_followers(self):
         if self.interface != 'cmd': self.log.debug('Descargando Followers')
         self.followers = self.twitter.statuses.followers()
-        if rate: self._update_rate_limits()
         self.ui.update_followers(self.followers)
         
     def _update_rate_limits(self):
@@ -139,12 +132,13 @@ class Turpial:
             
             self.ui.show_main()
             
-            self._update_timeline(False)
-            #self._update_replies(False)
-            self._update_directs(False)
-            #self._update_favorites(False)
-            self._update_following()
+            self._update_timeline()
+            #self._update_replies()
+            #self._update_directs()
+            #self._update_favorites()
+            #self._update_following()
             #self._update_followers()
+            self._update_rate_limits()
             
             self.ui.update_user_profile(self.profile)
             #self.ui.update_rate_limits(self.rate_limits)
@@ -165,7 +159,14 @@ class Turpial:
         
     def search_people(self, query):
         query = urllib.quote(query)
+        self.log.debug(u'Buscando personas con %s' % query)
         return self.twitter.users.search(q=query)
+        
+    def search_topic(self, topic):
+        topic = urllib.quote(topic)[:140]
+        self.log.debug(u'Buscando tweets sobre: %s' % topic)
+        tweets = self.search.search(q=topic)
+        self.ui.update_search_topics(tweets)
     
     def update_status(self, text, reply_id=None):
         if reply_id:

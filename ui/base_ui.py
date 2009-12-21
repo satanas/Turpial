@@ -124,6 +124,9 @@ class BaseGui:
     def request_update_profile(self, new_name, new_url, new_bio, new_loc):
         self.__controller.update_profile(self, new_name, new_url, new_bio, new_loc)
         
+    def request_search_topic(self, topic):
+        self.__controller.search_topic(topic)
+        
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
@@ -152,6 +155,9 @@ class BaseGui:
         
     def download_topics(self):
         self.__controller._update_topics()
+        
+    def download_rates(self):
+        self.__controller._update_rate_limits()
         
     # ------------------------------------------------------------
     # Methods to be overwritten
@@ -202,6 +208,6 @@ class BaseGui:
     def update_trends(self, trends):
         raise NotImplementedError
         
-    def update_topics(self, topics):
+    def update_search_topics(self, topics):
         raise NotImplementedError
         

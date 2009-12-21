@@ -14,21 +14,78 @@ import gobject
 import webbrowser
 
 from base_ui import *
+from gtkui import *
+
 gtk.gdk.threads_init()
 
 log = logging.getLogger('Gtk')
 
+class WrapperAlign:
+    left = 0
+    middle = 1
+    right = 2
+    
 class Wrapper(gtk.VBox):
     def __init__(self):
         gtk.VBox.__init__(self)
         
+        self.children = {
+            WrapperAlign.left: None,
+            WrapperAlign.middle: None,
+            WrapperAlign.right: None,
+        }
+    
+    def _append_widget(self, widget, align):
+        self.children[align] = widget
+        
     def change_mode(self, mode):
-        # Reimplementar en la clase hija
-        pass
+        for child in self.get_children():
+            self.remove(child)
+        
+        if mode == 'wide':
+            wrapper = gtk.HBox(True)
+            
+            for i in range(3):
+                widget = self.children[i]
+                if widget is None: continue
+                
+                box = gtk.VBox(False)
+                box.pack_start(gtk.Label(widget.caption), False, False)
+                if widget.get_parent(): 
+                    widget.reparent(box)
+                else:
+                    box.pack_start(widget, True, True)
+                wrapper.pack_start(box)
+        else:
+            wrapper = gtk.Notebook()
+            
+            for i in range(3):
+                widget = self.children[i]
+                if widget is None: continue
+                
+                if widget.get_parent(): 
+                    widget.reparent(wrapper)
+                    wrapper.set_tab_label(widget, gtk.Label(widget.caption))
+                else:
+                    wrapper.append_page(widget, gtk.Label(widget.caption))
+                
+                wrapper.set_tab_label_packing(widget, True, True, gtk.PACK_START)
+            
+        self.add(wrapper)
+        self.show_all()
         
     def update_wrap(self, width, mode):
-        # Reimplementar en la clase hija
-        pass
+        # Reimplementar en la clase hija de ser necesario
+        if mode == 'single':
+            w = width
+        else:
+            w = width / 3
+        
+        for i in range(3):
+            widget = self.children[i]
+            if widget is None: continue
+            
+            widget.update_wrap(w)
         
 class LoginLabel(gtk.DrawingArea):
     def __init__(self, parent):
@@ -67,6 +124,8 @@ class LoginLabel(gtk.DrawingArea):
         
         #cr.show_text(self.error)
         
+
+'''
 class TweetList(gtk.ScrolledWindow):
     def __init__(self, mainwin, label=''):
         gtk.ScrolledWindow.__init__(self)
@@ -81,6 +140,7 @@ class TweetList(gtk.ScrolledWindow):
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
         
         self.label = gtk.Label(label)
+        self.caption = label
         
         self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.set_shadow_type(gtk.SHADOW_IN)
@@ -225,13 +285,20 @@ class TweetList(gtk.ScrolledWindow):
     def add_tweet(self, tweet):
         #print tweet
         #print
-        
+        retweet_by = None
+        if tweet.has_key('retweeted_status'):
+            retweet_by = tweet['user']['screen_name']
+            tweet = tweet['retweeted_status']
+            
         if tweet.has_key('user'):
             username = tweet['user']['screen_name']
             avatar = tweet['user']['profile_image_url']
-        else:
+        elif tweet.has_key('sender'):
             username = tweet['sender']['screen_name']
             avatar = tweet['sender']['profile_image_url']
+        elif tweet.has_key('from_user'):
+            username = tweet['from_user']
+            avatar = tweet['profile_image_url']
             
         client = util.detect_client(tweet)
         datetime = util.get_timestamp(tweet)
@@ -258,9 +325,7 @@ class TweetList(gtk.ScrolledWindow):
             if in_reply_to_user:
                 footer += ' en respuesta a %s' % in_reply_to_user
         
-        retweet_by = None
-        if tweet.has_key('retweeted_status'):
-            retweet_by = tweet['retweeted_status']['user']['screen_name']
+        if retweet_by:
             footer += '\nRetweeted by %s' % retweet_by
             
         footer += '</span>'
@@ -288,10 +353,13 @@ class TweetList(gtk.ScrolledWindow):
         self.model.clear()
         for tweet in arr_tweets:
             self.add_tweet(tweet)
-        
+'''
+
 class PeopleList(gtk.ScrolledWindow):
-    def __init__(self, label=''):
+    def __init__(self, mainwin, label=''):
         gtk.ScrolledWindow.__init__(self)
+        
+        self.mainwin = mainwin
         
         self.list = gtk.TreeView()
         self.list.set_headers_visible(False)
@@ -301,6 +369,7 @@ class PeopleList(gtk.ScrolledWindow):
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
         
         self.label = gtk.Label(label)
+        self.caption = label
         
         self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.set_shadow_type(gtk.SHADOW_IN)
@@ -383,7 +452,7 @@ class PeopleIcons(gtk.ScrolledWindow):
         
         self.list = gtk.IconView(self.model)
         self.list.set_pixbuf_column(0)
-        #self.list.set_has_tooltip(True)
+        self.list.set_has_tooltip(True)
         self.list.set_orientation(gtk.ORIENTATION_VERTICAL)
         self.list.set_selection_mode(gtk.SELECTION_SINGLE)
         self.list.set_column_spacing(10)
@@ -400,6 +469,8 @@ class PeopleIcons(gtk.ScrolledWindow):
         self.list.connect("button-release-event", self.__popup_menu)
         
         self.label = gtk.Label(label)
+        self.caption = label
+        
         self.add(self.list)
         
     def __popup_menu(self, widget, event):
@@ -526,6 +597,51 @@ class PeopleIcons(gtk.ScrolledWindow):
         for p in people:
             self.add_profile(p)
             
+class SearchList(gtk.VBox):
+    def __init__(self, mainwin, label=''):
+        gtk.VBox.__init__(self, False)
+        
+        self.mainwin = mainwin
+        self.input_topics = gtk.Entry()
+        try:
+            self.input_topics.set_property("primary-icon-stock", gtk.STOCK_FIND)
+            self.input_topics.set_property("secondary-icon-stock", gtk.STOCK_CLEAR)
+            self.input_topics.connect("icon-press", self.__on_icon_press)
+        except: 
+            pass
+        
+        inputbox = gtk.HBox(False)
+        inputbox.pack_start(self.input_topics, True, True)
+        
+        self.topics = TweetList(mainwin, label)
+        self.caption = label
+        
+        self.pack_start(inputbox, False, False)
+        self.pack_start(self.topics, True, True)
+        self.show_all()
+        
+        self.input_topics.connect('activate', self.__search_topic)
+        
+    def __on_icon_press(self, widget, pos, e):
+        if pos == 0: 
+            self.__search_topic(widget)
+        elif pos == 1:
+            widget.set_text('')
+            
+    def __search_topic(self, widget):
+        topic = widget.get_text()
+        self.mainwin.request_search_topic(topic)
+        widget.set_text('')
+        
+    def update_tweets(self, arr_tweets):
+        self.topics.update_tweets(arr_tweets)
+        
+    def update_user_pic(self, user, pic):
+        self.topics.update_user_pic(user, pic)
+        
+    def update_wrap(self, width):
+        self.topics.update_wrap(width)
+        
 class UserForm(gtk.VBox):
     def __init__(self, mainwin, label='', profile=None):
         gtk.VBox.__init__(self, False)
@@ -534,6 +650,7 @@ class UserForm(gtk.VBox):
         self.mainwin = mainwin
         self.user = None
         self.label = gtk.Label(label)
+        self.caption = label
         
         self.user_pic = gtk.Button()
         self.user_pic.set_size_request(60, 60)
@@ -641,6 +758,23 @@ class UserForm(gtk.VBox):
         self.url
         self.bio
         
+    def update_wrap(self, w):
+        pass
+        
+class Trending(gtk.VBox):
+    def __init__(self, mainwin, label=''):
+        gtk.VBox.__init__(self, False)
+        
+        self.caption = label
+        
+        currentlbl = gtk.Label('Current')
+        
+        currentbox = gtk.VBox(False)
+        
+    def update_wrap(self, w):
+        pass
+        
+'''
 class UpdateBox(gtk.Window):
     def __init__(self, parent):
         gtk.Window.__init__(self)
@@ -827,95 +961,38 @@ class UpdateBox(gtk.Window):
     def show_options(self, widget, event=None):
         self.url.set_text('')
         self.url.grab_focus()
-        
-class Home(gtk.VBox):
+'''
+
+# ------------------------------------------------------------
+# Objetos del Dock (Main Objects)
+# ------------------------------------------------------------
+class Home(Wrapper):
     def __init__(self, mainwin, mode='single'):
-        gtk.VBox.__init__(self)
+        Wrapper.__init__(self)
         
         self.timeline = TweetList(mainwin, 'Home')
         self.replies = TweetList(mainwin, 'Replies')
         self.direct = TweetList(mainwin, 'Direct')
+        
+        self._append_widget(self.timeline, WrapperAlign.left)
+        self._append_widget(self.replies, WrapperAlign.middle)
+        self._append_widget(self.direct, WrapperAlign.right)
+        
         self.change_mode(mode)
         
-    def change_mode(self, mode):
-        for child in self.get_children():
-            self.remove(child)
-        
-        if mode == 'wide':
-            wrapper = gtk.HBox(True)
-            
-            tbox = gtk.VBox(False)
-            tbox.pack_start(gtk.Label('Home'), False, False)
-            if self.timeline.get_parent(): 
-                self.timeline.reparent(tbox)
-            else:
-                tbox.pack_start(self.timeline, True, True)
-            wrapper.pack_start(tbox)
-            
-            rbox = gtk.VBox(False)
-            rbox.pack_start(gtk.Label('Replies'), False, False)
-            if self.replies.get_parent(): 
-                self.replies.reparent(rbox)
-            else:
-                rbox.pack_start(self.replies, True, True)
-            wrapper.pack_start(rbox)
-                
-            dbox = gtk.VBox(False)
-            dbox.pack_start(gtk.Label('Direct'), False, False)
-            if self.direct.get_parent(): 
-                self.direct.reparent(dbox)
-            else:
-                dbox.pack_start(self.direct, True, True)
-            wrapper.pack_start(dbox)
-        else:
-            wrapper = gtk.Notebook()
-            if self.timeline.get_parent(): 
-                self.timeline.reparent(wrapper)
-                wrapper.set_tab_label(self.timeline, self.timeline.label)
-            else:
-                wrapper.append_page(self.timeline, self.timeline.label)
-            if self.replies.get_parent(): 
-                self.replies.reparent(wrapper)
-                wrapper.set_tab_label(self.replies, self.replies.label)
-            else:
-                wrapper.append_page(self.replies, self.replies.label)
-            if self.direct.get_parent(): 
-                self.direct.reparent(wrapper)
-                wrapper.set_tab_label(self.direct, self.direct.label)
-            else:
-                wrapper.append_page(self.direct, self.direct.label)
-            
-            wrapper.set_tab_label_packing(self.timeline, True, True, gtk.PACK_START)
-            wrapper.set_tab_label_packing(self.replies, True, True, gtk.PACK_START)
-            wrapper.set_tab_label_packing(self.direct, True, True, gtk.PACK_START)
-            
-        self.add(wrapper)
-        self.show_all()
-        
-    def update_wrap(self, width, mode):
-        if mode == 'single':
-            w = width
-        else:
-            w = width / 3
-        
-        self.timeline.update_wrap(w)
-        self.replies.update_wrap(w)
-        self.direct.update_wrap(w)
-        
 class Favorites(Wrapper):
-    def __init__(self, mainwin):
+    def __init__(self, mainwin, mode='single'):
         Wrapper.__init__(self)
         
-        self.mainwin = mainwin
         self.favorites = TweetList(mainwin, 'Favorites')
-        wrapper = gtk.HBox(False)
-        wrapper.pack_start(self.favorites, True, True)
-        self.pack_start(gtk.Label('Favorites'), False, False)
-        self.pack_start(wrapper, True, True)
-        self.show_all()
+        self.lfy = TweetList(mainwin, 'List following you')
+        self.lyf = TweetList(mainwin, 'List you follow')
         
-    def update_wrap(self, width, mode):
-        self.favorites.update_wrap(width)
+        self._append_widget(self.favorites, WrapperAlign.left)
+        self._append_widget(self.lfy, WrapperAlign.middle)
+        self._append_widget(self.lyf, WrapperAlign.right)
+        
+        self.change_mode(mode)
     
 class Profile(Wrapper):
     def __init__(self, mainwin, mode='single'):
@@ -924,66 +1001,12 @@ class Profile(Wrapper):
         self.user_form = UserForm(mainwin, 'Profile')
         self.following = PeopleIcons(mainwin, 'Following')
         self.followers = PeopleIcons(mainwin, 'Followers')
+        
+        self._append_widget(self.user_form, WrapperAlign.left)
+        self._append_widget(self.following, WrapperAlign.middle)
+        self._append_widget(self.followers, WrapperAlign.right)
+        
         self.change_mode(mode)
-        
-    def change_mode(self, mode):
-        for child in self.get_children():
-            self.remove(child)
-        
-        if mode == 'wide':
-            wrapper = gtk.HBox(True)
-            
-            tbox = gtk.VBox(False)
-            tbox.pack_start(gtk.Label('Profile'), False, False)
-            if self.user_form.get_parent(): 
-                self.user_form.reparent(tbox)
-            else:
-                tbox.pack_start(self.user_form, True, True)
-            wrapper.pack_start(tbox)
-            
-            rbox = gtk.VBox(False)
-            rbox.pack_start(gtk.Label('Following'), False, False)
-            if self.following.get_parent(): 
-                self.following.reparent(rbox)
-            else:
-                rbox.pack_start(self.following, True, True)
-            wrapper.pack_start(rbox)
-                
-            dbox = gtk.VBox(False)
-            dbox.pack_start(gtk.Label('Followers'), False, False)
-            if self.followers.get_parent(): 
-                self.followers.reparent(dbox)
-            else:
-                dbox.pack_start(self.followers, True, True)
-            wrapper.pack_start(dbox)
-        else:
-            wrapper = gtk.Notebook()
-            if self.user_form.get_parent(): 
-                self.user_form.reparent(wrapper)
-                wrapper.set_tab_label(self.user_form, self.user_form.label)
-            else:
-                wrapper.append_page(self.user_form, self.user_form.label)
-            #bbbox = gtk.VBox(False)
-            #wrapper.append_page(bbbox, gtk.Label('Profile'))
-            
-            if self.following.get_parent(): 
-                self.following.reparent(wrapper)
-                wrapper.set_tab_label(self.following, self.following.label)
-            else:
-                wrapper.append_page(self.following, self.following.label)
-                
-            if self.followers.get_parent(): 
-                self.followers.reparent(wrapper)
-                wrapper.set_tab_label(self.followers, self.followers.label)
-            else:
-                wrapper.append_page(self.followers, self.followers.label)
-            
-            wrapper.set_tab_label_packing(self.user_form, True, True, gtk.PACK_START)
-            wrapper.set_tab_label_packing(self.following, True, True, gtk.PACK_START)
-            wrapper.set_tab_label_packing(self.followers, True, True, gtk.PACK_START)
-            
-        self.add(wrapper)
-        self.show_all()
         
     def set_user_profile(self, user_profile):
         self.user_form.update(user_profile)
@@ -994,15 +1017,21 @@ class Profile(Wrapper):
     def set_followers(self, arr_followers):
         self.followers.update_profiles(arr_followers)
         
-    def update_wrap(self, width, mode):
-        if mode == 'single':
-            w = width
-        else:
-            w = width / 3
+class Search(Wrapper):
+    def __init__(self, mainwin, mode='single'):
+        Wrapper.__init__(self)
         
-        self.following.update_wrap(w)
-        self.followers.update_wrap(w)
+        self.trending = Trending(mainwin, 'Trending')
+        self.topics = SearchList(mainwin, 'Search')
+        self.people = PeopleList(mainwin, 'People')
         
+        self._append_widget(self.trending, WrapperAlign.left)
+        self._append_widget(self.topics, WrapperAlign.middle)
+        self._append_widget(self.people, WrapperAlign.right)
+        
+        self.change_mode(mode)
+        
+'''
 class CairoWaiting(gtk.DrawingArea):
     def __init__(self, parent):
         gtk.DrawingArea.__init__(self)
@@ -1049,7 +1078,7 @@ class CairoWaiting(gtk.DrawingArea):
         #cr.text_path(self.error)
         #cr.stroke()
         
-class Dock(gtk.Alignment):
+class Dock333(gtk.Alignment):
     def __init__(self, parent, mode='single'):
         gtk.Alignment.__init__(self, 0.5, 0.5)
         
@@ -1080,6 +1109,7 @@ class Dock(gtk.Alignment):
         self.btn_home.connect('clicked', self.mainwin.show_home)
         self.btn_favs.connect('clicked', self.mainwin.show_favs)
         self.btn_update.connect('clicked', self.show_update)
+        self.btn_search.connect('clicked', self.mainwin.show_search)
         self.btn_profile.connect('clicked', self.mainwin.show_profile)
         self.btn_settings.connect('clicked', self.mainwin.switch_mode)
         
@@ -1116,7 +1146,8 @@ class Dock(gtk.Alignment):
             self.btn_search.set_image(util.load_image('search-single.png'))
             self.btn_profile.set_image(util.load_image('profile-single.png'))
             self.btn_settings.set_image(util.load_image('settings-single.png'))
-        
+'''
+
 class Main(BaseGui, gtk.Window):
     def __init__(self, controller):
         BaseGui.__init__(self, controller)
@@ -1138,6 +1169,7 @@ class Main(BaseGui, gtk.Window):
         self.home = Home(self, self.workspace)
         self.favs = Favorites(self)
         self.profile = Profile(self)
+        self.search = Search(self)
         self.contenido = self.home
         self.updatebox = UpdateBox(self)
         
@@ -1226,6 +1258,10 @@ class Main(BaseGui, gtk.Window):
         self.show_all()
         
         gobject.timeout_add(3*60*1000, self.download_timeline)
+        gobject.timeout_add(5*60*1000, self.download_rates)
+        gobject.timeout_add(10*60*1000, self.download_replies)
+        gobject.timeout_add(15*60*1000, self.download_directs)
+        
         
     def show_home(self, widget):
         self.contentbox.remove(self.contenido)
@@ -1242,6 +1278,11 @@ class Main(BaseGui, gtk.Window):
         self.contenido = self.profile
         self.contentbox.add(self.contenido)
     
+    def show_search(self, widget):
+        self.contentbox.remove(self.contenido)
+        self.contenido = self.search
+        self.contentbox.add(self.contenido)
+        
     def show_update_box(self, text='', id='', user=''):
         if self.updatebox.get_property('visible'): 
             self.updatebox.present()
@@ -1249,35 +1290,47 @@ class Main(BaseGui, gtk.Window):
         self.updatebox.show(text, id, user)
         
     def update_timeline(self, tweets):
+        if tweets is None: return
         log.debug(u'Actualizando el timeline')
         self.home.timeline.update_tweets(tweets)
         
     def update_replies(self, tweets):
+        if tweets is None: return
         log.debug(u'Actualizando las replies')
         self.home.replies.update_tweets(tweets)
         
     def update_favs(self, tweets):
+        if tweets is None: return
         log.debug(u'Actualizando favoritos')
         self.favs.favorites.update_tweets(tweets)
         
     def update_directs(self, sent, recv):
+        if recv is None: return
         log.debug(u'Actualizando mensajes directos')
         self.home.direct.update_tweets(sent)
         
     def update_user_profile(self, profile):
+        if profile is None: return
         log.debug(u'Actualizando perfil del usuario')
         self.profile.set_user_profile(profile)
         
     def update_following(self, people):
+        if people is None: return
         log.debug(u'Actualizando following')
         self.profile.set_following(people)
         
     def update_followers(self, people):
+        if people is None: return
         log.debug(u'Actualizando followers')
         self.profile.set_followers(people)
         
     def update_rate_limits(self, val):
+        if val is None: return
         self.statusbar.push(0, util.get_rates(val))
+        
+    def update_search_topics(self, val):
+        if val is None: return
+        self.search.topics.update_tweets(val['results'])
         
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)
@@ -1294,6 +1347,7 @@ class Main(BaseGui, gtk.Window):
         self.profile.following.update_user_pic(user, pic)
         self.profile.followers.update_user_pic(user, pic)
         self.profile.user_form.update_user_pic(user, pic)
+        self.search.topics.update_user_pic(user, pic)
         
     def switch_mode(self, widget=None):
         cur_x, cur_y = self.get_position()
@@ -1315,6 +1369,7 @@ class Main(BaseGui, gtk.Window):
         self.dock.change_mode(self.workspace)
         self.home.change_mode(self.workspace)
         self.favs.change_mode(self.workspace)
+        self.search.change_mode(self.workspace)
         self.profile.change_mode(self.workspace)
         self.show_all()
         

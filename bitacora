@@ -1,9 +1,24 @@
+Dic 20, 2009:
+    + Ahora la API devuelve None si ha ocurrido algún error para no disparar una excepción y cancelar la ejecución del programa
+    * Implementando nueva estructura de directorios y archivos para separar cada parte del UI
+    ---- commit ----
+    
+Dic 19, 2009:
+    + Corregida visualización de retweets en el timeline (ahora se hace como en la web oficial)
+    + Agregado soporte para el timestamp de las búsquedas en el TweetList
+    + Implementado soporte de error para las solicitudes de sevicios (y encolada de nuevo la solicitud)
+    + Terminado soporte para búsquedas en tiempo real
+    + Refactorizada clase Wrapper para que maneje el cambio de modo y el update wrap
+    * Implementando búsquedas de usuarios
+    
 Dic 18, 2009:
     + Agregado soporte para reconocimiento de urls en la vista
     + Agregado menú contextual para abrir las urls de un tweet
     + Agregado un mensaje de depuración en la API para intentar detectar errores en la carga de JSON
     + Implementado manejo de excepciones al pedir el rate limits y el perfil del usuario
     ---- commit ----
+    + Eliminada la descarga del rate limit luego de cada actualización
+    + Agregado un timer cada 5min para obtener el rate limits y evitar la sobrecarga
     
 Dic 17, 2009:
     + Corregido error con imagen del perfil de usuario al momento de cargar una existente

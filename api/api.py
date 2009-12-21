@@ -78,7 +78,7 @@ class TwitterCall(object):
             handle = urllib2.urlopen(req)
             if "json" == self.format:
                 x = handle.read()
-                print 'API call:', x
+                #print 'API call:', x
                 return json.loads(x)
             else:
                 return handle.read()
@@ -86,11 +86,16 @@ class TwitterCall(object):
             if (e.code == 304):
                 return []
             else:
-                raise TwitterError(
-                    "Twitter sent status %i for URL: %s.%s using parameters: (%s)\ndetails: %s" %(
-                        e.code, uri, self.format, encoded_kwargs, e.fp.read()))
+                #raise TwitterError(
+                #    "Twitter sent status %i for URL: %s.%s using parameters: (%s)\ndetails: %s" %(
+                #        e.code, uri, self.format, encoded_kwargs, e.fp.read()))
+                print "Twitter sent status %i for URL: %s.%s using parameters: (%s)\ndetails: %s" % (
+                    e.code, uri, self.format, encoded_kwargs, e.fp.read())
+                return None
         except urllib2.URLError, e:
-            raise TwitterError("Problem to connect to twitter.com. Check network status.\nDetails: %s" %(e))
+            #raise TwitterError("Problem to connect to twitter.com. Check network status.\nDetails: %s" %(e))
+            print "Problem to connect to twitter.com. Check network status.\nDetails: %s" %(e)
+            return None
             
 class Twitter(TwitterCall):
     """

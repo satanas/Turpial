@@ -7,6 +7,9 @@ Dic 21, 2009:
     + Implementada la búsqueda de usuarios usando el PeopleList
     + Agregados iconos para el elemento 'About' del Dock
     ---- commit ----
+    + Corregido error con el tree conflict a causa de la nueva estructura
+    + Agregado el diálogo de los créditos para turpial (about)
+    ---- commit ----
     
 Dic 20, 2009:
     + Ahora la API devuelve None si ha ocurrido algún error para no disparar una excepción y cancelar la ejecución del programa

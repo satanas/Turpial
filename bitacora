@@ -1,3 +1,7 @@
+Dic 22, 2009:
+    * Iniciado nuevo modelo para la API
+    ---- commit ----
+    
 Dic 21, 2009:
     + Implementada nueva estructura de directorios y archivos para separar cada parte del UI
     + Creado widget TrendingBox y Trending

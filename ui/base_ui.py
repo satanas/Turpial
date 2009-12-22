@@ -29,7 +29,6 @@ class BaseGui:
         self.resize_avatar(pic)
         self.__user_pics[user] = pic
         self.__queued_pics.remove(pic)
-        
         self.update_user_avatar(user, pic)
         
         
@@ -71,7 +70,6 @@ class BaseGui:
         
         fullname = os.path.join('/tmp', pic)
         if os.path.isfile(fullname):
-            #log.debug('Encontrada imagen de usuario %s' % user)
             self.__user_pics[user] = pic
             return self.__user_pics[user]
         if user in self.__user_pics: 

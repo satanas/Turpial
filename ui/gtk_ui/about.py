@@ -10,13 +10,16 @@ import gtk
 from ui import util as util
 
 class About:
-    def __init__(self):
+    def __init__(self, parent=None):
         about=gtk.AboutDialog()
+        about.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         about.set_logo(util.load_image('turpial_icon.png', True))
         about.set_name('Turpial')
         about.set_version('0.8')
         about.set_copyright('Copyleft (C) 2009 Wil Alvarez - Eleazar Meza')
         about.set_comments('Cliente de Twitter multi-interfaz escrito en Python')
+        about.set_transient_for(parent)
+        about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
         try:
             lic = file('COPYING', 'r')

@@ -35,9 +35,21 @@ class TweetList(gtk.ScrolledWindow):
         self.set_shadow_type(gtk.SHADOW_IN)
         self.add(self.list)
         
-        # avatar, username, datetime, client, pango_message, real_message, id, favorited, in_reply_to_id, in_reply_to_user, retweet_by
-        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str, str, str, 
-            bool, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT)
+        # avatar, username, datetime, client, pango_message, real_message, id, favorited, in_reply_to_id, in_reply_to_user, retweet_by, operation
+        self.model = gtk.ListStore(
+            gtk.gdk.Pixbuf, # avatar
+            str, #username
+            str, #datetime
+            str, #client
+            str, #pango_message
+            str, #real_message
+            str, # id
+            bool, #favorited?
+            gobject.TYPE_PYOBJECT, # in_reply_to_id
+            gobject.TYPE_PYOBJECT, # in_reply_to_user
+            gobject.TYPE_PYOBJECT, # retweeted_by
+            gobject.TYPE_PYOBJECT # doing what operation?
+        )
         self.list.set_model(self.model)
         cell_avatar = gtk.CellRendererPixbuf()
         cell_avatar.set_property('yalign', 0)
@@ -95,43 +107,59 @@ class TweetList(gtk.ScrolledWindow):
             msg = model.get_value(row, 5)
             id = model.get_value(row, 6)
             fav = model.get_value(row, 7)
+            op = model.get_value(row, 11)
             
-            re = "@%s " % user
-            rt = "RT @%s %s" % (user, msg)
-            
-            profile = self.mainwin.request_user_profile()
-            
-            reply = gtk.MenuItem('Reply')
-            retweet_old = gtk.MenuItem('Retweet')
-            retweet = gtk.MenuItem('Retweet')
-            save = gtk.MenuItem('+ Fav')
-            unsave = gtk.MenuItem('- Fav')
-            delete = gtk.MenuItem('Delete')
-            open = gtk.MenuItem('Open URL')
-            search = gtk.MenuItem('Search')
-            
-            urls = util.detect_urls(msg)
-            open_menu = gtk.Menu()
-            for u in urls:
-                urlmenu = gtk.MenuItem(u)
-                urlmenu.connect('activate', self.__open_url, u)
-                open_menu.append(urlmenu)
-            open.set_submenu(open_menu)
+            deleting = gtk.MenuItem('Deleting...')
+            deleting.set_sensitive(False)
+            faving = gtk.MenuItem('Setting Fav...')
+            faving.set_sensitive(False)
+            unfaving = gtk.MenuItem('Unsetting Fav...')
+            unfaving.set_sensitive(False)
             
             menu = gtk.Menu()
-            if profile['screen_name'] != user:
-                menu.append(reply)
-                menu.append(retweet_old)
-                #menu.append(retweet)
+            if op == 'del': 
+                menu.append(deleting)
+            elif op == 'fav':
+                menu.append(faving)
+            elif op == 'unfav':
+                menu.append(unfaving)
             else:
-                menu.append(delete)
-            
-            if fav:
-                menu.append(unsave)
-            else:
-                menu.append(save)
-            if len(urls) > 0: menu.append(open)
-            #menu.append(search)
+                re = "@%s " % user
+                rt = "RT @%s %s" % (user, msg)
+                
+                profile = self.mainwin.request_user_profile()
+                
+                reply = gtk.MenuItem('Reply')
+                retweet_old = gtk.MenuItem('Retweet')
+                retweet = gtk.MenuItem('Retweet')
+                save = gtk.MenuItem('+ Fav')
+                unsave = gtk.MenuItem('- Fav')
+                delete = gtk.MenuItem('Delete')
+                open = gtk.MenuItem('Open URL')
+                search = gtk.MenuItem('Search')
+                
+                urls = util.detect_urls(msg)
+                open_menu = gtk.Menu()
+                for u in urls:
+                    urlmenu = gtk.MenuItem(u)
+                    urlmenu.connect('activate', self.__open_url, u)
+                    open_menu.append(urlmenu)
+                open.set_submenu(open_menu)
+                
+                
+                if profile['screen_name'] != user:
+                    menu.append(reply)
+                    menu.append(retweet_old)
+                    #menu.append(retweet)
+                else:
+                    menu.append(delete)
+                
+                if fav:
+                    menu.append(unsave)
+                else:
+                    menu.append(save)
+                if len(urls) > 0: menu.append(open)
+                #menu.append(search)
             
             reply.connect('activate', self.__show_update_box, re, id, user)
             retweet.connect('activate', self.__retweet, id)
@@ -154,14 +182,33 @@ class TweetList(gtk.ScrolledWindow):
         self.mainwin.request_retweet(id)
         
     def __delete(self, widget, id):
+        self.model.foreach(self.__deleting, id)
         self.mainwin.request_destroy_status(id)
     
     def __fav(self, widget, fav, id):
+        self.model.foreach(self.__favoriting, fav, id)
         if fav:
             self.mainwin.request_fav(id)
         else:
             self.mainwin.request_unfav(id)
     
+    def __favoriting(self, model, path, iter, fav, tweet_id):
+        id = model.get_value(iter, 6)
+        if id == tweet_id:
+            if fav:
+                model.set_value(iter, 11, 'fav')
+            else:
+                model.set_value(iter, 11, 'unfav')
+            return True
+        return False
+        
+    def __deleting(self, model, path, iter, tweet_id):
+        id = model.get_value(iter, 6)
+        if id == tweet_id:
+            model.set_value(iter, 11, 'del')
+            return True
+        return False
+        
     def update_wrap(self, val):
         self.cell_tweet.set_property('wrap-width', val - 80)
         iter = self.model.get_iter_first()
@@ -172,8 +219,6 @@ class TweetList(gtk.ScrolledWindow):
             iter = self.model.iter_next(iter)
         
     def add_tweet(self, tweet):
-        #print tweet
-        #print
         retweet_by = None
         if tweet.has_key('retweeted_status'):
             retweet_by = tweet['user']['screen_name']
@@ -224,7 +269,7 @@ class TweetList(gtk.ScrolledWindow):
         
         pango_twt = message + interline + footer
         self.model.append([pix, username, datetime, client, pango_twt, tweet['text'],
-            tweet['id'], fav, in_reply_to_id, in_reply_to_user, retweet_by])
+            tweet['id'], fav, in_reply_to_id, in_reply_to_user, retweet_by, None])
         del pix
         
     def update_user_pic(self, user, pic):

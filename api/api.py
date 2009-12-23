@@ -34,7 +34,6 @@ class TwitterCall(object):
         self.uri = uri
         self.agent = agent
     def __getattr__(self, k):
-        print k
         try:
             return object.__getattr__(self, k)
         except AttributeError:

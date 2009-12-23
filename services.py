@@ -25,7 +25,7 @@ class HTTPServices(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.setDaemon(False)
-        self.log = logging.getLogger('HTTP-Services')
+        self.log = logging.getLogger('Services')
         self.queue = Queue.Queue()
         self.exit = False
         self.log.debug('Iniciado')

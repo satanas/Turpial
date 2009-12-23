@@ -1,6 +1,12 @@
 Dic 22, 2009:
     * Iniciado nuevo modelo para la API
     ---- commit ----
+    + Retocada vista de inicio de sesión y agregado el waiting cairo
+    + Diseñada nueva API para el modelo
+    + Modificado el loginlabel para agregar un timer y una función de desactivación
+    + Implementada la API nueva para timeline, replies, direct, tweet y destroy
+    + Ahora el popup de tweetlist solo muestra la opción 'deleting.../faving...' cuando una operación está en curso
+    ---- commit ----
     
 Dic 21, 2009:
     + Implementada nueva estructura de directorios y archivos para separar cada parte del UI

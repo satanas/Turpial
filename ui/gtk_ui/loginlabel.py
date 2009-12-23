@@ -7,6 +7,7 @@
 
 import gtk
 import cairo
+import gobject
 
 class LoginLabel(gtk.DrawingArea):
     def __init__(self, parent):
@@ -14,12 +15,23 @@ class LoginLabel(gtk.DrawingArea):
         self.par = parent
         self.error = None
         self.active = False
+        self.timer = None
         self.connect('expose-event', self.expose)
         self.set_size_request(30, 25)
     
+    def deactivate(self):
+        #if self.timer:
+        #    gobject.source_remove(self.timer)
+        self.error = None
+        self.active = False
+        self.queue_draw()
+        
     def set_error(self, error):
         self.error = error
         self.active = True
+        #if self.timer:
+        #    gobject.source_remove(self.timer)
+        #self.timer = gobject.timeout_add(5000, self.deactivate)
         self.queue_draw()
         
     def expose(self, widget, event):

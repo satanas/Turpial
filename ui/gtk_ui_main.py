@@ -300,9 +300,8 @@ class Main(BaseGui, gtk.Window):
         
     def quit(self, widget):
         self.hide()
-        gtk.main_quit()
         self.request_signout()
-        exit(0)
+        gtk.main_quit()
         
     def main_loop(self):
         gtk.main()
@@ -311,13 +310,14 @@ class Main(BaseGui, gtk.Window):
         self.mode = 1
         if self.vbox is not None: self.remove(self.vbox)
         
-        avatar = util.load_image('logo.png')
+        avatar = util.load_image('logo2.png')
         self.message = LoginLabel(self)
         
         lbl_user = gtk.Label()
-        lbl_user.set_justify(gtk.JUSTIFY_LEFT)
+        #lbl_user.set_justify(gtk.JUSTIFY_LEFT)
         lbl_user.set_use_markup(True)
-        lbl_user.set_markup('<span size="small">Username</span>')
+        lbl_user.set_markup('<span size="small">Username and Password</span>')
+        lbl_user.set_alignment(0, 0.5)
         
         lbl_pass = gtk.Label()
         lbl_pass.set_justify(gtk.JUSTIFY_LEFT)
@@ -330,14 +330,22 @@ class Main(BaseGui, gtk.Window):
         
         self.btn_signup = gtk.Button('Conectar')
         
+        self.waiting = CairoWaiting(self)
+        align = gtk.Alignment(xalign=1, yalign=0.5)
+        align.add(self.waiting)
+        
+        hbox = gtk.HBox(False)
+        hbox.pack_start(lbl_user, False, False, 2)
+        hbox.pack_start(align, True, True, 2)
+        
         table = gtk.Table(8,1,False)
-        table.attach(avatar,0,1,0,1,gtk.FILL,gtk.FILL, 20, 10)
+        table.attach(avatar,0,1,0,1,gtk.FILL,gtk.FILL, 10, 50)
         table.attach(self.message,0,1,1,2,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 3)
-        table.attach(lbl_user,0,1,2,3,gtk.EXPAND,gtk.FILL,0,0)
-        table.attach(self.username,0,1,3,4,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 0)
-        table.attach(lbl_pass,0,1,4,5,gtk.EXPAND,gtk.FILL, 0, 5)
-        table.attach(self.password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 0)
-        table.attach(self.btn_signup,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 30)
+        table.attach(hbox,0,1,2,3,gtk.EXPAND|gtk.FILL,gtk.FILL,50,0)
+        table.attach(self.username,0,1,3,4,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
+        #table.attach(lbl_pass,0,1,4,5,gtk.EXPAND,gtk.FILL, 0, 5)
+        table.attach(self.password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
+        table.attach(self.btn_signup,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 10)
         
         self.vbox = gtk.VBox(False, 5)
         self.vbox.pack_start(table, False, False, 2)
@@ -349,6 +357,8 @@ class Main(BaseGui, gtk.Window):
         self.password.connect('activate', self.signin, self.username, self.password)
         
     def signin(self, widget, username, password):
+        self.message.deactivate()
+        self.waiting.start()
         self.btn_signup.set_sensitive(False)
         self.username.set_sensitive(False)
         self.password.set_sensitive(False)
@@ -357,6 +367,7 @@ class Main(BaseGui, gtk.Window):
     def cancel_login(self, error):
         #e = '<span background="#C00" foreground="#FFF" size="small">%s</span>' % error
         self.message.set_error(error)
+        self.waiting.stop()
         self.btn_signup.set_sensitive(True)
         self.username.set_sensitive(True)
         self.password.set_sensitive(True)
@@ -422,15 +433,15 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando las replies')
         self.home.replies.update_tweets(tweets)
         
-    def update_favs(self, tweets):
+    def update_favorites(self, tweets):
         if tweets is None: return
         log.debug(u'Actualizando favoritos')
         self.favs.favorites.update_tweets(tweets)
         
-    def update_directs(self, sent, recv):
+    def update_directs(self, recv):
         if recv is None: return
         log.debug(u'Actualizando mensajes directos')
-        self.home.direct.update_tweets(sent)
+        self.home.direct.update_tweets(recv)
         
     def update_user_profile(self, profile):
         if profile is None: return

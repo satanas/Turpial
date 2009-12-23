@@ -137,13 +137,16 @@ class BaseGui:
     # Estos métodos deben ser llamados por la clase hija cada cierto tiempo
     
     def download_timeline(self):
-        return self.__controller._update_timeline()
+        self.__controller._update_timeline()
+        return True
         
     def download_replies(self):
         self.__controller._update_replies()
+        return True
         
     def download_directs(self):
         self.__controller._update_directs()
+        return True
         
     def download_favorites(self):
         self.__controller._update_favorites()
@@ -185,7 +188,7 @@ class BaseGui:
     def update_directs(self, directs):
         raise NotImplementedError
         
-    def update_favs(self, favs):
+    def update_favorites(self, favs):
         raise NotImplementedError
         
     def update_rate_limits(self, rates):

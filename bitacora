@@ -1,3 +1,20 @@
+Dic 24, 2009:
+    + Corregido el bug de las entidades HTML en los tweets
+    + Corregido el bug al cerrar la sesión (se agregó un argumento vacío al POST)
+    + Corregidos errores menores al borrar un tweet
+    + Probado con éxito el borrado (y bloqueo de las opciones) de un tweet
+    + Agregada opción al tweetlist para que no muestre menú contextual
+    + Corregido error al cerrar la sesión sin estar autenticado
+    + Agregados a la API los métodos necesarios para manejar los tweets favoritos
+    + Validado que los valores de retorno no sean nulos antes de asignar las variables generales en la API
+    + Creados métodos en las vistas para marcar/desmarcar tweets favoritos
+    + Implementado y probado con éxito la funcionalidad de marcar/desmarcar tweets como favorito
+    ---- commit ----
+    
+Dic 23, 2009:
+    + Resuelto el bug del segmentation fault al actualizar el tweetlist utilizando el threads_enter/threads_leave de gtk
+    + Corregido error en download_rates que evitaba la ejecución continua de la función
+    
 Dic 22, 2009:
     * Iniciado nuevo modelo para la API
     ---- commit ----

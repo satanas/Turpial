@@ -148,6 +148,10 @@ class BaseGui:
         self.__controller._update_directs()
         return True
         
+    def download_rates(self):
+        self.__controller._update_rate_limits()
+        return True
+        
     def download_favorites(self):
         self.__controller._update_favorites()
         
@@ -156,9 +160,6 @@ class BaseGui:
         
     def download_followers(self):
         self.__controller._update_followers()
-        
-    def download_rates(self):
-        self.__controller._update_rate_limits()
         
     # ------------------------------------------------------------
     # Methods to be overwritten
@@ -210,5 +211,8 @@ class BaseGui:
         raise NotImplementedError
         
     def update_search_topics(self, topics):
+        raise NotImplementedError
+        
+    def tweet_changed(self, timeline, replies, favs):
         raise NotImplementedError
         

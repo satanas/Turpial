@@ -37,8 +37,9 @@ class TurpialAPI(threading.Thread):
         self.username = None
         self.password = None
         self.tweets = []
-        self.muted_users = []
+        self.replies = []
         self.favorites = []
+        self.muted_users = []
         
         self.log.debug('Iniciado')
     
@@ -56,29 +57,68 @@ class TurpialAPI(threading.Thread):
                     break
             if item: self.tweets.remove(item)
             
+    def __handle_muted(self):
         if len(self.muted_users) == 0: return self.tweets
         
         tweets = []
         for twt in self.tweets:
             if twt['user']['screen_name'] not in self.muted_users:
                tweets.append(twt)
+               
         return tweets
+        
+    def __handle_favorites(self, tweet, fav):
+        if fav:
+            tweet['favorited'] = True
+            self.favorites.insert(0, tweet)
+        else:
+            item = None
+            for f in self.favorites:
+                print tweet['id'], f['id']
+                if tweet['id'] == f['id']:
+                    item = f
+                    break
+            if item: self.favorites.remove(item)
+        
+        index = None
+        for twt in self.tweets:
+            print tweet['id'], twt['id']
+            if tweet['id'] == twt['id']:
+                index = self.tweets.index(twt)
+                break
+        if index: 
+            self.tweets[index]['favorited'] = fav
+            print self.tweets[index]
+        
+        index = None
+        for twt in self.replies:
+            print tweet['id'], twt['id']
+            if tweet['id'] == twt['id']:
+                index = self.replies.index(twt)
+                break
+        if index: 
+            self.replies[index]['favorited'] = fav
+            print self.replies[index]
         
     def auth(self, username, password, callback):
         self.username = username
         self.password = password
         self.__register({'uri': 'http://twitter.com/account/verify_credentials', 'login':True}, callback)
         
+    def oauth(self):
+        pass
+        
     def update_rate_limits(self, callback):
         self.__register({'uri': 'http://twitter.com/account/rate_limit_status'}, callback)
         
-    def update_timeline(self, callback):
+    def update_timeline(self, callback, count=20):
         self.log.debug('Descargando Timeline')
-        self.__register({'uri': 'http://api.twitter.com/1/statuses/home_timeline', 'timeline': True}, callback)
+        args = {'count': count}
+        self.__register({'uri': 'http://api.twitter.com/1/statuses/home_timeline', 'args': args, 'timeline': True}, callback)
         
     def update_replies(self, callback):
         self.log.debug('Descargando Replies')
-        self.__register({'uri': 'http://twitter.com/statuses/mentions'}, callback)
+        self.__register({'uri': 'http://twitter.com/statuses/mentions', 'replies': True}, callback)
         
     def update_directs(self, callback):
         self.log.debug('Descargando Directs')
@@ -86,7 +126,7 @@ class TurpialAPI(threading.Thread):
         
     def update_favorites(self, callback):
         self.log.debug('Descargando Favorites')
-        self.__register({'uri': 'http://twitter.com/favorites'}, callback)
+        self.__register({'uri': 'http://twitter.com/favorites', 'favorites': True}, callback)
         
     def update_status(self, text, in_reply_id, callback):
         if in_reply_id:
@@ -105,8 +145,16 @@ class TurpialAPI(threading.Thread):
         args = {'id': tweet_id}
         self.__register({'uri': 'http://twitter.com/statuses/retweet', 'args': args}, callback)
         
+    def set_favorite(self, tweet_id, callback):
+        self.log.debug('Marcando como favorito tweet: %s' % tweet_id)
+        self.__register({'uri': 'http://twitter.com/favorites/create', 'id':tweet_id, 'fav': True, 'args': ''}, callback)
+        
+    def unset_favorite(self, tweet_id, callback):
+        self.log.debug('Desmarcando como favorito tweet: %s' % tweet_id)
+        self.__register({'uri': 'http://twitter.com/favorites/destroy', 'id':tweet_id, 'fav': False, 'args': ''}, callback)
+    
     def end_session(self):
-        self.__register({'uri': 'http://twitter.com/account/end_session', 'exit': True}, None)
+        self.__register({'uri': 'http://twitter.com/account/end_session', 'args': '', 'exit': True}, None)
         
     def quit(self):
         self.exit = True
@@ -121,17 +169,20 @@ class TurpialAPI(threading.Thread):
             (args, callback) = req
             
             rtn = None
-            method = "GET"
-            uri = args['uri']
-            
-            for action in POST_ACTIONS:
-                if uri.endswith(action): method = "POST"
-            
-            uri = "%s.%s" % (uri, self.format)
-            
             argStr = ""
             argData = None
             encoded_args = None
+            method = "GET"
+            uri = args['uri']
+                
+            for action in POST_ACTIONS:
+                if uri.endswith(action): method = "POST"
+            
+            if args.has_key('id'):
+                uri = "%s/%s" % (uri, args['id'])
+                
+            uri = "%s.%s" % (uri, self.format)
+            
             if args.has_key('args'):
                 encoded_args = urlencode(args['args'])
             
@@ -162,15 +213,26 @@ class TurpialAPI(threading.Thread):
                     rtn = {'error': 'Can\'t connect to twitter.com'}
             
             if args.has_key('timeline'):
-                self.tweets = rtn
+                if rtn: self.tweets = rtn
+            elif args.has_key('replies'):
+                if rtn: self.replies = rtn
+            elif args.has_key('favorites'):
+                if rtn: self.favorites = rtn
                 
             if args.has_key('tweet'):
-                rtn = self.__handle_tweets(rtn, args)
+                self.__handle_tweets(rtn, args)
+                rtn = self.__handle_muted()
             
+            if args.has_key('fav'):
+                self.__handle_favorites(rtn, args['fav'])
+                rtn = self.__handle_muted()
+                callback(rtn, self.replies, self.favorites)
+                continue
+                
             if args.has_key('exit'):
                 self.exit = True
             else:
-                callback(rtn)
+                if rtn: callback(rtn)
             
         self.log.debug('Terminado')
         return

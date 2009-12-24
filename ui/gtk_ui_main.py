@@ -198,7 +198,7 @@ class Home(Wrapper):
         
         self.timeline = TweetList(mainwin, 'Home')
         self.replies = TweetList(mainwin, 'Replies')
-        self.direct = TweetList(mainwin, 'Direct')
+        self.direct = TweetList(mainwin, 'Direct', False)
         
         self._append_widget(self.timeline, WrapperAlign.left)
         self._append_widget(self.replies, WrapperAlign.middle)
@@ -424,53 +424,49 @@ class Main(BaseGui, gtk.Window):
         self.updatebox.show(text, id, user)
         
     def update_timeline(self, tweets):
-        if tweets is None: return
         log.debug(u'Actualizando el timeline')
+        gtk.gdk.threads_enter()
         self.home.timeline.update_tweets(tweets)
+        gtk.gdk.threads_leave()
         
     def update_replies(self, tweets):
-        if tweets is None: return
         log.debug(u'Actualizando las replies')
+        gtk.gdk.threads_enter()
         self.home.replies.update_tweets(tweets)
+        gtk.gdk.threads_leave()
         
     def update_favorites(self, tweets):
-        if tweets is None: return
         log.debug(u'Actualizando favoritos')
         self.favs.favorites.update_tweets(tweets)
         
     def update_directs(self, recv):
-        if recv is None: return
         log.debug(u'Actualizando mensajes directos')
+        gtk.gdk.threads_enter()
         self.home.direct.update_tweets(recv)
+        gtk.gdk.threads_leave()
         
     def update_user_profile(self, profile):
-        if profile is None: return
         log.debug(u'Actualizando perfil del usuario')
         self.profile.set_user_profile(profile)
         
     def update_following(self, people):
-        if people is None: return
         log.debug(u'Actualizando following')
         self.profile.set_following(people)
         
     def update_followers(self, people):
-        if people is None: return
         log.debug(u'Actualizando followers')
         self.profile.set_followers(people)
         
     def update_rate_limits(self, val):
-        if val is None: return
         self.statusbar.push(0, util.get_rates(val))
         
     def update_search_topics(self, val):
-        if val is None: return
         self.search.topics.update_tweets(val['results'])
         self.show_search(self)
         if self.workspace != 'wide':
             self.contenido.wrapper.set_current_page(1)
             
     def update_search_people(self, val):
-        if val is None: return
         self.search.people.update_profiles(val)
         #self.show_search(self)
         #if self.workspace != 'wide':
@@ -496,6 +492,29 @@ class Main(BaseGui, gtk.Window):
         self.profile.user_form.update_user_pic(user, pic)
         self.search.topics.update_user_pic(user, pic)
         self.search.people.update_user_pic(user, pic)
+        
+    def tweet_changed(self, timeline, replies, favs):
+        log.debug(u'Tweet modificado')
+        gtk.gdk.threads_enter()
+        log.debug(u'--Actualizando el timeline')
+        self.home.timeline.update_tweets(timeline)
+        log.debug(u'--Actualizando las replies')
+        self.home.replies.update_tweets(replies)
+        log.debug(u'--Actualizando favoritos')
+        self.favs.favorites.update_tweets(favs)
+        gtk.gdk.threads_leave()
+        
+    def tweet_fav(self, id, fav):
+        if fav:
+            self.home.timeline.do_mark(id)
+            self.home.replies.do_mark(id)
+            self.favs.favorites.do_mark( id)
+            self.request_fav(id)
+        else:
+            self.home.timeline.do_unmark(id)
+            self.home.replies.do_unmark(id)
+            self.favs.favorites.do_unmark(id)
+            self.request_unfav(id)
         
     def switch_mode(self, widget=None):
         cur_x, cur_y = self.get_position()

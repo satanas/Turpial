@@ -10,13 +10,14 @@ import pango
 import logging
 import gobject
 import webbrowser
+import xml.sax.saxutils as saxutils
 
 from ui import util as util
 
 log = logging.getLogger('Gtk:TweetList')
 
 class TweetList(gtk.ScrolledWindow):
-    def __init__(self, mainwin, label=''):
+    def __init__(self, mainwin, label='', menu=True):
         gtk.ScrolledWindow.__init__(self)
         
         self.mainwin = mainwin
@@ -35,7 +36,6 @@ class TweetList(gtk.ScrolledWindow):
         self.set_shadow_type(gtk.SHADOW_IN)
         self.add(self.list)
         
-        # avatar, username, datetime, client, pango_message, real_message, id, favorited, in_reply_to_id, in_reply_to_user, retweet_by, operation
         self.model = gtk.ListStore(
             gtk.gdk.Pixbuf, # avatar
             str, #username
@@ -48,7 +48,8 @@ class TweetList(gtk.ScrolledWindow):
             gobject.TYPE_PYOBJECT, # in_reply_to_id
             gobject.TYPE_PYOBJECT, # in_reply_to_user
             gobject.TYPE_PYOBJECT, # retweeted_by
-            gobject.TYPE_PYOBJECT # doing what operation?
+            gobject.TYPE_PYOBJECT, # doing what operation?
+            bool, #direct message?
         )
         self.list.set_model(self.model)
         cell_avatar = gtk.CellRendererPixbuf()
@@ -67,7 +68,8 @@ class TweetList(gtk.ScrolledWindow):
         column.set_attributes(cell_avatar, pixbuf=0)
         self.list.append_column(column)
         
-        self.list.connect("button-release-event", self.__popup_menu)
+        if menu:
+            self.list.connect("button-release-event", self.__popup_menu)
         
     def __highlight_hashtags(self, text):
         hashtags = util.detect_hashtags(text)
@@ -146,7 +148,6 @@ class TweetList(gtk.ScrolledWindow):
                     open_menu.append(urlmenu)
                 open.set_submenu(open_menu)
                 
-                
                 if profile['screen_name'] != user:
                     menu.append(reply)
                     menu.append(retweet_old)
@@ -158,15 +159,16 @@ class TweetList(gtk.ScrolledWindow):
                     menu.append(unsave)
                 else:
                     menu.append(save)
+                
                 if len(urls) > 0: menu.append(open)
                 #menu.append(search)
             
-            reply.connect('activate', self.__show_update_box, re, id, user)
-            retweet.connect('activate', self.__retweet, id)
-            retweet_old.connect('activate', self.__show_update_box, rt)
-            delete.connect('activate', self.__delete, id)
-            save.connect('activate', self.__fav, True, id)
-            unsave.connect('activate', self.__fav, False, id)
+                reply.connect('activate', self.__show_update_box, re, id, user)
+                retweet_old.connect('activate', self.__show_update_box, rt)
+                retweet.connect('activate', self.__retweet, id)
+                save.connect('activate', self.__fav, True, id)
+                unsave.connect('activate', self.__fav, False, id)
+                delete.connect('activate', self.__delete, id)
             
             menu.show_all()
             menu.popup(None, None, None, event.button ,event.time)
@@ -186,19 +188,19 @@ class TweetList(gtk.ScrolledWindow):
         self.mainwin.request_destroy_status(id)
     
     def __fav(self, widget, fav, id):
-        self.model.foreach(self.__favoriting, fav, id)
-        if fav:
-            self.mainwin.request_fav(id)
-        else:
-            self.mainwin.request_unfav(id)
+        self.mainwin.tweet_fav(id, fav)
     
-    def __favoriting(self, model, path, iter, fav, tweet_id):
+    def __fav_marking(self, model, path, iter, tweet_id):
         id = model.get_value(iter, 6)
         if id == tweet_id:
-            if fav:
-                model.set_value(iter, 11, 'fav')
-            else:
-                model.set_value(iter, 11, 'unfav')
+            model.set_value(iter, 11, 'fav')
+            return True
+        return False
+        
+    def __fav_unmarking(self, model, path, iter, tweet_id):
+        id = model.get_value(iter, 6)
+        if id == tweet_id:
+            model.set_value(iter, 11, 'unfav')
             return True
         return False
         
@@ -208,6 +210,12 @@ class TweetList(gtk.ScrolledWindow):
             model.set_value(iter, 11, 'del')
             return True
         return False
+        
+    def do_mark(self, id):
+        self.model.foreach(self.__fav_marking, id)
+        
+    def do_unmark(self, id):
+        self.model.foreach(self.__fav_marking, id)
         
     def update_wrap(self, val):
         self.cell_tweet.set_property('wrap-width', val - 80)
@@ -219,6 +227,7 @@ class TweetList(gtk.ScrolledWindow):
             iter = self.model.iter_next(iter)
         
     def add_tweet(self, tweet):
+        direct = False
         retweet_by = None
         if tweet.has_key('retweeted_status'):
             retweet_by = tweet['user']['screen_name']
@@ -228,6 +237,7 @@ class TweetList(gtk.ScrolledWindow):
             username = tweet['user']['screen_name']
             avatar = tweet['user']['profile_image_url']
         elif tweet.has_key('sender'):
+            direct = True
             username = tweet['sender']['screen_name']
             avatar = tweet['sender']['profile_image_url']
         elif tweet.has_key('from_user'):
@@ -239,8 +249,8 @@ class TweetList(gtk.ScrolledWindow):
         
         pix = self.mainwin.get_user_avatar(username, avatar)
         #print 'message', tweet['text']
-        message = gobject.markup_escape_text(tweet['text'])
-        #message = tweet['text']
+        message = gobject.markup_escape_text(saxutils.unescape(tweet['text']))
+        #print 'pango_message', message
         message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)
         message = self.__highlight_mentions(message)
@@ -269,7 +279,7 @@ class TweetList(gtk.ScrolledWindow):
         
         pango_twt = message + interline + footer
         self.model.append([pix, username, datetime, client, pango_twt, tweet['text'],
-            tweet['id'], fav, in_reply_to_id, in_reply_to_user, retweet_by, None])
+            tweet['id'], fav, in_reply_to_id, in_reply_to_user, retweet_by, None, direct])
         del pix
         
     def update_user_pic(self, user, pic):

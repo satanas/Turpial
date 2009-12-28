@@ -25,16 +25,19 @@ class Notification:
             import pynotify
             self.integrated = True
         except:
-            print 'holy shit'
             log.debug("pynotify is not installed")
             self.integrated = False
         
         if self.active:
             if pynotify.init("Turpial"):
                 if not icon:
-                    icon = util.load_image('turpial_icon.png', True)
+                    icon = util.load_image('turpial_icon_48.png', True)
                 else:
                     icon = util.load_image(icon, True)
                 n = pynotify.Notification(title, message)
                 n.set_icon_from_pixbuf(icon)
                 n.show()
+                
+    def new_tweets_home(self, count):
+        if count > 0:
+            self.popup('Actualizado timeline', '%i tweets nuevos' % count)

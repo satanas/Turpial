@@ -64,6 +64,7 @@ class SearchTweets(gtk.VBox):
     def update_wrap(self, width):
         self.topics.update_wrap(width)
 
+'''
 class SearchPeople(gtk.VBox):
     def __init__(self, mainwin, label=''):
         gtk.VBox.__init__(self, False)
@@ -189,7 +190,7 @@ class TrendingBox(gtk.VBox):
             for i in range(9):
                 topic = arr[i]['name']
                 self.trends[i].set_label(topic)
-        
+'''
 # ------------------------------------------------------------
 # Objetos del Dock (Main Objects)
 # ------------------------------------------------------------
@@ -207,70 +208,23 @@ class Home(Wrapper):
         
         self.change_mode(mode)
         
-class Favorites(Wrapper):
-    def __init__(self, mainwin, mode='single'):
-        Wrapper.__init__(self)
-        
-        self.favorites = TweetList(mainwin, 'Favorites')
-        self.lfy = TweetList(mainwin, 'List following you')
-        self.lyf = TweetList(mainwin, 'List you follow')
-        
-        self._append_widget(self.favorites, WrapperAlign.left)
-        self._append_widget(self.lfy, WrapperAlign.middle)
-        self._append_widget(self.lyf, WrapperAlign.right)
-        
-        self.change_mode(mode)
-'''
-class Retweets(Wrapper):
-    def __init__(self, mainwin, mode='single'):
-        Wrapper.__init__(self)
-        
-        self.by_me = TweetList(mainwin, 'Retweets by me')
-        self.to_me = TweetList(mainwin, 'Retweets to me')
-        self.of_me = TweetList(mainwin, 'Retweets of me')
-        
-        self._append_widget(self.by_me, WrapperAlign.left)
-        self._append_widget(self.to_me, WrapperAlign.middle)
-        self._append_widget(self.of_me, WrapperAlign.right)
-        
-        self.change_mode(mode)
-'''
 class Profile(Wrapper):
     def __init__(self, mainwin, mode='single'):
         Wrapper.__init__(self)
         
+        self.favorites = TweetList(mainwin, 'Favorites')
         self.user_form = UserForm(mainwin, 'Profile')
-        self.following = PeopleList(mainwin, 'Following')
-        self.followers = PeopleIcons(mainwin, 'Followers')
+        self.topics = SearchTweets(mainwin, 'Topics')
         
-        self._append_widget(self.user_form, WrapperAlign.left)
-        self._append_widget(self.following, WrapperAlign.middle)
-        self._append_widget(self.followers, WrapperAlign.right)
+        self._append_widget(self.favorites, WrapperAlign.left)
+        self._append_widget(self.user_form, WrapperAlign.middle)
+        self._append_widget(self.topics, WrapperAlign.right)
         
         self.change_mode(mode)
         
     def set_user_profile(self, user_profile):
         self.user_form.update(user_profile)
         
-    def set_following(self, arr_following):
-        self.following.update_profiles(arr_following)
-        
-    def set_followers(self, arr_followers):
-        self.followers.update_profiles(arr_followers)
-        
-class Search(Wrapper):
-    def __init__(self, mainwin, mode='single'):
-        Wrapper.__init__(self)
-        
-        self.trending = Trending(mainwin, 'Trending')
-        self.topics = SearchTweets(mainwin, 'Topics')
-        self.people = SearchPeople(mainwin, 'People')
-        
-        self._append_widget(self.trending, WrapperAlign.left)
-        self._append_widget(self.topics, WrapperAlign.middle)
-        self._append_widget(self.people, WrapperAlign.right)
-        
-        self.change_mode(mode)
         
 class Main(BaseGui, gtk.Window):
     def __init__(self, controller):
@@ -300,15 +254,18 @@ class Main(BaseGui, gtk.Window):
         self.last = {'home': None, 'replies':None, 'directs':None}
         
         self.notify = Notification()
+        
         self.home = Home(self, self.workspace)
-        self.favs = Favorites(self)
         self.profile = Profile(self)
-        self.search = Search(self)
         self.contenido = self.home
         self.updatebox = UpdateBox(self)
         
         self.dock = Dock(self, self.workspace)
         self.__create_trayicon()
+        
+    def filter_cb(self, event, data=None):
+        print 'me again7', event.type, event, data
+        return gtk.gdk.FILTER_CONTINUE
         
     def __create_trayicon(self):
         if gtk.check_version(2, 10, 0) is not None:
@@ -318,7 +275,7 @@ class Main(BaseGui, gtk.Window):
         self.tray.set_from_pixbuf(util.load_image('turpial_icon.png', True))
         self.tray.set_tooltip('%s %s' % ('Turpial', '0.8'))
         self.tray.connect("activate", self.__on_trayicon_click)
-        #self.tray.connect("popup-menu", self.__show_tray_menu)
+        self.tray.connect("popup-menu", self.__show_tray_menu)
         
         
     def __on_trayicon_click(self, widget):
@@ -327,25 +284,41 @@ class Main(BaseGui, gtk.Window):
             self.hide()
         else:
             self.showed = True
-            self.present()
+            self.show()
+            #self.present()
             
     def __show_tray_menu(self, widget, button, activate_time):
-        if (self.loggedin):
-            menu = self.uimanager.get_widget('/MainTrayMenu')
-        else:
-            menu = self.uimanager.get_widget('/LoginTrayMenu')
+        menu = gtk.Menu()
+        tweet = gtk.MenuItem('Tweet')
+        exit = gtk.MenuItem('Exit')
+        if self.mode == 2:
+            menu.append(tweet)
+        menu.append(exit)
+        
+        exit.connect('activate', self.quit)
+        tweet.connect('activate', self.show_update_box)
+            
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
         
     def quit(self, widget):
-        self.hide()
         self.request_signout()
         gtk.main_quit()
+        self.destroy()
+        self.tray = None
         
     def main_loop(self):
         gtk.main()
         
     def show_login(self):
+        x = gtk.gdk.get_default_root_window()
+        x.set_events(gtk.gdk.KEY_PRESS_MASK |
+             gtk.gdk.POINTER_MOTION_MASK |
+             gtk.gdk.BUTTON_PRESS_MASK |
+             gtk.gdk.SCROLL_MASK)
+
+        x.add_filter(self.filter_cb, 'passthisforward')
+        
         self.mode = 1
         if self.vbox is not None: self.remove(self.vbox)
         
@@ -406,7 +379,7 @@ class Main(BaseGui, gtk.Window):
     def cancel_login(self, error):
         #e = '<span background="#C00" foreground="#FFF" size="small">%s</span>' % error
         self.message.set_error(error)
-        self.waiting.stop()
+        self.waiting.stop(error=True)
         self.btn_signup.set_sensitive(True)
         self.username.set_sensitive(True)
         self.password.set_sensitive(True)
@@ -443,19 +416,9 @@ class Main(BaseGui, gtk.Window):
         self.contenido = self.home
         self.contentbox.add(self.contenido)
         
-    def show_favs(self, widget):
-        self.contentbox.remove(self.contenido)
-        self.contenido = self.favs
-        self.contentbox.add(self.contenido)
-        
     def show_profile(self, widget):
         self.contentbox.remove(self.contenido)
         self.contenido = self.profile
-        self.contentbox.add(self.contenido)
-    
-    def show_search(self, widget):
-        self.contentbox.remove(self.contenido)
-        self.contenido = self.search
         self.contentbox.add(self.contenido)
         
     def show_update_box(self, text='', id='', user=''):
@@ -467,6 +430,15 @@ class Main(BaseGui, gtk.Window):
     def show_prefs(self, widget):
         prefs = Preferences(self)
         
+    def start_updating_timeline(self):
+        self.home.timeline.waiting.start()
+        
+    def start_updating_replies(self):
+        self.home.replies.waiting.start()
+        
+    def start_updating_directs(self):
+        self.home.direct.waiting.start()
+        
     def update_timeline(self, tweets):
         log.debug(u'Actualizando el timeline')
         gtk.gdk.threads_enter()
@@ -474,6 +446,7 @@ class Main(BaseGui, gtk.Window):
         count = util.count_new_tweets(tweets, self.last['home'])
         if count > 0 and self.updating['home']:
             self.notify.popup('Actualizado timeline', '%i tweets nuevos' % count)
+        self.home.timeline.waiting.stop()
         gtk.gdk.threads_leave()
         self.last['home'] = tweets
         self.updating['home'] = False
@@ -485,24 +458,26 @@ class Main(BaseGui, gtk.Window):
         count = util.count_new_tweets(tweets, self.last['replies'])
         if count > 0 and self.updating['replies']:
             self.notify.popup('Actualizado menciones', '%i tweets nuevos' % count)
+        self.home.replies.waiting.stop()
         gtk.gdk.threads_leave()
         self.last['replies'] = tweets
         self.updating['replies'] = False
-        
-    def update_favorites(self, tweets):
-        log.debug(u'Actualizando favoritos')
-        self.favs.favorites.update_tweets(tweets)
         
     def update_directs(self, recv):
         log.debug(u'Actualizando mensajes directos')
         gtk.gdk.threads_enter()
         self.home.direct.update_tweets(recv)
-        count = util.count_new_tweets(tweets, self.last['directs'])
+        count = util.count_new_tweets(recv, self.last['directs'])
         if count > 0 and self.last['directs']:
             self.notify.popup('Actualizado mensajes directos', '%i mensajes nuevos' % count)
+        self.home.direct.waiting.stop()
         gtk.gdk.threads_leave()
-        self.last['directs'] = tweets
+        self.last['directs'] = recv
         self.updating['directs'] = False
+        
+    def update_favorites(self, tweets):
+        log.debug(u'Actualizando favoritos')
+        self.profile.favorites.update_tweets(tweets)
         
     def update_user_profile(self, profile):
         log.debug(u'Actualizando perfil del usuario')
@@ -545,12 +520,9 @@ class Main(BaseGui, gtk.Window):
         self.home.timeline.update_user_pic(user, pic)
         self.home.replies.update_user_pic(user, pic)
         self.home.direct.update_user_pic(user, pic)
-        self.favs.favorites.update_user_pic(user, pic)
-        self.profile.following.update_user_pic(user, pic)
-        self.profile.followers.update_user_pic(user, pic)
+        self.profile.favorites.update_user_pic(user, pic)
         self.profile.user_form.update_user_pic(user, pic)
-        self.search.topics.update_user_pic(user, pic)
-        self.search.people.update_user_pic(user, pic)
+        self.profile.topics.update_user_pic(user, pic)
         
     def tweet_changed(self, timeline, replies, favs):
         log.debug(u'Tweet modificado')
@@ -560,19 +532,19 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'--Actualizando las replies')
         self.home.replies.update_tweets(replies)
         log.debug(u'--Actualizando favoritos')
-        self.favs.favorites.update_tweets(favs)
+        self.profile.favorites.update_tweets(favs)
         gtk.gdk.threads_leave()
         
     def tweet_fav(self, id, fav):
         if fav:
             self.home.timeline.do_mark(id)
             self.home.replies.do_mark(id)
-            self.favs.favorites.do_mark( id)
+            self.profile.favorites.do_mark( id)
             self.request_fav(id)
         else:
             self.home.timeline.do_unmark(id)
             self.home.replies.do_unmark(id)
-            self.favs.favorites.do_unmark(id)
+            self.profile.favorites.do_unmark(id)
             self.request_unfav(id)
         
     def switch_mode(self, widget=None):
@@ -599,17 +571,20 @@ class Main(BaseGui, gtk.Window):
         
         self.dock.change_mode(self.workspace)
         self.home.change_mode(self.workspace)
-        self.favs.change_mode(self.workspace)
-        self.search.change_mode(self.workspace)
         self.profile.change_mode(self.workspace)
         self.show_all()
         
     def update_config(self, config):
         log.debug('Actualizando configuracion')
-        self.workspace = config.read('General', 'workspace')
-        home_interval = int(config.read('General', 'home-update-interval'))
-        replies_interval = int(config.read('General', 'replies-update-interval'))
-        directs_interval = int(config.read('General', 'directs-update-interval'))
+        #self.workspace = config.read('General', 'workspace')
+        #home_interval = int(config.read('General', 'home-update-interval'))
+        #replies_interval = int(config.read('General', 'replies-update-interval'))
+        #directs_interval = int(config.read('General', 'directs-update-interval'))
+        
+        self.workspace = 'single'
+        home_interval = 3
+        replies_interval = 10
+        directs_interval = 15
         
         gtk.gdk.threads_enter()
         self.set_mode()
@@ -640,4 +615,3 @@ class Main(BaseGui, gtk.Window):
         w, h = self.get_size()
         self.contenido.update_wrap(w, self.workspace)
         return
-        

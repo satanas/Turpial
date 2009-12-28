@@ -16,6 +16,7 @@ class CairoWaiting(gtk.DrawingArea):
         gtk.DrawingArea.__init__(self)
         self.par = parent
         self.active = False
+        self.error = False
         self.connect('expose-event', self.expose)
         self.set_size_request(16, 16)
         self.timer = None
@@ -23,13 +24,16 @@ class CairoWaiting(gtk.DrawingArea):
     
     def start(self):
         self.active = True
+        self.error = False
         self.timer = gobject.timeout_add(150, self.update)
         self.queue_draw()
         
-    def stop(self):
-        self.active = False
+    def stop(self, error=False):
+        self.active = error
+        self.error = error
         self.queue_draw()
         if self.timer is not None: gobject.source_remove(self.timer)
+        
         
     def update(self):
         self.count += 1
@@ -48,7 +52,10 @@ class CairoWaiting(gtk.DrawingArea):
         cr.rectangle(0, 0, rect.width, rect.height)
         if not self.active: return
         
-        img = 'wait-%i.png' % (self.count + 1)
+        if self.error:
+            img = 'wait-error.png'
+        else:
+            img = 'wait2-%i.png' % (self.count + 1)
         pix = util.load_image(img, True)
         cr.set_source_pixbuf(pix, 0, 0)
         cr.paint()

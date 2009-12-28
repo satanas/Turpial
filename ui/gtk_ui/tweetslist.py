@@ -12,13 +12,14 @@ import gobject
 import webbrowser
 import xml.sax.saxutils as saxutils
 
+from waiting import *
 from ui import util as util
 
 log = logging.getLogger('Gtk:TweetList')
 
-class TweetList(gtk.ScrolledWindow):
+class TweetList(gtk.VBox):
     def __init__(self, mainwin, label='', menu=True):
-        gtk.ScrolledWindow.__init__(self)
+        gtk.VBox.__init__(self, False)
         
         self.mainwin = mainwin
         
@@ -32,9 +33,19 @@ class TweetList(gtk.ScrolledWindow):
         self.label = gtk.Label(label)
         self.caption = label
         
-        self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        self.set_shadow_type(gtk.SHADOW_IN)
-        self.add(self.list)
+        self.lblerror = gtk.Label()
+        self.waiting = CairoWaiting(self)
+        align = gtk.Alignment(xalign=1, yalign=0.5)
+        align.add(self.waiting)
+        
+        bottombox = gtk.HBox(False)
+        bottombox.pack_start(self.lblerror, False, False, 2)
+        bottombox.pack_start(align, True, True, 2)
+        
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        scroll.set_shadow_type(gtk.SHADOW_IN)
+        scroll.add(self.list)
         
         self.model = gtk.ListStore(
             gtk.gdk.Pixbuf, # avatar
@@ -70,6 +81,9 @@ class TweetList(gtk.ScrolledWindow):
         
         if menu:
             self.list.connect("button-release-event", self.__popup_menu)
+            
+        self.pack_start(scroll, True, True)
+        self.pack_start(bottombox, False, False)
         
     def __highlight_hashtags(self, text):
         hashtags = util.detect_hashtags(text)

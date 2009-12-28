@@ -184,6 +184,15 @@ class BaseGui:
     def cancel_login(self):
         raise NotImplementedError
         
+    def start_updating_timeline(self):
+        raise NotImplementedError
+        
+    def start_updating_replies(self):
+        raise NotImplementedError
+        
+    def start_updating_directs(self):
+        raise NotImplementedError
+        
     def update_tweet(self, tweet):
         raise NotImplementedError
         

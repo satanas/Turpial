@@ -87,6 +87,7 @@ class UserForm(gtk.VBox):
         form.pack_start(bio_box, False, False, 4)
         
         submit = gtk.Button(stock=gtk.STOCK_SAVE)
+        submit.set_sensitive(False)
         submit_box = gtk.Alignment(1.0, 0.5)
         submit_box.set_property('right-padding', 5)
         submit_box.add(submit)

@@ -11,7 +11,7 @@ import logging
 
 from ui import *
 from api import *
-from config import *
+#from config import *
 from services import *
 from optparse import OptionParser
 
@@ -62,7 +62,7 @@ class Turpial:
             self.ui.cancel_login(val['error'])
         else:
             self.profile = val
-            self.config = ConfigHandler(val['screen_name'])
+            #self.config = ConfigHandler(val['screen_name'])
             self.ui.update_user_profile(val)
             self.ui.show_main(self.config, val)
             
@@ -73,12 +73,15 @@ class Turpial:
             self._update_rate_limits()
         
     def _update_timeline(self):
+        self.ui.start_updating_timeline()
         self.api.update_timeline(self.ui.update_timeline, 60)
         
     def _update_replies(self):
+        self.ui.start_updating_replies()
         self.api.update_replies(self.ui.update_replies)
         
     def _update_directs(self):
+        self.ui.start_updating_directs()
         self.api.update_directs(self.ui.update_directs)
         
     def _update_favorites(self):

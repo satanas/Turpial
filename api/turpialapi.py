@@ -6,6 +6,7 @@
 # Dic 22, 2009
 
 import Queue
+import socket
 import urllib2
 import logging
 import threading
@@ -27,6 +28,8 @@ else:
 class TurpialAPI(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
+        
+        socket.setdefaulttimeout(8)
         self.setDaemon(False)
         self.log = logging.getLogger('API')
         self.queue = Queue.Queue()

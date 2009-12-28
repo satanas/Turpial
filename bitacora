@@ -1,3 +1,12 @@
+Dic 28, 2009:
+    + Corregido bug con la cuenta de tweets en la actualización de mensajes directos
+    + Agregados nuevos iconos al waiting widget de cairo
+    + Implementado soporte para visualización de error para el waiting widget
+    + Implementada alerta visual durante la actualización de los 3 widgets principales (home, replies y directs)
+    + Agregado un timeout básico (solo en connect) para la API
+    + Simplificada y reestructurada la vista (dock, pestañas, widget, etc)
+    ---- commit ----
+    
 Dic 27, 2009:
     + Corregido bug al retweetear con caracteres especiales
     + Implementado sistema simple de notificaciones integrado con el sistema operativo (solo linux)

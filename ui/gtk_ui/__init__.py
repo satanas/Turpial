@@ -8,3 +8,4 @@ from wrapper import *
 from userform import *
 from loginlabel import *
 from about import *
+from preferences import *

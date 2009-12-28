@@ -1,3 +1,9 @@
+Dic 27, 2009:
+    + Corregido bug al retweetear con caracteres especiales
+    + Implementado sistema simple de notificaciones integrado con el sistema operativo (solo linux)
+    + Agregada notificación al iniciar sesión y al actualizar home, replies o directs
+    ---- commit ----
+    
 Dic 24, 2009:
     + Corregido el bug de las entidades HTML en los tweets
     + Corregido el bug al cerrar la sesión (se agregó un argumento vacío al POST)
@@ -10,6 +16,13 @@ Dic 24, 2009:
     + Creados métodos en las vistas para marcar/desmarcar tweets favoritos
     + Implementado y probado con éxito la funcionalidad de marcar/desmarcar tweets como favorito
     ---- commit ----
+    + Limpiado el código de comentarios obsoletos
+    + Removido del repositorio la API antigua
+    + Creado el widget para la ventana de preferencias junto con el tab general
+    + Creado el módulo para el manejo de la configuración de los usuarios
+    + Integrado módulo de configuración y el widget con el controlador
+    + Implementado Tray Icon (sin menú)
+    * Preferencias y Notificaciones
     
 Dic 23, 2009:
     + Resuelto el bug del segmentation fault al actualizar el tweetlist utilizando el threads_enter/threads_leave de gtk

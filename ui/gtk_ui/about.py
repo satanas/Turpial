@@ -36,7 +36,7 @@ class About:
         about.set_license(license)
         about.set_authors([
             'Wil A. Alvarez aka Satanas (Concepto y programación)',
-            'Eleazar Meza aka Shaka (Concepto y arte)',
+            'Eleazar Meza aka Shaka (Concepto y logo)',
         ])
         
         about.connect("response", self.__response)

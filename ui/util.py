@@ -133,3 +133,12 @@ def get_pango_profile(p):
     profile += '</span>'
     
     return profile
+    
+def count_new_tweets(tweets, last):
+    if not last: return 0
+    
+    index = 0
+    for twt in tweets:
+        if twt not in last: index += 1
+    return index
+    

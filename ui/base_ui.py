@@ -18,6 +18,7 @@ class BaseGui:
         self.__controller = controller
         self.__user_pics = {}
         self.__queued_pics = []
+        self.updating = {'home': False, 'replies': False, 'directs': False}
         
         
     # ------------------------------------------------------------
@@ -131,20 +132,26 @@ class BaseGui:
     def request_trends(self):
         self.__controller._update_trends()
         
+    def request_save_config(self, new_config):
+        self.__controller.save_config(new_config)
+        
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
     # Estos métodos deben ser llamados por la clase hija cada cierto tiempo
     
     def download_timeline(self):
+        self.updating['home'] = True
         self.__controller._update_timeline()
         return True
         
     def download_replies(self):
+        self.updating['replies'] = True
         self.__controller._update_replies()
         return True
         
     def download_directs(self):
+        self.updating['directs'] = True
         self.__controller._update_directs()
         return True
         
@@ -214,5 +221,8 @@ class BaseGui:
         raise NotImplementedError
         
     def tweet_changed(self, timeline, replies, favs):
+        raise NotImplementedError
+        
+    def update_config(self, config):
         raise NotImplementedError
         

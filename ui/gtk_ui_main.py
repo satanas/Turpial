@@ -11,8 +11,9 @@ import pango
 import logging
 import gobject
 
-from base_ui import *
 from gtk_ui import *
+from base_ui import *
+from notification import *
 
 gtk.gdk.threads_init()
 
@@ -286,9 +287,19 @@ class Main(BaseGui, gtk.Window):
         
         self.mode = 0
         self.vbox = None
-        self.workspace = 'wide'
+        self.workspace = 'single'
         self.contentbox = gtk.VBox(False)
         
+        self.showed = True
+        self.home_timer = None
+        self.replies_timer = None
+        self.directs_timer = None
+        self.home_interval = 3
+        self.replies_interval = 10
+        self.directs_interval = 15
+        self.last = {'home': None, 'replies':None, 'directs':None}
+        
+        self.notify = Notification()
         self.home = Home(self, self.workspace)
         self.favs = Favorites(self)
         self.profile = Profile(self)
@@ -297,6 +308,34 @@ class Main(BaseGui, gtk.Window):
         self.updatebox = UpdateBox(self)
         
         self.dock = Dock(self, self.workspace)
+        self.__create_trayicon()
+        
+    def __create_trayicon(self):
+        if gtk.check_version(2, 10, 0) is not None:
+            self.log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
+            return
+        self.tray = gtk.StatusIcon()
+        self.tray.set_from_pixbuf(util.load_image('turpial_icon.png', True))
+        self.tray.set_tooltip('%s %s' % ('Turpial', '0.8'))
+        self.tray.connect("activate", self.__on_trayicon_click)
+        #self.tray.connect("popup-menu", self.__show_tray_menu)
+        
+        
+    def __on_trayicon_click(self, widget):
+        if(self.showed is True):
+            self.showed = False
+            self.hide()
+        else:
+            self.showed = True
+            self.present()
+            
+    def __show_tray_menu(self, widget, button, activate_time):
+        if (self.loggedin):
+            menu = self.uimanager.get_widget('/MainTrayMenu')
+        else:
+            menu = self.uimanager.get_widget('/LoginTrayMenu')
+        menu.show_all()
+        menu.popup(None, None, None, button, activate_time)
         
     def quit(self, widget):
         self.hide()
@@ -372,7 +411,7 @@ class Main(BaseGui, gtk.Window):
         self.username.set_sensitive(True)
         self.password.set_sensitive(True)
         
-    def show_main(self):
+    def show_main(self, config, p):
         log.debug('Cargando ventana principal')
         self.mode = 2
         
@@ -388,14 +427,16 @@ class Main(BaseGui, gtk.Window):
         self.vbox.pack_start(self.statusbar, False, False, 0)
         
         self.add(self.vbox)
-        self.switch_mode()
         self.show_all()
         
-        gobject.timeout_add(3*60*1000, self.download_timeline)
-        gobject.timeout_add(5*60*1000, self.download_rates)
-        gobject.timeout_add(10*60*1000, self.download_replies)
-        gobject.timeout_add(15*60*1000, self.download_directs)
+        self.update_config(config)
         
+        self.notify.popup('@%s' % p['screen_name'], 
+            'Tweets: %i\nFollowing: %i\nFollowers: %i' % (p['statuses_count'], 
+            p['friends_count'], p['followers_count'])
+        )
+        
+        gobject.timeout_add(5*60*1000, self.download_rates)
         
     def show_home(self, widget):
         self.contentbox.remove(self.contenido)
@@ -423,17 +464,30 @@ class Main(BaseGui, gtk.Window):
             return
         self.updatebox.show(text, id, user)
         
+    def show_prefs(self, widget):
+        prefs = Preferences(self)
+        
     def update_timeline(self, tweets):
         log.debug(u'Actualizando el timeline')
         gtk.gdk.threads_enter()
         self.home.timeline.update_tweets(tweets)
+        count = util.count_new_tweets(tweets, self.last['home'])
+        if count > 0 and self.updating['home']:
+            self.notify.popup('Actualizado timeline', '%i tweets nuevos' % count)
         gtk.gdk.threads_leave()
+        self.last['home'] = tweets
+        self.updating['home'] = False
         
     def update_replies(self, tweets):
         log.debug(u'Actualizando las replies')
         gtk.gdk.threads_enter()
         self.home.replies.update_tweets(tweets)
+        count = util.count_new_tweets(tweets, self.last['replies'])
+        if count > 0 and self.updating['replies']:
+            self.notify.popup('Actualizado menciones', '%i tweets nuevos' % count)
         gtk.gdk.threads_leave()
+        self.last['replies'] = tweets
+        self.updating['replies'] = False
         
     def update_favorites(self, tweets):
         log.debug(u'Actualizando favoritos')
@@ -443,7 +497,12 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando mensajes directos')
         gtk.gdk.threads_enter()
         self.home.direct.update_tweets(recv)
+        count = util.count_new_tweets(tweets, self.last['directs'])
+        if count > 0 and self.last['directs']:
+            self.notify.popup('Actualizado mensajes directos', '%i mensajes nuevos' % count)
         gtk.gdk.threads_leave()
+        self.last['directs'] = tweets
+        self.updating['directs'] = False
         
     def update_user_profile(self, profile):
         log.debug(u'Actualizando perfil del usuario')
@@ -517,17 +576,22 @@ class Main(BaseGui, gtk.Window):
             self.request_unfav(id)
         
     def switch_mode(self, widget=None):
+        if self.workspace == 'single':
+            self.workspace = 'wide'
+        else:
+            self.workspace = 'single'
+        self.set_mode()
+        
+    def set_mode(self):
         cur_x, cur_y = self.get_position()
         cur_w, cur_h = self.get_size()
         
-        if self.workspace == 'single':
-            self.workspace = 'wide'
+        if self.workspace == 'wide':
             self.set_size_request(960, 480)
             self.resize(960, 480)
             x = (960 - cur_w)/2
             self.move(cur_x - x, cur_y)
         else:
-            self.workspace = 'single'
             self.set_size_request(320, 480)
             self.resize(320, 480)
             x = (cur_w - 320)/2
@@ -539,6 +603,34 @@ class Main(BaseGui, gtk.Window):
         self.search.change_mode(self.workspace)
         self.profile.change_mode(self.workspace)
         self.show_all()
+        
+    def update_config(self, config):
+        log.debug('Actualizando configuracion')
+        self.workspace = config.read('General', 'workspace')
+        home_interval = int(config.read('General', 'home-update-interval'))
+        replies_interval = int(config.read('General', 'replies-update-interval'))
+        directs_interval = int(config.read('General', 'directs-update-interval'))
+        
+        gtk.gdk.threads_enter()
+        self.set_mode()
+        
+        if self.home_timer: gobject.remove_source(self.home_timer)
+        if self.replies_timer: gobject.remove_source(self.home_timer)
+        if self.directs_timer: gobject.remove_source(self.home_timer)
+        
+        if (self.home_interval != home_interval) or not self.home_timer:
+            self.home_interval = home_interval
+            self.home_timer = gobject.timeout_add(self.home_interval*60*1000, self.download_timeline)
+            
+        if (self.replies_interval != replies_interval) or not self.replies_timer:
+            self.replies_interval = replies_interval
+            self.replies_timer = gobject.timeout_add(self.replies_interval*60*1000, self.download_replies)
+            
+        if (self.directs_interval != directs_interval) or not self.directs_timer:
+            self.directs_interval = directs_interval
+            self.directs_timer = gobject.timeout_add(self.directs_interval*60*1000, self.download_directs)
+            
+        gtk.gdk.threads_leave()
         
     def size_request(self, widget, event, data=None):
         """Callback when the window changes its sizes. We use it to set the

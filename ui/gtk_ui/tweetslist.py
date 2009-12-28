@@ -249,7 +249,8 @@ class TweetList(gtk.ScrolledWindow):
         
         pix = self.mainwin.get_user_avatar(username, avatar)
         #print 'message', tweet['text']
-        message = gobject.markup_escape_text(saxutils.unescape(tweet['text']))
+        tweet['text'] = saxutils.unescape(tweet['text'])
+        message = gobject.markup_escape_text(tweet['text'])
         #print 'pango_message', message
         message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
         message = self.__highlight_hashtags(message)

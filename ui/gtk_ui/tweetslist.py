@@ -21,6 +21,7 @@ class TweetList(gtk.VBox):
     def __init__(self, mainwin, label='', menu=True):
         gtk.VBox.__init__(self, False)
         
+        self.last = None    # Last tweets updated
         self.mainwin = mainwin
         
         self.list = gtk.TreeView()
@@ -34,6 +35,7 @@ class TweetList(gtk.VBox):
         self.caption = label
         
         self.lblerror = gtk.Label()
+        self.lblerror.set_use_markup(True)
         self.waiting = CairoWaiting(self)
         align = gtk.Alignment(xalign=1, yalign=0.5)
         align.add(self.waiting)
@@ -100,6 +102,7 @@ class TweetList(gtk.VBox):
         if len(mentions) == 0: return text
         
         for h in mentions:
+            if len(h) == 1: continue
             torep = '@%s' % h
             cad = '<span foreground="#FF6633">@%s</span>' % h
             text = text.replace(torep, cad)
@@ -146,7 +149,7 @@ class TweetList(gtk.VBox):
                 profile = self.mainwin.request_user_profile()
                 
                 reply = gtk.MenuItem('Reply')
-                retweet_old = gtk.MenuItem('Retweet')
+                retweet_old = gtk.MenuItem('Retweet (Old Fashion Way)')
                 retweet = gtk.MenuItem('Retweet')
                 save = gtk.MenuItem('+ Fav')
                 unsave = gtk.MenuItem('- Fav')
@@ -165,7 +168,7 @@ class TweetList(gtk.VBox):
                 if profile['screen_name'] != user:
                     menu.append(reply)
                     menu.append(retweet_old)
-                    #menu.append(retweet)
+                    menu.append(retweet)
                 else:
                     menu.append(delete)
                 
@@ -309,6 +312,17 @@ class TweetList(gtk.VBox):
         del pix
         
     def update_tweets(self, arr_tweets):
-        self.model.clear()
-        for tweet in arr_tweets:
-            self.add_tweet(tweet)
+        if arr_tweets is None:
+            self.waiting.stop(error=True)
+            self.lblerror.set_markup("<span size='small'>Error intentando actualizar</span>")
+            return 0
+        else:
+            count = util.count_new_tweets(arr_tweets, self.last)
+            self.waiting.stop()
+            self.lblerror.set_markup("")
+            self.model.clear()
+            for tweet in arr_tweets:
+                self.add_tweet(tweet)
+            self.last = arr_tweets
+            
+            return count

@@ -136,9 +136,14 @@ def get_pango_profile(p):
     
 def count_new_tweets(tweets, last):
     if not last: return 0
+    if (tweets is None) or (len(tweets) <= 0): return 0
     
     index = 0
     for twt in tweets:
-        if twt not in last: index += 1
+        found = False
+        for t in last:
+            if twt['id'] == t['id']: found = True
+        if not found: index += 1
+    
     return index
     

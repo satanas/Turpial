@@ -38,6 +38,14 @@ class Notification:
                 n.set_icon_from_pixbuf(icon)
                 n.show()
                 
-    def new_tweets_home(self, count):
-        if count > 0:
-            self.popup('Actualizado timeline', '%i tweets nuevos' % count)
+    def new_tweets(self, count, updating):
+        if count > 0 and updating:
+            self.popup('Actualizado timeline', '%i tweets nuevos' % count, 'home.png')
+            
+    def new_replies(self, count, updating):
+        if count > 0 and updating:
+            self.popup('Actualizadas menciones', '%i menciones nuevas' % count, 'profile.png')
+            
+    def new_directs(self, count, updating):
+        if count > 0 and updating:
+            self.popup('Actualizados mensajes directos', '%i mensajes nuevos' % count, 'lists.png')

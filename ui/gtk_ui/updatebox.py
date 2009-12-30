@@ -56,6 +56,7 @@ class UpdateBox(gtk.Window):
         
         btn_pic = gtk.Button('Upload Pic')
         btn_pic.set_tooltip_text('Upload Pic')
+        btn_pic.set_sensitive(False)
         #btn_pic.set_relief(gtk.RELIEF_NONE)
         #btn_pic.set_image(util.load_image('photos.png'))
         
@@ -83,6 +84,8 @@ class UpdateBox(gtk.Window):
         top.pack_start(self.num_chars, False, False, 5)
         
         self.waiting = CairoWaiting(self)
+        self.lblerror = gtk.Label()
+        self.lblerror.set_use_markup(True)
         
         buttonbox = gtk.HBox(False)
         buttonbox.pack_start(chk_short, False, False, 0)
@@ -94,6 +97,7 @@ class UpdateBox(gtk.Window):
         
         bottom = gtk.HBox(False)
         bottom.pack_start(self.waiting, False, False, 5)
+        bottom.pack_start(self.lblerror, True, True, 4)
         bottom.pack_start(abuttonbox, True, True, 5)
         
         vbox = gtk.VBox(False)
@@ -159,6 +163,10 @@ class UpdateBox(gtk.Window):
         self.mainwin.request_short_url(self.url.get_text(), self.update_shorten_url)
         
     def update_shorten_url(self, short):
+        if short is None:
+            self.waiting.stop(error=True)
+            self.lblerror.set_markup("<span size='small'>Error intentando cortar la URL</span>")
+            return
         buffer = self.update_text.get_buffer()
         end_offset = buffer.get_property('cursor-position')
         start_offset = end_offset - 1
@@ -171,6 +179,7 @@ class UpdateBox(gtk.Window):
         
         buffer.insert_at_cursor(short)
         self.waiting.stop()
+        self.lblerror.set_markup("")
         self.toolbox.set_expanded(False)
         
     def upload_pic(self, widget):

@@ -76,7 +76,10 @@ class HTTPServices(threading.Thread):
             elif args['cmd'] == 'short_url':
                 self.log.debug('Cortando URL: %s' % args['url'])
                 longurl = urllib2.quote(args['url'])
-                short = urllib2.urlopen(SERVICES[args['service']] % longurl).read()
+                try:
+                    short = urllib2.urlopen(SERVICES[args['service']] % longurl).read()
+                except:
+                    short = None
                 self.log.debug('URL Cortada: %s' % short)
                 callback(short)
         

@@ -1,3 +1,22 @@
+Dic 30, 2009:
+    + Creado el diálogo InputPin para solicitar el pin al usuario
+    + Implementado soporte completo para OAuth (Sí, ya dice Turpial xD)
+    + Corregido error con el TurpialOAuthClient, se crea una conexión HTTP con cada solicitud
+    + Migrado el TurpialOAuthClient a urllib en lugar de httplib (problemas con la conexion)
+    ---- commit ----
+    
+Dic 29, 2009:
+    + Ahora el None en los callbacks será manejado por la vista y como un dict con errores
+    + Tweetlist es el encargado e contar los tweets nuevos y retornarlos para luego decidir si se notifica o no
+    + Agregada validación para crear, destruir, responder o retuitear sin red
+    + Agregada validación para marcar/desmarcar como favorito sin red
+    + Probado con éxito restitución del funcionamiento luego de un fallo de red (actualización)
+    + Agregada validación para problemas al actualizar el rate_limits
+    + Agregada validación para problemas al recortar una url
+    + Corregido error al resaltar menciones con solo el caracter '@'
+    + Corregida la cuenta de los tweets basada en id y no en hash de objetos (los hash son diferentes aunq los tweets sean iguales)
+    + Reubicado el módulo de servicios en la carpeta de 'api'
+    
 Dic 28, 2009:
     + Corregido bug con la cuenta de tweets en la actualización de mensajes directos
     + Agregados nuevos iconos al waiting widget de cairo

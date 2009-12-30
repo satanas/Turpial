@@ -59,6 +59,12 @@ class BaseGui:
     def request_signin(self, username, password):
         self.__controller.signin(username, password)
         
+    def request_oauth(self, username, password):
+        self.__controller.signin_oauth(username, password)
+        
+    def request_auth_token(self, pin):
+        self.__controller.auth_token(pin)
+        
     def request_signout(self):
         self.__controller.signout()
         
@@ -179,6 +185,9 @@ class BaseGui:
         raise NotImplementedError
         
     def show_main(self):
+        raise NotImplementedError
+        
+    def show_oauth_pin_request(self, url):
         raise NotImplementedError
         
     def cancel_login(self):

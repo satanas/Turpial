@@ -10,6 +10,7 @@ import util
 import pango
 import logging
 import gobject
+import webbrowser
 
 from gtk_ui import *
 from base_ui import *
@@ -251,7 +252,6 @@ class Main(BaseGui, gtk.Window):
         self.home_interval = 3
         self.replies_interval = 10
         self.directs_interval = 15
-        self.last = {'home': None, 'replies':None, 'directs':None}
         
         self.notify = Notification()
         
@@ -341,6 +341,7 @@ class Main(BaseGui, gtk.Window):
         self.password.set_visibility(False)
         
         self.btn_signup = gtk.Button('Conectar')
+        self.btn_oauth = gtk.Button('Autenticar usando OAuth')
         
         self.waiting = CairoWaiting(self)
         align = gtk.Alignment(xalign=1, yalign=0.5)
@@ -350,7 +351,7 @@ class Main(BaseGui, gtk.Window):
         hbox.pack_start(lbl_user, False, False, 2)
         hbox.pack_start(align, True, True, 2)
         
-        table = gtk.Table(8,1,False)
+        table = gtk.Table(9,1,False)
         table.attach(avatar,0,1,0,1,gtk.FILL,gtk.FILL, 10, 50)
         table.attach(self.message,0,1,1,2,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 3)
         table.attach(hbox,0,1,2,3,gtk.EXPAND|gtk.FILL,gtk.FILL,50,0)
@@ -358,6 +359,7 @@ class Main(BaseGui, gtk.Window):
         #table.attach(lbl_pass,0,1,4,5,gtk.EXPAND,gtk.FILL, 0, 5)
         table.attach(self.password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
         table.attach(self.btn_signup,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 10)
+        table.attach(self.btn_oauth,0,1,8,9,gtk.EXPAND,gtk.FILL,0, 10)
         
         self.vbox = gtk.VBox(False, 5)
         self.vbox.pack_start(table, False, False, 2)
@@ -366,28 +368,39 @@ class Main(BaseGui, gtk.Window):
         self.show_all()
         
         self.btn_signup.connect('clicked', self.signin, self.username, self.password)
+        self.btn_oauth.connect('clicked', self.oauth, self.username, self.password)
         self.password.connect('activate', self.signin, self.username, self.password)
         
     def signin(self, widget, username, password):
         self.message.deactivate()
         self.waiting.start()
         self.btn_signup.set_sensitive(False)
+        self.btn_oauth.set_sensitive(False)
         self.username.set_sensitive(False)
         self.password.set_sensitive(False)
         self.request_signin(username.get_text(), password.get_text())
         
+    def oauth(self, widget, username, password):
+        self.message.deactivate()
+        self.waiting.start()
+        self.btn_signup.set_sensitive(False)
+        self.btn_oauth.set_sensitive(False)
+        self.username.set_sensitive(False)
+        self.password.set_sensitive(False)
+        self.request_oauth(username.get_text(), password.get_text())
+        
     def cancel_login(self, error):
-        #e = '<span background="#C00" foreground="#FFF" size="small">%s</span>' % error
         self.message.set_error(error)
         self.waiting.stop(error=True)
         self.btn_signup.set_sensitive(True)
+        self.btn_oauth.set_sensitive(True)
         self.username.set_sensitive(True)
         self.password.set_sensitive(True)
         
     def show_main(self, config, p):
         log.debug('Cargando ventana principal')
         self.mode = 2
-        
+        gtk.gdk.threads_enter()
         self.contentbox.add(self.contenido)
         
         self.statusbar = gtk.Statusbar()
@@ -401,7 +414,7 @@ class Main(BaseGui, gtk.Window):
         
         self.add(self.vbox)
         self.show_all()
-        
+        gtk.gdk.threads_leave()
         self.update_config(config)
         
         self.notify.popup('@%s' % p['screen_name'], 
@@ -409,7 +422,7 @@ class Main(BaseGui, gtk.Window):
             p['friends_count'], p['followers_count'])
         )
         
-        gobject.timeout_add(5*60*1000, self.download_rates)
+        gobject.timeout_add(6*60*1000, self.download_rates)
         
     def show_home(self, widget):
         self.contentbox.remove(self.contenido)
@@ -430,6 +443,25 @@ class Main(BaseGui, gtk.Window):
     def show_prefs(self, widget):
         prefs = Preferences(self)
         
+    def show_oauth_pin_request(self, url):
+        webbrowser.open(url)
+        gtk.gdk.threads_enter()
+        p = InputPin(self)
+        response = p.run()
+        if response == gtk.RESPONSE_ACCEPT:
+            verifier = p.pin.get_text()
+        else:
+            self.cancel_login('Login cancelado por el usuario')
+            return
+            
+        if verifier == '': 
+            self.cancel_login('Debe escribir el PIN válido')
+            return
+        print 'verifier', verifier
+        p.destroy()
+        gtk.gdk.threads_leave()
+        self.request_auth_token(verifier)
+        
     def start_updating_timeline(self):
         self.home.timeline.waiting.start()
         
@@ -442,37 +474,25 @@ class Main(BaseGui, gtk.Window):
     def update_timeline(self, tweets):
         log.debug(u'Actualizando el timeline')
         gtk.gdk.threads_enter()
-        self.home.timeline.update_tweets(tweets)
-        count = util.count_new_tweets(tweets, self.last['home'])
-        if count > 0 and self.updating['home']:
-            self.notify.popup('Actualizado timeline', '%i tweets nuevos' % count)
-        self.home.timeline.waiting.stop()
+        count = self.home.timeline.update_tweets(tweets)
+        self.notify.new_tweets(count, self.updating['home'])
         gtk.gdk.threads_leave()
-        self.last['home'] = tweets
         self.updating['home'] = False
         
     def update_replies(self, tweets):
         log.debug(u'Actualizando las replies')
         gtk.gdk.threads_enter()
-        self.home.replies.update_tweets(tweets)
-        count = util.count_new_tweets(tweets, self.last['replies'])
-        if count > 0 and self.updating['replies']:
-            self.notify.popup('Actualizado menciones', '%i tweets nuevos' % count)
-        self.home.replies.waiting.stop()
+        count = self.home.replies.update_tweets(tweets)
+        self.notify.new_replies(count, self.updating['replies'])
         gtk.gdk.threads_leave()
-        self.last['replies'] = tweets
         self.updating['replies'] = False
         
     def update_directs(self, recv):
         log.debug(u'Actualizando mensajes directos')
         gtk.gdk.threads_enter()
-        self.home.direct.update_tweets(recv)
-        count = util.count_new_tweets(recv, self.last['directs'])
-        if count > 0 and self.last['directs']:
-            self.notify.popup('Actualizado mensajes directos', '%i mensajes nuevos' % count)
-        self.home.direct.waiting.stop()
+        count = self.home.direct.update_tweets(recv)
+        self.notify.new_directs(count, self.updating['directs'])
         gtk.gdk.threads_leave()
-        self.last['directs'] = recv
         self.updating['directs'] = False
         
     def update_favorites(self, tweets):
@@ -492,6 +512,7 @@ class Main(BaseGui, gtk.Window):
         self.profile.set_followers(people)
         
     def update_rate_limits(self, val):
+        if val is None: return
         self.statusbar.push(0, util.get_rates(val))
         
     def update_search_topics(self, val):

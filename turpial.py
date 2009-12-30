@@ -11,8 +11,7 @@ import logging
 
 from ui import *
 from api import *
-#from config import *
-from services import *
+from config import *
 from optparse import OptionParser
 
 try:
@@ -62,7 +61,6 @@ class Turpial:
             self.ui.cancel_login(val['error'])
         else:
             self.profile = val
-            #self.config = ConfigHandler(val['screen_name'])
             self.ui.update_user_profile(val)
             self.ui.show_main(self.config, val)
             
@@ -71,10 +69,31 @@ class Turpial:
             #self._update_directs()
             self._update_favorites()
             self._update_rate_limits()
+            
+    def __validate_credentials(self, val):
+        if val.has_key('error'):
+            self.ui.cancel_login(val['error'])
+        else:
+            self.profile = val
+            self.config = ConfigHandler(val['screen_name'])
+            auth = self.config.read_section('Auth')
+            self.api.start_oauth(auth, self.ui.show_oauth_pin_request, self.__signin_done)
+        
+    def __signin_done(self, key, secret, verifier):
+        self.config.write('Auth', 'oauth-key', key)
+        self.config.write('Auth', 'oauth-secret', secret)
+        self.config.write('Auth', 'oauth-verifier', verifier)
+        
+        self.ui.show_main(self.config, self.profile)
+        self._update_timeline()
+        self._update_replies()
+        #self._update_directs()
+        self._update_favorites()
+        self._update_rate_limits()
         
     def _update_timeline(self):
         self.ui.start_updating_timeline()
-        self.api.update_timeline(self.ui.update_timeline, 60)
+        self.api.update_timeline(self.ui.update_timeline, 40)
         
     def _update_replies(self):
         self.ui.start_updating_replies()
@@ -91,7 +110,14 @@ class Turpial:
         self.api.update_rate_limits(self.ui.update_rate_limits)
         
     def signin(self, username, password):
+        self.config = ConfigHandler(username)
         self.api.auth(username, password, self.__validate_signin)
+        
+    def signin_oauth(self, username, password):
+        self.api.auth(username, password, self.__validate_credentials)
+        
+    def auth_token(self, pin):
+        self.api.authorize_oauth_token(pin, self.__signin_done)
         
     def signout(self):
         self.log.debug('Desconectando')
@@ -113,11 +139,11 @@ class Turpial:
     def unset_favorite(self, tweet_id):
         self.api.unset_favorite(tweet_id, self.ui.tweet_changed)
         
-    '''
-    def retweet(self, tweet_id):
-        self.twitterapi.statuses.retweet(id=tweet_id)
-        self.log.debug('Retuiteado tweet %s' % tweet_id)
     
+    def retweet(self, tweet_id):
+        self.api.retweet(tweet_id, self.ui.tweet_changed)
+    
+    '''
     def mute(self, user):
         if user not in self.muted_users: 
             self.muted_users.append(user)

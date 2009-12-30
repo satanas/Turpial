@@ -1,1 +1,2 @@
-from turpialapi import *
+from turpialapi import TurpialAPI
+from services import *

@@ -241,6 +241,9 @@ class BaseGui:
     def tweet_changed(self, timeline, replies, favs):
         raise NotImplementedError
         
+    def tweet_done(self, tweets):
+        raise NotImplementedError
+        
     def update_config(self, config):
         raise NotImplementedError
         

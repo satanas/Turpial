@@ -1,3 +1,14 @@
+Ene 04, 2010:
+    + Establecido foco por defecto al textview del updatebox
+    + Validación de tweets vacíos antes de enviar
+    + Eliminado el timeout personalizado de los sockets
+    + Alineada la etiqueta del lblerror en update box
+    + Ahora el updatebox no se cierra hasta que no se compruebe que el tweet ha sido enviado
+    + Deshabilitada el cierre de sesión 'limpio'. Ahora se usa exit()
+    + Mejorado el cuadro de diálogo inputpin con un mensaje más amigable al usuario
+    + Agregado botón de autencación básica
+    ---- commit ----
+    
 Dic 30, 2009:
     + Creado el diálogo InputPin para solicitar el pin al usuario
     + Implementado soporte completo para OAuth (Sí, ya dice Turpial xD)

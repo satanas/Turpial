@@ -311,6 +311,7 @@ class Main(BaseGui, gtk.Window):
         gtk.main()
         
     def show_login(self):
+        '''
         x = gtk.gdk.get_default_root_window()
         x.set_events(gtk.gdk.KEY_PRESS_MASK |
              gtk.gdk.POINTER_MOTION_MASK |
@@ -318,7 +319,7 @@ class Main(BaseGui, gtk.Window):
              gtk.gdk.SCROLL_MASK)
 
         x.add_filter(self.filter_cb, 'passthisforward')
-        
+        '''
         self.mode = 1
         if self.vbox is not None: self.remove(self.vbox)
         
@@ -340,8 +341,8 @@ class Main(BaseGui, gtk.Window):
         self.password = gtk.Entry()
         self.password.set_visibility(False)
         
-        self.btn_signup = gtk.Button('Conectar')
-        self.btn_oauth = gtk.Button('Autenticar usando OAuth')
+        self.btn_signup = gtk.Button('Autenticacion Vieja')
+        self.btn_oauth = gtk.Button('Conectar')
         
         self.waiting = CairoWaiting(self)
         align = gtk.Alignment(xalign=1, yalign=0.5)
@@ -358,8 +359,8 @@ class Main(BaseGui, gtk.Window):
         table.attach(self.username,0,1,3,4,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
         #table.attach(lbl_pass,0,1,4,5,gtk.EXPAND,gtk.FILL, 0, 5)
         table.attach(self.password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
-        table.attach(self.btn_signup,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 10)
         table.attach(self.btn_oauth,0,1,8,9,gtk.EXPAND,gtk.FILL,0, 10)
+        table.attach(self.btn_signup,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 10)
         
         self.vbox = gtk.VBox(False, 5)
         self.vbox.pack_start(table, False, False, 2)
@@ -369,7 +370,7 @@ class Main(BaseGui, gtk.Window):
         
         self.btn_signup.connect('clicked', self.signin, self.username, self.password)
         self.btn_oauth.connect('clicked', self.oauth, self.username, self.password)
-        self.password.connect('activate', self.signin, self.username, self.password)
+        self.password.connect('activate', self.oauth, self.username, self.password)
         
     def signin(self, widget, username, password):
         self.message.deactivate()
@@ -450,17 +451,17 @@ class Main(BaseGui, gtk.Window):
         response = p.run()
         if response == gtk.RESPONSE_ACCEPT:
             verifier = p.pin.get_text()
+            print 'verifier', verifier
+            if verifier == '': 
+                self.cancel_login('Debe escribir el PIN válido')
+            else:
+                self.request_auth_token(verifier)
         else:
             self.cancel_login('Login cancelado por el usuario')
-            return
             
-        if verifier == '': 
-            self.cancel_login('Debe escribir el PIN válido')
-            return
-        print 'verifier', verifier
         p.destroy()
         gtk.gdk.threads_leave()
-        self.request_auth_token(verifier)
+        
         
     def start_updating_timeline(self):
         self.home.timeline.waiting.start()
@@ -555,6 +556,13 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'--Actualizando favoritos')
         self.profile.favorites.update_tweets(favs)
         gtk.gdk.threads_leave()
+        
+    def tweet_done(self, tweets):
+        log.debug(u'Actualizando nuevo tweet')
+        self.updatebox.release()
+        if tweets is None: return
+        self.updatebox.done()
+        self.update_timeline(tweets)
         
     def tweet_fav(self, id, fav):
         if fav:

@@ -14,6 +14,7 @@ class UpdateBox(gtk.Window):
     def __init__(self, parent):
         gtk.Window.__init__(self)
         
+        self.blocked = False
         self.mainwin = parent
         self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.set_title('Update Status')
@@ -49,10 +50,10 @@ class UpdateBox(gtk.Window):
         updatebox.pack_start(scroll, True, True, 3)
         
         self.url = gtk.Entry()
-        btn_url = gtk.Button('Shorten URL')
-        btn_url.set_tooltip_text('Shorten URL')
-        #btn_url.set_relief(gtk.RELIEF_NONE)
-        #btn_url.set_image(util.load_image('cut.png'))
+        self.btn_url = gtk.Button('Shorten URL')
+        self.btn_url.set_tooltip_text('Shorten URL')
+        #self.btn_url.set_relief(gtk.RELIEF_NONE)
+        #self.btn_url.set_image(util.load_image('cut.png'))
         
         btn_pic = gtk.Button('Upload Pic')
         btn_pic.set_tooltip_text('Upload Pic')
@@ -62,7 +63,7 @@ class UpdateBox(gtk.Window):
         
         tools = gtk.HBox(False)
         tools.pack_start(self.url, True, True, 3)
-        tools.pack_start(btn_url, False, False)
+        tools.pack_start(self.btn_url, False, False)
         tools.pack_start(gtk.HSeparator(), False, False)
         tools.pack_start(btn_pic, False, False, 3)
         
@@ -71,11 +72,11 @@ class UpdateBox(gtk.Window):
         self.toolbox.set_expanded(False)
         self.toolbox.add(tools)
         
-        btn_clr = gtk.Button()
-        btn_clr.set_image(util.load_image('clear.png'))
-        btn_clr.set_tooltip_text('Clear Box')
-        btn_clr.set_relief(gtk.RELIEF_NONE)
-        btn_upd = gtk.Button('Tweet')
+        self.btn_clr = gtk.Button()
+        self.btn_clr.set_image(util.load_image('clear.png'))
+        self.btn_clr.set_tooltip_text('Clear Box')
+        self.btn_clr.set_relief(gtk.RELIEF_NONE)
+        self.btn_upd = gtk.Button('Tweet')
         chk_short = gtk.CheckButton('Autocortado de URLs')
         chk_short.set_sensitive(False)
         
@@ -86,18 +87,20 @@ class UpdateBox(gtk.Window):
         self.waiting = CairoWaiting(self)
         self.lblerror = gtk.Label()
         self.lblerror.set_use_markup(True)
+        error_align = gtk.Alignment(xalign=0.0)
+        error_align.add(self.lblerror)
         
         buttonbox = gtk.HBox(False)
         buttonbox.pack_start(chk_short, False, False, 0)
-        buttonbox.pack_start(btn_clr, False, False, 0)
+        buttonbox.pack_start(self.btn_clr, False, False, 0)
         buttonbox.pack_start(gtk.HSeparator(), False, False, 2)
-        buttonbox.pack_start(btn_upd, False, False, 0)
+        buttonbox.pack_start(self.btn_upd, False, False, 0)
         abuttonbox = gtk.Alignment(1, 0.5)
         abuttonbox.add(buttonbox)
         
         bottom = gtk.HBox(False)
         bottom.pack_start(self.waiting, False, False, 5)
-        bottom.pack_start(self.lblerror, True, True, 4)
+        bottom.pack_start(error_align, True, True, 4)
         bottom.pack_start(abuttonbox, True, True, 5)
         
         vbox = gtk.VBox(False)
@@ -108,14 +111,36 @@ class UpdateBox(gtk.Window):
         
         self.add(vbox)
         
-        self.connect('delete-event', self.close)
-        buffer.connect("changed", self.count_chars)
-        btn_clr.connect('clicked', self.clear)
-        btn_upd.connect('clicked', self.update)
-        btn_url.connect('clicked', self.short_url)
+        self.connect('delete-event', self.__unclose)
+        buffer.connect('changed', self.count_chars)
+        self.btn_clr.connect('clicked', self.clear)
+        self.btn_upd.connect('clicked', self.update)
+        self.btn_url.connect('clicked', self.short_url)
         btn_pic.connect('clicked', self.upload_pic)
         self.toolbox.connect('activate', self.show_options)
     
+    def __unclose(self, widget, event):
+        if not self.blocked: self.done()
+        return True
+        
+    def block(self):
+        self.blocked = True
+        self.update_text.set_sensitive(False)
+        self.toolbox.set_sensitive(False)
+        self.btn_clr.set_sensitive(False)
+        self.btn_upd.set_sensitive(False)
+        self.btn_url.set_sensitive(False)
+        
+    def release(self):
+        self.blocked = False
+        self.update_text.set_sensitive(True)
+        self.toolbox.set_sensitive(True)
+        self.btn_clr.set_sensitive(True)
+        self.btn_upd.set_sensitive(True)
+        self.btn_url.set_sensitive(True)
+        self.waiting.stop(error=True)
+        self.lblerror.set_markup("<span size='small'>No se pudo enviar el tweet</span>")
+        
     def show(self, text, id, user):
         self.in_reply_id = id
         self.in_reply_user = user
@@ -123,14 +148,16 @@ class UpdateBox(gtk.Window):
             self.label.set_markup('<span size="medium"><b>Reply to %s</b></span>' % user)
         
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        self.set_focus(self.update_text)
         buffer = self.update_text.get_buffer()
         buffer.set_text(text)
         self.show_all()
         
-    def close(self, widget=None, event=None):
+    def done(self, widget=None, event=None):
         buffer = self.update_text.get_buffer()
         buffer.set_text('')
         self.url.set_text('')
+        self.lblerror.set_markup('')
         self.label.set_markup('<span size="medium"><b>What\'s happening?</b></span>')
         self.waiting.stop()
         self.toolbox.set_expanded(False)
@@ -154,9 +181,14 @@ class UpdateBox(gtk.Window):
         buffer = self.update_text.get_buffer()
         start, end = buffer.get_bounds()
         tweet = buffer.get_text(start, end)
+        if tweet == '': 
+            self.waiting.stop(error=True)
+            self.lblerror.set_markup("<span size='small'>Debe escribir algo</span>")
+            return
         
+        self.waiting.start()
         self.mainwin.request_update_status(tweet, self.in_reply_id)
-        self.close()
+        self.block()
         
     def short_url(self, widget):
         self.waiting.start()

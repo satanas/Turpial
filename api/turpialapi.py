@@ -8,7 +8,7 @@
 import time
 import oauth
 import Queue
-import socket
+#import socket
 import urllib2
 import logging
 import threading
@@ -34,7 +34,7 @@ class TurpialAPI(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         
-        socket.setdefaulttimeout(8)
+        #socket.setdefaulttimeout(8)
         self.setDaemon(False)
         self.log = logging.getLogger('API')
         self.queue = Queue.Queue()

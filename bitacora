@@ -7,8 +7,13 @@ Ene 04, 2010:
     + Deshabilitada el cierre de sesión 'limpio'. Ahora se usa exit()
     + Mejorado el cuadro de diálogo inputpin con un mensaje más amigable al usuario
     + Agregado botón de autencación básica
+    + Establecida por defecto la autenticación OAuth (con soporte aún para la básica)
     ---- commit ----
-    
+    + Separados los servicios de descarga de imágenes y acortado de urls
+    + Implementada actualización del número de tweets en el perfil del usuario (según contador)
+    + Corregidos bugs menores
+    ---- commit ----
+
 Dic 30, 2009:
     + Creado el diálogo InputPin para solicitar el pin al usuario
     + Implementado soporte completo para OAuth (Sí, ya dice Turpial xD)

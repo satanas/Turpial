@@ -47,10 +47,12 @@ class Turpial:
         self.profile = None
         self.agent = 'Turpial'
         self.httpserv = HTTPServices()
+        self.picserv = HTTPServices()
         self.api = TurpialAPI()
         
         self.log.debug('Iniciando Turpial')
         self.httpserv.start()
+        self.picserv.start()
         self.api.start()
         
         self.ui.show_login()
@@ -79,6 +81,12 @@ class Turpial:
             auth = self.config.read_section('Auth')
             self.api.start_oauth(auth, self.ui.show_oauth_pin_request, self.__signin_done)
         
+    def __tweet_done(self, tweet):
+        if tweet:
+            self.profile['statuses_count'] += 1
+            self.ui.update_user_profile(self.profile)
+        self.ui.tweet_done(tweet)
+        
     def __signin_done(self, key, secret, verifier):
         self.config.write('Auth', 'oauth-key', key)
         self.config.write('Auth', 'oauth-secret', secret)
@@ -93,7 +101,7 @@ class Turpial:
         
     def _update_timeline(self):
         self.ui.start_updating_timeline()
-        self.api.update_timeline(self.ui.update_timeline, 40)
+        self.api.update_timeline(self.ui.update_timeline, 60)
         
     def _update_replies(self):
         self.ui.start_updating_replies()
@@ -129,7 +137,7 @@ class Turpial:
             self.api.quit()
     
     def update_status(self, text, reply_id=None):
-        self.api.update_status(text, reply_id, self.ui.tweet_done)
+        self.api.update_status(text, reply_id, self.__tweet_done)
         
     def destroy_status(self, tweet_id):
         self.api.destroy_status(tweet_id, self.ui.update_timeline)
@@ -158,11 +166,11 @@ class Turpial:
             self.ui.update_timeline(self.__get_timeline())
     '''
     def short_url(self, text, callback):
-        service = 'tr.im'
+        service = 'is.gd'
         self.httpserv.short_url(service, text, callback)
     
     def download_user_pic(self, user, pic_url, callback):
-        self.httpserv.download_pic(user, pic_url, callback)
+        self.picserv.download_pic(user, pic_url, callback)
         
     def upload_pic(self, path):
         pass

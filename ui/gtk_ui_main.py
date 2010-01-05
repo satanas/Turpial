@@ -359,8 +359,8 @@ class Main(BaseGui, gtk.Window):
         table.attach(self.username,0,1,3,4,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
         #table.attach(lbl_pass,0,1,4,5,gtk.EXPAND,gtk.FILL, 0, 5)
         table.attach(self.password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
-        table.attach(self.btn_oauth,0,1,8,9,gtk.EXPAND,gtk.FILL,0, 10)
-        table.attach(self.btn_signup,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 10)
+        table.attach(self.btn_oauth,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 10)
+        table.attach(self.btn_signup,0,1,8,9,gtk.EXPAND,gtk.FILL,0, 10)
         
         self.vbox = gtk.VBox(False, 5)
         self.vbox.pack_start(table, False, False, 2)
@@ -413,6 +413,7 @@ class Main(BaseGui, gtk.Window):
         self.vbox.pack_start(self.dock, False, False, 0)
         self.vbox.pack_start(self.statusbar, False, False, 0)
         
+        self.profile.set_user_profile(p)
         self.add(self.vbox)
         self.show_all()
         gtk.gdk.threads_leave()
@@ -561,6 +562,8 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando nuevo tweet')
         self.updatebox.release()
         if tweets is None: return
+        #self.profile['statuses_count'] += 1
+        #self.profile.set_user_profile(self.profile)
         self.updatebox.done()
         self.update_timeline(tweets)
         

@@ -6,7 +6,6 @@
 # Dic 24, 2009
 
 import os
-import base64
 import logging
 import ConfigParser
 
@@ -15,6 +14,7 @@ class ConfigHandler:
         self.__config = {}
         self.cfg = ConfigParser.ConfigParser()
         self.dir = os.path.join(os.path.expanduser('~'),'.config', 'turpial', user)
+        self.imgpath = os.path.join(self.dir, 'images')
         self.filepath = os.path.join(self.dir, 'config')
         self.log = logging.getLogger('Config')
         

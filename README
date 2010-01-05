@@ -31,6 +31,8 @@ Turpial necesita los siguientes paquetes para funcionar correctamente:
 
   * python >= 2.5
   * python-simplejson >= 2.0.x
+  * python-imaging
+  * python-notify >= 0.1.x
   
 Una instalación estándar de Python (como la que viene en la mayoría de las
 distribuciones GNU/Linux) es más que suficiente. El módulo de python para 

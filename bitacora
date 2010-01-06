@@ -1,4 +1,10 @@
+Ene 06, 2010:
+    + Separado el searchtweets del main y limpiado el main de comentarios viejos
+    + Mejoradas las notificaciones de turpial. Ahora sale el último tweet y el icono del usuario
+    ---- commit ----
+    
 Ene 05, 2010:
+    + Actualizado el archivo README
     + Corregido error con los parámetros opcionales del perfil y el userform
     + Habilitada la búsqueda de tweets por tópicos
     + Habilitada la descarga inicial de todos los tweets (timeline, replies, directs y favs)

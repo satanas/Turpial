@@ -20,179 +20,6 @@ gtk.gdk.threads_init()
 
 log = logging.getLogger('Gtk')
 
-class SearchTweets(gtk.VBox):
-    def __init__(self, mainwin, label=''):
-        gtk.VBox.__init__(self, False)
-        
-        self.mainwin = mainwin
-        self.input_topics = gtk.Entry()
-        try:
-            #self.input_topics.set_property("primary-icon-stock", gtk.STOCK_FIND)
-            self.input_topics.set_property("secondary-icon-stock", gtk.STOCK_FIND)
-            self.input_topics.connect("icon-press", self.__on_icon_press)
-        except: 
-            pass
-        
-        inputbox = gtk.HBox(False)
-        inputbox.pack_start(self.input_topics, True, True)
-        
-        self.topics = TweetList(mainwin, label)
-        self.caption = label
-        
-        self.pack_start(inputbox, False, False)
-        self.pack_start(self.topics, True, True)
-        self.show_all()
-        
-        self.input_topics.connect('activate', self.__search_topic)
-        
-    def __on_icon_press(self, widget, pos, e):
-        #if pos == 0: 
-        #    self.__search_topic(widget)
-        if pos == 1:
-            #widget.set_text('')
-            self.__search_topic(widget)
-            
-    def __search_topic(self, widget):
-        topic = widget.get_text()
-        self.mainwin.request_search_topic(topic)
-        widget.set_text('')
-        
-    def update_tweets(self, arr_tweets):
-        self.topics.update_tweets(arr_tweets)
-        
-    def update_user_pic(self, user, pic):
-        self.topics.update_user_pic(user, pic)
-        
-    def update_wrap(self, width):
-        self.topics.update_wrap(width)
-
-'''
-class SearchPeople(gtk.VBox):
-    def __init__(self, mainwin, label=''):
-        gtk.VBox.__init__(self, False)
-        
-        self.mainwin = mainwin
-        self.input_topics = gtk.Entry()
-        try:
-            self.input_topics.set_property("primary-icon-stock", gtk.STOCK_FIND)
-            self.input_topics.set_property("secondary-icon-stock", gtk.STOCK_CLEAR)
-            self.input_topics.connect("icon-press", self.__on_icon_press)
-        except: 
-            pass
-        
-        inputbox = gtk.HBox(False)
-        inputbox.pack_start(self.input_topics, True, True)
-        
-        self.people = PeopleList(mainwin, label)
-        self.caption = label
-        
-        self.pack_start(inputbox, False, False)
-        self.pack_start(self.people, True, True)
-        self.show_all()
-        
-        self.input_topics.connect('activate', self.__search_topic)
-        
-    def __on_icon_press(self, widget, pos, e):
-        if pos == 0: 
-            self.__search_topic(widget)
-        elif pos == 1:
-            widget.set_text('')
-            
-    def __search_topic(self, widget):
-        query = widget.get_text()
-        self.mainwin.request_search_people(query)
-        widget.set_text('')
-        
-    def update_profiles(self, arr_profiles):
-        self.people.update_profiles(arr_profiles)
-        
-    def update_user_pic(self, user, pic):
-        self.people.update_user_pic(user, pic)
-        
-    def update_wrap(self, width):
-        self.people.update_wrap(width)
-        
-class Trending(gtk.VBox):
-    def __init__(self, mainwin, label=''):
-        gtk.VBox.__init__(self, False)
-        
-        self.mainwin = mainwin
-        self.caption = label
-        update = gtk.Button(stock=gtk.STOCK_REFRESH)
-        self.current = TrendingBox(mainwin, 'What\'s happening right now', 'trend-current.png')
-        self.day = TrendingBox(mainwin, 'What happened today', 'trend-daily.png')
-        self.week = TrendingBox(mainwin, 'What happened this week', 'trend-weekly.png')
-        
-        self.pack_start(self.current, False, False, 3)
-        self.pack_start(self.day, False, False, 3)
-        self.pack_start(self.week, False, False, 3)
-        self.pack_start(update, False, False, 5)
-        
-        self.show_all()
-        
-        update.connect('clicked', self.__request_trends)
-        
-    def __request_trends(self, widget):
-        self.mainwin.request_trends()
-        
-    def update_trends(self, current, day, week):
-        self.current.update_topic(current)
-        self.day.update_topic(day)
-        self.week.update_topic(week)
-        
-    def update_wrap(self, w):
-        pass
-        
-class TrendingBox(gtk.VBox):
-    def __init__(self, mainwin, label='', icon=None):
-        gtk.VBox.__init__(self, False)
-        
-        self.mainwin = mainwin
-        self.trends = []
-        for i in range(9):
-            btn = gtk.Button('%i' % i)
-            btn.connect('clicked', self.__search_topic)
-            self.trends.append(btn)
-            
-        title = gtk.Label()
-        title.set_alignment(0, 0.5)
-        title.set_markup('<b>%s</b>' % label)
-        
-        titlebox = gtk.HBox(False)
-        if icon:
-            icon = util.load_image(icon)
-            titlebox.pack_start(icon, False, False, 5)
-        titlebox.pack_start(title, False, False)
-        
-        line1 = gtk.HBox(True)
-        for i in range(3):
-            line1.pack_start(self.trends[i])
-        
-        line2 = gtk.HBox(True)
-        for i in range(3, 6):
-            line2.pack_start(self.trends[i])
-            
-        line3 = gtk.HBox(True)
-        for i in range(6, 9):
-            line3.pack_start(self.trends[i])
-            
-        self.pack_start(titlebox, False, False, 2)
-        self.pack_start(line1, False, False, 1)
-        self.pack_start(line2, False, False, 1)
-        self.pack_start(line3, False, False, 1)
-        self.show_all()
-        
-    def __search_topic(self, widget):
-        topic = widget.get_label()
-        self.mainwin.request_search_topic(topic)
-        
-    def update_topic(self, arr_topics):
-        for result in arr_topics['trends']:
-            arr = arr_topics['trends'][result]
-            for i in range(9):
-                topic = arr[i]['name']
-                self.trends[i].set_label(topic)
-'''
 # ------------------------------------------------------------
 # Objetos del Dock (Main Objects)
 # ------------------------------------------------------------
@@ -226,7 +53,6 @@ class Profile(Wrapper):
         
     def set_user_profile(self, user_profile):
         self.user_form.update(user_profile)
-        
         
 class Main(BaseGui, gtk.Window):
     def __init__(self, controller):
@@ -312,15 +138,7 @@ class Main(BaseGui, gtk.Window):
         gtk.main()
         
     def show_login(self):
-        '''
-        x = gtk.gdk.get_default_root_window()
-        x.set_events(gtk.gdk.KEY_PRESS_MASK |
-             gtk.gdk.POINTER_MOTION_MASK |
-             gtk.gdk.BUTTON_PRESS_MASK |
-             gtk.gdk.SCROLL_MASK)
 
-        x.add_filter(self.filter_cb, 'passthisforward')
-        '''
         self.mode = 1
         if self.vbox is not None: self.remove(self.vbox)
         
@@ -478,7 +296,10 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando el timeline')
         gtk.gdk.threads_enter()
         count = self.home.timeline.update_tweets(tweets)
-        self.notify.new_tweets(count, self.updating['home'])
+        username = tweets[0]['user']['screen_name']
+        avatar = tweets[0]['user']['profile_image_url']
+        icon = self.get_user_avatar(username, avatar)
+        self.notify.new_tweets(count, self.updating['home'], tweets[0]['text'], icon)
         gtk.gdk.threads_leave()
         self.updating['home'] = False
         
@@ -486,7 +307,10 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando las replies')
         gtk.gdk.threads_enter()
         count = self.home.replies.update_tweets(tweets)
-        self.notify.new_replies(count, self.updating['replies'])
+        username = tweets[0]['user']['screen_name']
+        avatar = tweets[0]['user']['profile_image_url']
+        icon = self.get_user_avatar(username, avatar)
+        self.notify.new_replies(count, self.updating['replies'], tweets[0]['text'], icon)
         gtk.gdk.threads_leave()
         self.updating['replies'] = False
         
@@ -494,7 +318,10 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando mensajes directos')
         gtk.gdk.threads_enter()
         count = self.home.direct.update_tweets(recv)
-        self.notify.new_directs(count, self.updating['directs'])
+        username = recv[0]['sender']['screen_name']
+        avatar = recv[0]['sender']['profile_image_url']
+        icon = self.get_user_avatar(username, avatar)
+        self.notify.new_directs(count, self.updating['directs'], recv[0]['text'], icon)
         gtk.gdk.threads_leave()
         self.updating['directs'] = False
         

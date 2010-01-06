@@ -32,20 +32,26 @@ class Notification:
             if pynotify.init("Turpial"):
                 if not icon:
                     icon = util.load_image('turpial_icon_48.png', True)
-                else:
-                    icon = util.load_image(icon, True)
+                #else:
+                #    icon = util.load_avatar(icon, True)
                 n = pynotify.Notification(title, message)
                 n.set_icon_from_pixbuf(icon)
                 n.show()
                 
-    def new_tweets(self, count, updating):
+    def new_tweets(self, count, updating, tweet, icon):
         if count > 0 and updating:
-            self.popup('Actualizado timeline', '%i tweets nuevos' % count, 'home.png')
+            twt = 'nuevo tweet' if count == 1 else 'nuevos tweets'
+            #self.popup('Actualizado timeline', '%i tweets nuevos' % count, 'home.png')
+            self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
             
-    def new_replies(self, count, updating):
+    def new_replies(self, count, updating, tweet, icon):
         if count > 0 and updating:
-            self.popup('Actualizadas menciones', '%i menciones nuevas' % count, 'profile.png')
+            twt = u'nueva mención' if count == 1 else u'nuevas menciones'
+            #self.popup('Actualizadas menciones', '%i menciones nuevas' % count, 'profile.png')
+            self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
             
-    def new_directs(self, count, updating):
+    def new_directs(self, count, updating, tweet, icon):
         if count > 0 and updating:
-            self.popup('Actualizados mensajes directos', '%i mensajes nuevos' % count, 'lists.png')
+            twt = 'nuevo DM' if count == 1 else 'nuevos DM'
+            #self.popup('Actualizados mensajes directos', '%i mensajes nuevos' % count, 'lists.png')
+            self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)

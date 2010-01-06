@@ -110,10 +110,10 @@ class UserForm(gtk.VBox):
         self.following_count.set_markup('<span size="9000">%i Following</span>' % profile['friends_count'])
         self.followers_count.set_markup('<span size="9000">%i Followers</span>' % profile['followers_count'])
         self.real_name.set_text(profile['name'])
-        self.location.set_text(profile['location'])
-        self.url.set_text(profile['url'])
+        if profile['location']: self.location.set_text(profile['location'])
+        if profile['url']: self.url.set_text(profile['url'])
         buffer = self.bio.get_buffer()
-        buffer.set_text(profile['description'])
+        if profile['description']: buffer.set_text(profile['description'])
     
     def update_user_pic(self, user, pic):
         if self.user != user: return

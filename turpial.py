@@ -95,7 +95,7 @@ class Turpial:
         self.ui.show_main(self.config, self.profile)
         self._update_timeline()
         self._update_replies()
-        #self._update_directs()
+        self._update_directs()
         self._update_favorites()
         self._update_rate_limits()
         
@@ -130,11 +130,11 @@ class Turpial:
     def signout(self):
         self.log.debug('Desconectando')
         exit(0)
-        self.httpserv.quit()
-        if self.profile: 
-            self.api.end_session()
-        else:
-            self.api.quit()
+        #self.httpserv.quit()
+        #if self.profile: 
+        #    self.api.end_session()
+        #else:
+        #    self.api.quit()
     
     def update_status(self, text, reply_id=None):
         self.api.update_status(text, reply_id, self.__tweet_done)
@@ -174,6 +174,9 @@ class Turpial:
         
     def upload_pic(self, path):
         pass
+        
+    def search_topic(self, query):
+        self.api.search_topic(query, self.ui.update_search_topics)
         
     def save_config(self, config):
         self.log.debug('Guardando configuracion')

@@ -27,8 +27,8 @@ class SearchTweets(gtk.VBox):
         self.mainwin = mainwin
         self.input_topics = gtk.Entry()
         try:
-            self.input_topics.set_property("primary-icon-stock", gtk.STOCK_FIND)
-            self.input_topics.set_property("secondary-icon-stock", gtk.STOCK_CLEAR)
+            #self.input_topics.set_property("primary-icon-stock", gtk.STOCK_FIND)
+            self.input_topics.set_property("secondary-icon-stock", gtk.STOCK_FIND)
             self.input_topics.connect("icon-press", self.__on_icon_press)
         except: 
             pass
@@ -46,10 +46,11 @@ class SearchTweets(gtk.VBox):
         self.input_topics.connect('activate', self.__search_topic)
         
     def __on_icon_press(self, widget, pos, e):
-        if pos == 0: 
+        #if pos == 0: 
+        #    self.__search_topic(widget)
+        if pos == 1:
+            #widget.set_text('')
             self.__search_topic(widget)
-        elif pos == 1:
-            widget.set_text('')
             
     def __search_topic(self, widget):
         topic = widget.get_text()
@@ -215,7 +216,7 @@ class Profile(Wrapper):
         
         self.favorites = TweetList(mainwin, 'Favorites')
         self.user_form = UserForm(mainwin, 'Profile')
-        self.topics = SearchTweets(mainwin, 'Topics')
+        self.topics = SearchTweets(mainwin, 'Search')
         
         self._append_widget(self.favorites, WrapperAlign.left)
         self._append_widget(self.user_form, WrapperAlign.middle)
@@ -518,10 +519,13 @@ class Main(BaseGui, gtk.Window):
         self.statusbar.push(0, util.get_rates(val))
         
     def update_search_topics(self, val):
-        self.search.topics.update_tweets(val['results'])
-        self.show_search(self)
-        if self.workspace != 'wide':
-            self.contenido.wrapper.set_current_page(1)
+        log.debug(u'Mostrando resultados de la búsqueda')
+        gtk.gdk.threads_enter()
+        self.profile.topics.update_tweets(val['results'])
+        gtk.gdk.threads_leave()
+        #self.show_search(self)
+        #if self.workspace != 'wide':
+        #    self.contenido.wrapper.set_current_page(1)
             
     def update_search_people(self, val):
         self.search.people.update_profiles(val)

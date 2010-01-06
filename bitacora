@@ -1,3 +1,9 @@
+Ene 05, 2010:
+    + Corregido error con los parámetros opcionales del perfil y el userform
+    + Habilitada la búsqueda de tweets por tópicos
+    + Habilitada la descarga inicial de todos los tweets (timeline, replies, directs y favs)
+    ---- commit ----
+    
 Ene 04, 2010:
     + Establecido foco por defecto al textview del updatebox
     + Validación de tweets vacíos antes de enviar

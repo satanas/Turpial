@@ -245,6 +245,11 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Desmarcando como favorito tweet: %s' % tweet_id)
         self.__register({'uri': 'http://twitter.com/favorites/destroy', 'id':tweet_id, 'fav': False, 'args': ''}, callback)
     
+    def search_topic(self, query, callback):
+        args = {'q': query, 'rpp': 50}
+        self.log.debug('Buscando tweets: %s' % query)
+        self.__register({'uri': 'http://search.twitter.com/search', 'args': args}, callback)
+        
     def end_session(self):
         self.__register({'uri': 'http://twitter.com/account/end_session', 'args': '', 'exit': True}, None)
         

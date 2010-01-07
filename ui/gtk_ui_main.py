@@ -296,11 +296,13 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando el timeline')
         gtk.gdk.threads_enter()
         count = self.home.timeline.update_tweets(tweets)
-        if count > 0:
+        
+        if count > 0 and self.updating['home']:
             username = tweets[0]['user']['screen_name']
             avatar = tweets[0]['user']['profile_image_url']
             icon = self.get_user_avatar(username, avatar)
-            self.notify.new_tweets(count, self.updating['home'], tweets[0]['text'], icon)
+            self.notify.new_tweets(count, tweets[0]['text'], icon)
+            
         gtk.gdk.threads_leave()
         self.updating['home'] = False
         
@@ -308,11 +310,13 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando las replies')
         gtk.gdk.threads_enter()
         count = self.home.replies.update_tweets(tweets)
-        if count > 0:
+        
+        if count > 0 and self.updating['replies']:
             username = tweets[0]['user']['screen_name']
             avatar = tweets[0]['user']['profile_image_url']
             icon = self.get_user_avatar(username, avatar)
-            self.notify.new_replies(count, self.updating['replies'], tweets[0]['text'], icon)
+            self.notify.new_replies(count, tweets[0]['text'], icon)
+        
         gtk.gdk.threads_leave()
         self.updating['replies'] = False
         
@@ -320,11 +324,13 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando mensajes directos')
         gtk.gdk.threads_enter()
         count = self.home.direct.update_tweets(recv)
-        if count > 0:
+        
+        if count > 0 and self.updating['directs']:
             username = recv[0]['sender']['screen_name']
             avatar = recv[0]['sender']['profile_image_url']
             icon = self.get_user_avatar(username, avatar)
-            self.notify.new_directs(count, self.updating['directs'], recv[0]['text'], icon)
+            self.notify.new_directs(count, recv[0]['text'], icon)
+            
         gtk.gdk.threads_leave()
         self.updating['directs'] = False
         

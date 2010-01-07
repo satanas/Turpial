@@ -1,3 +1,7 @@
+Ene 07, 2010:
+    + Refactorizado el código de las notificaciones. Ahora las validaciones se hacen en el controlador
+    ---- commit ----
+    
 Ene 06, 2010:
     + Separado el searchtweets del main y limpiado el main de comentarios viejos
     + Mejoradas las notificaciones de turpial. Ahora sale el último tweet y el icono del usuario

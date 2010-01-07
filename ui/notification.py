@@ -38,20 +38,14 @@ class Notification:
                 n.set_icon_from_pixbuf(icon)
                 n.show()
                 
-    def new_tweets(self, count, updating, tweet, icon):
-        if count > 0 and updating:
-            twt = 'nuevo tweet' if count == 1 else 'nuevos tweets'
-            #self.popup('Actualizado timeline', '%i tweets nuevos' % count, 'home.png')
-            self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
+    def new_tweets(self, count, tweet, icon):
+        twt = 'nuevo tweet' if count == 1 else 'nuevos tweets'
+        self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
             
-    def new_replies(self, count, updating, tweet, icon):
-        if count > 0 and updating:
-            twt = u'nueva mención' if count == 1 else u'nuevas menciones'
-            #self.popup('Actualizadas menciones', '%i menciones nuevas' % count, 'profile.png')
-            self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
+    def new_replies(self, count, tweet, icon):
+        twt = u'nueva mención' if count == 1 else u'nuevas menciones'
+        self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
             
-    def new_directs(self, count, updating, tweet, icon):
-        if count > 0 and updating:
-            twt = 'nuevo DM' if count == 1 else 'nuevos DM'
-            #self.popup('Actualizados mensajes directos', '%i mensajes nuevos' % count, 'lists.png')
-            self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
+    def new_directs(self, count, tweet, icon):
+        twt = 'nuevo DM' if count == 1 else 'nuevos DM'
+        self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)

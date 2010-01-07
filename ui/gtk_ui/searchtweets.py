@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Widget para mostrar los resultados de las búsquedas en Turpial
+# Widget para mostrar resultados de una búsqueda en Turpial
 #
 # Author: Wil Alvarez (aka Satanas)
-# Ene 06, 2009
+# Ene 06, 2010
 
 import gtk
 from tweetslist import *
+
 
 class SearchTweets(gtk.VBox):
     def __init__(self, mainwin, label=''):
@@ -15,8 +16,8 @@ class SearchTweets(gtk.VBox):
         self.mainwin = mainwin
         self.input_topics = gtk.Entry()
         try:
-            self.input_topics.set_property("primary-icon-stock", gtk.STOCK_FIND)
-            self.input_topics.set_property("secondary-icon-stock", gtk.STOCK_CLEAR)
+            #self.input_topics.set_property("primary-icon-stock", gtk.STOCK_FIND)
+            self.input_topics.set_property("secondary-icon-stock", gtk.STOCK_FIND)
             self.input_topics.connect("icon-press", self.__on_icon_press)
         except: 
             pass
@@ -34,10 +35,11 @@ class SearchTweets(gtk.VBox):
         self.input_topics.connect('activate', self.__search_topic)
         
     def __on_icon_press(self, widget, pos, e):
-        if pos == 0: 
+        #if pos == 0: 
+        #    self.__search_topic(widget)
+        if pos == 1:
+            #widget.set_text('')
             self.__search_topic(widget)
-        elif pos == 1:
-            widget.set_text('')
             
     def __search_topic(self, widget):
         topic = widget.get_text()

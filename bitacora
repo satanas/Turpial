@@ -1,6 +1,9 @@
 Ene 08, 2010:
     + Corregido item del tray menú que muestra el update box
     ---- commit ----
+    + Mejorada expresión regular para detectar hashtags
+    + Corregido error al recibir un None en las búsquedas
+    ---- commit ----
     
 Ene 07, 2010:
     + Refactorizado el código de las notificaciones. Ahora las validaciones se hacen en el controlador

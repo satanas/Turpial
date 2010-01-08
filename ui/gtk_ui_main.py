@@ -252,10 +252,7 @@ class Main(BaseGui, gtk.Window):
         gtk.gdk.threads_leave()
         self.update_config(config)
         
-        self.notify.popup('@%s' % p['screen_name'], 
-            'Tweets: %i<br/>Following: %i<br/>Followers: %i' % (p['statuses_count'], 
-            p['friends_count'], p['followers_count'])
-        )
+        self.notify.login(p)
         
         gobject.timeout_add(6*60*1000, self.download_rates)
         
@@ -371,7 +368,10 @@ class Main(BaseGui, gtk.Window):
     def update_search_topics(self, val):
         log.debug(u'Mostrando resultados de la búsqueda')
         gtk.gdk.threads_enter()
-        self.profile.topics.update_tweets(val['results'])
+        if val is None:
+            self.profile.topics.update_tweets(val)
+        else:
+            self.profile.topics.update_tweets(val['results'])
         gtk.gdk.threads_leave()
         #self.show_search(self)
         #if self.workspace != 'wide':

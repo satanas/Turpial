@@ -49,3 +49,8 @@ class Notification:
     def new_directs(self, count, tweet, icon):
         twt = 'nuevo DM' if count == 1 else 'nuevos DM'
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
+        
+    def login(self, p):
+        self.popup('@%s' % p['screen_name'], 
+            'Tweets: %i\nFollowing: %i\nFollowers: %i' % (p['statuses_count'], 
+            p['friends_count'], p['followers_count']))

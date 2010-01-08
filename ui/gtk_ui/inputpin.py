@@ -11,8 +11,8 @@ class InputPin(gtk.Dialog):
     def __init__(self, parent):
         gtk.Dialog.__init__(self, 'Autorizacion de Turpial', parent, 
             gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-            (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT, gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
-            'Basic Auth', gtk.RESPONSE_APPLY))
+            (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT, 
+            gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
         
         self.mainwin = parent
         self.set_size_request(380, 220)

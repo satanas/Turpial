@@ -64,21 +64,24 @@ class Main(BaseGui, gtk.Window):
         self.set_default_size(320, 480)
         self.set_icon(util.load_image('turpial_icon.png', True))
         self.set_position(gtk.WIN_POS_CENTER)
-        self.connect('destroy', self.quit)
+        self.connect('delete-event', self.__close)
         self.connect('size-request', self.size_request)
         
         self.mode = 0
         self.vbox = None
-        self.workspace = 'single'
         self.contentbox = gtk.VBox(False)
         
+        # Valores de config. por defecto
         self.showed = True
-        self.home_timer = None
-        self.replies_timer = None
-        self.directs_timer = None
+        self.minimize = 'on'
+        self.workspace = 'single'
         self.home_interval = 3
         self.replies_interval = 10
         self.directs_interval = 15
+        
+        self.home_timer = None
+        self.replies_timer = None
+        self.directs_timer = None
         
         self.notify = Notification()
         
@@ -123,10 +126,21 @@ class Main(BaseGui, gtk.Window):
         menu.append(exit)
         
         exit.connect('activate', self.quit)
-        tweet.connect('activate', self.show_update_box)
+        tweet.connect('activate', self.__show_update_box_from_menu)
             
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
+        
+    def __show_update_box_from_menu(self, widget):
+        self.show_update_box()
+        
+    def __close(self, widget, event=None):
+        if self.minimize == 'on':
+            self.showed = False
+            self.hide()
+        else:
+            self.quit(widget)
+        return True
         
     def quit(self, widget):
         self.request_signout()
@@ -179,7 +193,7 @@ class Main(BaseGui, gtk.Window):
         #table.attach(lbl_pass,0,1,4,5,gtk.EXPAND,gtk.FILL, 0, 5)
         table.attach(self.password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
         table.attach(self.btn_oauth,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 10)
-        table.attach(self.btn_signup,0,1,8,9,gtk.EXPAND,gtk.FILL,0, 10)
+        #table.attach(self.btn_signup,0,1,8,9,gtk.EXPAND,gtk.FILL,0, 10)
         
         self.vbox = gtk.VBox(False, 5)
         self.vbox.pack_start(table, False, False, 2)
@@ -239,7 +253,7 @@ class Main(BaseGui, gtk.Window):
         self.update_config(config)
         
         self.notify.popup('@%s' % p['screen_name'], 
-            'Tweets: %i\nFollowing: %i\nFollowers: %i' % (p['statuses_count'], 
+            'Tweets: %i<br/>Following: %i<br/>Followers: %i' % (p['statuses_count'], 
             p['friends_count'], p['followers_count'])
         )
         
@@ -448,22 +462,22 @@ class Main(BaseGui, gtk.Window):
         
     def update_config(self, config):
         log.debug('Actualizando configuracion')
-        #self.workspace = config.read('General', 'workspace')
-        #home_interval = int(config.read('General', 'home-update-interval'))
-        #replies_interval = int(config.read('General', 'replies-update-interval'))
-        #directs_interval = int(config.read('General', 'directs-update-interval'))
-        
-        self.workspace = 'single'
-        home_interval = 3
-        replies_interval = 10
-        directs_interval = 15
+        self.workspace = config.read('General', 'workspace')
+        self.minimize = bool(config.read('General', 'minimize-on-close'))
+        home_interval = int(config.read('General', 'home-update-interval'))
+        replies_interval = int(config.read('General', 'replies-update-interval'))
+        directs_interval = int(config.read('General', 'directs-update-interval'))
+        #self.workspace = 'single'
+        #home_interval = 3
+        #replies_interval = 10
+        #directs_interval = 15
         
         gtk.gdk.threads_enter()
         self.set_mode()
         
         if self.home_timer: gobject.remove_source(self.home_timer)
-        if self.replies_timer: gobject.remove_source(self.home_timer)
-        if self.directs_timer: gobject.remove_source(self.home_timer)
+        if self.replies_timer: gobject.remove_source(self.replies_timer)
+        if self.directs_timer: gobject.remove_source(self.directs_timer)
         
         if (self.home_interval != home_interval) or not self.home_timer:
             self.home_interval = home_interval

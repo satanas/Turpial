@@ -1,6 +1,12 @@
+Ene 08, 2010:
+    + Corregido item del tray menú que muestra el update box
+    ---- commit ----
+    
 Ene 07, 2010:
     + Refactorizado el código de las notificaciones. Ahora las validaciones se hacen en el controlador
     ---- commit ----
+    + Eliminado el botón de autenticación básica
+    + Ahora turpial si responde a la configuración establecida en el archivo
     
 Ene 06, 2010:
     + Separado el searchtweets del main y limpiado el main de comentarios viejos

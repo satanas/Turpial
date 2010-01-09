@@ -4,6 +4,10 @@ Ene 08, 2010:
     + Mejorada expresión regular para detectar hashtags
     + Corregido error al recibir un None en las búsquedas
     ---- commit ----
+    + Agregado Azrael Arocha como Tester
+    + Agregado soporte para reproducción de sonido (notificaciones)
+    + Implementado cálculo aproximado de uso de la API al configurar los tiempos
+    ---- commit ----
     
 Ene 07, 2010:
     + Refactorizado el código de las notificaciones. Ahora las validaciones se hacen en el controlador

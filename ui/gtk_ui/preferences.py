@@ -60,9 +60,11 @@ class Preferences(gtk.Window):
         
         
 class TimeScroll(gtk.HBox):
-    def __init__(self, label='', val=5, min=2, max=60, step=3, page=6, size=0):
+    def __init__(self, label='', val=5, min=1, max=60, step=3, page=6, size=0,
+        callback=None):
         gtk.HBox.__init__(self, False)
         
+        self.callback = callback
         self.value = val
         lbl = gtk.Label(label)
         lbl.set_size_request(60, -1)
@@ -85,31 +87,61 @@ class TimeScroll(gtk.HBox):
         
     def __on_change(self, widget):
         self.value = widget.get_value()
+        self.callback()
         
 class GeneralTab(gtk.VBox):
     def __init__(self):
         gtk.VBox.__init__(self, False)
         
-        self.home = TimeScroll('Home', 3)
-        self.replies = TimeScroll('Replies', 10)
-        self.directs = TimeScroll('Directs', 15)
+        description = gtk.Label('Ajusta cada cuanto tiempo quieres actualizar \
+el timeline, las menciones y los mensajes directos')
+        description.set_line_wrap(True)
         
-        self.estimated = gtk.Label('You will be using X API calls per hour')
+        self.home = TimeScroll('Home', 3, callback=self.update_api_calls)
+        self.replies = TimeScroll('Replies', 10, min=2, callback=self.update_api_calls)
+        self.directs = TimeScroll('Directs', 15, min=5, callback=self.update_api_calls)
+        
+        self.estimated = gtk.Label(u'Usarás 0 llamadas a la API por hora')
         
         self.workspace = gtk.CheckButton('Wide Workspace')
-        self.profile_colors = gtk.CheckButton('Load profile color')
-        self.remember = gtk.CheckButton('Remember login info')
-        self.minimize = gtk.CheckButton('Minimize to tray on close')
+        self.workspace.set_has_tooltip(True)
+        self.workspace.set_tooltip_text('Muestra un espacio de trabajo de 3 columnas')
         
+        self.profile_colors = gtk.CheckButton('Load profile color')
+        self.profile_colors.set_has_tooltip(True)
+        self.profile_colors.set_sensitive(False)
+        self.profile_colors.set_tooltip_text('Utiliza los colores del perfil de \
+usuario para resaltar menciones, hashtags y URLs')
+        
+        self.minimize = gtk.CheckButton('Minimize to tray on close')
+        self.minimize.set_has_tooltip(True)
+        self.minimize.set_tooltip_text('Envía a Turpial a la bandeja de sistema en \
+lugar de cerrarla')
+
+        self.remember = gtk.CheckButton('Remember login info')
+        self.remember.set_has_tooltip(True)
+        self.remember.set_sensitive(False)
+        self.remember.set_tooltip_text('Recuerda la información de inicio de sesión')
+        
+        
+        self.pack_start(description, False, False, 6)
         self.pack_start(self.home, False, False, 5)
         self.pack_start(self.replies, False, False, 5)
         self.pack_start(self.directs, False, False, 5)
         self.pack_start(self.estimated, False, False, 4)
         self.pack_start(self.workspace, False, False, 2)
         self.pack_start(self.profile_colors, False, False, 2)
-        self.pack_start(self.remember, False, False, 2)
         self.pack_start(self.minimize, False, False, 2)
+        self.pack_start(self.remember, False, False, 2)
         self.show_all()
+        self.update_api_calls()
+        
+    def update_api_calls(self):
+        #print self.home.value
+        #print self.replies.value
+        #print self.directs.value
+        calls = (60 / self.home.value) + (60 / self.replies.value) + (60 / self.directs.value)
+        self.estimated.set_text(u'Usarás aprox. %i llamadas a la API por hora' % calls)
         
     def get_config(self):
         if self.workspace.get_active():

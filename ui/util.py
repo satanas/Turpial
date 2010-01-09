@@ -107,7 +107,7 @@ def get_pango_profile(p):
         protected = '&lt;p&gt;'
     if p['following']: 
         following = '&lt;f&gt;'
-            
+    
     # Escape pango markup
     for key in ['url', 'location', 'description', 'name', 'screen_name']:
         if not p.has_key(key) or p[key] is None: continue

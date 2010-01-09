@@ -8,11 +8,14 @@
 import util
 import logging
 
+from sound import *
+
 log = logging.getLogger('Notify')
 
 class Notification:
     def __init__(self):
         self.activate()
+        self.sound = Sound()
         
     def activate(self):
         self.active = True
@@ -41,16 +44,21 @@ class Notification:
     def new_tweets(self, count, tweet, icon):
         twt = 'nuevo tweet' if count == 1 else 'nuevos tweets'
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
-            
+        self.sound.tweets()
+        
+        
     def new_replies(self, count, tweet, icon):
         twt = u'nueva mención' if count == 1 else u'nuevas menciones'
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
+        self.sound.replies()
             
     def new_directs(self, count, tweet, icon):
         twt = 'nuevo DM' if count == 1 else 'nuevos DM'
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
+        self.sound.directs()
         
     def login(self, p):
         self.popup('@%s' % p['screen_name'], 
             'Tweets: %i\nFollowing: %i\nFollowers: %i' % (p['statuses_count'], 
             p['friends_count'], p['followers_count']))
+        self.sound.login()

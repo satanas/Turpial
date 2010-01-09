@@ -46,7 +46,7 @@ class Dock(gtk.Alignment):
         self.btn_update.connect('clicked', self.show_update)
         #self.btn_search.connect('clicked', self.mainwin.show_search)
         self.btn_profile.connect('clicked', self.mainwin.show_profile)
-        self.btn_settings.connect('clicked', self.mainwin.show_prefs)
+        self.btn_settings.connect('clicked', self.mainwin.show_preferences)
         self.btn_about.connect('clicked', self.__show_about)
         
         box = gtk.HBox()

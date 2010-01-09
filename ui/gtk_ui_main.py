@@ -93,10 +93,6 @@ class Main(BaseGui, gtk.Window):
         self.dock = Dock(self, self.workspace)
         self.__create_trayicon()
         
-    def filter_cb(self, event, data=None):
-        print 'me again7', event.type, event, data
-        return gtk.gdk.FILTER_CONTINUE
-        
     def __create_trayicon(self):
         if gtk.check_version(2, 10, 0) is not None:
             self.log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
@@ -272,7 +268,7 @@ class Main(BaseGui, gtk.Window):
             return
         self.updatebox.show(text, id, user)
         
-    def show_prefs(self, widget):
+    def show_preferences(self, widget):
         prefs = Preferences(self)
         
     def show_oauth_pin_request(self, url):

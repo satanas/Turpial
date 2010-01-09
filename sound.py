@@ -25,10 +25,10 @@ class Sound:
         self.__play('cambur_pinton.wav')
         
     def tweets(self):
-        self.__play('turpial.ogg')
+        self.__play('turpial.wav')
         
     def replies(self):
-        self.__play('mencion3.ogg')
+        self.__play('mencion3.wav')
         
     def directs(self):
-        self.__play('mencion2.ogg')
+        self.__play('mencion2.wav')

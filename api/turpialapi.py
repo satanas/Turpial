@@ -109,7 +109,11 @@ class TurpialAPI(threading.Thread):
         if tweet is None: return False
         
         if args.has_key('add'):
-            self.tweets.insert(0, tweet)
+            exist = False
+            for twt in self.tweets:
+                if tweet['id'] == twt['id']: exist = True
+            
+            if not exist: self.tweets.insert(0, tweet)
         elif args.has_key('del'):
             item = None
             for twt in self.tweets:

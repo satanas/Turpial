@@ -59,13 +59,10 @@ class Preferences(gtk.Window):
         self.destroy()
         
     def __save(self, widget):
-        #return
         general = self.general.get_config()
         notif = self.notif.get_config()
         services = self.services.get_config()
-        #print general
-        #print notif
-        #print services
+        
         new_config = {
             'General': general, 
             'Notifications': notif, 

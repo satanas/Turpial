@@ -164,6 +164,7 @@ class TweetList(gtk.VBox):
                 for u in urls:
                     urlmenu = gtk.MenuItem(u)
                     urlmenu.connect('activate', self.__open_url, u)
+                    urlmenu.connect('button-release-event', self.__open_url2, u)
                     open_menu.append(urlmenu)
                 open.set_submenu(open_menu)
                 
@@ -196,6 +197,9 @@ class TweetList(gtk.VBox):
             
             menu.show_all()
             menu.popup(None, None, None, event.button ,event.time)
+        
+    def __open_url2(self, widget, event, url):
+        self.__open_url(widget, url)
         
     def __open_url(self, widget, url):
         log.debug('Opening url %s' % url)

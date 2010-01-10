@@ -11,14 +11,17 @@ import getpass
 import logging
 import datetime
 
+from base_ui import *
+
 log = logging.getLogger('Cmd')
 INTRO = [
     'Bienvenido a Turpial, un cliente Twitter para GNU/Linux.', 
     'Escriba "help" para obtener una lista de los comandos disponibles.',
     'Escriba "help <comando>" para obtener una ayuda detallada de un comando'
 ]
-class Main(cmd.Cmd):
+class Main(BaseGui, cmd.Cmd):
     def __init__(self, controller):
+        BaseGui.__init__(self, controller)
         cmd.Cmd.__init__(self)
         self.controller = controller
         self.prompt = 'turpial> '
@@ -310,7 +313,8 @@ class Main(cmd.Cmd):
             self.do_exit('')
             exit(0)
         log.info('Autenticando')
-        self.controller.signin(usuario, password)
+        #self.controller.signin(usuario, password)
+        self.request_signin(usuario, password)
     
     def cancel_login(self, error):
         print error

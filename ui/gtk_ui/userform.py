@@ -117,7 +117,7 @@ class UserForm(gtk.VBox):
     
     def update_user_pic(self, user, pic):
         if self.user != user: return
-        pix = util.load_avatar(pic, True)
+        pix = util.load_avatar(self.mainwin.imgdir, pic, True)
         self.user_pic.set_image(pix)
         
     def save_user_profile(self, widget):

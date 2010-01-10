@@ -35,8 +35,6 @@ class Notification:
             if pynotify.init("Turpial"):
                 if not icon:
                     icon = util.load_image('turpial_icon_48.png', True)
-                #else:
-                #    icon = util.load_avatar(icon, True)
                 n = pynotify.Notification(title, message)
                 n.set_icon_from_pixbuf(icon)
                 n.show()

@@ -78,6 +78,11 @@ class Main(BaseGui, gtk.Window):
         self.home_interval = 3
         self.replies_interval = 10
         self.directs_interval = 15
+        self.home_notif = True
+        self.replies_notif = True
+        self.directs_notif = True
+        self.login_notif = True
+        self.me = None
         
         self.home_timer = None
         self.replies_timer = None
@@ -145,7 +150,9 @@ class Main(BaseGui, gtk.Window):
         self.tray = None
         
     def main_loop(self):
+        gtk.gdk.threads_enter()
         gtk.main()
+        gtk.gdk.threads_leave()
         
     def show_login(self):
 
@@ -230,6 +237,9 @@ class Main(BaseGui, gtk.Window):
     def show_main(self, config, p):
         log.debug('Cargando ventana principal')
         self.mode = 2
+        
+        self.update_config(config, True)
+        
         gtk.gdk.threads_enter()
         self.contentbox.add(self.contenido)
         
@@ -243,12 +253,13 @@ class Main(BaseGui, gtk.Window):
         self.vbox.pack_start(self.statusbar, False, False, 0)
         
         self.profile.set_user_profile(p)
+        self.me = p['screen_name']
+        
         self.add(self.vbox)
         self.show_all()
         gtk.gdk.threads_leave()
-        self.update_config(config)
         
-        self.notify.login(p)
+        if self.login_notif: self.notify.login(p)
         
         gobject.timeout_add(6*60*1000, self.download_rates)
         
@@ -304,11 +315,17 @@ class Main(BaseGui, gtk.Window):
         gtk.gdk.threads_enter()
         count = self.home.timeline.update_tweets(tweets)
         
-        if count > 0 and self.updating['home']:
-            username = tweets[0]['user']['screen_name']
-            avatar = tweets[0]['user']['profile_image_url']
+        if count > 0 and self.updating['home'] and self.home_notif:
+            tweet = None
+            for i in range(0, len(tweets)):
+                if tweets[i]['user']['screen_name'] != self.me:
+                    tweet = tweets[i]
+                    break
+            username = tweet['user']['screen_name']
+            avatar = tweet['user']['profile_image_url']
             icon = self.get_user_avatar(username, avatar)
-            self.notify.new_tweets(count, tweets[0]['text'], icon)
+            text = "<b>@%s</b> %s" % (username, tweet['text'])
+            self.notify.new_tweets(count, text, icon)
             
         gtk.gdk.threads_leave()
         self.updating['home'] = False
@@ -318,7 +335,7 @@ class Main(BaseGui, gtk.Window):
         gtk.gdk.threads_enter()
         count = self.home.replies.update_tweets(tweets)
         
-        if count > 0 and self.updating['replies']:
+        if count > 0 and self.updating['replies'] and self.replies_notif:
             username = tweets[0]['user']['screen_name']
             avatar = tweets[0]['user']['profile_image_url']
             icon = self.get_user_avatar(username, avatar)
@@ -332,7 +349,7 @@ class Main(BaseGui, gtk.Window):
         gtk.gdk.threads_enter()
         count = self.home.direct.update_tweets(recv)
         
-        if count > 0 and self.updating['directs']:
+        if count > 0 and self.updating['directs'] and self.directs_notif:
             username = recv[0]['sender']['screen_name']
             avatar = recv[0]['sender']['profile_image_url']
             icon = self.get_user_avatar(username, avatar)
@@ -385,7 +402,7 @@ class Main(BaseGui, gtk.Window):
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)
         if pix:
-            return util.load_avatar(pix)
+            return util.load_avatar(self.imgdir, pix)
         else:
             return util.load_image('unknown.png', pixbuf=True)
         
@@ -429,14 +446,15 @@ class Main(BaseGui, gtk.Window):
             self.profile.favorites.do_unmark(id)
             self.request_unfav(id)
         
-    def switch_mode(self, widget=None):
-        if self.workspace == 'single':
-            self.workspace = 'wide'
-        else:
-            self.workspace = 'single'
-        self.set_mode()
+    #def switch_mode(self, widget=None):
+    #    if self.workspace == 'single':
+    #        self.workspace = 'wide'
+    #    else:
+    #        self.workspace = 'single'
+    #    self.set_mode()
         
     def set_mode(self):
+        #gtk.gdk.threads_enter()
         cur_x, cur_y = self.get_position()
         cur_w, cur_h = self.get_size()
         
@@ -455,25 +473,27 @@ class Main(BaseGui, gtk.Window):
         self.home.change_mode(self.workspace)
         self.profile.change_mode(self.workspace)
         self.show_all()
+        #gtk.gdk.threads_leave()
         
-    def update_config(self, config):
+    def update_config(self, config, thread=False):
         log.debug('Actualizando configuracion')
         self.workspace = config.read('General', 'workspace')
-        self.minimize = bool(config.read('General', 'minimize-on-close'))
+        self.minimize = config.read('General', 'minimize-on-close')
         home_interval = int(config.read('General', 'home-update-interval'))
         replies_interval = int(config.read('General', 'replies-update-interval'))
         directs_interval = int(config.read('General', 'directs-update-interval'))
-        #self.workspace = 'single'
-        #home_interval = 3
-        #replies_interval = 10
-        #directs_interval = 15
+        self.home_notif = True if config.read('Notifications', 'home') == 'on' else False
+        self.replies_notif = True if config.read('Notifications', 'replies') == 'on' else False
+        self.directs_notif = True if config.read('Notifications', 'directs') == 'on' else False
+        self.login_notif = True if config.read('Notifications', 'login') == 'on' else False
+        self.imgdir = config.imgdir
         
-        gtk.gdk.threads_enter()
+        if self.home_timer: gobject.source_remove(self.home_timer)
+        if self.replies_timer: gobject.source_remove(self.replies_timer)
+        if self.directs_timer: gobject.source_remove(self.directs_timer)
+        
+        if thread: gtk.gdk.threads_enter()
         self.set_mode()
-        
-        if self.home_timer: gobject.remove_source(self.home_timer)
-        if self.replies_timer: gobject.remove_source(self.replies_timer)
-        if self.directs_timer: gobject.remove_source(self.directs_timer)
         
         if (self.home_interval != home_interval) or not self.home_timer:
             self.home_interval = home_interval
@@ -487,7 +507,7 @@ class Main(BaseGui, gtk.Window):
             self.directs_interval = directs_interval
             self.directs_timer = gobject.timeout_add(self.directs_interval*60*1000, self.download_directs)
             
-        gtk.gdk.threads_leave()
+        if thread: gtk.gdk.threads_leave()
         
     def size_request(self, widget, event, data=None):
         """Callback when the window changes its sizes. We use it to set the

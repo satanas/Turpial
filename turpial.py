@@ -78,6 +78,7 @@ class Turpial:
         else:
             self.profile = val
             self.config = ConfigHandler(val['screen_name'])
+            self.picserv.update_img_dir(self.config.imgdir)
             auth = self.config.read_section('Auth')
             self.api.start_oauth(auth, self.ui.show_oauth_pin_request, self.__signin_done)
         
@@ -166,7 +167,7 @@ class Turpial:
             self.ui.update_timeline(self.__get_timeline())
     '''
     def short_url(self, text, callback):
-        service = 'is.gd'
+        service = self.config.read('Services', 'shorten-url')
         self.httpserv.short_url(service, text, callback)
     
     def download_user_pic(self, user, pic_url, callback):
@@ -179,8 +180,6 @@ class Turpial:
         self.api.search_topic(query, self.ui.update_search_topics)
         
     def save_config(self, config):
-        self.log.debug('Guardando configuracion')
-        print config
         self.config.save(config)
         self.ui.update_config(self.config)
         

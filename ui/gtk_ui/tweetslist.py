@@ -136,6 +136,8 @@ class TweetList(gtk.VBox):
             unfaving.set_sensitive(False)
             
             menu = gtk.Menu()
+            usermenu = gtk.MenuItem('@'+user)
+            
             if op == 'del': 
                 menu.append(deleting)
             elif op == 'fav':
@@ -179,7 +181,12 @@ class TweetList(gtk.VBox):
                 
                 if len(urls) > 0: menu.append(open)
                 #menu.append(search)
-            
+                
+                menu.append(gtk.SeparatorMenuItem())
+                menu.append(usermenu)
+                
+                user_profile = '/'.join(['http://www.twitter.com', user])
+                usermenu.connect('activate', self.__open_url, user_profile)
                 reply.connect('activate', self.__show_update_box, re, id, user)
                 retweet_old.connect('activate', self.__show_update_box, rt)
                 retweet.connect('activate', self.__retweet, id)
@@ -302,7 +309,7 @@ class TweetList(gtk.VBox):
         
     def update_user_pic(self, user, pic):
         # Evaluar si es más eficiente esto o cargar toda la lista cada vez
-        pix = util.load_avatar(pic)
+        pix = util.load_avatar(self.mainwin.imgdir, pic)
         iter = self.model.get_iter_first()
         while iter:
             u = self.model.get_value(iter, 1)

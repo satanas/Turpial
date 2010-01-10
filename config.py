@@ -14,17 +14,15 @@ class ConfigHandler:
         self.__config = {}
         self.cfg = ConfigParser.ConfigParser()
         self.dir = os.path.join(os.path.expanduser('~'),'.config', 'turpial', user)
-        self.imgpath = os.path.join(self.dir, 'images')
+        self.imgdir = os.path.join(self.dir, 'images')
         self.filepath = os.path.join(self.dir, 'config')
         self.log = logging.getLogger('Config')
         
+        if not os.path.isdir(self.dir): os.makedirs(self.dir)
+        if not os.path.isdir(self.imgdir): os.makedirs(self.imgdir)
+        
         # Create config file
         if not os.path.isfile(self.filepath):
-            try:
-                os.makedirs(self.dir)
-            except:
-                pass
-            
             fd = open(self.filepath,'w')
             self.cfg.read(self.filepath)
             
@@ -40,10 +38,26 @@ class ConfigHandler:
             self.cfg.set('General','replies-update-interval', 10)
             self.cfg.set('General','directs-update-interval', 15)
             self.cfg.set('General','workspace', 'single')
-            self.cfg.set('General','profile-color', False)
-            self.cfg.set('General','remember-login-info', False)
-            self.cfg.set('General','minimize-on-close', False)
+            self.cfg.set('General','profile-color', 'on')
+            self.cfg.set('General','remember-login-info', 'off')
+            self.cfg.set('General','minimize-on-close', 'on')
             self.cfg.set('General','main-win-geometry','320,480')
+            
+            # Write general config
+            self.cfg.add_section('Notifications')
+            self.cfg.set('Notifications','login', 'on')
+            self.cfg.set('Notifications','home', 'on')
+            self.cfg.set('Notifications','replies', 'on')
+            self.cfg.set('Notifications','directs', 'on')
+            
+            # Write general config
+            self.cfg.add_section('Services')
+            self.cfg.set('Services','shorten-url', 'is.gd')
+            self.cfg.set('Services','upload-pic', '')
+            
+            # Write general config
+            self.cfg.add_section('Muted')
+            self.cfg.set('Muted','users', '')
             
             self.cfg.write(fd)
             fd.close()
@@ -51,6 +65,7 @@ class ConfigHandler:
         self.load()
 
     def load(self):
+        self.log.debug('Cargando')
         self.cfg.read(self.filepath)
         
         self.__config = {
@@ -69,15 +84,30 @@ class ConfigHandler:
                 'minimize-on-close': self.cfg.get('General','minimize-on-close'),
                 'main-win-geometry': self.cfg.get('General','main-win-geometry'),
             },
+            'Notifications':{
+                'login': self.cfg.get('Notifications','login'),
+                'home': self.cfg.get('Notifications','home'),
+                'replies': self.cfg.get('Notifications','replies'),
+                'directs': self.cfg.get('Notifications','directs'),
+            },
+            'Services':{
+                'shorten-url': self.cfg.get('Services','shorten-url'),
+                'upload-pic': self.cfg.get('Services','upload-pic'),
+            },
+            'Muted':{
+                'users': self.cfg.get('Muted','users'),
+            },
         }
     
     def save(self, config):
-        for section in config:
-            for option in config[section]:
-                value = config[section][option]
-                self.write(section, option, value)
+        self.log.debug('Guardando todo')
+        for section, v in config.iteritems():
+            for option, value in config[section].iteritems():
+                if self.__config[section][option] != value:
+                    self.write(section, option, value)
         
     def write(self, section, option, value):
+        #self.log.debug('Guardando valor %s, %s, %s' % (section, option, value))
         fd = open(self.filepath,'w')
         self.cfg.set(section, option, value)
         self.cfg.write(fd)
@@ -85,13 +115,22 @@ class ConfigHandler:
         self.__config[section][option] = value
         
     def read(self, section, option):
+        #self.log.debug(u'Leyendo valor %s, %s' % (section, option))
         try:
             return self.__config[section][option]
         except:
             return None
             
     def read_section(self, section):
+        self.log.debug(u'Leyendo sección %s' % (section))
         try:
             return self.__config[section]
+        except:
+            return None
+            
+    def read_all(self):
+        self.log.debug('Leyendo todo')
+        try:
+            return self.__config
         except:
             return None

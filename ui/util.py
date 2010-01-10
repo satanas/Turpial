@@ -30,8 +30,8 @@ def load_image(path, pixbuf=False):
     del pix
     return avatar
     
-def load_avatar(path, image=False):
-    img_path = os.path.join('/tmp', path)
+def load_avatar(dir, path, image=False):
+    img_path = os.path.join(dir, path)
     pix = gtk.gdk.pixbuf_new_from_file(img_path)
     if not image: return pix
     avatar = gtk.Image()

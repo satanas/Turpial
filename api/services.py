@@ -11,7 +11,7 @@ import urllib2
 import logging
 import threading
 
-SERVICES = {
+URL_SERVICES = {
     "cli.gs": "http://cli.gs/api/v1/cligs/create?appid=gwibber&url=%s",
     "is.gd": "http://is.gd/api.php?longurl=%s",
     "tinyurl.com": "http://tinyurl.com/api-create.php?url=%s",
@@ -22,13 +22,17 @@ SERVICES = {
 }
 
 class HTTPServices(threading.Thread):
-    def __init__(self):
+    def __init__(self, imgdir='/tmp'):
         threading.Thread.__init__(self)
         self.setDaemon(False)
         self.log = logging.getLogger('Services')
         self.queue = Queue.Queue()
         self.exit = False
+        self.imgdir = imgdir
         self.log.debug('Iniciado')
+        
+    def update_img_dir(self, imgdir):
+        self.imgdir = imgdir
         
     def download_pic(self, user, pic_url, callback):
         self.register({'cmd': 'download_pic', 'user': user, 'url': pic_url}, callback)
@@ -58,7 +62,7 @@ class HTTPServices(threading.Thread):
                 if ext == '': ext = 'png'
                 filename = args['url'].replace('http://', '0_')
                 filename = filename.replace('/', '_')
-                fullname = os.path.join('/tmp', filename)
+                fullname = os.path.join(self.imgdir, filename)
                 
                 try:
                     f = urllib2.urlopen(args['url']).read()
@@ -77,7 +81,7 @@ class HTTPServices(threading.Thread):
                 self.log.debug('Cortando URL: %s' % args['url'])
                 longurl = urllib2.quote(args['url'])
                 try:
-                    short = urllib2.urlopen(SERVICES[args['service']] % longurl).read()
+                    short = urllib2.urlopen(URL_SERVICES[args['service']] % longurl).read()
                 except:
                     short = None
                 self.log.debug('URL Cortada: %s' % short)
@@ -90,5 +94,5 @@ class URLShorten:
     
     def short(self, service, url):
         longurl = urllib2.quote(url)
-        short = urllib2.urlopen(SERVICES[service] % longurl).read()
+        short = urllib2.urlopen(URL_SERVICES[service] % longurl).read()
         return short

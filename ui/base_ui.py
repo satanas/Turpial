@@ -37,9 +37,15 @@ class BaseGui:
     # Common methods to all interfaces
     # ------------------------------------------------------------
     
+    def read_config(self):
+        return self.__controller.config.read_all()
+        
+    def save_config(self, new_config):
+        self.__controller.save_config(new_config)
+        
     def resize_avatar(self, pic):
         ext = pic[-3:].lower()
-        fullname = os.path.join('/tmp', pic)
+        fullname = os.path.join(self.imgdir, pic)
         
         img = Image.open(fullname)
         pw, ph = img.size
@@ -75,7 +81,7 @@ class BaseGui:
         pic = pic_url.replace('http://', '0_')
         pic = pic.replace('/', '_')
         
-        fullname = os.path.join('/tmp', pic)
+        fullname = os.path.join(self.imgdir, pic)
         if os.path.isfile(fullname):
             self.__user_pics[user] = pic
             return self.__user_pics[user]
@@ -137,9 +143,6 @@ class BaseGui:
         
     def request_trends(self):
         self.__controller._update_trends()
-        
-    def request_save_config(self, new_config):
-        self.__controller.save_config(new_config)
         
     # ------------------------------------------------------------
     # Timer Methods

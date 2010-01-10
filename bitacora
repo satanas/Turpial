@@ -1,3 +1,12 @@
+Ene 09, 2010:
+    + Terminados controles para manejar las preferencias
+    + Implementado soporte para manejar la configuración del usuario
+    + Cambiada la ruta de las imágenes a la carpeta del usuario
+    + Agregado menú item en el popup para abrir los perfiles
+    + Corregido bug que mostraba en las notificaciones los tweets propios
+    + Agregado el nombre del usuario en el tweet resúmen
+    ---- commit ----
+    
 Ene 08, 2010:
     + Corregido item del tray menú que muestra el update box
     ---- commit ----

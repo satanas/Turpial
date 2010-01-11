@@ -45,7 +45,6 @@ class Turpial:
         
         self.config = None
         self.profile = None
-        self.agent = 'Turpial'
         self.httpserv = HTTPServices()
         self.picserv = HTTPServices()
         self.api = TurpialAPI()

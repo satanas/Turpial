@@ -30,7 +30,13 @@ class TweetList(gtk.VBox):
         self.list.set_level_indentation(0)
         self.list.set_rules_hint(True)
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
-        
+        '''
+        try:
+            self.list.set_has_tooltip(True)
+        except:
+            pass
+        self.list.connect("query-tooltip", self.show_tooltip)
+        '''
         self.label = gtk.Label(label)
         self.caption = label
         
@@ -117,6 +123,26 @@ class TweetList(gtk.VBox):
             text = text.replace(u, cad)
         return text
         
+    '''
+    def show_tooltip(self, widget, x, y, keyboard_mode, tooltip):
+        #rel_y = self.get_property('vadjustment').value
+        
+        #path = widget.get_path_at_pos(int(x), int(y + rel_y))
+        path = widget.get_path_at_pos(int(x), int(y))
+        if path is None: return False
+        
+        model = widget.get_model()
+        iter = model.get_iter(path[0])
+        
+        pix = model.get_value(iter, 0)
+        msg = "<b>En respuesta a</b>:\n%s" % model.get_value(iter, 4)
+        tooltip.set_icon(pix)
+        tooltip.set_markup(msg)
+        del pix
+        
+        return True
+    '''
+    
     def __popup_menu(self, widget, event):
         model, row = widget.get_selection().get_selected()
         if (row is None): return False
@@ -163,7 +189,6 @@ class TweetList(gtk.VBox):
                 open_menu = gtk.Menu()
                 for u in urls:
                     urlmenu = gtk.MenuItem(u)
-                    urlmenu.connect('activate', self.__open_url, u)
                     urlmenu.connect('button-release-event', self.__open_url2, u)
                     open_menu.append(urlmenu)
                 open.set_submenu(open_menu)

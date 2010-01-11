@@ -187,7 +187,7 @@ class BaseGui:
     def show_login(self):
         raise NotImplementedError
         
-    def show_main(self):
+    def show_main(self, config, profile):
         raise NotImplementedError
         
     def show_oauth_pin_request(self, url):

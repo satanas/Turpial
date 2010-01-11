@@ -30,13 +30,42 @@ class Main(BaseGui, cmd.Cmd):
     def main_loop(self):
         pass
         
-    def update_timeline(self, tweets):
+    def show_main(self, config, profile):
+        self.cmdloop()
+        
+    def show_login(self):
+        try:
+            usuario = raw_input('Username: ')
+            password = getpass.unix_getpass()
+        except EOFError:
+            self.do_exit('')
+            exit(0)
+        log.info('Autenticando')
+        self.request_signin(usuario, password)
+    
+    def cancel_login(self, error):
+        print error
+        self.show_login()
+        
+    def start_updating_timeline(self):
+        print "\nActualizando timeline"
+        
+    def start_updating_replies(self):
         pass
+        
+    def start_updating_directs(self):
+        pass
+        
+    def update_tweet(self, tweet):
+        pass
+        
+    def update_timeline(self, tweets):
+        self.show_tweets(tweets)
         
     def update_replies(self, tweets):
         pass
         
-    def update_favs(self, tweets):
+    def update_favorites(self, tweets):
         pass
         
     def update_directs(self, recv, sent):
@@ -45,6 +74,35 @@ class Main(BaseGui, cmd.Cmd):
     def update_rate_limits(self, rates):
         pass
         
+    def update_following(self, followings):
+        pass
+        
+    def update_followers(self, followers):
+        pass
+        
+    def update_user_avatar(self, avatar):
+        pass
+        
+    def update_user_profile(self, profile):
+        pass
+        
+    def update_trends(self, current, day, week):
+        pass
+        
+    def update_search_topics(self, topics):
+        pass
+        
+    def tweet_changed(self, timeline, replies, favs):
+        pass
+        
+    def tweet_done(self, tweets):
+        pass
+        
+    def update_config(self, config):
+        pass
+    
+    
+    
     def default(self, line):
         print '\n'.join(['Comando no encontrado.', INTRO[1], INTRO[2]])
         
@@ -53,7 +111,8 @@ class Main(BaseGui, cmd.Cmd):
         
     def do_show(self, arg):
         if arg == 'tweets':
-            self.show_tweets(self.controller.get_timeline())
+            #self.show_tweets(self.controller._update_timeline())
+            self.download_timeline()
         elif arg == 'replies':
             self.show_tweets(self.controller.replies)
         elif arg == 'directs':
@@ -301,24 +360,6 @@ class Main(BaseGui, cmd.Cmd):
             if resp.lower() == 'n':
                 return False
         return True
-        
-    def show_main(self):
-        self.cmdloop()
-        
-    def show_login(self):
-        try:
-            usuario = raw_input('Username: ')
-            password = getpass.unix_getpass()
-        except EOFError:
-            self.do_exit('')
-            exit(0)
-        log.info('Autenticando')
-        #self.controller.signin(usuario, password)
-        self.request_signin(usuario, password)
-    
-    def cancel_login(self, error):
-        print error
-        self.show_login()
         
     def show_tweets(self, tweets):
         count = 1

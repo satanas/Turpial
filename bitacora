@@ -2,6 +2,9 @@ Ene 10, 2010:
     + Corregida interacción con los enlaces en el popup menú (abren con click D o I)
     + Corregido duplicado del último tweet público al mandar DM usando D
     ---- commit ----
+    + Actualizados diagramas de modelo, vista y controlador
+    + Creado lanzador para beta testers
+    ---- commit ----
     
 Ene 09, 2010:
     + Terminados controles para manejar las preferencias

@@ -1,3 +1,19 @@
+v0.8 (Ene 10, 2010):
+    + Disponible interfaz GTK+ para el modo gráfico (el modo texto está en reconstrucción)
+    + Soporte para búsquedas (con parámetros)
+    + Funciones para marcar y desmarcar favoritos
+    + Muestra el timeline, las menciones, los mensajes directos, los favoritos
+    + Muestra las llamadas restantes a la API
+    + Permite tuitear, borrar tuits y retuitear
+    + Soporte para enviar mensajes directos (usando el comando D)
+    + Implementados servicios de cortado de URLs
+    + Descarga las imágenes de los usuarios
+    + Usa threads para mantener una interfaz de alta respuesta
+    + Implementadas notificaciones (con sonido) integradas con el entorno de escritorio
+    + Disponible el modo "wide" del entorno de trabajo
+    + Creados diagramas de clases como parte de la documentación para desarrolladores
+    + Implementada nueva API usando la autenticación segura de Twitter (OAuth)
+    
 v0.6 (Nov 18, 2009):
     + Disponible solo interfaz en modo texto
     + Soporte para follow y unfollow

@@ -12,6 +12,7 @@ v0.8 (Ene 10, 2010):
     + Implementadas notificaciones (con sonido) integradas con el entorno de escritorio
     + Disponible el modo "wide" del entorno de trabajo
     + Creados diagramas de clases como parte de la documentación para desarrolladores
+    + Implementada nueva API usando la autenticación segura de Twitter (OAuth)
     
 v0.6 (Nov 18, 2009):
     + Disponible solo interfaz en modo texto

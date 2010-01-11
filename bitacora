@@ -5,6 +5,8 @@ Ene 10, 2010:
     + Actualizados diagramas de modelo, vista y controlador
     + Creado lanzador para beta testers
     ---- commit ----
+    + Agregado script para la instalación automática de dependencias
+    ---- commit ----
     
 Ene 09, 2010:
     + Terminados controles para manejar las preferencias

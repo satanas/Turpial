@@ -132,8 +132,8 @@ class BaseGui:
     def request_update_status(self, text, in_reply_id):
         self.__controller.update_status(text, in_reply_id)
         
-    def request_update_profile(self, new_name, new_url, new_bio, new_loc):
-        self.__controller.update_profile(self, new_name, new_url, new_bio, new_loc)
+    def request_update_profile(self, name, url, bio, location):
+        self.__controller.update_profile(name, url, bio, location)
         
     def request_search_topic(self, topic):
         self.__controller.search_topic(topic)

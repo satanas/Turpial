@@ -47,6 +47,7 @@ class UserForm(gtk.VBox):
         top.pack_start(info_box, False, False, 5)
         
         self.real_name = gtk.Entry()
+        self.real_name.set_max_length(20)
         name_lbl = gtk.Label('Nombre')
         name_lbl.set_size_request(label_width, -1)
         name_box = gtk.HBox(False)
@@ -54,6 +55,7 @@ class UserForm(gtk.VBox):
         name_box.pack_start(self.real_name, True, True, 5)
         
         self.location = gtk.Entry()
+        self.location.set_max_length(30)
         loc_lbl = gtk.Label('Ubicacion')
         loc_lbl.set_size_request(label_width, -1)
         loc_box = gtk.HBox(False)
@@ -61,6 +63,7 @@ class UserForm(gtk.VBox):
         loc_box.pack_start(self.location, True, True, 5)
         
         self.url = gtk.Entry()
+        self.url.set_max_length(100)
         url_lbl = gtk.Label('URL')
         url_lbl.set_size_request(label_width, -1)
         url_box = gtk.HBox(False)
@@ -86,17 +89,16 @@ class UserForm(gtk.VBox):
         form.pack_start(url_box, False, False, 4)
         form.pack_start(bio_box, False, False, 4)
         
-        submit = gtk.Button(stock=gtk.STOCK_SAVE)
-        submit.set_sensitive(False)
+        self.submit = gtk.Button('Guardar')
         submit_box = gtk.Alignment(1.0, 0.5)
         submit_box.set_property('right-padding', 5)
-        submit_box.add(submit)
+        submit_box.add(self.submit)
         
         self.pack_start(top, False, False)
         self.pack_start(form, False, False)
         self.pack_start(submit_box, False, False)
         
-        submit.connect('clicked', self.save_user_profile)
+        self.submit.connect('clicked', self.save_user_profile)
         
     def update(self, profile):
         self.user = profile['screen_name']
@@ -114,17 +116,38 @@ class UserForm(gtk.VBox):
         if profile['url']: self.url.set_text(profile['url'])
         buffer = self.bio.get_buffer()
         if profile['description']: buffer.set_text(profile['description'])
-    
+        self.unlock()
+        
     def update_user_pic(self, user, pic):
         if self.user != user: return
         pix = util.load_avatar(self.mainwin.imgdir, pic, True)
         self.user_pic.set_image(pix)
         
     def save_user_profile(self, widget):
-        self.real_name
-        self.location
-        self.url
-        self.bio
+        self.lock()
+        name = self.real_name.get_text()
+        location = self.location.get_text()
+        url = self.url.get_text()
+        buffer = self.bio.get_buffer()
+        bounds = buffer.get_bounds()
+        bio = buffer.get_text(bounds[0], bounds[1])[:160]
+        self.mainwin.request_update_profile(name, url, bio, location)
+        
+    def lock(self):
+        self.real_name.set_sensitive(False)
+        self.location.set_sensitive(False)
+        self.url.set_sensitive(False)
+        self.bio.set_sensitive(False)
+        self.submit.set_label('Guardando...')
+        self.submit.set_sensitive(False)
+    
+    def unlock(self):
+        self.real_name.set_sensitive(True)
+        self.location.set_sensitive(True)
+        self.url.set_sensitive(True)
+        self.bio.set_sensitive(True)
+        self.submit.set_label('Guardar')
+        self.submit.set_sensitive(True)
         
     def update_wrap(self, w):
         pass

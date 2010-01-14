@@ -6,6 +6,7 @@
 # Dic 05, 2009
 
 import os
+import time
 import Queue
 import urllib2
 import logging
@@ -51,6 +52,7 @@ class HTTPServices(threading.Thread):
         
     def run(self):
         while not self.exit:
+            time.sleep(0.5)
             try:
                 req = self.queue.get(False)
             except Queue.Empty:

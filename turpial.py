@@ -6,6 +6,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 8, 2009
 
+import os
 import urllib
 import logging
 
@@ -28,6 +29,8 @@ class Turpial:
             help='Debug Mode', default=False)
         parser.add_option('-i', '--interface', dest='interface',
             help='Select interface to use. (cmd|gtk)', default='gtk')
+        parser.add_option('-c', '--clean', dest='clean', action='store_true',
+            help='Clean all bytecodes', default=False)
         
         (options, _) = parser.parse_args()
         
@@ -37,6 +40,10 @@ class Turpial:
             logging.basicConfig(level=logging.INFO)
         self.log = logging.getLogger('Controller')
         
+        if options.clean:
+            self.__clean()
+            self.signout()
+            
         self.interface = options.interface
         if options.interface == 'gtk':
             self.ui = gtk_ui_main.Main(self)
@@ -57,6 +64,17 @@ class Turpial:
         self.ui.show_login()
         self.ui.main_loop()
         
+    def __clean(self):
+        self.log.debug("Limpiando la casa...")
+        i = 0
+        for root, dirs, files in os.walk('.'):
+            for f in files:
+                path = os.path.join(root, f)
+                if path.endswith('.pyc') or path.endswith('.pyo'): 
+                    self.log.debug("Borrado %s" % path)
+                    os.remove(path)
+
+            
     def __validate_signin(self, val):
         if val.has_key('error'):
             self.ui.cancel_login(val['error'])
@@ -151,6 +169,10 @@ class Turpial:
     
     def retweet(self, tweet_id):
         self.api.retweet(tweet_id, self.ui.tweet_changed)
+    
+    def update_profile(self, new_name, new_url, new_bio, new_location):
+        self.api.update_profile(new_name, new_url, new_bio, new_location, 
+            self.ui.update_user_profile)
     
     '''
     def mute(self, user):

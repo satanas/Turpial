@@ -8,7 +8,6 @@
 import time
 import oauth
 import Queue
-#import socket
 import urllib2
 import logging
 import threading
@@ -34,7 +33,6 @@ class TurpialAPI(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         
-        #socket.setdefaulttimeout(8)
         self.setDaemon(False)
         self.log = logging.getLogger('API')
         self.queue = Queue.Queue()
@@ -254,6 +252,11 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Buscando tweets: %s' % query)
         self.__register({'uri': 'http://search.twitter.com/search', 'args': args}, callback)
         
+    def update_profile(self, name, url, bio, location, callback):
+        args = {'name': name, 'url': url, 'location': location, 'description': bio}
+        self.log.debug('Actualizando perfil')
+        self.__register({'uri': 'http://twitter.com/account/update_profile', 'args': args}, callback)
+        
     def end_session(self):
         self.__register({'uri': 'http://twitter.com/account/end_session', 'args': '', 'exit': True}, None)
         
@@ -262,6 +265,7 @@ class TurpialAPI(threading.Thread):
         
     def run(self):
         while not self.exit:
+            time.sleep(0.3)
             try:
                 req = self.queue.get(False)
             except Queue.Empty:

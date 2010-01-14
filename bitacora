@@ -1,3 +1,12 @@
+Ene 14, 2010:
+    + Validada longitud de los campos del perfil de usuario en la vista
+    + Implementada actualización del perfil de usuario
+    + Optimizado el rendimiento de los hilos, se usaron sleeps para bajar el consumo de cpu
+    ---- commit ----
+    
+Ene 13, 2010:
+    + Implementado argumento de línea de comando para limpiar los bytecodes
+    
 Ene 10, 2010:
     + Corregida interacción con los enlaces en el popup menú (abren con click D o I)
     + Corregido duplicado del último tweet público al mandar DM usando D

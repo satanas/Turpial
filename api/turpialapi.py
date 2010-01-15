@@ -194,6 +194,25 @@ class TurpialAPI(threading.Thread):
             else:
                 done_callback(self.friends)
         
+    def __handle_follow(self, user, follow):
+        if follow:
+            exist = False
+            for u in self.friends:
+                if user['id'] == u['id']: exist = True
+            
+            if not exist: 
+                self.friends.insert(0, user)
+                self.profile['friends_count'] += 1
+        else:
+            item = None
+            for u in self.friends:
+                if user['id'] == u['id']:
+                    item = u
+                    break
+            if item: 
+                self.friends.remove(item)
+                self.profile['friends_count'] -= 1
+            
     def is_friend(self, user):
         if self.friends is None: return None
         
@@ -286,8 +305,15 @@ class TurpialAPI(threading.Thread):
         self.__register({'uri': 'http://twitter.com/statuses/friends', 'args': args,
             'done': callback, 'friends': True}, self.__handle_friends)
         
-    def follow(self, user_id, callback):
-        args = {'id': user_id}
+    def follow(self, user, callback):
+        args = {'screen_name': user}
+        self.log.debug('Siguiendo a: %s' % user)
+        self.__register({'uri': 'http://twitter.com/friendships/create', 'args': args, 'follow': True}, callback)
+        
+    def unfollow(self, user, callback):
+        args = {'screen_name': user}
+        self.log.debug('Dejando de seguir a: %s' % user)
+        self.__register({'uri': 'http://twitter.com/friendships/destroy', 'args': args, 'follow': False}, callback)
         
     def end_session(self):
         self.__register({'uri': 'http://twitter.com/account/end_session', 'args': '', 'exit': True}, None)
@@ -366,6 +392,9 @@ class TurpialAPI(threading.Thread):
                     if args.has_key('login'): 
                         rtn = {'error': 'Can\'t connect to twitter.com'}
             
+            if args.has_key('login'): 
+                self.profile = rtn
+                
             if args.has_key('timeline'):
                 if rtn: self.tweets = rtn
             elif args.has_key('replies'):
@@ -400,6 +429,11 @@ class TurpialAPI(threading.Thread):
                 
             if args.has_key('friends'):
                 callback(rtn, args['done'], args['args']['cursor'])
+                continue
+                
+            if args.has_key('follow'):
+                self.__handle_follow(rtn, args['follow'])
+                callback(self.friends, self.profile, rtn, args['follow'])
                 continue
                 
             if args.has_key('exit'):

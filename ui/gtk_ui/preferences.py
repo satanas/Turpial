@@ -146,28 +146,40 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         est_align.add(self.estimated)
         
         self.workspace = gtk.CheckButton('Wide Workspace')
-        self.workspace.set_has_tooltip(True)
         self.workspace.set_active(ws)
-        self.workspace.set_tooltip_text('Muestra un espacio de trabajo de 3 \
-columnas')
+        try:
+            self.workspace.set_has_tooltip(True)
+            self.workspace.set_tooltip_text('Muestra un espacio de trabajo de \
+3 columnas')
+        except:
+            pass
         
         self.profile_colors = gtk.CheckButton('Load profile color')
-        self.profile_colors.set_has_tooltip(True)
         self.profile_colors.set_sensitive(False)
-        self.profile_colors.set_tooltip_text('Utiliza los colores del perfil \
-de usuario para resaltar menciones, hashtags y URLs')
+        try:
+            self.profile_colors.set_has_tooltip(True)
+            self.profile_colors.set_tooltip_text('Utiliza los colores del \
+perfil de usuario para resaltar menciones, hashtags y URLs')
+        except:
+            pass
         
         self.minimize = gtk.CheckButton('Minimize to tray on close')
-        self.minimize.set_has_tooltip(True)
         self.minimize.set_active(min)
-        self.minimize.set_tooltip_text('Envía a Turpial a la bandeja de \
+        try:
+            self.minimize.set_has_tooltip(True)
+            self.minimize.set_tooltip_text('Envía a Turpial a la bandeja de \
 sistema en lugar de cerrarlo')
+        except:
+            pass
 
         self.remember = gtk.CheckButton('Remember login info')
-        self.remember.set_has_tooltip(True)
         self.remember.set_sensitive(False)
-        self.remember.set_tooltip_text('Recuerda la información de inicio de \
-sesión')
+        try:
+            self.remember.set_has_tooltip(True)
+            self.remember.set_tooltip_text('Recuerda la información de inicio \
+de sesión')
+        except:
+            pass
         
         
         self.pack_start(self.home, False, False, 5)
@@ -208,29 +220,40 @@ deseas recibir de Turpial', current)
         login = True if self.current['login'] == 'on' else False
         
         self.timeline = gtk.CheckButton('Timeline')
-        self.timeline.set_has_tooltip(True)
         self.timeline.set_active(home)
-        self.timeline.set_tooltip_text('Muestra una notificación cada vez que \
-se actualiza el timeline')
-        
+        try:
+            self.timeline.set_has_tooltip(True)
+            self.timeline.set_tooltip_text('Muestra una notificación cada vez \
+que se actualiza el timeline')
+        except:
+            pass
+            
         self.replies = gtk.CheckButton('Menciones')
-        self.replies.set_has_tooltip(True)
         self.replies.set_active(replies)
-        self.replies.set_tooltip_text('Muestra una notificación cuando se \
+        try:
+            self.replies.set_has_tooltip(True)
+            self.replies.set_tooltip_text('Muestra una notificación cuando se \
 reciben menciones de otros usuarios')
-        
+        except:
+            pass
+            
         self.directs = gtk.CheckButton('Mensajes Directos')
-        self.directs.set_has_tooltip(True)
         self.directs.set_active(directs)
-        self.directs.set_tooltip_text(u'Muestra una notificación cuando se \
+        try:
+            self.directs.set_has_tooltip(True)
+            self.directs.set_tooltip_text(u'Muestra una notificación cuando se \
 reciben mensajes directos')
-
+        except:
+            pass
+            
         self.profile = gtk.CheckButton('Inicio')
-        self.profile.set_has_tooltip(True)
         self.profile.set_active(login)
-        self.profile.set_tooltip_text(u'Muestra una notificación al inicio de \
-la sesión con información del perfil de usuario')
-        
+        try:
+            self.profile.set_has_tooltip(True)
+            self.profile.set_tooltip_text(u'Muestra una notificación al inicio \
+de la sesión con información del perfil de usuario')
+        except:
+            pass
         
         self.pack_start(self.timeline, False, False, 2)
         self.pack_start(self.replies, False, False, 2)

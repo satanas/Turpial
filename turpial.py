@@ -98,6 +98,12 @@ class Turpial:
             self.picserv.update_img_dir(self.config.imgdir)
             auth = self.config.read_section('Auth')
             self.api.start_oauth(auth, self.ui.show_oauth_pin_request, self.__signin_done)
+    
+    def __done_follow(self, friends, profile, user, follow):
+        self.ui.update_user_profile(profile)
+        self.ui.update_friends(friends)
+        self.ui.update_follow(user, follow)
+        #self.ui.update_timeline(friends)
         
     def __tweet_done(self, tweet):
         if tweet:
@@ -173,6 +179,12 @@ class Turpial:
     def retweet(self, tweet_id):
         self.api.retweet(tweet_id, self.ui.tweet_changed)
     
+    def follow(self, user):
+        self.api.follow(user, self.__done_follow)
+        
+    def unfollow(self, user):
+        self.api.unfollow(user, self.__done_follow)
+        
     def update_profile(self, new_name, new_url, new_bio, new_location):
         self.api.update_profile(new_name, new_url, new_bio, new_location, 
             self.ui.update_user_profile)

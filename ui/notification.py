@@ -60,3 +60,11 @@ class Notification:
             'Tweets: %i\nFollowing: %i\nFollowers: %i' % (p['statuses_count'], 
             p['friends_count'], p['followers_count']))
         self.sound.login()
+        
+    def following(self, user, follow):
+        name = user['screen_name']
+        
+        if follow:
+            self.popup('Follow', 'Estas siguiendo a @%s' % name)
+        else:
+            self.popup('Unfollow', 'Has dejado de seguir a @%s' % name)

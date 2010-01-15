@@ -7,15 +7,15 @@
 
 import gtk
 import pango
-import logging
 import gobject
+import logging
 import webbrowser
 import xml.sax.saxutils as saxutils
 
 from waiting import *
 from ui import util as util
 
-log = logging.getLogger('Gtk:TweetList')
+log = logging.getLogger('Gtk:Tweetlist')
 
 class TweetList(gtk.VBox):
     def __init__(self, mainwin, label='', menu=True):
@@ -207,11 +207,11 @@ class TweetList(gtk.VBox):
                     menu.append(direct)
                     
                     if not rtn.has_key('friend'):
-                        menu.append(loading)
+                        item = loading
                     elif rtn['friend'] is True:
-                        menu.append(unfollow)
+                        item = unfollow
                     elif rtn['friend'] is False:
-                        menu.append(follow)
+                        item = follow
                 else:
                     menu.append(delete)
                     
@@ -226,6 +226,7 @@ class TweetList(gtk.VBox):
                 
                 menu.append(gtk.SeparatorMenuItem())
                 menu.append(usermenu)
+                if not rtn['own']: menu.append(item)
                 
                 user_profile = '/'.join(['http://www.twitter.com', user])
                 usermenu.connect('activate', self.__open_url, user_profile)
@@ -236,8 +237,8 @@ class TweetList(gtk.VBox):
                 save.connect('activate', self.__fav, True, id)
                 unsave.connect('activate', self.__fav, False, id)
                 delete.connect('activate', self.__delete, id)
-                follow.connect('activate', self.__follow, True, id)
-                unfollow.connect('activate', self.__follow, False, id)
+                follow.connect('activate', self.__follow, True, user)
+                unfollow.connect('activate', self.__follow, False, user)
             
             menu.show_all()
             menu.popup(None, None, None, event.button ,event.time)
@@ -266,9 +267,12 @@ class TweetList(gtk.VBox):
         else:
             self.mainwin.request_unfav(id)
     
-    def __follow(self, widget, follow, id):
-        pass
-    
+    def __follow(self, widget, follow, user):
+        if follow:
+            self.mainwin.request_follow(user)
+        else:
+            self.mainwin.request_unfollow(user)
+        
     def update_wrap(self, val):
         self.cell_tweet.set_property('wrap-width', val - 80)
         iter = self.model.get_iter_first()

@@ -5,6 +5,12 @@ Ene 15, 2010:
     ---- commit ----
     + Establecido try/except para intentar depurar el error 401 en el OAuth
     ---- commit ----
+    + Eliminada la función update_friends (aparentemente inútil)
+    + Reubicado menú de follow/unfollow para evitar errores :P
+    + Agregado método following al sistema de notificaciones
+    + Agregadas notificaciones al hacer follow/unfollow
+    + Corregidoo error que evitaba mostrar las preferencias en versiones antiguas de pygtk (tooltips)
+    ---- commit ----
     
 Ene 14, 2010:
     + Validada longitud de los campos del perfil de usuario en la vista

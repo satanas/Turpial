@@ -230,10 +230,7 @@ class BaseGui:
     def update_rate_limits(self, rates):
         raise NotImplementedError
         
-    def update_following(self, followings):
-        raise NotImplementedError
-        
-    def update_followers(self, followers):
+    def update_follow(self, user, follow):
         raise NotImplementedError
         
     def update_user_avatar(self, avatar):
@@ -247,10 +244,10 @@ class BaseGui:
         
     def update_search_topics(self, topics):
         raise NotImplementedError
-        
+    
     def update_friends(self, friends):
         raise NotImplementedError
-    
+        
     def tweet_changed(self, timeline, replies, favs):
         raise NotImplementedError
         

@@ -371,13 +371,8 @@ class Main(BaseGui, gtk.Window):
         self.profile.set_user_profile(profile)
         gtk.gdk.threads_leave()
         
-    def update_following(self, people):
-        log.debug(u'Actualizando following')
-        self.profile.set_following(people)
-        
-    def update_followers(self, people):
-        log.debug(u'Actualizando followers')
-        self.profile.set_followers(people)
+    def update_follow(self, user, follow):
+        self.notify.following(user, follow)
         
     def update_rate_limits(self, val):
         if val is None: return
@@ -407,7 +402,7 @@ class Main(BaseGui, gtk.Window):
         self.search.trending.update_trends(current, day, week)
         
     def update_friends(self, friends):
-        self.friends = friends
+        pass
         
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)

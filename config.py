@@ -21,6 +21,8 @@ class ConfigHandler:
         if not os.path.isdir(self.dir): os.makedirs(self.dir)
         if not os.path.isdir(self.imgdir): os.makedirs(self.imgdir)
         
+        #if os.path.isfile(self.filepath):
+            
         # Create config file
         if not os.path.isfile(self.filepath):
             fd = open(self.filepath,'w')

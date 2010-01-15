@@ -443,18 +443,6 @@ class Main(BaseGui, gtk.Window):
         self.updatebox.done()
         self.update_timeline(tweets)
         
-    def tweet_fav(self, id, fav):
-        if fav:
-            self.home.timeline.do_mark(id)
-            self.home.replies.do_mark(id)
-            self.profile.favorites.do_mark( id)
-            self.request_fav(id)
-        else:
-            self.home.timeline.do_unmark(id)
-            self.home.replies.do_unmark(id)
-            self.profile.favorites.do_unmark(id)
-            self.request_unfav(id)
-        
     def set_mode(self):
         cur_x, cur_y = self.get_position()
         cur_w, cur_h = self.get_size()

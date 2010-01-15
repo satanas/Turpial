@@ -1,3 +1,9 @@
+Ene 15, 2010:
+    + Refactorizada actualización de tweets luego de marcar/desmarcar favoritos
+    + Creada función '__del_tweet_from' para refactorizar el borrado de tweets en la api
+    + Creada función '__change_tweet_from' para refactorizar la modificación de tweets en la api
+    ---- commit ----
+    
 Ene 14, 2010:
     + Validada longitud de los campos del perfil de usuario en la vista
     + Implementada actualización del perfil de usuario
@@ -9,6 +15,8 @@ Ene 14, 2010:
     + Descargada la lista de amigos completa. Debe probarse con usuarios que tengan más de 1000 amigos
     + Incrustados métodos de favoritos y rates dentro del gtk threads
     ---- commit ----
+    + Implementado menú para hacer follow/unfollow desde el timeline
+    + Reestructurado el menú contextual. El controlador verifica/calcula todo y la vista solo muestra
     
 Ene 13, 2010:
     + Implementado argumento de línea de comando para limpiar los bytecodes

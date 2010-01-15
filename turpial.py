@@ -162,13 +162,13 @@ class Turpial:
         self.api.update_status(text, reply_id, self.__tweet_done)
         
     def destroy_status(self, tweet_id):
-        self.api.destroy_status(tweet_id, self.ui.update_timeline)
+        self.api.destroy_status(tweet_id, self.ui.after_destroy)
         
     def set_favorite(self, tweet_id):
-        self.api.set_favorite(tweet_id, self.ui.tweet_changed)
+        self.api.set_favorite(tweet_id, self.ui.update_favorites)
         
     def unset_favorite(self, tweet_id):
-        self.api.unset_favorite(tweet_id, self.ui.tweet_changed)
+        self.api.unset_favorite(tweet_id, self.ui.update_favorites)
     
     def retweet(self, tweet_id):
         self.api.retweet(tweet_id, self.ui.tweet_changed)
@@ -203,8 +203,21 @@ class Turpial:
     def search_topic(self, query):
         self.api.search_topic(query, self.ui.update_search_topics)
         
-    def get_popup_info(self, tweet_id):
-        rtn = {'follow': False, 'fav': False, 'own': False}
+    def get_popup_info(self, tweet_id, user):
+        if tweet_id in self.api.to_fav:
+            return {'busy': 'Marcando favorito...'}
+        elif tweet_id in self.api.to_unfav:
+            return {'busy': 'Desmarcando favorito...'}
+        elif tweet_id in self.api.to_del:
+            return {'busy': 'Borrando...'}
+            
+        rtn = {}
+        if len(self.api.friends) > 0:
+            rtn['friend'] = self.api.is_friend(user) 
+        rtn['fav'] = self.api.is_fav(tweet_id)
+        rtn['own'] = (self.profile['screen_name'] == user)
+        
+        return rtn
         
     def save_config(self, config):
         self.config.save(config)

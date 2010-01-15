@@ -54,10 +54,31 @@ class TurpialAPI(threading.Thread):
         self.muted_users = []
         self.friends = []
         
+        self.to_fav = []
+        self.to_unfav = []
+        self.to_del = []
         self.log.debug('Iniciado')
-    
+        
     def __register(self, args, callback):
         self.queue.put((args, callback))
+        
+    def __del_tweet_from(self, tweets, id):
+        item = None
+        for twt in tweets:
+            if id == twt['id']:
+                item = twt
+                break
+        if item: tweets.remove(item)
+        return tweets
+        
+    def __change_tweet_from(self, tweets, id, key, value):
+        index = None
+        for twt in tweets:
+            if id == twt['id']:
+                index = tweets.index(twt)
+                break
+        if index: tweets[index][key] = value
+        return tweets
         
     def __handle_oauth(self, args, callback):
         if args['cmd'] == 'start':
@@ -114,37 +135,20 @@ class TurpialAPI(threading.Thread):
             
             if not exist: self.tweets.insert(0, tweet)
         elif args.has_key('del'):
-            item = None
-            for twt in self.tweets:
-                if tweet['id'] == twt['id']:
-                    item = twt
-                    break
-            if item: self.tweets.remove(item)
+            self.tweets = self.__del_tweet_from(self.tweets, tweet['id'])
+            self.favorites = self.__del_tweet_from(self.favorites, tweet['id'])
+            
         return True
         
     def __handle_retweets(self, tweet):
         if tweet is None: return False
+        self.tweets = self.__change_tweet_from(self.tweets, tweet['id'], 
+            'retweeted_status', tweet['retweeted_status'])
+        self.replies = self.__change_tweet_from(self.replies, tweet['id'], 
+            'retweeted_status', tweet['retweeted_status'])
+        self.favorites = self.__change_tweet_from(self.favorites, tweet['id'], 
+            'retweeted_status', tweet['retweeted_status'])
         
-        index = None
-        for twt in self.tweets:
-            if tweet['id'] == twt['id']:
-                index = self.tweets.index(twt)
-                break
-        if index: self.tweets[index]['retweeted_status'] = tweet['retweeted_status']
-        
-        index = None
-        for twt in self.replies:
-            if tweet['id'] == twt['id']:
-                index = self.replies.index(twt)
-                break
-        if index: self.replies[index]['retweeted_status'] = tweet['retweeted_status']
-        
-        index = None
-        for twt in self.favorites:
-            if tweet['id'] == twt['id']:
-                index = self.favorites.index(twt)
-                break
-        if index: self.favorites[index]['retweeted_status'] = tweet['retweeted_status']
         return True
         
     def __handle_muted(self):
@@ -163,29 +167,13 @@ class TurpialAPI(threading.Thread):
         if fav:
             tweet['favorited'] = True
             self.favorites.insert(0, tweet)
+            self.to_fav.remove(str(tweet['id']))
         else:
-            item = None
-            for f in self.favorites:
-                if tweet['id'] == f['id']:
-                    item = f
-                    break
-            if item: self.favorites.remove(item)
-        
-        index = None
-        for twt in self.tweets:
-            if tweet['id'] == twt['id']:
-                index = self.tweets.index(twt)
-                break
-        if index: 
-            self.tweets[index]['favorited'] = fav
-        
-        index = None
-        for twt in self.replies:
-            if tweet['id'] == twt['id']:
-                index = self.replies.index(twt)
-                break
-        if index: 
-            self.replies[index]['favorited'] = fav
+            self.favorites = self.__del_tweet_from(self.favorites, tweet['id'])
+            self.to_unfav.remove(str(tweet['id']))
+            
+        self.tweets = self.__change_tweet_from(self.tweets, tweet['id'], 'favorited', fav)
+        self.replies = self.__change_tweet_from(self.replies, tweet['id'], 'favorited', fav)
         
         return True
         
@@ -208,7 +196,16 @@ class TurpialAPI(threading.Thread):
         for f in self.friends:
             if user == f['screen_name']: return True
         return False
-    
+        
+    def is_fav(self, tweet_id):
+        for twt in self.tweets:
+            if tweet_id == str(twt['id']): return twt['favorited']
+        for twt in self.replies:
+            if tweet_id == str(twt['id']): return twt['favorited']
+        for twt in self.favorites:
+            if tweet_id == str(twt['id']): return twt['favorited']
+
+        
     def auth(self, username, password, callback):
         self.log.debug('Iniciando autenticacion basica')
         self.username = username
@@ -252,7 +249,6 @@ class TurpialAPI(threading.Thread):
         self.__register({'uri': 'http://twitter.com/statuses/update', 'args': args, 'tweet':True, 'add': True}, callback)
         
     def destroy_status(self, tweet_id, callback):
-        #args = {'id': tweet_id}
         self.log.debug('Destruyendo tweet: %s' % tweet_id)
         self.__register({'uri': 'http://twitter.com/statuses/destroy', 'id': tweet_id, 'args': '', 'tweet':True, 'del': True}, callback)
         
@@ -261,10 +257,12 @@ class TurpialAPI(threading.Thread):
         self.__register({'uri': 'http://api.twitter.com/1/statuses/retweet',  'id':tweet_id, 'rt':True, 'args': ''}, callback)
         
     def set_favorite(self, tweet_id, callback):
+        self.to_fav.append(tweet_id)
         self.log.debug('Marcando como favorito tweet: %s' % tweet_id)
         self.__register({'uri': 'http://twitter.com/favorites/create', 'id':tweet_id, 'fav': True, 'args': ''}, callback)
         
     def unset_favorite(self, tweet_id, callback):
+        self.to_unfav.append(tweet_id)
         self.log.debug('Desmarcando como favorito tweet: %s' % tweet_id)
         self.__register({'uri': 'http://twitter.com/favorites/destroy', 'id':tweet_id, 'fav': False, 'args': ''}, callback)
     
@@ -374,6 +372,9 @@ class TurpialAPI(threading.Thread):
             if args.has_key('tweet'):
                 done = self.__handle_tweets(rtn, args)
                 if done: rtn = self.__handle_muted()
+                if args.has_key('del'):
+                    callback(rtn, self.favorites)
+                    continue
             
             if args.has_key('rt'):
                 done = self.__handle_retweets(rtn)
@@ -386,11 +387,11 @@ class TurpialAPI(threading.Thread):
                 
             if args.has_key('fav'):
                 done = self.__handle_favorites(rtn, args['fav'])
+                
                 if done: 
-                    rtn = self.__handle_muted()
-                    callback(rtn, self.replies, self.favorites)
+                    callback(self.favorites)
                 else:
-                    callback(None, None, None)
+                    callback(None)
                 continue
                 
             if args.has_key('friends'):

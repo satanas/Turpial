@@ -3,6 +3,12 @@ Ene 14, 2010:
     + Implementada actualización del perfil de usuario
     + Optimizado el rendimiento de los hilos, se usaron sleeps para bajar el consumo de cpu
     ---- commit ----
+    + Implementado menú contextual para enviar DMs
+    + Corregido error que abría las URLs 2 veces al hacerlo con el click derecho
+    + Implementado menú contextual para abrir menciones fusionado con el de las urls
+    + Descargada la lista de amigos completa. Debe probarse con usuarios que tengan más de 1000 amigos
+    + Incrustados métodos de favoritos y rates dentro del gtk threads
+    ---- commit ----
     
 Ene 13, 2010:
     + Implementado argumento de línea de comando para limpiar los bytecodes

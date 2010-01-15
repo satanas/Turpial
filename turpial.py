@@ -116,6 +116,7 @@ class Turpial:
         self._update_directs()
         self._update_favorites()
         self._update_rate_limits()
+        self._update_friends()
         
     def _update_timeline(self):
         self.ui.start_updating_timeline()
@@ -134,6 +135,9 @@ class Turpial:
     
     def _update_rate_limits(self):
         self.api.update_rate_limits(self.ui.update_rate_limits)
+        
+    def _update_friends(self):
+        self.api.get_friends(self.ui.update_friends)
         
     def signin(self, username, password):
         self.config = ConfigHandler(username)
@@ -165,7 +169,6 @@ class Turpial:
         
     def unset_favorite(self, tweet_id):
         self.api.unset_favorite(tweet_id, self.ui.tweet_changed)
-        
     
     def retweet(self, tweet_id):
         self.api.retweet(tweet_id, self.ui.tweet_changed)
@@ -199,6 +202,9 @@ class Turpial:
         
     def search_topic(self, query):
         self.api.search_topic(query, self.ui.update_search_topics)
+        
+    def get_popup_info(self, tweet_id):
+        rtn = {'follow': False, 'fav': False, 'own': False}
         
     def save_config(self, config):
         self.config.save(config)

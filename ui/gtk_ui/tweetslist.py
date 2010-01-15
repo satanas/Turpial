@@ -151,6 +151,9 @@ class TweetList(gtk.VBox):
             user = model.get_value(row, 1)
             msg = model.get_value(row, 5)
             id = model.get_value(row, 6)
+            
+            #self.mainwin.request_popup_info(id)
+            
             fav = model.get_value(row, 7)
             op = model.get_value(row, 11)
             
@@ -173,30 +176,53 @@ class TweetList(gtk.VBox):
             else:
                 re = "@%s " % user
                 rt = "RT @%s %s" % (user, msg)
+                dm = "D @%s " % user
                 
                 profile = self.mainwin.request_user_profile()
                 
                 reply = gtk.MenuItem('Reply')
-                retweet_old = gtk.MenuItem('Retweet (Old Fashion Way)')
+                retweet_old = gtk.MenuItem('Retweet (Old fashion)')
                 retweet = gtk.MenuItem('Retweet')
                 save = gtk.MenuItem('+ Fav')
                 unsave = gtk.MenuItem('- Fav')
                 delete = gtk.MenuItem('Delete')
-                open = gtk.MenuItem('Open URL')
+                open = gtk.MenuItem('Open')
                 search = gtk.MenuItem('Search')
+                direct = gtk.MenuItem('DM')
+                follow = gtk.MenuItem('Follow')
+                unfollow = gtk.MenuItem('Unfollow')
+                loading = gtk.MenuItem('Loading friends...')
+                loading.set_sensitive(False)
                 
-                urls = util.detect_urls(msg)
                 open_menu = gtk.Menu()
-                for u in urls:
-                    urlmenu = gtk.MenuItem(u)
-                    urlmenu.connect('button-release-event', self.__open_url2, u)
-                    open_menu.append(urlmenu)
-                open.set_submenu(open_menu)
+                
+                total_urls = util.detect_urls(msg)
+                for u in total_urls:
+                    umenu = gtk.MenuItem(u)
+                    umenu.connect('button-release-event', self.__open_url2, u)
+                    open_menu.append(umenu)
+                
+                total_users = util.detect_mentions(msg)
+                if len(total_users) > 0: open_menu.append(gtk.SeparatorMenuItem())
+                for m in total_users:
+                    if m == user: continue
+                    user_prof = '/'.join(['http://www.twitter.com', m])
+                    mentmenu = gtk.MenuItem('@'+m)
+                    mentmenu.connect('button-release-event', self.__open_url2, user_prof)
+                    open_menu.append(mentmenu)
                 
                 if profile['screen_name'] != user:
                     menu.append(reply)
                     menu.append(retweet_old)
                     menu.append(retweet)
+                    menu.append(direct)
+                    #if self.mainwin.friends is None:
+                    #    menu.append(loading)
+                    #else:
+                    #    if self.mainwin.is_friend(user): 
+                    #        menu.append(unfollow)
+                    #    else:
+                    #        menu.append(follow)
                 else:
                     menu.append(delete)
                 
@@ -205,8 +231,10 @@ class TweetList(gtk.VBox):
                 else:
                     menu.append(save)
                 
-                if len(urls) > 0: menu.append(open)
-                #menu.append(search)
+                
+                if (len(total_urls) > 0) or (len(total_users) > 0): 
+                    open.set_submenu(open_menu)
+                    menu.append(open)
                 
                 menu.append(gtk.SeparatorMenuItem())
                 menu.append(usermenu)
@@ -216,15 +244,20 @@ class TweetList(gtk.VBox):
                 reply.connect('activate', self.__show_update_box, re, id, user)
                 retweet_old.connect('activate', self.__show_update_box, rt)
                 retweet.connect('activate', self.__retweet, id)
+                direct.connect('activate', self.__show_update_box, dm)
                 save.connect('activate', self.__fav, True, id)
                 unsave.connect('activate', self.__fav, False, id)
                 delete.connect('activate', self.__delete, id)
+                follow.connect('activate', self.__follow, True, id)
+                unfollow.connect('activate', self.__follow, False, id)
             
             menu.show_all()
             menu.popup(None, None, None, event.button ,event.time)
         
     def __open_url2(self, widget, event, url):
-        self.__open_url(widget, url)
+        if (event.button == 1) or (event.button == 3):
+            log.debug('Opening url %s' % url)
+            webbrowser.open(url)
         
     def __open_url(self, widget, url):
         log.debug('Opening url %s' % url)
@@ -243,6 +276,9 @@ class TweetList(gtk.VBox):
     def __fav(self, widget, fav, id):
         self.mainwin.tweet_fav(id, fav)
     
+    def __follow(self, widget, follow, id):
+        pass
+        
     def __fav_marking(self, model, path, iter, tweet_id):
         id = model.get_value(iter, 6)
         if id == tweet_id:

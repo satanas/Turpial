@@ -52,6 +52,7 @@ class TurpialAPI(threading.Thread):
         self.replies = []
         self.favorites = []
         self.muted_users = []
+        self.friends = []
         
         self.log.debug('Iniciado')
     
@@ -188,6 +189,26 @@ class TurpialAPI(threading.Thread):
         
         return True
         
+    def __handle_friends(self, rtn, done_callback, cursor):
+        if rtn is None:
+            self.log.debug('Error descargando amigos, intentando de nuevo')
+            self.get_friends(done_callback, cursor)
+        else:
+            for p in rtn['users']:
+                self.friends.append(p)
+            
+            if rtn['next_cursor'] > 0:
+                self.get_friends(done_callback, rtn['next_cursor'])
+            else:
+                done_callback(self.friends)
+        
+    def is_friend(self, user):
+        if self.friends is None: return None
+        
+        for f in self.friends:
+            if user == f['screen_name']: return True
+        return False
+    
     def auth(self, username, password, callback):
         self.log.debug('Iniciando autenticacion basica')
         self.username = username
@@ -256,6 +277,15 @@ class TurpialAPI(threading.Thread):
         args = {'name': name, 'url': url, 'location': location, 'description': bio}
         self.log.debug('Actualizando perfil')
         self.__register({'uri': 'http://twitter.com/account/update_profile', 'args': args}, callback)
+        
+    def get_friends(self, callback, cursor=-1):
+        args = {'cursor': cursor}
+        self.log.debug('Descargando Lista de Amigos')
+        self.__register({'uri': 'http://twitter.com/statuses/friends', 'args': args,
+            'done': callback, 'friends': True}, self.__handle_friends)
+        
+    def follow(self, user_id, callback):
+        args = {'id': user_id}
         
     def end_session(self):
         self.__register({'uri': 'http://twitter.com/account/end_session', 'args': '', 'exit': True}, None)
@@ -361,6 +391,10 @@ class TurpialAPI(threading.Thread):
                     callback(rtn, self.replies, self.favorites)
                 else:
                     callback(None, None, None)
+                continue
+                
+            if args.has_key('friends'):
+                callback(rtn, args['done'], args['args']['cursor'])
                 continue
                 
             if args.has_key('exit'):

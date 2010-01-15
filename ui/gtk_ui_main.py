@@ -83,6 +83,7 @@ class Main(BaseGui, gtk.Window):
         self.directs_notif = True
         self.login_notif = True
         self.me = None
+        #self.friends = None
         
         self.home_timer = None
         self.replies_timer = None
@@ -360,11 +361,15 @@ class Main(BaseGui, gtk.Window):
         
     def update_favorites(self, tweets):
         log.debug(u'Actualizando favoritos')
+        gtk.gdk.threads_enter()
         self.profile.favorites.update_tweets(tweets)
+        gtk.gdk.threads_leave()
         
     def update_user_profile(self, profile):
         log.debug(u'Actualizando perfil del usuario')
+        gtk.gdk.threads_enter()
         self.profile.set_user_profile(profile)
+        gtk.gdk.threads_leave()
         
     def update_following(self, people):
         log.debug(u'Actualizando following')
@@ -376,7 +381,9 @@ class Main(BaseGui, gtk.Window):
         
     def update_rate_limits(self, val):
         if val is None: return
+        gtk.gdk.threads_enter()
         self.statusbar.push(0, util.get_rates(val))
+        gtk.gdk.threads_leave()
         
     def update_search_topics(self, val):
         log.debug(u'Mostrando resultados de la búsqueda')
@@ -398,6 +405,9 @@ class Main(BaseGui, gtk.Window):
         
     def update_trends(self, current, day, week):
         self.search.trending.update_trends(current, day, week)
+        
+    def update_friends(self, friends):
+        self.friends = friends
         
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)
@@ -429,8 +439,7 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando nuevo tweet')
         self.updatebox.release()
         if tweets is None: return
-        #self.profile['statuses_count'] += 1
-        #self.profile.set_user_profile(self.profile)
+        
         self.updatebox.done()
         self.update_timeline(tweets)
         
@@ -446,15 +455,7 @@ class Main(BaseGui, gtk.Window):
             self.profile.favorites.do_unmark(id)
             self.request_unfav(id)
         
-    #def switch_mode(self, widget=None):
-    #    if self.workspace == 'single':
-    #        self.workspace = 'wide'
-    #    else:
-    #        self.workspace = 'single'
-    #    self.set_mode()
-        
     def set_mode(self):
-        #gtk.gdk.threads_enter()
         cur_x, cur_y = self.get_position()
         cur_w, cur_h = self.get_size()
         
@@ -473,7 +474,6 @@ class Main(BaseGui, gtk.Window):
         self.home.change_mode(self.workspace)
         self.profile.change_mode(self.workspace)
         self.show_all()
-        #gtk.gdk.threads_leave()
         
     def update_config(self, config, thread=False):
         log.debug('Actualizando configuracion')

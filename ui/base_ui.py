@@ -36,7 +36,15 @@ class BaseGui:
     # ------------------------------------------------------------
     # Common methods to all interfaces
     # ------------------------------------------------------------
-    
+    '''
+    def is_friend(self, user):
+        if self.friends is None: return False
+        
+        for f in self.friends:
+            print "%s ? %s" % (user, f['screen_name'])
+            if user == f['screen_name']: return True
+        return False
+    '''
     def read_config(self):
         return self.__controller.config.read_all()
         
@@ -144,6 +152,9 @@ class BaseGui:
     def request_trends(self):
         self.__controller._update_trends()
         
+    def request_popup_info(self, tweet_id):
+        return self.__controller.get_popup_info(tweet_id)
+    
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
@@ -241,6 +252,9 @@ class BaseGui:
     def update_search_topics(self, topics):
         raise NotImplementedError
         
+    def update_friends(self, friends):
+        raise NotImplementedError
+    
     def tweet_changed(self, timeline, replies, favs):
         raise NotImplementedError
         

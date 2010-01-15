@@ -1,8 +1,5 @@
 '''
-    This module is automatically generated using `update.py`
-
-    .. data:: POST_ACTIONS
-        List of twitter method names that require the use of POST
+List of twitter method names that require the use of POST
 '''
 
 POST_ACTIONS = [

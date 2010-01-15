@@ -3,6 +3,8 @@ Ene 15, 2010:
     + Creada función '__del_tweet_from' para refactorizar el borrado de tweets en la api
     + Creada función '__change_tweet_from' para refactorizar la modificación de tweets en la api
     ---- commit ----
+    + Establecido try/except para intentar depurar el error 401 en el OAuth
+    ---- commit ----
     
 Ene 14, 2010:
     + Validada longitud de los campos del perfil de usuario en la vista

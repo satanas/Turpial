@@ -99,7 +99,11 @@ class TurpialAPI(threading.Thread):
                 
                 self.log.debug('REQUEST (via headers)')
                 self.log.debug('parameters: %s' % str(oauth_request.parameters))
-                self.token = self.client.fetch_request_token(oauth_request)
+                try:
+                    self.token = self.client.fetch_request_token(oauth_request)
+                except Exception, e:
+                    print "Error: %s\n%s" % (e, traceback.print_exc())
+                    raise Exception
                 
                 self.log.debug('GOT')
                 self.log.debug('key: %s' % str(self.token.key))

@@ -9,6 +9,7 @@ import os
 import util
 import Image
 import logging
+import xml.sax.saxutils as saxutils
 
 log = logging.getLogger('BaseUI')
 
@@ -32,11 +33,52 @@ class BaseGui:
         self.__queued_pics.remove(pic)
         self.update_user_avatar(user, pic)
         
+    def __get_real_tweet(self, tweet):
+        retweet_by = None
+        if tweet.has_key('retweeted_status'):
+            retweet_by = tweet['user']['screen_name']
+            tweet = tweet['retweeted_status']
+        
+        return tweet, retweet_by
         
     # ------------------------------------------------------------
     # Common methods to all interfaces
     # ------------------------------------------------------------
     
+    # :FIX: Quizas esto deba ir en 'util'
+    def parse_tweet(self, xtweet):
+        tweet, retweet_by = self.__get_real_tweet(xtweet)
+        
+        if tweet.has_key('user'):
+            username = tweet['user']['screen_name']
+            avatar = tweet['user']['profile_image_url']
+        elif tweet.has_key('sender'):
+            direct = True
+            username = tweet['sender']['screen_name']
+            avatar = tweet['sender']['profile_image_url']
+        elif tweet.has_key('from_user'):
+            username = tweet['from_user']
+            avatar = tweet['profile_image_url']
+        
+        tweet['text'] = saxutils.unescape(tweet['text'])
+        
+        client = util.detect_client(tweet)
+        datetime = util.get_timestamp(tweet)
+        
+        in_reply_to_id = None
+        in_reply_to_user = None
+        if tweet.has_key('in_reply_to_status_id'):
+            in_reply_to_id = tweet['in_reply_to_status_id']
+            in_reply_to_user = tweet['in_reply_to_screen_name']
+        
+        fav = False
+        if tweet.has_key('favorited'): fav = tweet['favorited']
+        
+        return {'username': username, 'avatar': avatar, 'client': client, 
+            'datetime':datetime, 'text': tweet['text'], 'id': tweet['id'],
+            'in_reply_to_id': in_reply_to_id, 'in_reply_to_user': in_reply_to_user,
+            'fav': fav, 'retweet_by': retweet_by}
+        
     def after_destroy(self, timeline, favs):
         self.update_timeline(timeline)
         self.update_favorites(favs)
@@ -178,12 +220,6 @@ class BaseGui:
     def download_favorites(self):
         self.__controller._update_favorites()
         
-    def download_following(self):
-        self.__controller._update_following()
-        
-    def download_followers(self):
-        self.__controller._update_followers()
-        
     # ------------------------------------------------------------
     # Methods to be overwritten
     # ------------------------------------------------------------
@@ -210,6 +246,9 @@ class BaseGui:
         raise NotImplementedError
         
     def start_updating_directs(self):
+        raise NotImplementedError
+        
+    def start_search(self):
         raise NotImplementedError
         
     def update_tweet(self, tweet):

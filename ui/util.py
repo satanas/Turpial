@@ -11,6 +11,7 @@ import gtk
 import time
 import gobject
 import datetime
+import xml.sax.saxutils as saxutils
 
 AVATAR_SIZE = 48
 
@@ -21,6 +22,7 @@ MENTION_PATTERN = re.compile('\@(\w+)[\W]')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
 URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_().]*[-A-Za-z0-9+&@#/%?=~_()])')
 
+# :FIX: Esto debería estar en el main de GTK
 def load_image(path, pixbuf=False):
     img_path = os.path.join('pixmaps', path)
     pix = gtk.gdk.pixbuf_new_from_file(img_path)
@@ -29,7 +31,8 @@ def load_image(path, pixbuf=False):
     avatar.set_from_pixbuf(pix)
     del pix
     return avatar
-    
+
+# :FIX: Esto debería estar en el main de GTK
 def load_avatar(dir, path, image=False):
     img_path = os.path.join(dir, path)
     pix = gtk.gdk.pixbuf_new_from_file(img_path)
@@ -41,7 +44,8 @@ def load_avatar(dir, path, image=False):
     
 def detect_client(tweet):
     if not tweet.has_key('source'): return None
-    text = tweet['source']
+    text = saxutils.unescape(tweet['source'])
+    text = text.replace('&quot;', '"')
     if text == 'web': return text
     rtn = CLIENT_PATTERN.search(text)
     if rtn: return rtn.groups()[1]
@@ -100,6 +104,7 @@ def get_timestamp(tweet):
     
     return time.strftime('%b %d, %I:%M %p', t)
     
+# :FIX: Esto debería estar en el main de GTK
 def get_pango_profile(p):
     protected = ''
     following = ''

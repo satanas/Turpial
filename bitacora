@@ -1,3 +1,13 @@
+Ene 16, 2010:
+    + Soporte para resultados en formato json
+    + Agregado soporte para los servicios su.pr y bit.ly al cortado de URLs
+    + Creada la función parse_tweet para centralizar la descomposición de los elementos de uun tweet
+    + Corregido bug que impedía mostrar el cliente en las búsquedas
+    + Agregada notificación visual de inicio y progreso de las búsquedas
+    + Corregido bug que borraba todos los timers al modificar el tiempo de actualización de los tweets
+    + Implementado soporte para el esquema de colores de cada usuario (profile-link-color)
+    ---- commit ----
+    
 Ene 15, 2010:
     + Refactorizada actualización de tweets luego de marcar/desmarcar favoritos
     + Creada función '__del_tweet_from' para refactorizar el borrado de tweets en la api

@@ -10,7 +10,7 @@ import pango
 import gobject
 import logging
 import webbrowser
-import xml.sax.saxutils as saxutils
+#import xml.sax.saxutils as saxutils
 
 from waiting import *
 from ui import util as util
@@ -99,7 +99,7 @@ class TweetList(gtk.VBox):
         
         for h in hashtags:
             torep = '#%s' % h
-            cad = '<span foreground="#FF6633">#%s</span>' % h
+            cad = '<span foreground="#%s">#%s</span>' % (self.mainwin.link_color, h)
             text = text.replace(torep, cad)
         return text
         
@@ -110,7 +110,7 @@ class TweetList(gtk.VBox):
         for h in mentions:
             if len(h) == 1: continue
             torep = '@%s' % h
-            cad = '<span foreground="#FF6633">@%s</span>' % h
+            cad = '<span foreground="#%s">@%s</span>' % (self.mainwin.link_color, h)
             text = text.replace(torep, cad)
         return text
         
@@ -119,7 +119,7 @@ class TweetList(gtk.VBox):
         if len(urls) == 0: return text
         
         for u in urls:
-            cad = '<span foreground="#FF6633">%s</span>' % u
+            cad = '<span foreground="#%s">%s</span>' % (self.mainwin.link_color, u)
             text = text.replace(u, cad)
         return text
         
@@ -187,7 +187,7 @@ class TweetList(gtk.VBox):
                 
                 for u in total_urls:
                     umenu = gtk.MenuItem(u)
-                    umenu.connect('button-release-event', self.__open_url2, u)
+                    umenu.connect('button-release-event', self.__open_url, u)
                     open_menu.append(umenu)
                 
                 if len(total_urls) > 0 and len(total_users) > 0: 
@@ -197,7 +197,7 @@ class TweetList(gtk.VBox):
                     if m == user: continue
                     user_prof = '/'.join(['http://www.twitter.com', m])
                     mentmenu = gtk.MenuItem('@'+m)
-                    mentmenu.connect('button-release-event', self.__open_url2, user_prof)
+                    mentmenu.connect('button-release-event', self.__open_url, user_prof)
                     open_menu.append(mentmenu)
                 
                 if not rtn['own']:
@@ -243,14 +243,10 @@ class TweetList(gtk.VBox):
             menu.show_all()
             menu.popup(None, None, None, event.button ,event.time)
         
-    def __open_url2(self, widget, event, url):
+    def __open_url(self, widget, event, url):
         if (event.button == 1) or (event.button == 3):
             log.debug('Opening url %s' % url)
             webbrowser.open(url)
-        
-    def __open_url(self, widget, url):
-        log.debug('Opening url %s' % url)
-        webbrowser.open(url)
         
     def __show_update_box(self, widget, text, in_reply_id='', in_reply_user=''):
         self.mainwin.show_update_box(text, in_reply_id, in_reply_user)
@@ -283,60 +279,33 @@ class TweetList(gtk.VBox):
             iter = self.model.iter_next(iter)
         
     def add_tweet(self, tweet):
-        direct = False
-        retweet_by = None
-        if tweet.has_key('retweeted_status'):
-            retweet_by = tweet['user']['screen_name']
-            tweet = tweet['retweeted_status']
-            
-        if tweet.has_key('user'):
-            username = tweet['user']['screen_name']
-            avatar = tweet['user']['profile_image_url']
-        elif tweet.has_key('sender'):
-            direct = True
-            username = tweet['sender']['screen_name']
-            avatar = tweet['sender']['profile_image_url']
-        elif tweet.has_key('from_user'):
-            username = tweet['from_user']
-            avatar = tweet['profile_image_url']
-            
-        client = util.detect_client(tweet)
-        datetime = util.get_timestamp(tweet)
+        p = self.mainwin.parse_tweet(tweet)
+        pix = self.mainwin.get_user_avatar(p['username'], p['avatar'])
         
-        pix = self.mainwin.get_user_avatar(username, avatar)
-        #print 'message', tweet['text']
-        tweet['text'] = saxutils.unescape(tweet['text'])
-        message = gobject.markup_escape_text(tweet['text'])
-        #print 'pango_message', message
-        message = '<span size="9000"><b>@%s</b> %s</span>' % (username, message)
-        message = self.__highlight_hashtags(message)
-        message = self.__highlight_mentions(message)
-        message = self.__highlight_urls(message)
-        interline = '<span size="2000">\n\n</span>'
+        pango_twt = gobject.markup_escape_text(p['text'])
+        pango_twt = '<span size="9000"><b>@%s</b> %s</span>' % (p['username'], pango_twt)
+        pango_twt = self.__highlight_hashtags(pango_twt)
+        pango_twt = self.__highlight_mentions(pango_twt)
+        pango_twt = self.__highlight_urls(pango_twt)
+        pango_twt += '<span size="2000">\n\n</span>'
         
-        footer = '<span size="small" foreground="#999">%s' % datetime
-        if client:
-            footer += ' desde %s' % client
-        
-        in_reply_to_id = None
-        in_reply_to_user = None
-        if tweet.has_key('in_reply_to_status_id'):
-            in_reply_to_id = tweet['in_reply_to_status_id']
-            in_reply_to_user = tweet['in_reply_to_screen_name']
-            if in_reply_to_user:
-                footer += ' en respuesta a %s' % in_reply_to_user
-        
-        if retweet_by:
-            footer += '\nRetweeted by %s' % retweet_by
-            
+        footer = '<span size="small" foreground="#999">%s' % p['datetime']
+        if p['client']: 
+            footer += ' desde %s' % p['client']
+        if p['in_reply_to_user']:
+            footer += ' en respuesta a %s' % p['in_reply_to_user']
+        if p['retweet_by']:
+            footer += '\nRetweeted by %s' % p['retweet_by']
         footer += '</span>'
         
-        fav = False
-        if tweet.has_key('favorited'): fav = tweet['favorited']
-        
-        pango_twt = message + interline + footer
-        self.model.append([pix, username, datetime, client, pango_twt, tweet['text'],
-            tweet['id'], fav, in_reply_to_id, in_reply_to_user, retweet_by, None, direct])
+        pango_twt += footer
+        if p['text'].find('&') > 0: 
+            print 'text', p['text']
+            print 'pango', pango_twt
+            
+        self.model.append([pix, p['username'], p['datetime'], p['client'], 
+            pango_twt, p['text'], p['id'], p['fav'], p['in_reply_to_id'], 
+            p['in_reply_to_user'], p['retweet_by'], None, False])
         del pix
         
     def update_user_pic(self, user, pic):
@@ -353,7 +322,7 @@ class TweetList(gtk.VBox):
     def update_tweets(self, arr_tweets):
         if arr_tweets is None:
             self.waiting.stop(error=True)
-            self.lblerror.set_markup("<span size='small'>Error intentando actualizar</span>")
+            self.lblerror.set_markup(u"<span size='small'>Oops... Algo salió mal. Actualizaré de nuevo pronto</span>")
             return 0
         else:
             count = util.count_new_tweets(arr_tweets, self.last)

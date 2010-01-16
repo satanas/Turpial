@@ -75,15 +75,15 @@ class Main(BaseGui, gtk.Window):
         self.showed = True
         self.minimize = 'on'
         self.workspace = 'single'
-        self.home_interval = 3
-        self.replies_interval = 10
-        self.directs_interval = 15
+        self.link_color = 'ed6300'
+        self.home_interval = -1
+        self.replies_interval = -1
+        self.directs_interval = -1
         self.home_notif = True
         self.replies_notif = True
         self.directs_notif = True
         self.login_notif = True
         self.me = None
-        #self.friends = None
         
         self.home_timer = None
         self.replies_timer = None
@@ -144,6 +144,13 @@ class Main(BaseGui, gtk.Window):
             self.quit(widget)
         return True
         
+    def get_user_avatar(self, user, pic_url):
+        pix = self.request_user_avatar(user, pic_url)
+        if pix:
+            return util.load_avatar(self.imgdir, pix)
+        else:
+            return util.load_image('unknown.png', pixbuf=True)
+    
     def quit(self, widget):
         self.request_signout()
         gtk.main_quit()
@@ -255,6 +262,9 @@ class Main(BaseGui, gtk.Window):
         
         self.profile.set_user_profile(p)
         self.me = p['screen_name']
+        if config.read('General', 'profile-color') == 'on':
+            self.link_color = p['profile_link_color']
+            print 'link color', self.link_color
         
         self.add(self.vbox)
         self.show_all()
@@ -311,6 +321,9 @@ class Main(BaseGui, gtk.Window):
     def start_updating_directs(self):
         self.home.direct.waiting.start()
         
+    def start_search(self):
+        self.profile.topics.topics.waiting.start()
+        
     def update_timeline(self, tweets):
         log.debug(u'Actualizando el timeline')
         gtk.gdk.threads_enter()
@@ -322,10 +335,10 @@ class Main(BaseGui, gtk.Window):
                 if tweets[i]['user']['screen_name'] != self.me:
                     tweet = tweets[i]
                     break
-            username = tweet['user']['screen_name']
-            avatar = tweet['user']['profile_image_url']
-            icon = self.get_user_avatar(username, avatar)
-            text = "<b>@%s</b> %s" % (username, tweet['text'])
+            
+            p = self.parse_tweet(tweet)
+            icon = self.get_user_avatar(p['username'], p['avatar'])
+            text = "<b>@%s</b> %s" % (p['username'], p['text'])
             self.notify.new_tweets(count, text, icon)
             
         gtk.gdk.threads_leave()
@@ -337,10 +350,10 @@ class Main(BaseGui, gtk.Window):
         count = self.home.replies.update_tweets(tweets)
         
         if count > 0 and self.updating['replies'] and self.replies_notif:
-            username = tweets[0]['user']['screen_name']
-            avatar = tweets[0]['user']['profile_image_url']
-            icon = self.get_user_avatar(username, avatar)
-            self.notify.new_replies(count, tweets[0]['text'], icon)
+            p = self.parse_tweet(tweet[0])
+            icon = self.get_user_avatar(p['username'], p['avatar'])
+            text = "<b>@%s</b> %s" % (p['username'], p['text'])
+            self.notify.new_replies(count, text, icon)
         
         gtk.gdk.threads_leave()
         self.updating['replies'] = False
@@ -351,10 +364,10 @@ class Main(BaseGui, gtk.Window):
         count = self.home.direct.update_tweets(recv)
         
         if count > 0 and self.updating['directs'] and self.directs_notif:
-            username = recv[0]['sender']['screen_name']
-            avatar = recv[0]['sender']['profile_image_url']
-            icon = self.get_user_avatar(username, avatar)
-            self.notify.new_directs(count, recv[0]['text'], icon)
+            p = self.parse_tweet(recv[0])
+            icon = self.get_user_avatar(p['username'], p['avatar'])
+            text = "<b>@%s</b> %s" % (p['username'], p['text'])
+            self.notify.new_directs(count, text, icon)
             
         gtk.gdk.threads_leave()
         self.updating['directs'] = False
@@ -388,10 +401,7 @@ class Main(BaseGui, gtk.Window):
         else:
             self.profile.topics.update_tweets(val['results'])
         gtk.gdk.threads_leave()
-        #self.show_search(self)
-        #if self.workspace != 'wide':
-        #    self.contenido.wrapper.set_current_page(1)
-            
+        
     def update_search_people(self, val):
         self.search.people.update_profiles(val)
         #self.show_search(self)
@@ -403,13 +413,6 @@ class Main(BaseGui, gtk.Window):
         
     def update_friends(self, friends):
         pass
-        
-    def get_user_avatar(self, user, pic_url):
-        pix = self.request_user_avatar(user, pic_url)
-        if pix:
-            return util.load_avatar(self.imgdir, pix)
-        else:
-            return util.load_image('unknown.png', pixbuf=True)
         
     def update_user_avatar(self, user, pic):
         self.home.timeline.update_user_pic(user, pic)
@@ -471,24 +474,26 @@ class Main(BaseGui, gtk.Window):
         self.login_notif = True if config.read('Notifications', 'login') == 'on' else False
         self.imgdir = config.imgdir
         
-        if self.home_timer: gobject.source_remove(self.home_timer)
-        if self.replies_timer: gobject.source_remove(self.replies_timer)
-        if self.directs_timer: gobject.source_remove(self.directs_timer)
-        
         if thread: gtk.gdk.threads_enter()
         self.set_mode()
         
-        if (self.home_interval != home_interval) or not self.home_timer:
+        if (self.home_interval != home_interval):
+            if self.home_timer: gobject.source_remove(self.home_timer)
             self.home_interval = home_interval
             self.home_timer = gobject.timeout_add(self.home_interval*60*1000, self.download_timeline)
+            log.debug('--Creado timer de Timeline cada %i min' % self.home_interval)
             
-        if (self.replies_interval != replies_interval) or not self.replies_timer:
+        if (self.replies_interval != replies_interval):
+            if self.replies_timer: gobject.source_remove(self.replies_timer)
             self.replies_interval = replies_interval
             self.replies_timer = gobject.timeout_add(self.replies_interval*60*1000, self.download_replies)
+            log.debug('--Creado timer de Replies cada %i min' % self.replies_interval)
             
-        if (self.directs_interval != directs_interval) or not self.directs_timer:
+        if (self.directs_interval != directs_interval):
+            if self.directs_timer: gobject.source_remove(self.directs_timer)
             self.directs_interval = directs_interval
             self.directs_timer = gobject.timeout_add(self.directs_interval*60*1000, self.download_directs)
+            log.debug('--Creado timer de Directs cada %i min' % self.directs_interval)
             
         if thread: gtk.gdk.threads_leave()
         

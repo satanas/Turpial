@@ -1,3 +1,10 @@
+v0.8.5 (Ene 15, 2010):
+    + Optimizado el consumo de cpu
+    + Modificación del perfil de usuario
+    + Envío de DM a través del menú contextual
+    + Descargada la lista de amigos del usuario
+    + Corregidos bugs menores
+    
 v0.8 (Ene 10, 2010):
     + Disponible interfaz GTK+ para el modo gráfico (el modo texto está en reconstrucción)
     + Soporte para búsquedas (con parámetros)

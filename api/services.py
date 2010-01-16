@@ -12,15 +12,36 @@ import urllib2
 import logging
 import threading
 
+import traceback
+
+def _py26OrGreater():
+    import sys
+    return sys.hexversion > 0x20600f0
+    
+if _py26OrGreater():
+    import json
+else:
+    import simplejson as json
+    
+class ShortenObject:
+    def __init__(self, query, json=False, url_quote=True, response_key=None):
+        self.query = query
+        self.json = json
+        self.response_key = response_key
+        self.url_quote = url_quote
+
 URL_SERVICES = {
-    "cli.gs": "http://cli.gs/api/v1/cligs/create?appid=gwibber&url=%s",
-    "is.gd": "http://is.gd/api.php?longurl=%s",
-    "tinyurl.com": "http://tinyurl.com/api-create.php?url=%s",
-    "tr.im": "http://tr.im/api/trim_simple?url=%s",
-    #"bit.ly": "http://api.bit.ly/shorten?version=2.0.1&longUrl=%s&login=turpial&apiKey=R_5a84eae6dd4158a0636358c4f9efdecc",
-    #"su.pr": "http://su.pr/api/shorten?longUrl=%s",
-    "u.nu": "http://u.nu/unu-api-simple?url=%s"
+    "cli.gs": ShortenObject("http://cli.gs/api/v1/cligs/create?appid=gwibber&url=%s"),
+    "is.gd": ShortenObject("http://is.gd/api.php?longurl=%s"),
+    "tinyurl.com": ShortenObject("http://tinyurl.com/api-create.php?url=%s"),
+    "tr.im": ShortenObject("http://tr.im/api/trim_simple?url=%s"),
+    "bit.ly": ShortenObject("http://api.bit.ly/shorten?version=2.0.1&login=turpial&apiKey=R_5a84eae6dd4158a0636358c4f9efdecc&longUrl=%s",
+        True, False, 'shortUrl'),
+    "su.pr": ShortenObject("http://su.pr/api/simpleshorten?url=%s"),
+    "u.nu": ShortenObject("http://u.nu/unu-api-simple?url=%s"),
+    #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
 }
+
 
 class HTTPServices(threading.Thread):
     def __init__(self, imgdir='/tmp'):
@@ -81,10 +102,23 @@ class HTTPServices(threading.Thread):
                 
             elif args['cmd'] == 'short_url':
                 self.log.debug('Cortando URL: %s' % args['url'])
-                longurl = urllib2.quote(args['url'])
+                
+                service = URL_SERVICES[args['service']]
+                if service.url_quote:
+                    longurl = urllib2.quote(args['url'])
+                else:
+                    longurl = args['url']
+                
                 try:
-                    short = urllib2.urlopen(URL_SERVICES[args['service']] % longurl).read()
-                except:
+                    req = service.query % longurl
+                    self.log.debug('Request: %s' % req)
+                    if service.json:
+                        resp = json.loads(urllib2.urlopen(req).read())
+                        short = resp['results'][longurl][service.response_key]
+                    else:
+                        short = urllib2.urlopen(req).read()
+                except Exception, e:
+                    self.log.debug("Error: %s\n%s" % (e, traceback.print_exc()))
                     short = None
                 self.log.debug('URL Cortada: %s' % short)
                 callback(short)
@@ -92,9 +126,3 @@ class HTTPServices(threading.Thread):
         self.log.debug('Terminado')
         return
         
-class URLShorten:
-    
-    def short(self, service, url):
-        longurl = urllib2.quote(url)
-        short = urllib2.urlopen(URL_SERVICES[service] % longurl).read()
-        return short

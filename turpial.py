@@ -213,6 +213,7 @@ class Turpial:
         pass
         
     def search_topic(self, query):
+        self.ui.start_search()
         self.api.search_topic(query, self.ui.update_search_topics)
         
     def get_popup_info(self, tweet_id, user):

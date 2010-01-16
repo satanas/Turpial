@@ -133,6 +133,7 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         h = int(self.current['home-update-interval'])
         r = int(self.current['replies-update-interval'])
         d = int(self.current['directs-update-interval'])
+        pf = True if self.current['profile-color'] == 'on' else False
         ws = True if self.current['workspace'] == 'wide' else False
         min = True if self.current['minimize-on-close'] == 'on' else False
         
@@ -155,7 +156,7 @@ actualizar el timeline, las menciones y los mensajes directos', current)
             pass
         
         self.profile_colors = gtk.CheckButton('Load profile color')
-        self.profile_colors.set_sensitive(False)
+        self.profile_colors.set_active(pf)
         try:
             self.profile_colors.set_has_tooltip(True)
             self.profile_colors.set_tooltip_text('Utiliza los colores del \

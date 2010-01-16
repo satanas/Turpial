@@ -184,13 +184,27 @@ class TweetList(gtk.VBox):
                 
                 total_urls = util.detect_urls(msg)
                 total_users = util.detect_mentions(msg)
-                
+                total_tags = util.detect_hashtags(msg)
+                print total_urls
+                print total_users
+                print total_tags
                 for u in total_urls:
-                    umenu = gtk.MenuItem(u)
+                    url = u if len(u) < 30 else u[:30] + '...'
+                    umenu = gtk.MenuItem(url)
                     umenu.connect('button-release-event', self.__open_url, u)
                     open_menu.append(umenu)
                 
-                if len(total_urls) > 0 and len(total_users) > 0: 
+                if len(total_urls) > 0 and len(total_tags) > 0: 
+                    open_menu.append(gtk.SeparatorMenuItem())
+                
+                for h in total_tags:
+                    ht = "#search?q=%23" + h
+                    hashtag = '/'.join(['https://twitter.com', ht])
+                    hmenu = gtk.MenuItem('#'+h)
+                    hmenu.connect('button-release-event', self.__open_url, hashtag)
+                    open_menu.append(hmenu)
+                    
+                if (len(total_urls) > 0 or len(total_tags) > 0) and len(total_users) > 0: 
                     open_menu.append(gtk.SeparatorMenuItem())
                 
                 for m in total_users:
@@ -269,6 +283,9 @@ class TweetList(gtk.VBox):
         else:
             self.mainwin.request_unfollow(user)
         
+    def clear(self):
+        self.model.clear()
+        
     def update_wrap(self, val):
         self.cell_tweet.set_property('wrap-width', val - 80)
         iter = self.model.get_iter_first()
@@ -328,7 +345,7 @@ class TweetList(gtk.VBox):
             count = util.count_new_tweets(arr_tweets, self.last)
             self.waiting.stop()
             self.lblerror.set_markup("")
-            self.model.clear()
+            self.clear()
             for tweet in arr_tweets:
                 self.add_tweet(tweet)
             self.last = arr_tweets

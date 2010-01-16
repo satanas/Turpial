@@ -7,6 +7,11 @@ Ene 16, 2010:
     + Corregido bug que borraba todos los timers al modificar el tiempo de actualización de los tweets
     + Implementado soporte para el esquema de colores de cada usuario (profile-link-color)
     ---- commit ----
+    + Corregido un bug con la actualización (y notificación) de los replies
+    + Implementado menú contextual para los hashtags
+    + Implementado botón para limpiar el cuadro de búsquedas
+    + Mejoradas expresiones regulares para detectar hashtags y menciones
+    ---- commit ----
     
 Ene 15, 2010:
     + Refactorizada actualización de tweets luego de marcar/desmarcar favoritos

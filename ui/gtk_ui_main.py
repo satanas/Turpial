@@ -75,7 +75,7 @@ class Main(BaseGui, gtk.Window):
         self.showed = True
         self.minimize = 'on'
         self.workspace = 'single'
-        self.link_color = 'ed6300'
+        self.link_color = 'ff6633'
         self.home_interval = -1
         self.replies_interval = -1
         self.directs_interval = -1
@@ -350,7 +350,7 @@ class Main(BaseGui, gtk.Window):
         count = self.home.replies.update_tweets(tweets)
         
         if count > 0 and self.updating['replies'] and self.replies_notif:
-            p = self.parse_tweet(tweet[0])
+            p = self.parse_tweet(tweets[0])
             icon = self.get_user_avatar(p['username'], p['avatar'])
             text = "<b>@%s</b> %s" % (p['username'], p['text'])
             self.notify.new_replies(count, text, icon)

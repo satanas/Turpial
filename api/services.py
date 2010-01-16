@@ -73,7 +73,7 @@ class HTTPServices(threading.Thread):
         
     def run(self):
         while not self.exit:
-            time.sleep(0.5)
+            time.sleep(0.3)
             try:
                 req = self.queue.get(False)
             except Queue.Empty:

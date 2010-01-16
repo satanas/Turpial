@@ -6,7 +6,9 @@
 # Ene 06, 2010
 
 import gtk
+
 from tweetslist import *
+from ui import util as util
 
 
 class SearchTweets(gtk.VBox):
@@ -15,6 +17,9 @@ class SearchTweets(gtk.VBox):
         
         self.mainwin = mainwin
         self.input_topics = gtk.Entry()
+        self.clearbtn = gtk.Button()
+        self.clearbtn.set_image(util.load_image('clear.png'))
+        self.clearbtn.set_tooltip_text('Limpiar todos los resultados')
         try:
             #self.input_topics.set_property("primary-icon-stock", gtk.STOCK_FIND)
             self.input_topics.set_property("secondary-icon-stock", gtk.STOCK_FIND)
@@ -24,6 +29,7 @@ class SearchTweets(gtk.VBox):
         
         inputbox = gtk.HBox(False)
         inputbox.pack_start(self.input_topics, True, True)
+        inputbox.pack_start(self.clearbtn, False, False)
         
         self.topics = TweetList(mainwin, label)
         self.caption = label
@@ -32,7 +38,10 @@ class SearchTweets(gtk.VBox):
         self.pack_start(self.topics, True, True)
         self.show_all()
         
+        self.clearbtn.connect('clicked', self.__clear)
         self.input_topics.connect('activate', self.__search_topic)
+        self.input_topics.grab_focus()
+        #self.input_topics.grab_default()
         
     def __on_icon_press(self, widget, pos, e):
         #if pos == 0: 
@@ -41,6 +50,9 @@ class SearchTweets(gtk.VBox):
             #widget.set_text('')
             self.__search_topic(widget)
             
+    def __clear(self, widget):
+        self.topics.clear()
+        
     def __search_topic(self, widget):
         topic = widget.get_text()
         self.mainwin.request_search_topic(topic)

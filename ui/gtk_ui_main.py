@@ -79,10 +79,10 @@ class Main(BaseGui, gtk.Window):
         self.home_interval = -1
         self.replies_interval = -1
         self.directs_interval = -1
-        self.home_notif = True
-        self.replies_notif = True
-        self.directs_notif = True
-        self.login_notif = True
+        #self.home_notif = True
+        #self.replies_notif = True
+        #self.directs_notif = True
+        #self.login_notif = True
         self.me = None
         
         self.home_timer = None
@@ -262,15 +262,15 @@ class Main(BaseGui, gtk.Window):
         
         self.profile.set_user_profile(p)
         self.me = p['screen_name']
+        self.set_title('Turpial - ' + self.me)
         if config.read('General', 'profile-color') == 'on':
             self.link_color = p['profile_link_color']
-            print 'link color', self.link_color
         
         self.add(self.vbox)
         self.show_all()
         gtk.gdk.threads_leave()
         
-        if self.login_notif: self.notify.login(p)
+        self.notify.login(p)
         
         gobject.timeout_add(6*60*1000, self.download_rates)
         
@@ -329,7 +329,7 @@ class Main(BaseGui, gtk.Window):
         gtk.gdk.threads_enter()
         count = self.home.timeline.update_tweets(tweets)
         
-        if count > 0 and self.updating['home'] and self.home_notif:
+        if count > 0 and self.updating['home']:
             tweet = None
             for i in range(0, len(tweets)):
                 if tweets[i]['user']['screen_name'] != self.me:
@@ -349,7 +349,7 @@ class Main(BaseGui, gtk.Window):
         gtk.gdk.threads_enter()
         count = self.home.replies.update_tweets(tweets)
         
-        if count > 0 and self.updating['replies'] and self.replies_notif:
+        if count > 0 and self.updating['replies']:
             p = self.parse_tweet(tweets[0])
             icon = self.get_user_avatar(p['username'], p['avatar'])
             text = "<b>@%s</b> %s" % (p['username'], p['text'])
@@ -363,7 +363,7 @@ class Main(BaseGui, gtk.Window):
         gtk.gdk.threads_enter()
         count = self.home.direct.update_tweets(recv)
         
-        if count > 0 and self.updating['directs'] and self.directs_notif:
+        if count > 0 and self.updating['directs']:
             p = self.parse_tweet(recv[0])
             icon = self.get_user_avatar(p['username'], p['avatar'])
             text = "<b>@%s</b> %s" % (p['username'], p['text'])
@@ -468,10 +468,13 @@ class Main(BaseGui, gtk.Window):
         home_interval = int(config.read('General', 'home-update-interval'))
         replies_interval = int(config.read('General', 'replies-update-interval'))
         directs_interval = int(config.read('General', 'directs-update-interval'))
-        self.home_notif = True if config.read('Notifications', 'home') == 'on' else False
-        self.replies_notif = True if config.read('Notifications', 'replies') == 'on' else False
-        self.directs_notif = True if config.read('Notifications', 'directs') == 'on' else False
-        self.login_notif = True if config.read('Notifications', 'login') == 'on' else False
+        
+        #self.home_notif = True if config.read('Notifications', 'home') == 'on' else False
+        #self.replies_notif = True if config.read('Notifications', 'replies') == 'on' else False
+        #self.directs_notif = True if config.read('Notifications', 'directs') == 'on' else False
+        #self.login_notif = True if config.read('Notifications', 'login') == 'on' else False
+        #self.sound_notif = True if config.read('Notifications', 'sound') == 'on' else False
+        self.notify.update_config(config.read_section('Notifications'))
         self.imgdir = config.imgdir
         
         if thread: gtk.gdk.threads_enter()

@@ -219,6 +219,7 @@ deseas recibir de Turpial', current)
         replies = True if self.current['replies'] == 'on' else False
         directs = True if self.current['directs'] == 'on' else False
         login = True if self.current['login'] == 'on' else False
+        sound = True if self.current['sound'] == 'on' else False
         
         self.timeline = gtk.CheckButton('Timeline')
         self.timeline.set_active(home)
@@ -256,10 +257,20 @@ de la sesión con información del perfil de usuario')
         except:
             pass
         
+        self.sounds = gtk.CheckButton('Sonidos')
+        self.sounds.set_active(sound)
+        try:
+            self.sounds.set_has_tooltip(True)
+            self.sounds.set_tooltip_text(u'Activa los sonidos con cada \
+notificación')
+        except:
+            pass
+            
         self.pack_start(self.timeline, False, False, 2)
         self.pack_start(self.replies, False, False, 2)
         self.pack_start(self.directs, False, False, 2)
         self.pack_start(self.profile, False, False, 2)
+        self.pack_start(self.sounds, False, False, 6)
         self.show_all()
         
     def get_config(self):
@@ -267,12 +278,14 @@ de la sesión con información del perfil de usuario')
         replies = 'on' if self.replies.get_active() else 'off'
         directs = 'on' if self.directs.get_active() else 'off'
         profile = 'on' if self.profile.get_active() else 'off'
+        sound = 'on' if self.sounds.get_active() else 'off'
         
         return {
             'home': home,
             'replies': replies,
             'directs': directs,
             'login': profile,
+            'sound': sound,
         }
         
 class ServicesTab(PreferencesTab):

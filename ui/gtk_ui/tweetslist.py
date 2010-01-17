@@ -114,9 +114,8 @@ class TweetList(gtk.VBox):
             text = text.replace(torep, cad)
         return text
         
-    def __highlight_urls(self, text):
-        urls = util.detect_urls(text)
-        if len(urls) == 0: return text
+    def __highlight_urls(self, urls, text):
+        #if len(urls) == 0: return text
         
         for u in urls:
             cad = '<span foreground="#%s">%s</span>' % (self.mainwin.link_color, u)
@@ -185,9 +184,7 @@ class TweetList(gtk.VBox):
                 total_urls = util.detect_urls(msg)
                 total_users = util.detect_mentions(msg)
                 total_tags = util.detect_hashtags(msg)
-                print total_urls
-                print total_users
-                print total_tags
+                
                 for u in total_urls:
                     url = u if len(u) < 30 else u[:30] + '...'
                     umenu = gtk.MenuItem(url)
@@ -299,11 +296,15 @@ class TweetList(gtk.VBox):
         p = self.mainwin.parse_tweet(tweet)
         pix = self.mainwin.get_user_avatar(p['username'], p['avatar'])
         
+        #tags = [gobject.markup_escape_text(h) for h in util.detect_hashtags(text)]
+        #reps = [gobject.markup_escape_text(m) for m in util.detect_mentions(text)]
+        urls = [gobject.markup_escape_text(u) for u in util.detect_urls(p['text'])]
+        
         pango_twt = gobject.markup_escape_text(p['text'])
         pango_twt = '<span size="9000"><b>@%s</b> %s</span>' % (p['username'], pango_twt)
         pango_twt = self.__highlight_hashtags(pango_twt)
         pango_twt = self.__highlight_mentions(pango_twt)
-        pango_twt = self.__highlight_urls(pango_twt)
+        pango_twt = self.__highlight_urls(urls, pango_twt)
         pango_twt += '<span size="2000">\n\n</span>'
         
         footer = '<span size="small" foreground="#999">%s' % p['datetime']
@@ -316,10 +317,7 @@ class TweetList(gtk.VBox):
         footer += '</span>'
         
         pango_twt += footer
-        if p['text'].find('&') > 0: 
-            print 'text', p['text']
-            print 'pango', pango_twt
-            
+        
         self.model.append([pix, p['username'], p['datetime'], p['client'], 
             pango_twt, p['text'], p['id'], p['fav'], p['in_reply_to_id'], 
             p['in_reply_to_user'], p['retweet_by'], None, False])

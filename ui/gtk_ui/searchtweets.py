@@ -41,7 +41,6 @@ class SearchTweets(gtk.VBox):
         self.clearbtn.connect('clicked', self.__clear)
         self.input_topics.connect('activate', self.__search_topic)
         self.input_topics.grab_focus()
-        #self.input_topics.grab_default()
         
     def __on_icon_press(self, widget, pos, e):
         #if pos == 0: 
@@ -52,11 +51,13 @@ class SearchTweets(gtk.VBox):
             
     def __clear(self, widget):
         self.topics.clear()
+        self.input_topics.grab_focus()
         
     def __search_topic(self, widget):
         topic = widget.get_text()
         self.mainwin.request_search_topic(topic)
         widget.set_text('')
+        widget.grab_focus()
         
     def update_tweets(self, arr_tweets):
         self.topics.update_tweets(arr_tweets)

@@ -12,6 +12,13 @@ Ene 16, 2010:
     + Implementado botón para limpiar el cuadro de búsquedas
     + Mejoradas expresiones regulares para detectar hashtags y menciones
     ---- commit ----
+    + Agregado el nombre de la cuenta abierta en la barra de título de Turpial
+    + Establecido el foco al cuadro de texto de búsqueda luego de buscar
+    + Corregido bug que impedía mostrar tweets con '&' en una URL
+    + Refactorizado el sistema de configuración
+    + Implementada opción para activar/desactivar el sonido en las notificaciones
+    + Refactorizado el sistema de notificaciones
+    ---- commit ----
     
 Ene 15, 2010:
     + Refactorizada actualización de tweets luego de marcar/desmarcar favoritos

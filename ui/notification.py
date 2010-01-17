@@ -15,7 +15,11 @@ log = logging.getLogger('Notify')
 class Notification:
     def __init__(self):
         self.activate()
+        self.play = True
         self.sound = Sound()
+        
+    def update_config(self, config):
+        self.config = config
         
     def activate(self):
         self.active = True
@@ -40,26 +44,30 @@ class Notification:
                 n.show()
                 
     def new_tweets(self, count, tweet, icon):
+        if self.config['home'] != 'on': return
         twt = 'nuevo tweet' if count == 1 else 'nuevos tweets'
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
-        self.sound.tweets()
+        if self.config['sound'] == 'on': self.sound.tweets()
         
         
     def new_replies(self, count, tweet, icon):
+        if self.config['replies'] != 'on': return
         twt = u'nueva mención' if count == 1 else u'nuevas menciones'
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
-        self.sound.replies()
+        if self.config['sound'] == 'on': self.sound.replies()
             
     def new_directs(self, count, tweet, icon):
+        if self.config['directs'] != 'on': return
         twt = 'nuevo DM' if count == 1 else 'nuevos DM'
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
-        self.sound.directs()
+        if self.config['sound'] == 'on': self.sound.directs()
         
     def login(self, p):
+        if self.config['login'] != 'on': return
         self.popup('@%s' % p['screen_name'], 
             'Tweets: %i\nFollowing: %i\nFollowers: %i' % (p['statuses_count'], 
             p['friends_count'], p['followers_count']))
-        self.sound.login()
+        if self.config['sound'] == 'on': self.sound.login()
         
     def following(self, user, follow):
         name = user['screen_name']

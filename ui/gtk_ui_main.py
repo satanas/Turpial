@@ -79,11 +79,8 @@ class Main(BaseGui, gtk.Window):
         self.home_interval = -1
         self.replies_interval = -1
         self.directs_interval = -1
-        #self.home_notif = True
-        #self.replies_notif = True
-        #self.directs_notif = True
-        #self.login_notif = True
         self.me = None
+        self.version = None
         
         self.home_timer = None
         self.replies_timer = None
@@ -105,7 +102,7 @@ class Main(BaseGui, gtk.Window):
             return
         self.tray = gtk.StatusIcon()
         self.tray.set_from_pixbuf(util.load_image('turpial_icon.png', True))
-        self.tray.set_tooltip('%s %s' % ('Turpial', '0.8'))
+        self.tray.set_tooltip('Turpial')
         self.tray.connect("activate", self.__on_trayicon_click)
         self.tray.connect("popup-menu", self.__show_tray_menu)
         
@@ -262,7 +259,10 @@ class Main(BaseGui, gtk.Window):
         
         self.profile.set_user_profile(p)
         self.me = p['screen_name']
-        self.set_title('Turpial - ' + self.me)
+        title = 'Turpial - %s' % self.me
+        self.set_title(title)
+        self.tray.set_tooltip(title)
+        
         if config.read('General', 'profile-color') == 'on':
             self.link_color = p['profile_link_color']
         
@@ -300,7 +300,6 @@ class Main(BaseGui, gtk.Window):
         response = p.run()
         if response == gtk.RESPONSE_ACCEPT:
             verifier = p.pin.get_text()
-            print 'verifier', verifier
             if verifier == '': 
                 self.cancel_login('Debe escribir el PIN válido')
             else:
@@ -468,13 +467,8 @@ class Main(BaseGui, gtk.Window):
         home_interval = int(config.read('General', 'home-update-interval'))
         replies_interval = int(config.read('General', 'replies-update-interval'))
         directs_interval = int(config.read('General', 'directs-update-interval'))
-        
-        #self.home_notif = True if config.read('Notifications', 'home') == 'on' else False
-        #self.replies_notif = True if config.read('Notifications', 'replies') == 'on' else False
-        #self.directs_notif = True if config.read('Notifications', 'directs') == 'on' else False
-        #self.login_notif = True if config.read('Notifications', 'login') == 'on' else False
-        #self.sound_notif = True if config.read('Notifications', 'sound') == 'on' else False
         self.notify.update_config(config.read_section('Notifications'))
+        self.version = config.read('App', 'version')
         self.imgdir = config.imgdir
         
         if thread: gtk.gdk.threads_enter()

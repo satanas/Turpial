@@ -67,8 +67,7 @@ class TweetList(gtk.VBox):
             gobject.TYPE_PYOBJECT, # in_reply_to_id
             gobject.TYPE_PYOBJECT, # in_reply_to_user
             gobject.TYPE_PYOBJECT, # retweeted_by
-            gobject.TYPE_PYOBJECT, # doing what operation?
-            bool, #direct message?
+            gobject.TYPE_PYOBJECT, #color
         )
         self.list.set_model(self.model)
         cell_avatar = gtk.CellRendererPixbuf()
@@ -78,11 +77,14 @@ class TweetList(gtk.VBox):
         self.cell_tweet.set_property('wrap-width', 260)
         self.cell_tweet.set_property('yalign', 0)
         self.cell_tweet.set_property('xalign', 0)
+        #self.cell_tweet.set_property('cell-background-set', True)
         
         column = gtk.TreeViewColumn('tweets')
         column.set_alignment(0.0)
         column.pack_start(cell_avatar, False)
         column.pack_start(self.cell_tweet, True)
+        column.set_attributes(self.cell_tweet, background_set=7, 
+            background_gdk=11, markup=4)
         column.set_attributes(self.cell_tweet, markup=4)
         column.set_attributes(cell_avatar, pixbuf=0)
         self.list.append_column(column)
@@ -296,8 +298,6 @@ class TweetList(gtk.VBox):
         p = self.mainwin.parse_tweet(tweet)
         pix = self.mainwin.get_user_avatar(p['username'], p['avatar'])
         
-        #tags = [gobject.markup_escape_text(h) for h in util.detect_hashtags(text)]
-        #reps = [gobject.markup_escape_text(m) for m in util.detect_mentions(text)]
         urls = [gobject.markup_escape_text(u) for u in util.detect_urls(p['text'])]
         
         pango_twt = gobject.markup_escape_text(p['text'])
@@ -317,10 +317,11 @@ class TweetList(gtk.VBox):
         footer += '</span>'
         
         pango_twt += footer
+        color = gtk.gdk.Color(255, 248, 204) if p['fav'] else None
         
         self.model.append([pix, p['username'], p['datetime'], p['client'], 
             pango_twt, p['text'], p['id'], p['fav'], p['in_reply_to_id'], 
-            p['in_reply_to_user'], p['retweet_by'], None, False])
+            p['in_reply_to_user'], p['retweet_by'], color])
         del pix
         
     def update_user_pic(self, user, pic):

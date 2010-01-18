@@ -34,7 +34,8 @@ class UpdateBox(gtk.Window):
         self.num_chars.set_use_markup(True)
         self.num_chars.set_markup('<span size="14000" foreground="#999"><b>140</b></span>')
         
-        self.update_text = gtk.TextView()
+        #self.update_text = gtk.TextView()
+        self.update_text = MessageTextView()
         self.update_text.set_border_width(2)
         self.update_text.set_left_margin(2)
         self.update_text.set_right_margin(2)
@@ -52,8 +53,6 @@ class UpdateBox(gtk.Window):
         self.url = gtk.Entry()
         self.btn_url = gtk.Button('Shorten URL')
         self.btn_url.set_tooltip_text('Shorten URL')
-        #self.btn_url.set_relief(gtk.RELIEF_NONE)
-        #self.btn_url.set_image(util.load_image('cut.png'))
         
         btn_pic = gtk.Button('Upload Pic')
         btn_pic.set_tooltip_text('Upload Pic')
@@ -118,8 +117,16 @@ class UpdateBox(gtk.Window):
         self.btn_url.connect('clicked', self.short_url)
         btn_pic.connect('clicked', self.upload_pic)
         self.toolbox.connect('activate', self.show_options)
+        self.update_text.connect('mykeypress', self.__on_key_pressed)
     
-    def __unclose(self, widget, event):
+    def __on_key_pressed(self, widget, keyval, keymod):
+        if keyval == gtk.keysyms.Return:
+            self.update(widget)
+        elif keyval == gtk.keysyms.Escape:
+            self.__unclose(widget)
+        return False
+            
+    def __unclose(self, widget, event=None):
         if not self.blocked: self.done()
         return True
         
@@ -139,7 +146,8 @@ class UpdateBox(gtk.Window):
         self.btn_upd.set_sensitive(True)
         self.btn_url.set_sensitive(True)
         self.waiting.stop(error=True)
-        self.lblerror.set_markup("<span size='small'>No se pudo enviar el tweet</span>")
+        self.lblerror.set_markup("<span size='small'>Oh oh... No se pudo enviar el tweet</span>")
+        self.set_focus(self.update_text)
         
     def show(self, text, id, user):
         self.in_reply_id = id
@@ -161,6 +169,8 @@ class UpdateBox(gtk.Window):
         self.label.set_markup('<span size="medium"><b>What\'s happening?</b></span>')
         self.waiting.stop()
         self.toolbox.set_expanded(False)
+        self.in_reply_id = None
+        self.in_reply_user = None
         self.hide()
         return True
         
@@ -183,7 +193,7 @@ class UpdateBox(gtk.Window):
         tweet = buffer.get_text(start, end)
         if tweet == '': 
             self.waiting.stop(error=True)
-            self.lblerror.set_markup("<span size='small'>Debe escribir algo</span>")
+            self.lblerror.set_markup("<span size='small'>Eyy... debes escribir algo</span>")
             return
         
         self.waiting.start()
@@ -197,7 +207,7 @@ class UpdateBox(gtk.Window):
     def update_shorten_url(self, short):
         if short is None:
             self.waiting.stop(error=True)
-            self.lblerror.set_markup("<span size='small'>Error intentando cortar la URL</span>")
+            self.lblerror.set_markup("<span size='small'>Oops... No se pudo cortar la URL</span>")
             return
         buffer = self.update_text.get_buffer()
         end_offset = buffer.get_property('cursor-position')
@@ -213,6 +223,7 @@ class UpdateBox(gtk.Window):
         self.waiting.stop()
         self.lblerror.set_markup("")
         self.toolbox.set_expanded(False)
+        self.set_focus(self.update_text)
         
     def upload_pic(self, widget):
         filtro = gtk.FileFilter()
@@ -237,3 +248,29 @@ class UpdateBox(gtk.Window):
     def show_options(self, widget, event=None):
         self.url.set_text('')
         self.url.grab_focus()
+
+class MessageTextView(gtk.TextView):
+    '''Class for the message textview (where user writes new messages)
+    for chat/groupchat windows'''
+    __gsignals__ = dict(mykeypress = (gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (int, gtk.gdk.ModifierType )))
+        
+    def __init__(self):
+        gtk.TextView.__init__(self)
+        
+        self.set_border_width(2)
+        self.set_left_margin(2)
+        self.set_right_margin(2)
+        self.set_wrap_mode(gtk.WRAP_WORD)
+
+    def destroy(self):
+        import gc
+        gobject.idle_add(lambda:gc.collect())
+
+    def clear(self, widget = None):
+        self.get_buffer().set_text('')
+        
+if gobject.pygtk_version < (2, 8, 0):
+    gobject.type_register(MessageTextView)
+
+gtk.binding_entry_add_signal(MessageTextView, gtk.keysyms.Return, 0, 'mykeypress', int, gtk.keysyms.Return, gtk.gdk.ModifierType, 0)
+gtk.binding_entry_add_signal(MessageTextView, gtk.keysyms.Escape, 0, 'mykeypress', int, gtk.keysyms.Escape, gtk.gdk.ModifierType, 0)

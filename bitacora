@@ -1,4 +1,11 @@
 Ene 18, 2010:
+    + Corregido error que dejaba seteado el flag de reply_id en el update_box
+    + Mostrado número versión que aparece en el archivo de configuración
+    + Mejorados los focos del textview en el updatebox (luego de cortar url y luego del release)
+    * En progreso el cambio de color de los tweets favoritos
+    ---- commit ----
+    
+Ene 18, 2010:
     + Corregido shebang del lanzador para fedora (gracias a richzendy)
     ---- commit ----
     

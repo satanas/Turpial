@@ -1,3 +1,7 @@
+Ene 18, 2010:
+    + Corregido shebang del lanzador para fedora (gracias a richzendy)
+    ---- commit ----
+    
 Ene 16, 2010:
     + Soporte para resultados en formato json
     + Agregado soporte para los servicios su.pr y bit.ly al cortado de URLs

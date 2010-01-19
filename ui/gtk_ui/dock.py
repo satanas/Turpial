@@ -67,6 +67,13 @@ class Dock(gtk.Alignment):
         self.mainwin.show_update_box()
         
     def change_mode(self, mode):
+        self.btn_home.set_image(util.load_image('home-single.png'))
+        self.btn_update.set_image(util.load_image('button-update-single.png'))
+        self.btn_profile.set_image(util.load_image('profile-single.png'))
+        self.btn_settings.set_image(util.load_image('settings-single.png'))
+        self.btn_about.set_image(util.load_image('about-single.png'))
+        return
+        
         if mode == 'wide':
             self.btn_home.set_image(util.load_image('home.png'))
             #self.btn_favs.set_image(util.load_image('favorites.png'))

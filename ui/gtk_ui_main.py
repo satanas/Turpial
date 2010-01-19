@@ -62,6 +62,8 @@ class Main(BaseGui, gtk.Window):
         self.set_title('Turpial')
         self.set_size_request(280, 350)
         self.set_default_size(320, 480)
+        self.current_width = 320
+        self.current_height = 480
         self.set_icon(util.load_image('turpial_icon.png', True))
         self.set_position(gtk.WIN_POS_CENTER)
         self.connect('delete-event', self.__close)
@@ -445,14 +447,16 @@ class Main(BaseGui, gtk.Window):
         cur_w, cur_h = self.get_size()
         
         if self.workspace == 'wide':
-            self.set_size_request(960, 480)
-            self.resize(960, 480)
-            x = (960 - cur_w)/2
+            size = self.wide_win_size
+            #self.set_size_request(size[0], size[1])
+            self.resize(size[0], size[1])
+            x = (size[0] - cur_w)/2
             self.move(cur_x - x, cur_y)
         else:
-            self.set_size_request(320, 480)
-            self.resize(320, 480)
-            x = (cur_w - 320)/2
+            size = self.single_win_size
+            #self.set_size_request(size[0], size[1])
+            self.resize(size[0], size[1])
+            x = (cur_w - size[0])/2
             self.move(cur_x + x, cur_y)
         
         self.dock.change_mode(self.workspace)
@@ -470,6 +474,11 @@ class Main(BaseGui, gtk.Window):
         self.notify.update_config(config.read_section('Notifications'))
         self.version = config.read('App', 'version')
         self.imgdir = config.imgdir
+        
+        single_size = config.read('General', 'single-win-size').split(',')
+        wide_size = config.read('General', 'wide-win-size').split(',')
+        self.single_win_size = (int(single_size[0]), int(single_size[1]))
+        self.wide_win_size = (int(wide_size[0]), int(wide_size[1]))
         
         if thread: gtk.gdk.threads_enter()
         self.set_mode()
@@ -500,5 +509,23 @@ class Main(BaseGui, gtk.Window):
         if self.mode < 2: return
         
         w, h = self.get_size()
+        
+        if self.workspace == 'single':
+            size = self.single_win_size
+        else:
+            size = self.wide_win_size
+        
+        if w == size[0] and h == size[1]: return
+        if w == self.current_width and h == self.current_height: return
+        
         self.contenido.update_wrap(w, self.workspace)
+        
+        value = "%i, %i" % (w, h)
+        self.current_width = w
+        self.current_height = h
+        if self.workspace == 'single':
+            self.save_config({'General': {'single-win-size': value}})
+        else:
+            self.save_config({'General': {'wide-win-size': value}})
+        
         return

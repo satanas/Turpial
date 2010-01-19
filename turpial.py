@@ -126,7 +126,7 @@ class Turpial:
         
     def _update_timeline(self):
         self.ui.start_updating_timeline()
-        self.api.update_timeline(self.ui.update_timeline, 60)
+        self.api.update_timeline(self.ui.update_timeline, 80)
         
     def _update_replies(self):
         self.ui.start_updating_replies()

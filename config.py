@@ -26,7 +26,8 @@ DEFAULT = {
         'profile-color': 'on',
         'remember-login-info': 'off',
         'minimize-on-close': 'on',
-        'main-win-geometry': '320,480',
+        'single-win-size': '320,480',
+        'wide-win-size': '960,480',
     },
     'Notifications':{
         'sound': 'on',

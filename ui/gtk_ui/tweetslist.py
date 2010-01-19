@@ -206,8 +206,11 @@ class TweetList(gtk.VBox):
                 if (len(total_urls) > 0 or len(total_tags) > 0) and len(total_users) > 0: 
                     open_menu.append(gtk.SeparatorMenuItem())
                 
+                exist = []
                 for m in total_users:
                     if m == user: continue
+                    if m in exist: continue
+                    exist.append(m)
                     user_prof = '/'.join(['http://www.twitter.com', m])
                     mentmenu = gtk.MenuItem('@'+m)
                     mentmenu.connect('button-release-event', self.__open_url, user_prof)
@@ -339,6 +342,10 @@ class TweetList(gtk.VBox):
         if arr_tweets is None:
             self.waiting.stop(error=True)
             self.lblerror.set_markup(u"<span size='small'>Oops... Algo salió mal. Actualizaré de nuevo pronto</span>")
+            return 0
+        elif len(arr_tweets) == 0:
+            self.waiting.stop(error=True)
+            self.lblerror.set_markup(u"<span size='small'>No hay tweets</span>")
             return 0
         else:
             count = util.count_new_tweets(arr_tweets, self.last)

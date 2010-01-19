@@ -4,6 +4,10 @@ Ene 18, 2010:
     + Mejorados los focos del textview en el updatebox (luego de cortar url y luego del release)
     * En progreso el cambio de color de los tweets favoritos
     ---- commit ----
+    + Implementado soporte para mostrar un mensaje cuando no hay tweets a mostrar en el tweetlist
+    + Corregidos enlaces duplicados para un mismo usuario mencionados más de una vez
+    + Almacenado el tamaño de la ventana establecido por el usuario
+    ---- commit ----
     
 Ene 18, 2010:
     + Corregido shebang del lanzador para fedora (gracias a richzendy)

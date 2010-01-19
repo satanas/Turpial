@@ -126,15 +126,18 @@ class Turpial:
         
     def _update_timeline(self):
         self.ui.start_updating_timeline()
-        self.api.update_timeline(self.ui.update_timeline, 80)
+        tweets = int(self.config.read('General', 'num-tweets'))
+        self.api.update_timeline(self.ui.update_timeline, tweets)
         
     def _update_replies(self):
         self.ui.start_updating_replies()
-        self.api.update_replies(self.ui.update_replies)
+        tweets = int(self.config.read('General', 'num-tweets'))
+        self.api.update_replies(self.ui.update_replies, tweets)
         
     def _update_directs(self):
         self.ui.start_updating_directs()
-        self.api.update_directs(self.ui.update_directs)
+        tweets = int(self.config.read('General', 'num-tweets'))
+        self.api.update_directs(self.ui.update_directs, tweets)
         
     def _update_favorites(self):
         self.api.update_favorites(self.ui.update_favorites)

@@ -15,7 +15,7 @@ class Preferences(gtk.Window):
         
         self.mainwin = parent
         self.current = parent.read_config()
-        self.set_default_size(360, 360)
+        self.set_default_size(360, 380)
         self.set_title('Preferences')
         self.set_border_width(6)
         self.set_transient_for(parent)
@@ -97,13 +97,14 @@ class PreferencesTab(gtk.VBox):
         
 class TimeScroll(gtk.HBox):
     def __init__(self, label='', val=5, min=1, max=60, step=3, page=6, size=0,
-        callback=None):
+        callback=None, lbl_size=60, unit='min'):
         gtk.HBox.__init__(self, False)
         
         self.callback = callback
         self.value = val
+        self.unit = unit
         lbl = gtk.Label(label)
-        lbl.set_size_request(60, -1)
+        lbl.set_size_request(lbl_size, -1)
         adj = gtk.Adjustment(val, min, max, step, page, size)
         scale = gtk.HScale()
         scale.set_digits(0)
@@ -119,11 +120,11 @@ class TimeScroll(gtk.HBox):
         scale.connect('value-changed', self.__on_change)
         
     def __format_value(self, widget, value):
-        return "%i min" % int(value)
+        return "%i %s" % (int(value), self.unit)
         
     def __on_change(self, widget):
         self.value = widget.get_value()
-        self.callback()
+        if self.callback: self.callback()
         
 class GeneralTab(PreferencesTab):
     def __init__(self, current):
@@ -133,6 +134,7 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         h = int(self.current['home-update-interval'])
         r = int(self.current['replies-update-interval'])
         d = int(self.current['directs-update-interval'])
+        t = int(self.current['num-tweets'])
         pf = True if self.current['profile-color'] == 'on' else False
         ws = True if self.current['workspace'] == 'wide' else False
         min = True if self.current['minimize-on-close'] == 'on' else False
@@ -140,6 +142,8 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         self.home = TimeScroll('Home', h, callback=self.update_api_calls)
         self.replies = TimeScroll('Replies', r, min=2, callback=self.update_api_calls)
         self.directs = TimeScroll('Directs', d, min=5, callback=self.update_api_calls)
+        
+        self.tweets = TimeScroll('Tweets mostrados', t, min=20, max=200, unit='', lbl_size=120)
         
         self.estimated = gtk.Label(u'Usarás 0 llamadas a la API por hora')
         est_align = gtk.Alignment(xalign=0.5)
@@ -187,6 +191,7 @@ de sesión')
         self.pack_start(self.replies, False, False, 5)
         self.pack_start(self.directs, False, False, 5)
         self.pack_start(est_align, False, False, 4)
+        self.pack_start(self.tweets, False, False, 10)
         self.pack_start(self.workspace, False, False, 2)
         self.pack_start(self.profile_colors, False, False, 2)
         self.pack_start(self.minimize, False, False, 2)
@@ -208,6 +213,7 @@ de sesión')
             'directs-update-interval': int(self.directs.value),
             'workspace': ws,
             'minimize-on-close': min,
+            'num-tweets': int(self.tweets.value),
         }
 
 class NotificationsTab(PreferencesTab):

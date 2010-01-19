@@ -83,9 +83,9 @@ class TweetList(gtk.VBox):
         column.set_alignment(0.0)
         column.pack_start(cell_avatar, False)
         column.pack_start(self.cell_tweet, True)
-        column.set_attributes(self.cell_tweet, background_set=7, 
-            background_gdk=11, markup=4)
-        column.set_attributes(self.cell_tweet, markup=4)
+        column.set_attributes(self.cell_tweet, cell_background_set=7, 
+            cell_background_gdk=11, markup=4)
+        #column.set_attributes(self.cell_tweet, markup=4)
         column.set_attributes(cell_avatar, pixbuf=0)
         self.list.append_column(column)
         
@@ -289,7 +289,7 @@ class TweetList(gtk.VBox):
         self.model.clear()
         
     def update_wrap(self, val):
-        self.cell_tweet.set_property('wrap-width', val - 80)
+        self.cell_tweet.set_property('wrap-width', val - 85)
         iter = self.model.get_iter_first()
         
         while iter:

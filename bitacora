@@ -1,3 +1,7 @@
+Ene 19, 2010:
+    + Habilitada preferencia para configurar el número de tweets en cada columna
+    ---- commit ----
+    
 Ene 18, 2010:
     + Corregido error que dejaba seteado el flag de reply_id en el update_box
     + Mostrado número versión que aparece en el archivo de configuración

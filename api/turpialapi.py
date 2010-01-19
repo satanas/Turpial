@@ -251,13 +251,15 @@ class TurpialAPI(threading.Thread):
         args = {'count': count}
         self.__register({'uri': 'http://api.twitter.com/1/statuses/home_timeline', 'args': args, 'timeline': True}, callback)
         
-    def update_replies(self, callback):
+    def update_replies(self, callback, count=20):
         self.log.debug('Descargando Replies')
-        self.__register({'uri': 'http://twitter.com/statuses/mentions', 'replies': True}, callback)
+        args = {'count': count}
+        self.__register({'uri': 'http://twitter.com/statuses/mentions','args': args,  'replies': True}, callback)
         
-    def update_directs(self, callback):
+    def update_directs(self, callback, count=20):
         self.log.debug('Descargando Directs')
-        self.__register({'uri': 'http://twitter.com/direct_messages'}, callback)
+        args = {'count': count}
+        self.__register({'uri': 'http://twitter.com/direct_messages', 'args': args}, callback)
         
     def update_favorites(self, callback):
         self.log.debug('Descargando Favorites')

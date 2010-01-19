@@ -28,6 +28,7 @@ DEFAULT = {
         'minimize-on-close': 'on',
         'single-win-size': '320,480',
         'wide-win-size': '960,480',
+        'num-tweets': '60',
     },
     'Notifications':{
         'sound': 'on',

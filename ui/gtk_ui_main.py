@@ -143,6 +143,15 @@ class Main(BaseGui, gtk.Window):
             self.quit(widget)
         return True
         
+    def __save_size(self):
+        wide_value = "%i, %i" % (self.wide_win_size[0], self.wide_win_size[1])
+        single_value = "%i, %i" % (self.single_win_size[0], self.single_win_size[1])
+        log.debug('Guardando tamaño de la ventana')
+        log.debug('--Single: %s' % single_value)
+        log.debug('--Wide: %s' % wide_value)
+        self.save_config({'General': {'single-win-size': single_value, 
+            'wide-win-size': wide_value}})
+            
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)
         if pix:
@@ -152,9 +161,11 @@ class Main(BaseGui, gtk.Window):
     
     def quit(self, widget):
         self.request_signout()
+        self.__save_size()
         gtk.main_quit()
         self.destroy()
         self.tray = None
+        exit(0)
         
     def main_loop(self):
         gtk.gdk.threads_enter()
@@ -373,10 +384,12 @@ class Main(BaseGui, gtk.Window):
         gtk.gdk.threads_leave()
         self.updating['directs'] = False
         
-    def update_favorites(self, tweets):
+    def update_favorites(self, tweets, replies, favs):
         log.debug(u'Actualizando favoritos')
         gtk.gdk.threads_enter()
-        self.profile.favorites.update_tweets(tweets)
+        self.home.timeline.update_tweets(tweets)
+        self.home.replies.update_tweets(replies)
+        self.profile.favorites.update_tweets(favs)
         gtk.gdk.threads_leave()
         
     def update_user_profile(self, profile):
@@ -448,17 +461,18 @@ class Main(BaseGui, gtk.Window):
         
         if self.workspace == 'wide':
             size = self.wide_win_size
-            #self.set_size_request(size[0], size[1])
             self.resize(size[0], size[1])
+            self.set_default_size(size[0], size[1])
             x = (size[0] - cur_w)/2
             self.move(cur_x - x, cur_y)
         else:
             size = self.single_win_size
-            #self.set_size_request(size[0], size[1])
             self.resize(size[0], size[1])
+            self.set_default_size(size[0], size[1])
             x = (cur_w - size[0])/2
             self.move(cur_x + x, cur_y)
         
+        log.debug('Cambiando a modo %s (%s)' % (self.workspace, size))
         self.dock.change_mode(self.workspace)
         self.home.change_mode(self.workspace)
         self.profile.change_mode(self.workspace)
@@ -512,20 +526,13 @@ class Main(BaseGui, gtk.Window):
         
         if self.workspace == 'single':
             size = self.single_win_size
+            if w == size[0] and h == size[1]: return
+            self.single_win_size = (w, h)
         else:
             size = self.wide_win_size
-        
-        if w == size[0] and h == size[1]: return
-        if w == self.current_width and h == self.current_height: return
+            if w == size[0] and h == size[1]: return
+            self.wide_win_size = (w, h)
         
         self.contenido.update_wrap(w, self.workspace)
-        
-        value = "%i, %i" % (w, h)
-        self.current_width = w
-        self.current_height = h
-        if self.workspace == 'single':
-            self.save_config({'General': {'single-win-size': value}})
-        else:
-            self.save_config({'General': {'wide-win-size': value}})
         
         return

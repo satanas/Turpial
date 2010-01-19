@@ -403,6 +403,8 @@ class TurpialAPI(threading.Thread):
                 if rtn: self.replies = rtn
             elif args.has_key('favorites'):
                 if rtn: self.favorites = rtn
+                callback(self.tweets, self.replies, self.favorites)
+                continue
                 
             if args.has_key('tweet'):
                 done = self.__handle_tweets(rtn, args)
@@ -422,11 +424,11 @@ class TurpialAPI(threading.Thread):
                 
             if args.has_key('fav'):
                 done = self.__handle_favorites(rtn, args['fav'])
-                
-                if done: 
-                    callback(self.favorites)
-                else:
-                    callback(None)
+                callback(self.tweets, self.replies, self.favorites)
+                #if done: 
+                #    callback(self.tweets, self.replies, self.favorites)
+                #else:
+                #    callback(None,None,None)
                 continue
                 
             if args.has_key('friends'):

@@ -67,7 +67,7 @@ class TweetList(gtk.VBox):
             gobject.TYPE_PYOBJECT, # in_reply_to_id
             gobject.TYPE_PYOBJECT, # in_reply_to_user
             gobject.TYPE_PYOBJECT, # retweeted_by
-            gobject.TYPE_PYOBJECT, #color
+            gtk.gdk.Color, #gobject.TYPE_PYOBJECT, #color
         )
         self.list.set_model(self.model)
         cell_avatar = gtk.CellRendererPixbuf()
@@ -77,15 +77,12 @@ class TweetList(gtk.VBox):
         self.cell_tweet.set_property('wrap-width', 260)
         self.cell_tweet.set_property('yalign', 0)
         self.cell_tweet.set_property('xalign', 0)
-        #self.cell_tweet.set_property('cell-background-set', True)
         
         column = gtk.TreeViewColumn('tweets')
         column.set_alignment(0.0)
         column.pack_start(cell_avatar, False)
         column.pack_start(self.cell_tweet, True)
-        column.set_attributes(self.cell_tweet, cell_background_set=7, 
-            cell_background_gdk=11, markup=4)
-        #column.set_attributes(self.cell_tweet, markup=4)
+        column.set_attributes(self.cell_tweet, markup=4, cell_background_gdk=11)
         column.set_attributes(cell_avatar, pixbuf=0)
         self.list.append_column(column)
         
@@ -320,7 +317,8 @@ class TweetList(gtk.VBox):
         footer += '</span>'
         
         pango_twt += footer
-        color = gtk.gdk.Color(255, 248, 204) if p['fav'] else None
+        #color = gtk.gdk.Color(255*257, 242*257, 212*257) if p['fav'] else None
+        color = gtk.gdk.Color(250*257, 237*257, 187*257) if p['fav'] else None
         
         self.model.append([pix, p['username'], p['datetime'], p['client'], 
             pango_twt, p['text'], p['id'], p['fav'], p['in_reply_to_id'], 

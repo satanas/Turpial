@@ -1,6 +1,9 @@
 Ene 19, 2010:
     + Habilitada preferencia para configurar el número de tweets en cada columna
     ---- commit ----
+    + Resaltados visualmente tweets favoritos
+    + Corregido error con el auto ajuste de la ventana al guardar las preferencias
+    ---- commit ----
     
 Ene 18, 2010:
     + Corregido error que dejaba seteado el flag de reply_id en el update_box

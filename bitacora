@@ -4,6 +4,10 @@ Ene 19, 2010:
     + Resaltados visualmente tweets favoritos
     + Corregido error con el auto ajuste de la ventana al guardar las preferencias
     ---- commit ----
+    + Pulida la correción del error con el auto ajuste
+    + Implementada actualización de la versión en al archivo de config al cargar
+    + Preparados archivos para el release 0.9.2
+    ---- commit ----
     
 Ene 18, 2010:
     + Corregido error que dejaba seteado el flag de reply_id en el update_box

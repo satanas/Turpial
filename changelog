@@ -1,3 +1,18 @@
+v0.9.2 (Ene 19, 2010):
+    + Añadida opción para configurar el número de tweets por columna
+    + Resaltado de los tweets favoritos
+    + Mejorados mensajes de error
+    + Almacenado el tamaño que el usuario le asigne a la ventana
+    + Corregido shebang del lanzador para hacerlo compatible con Fedora (gracias a Richzendy)
+    + Agregado soporte para los servicios su.pr y bit.ly (cortado de URLs)
+    + Usado el esquema de colores del perfil del usuario para los elementos resaltables
+    + Soporte para abrir los hashtags desde el menú contextual
+    + Añadido botón para limpiar las búsquedas
+    + Mejoradas la detección de hashtags y menciones
+    + Agregada la opción para activar/desactivar el sonido de las notificaciones
+    + Mejorados los módulos de configuración y notificaciones
+    + Corregidos bugs menores
+    
 v0.8.5 (Ene 15, 2010):
     + Optimizado el consumo de cpu
     + Modificación del perfil de usuario

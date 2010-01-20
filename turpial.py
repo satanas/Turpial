@@ -234,9 +234,9 @@ class Turpial:
         
         return rtn
         
-    def save_config(self, config):
+    def save_config(self, config, update):
         self.config.save(config)
-        self.ui.update_config(self.config)
+        if update: self.ui.update_config(self.config)
         
 if __name__ == '__main__':
     t = Turpial()

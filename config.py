@@ -11,7 +11,7 @@ import ConfigParser
 
 DEFAULT = {
     'App':{
-        'version': '0.8.8',
+        'version': '0.9.2',
     },
     'Auth':{
         'oauth-key': '',
@@ -56,6 +56,9 @@ class ConfigHandler:
         if not os.path.isfile(self.filepath): self.create()
         
         self.load()
+        
+        if self.__config['App']['version'] != DEFAULT['App']['version']:
+            self.write('App', 'version', DEFAULT['App']['version'])
     
     def create(self):
         self.log.debug('Creando archivo')

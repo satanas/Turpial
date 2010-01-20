@@ -150,7 +150,7 @@ class Main(BaseGui, gtk.Window):
         log.debug('--Single: %s' % single_value)
         log.debug('--Wide: %s' % wide_value)
         self.save_config({'General': {'single-win-size': single_value, 
-            'wide-win-size': wide_value}})
+            'wide-win-size': wide_value}}, update=False)
             
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)
@@ -160,8 +160,8 @@ class Main(BaseGui, gtk.Window):
             return util.load_image('unknown.png', pixbuf=True)
     
     def quit(self, widget):
-        self.request_signout()
         self.__save_size()
+        self.request_signout()
         gtk.main_quit()
         self.destroy()
         self.tray = None
@@ -486,15 +486,16 @@ class Main(BaseGui, gtk.Window):
         replies_interval = int(config.read('General', 'replies-update-interval'))
         directs_interval = int(config.read('General', 'directs-update-interval'))
         self.notify.update_config(config.read_section('Notifications'))
-        self.version = config.read('App', 'version')
-        self.imgdir = config.imgdir
         
-        single_size = config.read('General', 'single-win-size').split(',')
-        wide_size = config.read('General', 'wide-win-size').split(',')
-        self.single_win_size = (int(single_size[0]), int(single_size[1]))
-        self.wide_win_size = (int(wide_size[0]), int(wide_size[1]))
-        
-        if thread: gtk.gdk.threads_enter()
+        if thread: 
+            self.version = config.read('App', 'version')
+            self.imgdir = config.imgdir
+            single_size = config.read('General', 'single-win-size').split(',')
+            wide_size = config.read('General', 'wide-win-size').split(',')
+            self.single_win_size = (int(single_size[0]), int(single_size[1]))
+            self.wide_win_size = (int(wide_size[0]), int(wide_size[1]))
+            
+            gtk.gdk.threads_enter()
         self.set_mode()
         
         if (self.home_interval != home_interval):
@@ -525,12 +526,10 @@ class Main(BaseGui, gtk.Window):
         w, h = self.get_size()
         
         if self.workspace == 'single':
-            size = self.single_win_size
-            if w == size[0] and h == size[1]: return
+            if (w, h) == self.single_win_size: return
             self.single_win_size = (w, h)
         else:
-            size = self.wide_win_size
-            if w == size[0] and h == size[1]: return
+            if (w, h) == self.wide_win_size: return
             self.wide_win_size = (w, h)
         
         self.contenido.update_wrap(w, self.workspace)

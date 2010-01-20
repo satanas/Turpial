@@ -86,8 +86,8 @@ class BaseGui:
     def read_config(self):
         return self.__controller.config.read_all()
         
-    def save_config(self, new_config):
-        self.__controller.save_config(new_config)
+    def save_config(self, new_config, update=True):
+        self.__controller.save_config(new_config, update)
         
     def resize_avatar(self, pic):
         ext = pic[-3:].lower()

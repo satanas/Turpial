@@ -38,6 +38,7 @@ class About:
             'Wil Alvarez aka Satanas (Concepto y programación)',
             'Eleazar Meza aka Shaka (Concepto y logo)',
             'Azrael Arocha (Pruebas y colaboración)',
+            u'José Leonel Subero aka Arawako (Pruebas y colaboración)',
         ])
         
         about.connect("response", self.__response)

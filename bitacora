@@ -10,6 +10,8 @@ Ene 19, 2010:
     ---- commit ----
     + Corregido error al cerrar sin iniciar sesión
     ---- commit ----
+    + Agregado arawako a los créditos como beta tester
+    ---- commit ----
     
 Ene 18, 2010:
     + Corregido error que dejaba seteado el flag de reply_id en el update_box

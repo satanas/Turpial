@@ -450,8 +450,8 @@ class Main(BaseGui, gtk.Window):
     def tweet_done(self, tweets):
         log.debug(u'Actualizando nuevo tweet')
         gtk.gdk.threads_enter()
+        self.updatebox.release()
         if tweets: 
-            self.updatebox.release()
             self.updatebox.done()
             self.update_timeline(tweets)
         
@@ -496,8 +496,8 @@ class Main(BaseGui, gtk.Window):
             wide_size = config.read('General', 'wide-win-size').split(',')
             self.single_win_size = (int(single_size[0]), int(single_size[1]))
             self.wide_win_size = (int(wide_size[0]), int(wide_size[1]))
-            
             gtk.gdk.threads_enter()
+            
         self.set_mode()
         
         if (self.home_interval != home_interval):
@@ -518,7 +518,8 @@ class Main(BaseGui, gtk.Window):
             self.directs_timer = gobject.timeout_add(self.directs_interval*60*1000, self.download_directs)
             log.debug('--Creado timer de Directs cada %i min' % self.directs_interval)
             
-        if thread: gtk.gdk.threads_leave()
+        if thread: 
+            gtk.gdk.threads_leave()
         
     def size_request(self, widget, event, data=None):
         """Callback when the window changes its sizes. We use it to set the

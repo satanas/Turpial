@@ -4,6 +4,8 @@ Ene 20, 2010:
     + Corregido bug #55 que impedía abrir el perfil del autor de un tweet
     + Corregido error #57 que bloqueaba la interfaz gráfica al actualizar y enviar un tweet al mismo tiempo (deadlock entre hilos)
     ---- commit ----
+    + Aplicado correctivo al problema #57 de los hilos
+    ---- commit ----
     
 Ene 19, 2010:
     + Habilitada preferencia para configurar el número de tweets en cada columna

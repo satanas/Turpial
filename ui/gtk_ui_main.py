@@ -449,11 +449,13 @@ class Main(BaseGui, gtk.Window):
         
     def tweet_done(self, tweets):
         log.debug(u'Actualizando nuevo tweet')
-        self.updatebox.release()
-        if tweets is None: return
+        gtk.gdk.threads_enter()
+        if tweets: 
+            self.updatebox.release()
+            self.updatebox.done()
+            self.update_timeline(tweets)
         
-        self.updatebox.done()
-        self.update_timeline(tweets)
+        gtk.gdk.threads_leave()
         
     def set_mode(self):
         cur_x, cur_y = self.get_position()

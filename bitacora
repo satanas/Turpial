@@ -1,3 +1,10 @@
+Ene 20, 2010:
+    + Corregido error #54 con las notificaciones (el programa fallaba si no estaba el python-notify)
+    + Corregido error #56 que impedía mostrar correctamente los hashtags en el menú contextual
+    + Corregido bug #55 que impedía abrir el perfil del autor de un tweet
+    + Corregido error #57 que bloqueaba la interfaz gráfica al actualizar y enviar un tweet al mismo tiempo (deadlock entre hilos)
+    ---- commit ----
+    
 Ene 19, 2010:
     + Habilitada preferencia para configurar el número de tweets en cada columna
     ---- commit ----
@@ -30,7 +37,7 @@ Ene 18, 2010:
     
 Ene 16, 2010:
     + Soporte para resultados en formato json
-    + Agregado soporte para los servicios su.pr y bit.ly al cortado de URLs
+    + Agregado soporte para los servicios s+  Corregido bug #55 que impedía abrir el perfil del autor de un tweetu.pr y bit.ly al cortado de URLs
     + Creada la función parse_tweet para centralizar la descomposición de los elementos de uun tweet
     + Corregido bug que impedía mostrar el cliente en las búsquedas
     + Agregada notificación visual de inicio y progreso de las búsquedas

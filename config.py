@@ -11,7 +11,7 @@ import ConfigParser
 
 DEFAULT = {
     'App':{
-        'version': '0.9.2',
+        'version': '0.9.3',
     },
     'Auth':{
         'oauth-key': '',

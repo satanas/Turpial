@@ -35,7 +35,7 @@ class Notification:
             log.debug("pynotify is not installed")
             self.integrated = False
         
-        if self.active:
+        if self.active and self.integrated:
             if pynotify.init("Turpial"):
                 if not icon:
                     icon = util.load_image('turpial_icon_48.png', True)

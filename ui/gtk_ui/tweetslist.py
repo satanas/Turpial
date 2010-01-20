@@ -183,11 +183,11 @@ class TweetList(gtk.VBox):
                 total_urls = util.detect_urls(msg)
                 total_users = util.detect_mentions(msg)
                 total_tags = util.detect_hashtags(msg)
-                
+                print 'total_tags', total_tags
                 for u in total_urls:
                     url = u if len(u) < 30 else u[:30] + '...'
                     umenu = gtk.MenuItem(url)
-                    umenu.connect('button-release-event', self.__open_url, u)
+                    umenu.connect('button-release-event', self.__open_url_with_event, u)
                     open_menu.append(umenu)
                 
                 if len(total_urls) > 0 and len(total_tags) > 0: 
@@ -197,7 +197,7 @@ class TweetList(gtk.VBox):
                     ht = "#search?q=%23" + h
                     hashtag = '/'.join(['https://twitter.com', ht])
                     hmenu = gtk.MenuItem('#'+h)
-                    hmenu.connect('button-release-event', self.__open_url, hashtag)
+                    hmenu.connect('button-release-event', self.__open_url_with_event, hashtag)
                     open_menu.append(hmenu)
                     
                 if (len(total_urls) > 0 or len(total_tags) > 0) and len(total_users) > 0: 
@@ -210,7 +210,7 @@ class TweetList(gtk.VBox):
                     exist.append(m)
                     user_prof = '/'.join(['http://www.twitter.com', m])
                     mentmenu = gtk.MenuItem('@'+m)
-                    mentmenu.connect('button-release-event', self.__open_url, user_prof)
+                    mentmenu.connect('button-release-event', self.__open_url_with_event, user_prof)
                     open_menu.append(mentmenu)
                 
                 if not rtn['own']:
@@ -233,7 +233,7 @@ class TweetList(gtk.VBox):
                 else:
                     menu.append(save)
                     
-                if (len(total_urls) > 0) or (len(total_users) > 0): 
+                if (len(total_urls) > 0) or (len(total_users) > 0) or (len(total_tags) > 0): 
                     open.set_submenu(open_menu)
                     menu.append(open)
                 
@@ -256,10 +256,13 @@ class TweetList(gtk.VBox):
             menu.show_all()
             menu.popup(None, None, None, event.button ,event.time)
         
-    def __open_url(self, widget, event, url):
+    def __open_url_with_event(self, widget, event, url):
         if (event.button == 1) or (event.button == 3):
-            log.debug('Opening url %s' % url)
-            webbrowser.open(url)
+            self.__open_url(widget, url)
+            
+    def __open_url(self, widget, url):
+        log.debug('Opening url %s' % url)
+        webbrowser.open(url)
         
     def __show_update_box(self, widget, text, in_reply_id='', in_reply_user=''):
         self.mainwin.show_update_box(text, in_reply_id, in_reply_user)

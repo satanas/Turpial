@@ -144,6 +144,7 @@ class Main(BaseGui, gtk.Window):
         return True
         
     def __save_size(self):
+        if self.mode < 2: return
         wide_value = "%i, %i" % (self.wide_win_size[0], self.wide_win_size[1])
         single_value = "%i, %i" % (self.single_win_size[0], self.single_win_size[1])
         log.debug('Guardando tamaño de la ventana')
@@ -161,11 +162,10 @@ class Main(BaseGui, gtk.Window):
     
     def quit(self, widget):
         self.__save_size()
-        self.request_signout()
         gtk.main_quit()
         self.destroy()
         self.tray = None
-        exit(0)
+        self.request_signout()
         
     def main_loop(self):
         gtk.gdk.threads_enter()

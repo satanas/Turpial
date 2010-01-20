@@ -8,6 +8,8 @@ Ene 19, 2010:
     + Implementada actualización de la versión en al archivo de config al cargar
     + Preparados archivos para el release 0.9.2
     ---- commit ----
+    + Corregido error al cerrar sin iniciar sesión
+    ---- commit ----
     
 Ene 18, 2010:
     + Corregido error que dejaba seteado el flag de reply_id en el update_box

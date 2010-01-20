@@ -160,6 +160,7 @@ class Turpial:
         
     def signout(self):
         self.log.debug('Desconectando')
+        exit(0)
         #self.httpserv.quit()
         #if self.profile: 
         #    self.api.end_session()

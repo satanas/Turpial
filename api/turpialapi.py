@@ -48,6 +48,7 @@ class TurpialAPI(threading.Thread):
         self.format = 'json'
         self.username = None
         self.password = None
+        self.profile = None
         self.tweets = []
         self.replies = []
         self.favorites = []

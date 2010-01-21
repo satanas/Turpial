@@ -453,9 +453,8 @@ class Main(BaseGui, gtk.Window):
         self.updatebox.release()
         if tweets: 
             self.updatebox.done()
-            self.update_timeline(tweets)
-        
         gtk.gdk.threads_leave()
+        self.update_timeline(tweets)
         
     def set_mode(self):
         cur_x, cur_y = self.get_position()

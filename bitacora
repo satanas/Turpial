@@ -6,6 +6,8 @@ Ene 20, 2010:
     ---- commit ----
     + Aplicado correctivo al problema #57 de los hilos
     ---- commit ----
+    + Corregido deadlock del error #57. Se estaba llamando a update_timeline dentro de tweet_done
+    ---- commit ----
     
 Ene 19, 2010:
     + Habilitada preferencia para configurar el número de tweets en cada columna

@@ -154,12 +154,11 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         self.workspace.set_active(ws)
         try:
             self.workspace.set_has_tooltip(True)
-            self.workspace.set_tooltip_text('Muestra un espacio de trabajo de \
-3 columnas')
+            self.workspace.set_tooltip_text('Muestra un espacio de trabajo de 3 columnas')
         except:
             pass
         
-        self.profile_colors = gtk.CheckButton('Cargar color de perfil')
+        self.profile_colors = gtk.CheckButton('Cargar color de perfil (Requiere reiniciar)')
         self.profile_colors.set_active(pf)
         try:
             self.profile_colors.set_has_tooltip(True)
@@ -181,8 +180,7 @@ sistema en lugar de cerrarlo')
         self.remember.set_sensitive(False)
         try:
             self.remember.set_has_tooltip(True)
-            self.remember.set_tooltip_text('Recuerda la información de inicio \
-de sesión')
+            self.remember.set_tooltip_text('Recuerda la información de inicio de sesión')
         except:
             pass
         

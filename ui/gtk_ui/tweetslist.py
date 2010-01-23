@@ -168,7 +168,7 @@ class TweetList(gtk.VBox):
                 retweet = gtk.MenuItem('Retweet')
                 save = gtk.MenuItem('+ Fav')
                 unsave = gtk.MenuItem('- Fav')
-                delete = gtk.MenuItem('Borar')
+                delete = gtk.MenuItem('Borrar')
                 open = gtk.MenuItem('Abrir')
                 search = gtk.MenuItem('Search')
                 direct = gtk.MenuItem('DM')

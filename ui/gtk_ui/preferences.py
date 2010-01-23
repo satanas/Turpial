@@ -16,7 +16,7 @@ class Preferences(gtk.Window):
         self.mainwin = parent
         self.current = parent.read_config()
         self.set_default_size(360, 380)
-        self.set_title('Preferences')
+        self.set_title('Preferencias')
         self.set_border_width(6)
         self.set_transient_for(parent)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
@@ -97,7 +97,7 @@ class PreferencesTab(gtk.VBox):
         
 class TimeScroll(gtk.HBox):
     def __init__(self, label='', val=5, min=1, max=60, step=3, page=6, size=0,
-        callback=None, lbl_size=60, unit='min'):
+        callback=None, lbl_size=70, unit='min'):
         gtk.HBox.__init__(self, False)
         
         self.callback = callback
@@ -139,9 +139,9 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         ws = True if self.current['workspace'] == 'wide' else False
         min = True if self.current['minimize-on-close'] == 'on' else False
         
-        self.home = TimeScroll('Home', h, callback=self.update_api_calls)
-        self.replies = TimeScroll('Replies', r, min=2, callback=self.update_api_calls)
-        self.directs = TimeScroll('Directs', d, min=5, callback=self.update_api_calls)
+        self.home = TimeScroll('Timeline', h, callback=self.update_api_calls)
+        self.replies = TimeScroll('Menciones', r, min=2, callback=self.update_api_calls)
+        self.directs = TimeScroll('Directos', d, min=5, callback=self.update_api_calls)
         
         self.tweets = TimeScroll('Tweets mostrados', t, min=20, max=200, unit='', lbl_size=120)
         
@@ -150,7 +150,7 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         est_align.set_padding(0, 8, 0, 0)
         est_align.add(self.estimated)
         
-        self.workspace = gtk.CheckButton('Wide Workspace')
+        self.workspace = gtk.CheckButton('Modo extendido')
         self.workspace.set_active(ws)
         try:
             self.workspace.set_has_tooltip(True)
@@ -159,7 +159,7 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         except:
             pass
         
-        self.profile_colors = gtk.CheckButton('Load profile color')
+        self.profile_colors = gtk.CheckButton('Cargar color de perfil')
         self.profile_colors.set_active(pf)
         try:
             self.profile_colors.set_has_tooltip(True)
@@ -168,7 +168,7 @@ perfil de usuario para resaltar menciones, hashtags y URLs')
         except:
             pass
         
-        self.minimize = gtk.CheckButton('Minimize to tray on close')
+        self.minimize = gtk.CheckButton('Minimizar a la bandeja')
         self.minimize.set_active(min)
         try:
             self.minimize.set_has_tooltip(True)
@@ -177,7 +177,7 @@ sistema en lugar de cerrarlo')
         except:
             pass
 
-        self.remember = gtk.CheckButton('Remember login info')
+        self.remember = gtk.CheckButton(u'Recordar info de sesión')
         self.remember.set_sensitive(False)
         try:
             self.remember.set_has_tooltip(True)
@@ -206,12 +206,14 @@ de sesión')
     def get_config(self):
         ws = 'wide' if self.workspace.get_active() else 'single'
         min = 'on' if self.minimize.get_active() else 'off'
+        pf = 'on' if self.profile_colors.get_active() else 'off'
         
         return {
             'home-update-interval': int(self.home.value),
             'replies-update-interval': int(self.replies.value),
             'directs-update-interval': int(self.directs.value),
             'workspace': ws,
+            'profile-color': pf,
             'minimize-on-close': min,
             'num-tweets': int(self.tweets.value),
         }
@@ -263,7 +265,7 @@ de la sesión con información del perfil de usuario')
         except:
             pass
         
-        self.sounds = gtk.CheckButton('Sonidos')
+        self.sounds = gtk.CheckButton('Activar sonidos')
         self.sounds.set_active(sound)
         try:
             self.sounds.set_has_tooltip(True)
@@ -300,7 +302,7 @@ class ServicesTab(PreferencesTab):
 usar para cortar URLs y subir imágenes a Twitter', current)
         i = 0
         default = -1
-        url_lbl = gtk.Label('Shorten URL')
+        url_lbl = gtk.Label('Cortar URL')
         self.shorten = gtk.combo_box_new_text()
         for key,v in URL_SERVICES.iteritems():
             self.shorten.append_text(key)
@@ -312,7 +314,7 @@ usar para cortar URLs y subir imágenes a Twitter', current)
         url_box.pack_start(url_lbl, False, False, 3)
         url_box.pack_start(self.shorten, False, False, 3)
         
-        pic_lbl = gtk.Label('Upload Pic')
+        pic_lbl = gtk.Label(u'Subir imágenes')
         self.upload = gtk.ComboBox()
         self.upload.set_sensitive(False)
         pic_box = gtk.HBox(False)

@@ -27,9 +27,9 @@ class Home(Wrapper):
     def __init__(self, mainwin, mode='single'):
         Wrapper.__init__(self)
         
-        self.timeline = TweetList(mainwin, 'Home')
-        self.replies = TweetList(mainwin, 'Replies')
-        self.direct = TweetList(mainwin, 'Direct', False)
+        self.timeline = TweetList(mainwin, 'Timeline')
+        self.replies = TweetList(mainwin, 'Menciones')
+        self.direct = TweetList(mainwin, 'Directos', False)
         
         self._append_widget(self.timeline, WrapperAlign.left)
         self._append_widget(self.replies, WrapperAlign.middle)
@@ -41,9 +41,9 @@ class Profile(Wrapper):
     def __init__(self, mainwin, mode='single'):
         Wrapper.__init__(self)
         
-        self.favorites = TweetList(mainwin, 'Favorites')
-        self.user_form = UserForm(mainwin, 'Profile')
-        self.topics = SearchTweets(mainwin, 'Search')
+        self.favorites = TweetList(mainwin, 'Favoritos')
+        self.user_form = UserForm(mainwin, 'Perfil')
+        self.topics = SearchTweets(mainwin, u'Búsquedas')
         
         self._append_widget(self.favorites, WrapperAlign.left)
         self._append_widget(self.user_form, WrapperAlign.middle)
@@ -121,7 +121,7 @@ class Main(BaseGui, gtk.Window):
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
         tweet = gtk.MenuItem('Tweet')
-        exit = gtk.MenuItem('Exit')
+        exit = gtk.MenuItem('Salir')
         if self.mode == 2:
             menu.append(tweet)
         menu.append(exit)
@@ -183,7 +183,7 @@ class Main(BaseGui, gtk.Window):
         lbl_user = gtk.Label()
         #lbl_user.set_justify(gtk.JUSTIFY_LEFT)
         lbl_user.set_use_markup(True)
-        lbl_user.set_markup('<span size="small">Username and Password</span>')
+        lbl_user.set_markup(u'<span size="small">Usuario y Contraseña</span>')
         lbl_user.set_alignment(0, 0.5)
         
         lbl_pass = gtk.Label()
@@ -262,7 +262,7 @@ class Main(BaseGui, gtk.Window):
         self.contentbox.add(self.contenido)
         
         self.statusbar = gtk.Statusbar()
-        self.statusbar.push(0, 'Turpial')
+        self.statusbar.push(0, 'Espera unos segundos mientras cargo...')
         if (self.vbox is not None): self.remove(self.vbox)
         
         self.vbox = gtk.VBox(False, 5)

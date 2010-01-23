@@ -17,7 +17,7 @@ class UpdateBox(gtk.Window):
         self.blocked = False
         self.mainwin = parent
         self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
-        self.set_title('Update Status')
+        self.set_title('Actualizar estado')
         self.set_resizable(False)
         #self.set_default_size(500, 120)
         self.set_size_request(500, 150)
@@ -27,7 +27,7 @@ class UpdateBox(gtk.Window):
         self.label = gtk.Label()
         self.label.set_use_markup(True)
         self.label.set_alignment(0, 0.5)
-        self.label.set_markup('<span size="medium"><b>What\'s happening?</b></span>')
+        self.label.set_markup(u'<span size="medium"><b>¿Qué está pasando?</b></span>')
         self.label.set_justify(gtk.JUSTIFY_LEFT)
         
         self.num_chars = gtk.Label()
@@ -51,11 +51,11 @@ class UpdateBox(gtk.Window):
         updatebox.pack_start(scroll, True, True, 3)
         
         self.url = gtk.Entry()
-        self.btn_url = gtk.Button('Shorten URL')
-        self.btn_url.set_tooltip_text('Shorten URL')
+        self.btn_url = gtk.Button('Cortar URL')
+        self.btn_url.set_tooltip_text('Cortar URL')
         
-        btn_pic = gtk.Button('Upload Pic')
-        btn_pic.set_tooltip_text('Upload Pic')
+        btn_pic = gtk.Button('Subir Imagen')
+        btn_pic.set_tooltip_text('Subir Imagen')
         btn_pic.set_sensitive(False)
         #btn_pic.set_relief(gtk.RELIEF_NONE)
         #btn_pic.set_image(util.load_image('photos.png'))
@@ -73,7 +73,7 @@ class UpdateBox(gtk.Window):
         
         self.btn_clr = gtk.Button()
         self.btn_clr.set_image(util.load_image('clear.png'))
-        self.btn_clr.set_tooltip_text('Clear Box')
+        self.btn_clr.set_tooltip_text('Borrar todo')
         self.btn_clr.set_relief(gtk.RELIEF_NONE)
         self.btn_upd = gtk.Button('Tweet')
         chk_short = gtk.CheckButton('Autocortado de URLs')
@@ -153,7 +153,7 @@ class UpdateBox(gtk.Window):
         self.in_reply_id = id
         self.in_reply_user = user
         if id != '' and user != '':
-            self.label.set_markup('<span size="medium"><b>Reply to %s</b></span>' % user)
+            self.label.set_markup('<span size="medium"><b>En respuesta a %s</b></span>' % user)
         
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         self.set_focus(self.update_text)
@@ -166,7 +166,7 @@ class UpdateBox(gtk.Window):
         buffer.set_text('')
         self.url.set_text('')
         self.lblerror.set_markup('')
-        self.label.set_markup('<span size="medium"><b>What\'s happening?</b></span>')
+        self.label.set_markup(u'<span size="medium"><b>¿Qué está pasando?</b></span>')
         self.waiting.stop()
         self.toolbox.set_expanded(False)
         self.in_reply_id = None

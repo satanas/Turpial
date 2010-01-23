@@ -17,7 +17,7 @@ AVATAR_SIZE = 48
 
 #HASHTAG_PATTERN = re.compile('\#(.+?)[\W]')
 #MENTION_PATTERN = re.compile('\@(.+?)[\W]')
-HASHTAG_PATTERN = re.compile('\#(\w+)[\W\S]')
+HASHTAG_PATTERN = re.compile('\#(\w+)')
 MENTION_PATTERN = re.compile('\@(\w+)[\W\S]')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
 URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_().]*[-A-Za-z0-9+&@#/%?=~_()])')
@@ -69,7 +69,7 @@ def get_rates(val):
     t = time.strftime('%I:%M %P', time.gmtime(tsec))
     hits = val['remaining_hits']
     limit = val['hourly_limit']
-    return "%s of %s API calls. Next reset: %s" % (hits, limit, t)
+    return u"%s de %s llamadas a la API. Reset: %s" % (hits, limit, t)
 
 def get_timestamp(tweet):
     # Tue Mar 13 00:12:41 +0000 2007 -> Tweets normales

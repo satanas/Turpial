@@ -54,6 +54,7 @@ class TurpialAPI(threading.Thread):
         self.favorites = []
         self.muted_users = []
         self.friends = []
+        self.friendsloaded = False
         
         self.to_fav = []
         self.to_unfav = []
@@ -193,6 +194,7 @@ class TurpialAPI(threading.Thread):
             if rtn['next_cursor'] > 0:
                 self.get_friends(done_callback, rtn['next_cursor'])
             else:
+                self.friendsloaded = True
                 done_callback(self.friends)
         
     def __handle_follow(self, user, follow):
@@ -215,8 +217,6 @@ class TurpialAPI(threading.Thread):
                 self.profile['friends_count'] -= 1
             
     def is_friend(self, user):
-        if self.friends is None: return None
-        
         for f in self.friends:
             if user == f['screen_name']: return True
         return False

@@ -163,13 +163,13 @@ class TweetList(gtk.VBox):
                 rt = "RT @%s %s" % (user, msg)
                 dm = "D @%s " % user
                 
-                reply = gtk.MenuItem('Reply')
-                retweet_old = gtk.MenuItem('Retweet (Old fashion)')
+                reply = gtk.MenuItem('Responder')
+                retweet_old = gtk.MenuItem('Retweet (Antiguo)')
                 retweet = gtk.MenuItem('Retweet')
                 save = gtk.MenuItem('+ Fav')
                 unsave = gtk.MenuItem('- Fav')
-                delete = gtk.MenuItem('Delete')
-                open = gtk.MenuItem('Open')
+                delete = gtk.MenuItem('Borar')
+                open = gtk.MenuItem('Abrir')
                 search = gtk.MenuItem('Search')
                 direct = gtk.MenuItem('DM')
                 follow = gtk.MenuItem('Follow')
@@ -183,7 +183,7 @@ class TweetList(gtk.VBox):
                 total_urls = util.detect_urls(msg)
                 total_users = util.detect_mentions(msg)
                 total_tags = util.detect_hashtags(msg)
-                print 'total_tags', total_tags
+                
                 for u in total_urls:
                     url = u if len(u) < 30 else u[:30] + '...'
                     umenu = gtk.MenuItem(url)

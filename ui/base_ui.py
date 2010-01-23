@@ -126,7 +126,7 @@ class BaseGui:
     def request_user_avatar(self, user, pic_url):
         pic = pic_url.replace('http://', '0_')
         pic = pic.replace('/', '_')
-        
+        # pic = unicode(pic)
         fullname = os.path.join(self.imgdir, pic)
         if os.path.isfile(fullname):
             self.__user_pics[user] = pic

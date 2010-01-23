@@ -120,8 +120,8 @@ class Turpial:
         self._update_timeline()
         self._update_replies()
         self._update_directs()
-        self._update_favorites()
         self._update_rate_limits()
+        self._update_favorites()
         self._update_friends()
         
     def _update_timeline(self):
@@ -228,8 +228,9 @@ class Turpial:
             return {'busy': 'Borrando...'}
             
         rtn = {}
-        if len(self.api.friends) > 0:
-            rtn['friend'] = self.api.is_friend(user) 
+        if self.api.friendsloaded:
+            rtn['friend'] = self.api.is_friend(user)
+
         rtn['fav'] = self.api.is_fav(tweet_id)
         rtn['own'] = (self.profile['screen_name'] == user)
         

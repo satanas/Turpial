@@ -1,3 +1,11 @@
+Ene 21, 2010:
+    + Optimizada la expresión regular para detectar hashtags
+    + Castellanizado completamente el Turpial
+    + Corregido bug que impedía guardar la opción de cargar color del perfil
+    + Corregido error que bloqueaba la opción 'Follow' del menú contextual cuando el usuario no tiene amigos
+    + Cambiado el esquema de versionamiento. Se agregaron letras para indicar el estado (alpha, beta, rc)
+    ---- commit ----
+    
 Ene 20, 2010:
     + Corregido error #54 con las notificaciones (el programa fallaba si no estaba el python-notify)
     + Corregido error #56 que impedía mostrar correctamente los hashtags en el menú contextual

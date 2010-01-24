@@ -77,7 +77,7 @@ class Main(BaseGui, gtk.Window):
         self.showed = True
         self.minimize = 'on'
         self.workspace = 'single'
-        self.link_color = '3b0522'
+        self.link_color = 'ff6633'
         self.home_interval = -1
         self.replies_interval = -1
         self.directs_interval = -1

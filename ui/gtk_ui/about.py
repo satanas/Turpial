@@ -39,6 +39,7 @@ class About:
             'Eleazar Meza aka Shaka (Concepto y logo)',
             'Azrael Arocha (Pruebas y colaboración)',
             u'José Leonel Subero aka Arawako (Pruebas y colaboración)',
+            'Edwind Contreras aka Richzendy (Paquete RPM)',
         ])
         
         about.connect("response", self.__response)

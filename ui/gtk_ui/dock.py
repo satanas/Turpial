@@ -8,6 +8,7 @@
 import gtk
 
 from about import *
+from replybox import *
 from ui import util as util
 
 class Dock(gtk.Alignment):
@@ -54,7 +55,8 @@ class Dock(gtk.Alignment):
         self.show_all()
         
     def __show_about(self, widget):
-        about = About(self.mainwin)
+        #about = About(self.mainwin)
+        about = ReplyBox(self.mainwin)
         
     def show_update(self, widget):
         self.mainwin.show_update_box()

@@ -318,6 +318,10 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Dejando de seguir a: %s' % user)
         self.__register({'uri': 'http://twitter.com/friendships/destroy', 'args': args, 'follow': False}, callback)
         
+    def in_reply_to(self, tweet_id, callback):
+        self.log.debug('Buscando respuesta: %s' % tweet_id)
+        self.__register({'uri': 'http://twitter.com/statuses/show', 'id': tweet_id}, callback)
+        
     def end_session(self):
         self.__register({'uri': 'http://twitter.com/account/end_session', 'args': '', 'exit': True}, None)
         

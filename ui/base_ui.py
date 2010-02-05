@@ -193,6 +193,9 @@ class BaseGui:
     def request_popup_info(self, tweet_id, user):
         return self.__controller.get_popup_info(tweet_id, user)
     
+    def request_in_reply_to(self, user, twt_id):
+        self.__controller.in_reply_to(twt_id)
+        
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
@@ -285,6 +288,9 @@ class BaseGui:
         raise NotImplementedError
     
     def update_friends(self, friends):
+        raise NotImplementedError
+        
+    def update_in_reply_to(self, tweets):
         raise NotImplementedError
         
     def tweet_changed(self, timeline, replies, favs):

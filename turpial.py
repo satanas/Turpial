@@ -118,11 +118,11 @@ class Turpial:
         
         self.ui.show_main(self.config, self.profile)
         self._update_timeline()
-        self._update_replies()
-        self._update_directs()
-        self._update_rate_limits()
-        self._update_favorites()
-        self._update_friends()
+        #self._update_replies()
+        #self._update_directs()
+        #self._update_rate_limits()
+        #self._update_favorites()
+        #self._update_friends()
         
     def _update_timeline(self):
         self.ui.start_updating_timeline()
@@ -192,6 +192,9 @@ class Turpial:
         self.api.update_profile(new_name, new_url, new_bio, new_location, 
             self.ui.update_user_profile)
     
+    def in_reply_to(self, twt_id):
+        self.api.in_reply_to(twt_id, self.ui.update_in_reply_to)
+        
     '''
     def mute(self, user):
         if user not in self.muted_users: 

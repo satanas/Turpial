@@ -15,6 +15,7 @@ class ReplyBox(gtk.Window):
     def __init__(self, parent):
         gtk.Window.__init__(self)
         
+        self.working = True
         self.mainwin = parent
         self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.set_title('En respuesta a...')
@@ -25,57 +26,54 @@ class ReplyBox(gtk.Window):
         
         self.tweets = TweetList(parent, 'En respuesta a...')
         
+        self.waiting = CairoWaiting(self)
+        self.lblerror = gtk.Label()
+        self.lblerror.set_use_markup(True)
+        error_align = gtk.Alignment(xalign=0.0)
+        error_align.add(self.lblerror)
+        
         top = gtk.VBox(False)
         top.pack_start(self.tweets, True, True, 5)
         
+        bottom = gtk.HBox(False)
+        bottom.pack_start(self.waiting, False, False, 5)
+        bottom.pack_start(error_align, True, True, 4)
+        #bottom.pack_start(abuttonbox, True, True, 5)
+        
         vbox = gtk.VBox(False)
-        vbox.pack_start(top, False, False, 2)
+        vbox.pack_start(top, True, True, 2)
         #vbox.pack_start(updatebox, True, True, 2)
-        #vbox.pack_start(bottom, False, False, 2)
+        vbox.pack_start(bottom, False, False, 2)
         #vbox.pack_start(self.toolbox, False, False, 2)
         
         self.add(vbox)
         
         self.connect('delete-event', self.__unclose)
         self.connect('size-request', self.__size_request)
-        self.show_all()
     
     def __size_request(self, widget, event, data=None):
         w, h = self.get_size()
-        self.tweets.update_wrap(w, 'single')
+        self.tweets.update_wrap(w)
         
     def __unclose(self, widget, event=None):
+        if not self.working: self.hide()
+        return True
         
-        return False
-        
-    def show(self, text, id, user):
+    def show(self, id, user):
         self.in_reply_id = id
         self.in_reply_user = user
-        if id != '' and user != '':
-            self.label.set_markup('<span size="medium"><b>En respuesta a %s</b></span>' % user)
-        
+        self.set_title('En respuesta a %s' % user)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-        self.set_focus(self.update_text)
-        buffer = self.update_text.get_buffer()
-        buffer.set_text(text)
+        self.tweets.clear()
+        self.waiting.start()
         self.show_all()
         
-    def clear(self, widget):
-        self.update_text.get_buffer().set_text('')
-        
-    def update(self, widget):
-        buffer = self.update_text.get_buffer()
-        start, end = buffer.get_bounds()
-        tweet = buffer.get_text(start, end)
-        if tweet == '': 
+    def update(self, tweets):
+        self.working = False
+        if not tweets or (len(tweets) == 0): 
             self.waiting.stop(error=True)
-            self.lblerror.set_markup("<span size='small'>Eyy... debes escribir algo</span>")
+            self.lblerror.set_markup(u"<span size='small'>Oops... algo salío mal</span>")
             return
         
-        self.waiting.start()
-        self.mainwin.request_update_status(tweet, self.in_reply_id)
-        self.block()
-        
-    def show_options(self, widget, event=None):
-        self.url.set_text('')
-        self.url.grab_focus()
+        self.waiting.stop()
+        self.tweets.update_tweets(tweets)

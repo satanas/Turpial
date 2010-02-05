@@ -94,6 +94,7 @@ class Main(BaseGui, gtk.Window):
         self.profile = Profile(self)
         self.contenido = self.home
         self.updatebox = UpdateBox(self)
+        self.replybox = ReplyBox(self)
         
         self.dock = Dock(self, self.workspace)
         self.__create_trayicon()
@@ -153,6 +154,10 @@ class Main(BaseGui, gtk.Window):
         self.save_config({'General': {'single-win-size': single_value, 
             'wide-win-size': wide_value}}, update=False)
             
+    def request_in_reply_to(self, user, twt_id):
+        self.replybox.show(id, user)
+        BaseGui.request_in_reply_to(self, user, twt_id)
+        
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)
         if pix:
@@ -435,6 +440,9 @@ class Main(BaseGui, gtk.Window):
         self.profile.favorites.update_user_pic(user, pic)
         self.profile.user_form.update_user_pic(user, pic)
         self.profile.topics.update_user_pic(user, pic)
+        
+    def update_in_reply_to(self, tweet):
+        self.replybox.update([tweet])
         
     def tweet_changed(self, timeline, replies, favs):
         log.debug(u'Tweet modificado')

@@ -149,6 +149,7 @@ class TweetList(gtk.VBox):
             user = model.get_value(row, 1)
             msg = model.get_value(row, 5)
             id = model.get_value(row, 6)
+            in_reply_to_id = model.get_value(row, 8)
             
             menu = gtk.Menu()
             
@@ -177,6 +178,7 @@ class TweetList(gtk.VBox):
                 loading = gtk.MenuItem('Cargando amigos...')
                 loading.set_sensitive(False)
                 usermenu = gtk.MenuItem('@'+user)
+                inreplymenu = gtk.MenuItem('En respuesta a')
                 
                 open_menu = gtk.Menu()
                 
@@ -237,6 +239,9 @@ class TweetList(gtk.VBox):
                     open.set_submenu(open_menu)
                     menu.append(open)
                 
+                if in_reply_to_id:
+                    menu.append(inreplymenu)
+                
                 menu.append(gtk.SeparatorMenuItem())
                 menu.append(usermenu)
                 if not rtn['own']: menu.append(item)
@@ -252,6 +257,7 @@ class TweetList(gtk.VBox):
                 delete.connect('activate', self.__delete, id)
                 follow.connect('activate', self.__follow, True, user)
                 unfollow.connect('activate', self.__follow, False, user)
+                inreplymenu.connect('activate', self.__in_reply_to, user, in_reply_to_id)
             
             menu.show_all()
             menu.popup(None, None, None, event.button ,event.time)
@@ -284,6 +290,9 @@ class TweetList(gtk.VBox):
             self.mainwin.request_follow(user)
         else:
             self.mainwin.request_unfollow(user)
+        
+    def __in_reply_to(self, widget, user, in_reply_to_id):
+        self.mainwin.request_in_reply_to(user, in_reply_to_id)
         
     def clear(self):
         self.model.clear()

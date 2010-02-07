@@ -55,6 +55,7 @@ class TurpialAPI(threading.Thread):
         self.muted_users = []
         self.friends = []
         self.friendsloaded = False
+        self.conversation = []
         
         self.to_fav = []
         self.to_unfav = []
@@ -196,6 +197,18 @@ class TurpialAPI(threading.Thread):
             else:
                 self.friendsloaded = True
                 done_callback(self.friends)
+                
+    def __handle_conversation(self, rtn, done_callback):
+        if rtn is None:
+            self.log.debug(u'Error descargando conversación')
+            done_callback(rtn)
+        else:
+            self.conversation.append(rtn)
+            
+            if rtn['in_reply_to_status_id']:
+                self.get_conversation(str(rtn['in_reply_to_status_id']), done_callback, False)
+            else:
+                done_callback(self.conversation)
         
     def __handle_follow(self, user, follow):
         if follow:
@@ -322,6 +335,14 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Buscando respuesta: %s' % tweet_id)
         self.__register({'uri': 'http://twitter.com/statuses/show', 'id': tweet_id}, callback)
         
+    def get_conversation(self, tweet_id, callback, first=True):
+        if first: 
+            self.conversation = []
+            self.log.debug(u'Obteniendo conversación:')
+        self.log.debug('--Tweet: %s' % tweet_id)
+        self.__register({'uri': 'http://twitter.com/statuses/show', 'id': tweet_id, 
+            'done': callback, 'conversation': True}, self.__handle_conversation)
+        
     def end_session(self):
         self.__register({'uri': 'http://twitter.com/account/end_session', 'args': '', 'exit': True}, None)
         
@@ -438,6 +459,10 @@ class TurpialAPI(threading.Thread):
                 
             if args.has_key('friends'):
                 callback(rtn, args['done'], args['args']['cursor'])
+                continue
+                
+            if args.has_key('conversation'):
+                callback(rtn, args['done'])
                 continue
                 
             if args.has_key('follow'):

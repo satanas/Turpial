@@ -150,7 +150,7 @@ class TweetList(gtk.VBox):
             msg = model.get_value(row, 5)
             id = model.get_value(row, 6)
             in_reply_to_id = model.get_value(row, 8)
-            
+             
             menu = gtk.Menu()
             
             rtn = self.mainwin.request_popup_info(id, user)
@@ -292,7 +292,7 @@ class TweetList(gtk.VBox):
             self.mainwin.request_unfollow(user)
         
     def __in_reply_to(self, widget, user, in_reply_to_id):
-        self.mainwin.request_in_reply_to(user, in_reply_to_id)
+        self.mainwin.request_in_reply_to(in_reply_to_id, user)
         
     def clear(self):
         self.model.clear()

@@ -154,9 +154,9 @@ class Main(BaseGui, gtk.Window):
         self.save_config({'General': {'single-win-size': single_value, 
             'wide-win-size': wide_value}}, update=False)
             
-    def request_in_reply_to(self, user, twt_id):
-        self.replybox.show(id, user)
-        BaseGui.request_in_reply_to(self, user, twt_id)
+    def request_in_reply_to(self, twt_id, user):
+        self.replybox.show(twt_id, user)
+        BaseGui.request_in_reply_to(self, twt_id, user)
         
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)
@@ -443,6 +443,9 @@ class Main(BaseGui, gtk.Window):
         
     def update_in_reply_to(self, tweet):
         self.replybox.update([tweet])
+        
+    def update_conversation(self, tweets):
+        self.replybox.update(tweets)
         
     def tweet_changed(self, timeline, replies, favs):
         log.debug(u'Tweet modificado')

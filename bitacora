@@ -1,3 +1,7 @@
+Feb 07, 2010:
+    + Implementada visualización de tweets "en respuesta a" y modo conversaciones (issues 12 y 67)
+    ---- commit ----
+    
 Feb 05, 2010:
     + Implementados métodos (API, UI, etc) para mostrar las respuestas a un tweet
     ---- commit ----

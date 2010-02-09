@@ -1,3 +1,7 @@
+Feb 09, 2010:
+    + Corregido error con el response de la api
+    ---- commit ----
+    
 Feb 08, 2010:
     + Corregido error con los threads al actualizar el replybox (threads enter/leave)
     + Corregido bug que mostraba incorrectamente "en respuesta a" en algunos tweets (gracias a Azrael)
@@ -12,6 +16,7 @@ Feb 07, 2010:
 Feb 05, 2010:
     + Implementados métodos (API, UI, etc) para mostrar las respuestas a un tweet
     ---- commit ----
+    + Mejorados los mensajes de error al fallar el login
     
 Feb 03, 2010:
     + Iniciado desarrollo del cuadro de respuestas

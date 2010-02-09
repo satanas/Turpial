@@ -414,21 +414,24 @@ class TurpialAPI(threading.Thread):
                 headers = {}
                 if (self.username):
                     headers["Authorization"] = "Basic " + b64encode("%s:%s" %(self.username, self.password))
-                
+                strReq = "%s%s" %(uri, argStr)
                 req = urllib2.Request("%s%s" %(uri, argStr), argData, headers)
+                response = ''
                 try:
                     handle = urllib2.urlopen(req)
-                    rtn = json.loads(handle.read())
+                    response = handle.read()
+                    rtn = json.loads(response)
                 except urllib2.HTTPError, e:
                     if (e.code == 304):
                         rtn = []
                     else:
-                        self.log.debug("Twitter sent status %i for URL: %s using parameters: (%s)\ndetails: %s" % (
-                            e.code, uri, encoded_args, e.fp.read()))
+                        self.log.debug("Twitter sent status %i for URL: %s using parameters: (%s)\nDetails: %s\nRequest: %s\nResponse: %s" % (
+                            e.code, uri, encoded_args, e.fp.read(), strReq, response))
                         if args.has_key('login'): 
                             rtn = {'error': 'Error %i from Twitter.com' % e.code}
-                except urllib2.URLError, e:
-                    self.log.debug("Problem to connect to twitter.com. Check network status.\nDetails: %s" %(e))
+                except (urllib2.URLError, Exception), e:
+                    self.log.debug("Problem to connect to twitter.com. Check network status.\nDetails: %s\nRequest: %s\nResponse: %s" %(
+                        e, strReq, response))
                     if args.has_key('login'): 
                         rtn = {'error': 'Can\'t connect to twitter.com'}
             

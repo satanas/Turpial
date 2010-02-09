@@ -2,6 +2,8 @@ Feb 08, 2010:
     + Corregido error con los threads al actualizar el replybox (threads enter/leave)
     + Corregido bug que mostraba incorrectamente "en respuesta a" en algunos tweets (gracias a Azrael)
     ---- commit ----
+    + Iniciado el desarrollo de la funcionalidad Mute/Unmute
+    ---- commit ----
     
 Feb 07, 2010:
     + Implementada visualización de tweets "en respuesta a" y modo conversaciones (issues 12 y 67)

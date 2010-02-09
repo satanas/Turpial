@@ -331,6 +331,18 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Dejando de seguir a: %s' % user)
         self.__register({'uri': 'http://twitter.com/friendships/destroy', 'args': args, 'follow': False}, callback)
         
+    def mute(self, user):
+        if user not in self.muted_users: 
+            self.muted_users.append(user)
+            self.log.debug('Muteando a %s' % user)
+        return self.__handle_muted()
+        
+    def unmute(self, user):
+        if user in self.muted_users: 
+            self.muted_users.remove(user)
+            self.log.debug('Desmuteando a %s' % user)
+        return self.__handle_muted()
+        
     def in_reply_to(self, tweet_id, callback):
         self.log.debug('Buscando respuesta: %s' % tweet_id)
         self.__register({'uri': 'http://twitter.com/statuses/show', 'id': tweet_id}, callback)

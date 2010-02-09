@@ -442,10 +442,14 @@ class Main(BaseGui, gtk.Window):
         self.profile.topics.update_user_pic(user, pic)
         
     def update_in_reply_to(self, tweet):
+        gtk.gdk.threads_enter()
         self.replybox.update([tweet])
+        gtk.gdk.threads_leave()
         
     def update_conversation(self, tweets):
+        gtk.gdk.threads_enter()
         self.replybox.update(tweets)
+        gtk.gdk.threads_leave()
         
     def tweet_changed(self, timeline, replies, favs):
         log.debug(u'Tweet modificado')

@@ -83,30 +83,17 @@ class BaseGui:
         self.update_timeline(timeline)
         self.update_favorites(favs)
         
+    def request_all_contacts(self):
+        return self.__controller.get_all_contacts()
+        
     def read_config(self):
         return self.__controller.config.read_all()
         
     def save_config(self, new_config, update=True):
         self.__controller.save_config(new_config, update)
         
-    def resize_avatar(self, pic):
-        ext = pic[-3:].lower()
-        fullname = os.path.join(self.imgdir, pic)
-        
-        img = Image.open(fullname)
-        pw, ph = img.size
-        
-        if pw >= ph:
-            ratio = float(ph)/pw
-            fw = util.AVATAR_SIZE
-            fh = int(fw * ratio)
-        else:
-            ratio = float(pw)/ph
-            fh = util.AVATAR_SIZE
-            fw = int(fh * ratio)
-        
-        img2 = img.resize((fw, fh), Image.BICUBIC)
-        img2.save(fullname)
+    def save_muted(self, muted_users):
+        self.__controller.update_muted(muted_users)
         
     def request_signin(self, username, password):
         self.__controller.signin(username, password)
@@ -230,6 +217,9 @@ class BaseGui:
     # Methods to be overwritten
     # ------------------------------------------------------------
     
+    def resize_avatar(self, pic):
+        raise NotImplemented
+        
     def main_loop(self):
         raise NotImplementedError
         

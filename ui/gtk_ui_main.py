@@ -154,6 +154,28 @@ class Main(BaseGui, gtk.Window):
         self.save_config({'General': {'single-win-size': single_value, 
             'wide-win-size': wide_value}}, update=False)
             
+    def resize_avatar(self, pic):
+        ext = pic[-3:].lower()
+        fullname = os.path.join(self.imgdir, pic)
+        
+        orig = gtk.gdk.pixbuf_new_from_file(fullname)
+        pw, ph = orig.get_width(), orig.get_height()
+        
+        if pw >= ph:
+            ratio = float(ph)/pw
+            fw = util.AVATAR_SIZE
+            fh = int(fw * ratio)
+        else:
+            ratio = float(pw)/ph
+            fh = util.AVATAR_SIZE
+            fw = int(fh * ratio)
+            
+        dest = orig.scale_simple(fw, fh, gtk.gdk.INTERP_BILINEAR)
+        dest.save(fullname, 'png')
+        
+        del orig
+        del dest
+        
     def request_in_reply_to(self, twt_id, user):
         self.replybox.show(twt_id, user)
         BaseGui.request_in_reply_to(self, twt_id, user)

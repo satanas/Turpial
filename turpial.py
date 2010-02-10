@@ -198,19 +198,16 @@ class Turpial:
     def get_conversation(self, twt_id):
         self.api.get_conversation(twt_id, self.ui.update_conversation)
         
-    '''
     def mute(self, user):
-        if user not in self.muted_users: 
-            self.muted_users.append(user)
-            self.log.debug('Muteando a %s' % user)
-            self.ui.update_timeline(self.__get_timeline())
-            
+        self.ui.start_updating_timeline()
+        timeline = self.api.mute(user)
+        self.ui.update_timeline(timeline)
+        
     def unmute(self, user):
-        if user in self.muted_users: 
-            self.muted_users.remove(user)
-            self.log.debug('Desmuteando a %s' % user)
-            self.ui.update_timeline(self.__get_timeline())
-    '''
+        self.ui.start_updating_timeline()
+        timeline = self.api.unmute(user)
+        self.ui.update_timeline(timeline)
+        
     def short_url(self, text, callback):
         service = self.config.read('Services', 'shorten-url')
         self.httpserv.short_url(service, text, callback)
@@ -245,6 +242,16 @@ class Turpial:
     def save_config(self, config, update):
         self.config.save(config)
         if update: self.ui.update_config(self.config)
+        
+    def get_all_contacts(self):
+        if self.api.friendsloaded:
+            friends = []
+            for f in self.api.friends:
+                friends.append(f['screen_name'])
+            
+            return friends, self.api.muted_users
+        else:
+            return None, None
         
 if __name__ == '__main__':
     t = Turpial()

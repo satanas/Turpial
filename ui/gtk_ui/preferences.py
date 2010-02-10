@@ -34,6 +34,7 @@ class Preferences(gtk.Window):
         self.general = GeneralTab(self.current['General'])
         self.notif = NotificationsTab(self.current['Notifications'])
         self.services = ServicesTab(self.current['Services'])
+        self.muted = MutedTab(self.mainwin)
         
         notebook = gtk.Notebook()
         notebook.set_scrollable(True)
@@ -42,6 +43,7 @@ class Preferences(gtk.Window):
         notebook.append_page(self.general, gtk.Label('General'))
         notebook.append_page(self.notif, gtk.Label('Notificaciones'))
         notebook.append_page(self.services, gtk.Label('Servicios'))
+        notebook.append_page(self.muted, gtk.Label('Silenciar'))
         
         vbox = gtk.VBox()
         #vbox.set_spacing(4)
@@ -71,6 +73,7 @@ class Preferences(gtk.Window):
         self.destroy()
         
         self.mainwin.save_config(new_config)
+        self.mainwin.save_muted(self.muted.get_muted())
         
         
 class PreferencesTab(gtk.VBox):
@@ -327,3 +330,63 @@ usar para cortar URLs y subir imágenes a Twitter', current)
         return {
             'shorten-url': self.shorten.get_active_text(),
         }
+        
+class MutedTab(PreferencesTab):
+    def __init__(self, parent):
+        PreferencesTab.__init__(self, u'Selecciona los usuarios que deseas \
+silenciar temporalmente')
+        
+        self.muted = []
+        self.mainwin = parent
+        self.friends, self.muted = self.mainwin.request_all_contacts()
+        
+        self.model = gtk.ListStore(str, bool)
+        for f in self.friends:
+            mark = True if (f in self.muted) else False
+            self.model.append([f, mark])
+        
+        self.list = gtk.TreeView()
+        self.list.set_headers_visible(False)
+        self.list.set_events(gtk.gdk.POINTER_MOTION_MASK)
+        self.list.set_level_indentation(0)
+        self.list.set_rules_hint(True)
+        self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
+        self.list.set_model(self.model)
+        
+        cell_check = gtk.CellRendererToggle()
+        cell_check.set_property('activatable', True)
+        cell_user = gtk.CellRendererText()
+        
+        column = gtk.TreeViewColumn('')
+        column.set_alignment(0.0)
+        column.pack_start(cell_check, False)
+        column.pack_start(cell_user, True)
+        column.set_attributes(cell_check, active=1)
+        column.set_attributes(cell_user, markup=0)
+        self.list.append_column(column)
+        
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        scroll.set_shadow_type(gtk.SHADOW_IN)
+        scroll.add(self.list)
+        
+        cell_check.connect("toggled", self.__toggled)
+        
+        self.pack_start(scroll, True, True, 2)
+        self.show_all()
+        
+    def __process(self, model, path, iter):
+        user = model.get_value(iter, 0)
+        mark = model.get_value(iter, 1)
+        
+        if mark:
+            print user
+            self.muted.append(user)
+            
+    def __toggled(self, widget, path):
+        value = not self.model[path][0]
+        self.model[path][0] = value
+        
+    def get_muted(self):
+        self.list.foreach(self.__process)
+        return self.muted

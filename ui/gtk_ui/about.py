@@ -16,7 +16,7 @@ class About:
         about.set_logo(util.load_image('turpial_icon.png', True))
         about.set_name('Turpial')
         about.set_version(parent.version)
-        about.set_copyright('Copyleft (C) 2009 Wil Alvarez')
+        about.set_copyright('Copyleft (C) 2009 - 2010 Wil Alvarez')
         about.set_comments('Cliente de Twitter multi-interfaz escrito en Python')
         about.set_transient_for(parent)
         about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)

@@ -12,6 +12,8 @@ Feb 10, 2010:
     + Actualizado el README y el install-dep.sh
     + Eliminada la dependencia del módulo Image (PIL)
     ---- commit ----
+    + Actualizado el año del copyleft en al about
+    ---- commit ----
     
 Feb 09, 2010:
     + Corregido error con el response de la api

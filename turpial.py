@@ -116,12 +116,14 @@ class Turpial:
         self.config.write('Auth', 'oauth-secret', secret)
         self.config.write('Auth', 'oauth-verifier', verifier)
         
+        self.api.muted_users = self.config.load_muted_list()
+        
         self.ui.show_main(self.config, self.profile)
         self._update_timeline()
-        self._update_replies()
-        self._update_directs()
-        self._update_rate_limits()
-        self._update_favorites()
+        #self._update_replies()
+        #self._update_directs()
+        #self._update_rate_limits()
+        #self._update_favorites()
         self._update_friends()
         
     def _update_timeline(self):
@@ -159,6 +161,7 @@ class Turpial:
         self.api.authorize_oauth_token(pin, self.__signin_done)
         
     def signout(self):
+        self.save_muted_list()
         self.log.debug('Desconectando')
         exit(0)
         #self.httpserv.quit()
@@ -200,13 +203,7 @@ class Turpial:
         
     def mute(self, user):
         self.ui.start_updating_timeline()
-        timeline = self.api.mute(user)
-        self.ui.update_timeline(timeline)
-        
-    def unmute(self, user):
-        self.ui.start_updating_timeline()
-        timeline = self.api.unmute(user)
-        self.ui.update_timeline(timeline)
+        self.api.mute(user, self.ui.update_timeline)
         
     def short_url(self, text, callback):
         service = self.config.read('Services', 'shorten-url')
@@ -243,7 +240,10 @@ class Turpial:
         self.config.save(config)
         if update: self.ui.update_config(self.config)
         
-    def get_all_contacts(self):
+    def save_muted_list(self):
+        self.config.save_muted_list(self.api.muted_users)
+        
+    def get_muted_list(self):
         if self.api.friendsloaded:
             friends = []
             for f in self.api.friends:
@@ -252,6 +252,10 @@ class Turpial:
             return friends, self.api.muted_users
         else:
             return None, None
+            
+    def update_muted(self, muted_users):
+        self.ui.start_updating_timeline()
+        timeline = self.api.mute(muted_users, self.ui.update_timeline)
         
 if __name__ == '__main__':
     t = Turpial()

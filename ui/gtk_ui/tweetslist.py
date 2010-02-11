@@ -179,6 +179,7 @@ class TweetList(gtk.VBox):
                 loading.set_sensitive(False)
                 usermenu = gtk.MenuItem('@'+user)
                 inreplymenu = gtk.MenuItem('En respuesta a')
+                mutemenu = gtk.MenuItem('Silenciar')
                 
                 open_menu = gtk.Menu()
                 
@@ -244,7 +245,9 @@ class TweetList(gtk.VBox):
                 
                 menu.append(gtk.SeparatorMenuItem())
                 menu.append(usermenu)
-                if not rtn['own']: menu.append(item)
+                if not rtn['own']: 
+                    if item != loading: menu.append(mutemenu)
+                    menu.append(item)
                 
                 user_profile = '/'.join(['http://www.twitter.com', user])
                 usermenu.connect('activate', self.__open_url, user_profile)
@@ -258,6 +261,7 @@ class TweetList(gtk.VBox):
                 follow.connect('activate', self.__follow, True, user)
                 unfollow.connect('activate', self.__follow, False, user)
                 inreplymenu.connect('activate', self.__in_reply_to, user, in_reply_to_id)
+                mutemenu.connect('activate', self.__mute, user)
             
             menu.show_all()
             menu.popup(None, None, None, event.button ,event.time)
@@ -293,6 +297,9 @@ class TweetList(gtk.VBox):
         
     def __in_reply_to(self, widget, user, in_reply_to_id):
         self.mainwin.request_in_reply_to(in_reply_to_id, user)
+        
+    def __mute(self, widget, user):
+        self.mainwin.request_update_muted(user)
         
     def clear(self):
         self.model.clear()

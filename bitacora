@@ -2,7 +2,10 @@ Feb 10, 2010:
     + Implementado resize_avatar para 'cada' UI y evitar los errores del PIL con los PNG's entrelazados
     + Creados métodos y vista para manejar mute/unmute (API; Controller, UI)
     ---- commit ----
-         
+    + Implementado soporte completo para funciones mute/unmute
+    + Agregado item 'Silenciar' al menu contextual del tweetlist para silenciar un usuario
+    ---- commit ----
+    
 Feb 09, 2010:
     + Corregido error con el response de la api
     ---- commit ----

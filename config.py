@@ -49,11 +49,13 @@ class ConfigHandler:
         self.dir = os.path.join(os.path.expanduser('~'),'.config', 'turpial', user)
         self.imgdir = os.path.join(self.dir, 'images')
         self.filepath = os.path.join(self.dir, 'config')
+        self.mutedpath = os.path.join(self.dir, 'muted')
         self.log = logging.getLogger('Config')
         
         if not os.path.isdir(self.dir): os.makedirs(self.dir)
         if not os.path.isdir(self.imgdir): os.makedirs(self.imgdir)
         if not os.path.isfile(self.filepath): self.create()
+        if not os.path.isfile(self.mutedpath): self.create_muted_list()
         
         self.load()
         
@@ -131,3 +133,22 @@ class ConfigHandler:
             return self.__config
         except:
             return None
+            
+    def create_muted_list(self):
+        fd = open(self.mutedpath,'w')
+        fd.close()
+        
+    def load_muted_list(self):
+        muted = []
+        fd = open(self.mutedpath,'r')
+        for line in fd:
+            if line == '\n': continue
+            muted.append(line.strip('\n'))
+        fd.close()
+        return muted
+        
+    def save_muted_list(self, list):
+        fd = open(self.mutedpath,'w')
+        for user in list:
+            fd.write(user+'\n')
+        fd.close()

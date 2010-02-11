@@ -64,7 +64,7 @@ class TurpialAPI(threading.Thread):
         
     def __register(self, args, callback):
         self.queue.put((args, callback))
-        
+    
     def __del_tweet_from(self, tweets, id):
         item = None
         for twt in tweets:
@@ -331,19 +331,15 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Dejando de seguir a: %s' % user)
         self.__register({'uri': 'http://twitter.com/friendships/destroy', 'args': args, 'follow': False}, callback)
         
-    def mute(self, users):
-        for user in users:
-            if user not in self.muted_users: 
-                self.muted_users.append(user)
-                self.log.debug('Muteando a %s' % user)
-        return self.__handle_muted()
-        
-    def unmute(self, users):
-        for user in users:
-            if user in self.muted_users: 
-                self.muted_users.remove(user)
-                self.log.debug('Desmuteando a %s' % user)
-        return self.__handle_muted()
+    def mute(self, arg, callback):
+        if type(arg).__name__=='list':
+            self.log.debug('Actualizando usuarios muteados')
+            self.muted_users = arg
+        else:
+            if arg not in self.muted_users: 
+                self.log.debug('Muteando a %s' % arg)
+                self.muted_users.append(arg)
+        self.__register({'mute': True}, callback)
         
     def in_reply_to(self, tweet_id, callback):
         self.log.debug('Buscando respuesta: %s' % tweet_id)
@@ -375,6 +371,10 @@ class TurpialAPI(threading.Thread):
             
             if args.has_key('oauth'):
                 self.__handle_oauth(args, callback)
+                continue
+            
+            if args.has_key('mute'):
+                callback(self.__handle_muted())
                 continue
             
             rtn = None

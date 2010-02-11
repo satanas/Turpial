@@ -83,17 +83,11 @@ class BaseGui:
         self.update_timeline(timeline)
         self.update_favorites(favs)
         
-    def request_all_contacts(self):
-        return self.__controller.get_all_contacts()
-        
     def read_config(self):
         return self.__controller.config.read_all()
         
     def save_config(self, new_config, update=True):
         self.__controller.save_config(new_config, update)
-        
-    def save_muted(self, muted_users):
-        self.__controller.update_muted(muted_users)
         
     def request_signin(self, username, password):
         self.__controller.signin(username, password)
@@ -185,6 +179,12 @@ class BaseGui:
         
     def request_conversation(self, tweet_id, user):
         self.__controller.get_conversation(tweet_id)
+        
+    def request_muted_list(self):
+        return self.__controller.get_muted_list()
+        
+    def request_update_muted(self, muted_users):
+        self.__controller.update_muted(muted_users)
         
     # ------------------------------------------------------------
     # Timer Methods

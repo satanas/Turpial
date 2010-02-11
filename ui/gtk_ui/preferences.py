@@ -73,7 +73,7 @@ class Preferences(gtk.Window):
         self.destroy()
         
         self.mainwin.save_config(new_config)
-        self.mainwin.save_muted(self.muted.get_muted())
+        self.mainwin.request_update_muted(self.muted.get_muted())
         
         
 class PreferencesTab(gtk.VBox):
@@ -338,12 +338,9 @@ silenciar temporalmente')
         
         self.muted = []
         self.mainwin = parent
-        self.friends, self.muted = self.mainwin.request_all_contacts()
+        self.friends, self.muted = self.mainwin.request_muted_list()
         
         self.model = gtk.ListStore(str, bool)
-        for f in self.friends:
-            mark = True if (f in self.muted) else False
-            self.model.append([f, mark])
         
         self.list = gtk.TreeView()
         self.list.set_headers_visible(False)
@@ -372,7 +369,26 @@ silenciar temporalmente')
         
         cell_check.connect("toggled", self.__toggled)
         
-        self.pack_start(scroll, True, True, 2)
+        label = gtk.Label()
+        label.set_line_wrap(True)
+        label.set_use_markup(True)
+        label.set_markup(u'Aún no he terminado de cargar todos los contactos. \
+Intententa en unos segundos')
+        label.set_justify(gtk.JUSTIFY_FILL)
+        
+        align = gtk.Alignment(xalign=0.0, yalign=0.0)
+        align.set_padding(0, 5, 10, 10)
+        align.add(label)
+        
+        if self.friends:
+            for f in self.friends:
+                mark = True if (f in self.muted) else False
+                self.model.append([f, mark])
+                
+            self.pack_start(scroll, True, True, 2)
+        else:
+            self.pack_start(align, True, True, 2)
+        
         self.show_all()
         
     def __process(self, model, path, iter):
@@ -380,13 +396,13 @@ silenciar temporalmente')
         mark = model.get_value(iter, 1)
         
         if mark:
-            print user
             self.muted.append(user)
             
     def __toggled(self, widget, path):
-        value = not self.model[path][0]
-        self.model[path][0] = value
+        value = not self.model[path][1]
+        self.model[path][1] = value
         
     def get_muted(self):
-        self.list.foreach(self.__process)
+        self.muted = []
+        self.model.foreach(self.__process)
         return self.muted

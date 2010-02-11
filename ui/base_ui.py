@@ -7,7 +7,7 @@
 
 import os
 import util
-import Image
+#import Image
 import logging
 import xml.sax.saxutils as saxutils
 

@@ -9,6 +9,6 @@ read X
 echo "Actualizando paquetes..."
 aptitude -y update
 echo "Instalando dependencias..."
-aptitude -y install python-simplejson python-imaging python-notify
+aptitude -y install python-simplejson python-gtk2 python-notify
 echo "Terminado"
 

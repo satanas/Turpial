@@ -2,12 +2,15 @@ Feb 10, 2010:
     + Implementado resize_avatar para 'cada' UI y evitar los errores del PIL con los PNG's entrelazados
     + Creados métodos y vista para manejar mute/unmute (API; Controller, UI)
     ---- commit ----
-    + Implementado soporte completo para funciones mute/unmute
+    + Implementado soporte completo para funciones mute/unmute (issue 23)
     + Agregado item 'Silenciar' al menu contextual del tweetlist para silenciar un usuario
     ---- commit ----
     + Agregado color al mensaje de espera de la pestaña 'Silenciar'
     + Ahora se valida que el usuario muteado sea amigo, sino no se hace nada
     + No se muestra el item 'Silenciar' si el contacto no es tu amigo
+    ---- commit ----
+    + Actualizado el README y el install-dep.sh
+    + Eliminada la dependencia del módulo Image (PIL)
     ---- commit ----
     
 Feb 09, 2010:

@@ -246,7 +246,7 @@ class TweetList(gtk.VBox):
                 menu.append(gtk.SeparatorMenuItem())
                 menu.append(usermenu)
                 if not rtn['own']: 
-                    if item != loading: menu.append(mutemenu)
+                    if item != loading and item != follow: menu.append(mutemenu)
                     menu.append(item)
                 
                 user_profile = '/'.join(['http://www.twitter.com', user])

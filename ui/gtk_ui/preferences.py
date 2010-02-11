@@ -372,8 +372,8 @@ silenciar temporalmente')
         label = gtk.Label()
         label.set_line_wrap(True)
         label.set_use_markup(True)
-        label.set_markup(u'Aún no he terminado de cargar todos los contactos. \
-Intententa en unos segundos')
+        label.set_markup(u'<span foreground="#920d12">Aún no he terminado \
+de cargar todos los contactos. Intententa de nuevo en unos segundos</span>')
         label.set_justify(gtk.JUSTIFY_FILL)
         
         align = gtk.Alignment(xalign=0.0, yalign=0.0)

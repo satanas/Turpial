@@ -5,6 +5,10 @@ Feb 10, 2010:
     + Implementado soporte completo para funciones mute/unmute
     + Agregado item 'Silenciar' al menu contextual del tweetlist para silenciar un usuario
     ---- commit ----
+    + Agregado color al mensaje de espera de la pestaña 'Silenciar'
+    + Ahora se valida que el usuario muteado sea amigo, sino no se hace nada
+    + No se muestra el item 'Silenciar' si el contacto no es tu amigo
+    ---- commit ----
     
 Feb 09, 2010:
     + Corregido error con el response de la api

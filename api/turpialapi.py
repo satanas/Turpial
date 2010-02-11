@@ -333,11 +333,13 @@ class TurpialAPI(threading.Thread):
         
     def mute(self, arg, callback):
         if type(arg).__name__=='list':
-            self.log.debug('Actualizando usuarios muteados')
+            self.log.debug('Actualizando usuarios silenciados')
             self.muted_users = arg
         else:
-            if arg not in self.muted_users: 
-                self.log.debug('Muteando a %s' % arg)
+            if arg not in self.friends:
+                self.log.debug('No se silencia a %s porque no es tu amigo' % arg)
+            elif arg not in self.muted_users: 
+                self.log.debug('Silenciando a %s' % arg)
                 self.muted_users.append(arg)
         self.__register({'mute': True}, callback)
         

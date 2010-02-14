@@ -6,10 +6,10 @@
 # Dic 07, 2009
 
 import os
-import util
-#import Image
 import logging
 import xml.sax.saxutils as saxutils
+
+from core.ui import util
 
 log = logging.getLogger('BaseUI')
 
@@ -174,8 +174,8 @@ class BaseGui:
     def request_popup_info(self, tweet_id, user):
         return self.__controller.get_popup_info(tweet_id, user)
     
-    def request_in_reply_to(self, tweet_id, user):
-        self.__controller.in_reply_to(tweet_id)
+    #def request_in_reply_to(self, tweet_id, user):
+    #    self.__controller.in_reply_to(tweet_id)
         
     def request_conversation(self, tweet_id, user):
         self.__controller.get_conversation(tweet_id)

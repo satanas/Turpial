@@ -7,7 +7,7 @@
 
 import gtk
 
-from api import *
+#from core.api import *
 
 class Preferences(gtk.Window):
     def __init__(self, parent=None):

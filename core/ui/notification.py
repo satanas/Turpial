@@ -5,10 +5,10 @@
 # Author: Wil Alvarez (aka Satanas)
 # Dic 27, 2009
 
-import util
 import logging
 
-from sound import *
+from core.ui import util
+from core.sound import *
 
 log = logging.getLogger('Notify')
 

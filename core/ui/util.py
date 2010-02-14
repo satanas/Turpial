@@ -24,7 +24,8 @@ URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_().]*[-A-Za-z
 
 # :FIX: Esto debería estar en el main de GTK
 def load_image(path, pixbuf=False):
-    img_path = os.path.join('pixmaps', path)
+    img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+        '..', '..', 'data', 'pixmaps', path))
     pix = gtk.gdk.pixbuf_new_from_file(img_path)
     if pixbuf: return pix
     avatar = gtk.Image()

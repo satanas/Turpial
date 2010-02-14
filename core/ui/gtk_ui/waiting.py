@@ -9,7 +9,7 @@ import gtk
 import cairo
 import gobject
 
-from ui import util as util
+from core.ui import util as util
 
 class CairoWaiting(gtk.DrawingArea):
     def __init__(self, parent):

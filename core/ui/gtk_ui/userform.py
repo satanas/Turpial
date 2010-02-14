@@ -7,7 +7,7 @@
 
 import gtk
 
-from ui import util as util
+from core.ui import util as util
 
 class UserForm(gtk.VBox):
     def __init__(self, mainwin, label='', profile=None):

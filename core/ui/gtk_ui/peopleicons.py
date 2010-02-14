@@ -6,9 +6,8 @@
 # Dic 21, 2009
 
 import gtk
-#import gobject
 
-from ui import util as util
+from core.ui import util as util
 
 class PeopleIcons(gtk.ScrolledWindow):
     def __init__(self, mainwin, label='', named=False):

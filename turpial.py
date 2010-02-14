@@ -10,10 +10,11 @@ import os
 import urllib
 import logging
 
-from ui import *
-from api import *
-from config import *
 from optparse import OptionParser
+
+from core.ui import *
+from core.api import *
+from core.config import *
 
 try:
     import ctypes
@@ -34,6 +35,9 @@ class Turpial:
         
         (options, _) = parser.parse_args()
         
+        self.config = None
+        self.profile = None
+        
         if options.debug: 
             logging.basicConfig(level=logging.DEBUG)
         else:
@@ -50,8 +54,6 @@ class Turpial:
         else:
             self.ui = cmd_ui.Main(self)
         
-        self.config = None
-        self.profile = None
         self.httpserv = HTTPServices()
         self.picserv = HTTPServices()
         self.api = TurpialAPI()
@@ -241,7 +243,7 @@ class Turpial:
         if update: self.ui.update_config(self.config)
         
     def save_muted_list(self):
-        self.config.save_muted_list(self.api.muted_users)
+        if self.config: self.config.save_muted_list(self.api.muted_users)
         
     def get_muted_list(self):
         if self.api.friendsloaded:

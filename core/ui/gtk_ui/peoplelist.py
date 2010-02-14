@@ -8,7 +8,7 @@
 import gtk
 import pango
 
-from ui import util as util
+from core.ui import util as util
 
 class PeopleList(gtk.ScrolledWindow):
     def __init__(self, mainwin, label=''):

@@ -1,3 +1,12 @@
+Feb 14, 2010:
+    + Ahora el replybox muestra las conversaciones al hacer clic en 'En respuesta a'
+    + Implementada la estructura de directorio propuesta por Milton Mazzari
+    + Agregados los archivos para instalación usando 'setuptools' y el lanzador de escritorio
+    ---- commit ----
+    
+Feb 13, 2010:
+    + Corregido error con el muted_list al cerrar la aplicación
+    
 Feb 10, 2010:
     + Implementado resize_avatar para 'cada' UI y evitar los errores del PIL con los PNG's entrelazados
     + Creados métodos y vista para manejar mute/unmute (API; Controller, UI)

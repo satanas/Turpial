@@ -10,10 +10,9 @@ import pango
 import gobject
 import logging
 import webbrowser
-#import xml.sax.saxutils as saxutils
 
-from waiting import *
-from ui import util as util
+from core.ui.gtk_ui.waiting import *
+from core.ui import util as util
 
 log = logging.getLogger('Gtk:Tweetlist')
 
@@ -121,26 +120,6 @@ class TweetList(gtk.VBox):
             text = text.replace(u, cad)
         return text
         
-    '''
-    def show_tooltip(self, widget, x, y, keyboard_mode, tooltip):
-        #rel_y = self.get_property('vadjustment').value
-        
-        #path = widget.get_path_at_pos(int(x), int(y + rel_y))
-        path = widget.get_path_at_pos(int(x), int(y))
-        if path is None: return False
-        
-        model = widget.get_model()
-        iter = model.get_iter(path[0])
-        
-        pix = model.get_value(iter, 0)
-        msg = "<b>En respuesta a</b>:\n%s" % model.get_value(iter, 4)
-        tooltip.set_icon(pix)
-        tooltip.set_markup(msg)
-        del pix
-        
-        return True
-    '''
-    
     def __popup_menu(self, widget, event):
         model, row = widget.get_selection().get_selected()
         if (row is None): return False
@@ -296,7 +275,7 @@ class TweetList(gtk.VBox):
             self.mainwin.request_unfollow(user)
         
     def __in_reply_to(self, widget, user, in_reply_to_id):
-        self.mainwin.request_in_reply_to(in_reply_to_id, user)
+        self.mainwin.request_conversation(in_reply_to_id, user)
         
     def __mute(self, widget, user):
         self.mainwin.request_update_muted(user)

@@ -7,8 +7,8 @@
 
 import gtk
 
-from tweetslist import *
-from ui import util as util
+from core.ui.gtk_ui.tweetslist import *
+from core.ui import util as util
 
 
 class SearchTweets(gtk.VBox):

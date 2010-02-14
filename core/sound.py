@@ -12,7 +12,8 @@ if os.name == 'nt':
 
 class Sound:
     def __play(self, file):
-        path = os.path.join('sounds', file)
+        path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            '..', '..', 'data', 'sounds', file))
         if os.name == "nt":
             winsound.PlaySound(path, winsound.SND_FILENAME | winsound.SND_ASYNC)
         elif os.name == "posix":

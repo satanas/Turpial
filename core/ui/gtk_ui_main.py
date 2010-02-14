@@ -12,9 +12,9 @@ import logging
 import gobject
 import webbrowser
 
-from gtk_ui import *
-from base_ui import *
-from notification import *
+from core.ui.gtk_ui import *
+from core.ui.base_ui import *
+from core.ui.notification import *
 
 gtk.gdk.threads_init()
 
@@ -176,9 +176,9 @@ class Main(BaseGui, gtk.Window):
         del orig
         del dest
         
-    def request_in_reply_to(self, twt_id, user):
+    def request_conversation(self, twt_id, user):
         self.replybox.show(twt_id, user)
-        BaseGui.request_in_reply_to(self, twt_id, user)
+        BaseGui.request_conversation(self, twt_id, user)
         
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)

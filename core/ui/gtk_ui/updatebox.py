@@ -7,8 +7,8 @@
 
 import gtk
 
-from waiting import*
-from ui import util as util
+from core.ui.gtk_ui.waiting import*
+from core.ui import util as util
 
 class UpdateBox(gtk.Window):
     def __init__(self, parent):

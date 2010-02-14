@@ -54,17 +54,17 @@ class UpdateBox(gtk.Window):
         self.btn_url = gtk.Button('Cortar URL')
         self.btn_url.set_tooltip_text('Cortar URL')
         
-        btn_pic = gtk.Button('Subir Imagen')
-        btn_pic.set_tooltip_text('Subir Imagen')
-        btn_pic.set_sensitive(False)
-        #btn_pic.set_relief(gtk.RELIEF_NONE)
-        #btn_pic.set_image(util.load_image('photos.png'))
+        self.btn_pic = gtk.Button('Subir Imagen')
+        self.btn_pic.set_tooltip_text('Subir Imagen')
+        #self.btn_pic.set_sensitive(True)
+        #self.btn_pic.set_relief(gtk.RELIEF_NONE)
+        #self.btn_pic.set_image(util.load_image('photos.png'))
         
         tools = gtk.HBox(False)
         tools.pack_start(self.url, True, True, 3)
         tools.pack_start(self.btn_url, False, False)
         tools.pack_start(gtk.HSeparator(), False, False)
-        tools.pack_start(btn_pic, False, False, 3)
+        tools.pack_start(self.btn_pic, False, False, 3)
         
         self.toolbox = gtk.Expander()
         self.toolbox.set_label('Opciones')
@@ -115,7 +115,7 @@ class UpdateBox(gtk.Window):
         self.btn_clr.connect('clicked', self.clear)
         self.btn_upd.connect('clicked', self.update)
         self.btn_url.connect('clicked', self.short_url)
-        btn_pic.connect('clicked', self.upload_pic)
+        self.btn_pic.connect('clicked', self.upload_pic)
         self.toolbox.connect('activate', self.show_options)
         self.update_text.connect('mykeypress', self.__on_key_pressed)
     
@@ -241,9 +241,30 @@ class UpdateBox(gtk.Window):
         resp = dia.run()
         
         if resp == gtk.RESPONSE_OK:
-            log.debug('Subiendo Imagen: %s' % dia.get_filename())
-            ## self.mainwin.request_upload_pic(dia.get_filename())
+            self.waiting.start()
+            self.mainwin.request_upload_pic(dia.get_filename(), self.update_uploaded_pic)
         dia.destroy()
+        
+    def update_uploaded_pic(self, pic_url):
+        if pic_url is None:
+            self.waiting.stop(error=True)
+            self.lblerror.set_markup("<span size='small'>Oops... No se pudo subir la imagen</span>")
+            return
+        buffer = self.update_text.get_buffer()
+        end_offset = buffer.get_property('cursor-position')
+        start_offset = end_offset - 1
+        
+        end = buffer.get_iter_at_offset(end_offset)
+        start = buffer.get_iter_at_offset(start_offset)
+        text = buffer.get_text(start, end)
+        
+        if (text != ' ') and (start_offset > 0): pic_url = ' ' + pic_url
+        
+        buffer.insert_at_cursor(pic_url)
+        self.waiting.stop()
+        self.lblerror.set_markup("")
+        self.toolbox.set_expanded(False)
+        self.set_focus(self.update_text)
         
     def show_options(self, widget, event=None):
         self.url.set_text('')

@@ -7,7 +7,7 @@
 
 import gtk
 
-#from core.api import *
+from core.api import *
 
 class Preferences(gtk.Window):
     def __init__(self, parent=None):
@@ -316,8 +316,13 @@ usar para cortar URLs y subir imágenes a Twitter', current)
         url_box.pack_start(self.shorten, False, False, 3)
         
         pic_lbl = gtk.Label(u'Subir imágenes')
-        self.upload = gtk.ComboBox()
-        self.upload.set_sensitive(False)
+        self.upload = gtk.combo_box_new_text()
+        for key in PHOTO_SERVICES:
+            self.upload.append_text(key)
+            if key == self.current['upload-pic']: default = i
+            i += 1
+        self.upload.set_active(default)
+        
         pic_box = gtk.HBox(False)
         pic_box.pack_start(pic_lbl, False, False, 3)
         pic_box.pack_start(self.upload, False, False, 3)
@@ -329,6 +334,7 @@ usar para cortar URLs y subir imágenes a Twitter', current)
     def get_config(self):
         return {
             'shorten-url': self.shorten.get_active_text(),
+            'upload-pic': self.upload.get_active_text(),
         }
         
 class MutedTab(PreferencesTab):

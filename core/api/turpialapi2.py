@@ -5,22 +5,21 @@
 # Author: Wil Alvarez (aka Satanas)
 # Dic 22, 2009
 
-import sys #probando con dict
-
 import time
-import oauth
+#import oauth
 import Queue
-import urllib2
+#import urllib2
 import logging
 import threading
 import traceback
-
+'''
 from base64 import b64encode
 from urllib import urlencode
 
 from oauth_client import TurpialAuthClient
 
 from twitter_globals import *
+
 
 def _py26OrGreater():
     import sys
@@ -30,26 +29,30 @@ if _py26OrGreater():
     import json
 else:
     import simplejson as json
-    
+'''
+
 class TurpialAPI(threading.Thread):
-    def __init__(self):
+    def __init__(self, isthread=True):
         threading.Thread.__init__(self)
         
+        self.isthread = isthread
         self.setDaemon(False)
         self.log = logging.getLogger('API')
         self.queue = Queue.Queue()
         self.exit = False
-        
+        '''
         # OAuth stuffs
         self.client = None
         self.consumer = None
         self.is_oauth = False
         self.token = None
         self.signature_method_hmac_sha1 = None
+        '''
         
-        self.format = 'json'
-        self.username = None
-        self.password = None
+        self.http = TurpialHTTP()
+        #self.format = 'json'
+        #self.username = None
+        #self.password = None
         self.profile = None
         self.tweets = []
         self.replies = []
@@ -65,9 +68,24 @@ class TurpialAPI(threading.Thread):
         self.to_del = []
         self.log.debug('Iniciado')
         
-    def __register(self, args, callback):
-        self.queue.put((args, callback))
+    def execute(self, args, callback):
+        if args.has_key('oauth'):
+            self.http.oauth(args, callback)
+        elif args.has_key('mute'):
+            rtn = self.__handle_muted()
+        else:
+            rtn = self.http.request(args, callback)
+            if args.has_key('post-process'):
+                rtn = args['post-process'](rtn)
+        
+        return rtn
     
+    def __register(self, args, callback):
+        if self.isthread:
+            self.queue.put((args, callback))
+        else:
+            self.execute(args, callback)
+        
     def __del_tweet_from(self, tweets, id):
         item = None
         for twt in tweets:
@@ -87,53 +105,7 @@ class TurpialAPI(threading.Thread):
         return tweets
         
     def __handle_oauth(self, args, callback):
-        if args['cmd'] == 'start':
-            self.client = TurpialAuthClient()
-            self.consumer = oauth.OAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
-            self.signature_method_hmac_sha1 = oauth.OAuthSignatureMethod_HMAC_SHA1()
-            auth = args['auth']
-            
-            if auth['oauth-key'] != '' and auth['oauth-secret'] != '' and auth['oauth-verifier'] != '':
-                self.token = oauth.OAuthToken(auth['oauth-key'], auth['oauth-secret'])
-                self.token.set_verifier(auth['oauth-verifier'])
-                self.is_oauth = True
-                args['done'](self.token.key, self.token.secret, self.token.verifier)
-            else:
-                self.log.debug('Obtain a request token')
-                oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, http_url=self.client.request_token_url)
-                oauth_request.sign_request(self.signature_method_hmac_sha1, self.consumer, None)
-                
-                self.log.debug('REQUEST (via headers)')
-                self.log.debug('parameters: %s' % str(oauth_request.parameters))
-                try:
-                    self.token = self.client.fetch_request_token(oauth_request)
-                except Exception, e:
-                    print "Error: %s\n%s" % (e, traceback.print_exc())
-                    raise Exception
-                
-                self.log.debug('GOT')
-                self.log.debug('key: %s' % str(self.token.key))
-                self.log.debug('secret: %s' % str(self.token.secret))
-                self.log.debug('callback confirmed? %s' % str(self.token.callback_confirmed))
-                
-                self.log.debug('Authorize the request token')
-                oauth_request = oauth.OAuthRequest.from_token_and_callback(token=self.token, http_url=self.client.authorization_url)
-                self.log.debug('REQUEST (via url query string)')
-                self.log.debug('parameters: %s' % str(oauth_request.parameters))
-                callback(oauth_request.to_url())
-        elif args['cmd'] == 'authorize':
-            pin = args['pin']
-            self.log.debug('Obtain an access token')
-            oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, token=self.token, verifier=pin, http_url=self.client.access_token_url)
-            oauth_request.sign_request(self.signature_method_hmac_sha1, self.consumer, self.token)
-            self.log.debug('REQUEST (via headers)')
-            self.log.debug('parameters: %s' % str(oauth_request.parameters))
-            self.token = self.client.fetch_access_token(oauth_request)
-            self.log.debug('GOT')
-            self.log.debug('key: %s' % str(self.token.key))
-            self.log.debug('secret: %s' % str(self.token.secret))
-            self.is_oauth = True
-            callback(self.token.key, self.token.secret, pin)
+        
             
     def __handle_tweets(self, tweet, args):
         if tweet is None: return False
@@ -145,11 +117,9 @@ class TurpialAPI(threading.Thread):
             
             if not exist: self.tweets.insert(0, tweet)
         elif args.has_key('del'):
-            if str(tweet['id']) in self.to_del:
-                self.to_del.remove(str(tweet['id']))
             self.tweets = self.__del_tweet_from(self.tweets, tweet['id'])
             self.favorites = self.__del_tweet_from(self.favorites, tweet['id'])
-            self.directs = self.__del_tweet_from(self.directs, tweet['id'])
+            self.directs = self.__del_tweet_from(self.favorites, tweet['id'])
             
         return True
         
@@ -251,8 +221,9 @@ class TurpialAPI(threading.Thread):
         
     def auth(self, username, password, callback):
         self.log.debug('Iniciando autenticacion basica')
-        self.username = username
-        self.password = password
+        #self.username = username
+        #self.password = password
+        self.http.set_credentials(username, password)
         self.__register({'uri': 'http://twitter.com/account/verify_credentials', 'login':True}, callback)
         
     def start_oauth(self, auth, show_pin_callback, done_callback):
@@ -294,7 +265,6 @@ class TurpialAPI(threading.Thread):
         self.__register({'uri': 'http://twitter.com/statuses/update', 'args': args, 'tweet':True, 'add': True}, callback)
         
     def destroy_status(self, tweet_id, callback):
-        self.to_del.append(tweet_id)
         self.log.debug('Destruyendo tweet: %s' % tweet_id)
         self.__register({'uri': 'http://twitter.com/statuses/destroy', 'id': tweet_id, 'args': '', 'tweet':True, 'del': True}, callback)
         
@@ -363,9 +333,8 @@ class TurpialAPI(threading.Thread):
             'done': callback, 'conversation': True}, self.__handle_conversation)
         
     def destroy_direct(self, tweet_id, callback):
-        self.to_del.append(tweet_id)
         self.log.debug('Destruyendo directo: %s' % tweet_id)
-        self.__register({'uri': 'http://twitter.com/direct_messages/destroy', 'id': tweet_id, 'args': '', 'tweet':True, 'del': True}, callback)
+        self.__register({'uri': 'http://twitter.com/direct_messages/destroy', 'id': tweet_id, 'args': '', 'direct':True, 'del': True}, callback)
         
     def end_session(self):
         self.__register({'uri': 'http://twitter.com/account/end_session', 'args': '', 'exit': True}, None)
@@ -383,76 +352,7 @@ class TurpialAPI(threading.Thread):
             
             (args, callback) = req
             
-            if args.has_key('oauth'):
-                self.__handle_oauth(args, callback)
-                continue
             
-            if args.has_key('mute'):
-                callback(self.__handle_muted())
-                continue
-            
-            rtn = None
-            argStr = ""
-            argData = None
-            encoded_args = None
-            method = "GET"
-            uri = args['uri']
-                
-            for action in POST_ACTIONS:
-                if uri.endswith(action): method = "POST"
-            
-            if args.has_key('id'):
-                uri = "%s/%s" % (uri, args['id'])
-                
-            uri = "%s.%s" % (uri, self.format)
-            
-            if args.has_key('args'):
-                encoded_args = urlencode(args['args'])
-            
-            if (method == "GET"):
-                if encoded_args: argStr = "?%s" %(encoded_args)
-            else:
-                argData = encoded_args
-                
-            if self.is_oauth:
-                try:
-                    params = args['args'] if args.has_key('args') else {}
-                    oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, token=self.token, http_method=method, http_url=uri, parameters=params)
-                    oauth_request.sign_request(self.signature_method_hmac_sha1, self.consumer, self.token)
-                    rtn = json.loads(self.client.access_resource(oauth_request, uri, method))
-                    #if rtn.has_key('error'): rtn = None
-                except Exception, e:
-                    self.log.debug("Error for URL: %s using parameters: (%s)\ndetails: %s" % (
-                        uri, params, traceback.print_exc()))
-                    if args.has_key('login'): 
-                        rtn = {'error': 'Error from Twitter.com'}
-            else:
-                headers = {}
-                if (self.username):
-                    headers["Authorization"] = "Basic " + b64encode("%s:%s" %(self.username, self.password))
-                strReq = "%s%s" %(uri, argStr)
-                req = urllib2.Request("%s%s" %(uri, argStr), argData, headers)
-                response = ''
-                try:
-                    # Use http://www.someproxy.com:3128 for http proxying
-                    #proxies = {'http': 'http://www.someproxy.com:3128'}
-                    #filehandle = urllib.urlopen(some_url, proxies=proxies)
-                    handle = urllib2.urlopen(req)
-                    response = handle.read()
-                    rtn = json.loads(response)
-                except urllib2.HTTPError, e:
-                    if (e.code == 304):
-                        rtn = []
-                    else:
-                        self.log.debug("Twitter sent status %i for URL: %s using parameters: (%s)\nDetails: %s\nRequest: %s\nResponse: %s" % (
-                            e.code, uri, encoded_args, e.fp.read(), strReq, response))
-                        if args.has_key('login'): 
-                            rtn = {'error': 'Error %i from Twitter.com' % e.code}
-                except (urllib2.URLError, Exception), e:
-                    self.log.debug("Problem to connect to twitter.com. Check network status.\nDetails: %s\nRequest: %s\nResponse: %s" %(
-                        e, strReq, response))
-                    if args.has_key('login'): 
-                        rtn = {'error': 'Can\'t connect to twitter.com'}
             
             if args.has_key('login'): 
                 self.profile = rtn
@@ -472,7 +372,12 @@ class TurpialAPI(threading.Thread):
                 done = self.__handle_tweets(rtn, args)
                 if done: rtn = self.__handle_muted()
                 if args.has_key('del'):
-                    callback(rtn, self.replies, self.favorites, self.directs)
+                    callback(rtn, self.favorites)
+                    continue
+            
+            if args.has_key('direct'):
+                if args.has_key('del'):
+                    callback(rtn, self.favorites)
                     continue
             
             if args.has_key('rt'):
@@ -513,30 +418,3 @@ class TurpialAPI(threading.Thread):
             
         self.log.debug('Terminado')
         return
-
-class Test(object):
-    def __init__(self):
-        self.methods = dir(Test)
-    
-    def __getattr__(self, name):
-        #if name == 'update_shit':
-        #    self.update_shit()
-        #else:
-        #    raise AttributeError, name
-        
-        method = '_Test__' + name
-        mt = '__' + name
-        print name
-        print method
-        print self.methods
-        #raw_input()
-        if method in self.methods:
-            #eval('self.__' + name + '()')
-            Test.__call__(mt)
-            #eval('Test.'+mt)
-        else:
-            raise AttributeError , name
-        
-                
-    def __update_shit(self, a, b):
-        print a, b

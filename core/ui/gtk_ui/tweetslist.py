@@ -17,7 +17,7 @@ from core.ui import util as util
 log = logging.getLogger('Gtk:Tweetlist')
 
 class TweetList(gtk.VBox):
-    def __init__(self, mainwin, label='', menu=True):
+    def __init__(self, mainwin, label='', menu='normal'):
         gtk.VBox.__init__(self, False)
         
         self.last = None    # Last tweets updated
@@ -29,13 +29,7 @@ class TweetList(gtk.VBox):
         self.list.set_level_indentation(0)
         self.list.set_rules_hint(True)
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
-        '''
-        try:
-            self.list.set_has_tooltip(True)
-        except:
-            pass
-        self.list.connect("query-tooltip", self.show_tooltip)
-        '''
+        
         self.label = gtk.Label(label)
         self.caption = label
         
@@ -85,8 +79,10 @@ class TweetList(gtk.VBox):
         column.set_attributes(cell_avatar, pixbuf=0)
         self.list.append_column(column)
         
-        if menu:
+        if menu == 'normal':
             self.list.connect("button-release-event", self.__popup_menu)
+        elif menu == 'direct':
+            self.list.connect("button-release-event", self.__direct_popup_menu)
             
         self.pack_start(scroll, True, True)
         self.pack_start(bottombox, False, False)
@@ -120,6 +116,94 @@ class TweetList(gtk.VBox):
             text = text.replace(u, cad)
         return text
         
+    def __build_open_menu(self, user, msg):
+        open = gtk.MenuItem('Abrir')
+        
+        open_menu = gtk.Menu()
+        
+        total_urls = util.detect_urls(msg)
+        total_users = util.detect_mentions(msg)
+        total_tags = util.detect_hashtags(msg)
+        
+        for u in total_urls:
+            url = u if len(u) < 30 else u[:30] + '...'
+            umenu = gtk.MenuItem(url)
+            umenu.connect('button-release-event', self.__open_url_with_event, u)
+            open_menu.append(umenu)
+        
+        if len(total_urls) > 0 and len(total_tags) > 0: 
+            open_menu.append(gtk.SeparatorMenuItem())
+        
+        for h in total_tags:
+            ht = "#search?q=%23" + h
+            hashtag = '/'.join(['https://twitter.com', ht])
+            hmenu = gtk.MenuItem('#'+h)
+            hmenu.connect('button-release-event', self.__open_url_with_event, hashtag)
+            open_menu.append(hmenu)
+            
+        if (len(total_urls) > 0 or len(total_tags) > 0) and len(total_users) > 0: 
+            open_menu.append(gtk.SeparatorMenuItem())
+        
+        exist = []
+        for m in total_users:
+            if m == user: continue
+            if m in exist: continue
+            exist.append(m)
+            user_prof = '/'.join(['http://www.twitter.com', m])
+            mentmenu = gtk.MenuItem('@'+m)
+            mentmenu.connect('button-release-event', self.__open_url_with_event, user_prof)
+            open_menu.append(mentmenu)
+            
+        open.set_submenu(open_menu)
+        if (len(total_urls) > 0) or (len(total_users) > 0) or (len(total_tags) > 0): 
+            return open
+        else:
+            return None
+        
+    def __direct_popup_menu(self, widget, event):
+        model, row = widget.get_selection().get_selected()
+        if (row is None): return False
+        
+        if (event.button == 3):
+            user = model.get_value(row, 1)
+            msg = model.get_value(row, 5)
+            id = model.get_value(row, 6)
+            in_reply_to_id = model.get_value(row, 8)
+             
+            menu = gtk.Menu()
+            rtn = self.mainwin.request_popup_info(id, user)
+            
+            if rtn.has_key('busy'):
+                busymenu = gtk.MenuItem(rtn['busy'])
+                busymenu.set_sensitive(False)
+                menu.append(busymenu)
+            else:
+                dm = "D @%s " % user
+                
+                reply = gtk.MenuItem('Responder')
+                delete = gtk.MenuItem('Borrar')
+                usermenu = gtk.MenuItem('@'+user)
+                open = self.__build_open_menu(user, msg)
+                
+                if not rtn['own']:
+                    menu.append(reply)
+                
+                menu.append(delete)
+                
+                if open:
+                    menu.append(open)
+                
+                menu.append(gtk.SeparatorMenuItem())
+                menu.append(usermenu)
+                
+                user_profile = '/'.join(['http://www.twitter.com', user])
+                usermenu.connect('activate', self.__open_url, user_profile)
+                reply.connect('activate', self.__show_update_box, dm)
+                delete.connect('activate', self.__delete_direct, id)
+                
+                menu.show_all()
+                menu.popup(None, None, None, event.button ,event.time)
+        
     def __popup_menu(self, widget, event):
         model, row = widget.get_selection().get_selected()
         if (row is None): return False
@@ -137,7 +221,7 @@ class TweetList(gtk.VBox):
             if rtn.has_key('busy'):
                 busymenu = gtk.MenuItem(rtn['busy'])
                 busymenu.set_sensitive(False)
-                menu.append(deleting)
+                menu.append(busymenu)
             else:
                 re = "@%s " % user
                 rt = "RT @%s %s" % (user, msg)
@@ -149,7 +233,6 @@ class TweetList(gtk.VBox):
                 save = gtk.MenuItem('+ Fav')
                 unsave = gtk.MenuItem('- Fav')
                 delete = gtk.MenuItem('Borrar')
-                open = gtk.MenuItem('Abrir')
                 search = gtk.MenuItem('Search')
                 direct = gtk.MenuItem('DM')
                 follow = gtk.MenuItem('Follow')
@@ -160,40 +243,7 @@ class TweetList(gtk.VBox):
                 inreplymenu = gtk.MenuItem('En respuesta a')
                 mutemenu = gtk.MenuItem('Silenciar')
                 
-                open_menu = gtk.Menu()
-                
-                total_urls = util.detect_urls(msg)
-                total_users = util.detect_mentions(msg)
-                total_tags = util.detect_hashtags(msg)
-                
-                for u in total_urls:
-                    url = u if len(u) < 30 else u[:30] + '...'
-                    umenu = gtk.MenuItem(url)
-                    umenu.connect('button-release-event', self.__open_url_with_event, u)
-                    open_menu.append(umenu)
-                
-                if len(total_urls) > 0 and len(total_tags) > 0: 
-                    open_menu.append(gtk.SeparatorMenuItem())
-                
-                for h in total_tags:
-                    ht = "#search?q=%23" + h
-                    hashtag = '/'.join(['https://twitter.com', ht])
-                    hmenu = gtk.MenuItem('#'+h)
-                    hmenu.connect('button-release-event', self.__open_url_with_event, hashtag)
-                    open_menu.append(hmenu)
-                    
-                if (len(total_urls) > 0 or len(total_tags) > 0) and len(total_users) > 0: 
-                    open_menu.append(gtk.SeparatorMenuItem())
-                
-                exist = []
-                for m in total_users:
-                    if m == user: continue
-                    if m in exist: continue
-                    exist.append(m)
-                    user_prof = '/'.join(['http://www.twitter.com', m])
-                    mentmenu = gtk.MenuItem('@'+m)
-                    mentmenu.connect('button-release-event', self.__open_url_with_event, user_prof)
-                    open_menu.append(mentmenu)
+                open = self.__build_open_menu(user, msg)
                 
                 if not rtn['own']:
                     menu.append(reply)
@@ -215,8 +265,7 @@ class TweetList(gtk.VBox):
                 else:
                     menu.append(save)
                     
-                if (len(total_urls) > 0) or (len(total_users) > 0) or (len(total_tags) > 0): 
-                    open.set_submenu(open_menu)
+                if open:
                     menu.append(open)
                 
                 if in_reply_to_id:
@@ -262,6 +311,9 @@ class TweetList(gtk.VBox):
     def __delete(self, widget, id):
         self.mainwin.request_destroy_status(id)
     
+    def __delete_direct(self, widget, id):
+        self.mainwin.request_destroy_direct(id)
+        
     def __fav(self, widget, fav, id):
         if fav:
             self.mainwin.request_fav(id)

@@ -29,7 +29,7 @@ class Home(Wrapper):
         
         self.timeline = TweetList(mainwin, 'Timeline')
         self.replies = TweetList(mainwin, 'Menciones')
-        self.direct = TweetList(mainwin, 'Directos', False)
+        self.direct = TweetList(mainwin, 'Directos', 'direct')
         
         self._append_widget(self.timeline, WrapperAlign.left)
         self._append_widget(self.replies, WrapperAlign.middle)

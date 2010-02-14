@@ -39,7 +39,7 @@ DEFAULT = {
     },
     'Services':{
         'shorten-url': 'is.gd',
-        'upload-pic': '',
+        'upload-pic': 'TweetPhoto',
     },
 }
 class ConfigHandler:

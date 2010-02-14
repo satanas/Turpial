@@ -11,8 +11,10 @@ import Queue
 import urllib2
 import logging
 import threading
-
 import traceback
+
+from s60tweetphoto import *
+from twitter_globals import *
 
 def _py26OrGreater():
     import sys
@@ -42,15 +44,21 @@ URL_SERVICES = {
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
 }
 
+PHOTO_SERVICES = [
+    "TweetPhoto",
+]
+
 
 class HTTPServices(threading.Thread):
-    def __init__(self, imgdir='/tmp'):
+    def __init__(self, username='', password='', imgdir='/tmp'):
         threading.Thread.__init__(self)
         self.setDaemon(False)
         self.log = logging.getLogger('Services')
         self.queue = Queue.Queue()
         self.exit = False
         self.imgdir = imgdir
+        self.username = username
+        self.password = password
         self.log.debug('Iniciado')
         
     def update_img_dir(self, imgdir):
@@ -122,6 +130,14 @@ class HTTPServices(threading.Thread):
                     short = None
                 self.log.debug('URL Cortada: %s' % short)
                 callback(short)
+            elif args['cmd'] == 'upload_pic':
+                self.log.debug('Subiendo imagen [%s]: %s' % (args['service'], args['path']))
+                if args['service'] == "TweetPhoto":
+                    print self.username, self.password, TWEETPHOTO_KEY
+                    api = TweetPhotoAPI(self.username, self.password, TWEETPHOTO_KEY)
+                    rtn = api.upload(image=args['path'])
+                    callback(rtn)
+                
         
         self.log.debug('Terminado')
         return

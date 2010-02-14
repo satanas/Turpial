@@ -97,7 +97,10 @@ class Turpial:
         else:
             self.profile = val
             self.config = ConfigHandler(val['screen_name'])
+            
             self.picserv.update_img_dir(self.config.imgdir)
+            #self.picserv.set_credentials(self.api.username, self.api.password)
+            
             auth = self.config.read_section('Auth')
             self.api.start_oauth(auth, self.ui.show_oauth_pin_request, self.__signin_done)
     
@@ -214,8 +217,9 @@ class Turpial:
     def download_user_pic(self, user, pic_url, callback):
         self.picserv.download_pic(user, pic_url, callback)
         
-    def upload_pic(self, path):
-        pass
+    def upload_pic(self, path, callback):
+        service = self.config.read('Services', 'upload-pic')
+        self.httpserv.upload_pic(service, path, callback)
         
     def search_topic(self, query):
         self.ui.start_search()
@@ -258,6 +262,9 @@ class Turpial:
     def update_muted(self, muted_users):
         self.ui.start_updating_timeline()
         timeline = self.api.mute(muted_users, self.ui.update_timeline)
+        
+    def destroy_direct(self, tweet_id):
+        self.api.destroy_direct(tweet_id, self.ui.after_destroy)
         
 if __name__ == '__main__':
     t = Turpial()

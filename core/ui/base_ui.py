@@ -79,9 +79,10 @@ class BaseGui:
             'in_reply_to_id': in_reply_to_id, 'in_reply_to_user': in_reply_to_user,
             'fav': fav, 'retweet_by': retweet_by}
         
-    def after_destroy(self, timeline, favs):
+    def after_destroy(self, timeline, replies, favs, directs):
         self.update_timeline(timeline)
-        self.update_favorites(favs)
+        self.update_favorites(timeline, replies, favs)
+        self.update_directs(directs)
         
     def read_config(self):
         return self.__controller.config.read_all()
@@ -153,8 +154,8 @@ class BaseGui:
     def request_short_url(self, longurl, callback):
         self.__controller.short_url(longurl, callback)
         
-    def request_upload_pic(self, filename):
-        self.__controller.upload_pic(filename)
+    def request_upload_pic(self, filename, callback):
+        self.__controller.upload_pic(filename, callback)
         
     def request_update_status(self, text, in_reply_id):
         self.__controller.update_status(text, in_reply_id)
@@ -173,9 +174,6 @@ class BaseGui:
         
     def request_popup_info(self, tweet_id, user):
         return self.__controller.get_popup_info(tweet_id, user)
-    
-    #def request_in_reply_to(self, tweet_id, user):
-    #    self.__controller.in_reply_to(tweet_id)
         
     def request_conversation(self, tweet_id, user):
         self.__controller.get_conversation(tweet_id)
@@ -185,6 +183,9 @@ class BaseGui:
         
     def request_update_muted(self, muted_users):
         self.__controller.update_muted(muted_users)
+        
+    def request_destroy_direct(self, id):
+        self.__controller.destroy_direct(id)
         
     # ------------------------------------------------------------
     # Timer Methods
@@ -259,7 +260,7 @@ class BaseGui:
     def update_directs(self, directs):
         raise NotImplementedError
         
-    def update_favorites(self, favs):
+    def update_favorites(self, tweets, replies, favs):
         raise NotImplementedError
         
     def update_rate_limits(self, rates):

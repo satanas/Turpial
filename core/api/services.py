@@ -13,8 +13,8 @@ import logging
 import threading
 import traceback
 
+from twitpic import *
 from s60tweetphoto import *
-#from twitpic import *
 from twitter_globals import *
 
 def _py26OrGreater():
@@ -47,6 +47,7 @@ URL_SERVICES = {
 
 PHOTO_SERVICES = [
     "TweetPhoto",
+    "TwitPic",
 ]
 
 

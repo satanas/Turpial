@@ -18,6 +18,8 @@ Feb 14, 2010:
     + Agregado soporte para la reproducción de sonidos en Posix usando gstreamer
     + Corregido error de comparación entre dicts y el nombre de usuario al silenciar
     ---- commit ----
+    + Mejorado el indicador de progreso usando la animación de GNOME :)
+    ---- commit ----
     
 Feb 13, 2010:
     + Corregido error con el muted_list al cerrar la aplicación

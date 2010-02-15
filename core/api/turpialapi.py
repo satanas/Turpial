@@ -5,8 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # Dic 22, 2009
 
-import sys #probando con dict
-
+import sys
 import time
 import oauth
 import Queue
@@ -23,7 +22,6 @@ from oauth_client import TurpialAuthClient
 from twitter_globals import *
 
 def _py26OrGreater():
-    import sys
     return sys.hexversion > 0x20600f0
 
 if _py26OrGreater():

@@ -14,6 +14,7 @@ import threading
 import traceback
 
 from s60tweetphoto import *
+from twitpic import *
 from twitter_globals import *
 
 def _py26OrGreater():
@@ -138,6 +139,10 @@ class HTTPServices(threading.Thread):
                 self.log.debug('Subiendo imagen [%s]: %s' % (args['service'], args['path']))
                 if args['service'] == "TweetPhoto":
                     api = TweetPhotoAPI(self.username, self.password, TWEETPHOTO_KEY)
+                    rtn = api.upload(image=args['path'])
+                    callback(rtn)
+                elif args['service'] == "TwitPic":
+                    api = TwitPicAPI(self.username, self.password)
                     rtn = api.upload(image=args['path'])
                     callback(rtn)
                 else:

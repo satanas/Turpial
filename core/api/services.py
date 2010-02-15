@@ -14,7 +14,7 @@ import threading
 import traceback
 
 from s60tweetphoto import *
-from twitpic import *
+#from twitpic import *
 from twitter_globals import *
 
 def _py26OrGreater():

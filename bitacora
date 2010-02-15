@@ -1,3 +1,9 @@
+Feb 15, 2010:
+    + Mejorado el indicador de progreso usando la animación de GNOME :)
+    ---- commit ----
+    + Agregado módulo de soporte para twitpic al repositorio (no funcional)
+    ---- commit ----
+    
 Feb 14, 2010:
     + Ahora el replybox muestra las conversaciones al hacer clic en 'En respuesta a'
     + Implementada la estructura de directorio propuesta por Milton Mazzari
@@ -17,8 +23,6 @@ Feb 14, 2010:
     + Soporte para reproducción de sonidos en MacOS
     + Agregado soporte para la reproducción de sonidos en Posix usando gstreamer
     + Corregido error de comparación entre dicts y el nombre de usuario al silenciar
-    ---- commit ----
-    + Mejorado el indicador de progreso usando la animación de GNOME :)
     ---- commit ----
     
 Feb 13, 2010:

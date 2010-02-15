@@ -247,14 +247,7 @@ class Turpial:
         if self.config: self.config.save_muted_list(self.api.muted_users)
         
     def get_muted_list(self):
-        if self.api.friendsloaded:
-            friends = []
-            for f in self.api.friends:
-                friends.append(f['screen_name'])
-            
-            return friends, self.api.muted_users
-        else:
-            return None, None
+        return self.api.get_muted_list()
             
     def update_muted(self, muted_users):
         self.ui.start_updating_timeline()

@@ -328,6 +328,16 @@ class TurpialAPI(threading.Thread):
         self.__register({'uri': 'http://twitter.com/statuses/friends', 'args': args,
             'done': callback, 'friends': True}, self.__handle_friends)
         
+    def get_muted_list(self):
+        if self.friendsloaded:
+            friends = []
+            for f in self.friends:
+                friends.append(f['screen_name'])
+            
+            return friends, self.muted_users
+        else:
+            return None, None
+            
     def follow(self, user, callback):
         args = {'screen_name': user}
         self.log.debug('Siguiendo a: %s' % user)
@@ -343,7 +353,8 @@ class TurpialAPI(threading.Thread):
             self.log.debug('Actualizando usuarios silenciados')
             self.muted_users = arg
         else:
-            if arg not in self.friends:
+            friends, _ = self.get_muted_list()
+            if arg not in friends:
                 self.log.debug('No se silencia a %s porque no es tu amigo' % arg)
             elif arg not in self.muted_users: 
                 self.log.debug('Silenciando a %s' % arg)
@@ -459,6 +470,7 @@ class TurpialAPI(threading.Thread):
                 
             if args.has_key('timeline'):
                 if rtn: self.tweets = rtn
+                rtn = self.__handle_muted()
             elif args.has_key('replies'):
                 if rtn: self.replies = rtn
             elif args.has_key('directs'):

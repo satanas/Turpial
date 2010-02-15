@@ -279,11 +279,11 @@ class Main(BaseGui, gtk.Window):
         self.username.set_sensitive(True)
         self.password.set_sensitive(True)
         
-    def show_main(self, config, p):
+    def show_main(self, config, global_cfg, p):
         log.debug('Cargando ventana principal')
         self.mode = 2
         
-        self.update_config(config, True)
+        self.update_config(config, global_cfg,  True)
         
         gtk.gdk.threads_enter()
         self.contentbox.add(self.contenido)
@@ -516,7 +516,7 @@ class Main(BaseGui, gtk.Window):
         self.profile.change_mode(self.workspace)
         self.show_all()
         
-    def update_config(self, config, thread=False):
+    def update_config(self, config, global_cfg=None, thread=False):
         log.debug('Actualizando configuracion')
         self.workspace = config.read('General', 'workspace')
         self.minimize = config.read('General', 'minimize-on-close')
@@ -526,7 +526,7 @@ class Main(BaseGui, gtk.Window):
         self.notify.update_config(config.read_section('Notifications'))
         
         if thread: 
-            self.version = config.read('App', 'version')
+            self.version = global_cfg.read('App', 'version')
             self.imgdir = config.imgdir
             single_size = config.read('General', 'single-win-size').split(',')
             wide_size = config.read('General', 'wide-win-size').split(',')

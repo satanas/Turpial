@@ -184,5 +184,5 @@ class ConfigApp(ConfigBase):
         
         self.load()
         
-        if self.__config['App']['version'] != self.default['App']['version']:
+        if self.read('App', 'version') != self.default['App']['version']:
             self.write('App', 'version', self.default['App']['version'])

@@ -81,7 +81,7 @@ class Turpial:
         else:
             self.profile = val
             self.ui.update_user_profile(val)
-            self.ui.show_main(self.config, val)
+            self.ui.show_main(self.config, self.global_cfg, val)
             
             self._update_timeline()
             self._update_replies()
@@ -120,7 +120,7 @@ class Turpial:
         
         self.api.muted_users = self.config.load_muted_list()
         
-        self.ui.show_main(self.config, self.profile)
+        self.ui.show_main(self.config, self.global_cfg, self.profile)
         self._update_timeline()
         self._update_replies()
         self._update_directs()

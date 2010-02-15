@@ -12,6 +12,8 @@ Feb 14, 2010:
     + Implementada funcionalidad para subir fotos hacia TweetPhoto
     + Iniciada implementación de la configuración 'global' de la aplicación
     ---- commit ----
+    + Corregido error al intentar obtener la versión de la aplicación usando el arreglo interno de ConfigBase
+    ---- commit ----
     
 Feb 13, 2010:
     + Corregido error con el muted_list al cerrar la aplicación

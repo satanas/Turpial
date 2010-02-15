@@ -61,6 +61,10 @@ class HTTPServices(threading.Thread):
         self.password = password
         self.log.debug('Iniciado')
         
+    def set_credentials(self, username, password):
+        self.username = username
+        self.password = password
+        
     def update_img_dir(self, imgdir):
         self.imgdir = imgdir
         
@@ -133,9 +137,10 @@ class HTTPServices(threading.Thread):
             elif args['cmd'] == 'upload_pic':
                 self.log.debug('Subiendo imagen [%s]: %s' % (args['service'], args['path']))
                 if args['service'] == "TweetPhoto":
-                    print self.username, self.password, TWEETPHOTO_KEY
                     api = TweetPhotoAPI(self.username, self.password, TWEETPHOTO_KEY)
                     rtn = api.upload(image=args['path'])
+                    callback(rtn)
+                else:
                     callback(rtn)
                 
         

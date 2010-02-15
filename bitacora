@@ -9,6 +9,9 @@ Feb 14, 2010:
     + Comenzada la redefinición de una nueva API
     + Implementado modelo para subir imágenes
     ---- commit ----
+    + Implementada funcionalidad para subir fotos hacia TweetPhoto
+    + Iniciada implementación de la configuración 'global' de la aplicación
+    ---- commit ----
     
 Feb 13, 2010:
     + Corregido error con el muted_list al cerrar la aplicación

@@ -9,10 +9,22 @@ import os
 import logging
 import ConfigParser
 
-DEFAULT = {
+GLOBAL_CFG = {
     'App':{
-        'version': '0.9.6-a1',
+        'version': '0.9.8-a1',
     },
+    'Login':{
+        'username': '',
+        'password': '',
+    },
+    'Proxy':{
+        'username': '',
+        'password': '',
+        'server': '',
+        'port': '',
+    }
+}
+DEFAULT = {
     'Auth':{
         'oauth-key': '',
         'oauth-secret': '',
@@ -42,32 +54,21 @@ DEFAULT = {
         'upload-pic': 'TweetPhoto',
     },
 }
-class ConfigHandler:
-    def __init__(self, user):
+
+class ConfigBase:
+    def __init__(self, default=DEFAULT):
         self.__config = {}
+        self.default = default
         self.cfg = ConfigParser.ConfigParser()
-        self.dir = os.path.join(os.path.expanduser('~'),'.config', 'turpial', user)
-        self.imgdir = os.path.join(self.dir, 'images')
-        self.filepath = os.path.join(self.dir, 'config')
-        self.mutedpath = os.path.join(self.dir, 'muted')
+        self.filepath = ''
         self.log = logging.getLogger('Config')
-        
-        if not os.path.isdir(self.dir): os.makedirs(self.dir)
-        if not os.path.isdir(self.imgdir): os.makedirs(self.imgdir)
-        if not os.path.isfile(self.filepath): self.create()
-        if not os.path.isfile(self.mutedpath): self.create_muted_list()
-        
-        self.load()
-        
-        if self.__config['App']['version'] != DEFAULT['App']['version']:
-            self.write('App', 'version', DEFAULT['App']['version'])
     
     def create(self):
         self.log.debug('Creando archivo')
         fd = open(self.filepath,'w')
-        for section, v in DEFAULT.iteritems():
+        for section, v in self.default.iteritems():
             self.cfg.add_section(section)
-            for option, value in DEFAULT[section].iteritems():
+            for option, value in self.default[section].iteritems():
                 self.cfg.set(section, option, value)
         self.cfg.write(fd)
         fd.close()
@@ -76,17 +77,16 @@ class ConfigHandler:
         self.log.debug('Cargando archivo')
         self.cfg.read(self.filepath)
         
-        for section, v in DEFAULT.iteritems():
+        for section, v in self.default.iteritems():
             if not self.__config.has_key(section): self.__config[section] = {}
             if not self.cfg.has_section(section): 
-                self.write_section(section, DEFAULT[section])
-            for option, value in DEFAULT[section].iteritems():
+                self.write_section(section, self.default[section])
+            for option, value in self.default[section].iteritems():
                 if self.cfg.has_option(section, option):
                     self.__config[section][option] = self.cfg.get(section, option)
                 else:
                     self.write(section, option, value)
                 
-    
     def save(self, config):
         self.log.debug('Guardando todo')
         fd = open(self.filepath,'w')
@@ -133,7 +133,26 @@ class ConfigHandler:
             return self.__config
         except:
             return None
-            
+
+class ConfigHandler(ConfigBase):
+    def __init__(self, user):
+        ConfigBase.__init__(self)
+        
+        self.dir = os.path.join(os.path.expanduser('~'),'.config', 'turpial', user)
+        self.imgdir = os.path.join(self.dir, 'images')
+        self.filepath = os.path.join(self.dir, 'config')
+        self.mutedpath = os.path.join(self.dir, 'muted')
+        
+        if not os.path.isdir(self.dir): os.makedirs(self.dir)
+        if not os.path.isdir(self.imgdir): os.makedirs(self.imgdir)
+        if not os.path.isfile(self.filepath): self.create()
+        if not os.path.isfile(self.mutedpath): self.create_muted_list()
+        
+        self.load()
+        
+        #if self.__config['App']['version'] != DEFAULT['App']['version']:
+        #    self.write('App', 'version', DEFAULT['App']['version'])
+    
     def create_muted_list(self):
         fd = open(self.mutedpath,'w')
         fd.close()
@@ -152,3 +171,18 @@ class ConfigHandler:
         for user in list:
             fd.write(user+'\n')
         fd.close()
+
+class ConfigApp(ConfigBase):
+    def __init__(self):
+        ConfigBase.__init__(self, default=GLOBAL_CFG)
+        
+        self.dir = os.path.join(os.path.expanduser('~'),'.config', 'turpial')
+        self.filepath = os.path.join(self.dir, 'global')
+        
+        if not os.path.isdir(self.dir): os.makedirs(self.dir)
+        if not os.path.isfile(self.filepath): self.create()
+        
+        self.load()
+        
+        if self.__config['App']['version'] != self.default['App']['version']:
+            self.write('App', 'version', self.default['App']['version'])

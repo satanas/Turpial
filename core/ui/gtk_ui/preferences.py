@@ -35,6 +35,7 @@ class Preferences(gtk.Window):
         self.notif = NotificationsTab(self.current['Notifications'])
         self.services = ServicesTab(self.current['Services'])
         self.muted = MutedTab(self.mainwin)
+        self.proxy = ProxyTab(self.mainwin)
         
         notebook = gtk.Notebook()
         notebook.set_scrollable(True)
@@ -44,6 +45,7 @@ class Preferences(gtk.Window):
         notebook.append_page(self.notif, gtk.Label('Notificaciones'))
         notebook.append_page(self.services, gtk.Label('Servicios'))
         notebook.append_page(self.muted, gtk.Label('Silenciar'))
+        #notebook.append_page(self.proxy, gtk.Label('Proxy'))
         
         vbox = gtk.VBox()
         #vbox.set_spacing(4)
@@ -317,6 +319,7 @@ usar para cortar URLs y subir imágenes a Twitter', current)
         
         pic_lbl = gtk.Label(u'Subir imágenes')
         self.upload = gtk.combo_box_new_text()
+        i = 0
         for key in PHOTO_SERVICES:
             self.upload.append_text(key)
             if key == self.current['upload-pic']: default = i
@@ -412,3 +415,33 @@ de cargar todos los contactos. Intententa de nuevo en unos segundos</span>')
         self.muted = []
         self.model.foreach(self.__process)
         return self.muted
+
+class ProxyTab(PreferencesTab):
+    def __init__(self, current):
+        PreferencesTab.__init__(self, u'Configura el proxy de la red', current)
+        
+        server_lbl = gtk.Label('Servidor/Puerto')
+        
+        self.server = gtk.Entry()
+        self.port = gtk.Entry()
+        self.username = gtk.Entry()
+        self.password = gtk.Entry()
+        
+        serv_box = gtk.HBox(False)
+        serv_box.pack_start(server_lbl, False, False, 3)
+        serv_box.pack_start(self.server, True, True, 3)
+        serv_box.pack_start(self.port, False, False, 3)
+        
+        #pic_box = gtk.HBox(False)
+        #pic_box.pack_start(pic_lbl, False, False, 3)
+        #pic_box.pack_start(self.upload, False, False, 3)
+        
+        self.pack_start(serv_box, False, False, 2)
+        #self.pack_start(pic_box, False, False, 2)
+        self.show_all()
+        
+    def get_config(self):
+        return {
+            'shorten-url': self.shorten.get_active_text(),
+            'upload-pic': self.upload.get_active_text(),
+        }

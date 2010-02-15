@@ -36,6 +36,7 @@ class Turpial:
         (options, _) = parser.parse_args()
         
         self.config = None
+        self.global_cfg = ConfigApp()
         self.profile = None
         
         if options.debug: 
@@ -55,12 +56,10 @@ class Turpial:
             self.ui = cmd_ui.Main(self)
         
         self.httpserv = HTTPServices()
-        self.picserv = HTTPServices()
         self.api = TurpialAPI()
         
         self.log.debug('Iniciando Turpial')
         self.httpserv.start()
-        self.picserv.start()
         self.api.start()
         
         self.ui.show_login()
@@ -75,7 +74,6 @@ class Turpial:
                 if path.endswith('.pyc') or path.endswith('.pyo'): 
                     self.log.debug("Borrado %s" % path)
                     os.remove(path)
-
             
     def __validate_signin(self, val):
         if val.has_key('error'):
@@ -97,9 +95,8 @@ class Turpial:
         else:
             self.profile = val
             self.config = ConfigHandler(val['screen_name'])
-            
-            self.picserv.update_img_dir(self.config.imgdir)
-            #self.picserv.set_credentials(self.api.username, self.api.password)
+            self.httpserv.update_img_dir(self.config.imgdir)
+            self.httpserv.set_credentials(self.api.username, self.api.password)
             
             auth = self.config.read_section('Auth')
             self.api.start_oauth(auth, self.ui.show_oauth_pin_request, self.__signin_done)
@@ -215,7 +212,7 @@ class Turpial:
         self.httpserv.short_url(service, text, callback)
     
     def download_user_pic(self, user, pic_url, callback):
-        self.picserv.download_pic(user, pic_url, callback)
+        self.httpserv.download_pic(user, pic_url, callback)
         
     def upload_pic(self, path, callback):
         service = self.config.read('Services', 'upload-pic')

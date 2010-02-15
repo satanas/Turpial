@@ -47,7 +47,7 @@ ejecución al archivo y correr el script turpial.py (desde la carpeta de
 Turpial como usuario regular):
 
 $ chmod +x turpial.py
-$ ./turpial.py [OPCIONES] 
+$ python turpial.py [OPCIONES] 
 
 Por defecto, Turpial carga la interfaz gtk pero se pueden especificar los 
 siguientes parámetros opcionales:

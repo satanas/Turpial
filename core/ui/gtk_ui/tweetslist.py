@@ -388,20 +388,25 @@ class TweetList(gtk.VBox):
         
     def update_tweets(self, arr_tweets):
         if arr_tweets is None:
-            self.waiting.stop(error=True)
-            self.lblerror.set_markup(u"<span size='small'>Oops... Algo salió mal. Actualizaré de nuevo pronto</span>")
+            self.stop_update(True, 'Oops... Algo salió mal. Actualizaré de nuevo pronto')
             return 0
         elif len(arr_tweets) == 0:
-            self.waiting.stop(error=True)
-            self.lblerror.set_markup(u"<span size='small'>No hay tweets</span>")
+            self.stop_update(True, 'No hay tweets')
             return 0
         else:
             count = util.count_new_tweets(arr_tweets, self.last)
-            self.waiting.stop()
-            self.lblerror.set_markup("")
+            self.stop_update()
             self.clear()
             for tweet in arr_tweets:
                 self.add_tweet(tweet)
             self.last = arr_tweets
             
             return count
+            
+    def start_update(self):
+        self.waiting.start()
+        self.lblerror.set_markup("")
+        
+    def stop_update(self, error=False, msg=''):
+        self.waiting.stop(error)
+        self.lblerror.set_markup(u"<span size='small'>%s</span>" % msg)

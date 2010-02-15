@@ -5,6 +5,11 @@ Feb 15, 2010:
     ---- commit ----
     + Implementado soporte para subir imágenes a twitpic usando el módulo poster
     ---- commit ----
+    + Corregido espacio sobrante en la parte baja de la ventana replybox
+    + Agregados métodos start_update y stop_update al tweetlist
+    + Corregido el espacio adicional entre el contentbox y el dock
+    + Ahora los favoritos están en la parte media y el perfil a la izquierda (profile)
+    ---- commit ----
     
 Feb 14, 2010:
     + Ahora el replybox muestra las conversaciones al hacer clic en 'En respuesta a'

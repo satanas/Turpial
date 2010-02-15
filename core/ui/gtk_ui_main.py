@@ -45,8 +45,8 @@ class Profile(Wrapper):
         self.user_form = UserForm(mainwin, 'Perfil')
         self.topics = SearchTweets(mainwin, u'Búsquedas')
         
-        self._append_widget(self.favorites, WrapperAlign.left)
-        self._append_widget(self.user_form, WrapperAlign.middle)
+        self._append_widget(self.user_form, WrapperAlign.left)
+        self._append_widget(self.favorites, WrapperAlign.middle)
         self._append_widget(self.topics, WrapperAlign.right)
         
         self.change_mode(mode)
@@ -292,7 +292,7 @@ class Main(BaseGui, gtk.Window):
         self.statusbar.push(0, 'Espera unos segundos mientras cargo...')
         if (self.vbox is not None): self.remove(self.vbox)
         
-        self.vbox = gtk.VBox(False, 5)
+        self.vbox = gtk.VBox(False, 0)
         self.vbox.pack_start(self.contentbox, True, True, 0)
         self.vbox.pack_start(self.dock, False, False, 0)
         self.vbox.pack_start(self.statusbar, False, False, 0)
@@ -352,13 +352,13 @@ class Main(BaseGui, gtk.Window):
         
         
     def start_updating_timeline(self):
-        self.home.timeline.waiting.start()
+        self.home.timeline.start_update()
         
     def start_updating_replies(self):
-        self.home.replies.waiting.start()
+        self.home.replies.start_update()
         
     def start_updating_directs(self):
-        self.home.direct.waiting.start()
+        self.home.direct.start_update()
         
     def start_search(self):
         self.profile.topics.topics.waiting.start()

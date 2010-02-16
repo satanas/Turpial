@@ -1,6 +1,9 @@
 Feb 16, 2010:
     + Implementada opción para recordar los datos de inicio de sesión
     ---- commit ----
+    + Ahora al desactivar la opción de recordar se borra la preferencia guardada
+    + Eliminadas las dependencias de gtk2_ui_main
+    ---- commit ----
     
 Feb 15, 2010:
     + Mejorado el indicador de progreso usando la animación de GNOME :)

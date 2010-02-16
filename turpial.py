@@ -52,8 +52,8 @@ class Turpial:
             self.signout()
             
         self.interface = options.interface
-        if options.interface == 'gtk2':
-            self.ui = gtk2_ui_main.Main(self)
+        #if options.interface == 'gtk2':
+        #    self.ui = gtk2_ui_main.Main(self)
         if options.interface == 'gtk+':
             self.ui = gtk_ui_main.Main(self, extend=True)
         elif options.interface == 'gtk':
@@ -104,6 +104,9 @@ class Turpial:
             if self.remember:
                 self.global_cfg.write('Login', 'username', self.api.username)
                 self.global_cfg.write('Login', 'password', base64.b64encode(self.api.password))
+            else:
+                self.global_cfg.write('Login', 'username', '')
+                self.global_cfg.write('Login', 'password', '')
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.api.username, self.api.password)
             

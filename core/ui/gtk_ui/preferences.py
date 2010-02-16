@@ -27,8 +27,8 @@ class Preferences(gtk.Window):
         box_button = gtk.HButtonBox()
         box_button.set_spacing(6)
         box_button.set_layout(gtk.BUTTONBOX_END)
-        box_button.pack_start(btn_close)
         box_button.pack_start(btn_save)
+        box_button.pack_start(btn_close)
         
         # Tabs
         self.general = GeneralTab(self.current['General'])
@@ -180,15 +180,6 @@ perfil de usuario para resaltar menciones, hashtags y URLs')
 sistema en lugar de cerrarlo')
         except:
             pass
-
-        self.remember = gtk.CheckButton(u'Recordar info de sesión')
-        self.remember.set_sensitive(False)
-        try:
-            self.remember.set_has_tooltip(True)
-            self.remember.set_tooltip_text('Recuerda la información de inicio de sesión')
-        except:
-            pass
-        
         
         self.pack_start(self.home, False, False, 5)
         self.pack_start(self.replies, False, False, 5)
@@ -198,7 +189,6 @@ sistema en lugar de cerrarlo')
         self.pack_start(self.workspace, False, False, 2)
         self.pack_start(self.profile_colors, False, False, 2)
         self.pack_start(self.minimize, False, False, 2)
-        self.pack_start(self.remember, False, False, 2)
         self.show_all()
         self.update_api_calls()
         

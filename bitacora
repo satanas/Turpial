@@ -1,3 +1,7 @@
+Feb 16, 2010:
+    + Implementada opción para recordar los datos de inicio de sesión
+    ---- commit ----
+    
 Feb 15, 2010:
     + Mejorado el indicador de progreso usando la animación de GNOME :)
     ---- commit ----
@@ -10,6 +14,8 @@ Feb 15, 2010:
     + Corregido el espacio adicional entre el contentbox y el dock
     + Ahora los favoritos están en la parte media y el perfil a la izquierda (profile)
     ---- commit ----
+    + Cambiado el orden de los botones en la ventana de preferencias
+    
     
 Feb 14, 2010:
     + Ahora el replybox muestra las conversaciones al hacer clic en 'En respuesta a'

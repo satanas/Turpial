@@ -7,6 +7,7 @@
 # Nov 8, 2009
 
 import os
+import base64
 import urllib
 import logging
 
@@ -38,6 +39,7 @@ class Turpial:
         self.config = None
         self.global_cfg = ConfigApp()
         self.profile = None
+        self.remember = False
         
         if options.debug: 
             logging.basicConfig(level=logging.DEBUG)
@@ -50,7 +52,11 @@ class Turpial:
             self.signout()
             
         self.interface = options.interface
-        if options.interface == 'gtk':
+        if options.interface == 'gtk2':
+            self.ui = gtk2_ui_main.Main(self)
+        if options.interface == 'gtk+':
+            self.ui = gtk_ui_main.Main(self, extend=True)
+        elif options.interface == 'gtk':
             self.ui = gtk_ui_main.Main(self)
         else:
             self.ui = cmd_ui.Main(self)
@@ -62,7 +68,7 @@ class Turpial:
         self.httpserv.start()
         self.api.start()
         
-        self.ui.show_login()
+        self.ui.show_login(self.global_cfg)
         self.ui.main_loop()
         
     def __clean(self):
@@ -95,6 +101,9 @@ class Turpial:
         else:
             self.profile = val
             self.config = ConfigHandler(val['screen_name'])
+            if self.remember:
+                self.global_cfg.write('Login', 'username', self.api.username)
+                self.global_cfg.write('Login', 'password', base64.b64encode(self.api.password))
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.api.username, self.api.password)
             
@@ -156,7 +165,8 @@ class Turpial:
         self.config = ConfigHandler(username)
         self.api.auth(username, password, self.__validate_signin)
         
-    def signin_oauth(self, username, password):
+    def signin_oauth(self, username, password, remember):
+        self.remember = remember
         self.api.auth(username, password, self.__validate_credentials)
         
     def auth_token(self, pin):

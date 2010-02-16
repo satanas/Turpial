@@ -8,6 +8,7 @@
 import gtk
 import util
 import pango
+import base64
 import logging
 import gobject
 import webbrowser
@@ -55,10 +56,11 @@ class Profile(Wrapper):
         self.user_form.update(user_profile)
         
 class Main(BaseGui, gtk.Window):
-    def __init__(self, controller):
+    def __init__(self, controller, extend=False):
         BaseGui.__init__(self, controller)
         gtk.Window.__init__(self)
         
+        self.extend = extend
         self.set_title('Turpial')
         self.set_size_request(280, 350)
         self.set_default_size(320, 480)
@@ -154,6 +156,14 @@ class Main(BaseGui, gtk.Window):
         self.save_config({'General': {'single-win-size': single_value, 
             'wide-win-size': wide_value}}, update=False)
             
+    def __toogle_remember(self, widget):
+        if self.remember.get_active():
+            self.username.set_sensitive(False)
+            self.password.set_sensitive(False)
+        else:
+            self.username.set_sensitive(True)
+            self.password.set_sensitive(True)
+            
     def resize_avatar(self, pic):
         ext = pic[-3:].lower()
         fullname = os.path.join(self.imgdir, pic)
@@ -199,7 +209,7 @@ class Main(BaseGui, gtk.Window):
         gtk.main()
         gtk.gdk.threads_leave()
         
-    def show_login(self):
+    def show_login(self, global_config):
 
         self.mode = 1
         if self.vbox is not None: self.remove(self.vbox)
@@ -222,6 +232,8 @@ class Main(BaseGui, gtk.Window):
         self.password = gtk.Entry()
         self.password.set_visibility(False)
         
+        self.remember = gtk.CheckButton('Recordar mis datos')
+        
         self.btn_signup = gtk.Button('Autenticacion Vieja')
         self.btn_oauth = gtk.Button('Conectar')
         
@@ -238,10 +250,9 @@ class Main(BaseGui, gtk.Window):
         table.attach(self.message,0,1,1,2,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 3)
         table.attach(hbox,0,1,2,3,gtk.EXPAND|gtk.FILL,gtk.FILL,50,0)
         table.attach(self.username,0,1,3,4,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
-        #table.attach(lbl_pass,0,1,4,5,gtk.EXPAND,gtk.FILL, 0, 5)
         table.attach(self.password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
         table.attach(self.btn_oauth,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 10)
-        #table.attach(self.btn_signup,0,1,8,9,gtk.EXPAND,gtk.FILL,0, 10)
+        table.attach(self.remember,0,1,8,9,gtk.EXPAND,gtk.FILL,0, 10)
         
         self.vbox = gtk.VBox(False, 5)
         self.vbox.pack_start(table, False, False, 2)
@@ -250,8 +261,16 @@ class Main(BaseGui, gtk.Window):
         self.show_all()
         
         self.btn_signup.connect('clicked', self.signin, self.username, self.password)
-        self.btn_oauth.connect('clicked', self.oauth, self.username, self.password)
-        self.password.connect('activate', self.oauth, self.username, self.password)
+        self.btn_oauth.connect('clicked', self.oauth)
+        self.password.connect('activate', self.oauth)
+        self.remember.connect("toggled",self.__toogle_remember)
+        
+        username = global_config.read('Login', 'username')
+        password = global_config.read('Login', 'password')
+        if username != '' and password != '':
+            self.username.set_text(username)
+            self.password.set_text(base64.b64decode(password))
+            self.remember.set_active(True)
         
     def signin(self, widget, username, password):
         self.message.deactivate()
@@ -262,14 +281,14 @@ class Main(BaseGui, gtk.Window):
         self.password.set_sensitive(False)
         self.request_signin(username.get_text(), password.get_text())
         
-    def oauth(self, widget, username, password):
+    def oauth(self, widget):
         self.message.deactivate()
         self.waiting.start()
         self.btn_signup.set_sensitive(False)
         self.btn_oauth.set_sensitive(False)
         self.username.set_sensitive(False)
         self.password.set_sensitive(False)
-        self.request_oauth(username.get_text(), password.get_text())
+        self.request_oauth(self.username.get_text(), self.password.get_text(), self.remember.get_active())
         
     def cancel_login(self, error):
         self.message.set_error(error)

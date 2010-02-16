@@ -93,8 +93,8 @@ class BaseGui:
     def request_signin(self, username, password):
         self.__controller.signin(username, password)
         
-    def request_oauth(self, username, password):
-        self.__controller.signin_oauth(username, password)
+    def request_oauth(self, username, password, remember):
+        self.__controller.signin_oauth(username, password, remember)
         
     def request_auth_token(self, pin):
         self.__controller.auth_token(pin)
@@ -224,7 +224,7 @@ class BaseGui:
     def main_loop(self):
         raise NotImplementedError
         
-    def show_login(self):
+    def show_login(self, global_config):
         raise NotImplementedError
         
     def show_main(self, config, profile):

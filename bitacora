@@ -4,6 +4,9 @@ Feb 16, 2010:
     + Ahora al desactivar la opción de recordar se borra la preferencia guardada
     + Eliminadas las dependencias de gtk2_ui_main
     ---- commit ----
+    + Corregido bug con el valor rtn cuando no hay un servicio de foto seleccionado
+    + Agregado willicab a la lista de tester oficiales :)
+    ---- commit ----
     
 Feb 15, 2010:
     + Mejorado el indicador de progreso usando la animación de GNOME :)

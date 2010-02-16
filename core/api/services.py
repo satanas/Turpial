@@ -147,7 +147,7 @@ class HTTPServices(threading.Thread):
                     rtn = api.upload(image=args['path'])
                     callback(rtn)
                 else:
-                    callback(rtn)
+                    callback(None)
                 
         
         self.log.debug('Terminado')

@@ -8,6 +8,7 @@
 import os
 import time
 import Queue
+import urllib
 import urllib2
 import logging
 import threading
@@ -39,7 +40,7 @@ URL_SERVICES = {
     "tinyurl.com": ShortenObject("http://tinyurl.com/api-create.php?url=%s"),
     "tr.im": ShortenObject("http://tr.im/api/trim_simple?url=%s"),
     "bit.ly": ShortenObject("http://api.bit.ly/shorten?version=2.0.1&login=turpial&apiKey=R_5a84eae6dd4158a0636358c4f9efdecc&longUrl=%s",
-        True, False, 'shortUrl'),
+        True, True, 'shortUrl'),
     "su.pr": ShortenObject("http://su.pr/api/simpleshorten?url=%s"),
     "u.nu": ShortenObject("http://u.nu/unu-api-simple?url=%s"),
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
@@ -117,9 +118,11 @@ class HTTPServices(threading.Thread):
             elif args['cmd'] == 'short_url':
                 self.log.debug('Cortando URL: %s' % args['url'])
                 
+                key_url = args['url']
                 service = URL_SERVICES[args['service']]
                 if service.url_quote:
                     longurl = urllib2.quote(args['url'])
+                    longurl = longurl.replace('/', '%2F')
                 else:
                     longurl = args['url']
                 
@@ -128,7 +131,8 @@ class HTTPServices(threading.Thread):
                     self.log.debug('Request: %s' % req)
                     if service.json:
                         resp = json.loads(urllib2.urlopen(req).read())
-                        short = resp['results'][longurl][service.response_key]
+                        print resp
+                        short = resp['results'][key_url][service.response_key]
                     else:
                         short = urllib2.urlopen(req).read()
                 except Exception, e:

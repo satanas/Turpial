@@ -288,6 +288,7 @@ class Main(BaseGui, gtk.Window):
         self.btn_oauth.set_sensitive(False)
         self.username.set_sensitive(False)
         self.password.set_sensitive(False)
+        self.remember.set_sensitive(False)
         self.request_oauth(self.username.get_text(), self.password.get_text(), self.remember.get_active())
         
     def cancel_login(self, error):
@@ -295,8 +296,10 @@ class Main(BaseGui, gtk.Window):
         self.waiting.stop(error=True)
         self.btn_signup.set_sensitive(True)
         self.btn_oauth.set_sensitive(True)
-        self.username.set_sensitive(True)
-        self.password.set_sensitive(True)
+        self.remember.set_sensitive(True)
+        if not self.remember.get_active():
+            self.username.set_sensitive(True)
+            self.password.set_sensitive(True)
         
     def show_main(self, config, global_cfg, p):
         log.debug('Cargando ventana principal')

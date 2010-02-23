@@ -1,3 +1,7 @@
+Feb 22, 2010:
+    + Corregido bug con la opción de recordar datos al obtener un error de login
+    ---- commit ----
+    
 Feb 17, 2010:
     + Corregido bug con el cortado de urls que contienen caracteres 'extraños' (issue 84)
     ---- commit ----

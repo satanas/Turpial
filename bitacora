@@ -11,6 +11,8 @@ Feb 24, 2010:
     + Eliminada la dependencia de gobject del módulo 'util'
     + Movidos load_image y load_avatar al main de gtk
     ---- commit ----
+    + Corregido error con la redirección de hashtags a la página de twitter en el tweetlist
+    ---- commit ----
     
 Feb 23, 2010:
     + Agregado soporte para caracteres acentuados y eñes en los hashtags

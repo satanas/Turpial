@@ -135,8 +135,8 @@ class TweetList(gtk.VBox):
             open_menu.append(gtk.SeparatorMenuItem())
         
         for h in total_tags:
-            ht = "#search?q=%23" + h
-            hashtag = '/'.join(['https://twitter.com', ht])
+            ht = "#search?q=%23" + h[1:]
+            hashtag = '/'.join(['http://twitter.com', ht])
             hmenu = gtk.MenuItem(h)
             hmenu.connect('button-release-event', self.__open_url_with_event, hashtag)
             open_menu.append(hmenu)

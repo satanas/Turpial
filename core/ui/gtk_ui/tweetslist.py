@@ -92,8 +92,8 @@ class TweetList(gtk.VBox):
         if len(hashtags) == 0: return text
         
         for h in hashtags:
-            torep = '#%s' % h
-            cad = '<span foreground="#%s">#%s</span>' % (self.mainwin.link_color, h)
+            torep = '%s' % h
+            cad = '<span foreground="#%s">%s</span>' % (self.mainwin.link_color, h)
             text = text.replace(torep, cad)
         return text
         
@@ -137,7 +137,7 @@ class TweetList(gtk.VBox):
         for h in total_tags:
             ht = "#search?q=%23" + h
             hashtag = '/'.join(['https://twitter.com', ht])
-            hmenu = gtk.MenuItem('#'+h)
+            hmenu = gtk.MenuItem(h)
             hmenu.connect('button-release-event', self.__open_url_with_event, hashtag)
             open_menu.append(hmenu)
             
@@ -377,7 +377,7 @@ class TweetList(gtk.VBox):
         
     def update_user_pic(self, user, pic):
         # Evaluar si es más eficiente esto o cargar toda la lista cada vez
-        pix = util.load_avatar(self.mainwin.imgdir, pic)
+        pix = self.mainwin.load_avatar(self.mainwin.imgdir, pic)
         iter = self.model.get_iter_first()
         while iter:
             u = self.model.get_value(iter, 1)

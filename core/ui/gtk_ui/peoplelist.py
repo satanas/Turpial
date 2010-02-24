@@ -8,8 +8,6 @@
 import gtk
 import pango
 
-from core.ui import util as util
-
 class PeopleList(gtk.ScrolledWindow):
     def __init__(self, mainwin, label=''):
         gtk.ScrolledWindow.__init__(self)
@@ -60,7 +58,7 @@ class PeopleList(gtk.ScrolledWindow):
             
     def update_user_pic(self, user, pic):
         # Evaluar si es más eficiente esto o cargar toda la lista cada vez
-        pix = util.load_avatar(pic)
+        pix = self.mainwin.load_avatar(pic)
         iter = self.model.get_iter_first()
         while iter:
             u = self.model.get_value(iter, 1)
@@ -72,7 +70,7 @@ class PeopleList(gtk.ScrolledWindow):
     def add_profile(self, p):
         username = p['screen_name']
         pix = self.mainwin.get_user_avatar(username, p['profile_image_url'])
-        profile = util.get_pango_profile(p)
+        profile = ''
         
         self.model.append([pix, profile, username, p['name'], p['url'], 
             p['location'], p['description'], '', '', ''])

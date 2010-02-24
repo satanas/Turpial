@@ -5,6 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 08, 2009
 
+import os
 import gtk
 import pango
 import base64
@@ -69,7 +70,7 @@ class Main(BaseGui, gtk.Window):
         self.set_default_size(320, 480)
         self.current_width = 320
         self.current_height = 480
-        self.set_icon(util.load_image('turpial_icon.png', True))
+        self.set_icon(self.load_image('turpial_icon.png', True))
         self.set_position(gtk.WIN_POS_CENTER)
         self.connect('delete-event', self.__close)
         self.connect('size-request', self.size_request)
@@ -109,7 +110,7 @@ class Main(BaseGui, gtk.Window):
             self.log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
             return
         self.tray = gtk.StatusIcon()
-        self.tray.set_from_pixbuf(util.load_image('turpial_icon.png', True))
+        self.tray.set_from_pixbuf(self.load_image('turpial_icon.png', True))
         self.tray.set_tooltip('Turpial')
         self.tray.connect("activate", self.__on_trayicon_click)
         self.tray.connect("popup-menu", self.__show_tray_menu)
@@ -167,6 +168,25 @@ class Main(BaseGui, gtk.Window):
             self.username.set_sensitive(True)
             self.password.set_sensitive(True)
             
+    def load_image(self, path, pixbuf=False):
+        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            '..', '..', '..', 'data', 'pixmaps', path))
+        pix = gtk.gdk.pixbuf_new_from_file(img_path)
+        if pixbuf: return pix
+        avatar = gtk.Image()
+        avatar.set_from_pixbuf(pix)
+        del pix
+        return avatar
+        
+    def load_avatar(self, dir, path, image=False):
+        img_path = os.path.join(dir, path)
+        pix = gtk.gdk.pixbuf_new_from_file(img_path)
+        if not image: return pix
+        avatar = gtk.Image()
+        avatar.set_from_pixbuf(pix)
+        del pix
+        return avatar
+    
     def resize_avatar(self, pic):
         ext = pic[-3:].lower()
         fullname = os.path.join(self.imgdir, pic)
@@ -196,9 +216,9 @@ class Main(BaseGui, gtk.Window):
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)
         if pix:
-            return util.load_avatar(self.imgdir, pix)
+            return self.load_avatar(self.imgdir, pix)
         else:
-            return util.load_image('unknown.png', pixbuf=True)
+            return self.load_image('unknown.png', pixbuf=True)
     
     def quit(self, widget):
         self.__save_size()
@@ -217,7 +237,7 @@ class Main(BaseGui, gtk.Window):
         self.mode = 1
         if self.vbox is not None: self.remove(self.vbox)
         
-        avatar = util.load_image('logo2.png')
+        avatar = self.load_image('logo2.png')
         self.message = LoginLabel(self)
         
         lbl_user = gtk.Label()
@@ -401,7 +421,7 @@ class Main(BaseGui, gtk.Window):
                     break
             
             p = self.parse_tweet(tweet)
-            icon = self.get_user_avatar(p['username'], p['avatar'])
+            icon = self.avatar_name_from_url(p['avatar'])[0]
             text = "<b>@%s</b> %s" % (p['username'], p['text'])
             self.notify.new_tweets(count, text, icon)
             
@@ -415,7 +435,7 @@ class Main(BaseGui, gtk.Window):
         
         if count > 0 and self.updating['replies']:
             p = self.parse_tweet(tweets[0])
-            icon = self.get_user_avatar(p['username'], p['avatar'])
+            icon = self.avatar_name_from_url(p['avatar'])[0]
             text = "<b>@%s</b> %s" % (p['username'], p['text'])
             self.notify.new_replies(count, text, icon)
         
@@ -429,7 +449,7 @@ class Main(BaseGui, gtk.Window):
         
         if count > 0 and self.updating['directs']:
             p = self.parse_tweet(recv[0])
-            icon = self.get_user_avatar(p['username'], p['avatar'])
+            icon = self.avatar_name_from_url(p['avatar'])[0]
             text = "<b>@%s</b> %s" % (p['username'], p['text'])
             self.notify.new_directs(count, text, icon)
             

@@ -8,7 +8,7 @@
 import gtk
 
 from core.ui.gtk_ui.about import *
-from core.ui import util as util
+#from core.ui import util as util
 
 class Dock(gtk.Alignment):
     def __init__(self, parent, mode='single'):
@@ -60,9 +60,9 @@ class Dock(gtk.Alignment):
         self.mainwin.show_update_box()
         
     def change_mode(self, mode):
-        self.btn_home.set_image(util.load_image('home-single.png'))
-        self.btn_update.set_image(util.load_image('button-update-single.png'))
-        self.btn_profile.set_image(util.load_image('profile-single.png'))
-        self.btn_settings.set_image(util.load_image('settings-single.png'))
-        self.btn_about.set_image(util.load_image('about-single.png'))
+        self.btn_home.set_image(self.mainwin.load_image('home-single.png'))
+        self.btn_update.set_image(self.mainwin.load_image('button-update-single.png'))
+        self.btn_profile.set_image(self.mainwin.load_image('profile-single.png'))
+        self.btn_settings.set_image(self.mainwin.load_image('settings-single.png'))
+        self.btn_about.set_image(self.mainwin.load_image('about-single.png'))
         return

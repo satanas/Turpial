@@ -7,8 +7,6 @@
 
 import gtk
 
-from core.ui import util as util
-
 class PeopleIcons(gtk.ScrolledWindow):
     def __init__(self, mainwin, label='', named=False):
         gtk.ScrolledWindow.__init__(self)
@@ -123,46 +121,19 @@ class PeopleIcons(gtk.ScrolledWindow):
         username = p['screen_name']
         filename = self.mainwin.request_user_avatar(username, pic)
         if filename is None:
-            pix = util.load_image('unknown.png', True)
+            pix = self.mainwin.load_image('unknown.png', True)
         else:
-            pix = util.load_avatar(filename)
+            pix = self.mainwin.load_avatar(filename)
         
-        profile = util.get_pango_profile(p)
+        profile = '' #util.get_pango_profile(p)
         
-        '''
-        # Escape pango markup
-        for key in ['url', 'location', 'description', 'name', 'screen_name']:
-            if not p.has_key(key) or p[key] is None: continue
-            p[key] = gobject.markup_escape_text(p[key])
-            
-        profile = '<b>@%s</b> %s %s %s\n' % (p['screen_name'], p['name'], 
-                following, protected)
-        
-        profile += '<span size="9000">'
-        if not p['url'] is None: 
-            profile += "<b>URL:</b> %s\n" % p['url']
-            
-        if not p['location'] is None:
-            profile += "<b>Location:</b> %s\n" % p['location']
-            
-        if not p['description'] is None:
-            profile += "<b>Bio:</b> %s\n" % p['description']
-        
-        if p.has_key('status'): 
-            profile += '<span size="2000">\n</span>'
-            status = '<span foreground="#999"><b>Last:</b> %s</span>\n' % (
-                gobject.markup_escape_text(p['status']['text']))
-            profile += status
-        
-        profile += '</span>'
-        '''
         pangoname = '<span size="9000">@%s</span>' % p['screen_name']
         self.model.append([pix, username, profile, pangoname, follow])
         del pix
         
     def update_user_pic(self, user, pic):
         # Evaluar si es más eficiente esto o cargar toda la lista cada vez
-        pix = util.load_avatar(pic)
+        pix = self.mainwin.load_avatar(pic)
         iter = self.model.get_iter_first()
         while iter:
             u = self.model.get_value(iter, 1)

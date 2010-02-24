@@ -5,6 +5,12 @@ Feb 24, 2010:
     ---- commit ----
     + Comentado el import del tweetlist con webkit
     ---- commit ----
+    + Corregida la detección de hastags usando la nueva expresión regular (issue 86)
+    + Corregido menú contextual en la detección de hashtags
+    + Modificado sistema de notificaciones para eliminar la dependencia con gtk
+    + Eliminada la dependencia de gobject del módulo 'util'
+    + Movidos load_image y load_avatar al main de gtk
+    ---- commit ----
     
 Feb 23, 2010:
     + Agregado soporte para caracteres acentuados y eñes en los hashtags

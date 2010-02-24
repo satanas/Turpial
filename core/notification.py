@@ -7,7 +7,6 @@
 
 import logging
 
-from core.ui import util
 from core.sound import *
 
 log = logging.getLogger('Notify')
@@ -38,9 +37,10 @@ class Notification:
         if self.active and self.integrated:
             if pynotify.init("Turpial"):
                 if not icon:
-                    icon = util.load_image('turpial_icon_48.png', True)
-                n = pynotify.Notification(title, message)
-                n.set_icon_from_pixbuf(icon)
+                    icon = os.path.realpath(os.path.join(os.path.dirname(__file__),
+                        '..', 'data', 'pixmaps', 'turpial_icon_48.png'))
+                icon = "file://%s" % icon
+                n = pynotify.Notification(title, message, icon)
                 n.show()
                 
     def new_tweets(self, count, tweet, icon):

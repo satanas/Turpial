@@ -7,8 +7,6 @@
 
 import gtk
 
-from core.ui import util as util
-
 class UserForm(gtk.VBox):
     def __init__(self, mainwin, label='', profile=None):
         gtk.VBox.__init__(self, False)
@@ -120,7 +118,7 @@ class UserForm(gtk.VBox):
         
     def update_user_pic(self, user, pic):
         if self.user != user: return
-        pix = util.load_avatar(self.mainwin.imgdir, pic, True)
+        pix = self.mainwin.load_avatar(self.mainwin.imgdir, pic, True)
         self.user_pic.set_image(pix)
         
     def save_user_profile(self, widget):

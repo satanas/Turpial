@@ -8,8 +8,6 @@
 import gtk
 
 from core.ui.gtk_ui.tweetslist import *
-from core.ui import util as util
-
 
 class SearchTweets(gtk.VBox):
     def __init__(self, mainwin, label=''):
@@ -18,7 +16,7 @@ class SearchTweets(gtk.VBox):
         self.mainwin = mainwin
         self.input_topics = gtk.Entry()
         self.clearbtn = gtk.Button()
-        self.clearbtn.set_image(util.load_image('clear.png'))
+        self.clearbtn.set_image(self.mainwin.load_image('clear.png'))
         self.clearbtn.set_tooltip_text('Limpiar todos los resultados')
         try:
             #self.input_topics.set_property("primary-icon-stock", gtk.STOCK_FIND)

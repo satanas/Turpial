@@ -8,7 +8,6 @@
 import gtk
 
 from core.ui.gtk_ui.waiting import*
-from core.ui import util as util
 
 class UpdateBox(gtk.Window):
     def __init__(self, parent):
@@ -58,7 +57,7 @@ class UpdateBox(gtk.Window):
         self.btn_pic.set_tooltip_text('Subir Imagen')
         #self.btn_pic.set_sensitive(True)
         #self.btn_pic.set_relief(gtk.RELIEF_NONE)
-        #self.btn_pic.set_image(util.load_image('photos.png'))
+        #self.btn_pic.set_image(self.mainwin.load_image('photos.png'))
         
         tools = gtk.HBox(False)
         tools.pack_start(self.url, True, True, 3)
@@ -72,7 +71,7 @@ class UpdateBox(gtk.Window):
         self.toolbox.add(tools)
         
         self.btn_clr = gtk.Button()
-        self.btn_clr.set_image(util.load_image('clear.png'))
+        self.btn_clr.set_image(self.mainwin.load_image('clear.png'))
         self.btn_clr.set_tooltip_text('Borrar todo')
         self.btn_clr.set_relief(gtk.RELIEF_NONE)
         self.btn_upd = gtk.Button('Tweet')

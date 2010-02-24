@@ -9,8 +9,6 @@ import gtk
 import cairo
 import gobject
 
-from core.ui import util as util
-
 class CairoWaiting(gtk.DrawingArea):
     def __init__(self, parent):
         gtk.DrawingArea.__init__(self)
@@ -57,7 +55,7 @@ class CairoWaiting(gtk.DrawingArea):
         else:
             #img = 'wait2-%i.png' % (self.count + 1)
             img = 'wait%i.png' % (self.count + 1)
-        pix = util.load_image(img, True)
+        pix = self.par.load_image(img, True)
         cr.set_source_pixbuf(pix, 0, 0)
         cr.paint()
         del pix

@@ -5,42 +5,18 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 13, 2009
 
-import os
 import re
-import gtk
 import time
-import gobject
 import datetime
 import xml.sax.saxutils as saxutils
 
 AVATAR_SIZE = 48
 
-HASHTAG_PATTERN = re.compile('\#[\wáéíóúÁÉÍÓÚñÑ]+')
+HASHTAG_PATTERN = re.compile('\#[\wáéíóúÁÉÍÓÚñÑçÇ]+')
 MENTION_PATTERN = re.compile('\@(\w+)[\W\S]')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
 URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_().]*[-A-Za-z0-9+&@#/%?=~_()])')
 
-# :FIX: Esto debería estar en el main de GTK
-def load_image(path, pixbuf=False):
-    img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-        '..', '..', 'data', 'pixmaps', path))
-    pix = gtk.gdk.pixbuf_new_from_file(img_path)
-    if pixbuf: return pix
-    avatar = gtk.Image()
-    avatar.set_from_pixbuf(pix)
-    del pix
-    return avatar
-
-# :FIX: Esto debería estar en el main de GTK
-def load_avatar(dir, path, image=False):
-    img_path = os.path.join(dir, path)
-    pix = gtk.gdk.pixbuf_new_from_file(img_path)
-    if not image: return pix
-    avatar = gtk.Image()
-    avatar.set_from_pixbuf(pix)
-    del pix
-    return avatar
-    
 def detect_client(tweet):
     if not tweet.has_key('source'): return None
     text = saxutils.unescape(tweet['source'])
@@ -102,44 +78,7 @@ def get_timestamp(tweet):
     t = dt.timetuple()
     
     return time.strftime('%b %d, %I:%M %p', t)
-    
-# :FIX: Esto debería estar en el main de GTK
-def get_pango_profile(p):
-    protected = ''
-    following = ''
-    if p['protected']: 
-        protected = '&lt;p&gt;'
-    if p['following']: 
-        following = '&lt;f&gt;'
-    
-    # Escape pango markup
-    for key in ['url', 'location', 'description', 'name', 'screen_name']:
-        if not p.has_key(key) or p[key] is None: continue
-        p[key] = gobject.markup_escape_text(p[key])
-        
-    profile = '<b>@%s</b> (%s) %s %s\n' % (p['screen_name'], p['name'], 
-            following, protected)
-    
-    profile += '<span size="8000">'
-    if not p['url'] is None: 
-        profile += "<b>URL:</b> %s\n" % p['url']
-        
-    if not p['location'] is None:
-        profile += "<b>Location:</b> %s\n" % p['location']
-        
-    if not p['description'] is None:
-        profile += "<b>Bio:</b> %s\n" % p['description']
-    
-    if p.has_key('status'): 
-        profile += '<span size="2000">\n</span>'
-        status = '<span foreground="#999"><b>Last:</b> %s...</span>\n' % (
-            gobject.markup_escape_text(p['status']['text'][:20]))
-        profile += status
-    
-    profile += '</span>'
-    
-    return profile
-    
+
 def count_new_tweets(tweets, last):
     if not last: return 0
     if (tweets is None) or (len(tweets) <= 0): return 0

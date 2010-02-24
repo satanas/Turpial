@@ -35,7 +35,7 @@ class TweetList(gtk.VBox):
         
         self.lblerror = gtk.Label()
         self.lblerror.set_use_markup(True)
-        self.waiting = CairoWaiting(self)
+        self.waiting = CairoWaiting(mainwin)
         align = gtk.Alignment(xalign=1, yalign=0.5)
         align.add(self.waiting)
         

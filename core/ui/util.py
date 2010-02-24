@@ -92,3 +92,8 @@ def count_new_tweets(tweets, last):
     
     return index
     
+def escape_text(text):
+    return saxutils.escape(text)
+    
+def unescape_text(text):
+    return saxutils.unescape(text)

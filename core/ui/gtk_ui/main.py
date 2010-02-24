@@ -421,8 +421,9 @@ class Main(BaseGui, gtk.Window):
                     break
             
             p = self.parse_tweet(tweet)
-            icon = self.avatar_name_from_url(p['avatar'])[0]
-            text = "<b>@%s</b> %s" % (p['username'], p['text'])
+            icon = self.current_avatar_path(p['avatar'])
+            text = util.escape_text(p['text'])
+            text = "<b>@%s</b> %s" % (p['username'], text)
             self.notify.new_tweets(count, text, icon)
             
         gtk.gdk.threads_leave()
@@ -435,8 +436,9 @@ class Main(BaseGui, gtk.Window):
         
         if count > 0 and self.updating['replies']:
             p = self.parse_tweet(tweets[0])
-            icon = self.avatar_name_from_url(p['avatar'])[0]
-            text = "<b>@%s</b> %s" % (p['username'], p['text'])
+            icon = self.current_avatar_path(p['avatar'])
+            text = util.escape_text(p['text'])
+            text = "<b>@%s</b> %s" % (p['username'], text)
             self.notify.new_replies(count, text, icon)
         
         gtk.gdk.threads_leave()
@@ -449,8 +451,9 @@ class Main(BaseGui, gtk.Window):
         
         if count > 0 and self.updating['directs']:
             p = self.parse_tweet(recv[0])
-            icon = self.avatar_name_from_url(p['avatar'])[0]
-            text = "<b>@%s</b> %s" % (p['username'], p['text'])
+            icon = self.current_avatar_path(p['avatar'])
+            text = util.escape_text(p['text'])
+            text = "<b>@%s</b> %s" % (p['username'], text)
             self.notify.new_directs(count, text, icon)
             
         gtk.gdk.threads_leave()

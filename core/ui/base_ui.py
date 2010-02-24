@@ -7,7 +7,6 @@
 
 import os
 import logging
-import xml.sax.saxutils as saxutils
 
 from core.ui import util
 
@@ -45,12 +44,22 @@ class BaseGui:
     # Common methods to all interfaces
     # ------------------------------------------------------------
     
-    # :FIX: Quizas esto deba ir en 'util'
-    def avatar_name_from_url(self, pic_url):
+    def avatar_info_from_url(self, pic_url):
         pic = pic_url.replace('http://', '0_')
         pic = pic.replace('/', '_')
         return os.path.join(self.imgdir, pic), pic
         
+    def current_avatar_path(self, pic_url):
+        pic = pic_url.replace('http://', '0_')
+        pic = pic.replace('/', '_')
+        path = os.path.join(self.imgdir, pic)
+        default = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            '..', '..', 'data', 'pixmaps', 'unknown.png'))
+        if os.path.isfile(path):
+            return path
+        else:
+            return default
+    
     def parse_tweet(self, xtweet):
         tweet, retweet_by = self.__get_real_tweet(xtweet)
         
@@ -65,7 +74,7 @@ class BaseGui:
             username = tweet['from_user']
             avatar = tweet['profile_image_url']
         
-        tweet['text'] = saxutils.unescape(tweet['text'])
+        tweet['text'] = util.unescape_text(tweet['text'])
         
         client = util.detect_client(tweet)
         datetime = util.get_timestamp(tweet)
@@ -111,7 +120,8 @@ class BaseGui:
         return self.__controller.profile
         
     def request_user_avatar(self, user, pic_url):
-        fullname, pic = self.avatar_name_from_url(pic_url)
+        fullname, pic = self.avatar_info_from_url(pic_url)
+        
         if os.path.isfile(fullname):
             self.__user_pics[user] = pic
             return self.__user_pics[user]

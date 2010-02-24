@@ -82,7 +82,7 @@ class UpdateBox(gtk.Window):
         top.pack_start(self.label, True, True, 5)
         top.pack_start(self.num_chars, False, False, 5)
         
-        self.waiting = CairoWaiting(self)
+        self.waiting = CairoWaiting(parent)
         self.lblerror = gtk.Label()
         self.lblerror.set_use_markup(True)
         error_align = gtk.Alignment(xalign=0.0)

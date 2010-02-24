@@ -13,6 +13,11 @@ Feb 24, 2010:
     ---- commit ----
     + Corregido error con la redirección de hashtags a la página de twitter en el tweetlist
     ---- commit ----
+    + Agregadas funciones para escapar texto en el módulo util
+    + Corregidos bugs originados a causa de la limpieza del módulo util
+    + Limpiado los módulo util y notification de todas las funciones dependientes de gtk/gobject
+    + Corregido error con los caracteres especiales en las notificaciones con Debian Lenny (issue 88)
+    ---- commit ----
     
 Feb 23, 2010:
     + Agregado soporte para caracteres acentuados y eñes en los hashtags

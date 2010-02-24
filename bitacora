@@ -1,3 +1,13 @@
+Feb 24, 2010:
+    + Resuelta validación para que los mensajes directos no se cuenten como tweets (issue 45)
+    + Movido el módulo de notificaciones a la raíz de 'core'
+    + Modificada la estructura de las vistas. Ahora el main está dentro de cada carpeta
+    ---- commit ----
+    
+Feb 23, 2010:
+    + Agregado soporte para caracteres acentuados y eñes en los hashtags
+    + Priorizada reproducción de sonidos en posix usando play/aplay y luego gst
+    
 Feb 22, 2010:
     + Corregido bug con la opción de recordar datos al obtener un error de login
     ---- commit ----
@@ -29,7 +39,6 @@ Feb 15, 2010:
     + Ahora los favoritos están en la parte media y el perfil a la izquierda (profile)
     ---- commit ----
     + Cambiado el orden de los botones en la ventana de preferencias
-    
     
 Feb 14, 2010:
     + Ahora el replybox muestra las conversaciones al hacer clic en 'En respuesta a'

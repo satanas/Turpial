@@ -46,6 +46,11 @@ class BaseGui:
     # ------------------------------------------------------------
     
     # :FIX: Quizas esto deba ir en 'util'
+    def avatar_name_from_url(self, pic_url):
+        pic = pic_url.replace('http://', '0_')
+        pic = pic.replace('/', '_')
+        return os.path.join(self.imgdir, pic), pic
+        
     def parse_tweet(self, xtweet):
         tweet, retweet_by = self.__get_real_tweet(xtweet)
         
@@ -106,10 +111,7 @@ class BaseGui:
         return self.__controller.profile
         
     def request_user_avatar(self, user, pic_url):
-        pic = pic_url.replace('http://', '0_')
-        pic = pic.replace('/', '_')
-        # pic = unicode(pic)
-        fullname = os.path.join(self.imgdir, pic)
+        fullname, pic = self.avatar_name_from_url(pic_url)
         if os.path.isfile(fullname):
             self.__user_pics[user] = pic
             return self.__user_pics[user]

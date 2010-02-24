@@ -29,18 +29,17 @@ class Sound:
         if os.name == "nt":
             winsound.PlaySound(path, winsound.SND_FILENAME | winsound.SND_ASYNC)
         elif os.name == "posix":
-            if GST:
+            if os.path.isfile('/usr/bin/aplay'):
+                play = lambda path: os.popen4('aplay ' + path)
+            elif os.path.isfile('/usr/bin/play'):
+                play = lambda path: os.popen4('play ' + path)
+            elif GST:
                 _player = gst.element_factory_make("playbin", "player")
                 uri = "file://" + os.path.abspath(path)
                 _player.set_property('uri', uri)
                 _player.set_state(gst.STATE_PLAYING)
             else:
-                if os.path.isfile('/usr/bin/aplay'):
-                    play = lambda path: os.popen4('play ' + path)
-                elif os.path.isfile('/usr/bin/play'):
-                    play = lambda path: os.popen4('aplay ' + path)
-                else:
-                    play = dummy_play
+                play = dummy_play
         elif os.name == 'mac':
             macsound = NSSound.alloc()
             macsound.initWithContentsOfFile_byReference_(path, True)

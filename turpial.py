@@ -55,9 +55,9 @@ class Turpial:
         #if options.interface == 'gtk2':
         #    self.ui = gtk2_ui_main.Main(self)
         if options.interface == 'gtk+':
-            self.ui = gtk_ui_main.Main(self, extend=True)
+            self.ui = core.ui.gtk_ui.Main(self, extend=True)
         elif options.interface == 'gtk':
-            self.ui = gtk_ui_main.Main(self)
+            self.ui = core.ui.gtk_ui.Main(self)
         else:
             self.ui = cmd_ui.Main(self)
         
@@ -118,6 +118,9 @@ class Turpial:
         self.ui.update_friends(friends)
         self.ui.update_follow(user, follow)
         #self.ui.update_timeline(friends)
+        
+    def __direct_done(self, tweet):
+        self.ui.tweet_done(tweet)
         
     def __tweet_done(self, tweet):
         if tweet:
@@ -186,7 +189,10 @@ class Turpial:
         #    self.api.quit()
     
     def update_status(self, text, reply_id=None):
-        self.api.update_status(text, reply_id, self.__tweet_done)
+        if text.startswith('D '):
+            self.api.update_status(text, reply_id, self.__direct_done)
+        else:
+            self.api.update_status(text, reply_id, self.__tweet_done)
         
     def destroy_status(self, tweet_id):
         self.api.destroy_status(tweet_id, self.ui.after_destroy)

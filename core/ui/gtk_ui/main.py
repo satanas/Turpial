@@ -6,7 +6,6 @@
 # Nov 08, 2009
 
 import gtk
-import util
 import pango
 import base64
 import logging
@@ -15,7 +14,8 @@ import webbrowser
 
 from core.ui.gtk_ui import *
 from core.ui.base_ui import *
-from core.ui.notification import *
+from core.notification import *
+from core.ui import util as util
 
 gtk.gdk.threads_init()
 
@@ -28,7 +28,10 @@ class Home(Wrapper):
     def __init__(self, mainwin, mode='single'):
         Wrapper.__init__(self)
         
-        self.timeline = TweetList(mainwin, 'Timeline')
+        if mainwin.extend:
+            self.timeline = TweetListWebkit(mainwin, 'Timeline')
+        else:
+            self.timeline = TweetList(mainwin, 'Timeline')
         self.replies = TweetList(mainwin, 'Menciones')
         self.direct = TweetList(mainwin, 'Directos', 'direct')
         

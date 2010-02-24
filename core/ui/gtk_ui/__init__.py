@@ -2,6 +2,7 @@ from core.ui.gtk_ui.dock import *
 from core.ui.gtk_ui.updatebox import *
 from core.ui.gtk_ui.waiting import *
 from core.ui.gtk_ui.tweetslist import *
+from core.ui.gtk_ui.tweetslistwk import *
 from core.ui.gtk_ui.peopleicons import *
 from core.ui.gtk_ui.peoplelist import *
 from core.ui.gtk_ui.wrapper import *
@@ -12,3 +13,4 @@ from core.ui.gtk_ui.preferences import *
 from core.ui.gtk_ui.inputpin import *
 from core.ui.gtk_ui.searchtweets import *
 from core.ui.gtk_ui.replybox import *
+from core.ui.gtk_ui.main import *

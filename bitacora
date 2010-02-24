@@ -3,6 +3,8 @@ Feb 24, 2010:
     + Movido el módulo de notificaciones a la raíz de 'core'
     + Modificada la estructura de las vistas. Ahora el main está dentro de cada carpeta
     ---- commit ----
+    + Comentado el import del tweetlist con webkit
+    ---- commit ----
     
 Feb 23, 2010:
     + Agregado soporte para caracteres acentuados y eñes en los hashtags

@@ -57,6 +57,7 @@ setup(name="turpial",
                        'README',
                        'COPYING']),
       ],
-      #FIXME python-notify falta incluir
-      install_requires = ['simplejson >= 1.9.2', 'oauth >= 1.0.1' ],
+      
+      install_requires = ['python-simplejson >= 1.9.2', 
+        'python-notify >= 0.1.1', 'python-pygame >= 1.7.0',],
 )

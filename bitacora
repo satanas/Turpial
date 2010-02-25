@@ -1,6 +1,10 @@
 Feb 25, 2010:
     + Corregido error con las notificaciones de los tweets hechos por el usuario desde otra fuente (issue 49)
     ---- commit ----
+    + Implementado módulo de sonidos usando pygame
+    + Cambiado el formato de los sonidos de WAV a OGG
+    + Licenciados los sonidos y las imágenes
+    ---- commit ----
     
 Feb 24, 2010:
     + Resuelta validación para que los mensajes directos no se cuenten como tweets (issue 45)

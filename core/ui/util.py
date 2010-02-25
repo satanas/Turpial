@@ -92,6 +92,11 @@ def count_new_tweets(tweets, last):
     
     return index
     
+def has_tweet(src, tweet):
+    for t in src:
+        if tweet['id'] == t['id']: return True
+    return False
+    
 def escape_text(text):
     return saxutils.escape(text)
     

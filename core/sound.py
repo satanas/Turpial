@@ -6,7 +6,9 @@
 # Ene 08, 2010
 
 import os
+import pygame
 
+'''
 GST = False
 
 if os.name == 'nt':
@@ -19,9 +21,10 @@ elif os.name == "posix":
         pass
 elif os.name == 'mac':
     from AppKit import NSSound
+'''
 
 class Sound:
-    
+    '''
     def __play(self, file):
         path = os.path.realpath(os.path.join(os.path.dirname(__file__),
             '..', 'data', 'sounds', file))
@@ -52,7 +55,19 @@ class Sound:
         dummy method used when no method is available
         """
         pass
-    
+    '''
+    def __play(self, file):
+        path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            '..', 'data', 'sounds', file))
+        print path
+        if not pygame.mixer: return
+            
+        try:
+            sound = pygame.mixer.Sound(path)
+            sound.set_volume(0.7)
+        except pygame.error, message:
+            print 'Cannot load sound:', path
+        
     def login(self):
         self.__play('cambur_pinton.wav')
         

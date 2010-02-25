@@ -1,3 +1,7 @@
+Feb 25, 2010:
+    + Corregido error con las notificaciones de los tweets hechos por el usuario desde otra fuente (issue 49)
+    ---- commit ----
+    
 Feb 24, 2010:
     + Resuelta validación para que los mensajes directos no se cuenten como tweets (issue 45)
     + Movido el módulo de notificaciones a la raíz de 'core'

@@ -411,14 +411,22 @@ class Main(BaseGui, gtk.Window):
     def update_timeline(self, tweets):
         log.debug(u'Actualizando el timeline')
         gtk.gdk.threads_enter()
+        
+        last = self.home.timeline.last
         count = self.home.timeline.update_tweets(tweets)
         
         if count > 0 and self.updating['home']:
             tweet = None
-            for i in range(0, len(tweets)):
-                if tweets[i]['user']['screen_name'] != self.me:
+            i = 0
+            while 1:
+                if tweets[i]['user']['screen_name'] == self.me:
+                    if not util.has_tweet(last, tweets[i]):
+                        tweet = tweets[i]
+                        break
+                else:
                     tweet = tweets[i]
                     break
+                i += 1
             
             p = self.parse_tweet(tweet)
             icon = self.current_avatar_path(p['avatar'])

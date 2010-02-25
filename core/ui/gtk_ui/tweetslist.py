@@ -331,7 +331,7 @@ class TweetList(gtk.VBox):
         
     def __mute(self, widget, user):
         self.mainwin.request_update_muted(user)
-        
+    
     def clear(self):
         self.model.clear()
         

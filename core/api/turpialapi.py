@@ -523,30 +523,4 @@ class TurpialAPI(threading.Thread):
             
         self.log.debug('Terminado')
         return
-
-class Test(object):
-    def __init__(self):
-        self.methods = dir(Test)
-    
-    def __getattr__(self, name):
-        #if name == 'update_shit':
-        #    self.update_shit()
-        #else:
-        #    raise AttributeError, name
         
-        method = '_Test__' + name
-        mt = '__' + name
-        print name
-        print method
-        print self.methods
-        #raw_input()
-        if method in self.methods:
-            #eval('self.__' + name + '()')
-            Test.__call__(mt)
-            #eval('Test.'+mt)
-        else:
-            raise AttributeError , name
-        
-                
-    def __update_shit(self, a, b):
-        print a, b

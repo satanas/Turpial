@@ -33,12 +33,15 @@ class About:
             'Boston, MA  02111-1307  USA'
         about.set_license(license)
         about.set_authors([
-            'Wil Alvarez aka Satanas (Concepto y programación)',
-            'Eleazar Meza aka Shaka (Concepto y logo)',
+            'Wil Alvarez aka satanas (Concepto y programación)',
+            'Eleazar Meza aka el shaka (Concepto y logo)',
             'Azrael Arocha (Pruebas y colaboración)',
-            u'José Leonel Subero aka Arawako (Pruebas)',
+            u'José Leonel Subero aka arawako (Pruebas)',
             'Edwind Contreras aka Richzendy (Pruebas y Paquete RPM)',
-            'William Cabrera aka Willicab (Pruebas)',
+            'William Cabrera aka willicab (Pruebas)',
+            'Milton Mazzari aka milmazz (Instalador v0.9.3)',
+            u'Héctor Colina aka e1thor (Paquete DEB)',
+            'Alexander Olivares (Instalador v1.0)',
         ])
         
         about.connect("response", self.__response)

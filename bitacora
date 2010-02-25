@@ -7,6 +7,12 @@ Feb 25, 2010:
     ---- commit ----
     + Creado el changelog y editada la versión (1.0-b1)
     ---- commit ----
+    + Integrados los nuevos cambios en el setup.py (gracias a Alexander Olivares)
+    + Agregado el script de ejecución turpial (gracias a Alexander Olivares)
+    + Agregado el Canaima-Licencia
+    + Actualizados los créditos
+    ---- commit ----
+    
     
 Feb 24, 2010:
     + Resuelta validación para que los mensajes directos no se cuenten como tweets (issue 45)

@@ -1,3 +1,18 @@
+v1.0-b1(Feb 25, 2010):
+    + Soporte para ver los hilos de conversaciones
+    + Agregada funcionalidad para Silenciar usuarios
+    + Mejorado el manejo de las imágenes de usuarios (PIL)
+    + Soporte para subir imágenes (TweetPhoto y TwitPic)
+    + Añadido menú contextual a los mensajes directos
+    + Corregidos detalles en la vista GTK
+    + Agregada función para recordar credenciales al inicio
+    + Agregado soporte para caracteres acentuados y eñes en los hashtags
+    + Mejorado el módulo de sonidos
+    + Sonidos cambiados a formato libre (ogg)
+    + Mejorada la estructura de directorios y agregados archivos de instalación (gracias a Milton Mazzari)
+    + Independizados los módulos del núcleo (core) de las interfaces gráficas (gtk, gobject, etc)
+    + Corregidos bugs menores
+
 v0.9.3-a1(Ene 23, 2010):
     + Castellanizada toda la aplicación (a excepción de términos muy específicos)
     + Corregido bug que impedía guardar la opción de cargar color del perfil

@@ -5,6 +5,8 @@ Feb 25, 2010:
     + Cambiado el formato de los sonidos de WAV a OGG
     + Licenciados los sonidos y las imágenes
     ---- commit ----
+    + Creado el changelog y editada la versión (1.0-b1)
+    ---- commit ----
     
 Feb 24, 2010:
     + Resuelta validación para que los mensajes directos no se cuenten como tweets (issue 45)

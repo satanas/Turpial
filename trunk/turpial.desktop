@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=turpial
+Comment=Cliente Twitter escrito en Python
+Exec=turpial
+Terminal=false
+Type=Application
+Icon=turpial_icon_48
+StartupNotify=false
+Categories=Network

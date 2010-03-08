@@ -6,30 +6,15 @@
 # Dic 22, 2009
 
 import time
-#import oauth
 import Queue
-#import urllib2
 import logging
 import threading
 import traceback
-'''
-from base64 import b64encode
-from urllib import urlencode
 
-from oauth_client import TurpialAuthClient
+from turpial.api import oauth
+from turpial.api.oauth_client import TurpialAuthClient
+from turpial.api.twitter_globals import *
 
-from twitter_globals import *
-
-
-def _py26OrGreater():
-    import sys
-    return sys.hexversion > 0x20600f0
-
-if _py26OrGreater():
-    import json
-else:
-    import simplejson as json
-'''
 
 class TurpialAPI(threading.Thread):
     def __init__(self, isthread=True):
@@ -105,7 +90,7 @@ class TurpialAPI(threading.Thread):
         return tweets
         
     def __handle_oauth(self, args, callback):
-        
+        pass
             
     def __handle_tweets(self, tweet, args):
         if tweet is None: return False

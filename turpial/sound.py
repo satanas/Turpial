@@ -14,7 +14,7 @@ class Sound:
         
     def __play(self, file):
         path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            '..', 'data', 'sounds', file))
+            'data', 'sounds', file))
         if not pygame.mixer: return
             
         try:

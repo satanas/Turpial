@@ -7,7 +7,7 @@
 
 import logging
 
-from core.sound import *
+from turpial.sound import *
 
 log = logging.getLogger('Notify')
 
@@ -38,7 +38,7 @@ class Notification:
             if pynotify.init("Turpial"):
                 if not icon:
                     icon = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                        '..', 'data', 'pixmaps', 'turpial_icon_48.png'))
+                        'data', 'pixmaps', 'turpial_icon_48.png'))
                 icon = "file://%s" % icon
                 n = pynotify.Notification(title, message, icon)
                 n.show()

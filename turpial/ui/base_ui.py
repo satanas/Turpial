@@ -8,7 +8,7 @@
 import os
 import logging
 
-from core.ui import util
+from turpial.ui import util
 
 log = logging.getLogger('BaseUI')
 
@@ -54,7 +54,7 @@ class BaseGui:
         pic = pic.replace('/', '_')
         path = os.path.join(self.imgdir, pic)
         default = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            '..', '..', 'data', 'pixmaps', 'unknown.png'))
+            '..', 'data', 'pixmaps', 'unknown.png'))
         if os.path.isfile(path):
             return path
         else:

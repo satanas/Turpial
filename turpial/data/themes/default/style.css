@@ -1,0 +1,42 @@
+a:link, a:visited{
+  color: #CD0000;
+  text-decoration:none;
+}
+
+a:hover{
+  color: #CD0000;
+  text-decoration:underline;
+}
+
+.tweet.desc{
+    font-size: 11px;
+    font-family: Verdana, sans-serif;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+
+.tweet{
+    top: 0px; 
+    left:0px; 
+    background-color: #f3efeb; 
+    border: 1px solid #d6d3d0; 
+    padding: 3px 3px; 
+    margin: auto;
+}
+
+.mention{
+    color: #FF0025;
+}
+
+.spacer{
+    margin-top: 4px;
+}
+
+.footer{
+    color: #999;
+    font-size: 9px;
+}
+
+.buttons{
+    float: right;
+}

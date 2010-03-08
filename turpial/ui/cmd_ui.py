@@ -11,7 +11,7 @@ import getpass
 import logging
 import datetime
 
-from base_ui import *
+from turpial.ui.base_ui import *
 
 log = logging.getLogger('Cmd')
 INTRO = [

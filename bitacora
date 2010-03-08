@@ -3,6 +3,10 @@ Mar 07, 2010:
     + Renombrado changelog a ChangeLog para seguir el estándar
     + Cambiado script turpial a turpial.sh para poder hacer el cambio de estructura
     ---- commit ----
+    + Aplicados cambios sugeridos por Milton Mazzari
+    + Se mantiene turpial.py en la raíz y main.py en turpial por problemas de compatibilidad
+    ---- commit ----
+    + El script lanzador.sh se revirtió para continuar usando turpial.py en lugar de main.py
     
 Feb 26, 2010:
     + Añadido el archivo authors para independizar los créditos de las vistas

@@ -13,10 +13,10 @@ import logging
 import gobject
 import webbrowser
 
-from core.ui.gtk_ui import *
-from core.ui.base_ui import *
-from core.notification import *
-from core.ui import util as util
+from turpial.ui.gtk_ui import *
+from turpial.ui.base_ui import *
+from turpial.notification import *
+from turpial.ui import util as util
 
 gtk.gdk.threads_init()
 
@@ -170,7 +170,7 @@ class Main(BaseGui, gtk.Window):
             
     def load_image(self, path, pixbuf=False):
         img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            '..', '..', '..', 'data', 'pixmaps', path))
+            '..', '..', 'data', 'pixmaps', path))
         pix = gtk.gdk.pixbuf_new_from_file(img_path)
         if pixbuf: return pix
         avatar = gtk.Image()

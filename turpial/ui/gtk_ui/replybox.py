@@ -7,9 +7,9 @@
 
 import gtk
 
-from core.ui import util as util
-from core.ui.gtk_ui.waiting import*
-from core.ui.gtk_ui.tweetslist import *
+from turpial.ui import util as util
+from turpial.ui.gtk_ui.waiting import*
+from turpial.ui.gtk_ui.tweetslist import *
 
 class ReplyBox(gtk.Window):
     def __init__(self, parent):

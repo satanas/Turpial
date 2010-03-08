@@ -5,14 +5,14 @@
 # Author: Wil Alvarez (aka Satanas)
 # Feb 14, 2010
 
-import oauth
 import urllib2
 
 from base64 import b64encode
 from urllib import urlencode
 
-from twitter_globals import *
-from oauth_client import TurpialAuthClient
+from turpial.api import oauth
+from turpial.api.oauth_client import TurpialAuthClient
+from turpial.api.twitter_globals import *
 
 def _py26OrGreater():
     import sys
@@ -39,7 +39,7 @@ class TurpialHTTP:
         self.username = username
         self.password = password
         
-    def request(self, args)
+    def request(self, args):
         rtn = None
         encoded_args = None
         
@@ -85,16 +85,16 @@ class TurpialHTTP:
             if (e.code == 304):
                 rtn = []
             else:
-                error_msg = "Error %i from twitter.com\n" + 
-                    "Details: %s\nRequest: %s\nMethod: %s\nargStr: %s\n" + 
+                error_msg = "Error %i from twitter.com\n" + \
+                    "Details: %s\nRequest: %s\nMethod: %s\nargStr: %s\n" + \
                     "argData: %s\nResponse: %s\n"
                 self.log.debug(error_msg % (e.code, e, uri, method, argStr, argData, response))
             
             if args.has_key('login'): 
                 rtn = {'error': 'Error %i from Twitter.com' % e.code}
         except (urllib2.URLError, Exception), e:
-            error_msg = "Problem to connect to twitter.com\n" + 
-                "Details: %s\nRequest: %s\nMethod: %s\nargStr: %s\n" + 
+            error_msg = "Problem to connect to twitter.com\n" + \
+                "Details: %s\nRequest: %s\nMethod: %s\nargStr: %s\n" + \
                 "argData: %s\nResponse: %s\n"
             self.log.debug(error_msg %(e, uri, method, argStr, argData, response))
             if args.has_key('login'): 

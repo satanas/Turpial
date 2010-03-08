@@ -7,7 +7,6 @@
 
 import sys
 import time
-import oauth
 import Queue
 import urllib2
 import logging
@@ -17,9 +16,9 @@ import traceback
 from base64 import b64encode
 from urllib import urlencode
 
-from oauth_client import TurpialAuthClient
-
-from twitter_globals import *
+from turpial.api import oauth
+from turpial.api.oauth_client import TurpialAuthClient
+from turpial.api.twitter_globals import *
 
 def _py26OrGreater():
     return sys.hexversion > 0x20600f0

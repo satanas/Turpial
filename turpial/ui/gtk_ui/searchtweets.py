@@ -7,7 +7,7 @@
 
 import gtk
 
-from core.ui.gtk_ui.tweetslist import *
+from turpial.ui.gtk_ui.tweetslist import *
 
 class SearchTweets(gtk.VBox):
     def __init__(self, mainwin, label=''):

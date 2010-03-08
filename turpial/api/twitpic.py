@@ -5,8 +5,8 @@
 # Author: Wil Alvarez (aka Satanas)
 # Dic 22, 2009
 
-from poster.encode import multipart_encode
-from poster.streaminghttp import register_openers
+from turpial.api.poster.encode import multipart_encode
+from turpial.api.poster.streaminghttp import register_openers
 import urllib2
 
 import traceback

@@ -1,3 +1,13 @@
+Mar 07, 2010:
+    + Removido Canaima-Licencia para no casar la app con una distro
+    + Renombrado changelog a ChangeLog para seguir el estándar
+    + Cambiado script turpial a turpial.sh para poder hacer el cambio de estructura
+    ---- commit ----
+    
+Feb 26, 2010:
+    + Añadido el archivo authors para independizar los créditos de las vistas
+    + Limpiadas imágenes antiguas de la carpeta pixmaps
+    
 Feb 25, 2010:
     + Corregido error con las notificaciones de los tweets hechos por el usuario desde otra fuente (issue 49)
     ---- commit ----
@@ -12,7 +22,6 @@ Feb 25, 2010:
     + Agregado el Canaima-Licencia
     + Actualizados los créditos
     ---- commit ----
-    
     
 Feb 24, 2010:
     + Resuelta validación para que los mensajes directos no se cuenten como tweets (issue 45)

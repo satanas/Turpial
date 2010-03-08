@@ -55,9 +55,6 @@ class UpdateBox(gtk.Window):
         
         self.btn_pic = gtk.Button('Subir Imagen')
         self.btn_pic.set_tooltip_text('Subir Imagen')
-        #self.btn_pic.set_sensitive(True)
-        #self.btn_pic.set_relief(gtk.RELIEF_NONE)
-        #self.btn_pic.set_image(self.mainwin.load_image('photos.png'))
         
         tools = gtk.HBox(False)
         tools.pack_start(self.url, True, True, 3)

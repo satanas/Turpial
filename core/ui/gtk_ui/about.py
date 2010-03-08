@@ -14,7 +14,7 @@ class About:
         about.set_logo(parent.load_image('turpial_icon.png', True))
         about.set_name('Turpial')
         about.set_version(parent.version)
-        about.set_copyright('Copyleft (C) 2009 - 2010 Wil Alvarez')
+        about.set_copyright('Copyright (C) 2009 - 2010 Wil Alvarez')
         about.set_comments('Cliente de Twitter multi-interfaz escrito en Python')
         about.set_transient_for(parent)
         about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
@@ -22,6 +22,7 @@ class About:
         try:
             lic = file('COPYING', 'r')
             license=lic.read()
+            lic.close()
         except:
             license='This script is free software; you can redistribute it'
             'and\/or modify it under the\n\terms of the GNU General Public '
@@ -32,17 +33,16 @@ class About:
             'the Free Software\n\Foundation, Inc., 59 Temple Place, Suite 330, '
             'Boston, MA  02111-1307  USA'
         about.set_license(license)
-        about.set_authors([
-            'Wil Alvarez aka satanas (Concepto y programación)',
-            'Eleazar Meza aka el shaka (Concepto y logo)',
-            'Azrael Arocha (Pruebas y colaboración)',
-            u'José Leonel Subero aka arawako (Pruebas)',
-            'Edwind Contreras aka Richzendy (Pruebas y Paquete RPM)',
-            'William Cabrera aka willicab (Pruebas)',
-            'Milton Mazzari aka milmazz (Instalador v0.9.3)',
-            u'Héctor Colina aka e1thor (Paquete DEB)',
-            'Alexander Olivares (Instalador v1.0)',
-        ])
+        authors = []
+        try:
+            f = file('authors', 'r')
+            for line in f:
+                authors.append(line.strip('\n'))
+            f.close()
+        except:
+            pass
+            
+        about.set_authors(authors)
         
         about.connect("response", self.__response)
         about.connect("close", self.__close)

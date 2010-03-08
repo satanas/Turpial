@@ -7,6 +7,7 @@ Mar 07, 2010:
     + Se mantiene turpial.py en la raíz y main.py en turpial por problemas de compatibilidad
     ---- commit ----
     + El script lanzador.sh se revirtió para continuar usando turpial.py en lugar de main.py
+    ---- commit ----
     
 Feb 26, 2010:
     + Añadido el archivo authors para independizar los créditos de las vistas

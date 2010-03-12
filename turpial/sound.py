@@ -12,10 +12,11 @@ class Sound:
     def __init__(self):
         pygame.mixer.init()
         
-    def __play(self, file):
+    def __play(self, filename):
         path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            'data', 'sounds', file))
-        if not pygame.mixer: return
+            'data', 'sounds', filename))
+        if not pygame.mixer: 
+            return
             
         try:
             sound = pygame.mixer.Sound(path)

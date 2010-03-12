@@ -11,7 +11,7 @@ import ConfigParser
 
 GLOBAL_CFG = {
     'App':{
-        'version': '1.0-b1',
+        'version': '1.0-b2',
     },
     'Login':{
         'username': '',
@@ -24,7 +24,7 @@ GLOBAL_CFG = {
         'port': '',
     }
 }
-DEFAULT = {
+DEFAULT_CFG = {
     'Auth':{
         'oauth-key': '',
         'oauth-secret': '',
@@ -40,6 +40,7 @@ DEFAULT = {
         'minimize-on-close': 'on',
         'single-win-size': '320,480',
         'wide-win-size': '960,480',
+        'window-position': '-1,-1',
         'num-tweets': '60',
     },
     'Notifications':{
@@ -56,7 +57,7 @@ DEFAULT = {
 }
 
 class ConfigBase:
-    def __init__(self, default=DEFAULT):
+    def __init__(self, default=DEFAULT_CFG):
         self.__config = {}
         self.default = default
         self.cfg = ConfigParser.ConfigParser()
@@ -77,7 +78,7 @@ class ConfigBase:
         self.log.debug('Cargando archivo')
         self.cfg.read(self.filepath)
         
-        for section, v in self.default.iteritems():
+        for section, _v in self.default.iteritems():
             if not self.__config.has_key(section): self.__config[section] = {}
             if not self.cfg.has_section(section): 
                 self.write_section(section, self.default[section])
@@ -90,7 +91,7 @@ class ConfigBase:
     def save(self, config):
         self.log.debug('Guardando todo')
         fd = open(self.filepath,'w')
-        for section, v in config.iteritems():
+        for section, _v in config.iteritems():
             for option, value in config[section].iteritems():
                 self.cfg.set(section, option, value)
                 self.__config[section][option] = value
@@ -117,36 +118,40 @@ class ConfigBase:
     def read(self, section, option):
         try:
             return self.__config[section][option]
-        except:
+        except Exception:
             return None
             
     def read_section(self, section):
         self.log.debug(u'Leyendo sección %s' % (section))
         try:
             return self.__config[section]
-        except:
+        except Exception:
             return None
             
     def read_all(self):
         self.log.debug('Leyendo todo')
         try:
             return self.__config
-        except:
+        except Exception:
             return None
 
 class ConfigHandler(ConfigBase):
     def __init__(self, user):
         ConfigBase.__init__(self)
         
-        self.dir = os.path.join(os.path.expanduser('~'),'.config', 'turpial', user)
+        self.dir = os.path.join(os.path.expanduser('~'), '.config', 'turpial', user)
         self.imgdir = os.path.join(self.dir, 'images')
         self.filepath = os.path.join(self.dir, 'config')
         self.mutedpath = os.path.join(self.dir, 'muted')
         
-        if not os.path.isdir(self.dir): os.makedirs(self.dir)
-        if not os.path.isdir(self.imgdir): os.makedirs(self.imgdir)
-        if not os.path.isfile(self.filepath): self.create()
-        if not os.path.isfile(self.mutedpath): self.create_muted_list()
+        if not os.path.isdir(self.dir): 
+            os.makedirs(self.dir)
+        if not os.path.isdir(self.imgdir): 
+            os.makedirs(self.imgdir)
+        if not os.path.isfile(self.filepath): 
+            self.create()
+        if not os.path.isfile(self.mutedpath): 
+            self.create_muted_list()
         
         self.load()
         
@@ -166,9 +171,9 @@ class ConfigHandler(ConfigBase):
         fd.close()
         return muted
         
-    def save_muted_list(self, list):
+    def save_muted_list(self, lst):
         fd = open(self.mutedpath,'w')
-        for user in list:
+        for user in lst:
             fd.write(user+'\n')
         fd.close()
 
@@ -176,11 +181,13 @@ class ConfigApp(ConfigBase):
     def __init__(self):
         ConfigBase.__init__(self, default=GLOBAL_CFG)
         
-        self.dir = os.path.join(os.path.expanduser('~'),'.config', 'turpial')
+        self.dir = os.path.join(os.path.expanduser('~'), '.config', 'turpial')
         self.filepath = os.path.join(self.dir, 'global')
         
-        if not os.path.isdir(self.dir): os.makedirs(self.dir)
-        if not os.path.isfile(self.filepath): self.create()
+        if not os.path.isdir(self.dir): 
+            os.makedirs(self.dir)
+        if not os.path.isfile(self.filepath): 
+            self.create()
         
         self.load()
         

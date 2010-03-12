@@ -7,7 +7,7 @@
 
 import gtk
 
-from turpial.ui.gtk_ui.about import *
+from turpial.ui.gtk.about import *
 #from turpial.ui import util as util
 
 class Dock(gtk.Alignment):

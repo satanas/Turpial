@@ -8,8 +8,8 @@
 import gtk
 
 from turpial.ui import util as util
-from turpial.ui.gtk_ui.waiting import*
-from turpial.ui.gtk_ui.tweetslist import *
+from turpial.ui.gtk.waiting import*
+from turpial.ui.gtk.tweetslist import *
 
 class ReplyBox(gtk.Window):
     def __init__(self, parent):

@@ -6,12 +6,21 @@
 # Dic 07, 2009
 
 import os
+import locale
+import gettext
 import logging
 
 from turpial.ui import util
 
 log = logging.getLogger('BaseUI')
 
+# Initialize gettext
+try:
+    gettext.install("turpial", 'turpial/i18n')
+except Exception, e:
+    import __builtin__
+    __builtin__.__dict__["_"] = lambda x: x
+    
 class BaseGui:
     
     def __init__(self, controller):
@@ -20,6 +29,8 @@ class BaseGui:
         self.__queued_pics = []
         self.updating = {'home': False, 'replies': False, 'directs': False}
         
+        # Reescritos en la clase hija
+        self.imgdir = ''
         
     # ------------------------------------------------------------
     # Private/Internal methods
@@ -281,7 +292,7 @@ class BaseGui:
     def update_follow(self, user, follow):
         raise NotImplementedError
         
-    def update_user_avatar(self, avatar):
+    def update_user_avatar(self, user, avatar):
         raise NotImplementedError
         
     def update_user_profile(self, profile):

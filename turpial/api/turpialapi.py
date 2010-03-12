@@ -167,8 +167,8 @@ class TurpialAPI(threading.Thread):
         tweets = []
         for twt in self.tweets:
             if twt['user']['screen_name'] not in self.muted_users:
-               tweets.append(twt)
-               
+                tweets.append(twt)
+                
         return tweets
         
     def __handle_favorites(self, tweet, fav):

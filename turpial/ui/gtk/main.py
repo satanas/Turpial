@@ -13,7 +13,7 @@ import logging
 import gobject
 import webbrowser
 
-from turpial.ui.gtk_ui import *
+from turpial.ui.gtk import *
 from turpial.ui.base_ui import *
 from turpial.notification import *
 from turpial.ui import util as util
@@ -30,7 +30,8 @@ class Home(Wrapper):
         Wrapper.__init__(self)
         
         if mainwin.extend:
-            self.timeline = TweetListWebkit(mainwin, 'Timeline')
+            self.timeline = TweetList(mainwin, 'Timeline')
+            #self.timeline = TweetListWebkit(mainwin, 'Timeline')
         else:
             self.timeline = TweetList(mainwin, 'Timeline')
         self.replies = TweetList(mainwin, 'Menciones')
@@ -74,6 +75,7 @@ class Main(BaseGui, gtk.Window):
         self.set_position(gtk.WIN_POS_CENTER)
         self.connect('delete-event', self.__close)
         self.connect('size-request', self.size_request)
+        self.connect('configure-event', self.move_event)
         
         self.mode = 0
         self.vbox = None
@@ -154,11 +156,14 @@ class Main(BaseGui, gtk.Window):
         if self.mode < 2: return
         wide_value = "%i, %i" % (self.wide_win_size[0], self.wide_win_size[1])
         single_value = "%i, %i" % (self.single_win_size[0], self.single_win_size[1])
+        pos_value = "%i, %i" % (self.win_pos[0], self.win_pos[1])
         log.debug('Guardando tamaño de la ventana')
         log.debug('--Single: %s' % single_value)
         log.debug('--Wide: %s' % wide_value)
+        log.debug('--Position: %s' % pos_value)
         self.save_config({'General': {'single-win-size': single_value, 
-            'wide-win-size': wide_value}}, update=False)
+            'wide-win-size': wide_value, 'window-position': pos_value}}, 
+            update=False)
             
     def __toogle_remember(self, widget):
         if self.remember.get_active():
@@ -258,7 +263,7 @@ class Main(BaseGui, gtk.Window):
         self.remember = gtk.CheckButton('Recordar mis datos')
         
         self.btn_signup = gtk.Button('Autenticacion Vieja')
-        self.btn_oauth = gtk.Button('Conectar')
+        self.btn_oauth = gtk.Button(_('Conectar'))
         
         self.waiting = CairoWaiting(self)
         align = gtk.Alignment(xalign=1, yalign=0.5)
@@ -353,6 +358,8 @@ class Main(BaseGui, gtk.Window):
         
         self.add(self.vbox)
         self.show_all()
+        if (self.win_pos[0] > 0 and self.win_pos[1] > 0):
+            self.move(self.win_pos[0], self.win_pos[1])
         gtk.gdk.threads_leave()
         
         self.notify.login(p)
@@ -586,8 +593,10 @@ class Main(BaseGui, gtk.Window):
             self.imgdir = config.imgdir
             single_size = config.read('General', 'single-win-size').split(',')
             wide_size = config.read('General', 'wide-win-size').split(',')
+            win_pos = config.read('General', 'window-position').split(',')
             self.single_win_size = (int(single_size[0]), int(single_size[1]))
             self.wide_win_size = (int(wide_size[0]), int(wide_size[1]))
+            self.win_pos = (int(win_pos[0]), int(win_pos[1]))
             gtk.gdk.threads_enter()
             
         self.set_mode()
@@ -627,6 +636,11 @@ class Main(BaseGui, gtk.Window):
             if (w, h) == self.wide_win_size: return
             self.wide_win_size = (w, h)
         
+        self.win_pos = self.get_position()
+        
         self.contenido.update_wrap(w, self.workspace)
         
         return
+    
+    def move_event(self, widget, event):
+        self.win_pos = self.get_position()

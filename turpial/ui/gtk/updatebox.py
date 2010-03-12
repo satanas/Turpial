@@ -7,7 +7,7 @@
 
 import gtk
 
-from turpial.ui.gtk_ui.waiting import*
+from turpial.ui.gtk.waiting import*
 
 class UpdateBox(gtk.Window):
     def __init__(self, parent):
@@ -16,7 +16,7 @@ class UpdateBox(gtk.Window):
         self.blocked = False
         self.mainwin = parent
         self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
-        self.set_title('Actualizar estado')
+        self.set_title(_('Actualizar estado'))
         self.set_resizable(False)
         #self.set_default_size(500, 120)
         self.set_size_request(500, 150)

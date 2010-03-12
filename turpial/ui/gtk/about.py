@@ -35,7 +35,7 @@ class About:
         about.set_license(license)
         authors = []
         try:
-            f = file('authors', 'r')
+            f = file('AUTHORS', 'r')
             for line in f:
                 authors.append(line.strip('\n'))
             f.close()

@@ -14,6 +14,7 @@ import traceback
 from turpial.api import oauth
 from turpial.api.oauth_client import TurpialAuthClient
 from turpial.api.twitter_globals import *
+from turpial.api.turpialhttp import *
 
 
 class TurpialAPI(threading.Thread):
@@ -337,7 +338,7 @@ class TurpialAPI(threading.Thread):
             
             (args, callback) = req
             
-            
+            rtn = None
             
             if args.has_key('login'): 
                 self.profile = rtn

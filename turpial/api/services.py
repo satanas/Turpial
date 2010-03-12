@@ -14,15 +14,15 @@ import logging
 import threading
 import traceback
 
-from twitpic import *
-from s60tweetphoto import *
-from twitter_globals import *
+from turpial.api.twitpic import *
+from turpial.api.s60tweetphoto import *
+from turpial.api.twitter_globals import *
 
-def _py26OrGreater():
+def _py26orgreater():
     import sys
     return sys.hexversion > 0x20600f0
     
-if _py26OrGreater():
+if _py26orgreater():
     import json
 else:
     import simplejson as json

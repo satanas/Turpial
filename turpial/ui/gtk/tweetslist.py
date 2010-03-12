@@ -11,7 +11,7 @@ import gobject
 import logging
 import webbrowser
 
-from turpial.ui.gtk_ui.waiting import *
+from turpial.ui.gtk.waiting import *
 from turpial.ui import util as util
 
 log = logging.getLogger('Gtk:Tweetlist')

@@ -55,9 +55,9 @@ class Turpial:
         #if options.interface == 'gtk2':
         #    self.ui = gtk2_ui_main.Main(self)
         if options.interface == 'gtk+':
-            self.ui = turpial.ui.gtk_ui.Main(self, extend=True)
+            self.ui = turpial.ui.gtk.Main(self, extend=True)
         elif options.interface == 'gtk':
-            self.ui = turpial.ui.gtk_ui.Main(self)
+            self.ui = turpial.ui.gtk.Main(self)
         else:
             self.ui = cmd_ui.Main(self)
         

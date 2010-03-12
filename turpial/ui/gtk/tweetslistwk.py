@@ -13,8 +13,8 @@ import gobject
 import logging
 import webbrowser
 
-from core.ui.gtk_ui.waiting import *
-from core.ui import util as util
+from turpial.ui.gtk.waiting import *
+from turpial.ui import util as util
 
 log = logging.getLogger('Gtk:Tweetlist')
 
@@ -170,7 +170,7 @@ class TweetListWebkit(gtk.VBox):
         
     def update_user_pic(self, user, pic):
         # Evaluar si es más eficiente esto o cargar toda la lista cada vez
-        pix = util.load_avatar(self.mainwin.imgdir, pic)
+        pix = self.mainwin.load_avatar(self.mainwin.imgdir, pic)
         iter = self.model.get_iter_first()
         while iter:
             u = self.model.get_value(iter, 1)

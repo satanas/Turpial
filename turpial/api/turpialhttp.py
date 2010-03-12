@@ -6,6 +6,7 @@
 # Feb 14, 2010
 
 import urllib2
+import traceback
 
 from base64 import b64encode
 from urllib import urlencode
@@ -34,6 +35,7 @@ class TurpialHTTP:
         self.is_oauth = False
         self.token = None
         self.signature_method_hmac_sha1 = None
+        self.log = logging.getLogger('HTTP')
         
     def set_credentials(self, username, password):
         self.username = username

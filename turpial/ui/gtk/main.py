@@ -61,6 +61,8 @@ class Profile(Wrapper):
         self.user_form.update(user_profile)
         
 class Main(BaseGui, gtk.Window):
+    __gsignals__ = dict(mykeypress = (gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (str,)))
+
     def __init__(self, controller, extend=False):
         BaseGui.__init__(self, controller)
         gtk.Window.__init__(self)
@@ -76,6 +78,7 @@ class Main(BaseGui, gtk.Window):
         self.connect('delete-event', self.__close)
         self.connect('size-request', self.size_request)
         self.connect('configure-event', self.move_event)
+        self.connect('mykeypress', self.__on_key_press)
         
         self.mode = 0
         self.vbox = None
@@ -644,3 +647,14 @@ class Main(BaseGui, gtk.Window):
     
     def move_event(self, widget, event):
         self.win_pos = self.get_position()
+        
+    def __on_key_press(self, widget, keycomb):
+        if self.mode < 2: return
+        if keycomb == 'ctrl+n':
+            self.show_update_box()
+        
+#if gobject.pygtk_version < (2, 8, 0):
+gobject.type_register(Main)
+
+gtk.binding_entry_add_signal(Main, gtk.keysyms.n, gtk.gdk.CONTROL_MASK, 'mykeypress', str, 'ctrl+n')
+

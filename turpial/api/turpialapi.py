@@ -429,9 +429,12 @@ class TurpialAPI(threading.Thread):
                     oauth_request.sign_request(self.signature_method_hmac_sha1, self.consumer, self.token)
                     rtn = json.loads(self.client.access_resource(oauth_request, uri, method))
                     #if rtn.has_key('error'): rtn = None
+                except urllib2.HTTPError, e:
+                    rtn = []
+                    if args.has_key('login'): 
+                        rtn = {'error': 'Can\'t connect to twitter.com'}
                 except Exception, e:
-                    self.log.debug("Error for URL: %s using parameters: (%s)\ndetails: %s" % (
-                        uri, params, traceback.print_exc()))
+                    self.log.debug("Error for URL: %s using parameters: (%s)\ndetails: %s" % (uri, params, traceback.print_exc()))
                     if args.has_key('login'): 
                         rtn = {'error': 'Error from Twitter.com'}
             else:

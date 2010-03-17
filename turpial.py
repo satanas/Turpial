@@ -30,7 +30,7 @@ class Turpial:
         parser.add_option('-d', '--debug', dest='debug', action='store_true',
             help='Debug Mode', default=False)
         parser.add_option('-i', '--interface', dest='interface',
-            help='Select interface to use. (cmd|gtk)', default='gtk')
+            help='Select interface to use. (cmd|gtk|gtk+)', default='gtk+')
         parser.add_option('-c', '--clean', dest='clean', action='store_true',
             help='Clean all bytecodes', default=False)
         

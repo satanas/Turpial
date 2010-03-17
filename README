@@ -29,6 +29,7 @@ Turpial necesita los siguientes paquetes para funcionar correctamente:
   * python-gtk2 >= 2.12.x
   * python-notify >= 0.1.1
   * python-pygame >= 1.7
+  * python-webkit >= 1.1.5
   
 Una instalación estándar de Python (como la que viene en la mayoría de las
 distribuciones GNU/Linux) es más que suficiente. El resto de los módulos se 
@@ -55,7 +56,10 @@ Por defecto, Turpial carga la interfaz gtk pero se pueden especificar los
 siguientes parámetros opcionales:
 
     -d: ejecuta Turpial en Modo Depuración 
-    -i interfaz: para seleccionar la interfaz a cargar (gtk|cmd).
+    -i interfaz: para seleccionar la interfaz a cargar (gtk|cmd|gtk+)
+        cmd: Carga un interfaz en modo texto
+        gtk: Carga una interfaz gtk simple
+        gtk+: Carga una interfaz gtk extendida (usando webkit)
 
 
 Para más información visita la página de Preguntas y Respuestas Frecuentes:

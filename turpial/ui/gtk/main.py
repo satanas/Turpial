@@ -18,6 +18,13 @@ from turpial.ui.base_ui import *
 from turpial.notification import *
 from turpial.ui import util as util
 
+try:
+    import webkit
+    from turpial.ui.gtk.oauthwin import *
+    extend_mode = True
+except:
+    extend_mode = False
+
 gtk.gdk.threads_init()
 
 log = logging.getLogger('Gtk')
@@ -67,7 +74,8 @@ class Main(BaseGui, gtk.Window):
         BaseGui.__init__(self, controller)
         gtk.Window.__init__(self)
         
-        self.extend = extend
+        self.extend = extend and extend_mode
+        
         self.set_title('Turpial')
         self.set_size_request(280, 350)
         self.set_default_size(320, 480)
@@ -106,6 +114,12 @@ class Main(BaseGui, gtk.Window):
         self.contenido = self.home
         self.updatebox = UpdateBox(self)
         self.replybox = ReplyBox(self)
+        
+        if self.extend:
+            log.debug('Cargado modo GTK Extendido')
+            self.browser = OAuthWindow(self)
+        else:
+            log.debug('Cargado modo GTK Simple')
         
         self.dock = Dock(self, self.workspace)
         self.__create_trayicon()
@@ -389,22 +403,26 @@ class Main(BaseGui, gtk.Window):
         prefs = Preferences(self)
         
     def show_oauth_pin_request(self, url):
-        webbrowser.open(url)
-        gtk.gdk.threads_enter()
-        p = InputPin(self)
-        response = p.run()
-        if response == gtk.RESPONSE_ACCEPT:
-            verifier = p.pin.get_text()
-            if verifier == '': 
-                self.cancel_login('Debe escribir el PIN válido')
-            else:
-                self.request_auth_token(verifier)
+        if self.extend:
+            gtk.gdk.threads_enter()
+            self.browser.open(url)
+            gtk.gdk.threads_leave()
         else:
-            self.cancel_login('Login cancelado por el usuario')
-            
-        p.destroy()
-        gtk.gdk.threads_leave()
-        
+            webbrowser.open(url)
+            gtk.gdk.threads_enter()
+            p = InputPin(self)
+            response = p.run()
+            if response == gtk.RESPONSE_ACCEPT:
+                verifier = p.pin.get_text()
+                if verifier == '': 
+                    self.cancel_login('Debe escribir el PIN válido')
+                else:
+                    self.request_auth_token(verifier)
+            else:
+                self.cancel_login('Login cancelado por el usuario')
+                
+            p.destroy()
+            gtk.gdk.threads_leave()
         
     def start_updating_timeline(self):
         self.home.timeline.start_update()

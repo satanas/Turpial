@@ -45,7 +45,7 @@ setup(name="turpial",
         'turpial.api',
         'turpial.api.poster',
         'turpial.ui',
-        'turpial.ui.gtk_ui'
+        'turpial.ui.gtk'
       ],
       entry_points={
         'console_scripts': [

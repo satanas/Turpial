@@ -138,7 +138,16 @@ class TurpialAPI(threading.Thread):
         if args.has_key('add'):
             exist = False
             for twt in self.tweets:
-                if tweet['id'] == twt['id']: exist = True
+                try:
+                    if tweet['id'] == twt['id']: exist = True
+                except Exception, e:
+                    print 'Ha ocurrido un error:'
+                    print e
+                    print twt
+                    print '---'
+                    print tweet
+                    continue
+                    
             
             if not exist: self.tweets.insert(0, tweet)
         elif args.has_key('del'):

@@ -9,7 +9,6 @@ import gtk
 import pango
 import gobject
 import logging
-import webbrowser
 
 from turpial.ui.gtk.waiting import *
 from turpial.ui import util as util
@@ -299,8 +298,6 @@ class TweetList(gtk.VBox):
             self.__open_url(widget, url)
             
     def __open_url(self, widget, url):
-        #log.debug('Opening url %s' % url)
-        #webbrowser.open(url)
         self.mainwin.open_url(url)
         
     def __show_update_box(self, widget, text, in_reply_id='', in_reply_user=''):

@@ -458,6 +458,7 @@ los enlaces', current)
         if current['cmd'] != '':
             self.other_vbox.set_sensitive(True)
             self.command.set_text(current['cmd'])
+            chk_other.set_active(True)
         
         btn_browse.connect('clicked', self.__browse)
         btn_test.connect('clicked', self.__test)

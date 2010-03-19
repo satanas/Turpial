@@ -7,8 +7,8 @@
 # Nov 8, 2009
 
 import os
+import sys
 import base64
-import urllib
 import logging
 
 from optparse import OptionParser
@@ -60,7 +60,7 @@ class Turpial:
             self.ui = turpial.ui.gtk.Main(self)
         else:
             print 'No existe tal interfaz. Saliendo...'
-            exit(-1)
+            sys.exit(-1)
         
         self.httpserv = HTTPServices()
         self.api = TurpialAPI()
@@ -104,7 +104,8 @@ class Turpial:
             self.config = ConfigHandler(val['screen_name'])
             if self.remember:
                 self.global_cfg.write('Login', 'username', self.api.username)
-                self.global_cfg.write('Login', 'password', base64.b64encode(self.api.password))
+                self.global_cfg.write('Login', 'password',
+                                      base64.b64encode(self.api.password))
             else:
                 self.global_cfg.write('Login', 'username', '')
                 self.global_cfg.write('Login', 'password', '')
@@ -112,7 +113,8 @@ class Turpial:
             self.httpserv.set_credentials(self.api.username, self.api.password)
             
             auth = self.config.read_section('Auth')
-            self.api.start_oauth(auth, self.ui.show_oauth_pin_request, self.__signin_done)
+            self.api.start_oauth(auth, self.ui.show_oauth_pin_request, 
+                                 self.__signin_done)
     
     def __done_follow(self, friends, profile, user, follow):
         self.ui.update_user_profile(profile)

@@ -9,6 +9,7 @@ try:
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
+    from setuptools import setup, find_packages
 
 LONG_DESCRIPTION="""
 Este proyecto intenta ser un cliente alternativo para la red Twitter
@@ -44,7 +45,7 @@ setup(name="turpial",
         'turpial.api',
         'turpial.api.poster',
         'turpial.ui',
-        'turpial.ui.gtk_ui'
+        'turpial.ui.gtk'
       ],
       entry_points={
         'console_scripts': [
@@ -54,8 +55,8 @@ setup(name="turpial",
       data_files = [
         ('turpial/data/pixmaps', glob.glob(os.path.join('turpial', 'data', 'pixmaps', '*.png'))),
         ('turpial/data/sounds', glob.glob(os.path.join('turpial', 'data', 'sounds', '*.ogg'))),
-        ('/usr/share/pixmaps', ['turpial/data/pixmaps/turpial_icon_48.png']),
-        ('/usr/share/applications', ['turpial.desktop']),
+        ('share/pixmaps', ['turpial/data/pixmaps/turpial_icon_48.png']),
+        ('share/applications', ['turpial.desktop']),
         ('share/doc', ['doc/turpial.png',
                        'doc/turpial.dia',
                        'ChangeLog',

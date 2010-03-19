@@ -299,8 +299,9 @@ class TweetList(gtk.VBox):
             self.__open_url(widget, url)
             
     def __open_url(self, widget, url):
-        log.debug('Opening url %s' % url)
-        webbrowser.open(url)
+        #log.debug('Opening url %s' % url)
+        #webbrowser.open(url)
+        self.mainwin.open_url(url)
         
     def __show_update_box(self, widget, text, in_reply_id='', in_reply_user=''):
         self.mainwin.show_update_box(text, in_reply_id, in_reply_user)

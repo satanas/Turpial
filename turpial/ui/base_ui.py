@@ -9,6 +9,7 @@ import os
 import locale
 import gettext
 import logging
+import subprocess
 
 from turpial.ui import util
 
@@ -55,6 +56,11 @@ class BaseGui:
     # Common methods to all interfaces
     # ------------------------------------------------------------
     
+    def open_url(self, url):
+        browser = self.__controller.config.read('Browser', 'cmd')
+        log.debug('Abriendo URL %s con %s' % (url, browser))
+        subprocess.Popen([browser, url])
+        
     def avatar_info_from_url(self, pic_url):
         pic = pic_url.replace('http://', '0_')
         pic = pic.replace('/', '_')

@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# Clase para manejar todas las notificaciones de Turpial
+"""Clase para manejar todas las notificaciones de Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Dic 27, 2009
 
+import os
 import logging
 
-from turpial.sound import *
+from turpial.sound import Sound
 
 log = logging.getLogger('Notify')
 
 class Notification:
+    """Manejo de notificaciones"""
     def __init__(self):
         self.activate()
         self.play = True
@@ -20,6 +22,12 @@ class Notification:
     def update_config(self, config):
         self.config = config
         
+    def toggle_activation(self):
+        if self.active:
+            self.active = False
+        else:
+            self.active = True
+
     def activate(self):
         self.active = True
         
@@ -30,7 +38,7 @@ class Notification:
         try:
             import pynotify
             self.integrated = True
-        except:
+        except ImportError:
             log.debug("pynotify is not installed")
             self.integrated = False
         
@@ -40,34 +48,50 @@ class Notification:
                     icon = os.path.realpath(os.path.join(os.path.dirname(__file__),
                         'data', 'pixmaps', 'turpial_icon_48.png'))
                 icon = "file://%s" % icon
-                n = pynotify.Notification(title, message, icon)
-                n.show()
+                notification = pynotify.Notification(title, message, icon)
+                notification.show()
                 
     def new_tweets(self, count, tweet, icon):
-        if self.config['home'] != 'on': return
-        twt = 'nuevo tweet' if count == 1 else 'nuevos tweets'
+        if self.config['home'] != 'on':
+            return
+        if count == 1:
+            twt = 'nuevo tweet' 
+        else:
+            twt = 'nuevos tweets'
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
-        if self.config['sound'] == 'on': self.sound.tweets()
-        
+        if self.config['sound'] == 'on': 
+            self.sound.tweets()
         
     def new_replies(self, count, tweet, icon):
-        if self.config['replies'] != 'on': return
-        twt = u'nueva mención' if count == 1 else u'nuevas menciones'
+        if self.config['replies'] != 'on':
+            return
+        if count == 1:
+            twt = u'nueva mención'
+        else:
+            twt = u'nuevas menciones'
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
-        if self.config['sound'] == 'on': self.sound.replies()
+        if self.config['sound'] == 'on':
+            self.sound.replies()
             
     def new_directs(self, count, tweet, icon):
-        if self.config['directs'] != 'on': return
-        twt = 'nuevo DM' if count == 1 else 'nuevos DM'
+        if self.config['directs'] != 'on':
+            return
+        if count == 1: 
+            twt = 'nuevo DM' 
+        else:
+            twt = 'nuevos DM'
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
-        if self.config['sound'] == 'on': self.sound.directs()
+        if self.config['sound'] == 'on':
+            self.sound.directs()
         
     def login(self, p):
-        if self.config['login'] != 'on': return
+        if self.config['login'] != 'on':
+            return
         self.popup('@%s' % p['screen_name'], 
             'Tweets: %i\nFollowing: %i\nFollowers: %i' % (p['statuses_count'], 
             p['friends_count'], p['followers_count']))
-        if self.config['sound'] == 'on': self.sound.login()
+        if self.config['sound'] == 'on':
+            self.sound.login()
         
     def following(self, user, follow):
         name = user['screen_name']

@@ -133,7 +133,7 @@ class TurpialAPI(threading.Thread):
             callback(self.token.key, self.token.secret, pin)
             
     def __handle_tweets(self, tweet, args):
-        if tweet is None: return False
+        if tweet is None or tweet == []: return False
         
         if args.has_key('add'):
             exist = False
@@ -160,7 +160,7 @@ class TurpialAPI(threading.Thread):
         return True
         
     def __handle_retweets(self, tweet):
-        if tweet is None: return False
+        if tweet is None or tweet == []: return False
         self.tweets = self.__change_tweet_from(self.tweets, tweet['id'], 
             'retweeted_status', tweet['retweeted_status'])
         self.replies = self.__change_tweet_from(self.replies, tweet['id'], 
@@ -181,7 +181,7 @@ class TurpialAPI(threading.Thread):
         return tweets
         
     def __handle_favorites(self, tweet, fav):
-        if tweet is None: return False
+        if tweet is None or tweet == []: return False
         
         if fav:
             tweet['favorited'] = True
@@ -211,7 +211,7 @@ class TurpialAPI(threading.Thread):
                 done_callback(self.friends)
                 
     def __handle_conversation(self, rtn, done_callback):
-        if rtn is None:
+        if rtn is None or rtn == []:
             self.log.debug(u'Error descargando conversación')
             done_callback(rtn)
         else:
@@ -441,7 +441,12 @@ class TurpialAPI(threading.Thread):
                 except urllib2.HTTPError, e:
                     rtn = []
                     if args.has_key('login'): 
-                        rtn = {'error': 'Can\'t connect to twitter.com'}
+                        if e.code == 503 or e.code == 502:
+                            rtn = {'error': 'Caramba, Twitter está sobrecargado'}
+                        elif e.code == 401:
+                            rtn = {'error': 'Credenciales inválidas'}
+                        else:
+                            rtn = {'error': 'Error %i from Twitter.com' % e.code}
                 except Exception, e:
                     self.log.debug("Error for URL: %s using parameters: (%s)\ndetails: %s" % (uri, params, traceback.print_exc()))
                     if args.has_key('login'): 
@@ -467,7 +472,12 @@ class TurpialAPI(threading.Thread):
                         self.log.debug("Twitter sent status %i for URL: %s using parameters: (%s)\nDetails: %s\nRequest: %s\nResponse: %s" % (
                             e.code, uri, encoded_args, e.fp.read(), strReq, response))
                         if args.has_key('login'): 
-                            rtn = {'error': 'Error %i from Twitter.com' % e.code}
+                            if e.code == 503 or e.code == 502:
+                                rtn = {'error': 'Caramba, Twitter está sobrecargado'}
+                            elif e.code == 401:
+                                rtn = {'error': 'Credenciales inválidas'}
+                            else:
+                                rtn = {'error': 'Error %i from Twitter.com' % e.code}
                 except (urllib2.URLError, Exception), e:
                     self.log.debug("Problem to connect to twitter.com. Check network status.\nDetails: %s\nRequest: %s\nResponse: %s" %(
                         e, strReq, response))

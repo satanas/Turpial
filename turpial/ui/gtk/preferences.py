@@ -6,6 +6,7 @@
 # Dic 24, 2009
 
 import gtk
+import subprocess
 
 from turpial.api import *
 
@@ -35,6 +36,7 @@ class Preferences(gtk.Window):
         self.notif = NotificationsTab(self.current['Notifications'])
         self.services = ServicesTab(self.current['Services'])
         self.muted = MutedTab(self.mainwin)
+        self.browser = BrowserTab(self.mainwin, self.current['Browser'])
         self.proxy = ProxyTab(self.mainwin)
         
         notebook = gtk.Notebook()
@@ -45,6 +47,7 @@ class Preferences(gtk.Window):
         notebook.append_page(self.notif, gtk.Label('Notificaciones'))
         notebook.append_page(self.services, gtk.Label('Servicios'))
         notebook.append_page(self.muted, gtk.Label('Silenciar'))
+        notebook.append_page(self.browser, gtk.Label('Navegador Web'))
         #notebook.append_page(self.proxy, gtk.Label('Proxy'))
         
         vbox = gtk.VBox()
@@ -66,11 +69,13 @@ class Preferences(gtk.Window):
         general = self.general.get_config()
         notif = self.notif.get_config()
         services = self.services.get_config()
+        browser = self.browser.get_config()
         
         new_config = {
             'General': general, 
             'Notifications': notif, 
-            'Services': services
+            'Services': services,
+            'Browser': browser,
         }
         self.destroy()
         
@@ -144,11 +149,15 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         ws = True if self.current['workspace'] == 'wide' else False
         min = True if self.current['minimize-on-close'] == 'on' else False
         
-        self.home = TimeScroll('Timeline', h, callback=self.update_api_calls)
-        self.replies = TimeScroll('Menciones', r, min=2, callback=self.update_api_calls)
-        self.directs = TimeScroll('Directos', d, min=5, callback=self.update_api_calls)
+        self.home = TimeScroll('Timeline', h, 
+            callback=self.update_api_calls)
+        self.replies = TimeScroll('Menciones', r, min=2, 
+            callback=self.update_api_calls)
+        self.directs = TimeScroll('Directos', d, min=5, 
+            callback=self.update_api_calls)
         
-        self.tweets = TimeScroll('Tweets mostrados', t, min=20, max=200, unit='', lbl_size=120)
+        self.tweets = TimeScroll('Tweets mostrados', t, min=20, max=200, 
+            unit='', lbl_size=120)
         
         self.estimated = gtk.Label(u'Usarás 0 llamadas a la API por hora')
         est_align = gtk.Alignment(xalign=0.5)
@@ -159,11 +168,13 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         self.workspace.set_active(ws)
         try:
             self.workspace.set_has_tooltip(True)
-            self.workspace.set_tooltip_text('Muestra un espacio de trabajo de 3 columnas')
+            self.workspace.set_tooltip_text('Muestra un espacio de trabajo \
+de 3 columnas')
         except:
             pass
         
-        self.profile_colors = gtk.CheckButton('Cargar color de perfil (Requiere reiniciar)')
+        self.profile_colors = gtk.CheckButton('Cargar color de perfil \
+(Requiere reiniciar)')
         self.profile_colors.set_active(pf)
         try:
             self.profile_colors.set_has_tooltip(True)
@@ -193,8 +204,10 @@ sistema en lugar de cerrarlo')
         self.update_api_calls()
         
     def update_api_calls(self):
-        calls = (60 / self.home.value) + (60 / self.replies.value) + (60 / self.directs.value)
-        self.estimated.set_text(u'Usarás aprox. %i llamadas a la API por hora' % calls)
+        calls = (60 / self.home.value) + (60 / self.replies.value) + \
+            (60 / self.directs.value)
+        self.estimated.set_text(u'Usarás aprox. %i llamadas a la API por hora' 
+            % calls)
         
     def get_config(self):
         ws = 'wide' if self.workspace.get_active() else 'single'
@@ -406,28 +419,117 @@ de cargar todos los contactos. Intententa de nuevo en unos segundos</span>')
         self.model.foreach(self.__process)
         return self.muted
 
+class BrowserTab(PreferencesTab):
+    def __init__(self, parent, current):
+        PreferencesTab.__init__(self, u'Configura el navegador web para abrir \
+los enlaces', current)
+        
+        self.mainwin = parent
+        
+        chk_default = gtk.RadioButton(None, 
+            'Navegador predeterminado del sistema')
+        chk_other = gtk.RadioButton(chk_default, 
+            'Escoger un navegador diferente')
+        
+        cmd_lbl = gtk.Label('Comando')
+        self.command = gtk.Entry()
+        btn_test = gtk.Button('Probar')
+        btn_browse = gtk.Button('Examinar')
+        
+        cmd_box = gtk.HBox(False)
+        cmd_box.pack_start(cmd_lbl, False, False, 3)
+        cmd_box.pack_start(self.command, True, True, 3)
+        
+        buttons_box = gtk.HButtonBox()
+        buttons_box.set_spacing(6)
+        buttons_box.set_layout(gtk.BUTTONBOX_END)
+        buttons_box.pack_start(btn_test)
+        buttons_box.pack_start(btn_browse)
+        
+        self.other_vbox = gtk.VBox(False, 2)
+        self.other_vbox.pack_start(cmd_box, False, False, 2)
+        self.other_vbox.pack_start(buttons_box, False, False, 2)
+        self.other_vbox.set_sensitive(False)
+        
+        self.pack_start(chk_default, False, False, 2)
+        self.pack_start(chk_other, False, False, 2)
+        self.pack_start(self.other_vbox, False, False, 2)
+        
+        if current['cmd'] != '':
+            self.other_vbox.set_sensitive(True)
+            self.command.set_text(current['cmd'])
+        
+        btn_browse.connect('clicked', self.__browse)
+        btn_test.connect('clicked', self.__test)
+        chk_default.connect('toggled', self.__activate, 'default')
+        chk_other.connect('toggled', self.__activate, 'other')
+        
+        self.show_all()
+        
+    def __test(self, widget):
+        cmd = self.command.get_text()
+        if cmd != '':
+            subprocess.Popen([cmd, 'http://turpial.org.ve/'])
+            
+    def __browse(self, widget):
+        dia = gtk.FileChooserDialog(title=u'Seleccione la ruta del navegador \
+web con el que desea abrir los enlaces',
+            parent = self.mainwin, 
+            action = gtk.FILE_CHOOSER_ACTION_OPEN, 
+            buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                gtk.STOCK_OK, gtk.RESPONSE_OK))
+        resp = dia.run()
+        
+        if resp == gtk.RESPONSE_OK:
+            self.command.set_text(dia.get_filename())
+        dia.destroy()
+        
+    def __activate(self, widget, param):
+        if param == 'default':
+            self.other_vbox.set_sensitive(False)
+            self.command.set_text('')
+        else:
+            self.other_vbox.set_sensitive(True)
+            
+    def get_config(self):
+        return {
+            'cmd': self.command.get_text()
+        }
+        
 class ProxyTab(PreferencesTab):
     def __init__(self, current):
         PreferencesTab.__init__(self, u'Configura el proxy de la red', current)
         
-        server_lbl = gtk.Label('Servidor/Puerto')
+        chk_default = gtk.RadioButton(None, 
+            'Navegador predeterminado del sistema')
+        chk_other = gtk.RadioButton(chk_default, 
+            'Escoger un navegador diferente')
         
-        self.server = gtk.Entry()
-        self.port = gtk.Entry()
-        self.username = gtk.Entry()
-        self.password = gtk.Entry()
+        cmd_lbl = gtk.Label('Comando')
+        command = gtk.Entry()
+        btn_test = gtk.Button('Probar')
+        btn_search = gtk.Button('Examinar')
         
-        serv_box = gtk.HBox(False)
-        serv_box.pack_start(server_lbl, False, False, 3)
-        serv_box.pack_start(self.server, True, True, 3)
-        serv_box.pack_start(self.port, False, False, 3)
+        cmd_box = gtk.HBox(False)
+        cmd_box.pack_start(cmd_lbl, False, False, 3)
+        cmd_box.pack_start(command, True, True, 3)
         
-        #pic_box = gtk.HBox(False)
-        #pic_box.pack_start(pic_lbl, False, False, 3)
-        #pic_box.pack_start(self.upload, False, False, 3)
+        buttons_box = gtk.HButtonBox()
+        buttons_box.set_spacing(6)
+        buttons_box.set_layout(gtk.BUTTONBOX_END)
+        buttons_box.pack_start(btn_search)
+        buttons_box.pack_start(btn_test)
         
-        self.pack_start(serv_box, False, False, 2)
-        #self.pack_start(pic_box, False, False, 2)
+        other_vbox = gtk.VBox(False, 2)
+        other_vbox.pack_start(cmd_box, False, False, 3)
+        other_vbox.pack_start(buttons_box, False, False, 3)
+        
+        other_frame = gtk.Frame()
+        other_frame.add(other_vbox)
+        
+        self.pack_start(chk_default, False, False, 2)
+        self.pack_start(chk_other, False, False, 2)
+        self.pack_start(other_frame, False, False, 2)
         self.show_all()
         
     def get_config(self):

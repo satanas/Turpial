@@ -91,7 +91,7 @@ class Turpial:
             
             self._update_timeline()
             self._update_replies()
-            #self._update_directs()
+            self._update_directs()
             self._update_favorites()
             self._update_rate_limits()
             
@@ -137,11 +137,11 @@ class Turpial:
         
         self.ui.show_main(self.config, self.global_cfg, self.profile)
         self._update_timeline()
-        #self._update_replies()
-        #self._update_directs()
-        #self._update_rate_limits()
-        #self._update_favorites()
-        #self._update_friends()
+        self._update_replies()
+        self._update_directs()
+        self._update_rate_limits()
+        self._update_favorites()
+        self._update_friends()
         
     def _update_timeline(self):
         self.ui.start_updating_timeline()

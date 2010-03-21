@@ -11,7 +11,7 @@ except ImportError:
     use_setuptools()
     from setuptools import setup
 
-LONG_DESCRIPTION="""
+LONG_DESCRIPTION = """
 Este proyecto intenta ser un cliente alternativo para la red Twitter
 con múltiples interfaces. Está escrito en Python y tiene como meta ser
 una aplicación con bajo consumo de recursos y que se integre al
@@ -52,7 +52,7 @@ setup(name="turpial",
             'turpial = turpial.main:Turpial',
         ],
       },
-      data_files = [
+      data_files=[
         ('turpial/data/pixmaps', glob.glob(os.path.join('turpial', 'data', 'pixmaps', '*.png'))),
         ('turpial/data/sounds', glob.glob(os.path.join('turpial', 'data', 'sounds', '*.ogg'))),
         ('share/pixmaps', ['turpial/data/pixmaps/turpial_icon_48.png']),

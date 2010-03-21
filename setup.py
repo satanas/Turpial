@@ -5,11 +5,11 @@ import glob
 import os
 
 try:
-    from setuptools import setup, find_packages
+    from setuptools import setup
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
-    from setuptools import setup, find_packages
+    from setuptools import setup
 
 LONG_DESCRIPTION="""
 Este proyecto intenta ser un cliente alternativo para la red Twitter

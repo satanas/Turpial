@@ -55,8 +55,11 @@ class SearchTweets(gtk.VBox):
         
     def __search_topic(self, widget):
         topic = widget.get_text()
-        self.mainwin.request_search_topic(topic)
-        widget.set_text('')
+        if topic != '':
+            self.mainwin.request_search_topic(topic)
+            widget.set_text('')
+        else:
+            widget.set_text('Debes indicar un tema a buscar')
         widget.grab_focus()
         
     def update_tweets(self, arr_tweets):

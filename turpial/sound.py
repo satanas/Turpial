@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Clase para reproducir sonidos en múltiples plataformas en Turpial
+"""Clase para reproducir sonidos en múltiples plataformas en Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Ene 08, 2010

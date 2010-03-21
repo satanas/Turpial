@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Clase Base para todas las interfaces gráficas de Turpial
+"""Clase Base para todas las interfaces gráficas de Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Dic 07, 2009
@@ -103,16 +103,19 @@ class BaseGui:
         
         in_reply_to_id = None
         in_reply_to_user = None
-        if tweet.has_key('in_reply_to_status_id') and tweet['in_reply_to_status_id']:
+        if tweet.has_key('in_reply_to_status_id') and \
+           tweet['in_reply_to_status_id']:
             in_reply_to_id = tweet['in_reply_to_status_id']
             in_reply_to_user = tweet['in_reply_to_screen_name']
         
         fav = False
-        if tweet.has_key('favorited'): fav = tweet['favorited']
+        if tweet.has_key('favorited'):
+            fav = tweet['favorited']
         
-        return {'username': username, 'avatar': avatar, 'client': client, 
+        return {'username': username, 'avatar': avatar, 'client': client,
             'datetime':datetime, 'text': tweet['text'], 'id': tweet['id'],
-            'in_reply_to_id': in_reply_to_id, 'in_reply_to_user': in_reply_to_user,
+            'in_reply_to_id': in_reply_to_id,
+            'in_reply_to_user': in_reply_to_user,
             'fav': fav, 'retweet_by': retweet_by}
         
     def after_destroy(self, timeline, replies, favs, directs):
@@ -154,7 +157,8 @@ class BaseGui:
         
         log.debug('Solicitando imagen de usuario %s' % user)
         self.__queued_pics.append(pic)
-        self.__controller.download_user_pic(user, pic_url, self.__done_user_avatar)
+        self.__controller.download_user_pic(user, pic_url,
+                                            self.__done_user_avatar)
         return None
         
     def request_retweet(self, id):

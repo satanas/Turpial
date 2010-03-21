@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Widgets para la ventana de preferencias del Turpial
+"""Widgets para la ventana de preferencias del Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Dic 24, 2009
@@ -8,9 +8,10 @@
 import gtk
 import subprocess
 
-from turpial.api import *
+from turpial.api.services import URL_SERVICES, PHOTO_SERVICES
 
 class Preferences(gtk.Window):
+    """Ventana de preferencias de Turpial"""
     def __init__(self, parent=None):
         gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
         
@@ -72,8 +73,8 @@ class Preferences(gtk.Window):
         browser = self.browser.get_config()
         
         new_config = {
-            'General': general, 
-            'Notifications': notif, 
+            'General': general,
+            'Notifications': notif,
             'Services': services,
             'Browser': browser,
         }
@@ -134,7 +135,8 @@ class TimeScroll(gtk.HBox):
         
     def __on_change(self, widget):
         self.value = widget.get_value()
-        if self.callback: self.callback()
+        if self.callback:
+            self.callback()
         
 class GeneralTab(PreferencesTab):
     def __init__(self, current):
@@ -149,14 +151,14 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         ws = True if self.current['workspace'] == 'wide' else False
         min = True if self.current['minimize-on-close'] == 'on' else False
         
-        self.home = TimeScroll('Timeline', h, 
+        self.home = TimeScroll('Timeline', h,
             callback=self.update_api_calls)
-        self.replies = TimeScroll('Menciones', r, min=2, 
+        self.replies = TimeScroll('Menciones', r, min=2,
             callback=self.update_api_calls)
-        self.directs = TimeScroll('Directos', d, min=5, 
+        self.directs = TimeScroll('Directos', d, min=5,
             callback=self.update_api_calls)
         
-        self.tweets = TimeScroll('Tweets mostrados', t, min=20, max=200, 
+        self.tweets = TimeScroll('Tweets mostrados', t, min=20, max=200,
             unit='', lbl_size=120)
         
         self.estimated = gtk.Label(u'Usarás 0 llamadas a la API por hora')
@@ -310,9 +312,10 @@ usar para cortar URLs y subir imágenes a Twitter', current)
         default = -1
         url_lbl = gtk.Label('Cortar URL')
         self.shorten = gtk.combo_box_new_text()
-        for key,v in URL_SERVICES.iteritems():
+        for key, v in URL_SERVICES.iteritems():
             self.shorten.append_text(key)
-            if key == self.current['shorten-url']: default = i
+            if key == self.current['shorten-url']:
+                default = i
             i += 1
         self.shorten.set_active(default)
         
@@ -325,7 +328,8 @@ usar para cortar URLs y subir imágenes a Twitter', current)
         i = 0
         for key in PHOTO_SERVICES:
             self.upload.append_text(key)
-            if key == self.current['upload-pic']: default = i
+            if key == self.current['upload-pic']:
+                default = i
             i += 1
         self.upload.set_active(default)
         
@@ -426,9 +430,9 @@ los enlaces', current)
         
         self.mainwin = parent
         
-        chk_default = gtk.RadioButton(None, 
+        chk_default = gtk.RadioButton(None,
             'Navegador predeterminado del sistema')
-        chk_other = gtk.RadioButton(chk_default, 
+        chk_other = gtk.RadioButton(chk_default,
             'Escoger un navegador diferente')
         
         cmd_lbl = gtk.Label('Comando')
@@ -475,9 +479,9 @@ los enlaces', current)
     def __browse(self, widget):
         dia = gtk.FileChooserDialog(title=u'Seleccione la ruta del navegador \
 web con el que desea abrir los enlaces',
-            parent = self.mainwin, 
-            action = gtk.FILE_CHOOSER_ACTION_OPEN, 
-            buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+            parent=self.mainwin,
+            action=gtk.FILE_CHOOSER_ACTION_OPEN,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                 gtk.STOCK_OK, gtk.RESPONSE_OK))
         resp = dia.run()
         
@@ -501,9 +505,9 @@ class ProxyTab(PreferencesTab):
     def __init__(self, current):
         PreferencesTab.__init__(self, u'Configura el proxy de la red', current)
         
-        chk_default = gtk.RadioButton(None, 
+        chk_default = gtk.RadioButton(None,
             'Navegador predeterminado del sistema')
-        chk_other = gtk.RadioButton(chk_default, 
+        chk_other = gtk.RadioButton(chk_default,
             'Escoger un navegador diferente')
         
         cmd_lbl = gtk.Label('Comando')

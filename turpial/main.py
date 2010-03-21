@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Controlador de Turpial
+'''Controlador de Turpial'''
+
 #
 # Author: Wil Alvarez (aka Satanas)
 # Nov 8, 2009
@@ -10,21 +11,22 @@ import os
 import sys
 import base64
 import logging
-
 from optparse import OptionParser
 
-from turpial.ui import *
-from turpial.api import *
-from turpial.config import *
+from turpial.ui.gtk.main import Main as _GTK
+from turpial.api.services import HTTPServices
+from turpial.api.turpialapi import TurpialAPI
+from turpial.config import ConfigHandler, ConfigApp
 
 try:
     import ctypes
     libc = ctypes.CDLL('libc.so.6')
     libc.prctl(15, 'turpial', 0, 0)
-except:
+except ImportError:
     pass
 
 class Turpial:
+    '''Inicio de Turpial'''
     def __init__(self):
         parser = OptionParser()
         parser.add_option('-d', '--debug', dest='debug', action='store_true',
@@ -55,9 +57,9 @@ class Turpial:
         #if options.interface == 'gtk2':
         #    self.ui = gtk2_ui_main.Main(self)
         if options.interface == 'gtk+':
-            self.ui = turpial.ui.gtk.Main(self, extend=True)
+            self.ui = _GTK(self, extend=True)
         elif options.interface == 'gtk':
-            self.ui = turpial.ui.gtk.Main(self)
+            self.ui = _GTK(self)
         else:
             print 'No existe tal interfaz. Saliendo...'
             sys.exit(-1)
@@ -73,6 +75,7 @@ class Turpial:
         self.ui.main_loop()
         
     def __clean(self):
+        '''Limpieza de ficheros .pyc y .pyo'''
         self.log.debug("Limpiando la casa...")
         i = 0
         for root, dirs, files in os.walk('.'):
@@ -83,6 +86,7 @@ class Turpial:
                     os.remove(path)
             
     def __validate_signin(self, val):
+        '''Chequeo de inicio de sesion'''
         if val.has_key('error'):
             self.ui.cancel_login(val['error'])
         else:
@@ -97,6 +101,7 @@ class Turpial:
             self._update_rate_limits()
             
     def __validate_credentials(self, val):
+        '''Chequeo de credenciales'''
         if val.has_key('error'):
             self.ui.cancel_login(val['error'])
         else:
@@ -113,7 +118,7 @@ class Turpial:
             self.httpserv.set_credentials(self.api.username, self.api.password)
             
             auth = self.config.read_section('Auth')
-            self.api.start_oauth(auth, self.ui.show_oauth_pin_request, 
+            self.api.start_oauth(auth, self.ui.show_oauth_pin_request,
                                  self.__signin_done)
     
     def __done_follow(self, friends, profile, user, follow):
@@ -132,6 +137,7 @@ class Turpial:
         self.ui.tweet_done(tweet)
         
     def __signin_done(self, key, secret, verifier):
+        '''Inicio de sesion finalizado'''
         self.config.write('Auth', 'oauth-key', key)
         self.config.write('Auth', 'oauth-secret', secret)
         self.config.write('Auth', 'oauth-verifier', verifier)
@@ -147,27 +153,32 @@ class Turpial:
         self._update_friends()
         
     def _update_timeline(self):
+        '''Actualizar linea de tiempo'''
         self.ui.start_updating_timeline()
         tweets = int(self.config.read('General', 'num-tweets'))
         self.api.update_timeline(self.ui.update_timeline, tweets)
         
     def _update_replies(self):
+        '''Actualizar numero de respuestas'''
         self.ui.start_updating_replies()
         tweets = int(self.config.read('General', 'num-tweets'))
         self.api.update_replies(self.ui.update_replies, tweets)
         
     def _update_directs(self):
+        '''Actualizar mensajes directos'''
         self.ui.start_updating_directs()
         tweets = int(self.config.read('General', 'num-tweets'))
         self.api.update_directs(self.ui.update_directs, tweets)
         
     def _update_favorites(self):
+        '''Actualizar favoritos'''
         self.api.update_favorites(self.ui.update_favorites)
     
     def _update_rate_limits(self):
         self.api.update_rate_limits(self.ui.update_rate_limits)
         
     def _update_friends(self):
+        '''Actualizar amigos'''
         self.api.get_friends(self.ui.update_friends)
         
     def signin(self, username, password):
@@ -182,6 +193,7 @@ class Turpial:
         self.api.authorize_oauth_token(pin, self.__signin_done)
         
     def signout(self):
+        '''Finalizar sesion'''
         self.save_muted_list()
         self.log.debug('Desconectando')
         exit(0)
@@ -216,7 +228,7 @@ class Turpial:
         self.api.unfollow(user, self.__done_follow)
         
     def update_profile(self, new_name, new_url, new_bio, new_location):
-        self.api.update_profile(new_name, new_url, new_bio, new_location, 
+        self.api.update_profile(new_name, new_url, new_bio, new_location,
             self.ui.update_user_profile)
     
     def in_reply_to(self, twt_id):
@@ -263,10 +275,12 @@ class Turpial:
         
     def save_config(self, config, update):
         self.config.save(config)
-        if update: self.ui.update_config(self.config)
+        if update:
+            self.ui.update_config(self.config)
         
     def save_muted_list(self):
-        if self.config: self.config.save_muted_list(self.api.muted_users)
+        if self.config:
+            self.config.save_muted_list(self.api.muted_users)
         
     def get_muted_list(self):
         return self.api.get_muted_list()

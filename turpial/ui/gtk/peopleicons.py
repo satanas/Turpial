@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Widget para mostrar contactos como iconos en el Turpial
+"""Widget para mostrar contactos como iconos en el Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Dic 21, 2009
@@ -47,7 +47,8 @@ class PeopleIcons(gtk.ScrolledWindow):
         
     def __popup_menu(self, widget, event):
         paths = widget.get_selected_items()
-        if (len(paths) == 0): return False
+        if (len(paths) == 0):
+            return False
         
         row = self.model.get_iter(paths[0])
         if (event.button == 3):
@@ -77,7 +78,7 @@ class PeopleIcons(gtk.ScrolledWindow):
             unfollow.connect('activate', self.__manage, False, user)
             
             menu.show_all()
-            menu.popup(None, None, None, event.button ,event.time)
+            menu.popup(None, None, None, event.button , event.time)
             
     def __manage(self, widget, follow, user):
         if follow:

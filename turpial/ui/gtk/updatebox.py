@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Widget para actualizar el estado del Turpial
+"""Widget para actualizar el estado del Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Dic 20, 2009
 
 import gtk
 
-from turpial.ui.gtk.waiting import*
+from turpial.ui.gtk.waiting import CairoWaiting
 
 class UpdateBox(gtk.Window):
     def __init__(self, parent):
@@ -123,7 +123,8 @@ class UpdateBox(gtk.Window):
         return False
             
     def __unclose(self, widget, event=None):
-        if not self.blocked: self.done()
+        if not self.blocked:
+            self.done()
         return True
         
     def block(self):
@@ -174,9 +175,12 @@ class UpdateBox(gtk.Window):
         buffer = self.update_text.get_buffer()
         remain = 140 - buffer.get_char_count()
         
-        if remain >= 20: color = "#999"
-        elif 0 < remain < 20: color = "#d4790d"
-        else: color = "#D40D12"
+        if remain >= 20:
+            color = "#999"
+        elif 0 < remain < 20:
+            color = "#d4790d"
+        else:
+            color = "#D40D12"
         
         self.num_chars.set_markup('<span size="14000" foreground="%s"><b>%i</b></span>' % (color, remain))
         
@@ -213,7 +217,8 @@ class UpdateBox(gtk.Window):
         start = buffer.get_iter_at_offset(start_offset)
         text = buffer.get_text(start, end)
         
-        if (text != ' ') and (start_offset > 0): short = ' ' + short
+        if (text != ' ') and (start_offset > 0):
+            short = ' ' + short
         
         buffer.insert_at_cursor(short)
         self.waiting.stop()
@@ -230,7 +235,7 @@ class UpdateBox(gtk.Window):
         filtro.add_pattern('*.jpeg')
         
         dia = gtk.FileChooserDialog(title='Seleccione la imagen que desea subir',
-            parent=self, action=gtk.FILE_CHOOSER_ACTION_OPEN, 
+            parent=self, action=gtk.FILE_CHOOSER_ACTION_OPEN,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                 gtk.STOCK_OK, gtk.RESPONSE_OK))
         dia.add_filter(filtro)
@@ -238,7 +243,8 @@ class UpdateBox(gtk.Window):
         
         if resp == gtk.RESPONSE_OK:
             self.waiting.start()
-            self.mainwin.request_upload_pic(dia.get_filename(), self.update_uploaded_pic)
+            self.mainwin.request_upload_pic(dia.get_filename(),
+                                            self.update_uploaded_pic)
         dia.destroy()
         
     def update_uploaded_pic(self, pic_url):
@@ -254,7 +260,8 @@ class UpdateBox(gtk.Window):
         start = buffer.get_iter_at_offset(start_offset)
         text = buffer.get_text(start, end)
         
-        if (text != ' ') and (start_offset > 0): pic_url = ' ' + pic_url
+        if (text != ' ') and (start_offset > 0):
+            pic_url = ' ' + pic_url
         
         buffer.insert_at_cursor(pic_url)
         self.waiting.stop()
@@ -269,7 +276,7 @@ class UpdateBox(gtk.Window):
 class MessageTextView(gtk.TextView):
     '''Class for the message textview (where user writes new messages)
     for chat/groupchat windows'''
-    __gsignals__ = dict(mykeypress = (gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (int, gtk.gdk.ModifierType )))
+    __gsignals__ = dict(mykeypress=(gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (int, gtk.gdk.ModifierType)))
         
     def __init__(self):
         gtk.TextView.__init__(self)
@@ -283,7 +290,7 @@ class MessageTextView(gtk.TextView):
         import gc
         gobject.idle_add(lambda:gc.collect())
 
-    def clear(self, widget = None):
+    def clear(self, widget=None):
         self.get_buffer().set_text('')
         
 if gobject.pygtk_version < (2, 8, 0):

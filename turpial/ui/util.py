@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Funciones utilitarias comúnes a todas las vistas
+"""Funciones utilitarias comúnes a todas las vistas"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Nov 13, 2009
@@ -18,12 +18,15 @@ CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
 URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_().]*[-A-Za-z0-9+&@#/%?=~_()])')
 
 def detect_client(tweet):
-    if not tweet.has_key('source'): return None
+    if not tweet.has_key('source'):
+        return None
     text = saxutils.unescape(tweet['source'])
     text = text.replace('&quot;', '"')
-    if text == 'web': return text
+    if text == 'web':
+        return text
     rtn = CLIENT_PATTERN.search(text)
-    if rtn: return rtn.groups()[1]
+    if rtn:
+        return rtn.groups()[1]
     return None
     
 def detect_hashtags(text):
@@ -49,8 +52,8 @@ def get_rates(val):
 def get_timestamp(tweet):
     # Tue Mar 13 00:12:41 +0000 2007 -> Tweets normales
     # Wed, 08 Apr 2009 19:22:10 +0000 -> Busquedas
-    month_names = [None, 'Jan', 'Feb','Mar','Apr','May','Jun','Jul',
-        'Aug','Sep','Oct','Nov','Dec']
+    month_names = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+        'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     
     date_info = tweet['created_at'].split()
     
@@ -72,29 +75,36 @@ def get_timestamp(tweet):
     d = datetime.datetime(year, month, day, hour, minute, second)
     
     i_hate_timezones = time.timezone
-    if (time.daylight): i_hate_timezones = time.altzone
+    if (time.daylight):
+        i_hate_timezones = time.altzone
     
-    dt = datetime.datetime(*d.timetuple()[:-3]) - datetime.timedelta(seconds=i_hate_timezones)
+    dt = datetime.datetime(*d.timetuple()[:-3]) - \
+         datetime.timedelta(seconds=i_hate_timezones)
     t = dt.timetuple()
     
     return time.strftime('%b %d, %I:%M %p', t)
 
 def count_new_tweets(tweets, last):
-    if not last: return 0
-    if (tweets is None) or (len(tweets) <= 0): return 0
+    if not last:
+        return 0
+    if (tweets is None) or (len(tweets) <= 0):
+        return 0
     
     index = 0
     for twt in tweets:
         found = False
         for t in last:
-            if twt['id'] == t['id']: found = True
-        if not found: index += 1
+            if twt['id'] == t['id']:
+                found = True
+        if not found:
+            index += 1
     
     return index
     
 def has_tweet(src, tweet):
     for t in src:
-        if tweet['id'] == t['id']: return True
+        if tweet['id'] == t['id']:
+            return True
     return False
     
 def escape_text(text):

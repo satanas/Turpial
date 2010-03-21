@@ -9,7 +9,7 @@ import gtk
 
 class About:
     def __init__(self, parent=None):
-        about=gtk.AboutDialog()
+        about = gtk.AboutDialog()
         about.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         about.set_logo(parent.load_image('turpial_icon.png', True))
         about.set_name('Turpial')
@@ -21,10 +21,10 @@ class About:
         
         try:
             lic = file('COPYING', 'r')
-            license=lic.read()
+            license = lic.read()
             lic.close()
         except:
-            license='This script is free software; you can redistribute it'
+            license = 'This script is free software; you can redistribute it'
             'and\/or modify it under the\n\terms of the GNU General Public '
             'License as published by the Free Software\n\Foundation; either '
             'version 3 of the License, or (at your option) any later version.'

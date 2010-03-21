@@ -13,7 +13,18 @@ import logging
 import gobject
 import webbrowser
 
-from turpial.ui.gtk import *
+from turpial.ui.gtk.wrapper import Wrapper, WrapperAlign
+from turpial.ui.gtk.tweetslist import TweetList
+from turpial.ui.gtk.userform import  UserForm
+from turpial.ui.gtk.searchtweets import SearchTweets
+from turpial.ui.gtk.updatebox import UpdateBox
+from turpial.ui.gtk.replybox import ReplyBox
+from turpial.ui.gtk.loginlabel import LoginLabel
+from turpial.ui.gtk.waiting import CairoWaiting
+from turpial.ui.gtk.preferences import Preferences
+
+
+from turpial.ui.gtk.dock import Dock
 from turpial.ui.base_ui import *
 from turpial.notification import *
 from turpial.ui import util as util
@@ -68,7 +79,7 @@ class Profile(Wrapper):
         self.user_form.update(user_profile)
         
 class Main(BaseGui, gtk.Window):
-    __gsignals__ = dict(mykeypress = (gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (str,)))
+    __gsignals__ = dict(mykeypress=(gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (str,)))
 
     def __init__(self, controller, extend=False):
         BaseGui.__init__(self, controller)
@@ -178,8 +189,8 @@ class Main(BaseGui, gtk.Window):
         log.debug('--Single: %s' % single_value)
         log.debug('--Wide: %s' % wide_value)
         log.debug('--Position: %s' % pos_value)
-        self.save_config({'General': {'single-win-size': single_value, 
-            'wide-win-size': wide_value, 'window-position': pos_value}}, 
+        self.save_config({'General': {'single-win-size': single_value,
+            'wide-win-size': wide_value, 'window-position': pos_value}},
             update=False)
             
     def __toogle_remember(self, widget):
@@ -217,11 +228,11 @@ class Main(BaseGui, gtk.Window):
         pw, ph = orig.get_width(), orig.get_height()
         
         if pw >= ph:
-            ratio = float(ph)/pw
+            ratio = float(ph) / pw
             fw = util.AVATAR_SIZE
             fh = int(fw * ratio)
         else:
-            ratio = float(pw)/ph
+            ratio = float(pw) / ph
             fh = util.AVATAR_SIZE
             fw = int(fh * ratio)
             
@@ -290,14 +301,14 @@ class Main(BaseGui, gtk.Window):
         hbox.pack_start(lbl_user, False, False, 2)
         hbox.pack_start(align, True, True, 2)
         
-        table = gtk.Table(9,1,False)
-        table.attach(avatar,0,1,0,1,gtk.FILL,gtk.FILL, 10, 50)
-        table.attach(self.message,0,1,1,2,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 3)
-        table.attach(hbox,0,1,2,3,gtk.EXPAND|gtk.FILL,gtk.FILL,50,0)
-        table.attach(self.username,0,1,3,4,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
-        table.attach(self.password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
-        table.attach(self.btn_oauth,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 10)
-        table.attach(self.remember,0,1,8,9,gtk.EXPAND,gtk.FILL,0, 10)
+        table = gtk.Table(9, 1, False)
+        table.attach(avatar, 0, 1, 0, 1, gtk.FILL, gtk.FILL, 10, 50)
+        table.attach(self.message, 0, 1, 1, 2, gtk.EXPAND | gtk.FILL, gtk.FILL, 20, 3)
+        table.attach(hbox, 0, 1, 2, 3, gtk.EXPAND | gtk.FILL, gtk.FILL, 50, 0)
+        table.attach(self.username, 0, 1, 3, 4, gtk.EXPAND | gtk.FILL, gtk.FILL, 50, 0)
+        table.attach(self.password, 0, 1, 5, 6, gtk.EXPAND | gtk.FILL, gtk.FILL, 50, 0)
+        table.attach(self.btn_oauth, 0, 1, 7, 8, gtk.EXPAND, gtk.FILL, 0, 10)
+        table.attach(self.remember, 0, 1, 8, 9, gtk.EXPAND, gtk.FILL, 0, 10)
         
         self.vbox = gtk.VBox(False, 5)
         self.vbox.pack_start(table, False, False, 2)
@@ -308,7 +319,7 @@ class Main(BaseGui, gtk.Window):
         self.btn_signup.connect('clicked', self.signin, self.username, self.password)
         self.btn_oauth.connect('clicked', self.oauth)
         self.password.connect('activate', self.oauth)
-        self.remember.connect("toggled",self.__toogle_remember)
+        self.remember.connect("toggled", self.__toogle_remember)
         
         username = global_config.read('Login', 'username')
         password = global_config.read('Login', 'password')
@@ -350,7 +361,7 @@ class Main(BaseGui, gtk.Window):
         log.debug('Cargando ventana principal')
         self.mode = 2
         
-        self.update_config(config, global_cfg,  True)
+        self.update_config(config, global_cfg, True)
         
         gtk.gdk.threads_enter()
         self.contentbox.add(self.contenido)
@@ -381,7 +392,7 @@ class Main(BaseGui, gtk.Window):
         
         self.notify.login(p)
         
-        gobject.timeout_add(6*60*1000, self.download_rates)
+        gobject.timeout_add(6 * 60 * 1000, self.download_rates)
         
     def show_home(self, widget):
         self.contentbox.remove(self.contenido)
@@ -585,13 +596,13 @@ class Main(BaseGui, gtk.Window):
             size = self.wide_win_size
             self.resize(size[0], size[1])
             self.set_default_size(size[0], size[1])
-            x = (size[0] - cur_w)/2
+            x = (size[0] - cur_w) / 2
             self.move(cur_x - x, cur_y)
         else:
             size = self.single_win_size
             self.resize(size[0], size[1])
             self.set_default_size(size[0], size[1])
-            x = (cur_w - size[0])/2
+            x = (cur_w - size[0]) / 2
             self.move(cur_x + x, cur_y)
         
         log.debug('Cambiando a modo %s (%s)' % (self.workspace, size))
@@ -625,19 +636,19 @@ class Main(BaseGui, gtk.Window):
         if (self.home_interval != home_interval):
             if self.home_timer: gobject.source_remove(self.home_timer)
             self.home_interval = home_interval
-            self.home_timer = gobject.timeout_add(self.home_interval*60*1000, self.download_timeline)
+            self.home_timer = gobject.timeout_add(self.home_interval * 60 * 1000, self.download_timeline)
             log.debug('--Creado timer de Timeline cada %i min' % self.home_interval)
             
         if (self.replies_interval != replies_interval):
             if self.replies_timer: gobject.source_remove(self.replies_timer)
             self.replies_interval = replies_interval
-            self.replies_timer = gobject.timeout_add(self.replies_interval*60*1000, self.download_replies)
+            self.replies_timer = gobject.timeout_add(self.replies_interval * 60 * 1000, self.download_replies)
             log.debug('--Creado timer de Replies cada %i min' % self.replies_interval)
             
         if (self.directs_interval != directs_interval):
             if self.directs_timer: gobject.source_remove(self.directs_timer)
             self.directs_interval = directs_interval
-            self.directs_timer = gobject.timeout_add(self.directs_interval*60*1000, self.download_directs)
+            self.directs_timer = gobject.timeout_add(self.directs_interval * 60 * 1000, self.download_directs)
             log.debug('--Creado timer de Directs cada %i min' % self.directs_interval)
             
         if thread: 

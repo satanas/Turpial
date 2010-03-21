@@ -111,11 +111,11 @@ class TurpialAPI(threading.Thread):
         
     def __handle_retweets(self, tweet):
         if tweet is None: return False
-        self.tweets = self.__change_tweet_from(self.tweets, tweet['id'], 
+        self.tweets = self.__change_tweet_from(self.tweets, tweet['id'],
             'retweeted_status', tweet['retweeted_status'])
-        self.replies = self.__change_tweet_from(self.replies, tweet['id'], 
+        self.replies = self.__change_tweet_from(self.replies, tweet['id'],
             'retweeted_status', tweet['retweeted_status'])
-        self.favorites = self.__change_tweet_from(self.favorites, tweet['id'], 
+        self.favorites = self.__change_tweet_from(self.favorites, tweet['id'],
             'retweeted_status', tweet['retweeted_status'])
         
         return True
@@ -231,7 +231,7 @@ class TurpialAPI(threading.Thread):
     def update_replies(self, callback, count=20):
         self.log.debug('Descargando Replies')
         args = {'count': count}
-        self.__register({'uri': 'http://twitter.com/statuses/mentions','args': args,  'replies': True}, callback)
+        self.__register({'uri': 'http://twitter.com/statuses/mentions', 'args': args, 'replies': True}, callback)
         
     def update_directs(self, callback, count=20):
         self.log.debug('Descargando Directs')
@@ -256,7 +256,7 @@ class TurpialAPI(threading.Thread):
         
     def retweet(self, tweet_id, callback):
         self.log.debug('Retweet: %s' % tweet_id)
-        self.__register({'uri': 'http://api.twitter.com/1/statuses/retweet',  'id':tweet_id, 'rt':True, 'args': ''}, callback)
+        self.__register({'uri': 'http://api.twitter.com/1/statuses/retweet', 'id':tweet_id, 'rt':True, 'args': ''}, callback)
         
     def set_favorite(self, tweet_id, callback):
         self.to_fav.append(tweet_id)
@@ -278,7 +278,7 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Actualizando perfil')
         self.__register({'uri': 'http://twitter.com/account/update_profile', 'args': args}, callback)
         
-    def get_friends(self, callback, cursor=-1):
+    def get_friends(self, callback, cursor= -1):
         args = {'cursor': cursor}
         self.log.debug('Descargando Lista de Amigos')
         self.__register({'uri': 'http://twitter.com/statuses/friends', 'args': args,
@@ -295,7 +295,7 @@ class TurpialAPI(threading.Thread):
         self.__register({'uri': 'http://twitter.com/friendships/destroy', 'args': args, 'follow': False}, callback)
         
     def mute(self, arg, callback):
-        if type(arg).__name__=='list':
+        if type(arg).__name__ == 'list':
             self.log.debug('Actualizando usuarios silenciados')
             self.muted_users = arg
         else:
@@ -315,7 +315,7 @@ class TurpialAPI(threading.Thread):
             self.conversation = []
             self.log.debug(u'Obteniendo conversación:')
         self.log.debug('--Tweet: %s' % tweet_id)
-        self.__register({'uri': 'http://twitter.com/statuses/show', 'id': tweet_id, 
+        self.__register({'uri': 'http://twitter.com/statuses/show', 'id': tweet_id,
             'done': callback, 'conversation': True}, self.__handle_conversation)
         
     def destroy_direct(self, tweet_id, callback):

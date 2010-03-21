@@ -87,8 +87,8 @@ class Notification:
     def login(self, p):
         if self.config['login'] != 'on':
             return
-        self.popup('@%s' % p['screen_name'], 
-            'Tweets: %i\nFollowing: %i\nFollowers: %i' % (p['statuses_count'], 
+        self.popup('@%s' % p['screen_name'],
+            'Tweets: %i\nFollowing: %i\nFollowers: %i' % (p['statuses_count'],
             p['friends_count'], p['followers_count']))
         if self.config['sound'] == 'on':
             self.sound.login()

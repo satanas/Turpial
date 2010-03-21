@@ -15,7 +15,7 @@ from turpial.ui.base_ui import *
 
 log = logging.getLogger('Cmd')
 INTRO = [
-    'Bienvenido a Turpial, un cliente Twitter para GNU/Linux.', 
+    'Bienvenido a Turpial, un cliente Twitter para GNU/Linux.',
     'Escriba "help" para obtener una lista de los comandos disponibles.',
     'Escriba "help <comando>" para obtener una ayuda detallada de un comando'
 ]
@@ -404,7 +404,7 @@ class Main(BaseGui, cmd.Cmd):
             if p['protected']: protected = '<protected>'
             if p['following']: protected = '<following>'
             
-            header = "@%s (%s) %s %s" % (p['screen_name'], p['name'], 
+            header = "@%s (%s) %s %s" % (p['screen_name'], p['name'],
                 following, protected)
             print header
             print '-' * len(header)

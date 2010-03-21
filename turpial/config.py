@@ -75,7 +75,7 @@ class ConfigBase:
     def create(self):
         """Creacion de fichero de configuracion"""
         self.log.debug('Creando archivo')
-        _fd = open(self.filepath,'w')
+        _fd = open(self.filepath, 'w')
         for section, v in self.default.iteritems():
             self.cfg.add_section(section)
             for option, value in self.default[section].iteritems():
@@ -95,7 +95,7 @@ class ConfigBase:
                 self.write_section(section, self.default[section])
             for option, value in self.default[section].iteritems():
                 if self.cfg.has_option(section, option):
-                    self.__config[section][option] = self.cfg.get(section, 
+                    self.__config[section][option] = self.cfg.get(section,
                                                                   option)
                 else:
                     self.write(section, option, value)
@@ -103,7 +103,7 @@ class ConfigBase:
     def save(self, config):
         """Guardando configuracion en fichero"""
         self.log.debug('Guardando todo')
-        _fd = open(self.filepath,'w')
+        _fd = open(self.filepath, 'w')
         for section, _v in config.iteritems():
             for option, value in config[section].iteritems():
                 self.cfg.set(section, option, value)
@@ -112,14 +112,14 @@ class ConfigBase:
         _fd.close()
         
     def write(self, section, option, value):
-        _fd = open(self.filepath,'w')
+        _fd = open(self.filepath, 'w')
         self.cfg.set(section, option, value)
         self.cfg.write(_fd)
         _fd.close()
         self.__config[section][option] = value
         
     def write_section(self, section, items):
-        _fd = open(self.filepath,'w')
+        _fd = open(self.filepath, 'w')
         self.cfg.add_section(section)
         for option, value in items.iteritems():
             self.cfg.set(section, option, value)
@@ -159,7 +159,7 @@ class ConfigHandler(ConfigBase):
     def __init__(self, user):
         ConfigBase.__init__(self)
         
-        self.dir = os.path.join(os.path.expanduser('~'), '.config', 
+        self.dir = os.path.join(os.path.expanduser('~'), '.config',
                                 'turpial', user)
         self.imgdir = os.path.join(self.dir, 'images')
         self.filepath = os.path.join(self.dir, 'config')
@@ -177,12 +177,12 @@ class ConfigHandler(ConfigBase):
         self.load()
         
     def create_muted_list(self):
-        _fd = open(self.mutedpath,'w')
+        _fd = open(self.mutedpath, 'w')
         _fd.close()
         
     def load_muted_list(self):
         muted = []
-        _fd = open(self.mutedpath,'r')
+        _fd = open(self.mutedpath, 'r')
         for line in _fd:
             if line == '\n':
                 continue
@@ -191,9 +191,9 @@ class ConfigHandler(ConfigBase):
         return muted
         
     def save_muted_list(self, lst):
-        _fd = open(self.mutedpath,'w')
+        _fd = open(self.mutedpath, 'w')
         for user in lst:
-            _fd.write(user+'\n')
+            _fd.write(user + '\n')
         _fd.close()
 
 

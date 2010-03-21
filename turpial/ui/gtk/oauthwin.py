@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Widget para realizar la autenticación segura de Twitter desde Turpial
+"""Widget para realizar la autenticación segura de Twitter desde Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Mar 16, 2010

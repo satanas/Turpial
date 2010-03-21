@@ -7,19 +7,22 @@
 
 import urllib2
 import traceback
+import logging
 
 from base64 import b64encode
 from urllib import urlencode
 
 from turpial.api import oauth
 from turpial.api.oauth_client import TurpialAuthClient
-from turpial.api.twitter_globals import *
+from turpial.api.twitter_globals import POST_ACTIONS, \
+                                        CONSUMER_KEY, \
+                                        CONSUMER_SECRET
 
-def _py26OrGreater():
+def _py26_or_greater():
     import sys
     return sys.hexversion > 0x20600f0
 
-if _py26OrGreater():
+if _py26_or_greater():
     import json
 else:
     import simplejson as json
@@ -38,6 +41,7 @@ class TurpialHTTP:
         self.log = logging.getLogger('HTTP')
         
     def set_credentials(self, username, password):
+        '''Estableciendo credenciales'''
         self.username = username
         self.password = password
         
@@ -45,14 +49,15 @@ class TurpialHTTP:
         rtn = None
         encoded_args = None
         
-        argStr = ""
-        argData = None
+        arg_str = ""
+        arg_data = None
         uri = args['uri']
         method = "GET"
         response = ''
         
         for action in POST_ACTIONS:
-            if uri.endswith(action): method = "POST"
+            if uri.endswith(action):
+                method = "POST"
         
         if args.has_key('id'):
             uri = "%s/%s" % (uri, args['id'])
@@ -63,42 +68,53 @@ class TurpialHTTP:
             encoded_args = urlencode(args['args'])
         
         if (method == "GET"):
-            if encoded_args: argStr = "?%s" %(encoded_args)
+            if encoded_args:
+                arg_str = "?%s" % (encoded_args)
         else:
-            argData = encoded_args
+            arg_data = encoded_args
             
         try:
             if self.is_oauth:
-                argData = args['args'] if args.has_key('args') else {}
-                oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, token=self.token, http_method=method, http_url=uri, parameters=argData)
-                oauth_request.sign_request(self.signature_method_hmac_sha1, self.consumer, self.token)
-                response = self.client.access_resource(oauth_request, uri, method)
+                arg_data = args['args'] if args.has_key('args') else {}
+                oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
+                                                                           token=self.token,
+                                                                           http_method=method,
+                                                                           http_url=uri,
+                                                                           parameters=arg_data)
+                oauth_request.sign_request(self.signature_method_hmac_sha1,
+                                           self.consumer, self.token)
+                response = self.client.access_resource(oauth_request,
+                                                       uri, method)
                 rtn = json.loads(response)
             else:
                 headers = {}
                 if (self.username):
-                    headers["Authorization"] = "Basic " + b64encode("%s:%s" %(self.username, self.password))
-                req = urllib2.Request("%s%s" %(uri, argStr), argData, headers)
+                    headers["Authorization"] = "Basic " + \
+                    b64encode("%s:%s" % (self.username, self.password))
+                req = urllib2.Request("%s%s" % (uri, arg_str),
+                                      arg_data, headers)
                 handle = urllib2.urlopen(req)
                 response = handle.read()
                 rtn = json.loads(response)
                 
-        except urllib2.HTTPError, e:
-            if (e.code == 304):
+        except urllib2.HTTPError, error:
+            if (error.code == 304):
                 rtn = []
             else:
                 error_msg = "Error %i from twitter.com\n" + \
                     "Details: %s\nRequest: %s\nMethod: %s\nargStr: %s\n" + \
-                    "argData: %s\nResponse: %s\n"
-                self.log.debug(error_msg % (e.code, e, uri, method, argStr, argData, response))
+                    "arg_data: %s\nResponse: %s\n"
+                self.log.debug(error_msg % (error.code, error, uri, method,
+                                            arg_str, arg_data, response))
             
             if args.has_key('login'): 
-                rtn = {'error': 'Error %i from Twitter.com' % e.code}
-        except (urllib2.URLError, Exception), e:
+                rtn = {'error': 'Error %i from Twitter.com' % error.code}
+        except (urllib2.URLError, Exception), error:
             error_msg = "Problem to connect to twitter.com\n" + \
                 "Details: %s\nRequest: %s\nMethod: %s\nargStr: %s\n" + \
-                "argData: %s\nResponse: %s\n"
-            self.log.debug(error_msg %(e, uri, method, argStr, argData, response))
+                "arg_data: %s\nResponse: %s\n"
+            self.log.debug(error_msg % (error, uri, method, arg_str,
+                                        arg_data, response))
             if args.has_key('login'): 
                 rtn = {'error': 'Can\'t connect to twitter.com'}
         
@@ -111,31 +127,38 @@ class TurpialHTTP:
             self.signature_method_hmac_sha1 = oauth.OAuthSignatureMethod_HMAC_SHA1()
             auth = args['auth']
             
-            if auth['oauth-key'] != '' and auth['oauth-secret'] != '' and auth['oauth-verifier'] != '':
-                self.token = oauth.OAuthToken(auth['oauth-key'], auth['oauth-secret'])
+            if auth['oauth-key'] != '' and auth['oauth-secret'] != '' and \
+               auth['oauth-verifier'] != '':
+                self.token = oauth.OAuthToken(auth['oauth-key'],
+                                              auth['oauth-secret'])
                 self.token.set_verifier(auth['oauth-verifier'])
                 self.is_oauth = True
-                args['done'](self.token.key, self.token.secret, self.token.verifier)
+                args['done'](self.token.key, self.token.secret,
+                             self.token.verifier)
             else:
                 self.log.debug('Obtain a request token')
-                oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, http_url=self.client.request_token_url)
-                oauth_request.sign_request(self.signature_method_hmac_sha1, self.consumer, None)
+                oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
+                                                                           http_url=self.client.request_token_url)
+                oauth_request.sign_request(self.signature_method_hmac_sha1,
+                                           self.consumer, None)
                 
                 self.log.debug('REQUEST (via headers)')
                 self.log.debug('parameters: %s' % str(oauth_request.parameters))
                 try:
                     self.token = self.client.fetch_request_token(oauth_request)
-                except Exception, e:
-                    print "Error: %s\n%s" % (e, traceback.print_exc())
+                except Exception, error:
+                    print "Error: %s\n%s" % (error, traceback.print_exc())
                     raise Exception
                 
                 self.log.debug('GOT')
                 self.log.debug('key: %s' % str(self.token.key))
                 self.log.debug('secret: %s' % str(self.token.secret))
-                self.log.debug('callback confirmed? %s' % str(self.token.callback_confirmed))
+                self.log.debug('callback confirmed? %s' % 
+                               str(self.token.callback_confirmed))
                 
                 self.log.debug('Authorize the request token')
-                oauth_request = oauth.OAuthRequest.from_token_and_callback(token=self.token, http_url=self.client.authorization_url)
+                oauth_request = oauth.OAuthRequest.from_token_and_callback(token=self.token,
+                                                                           http_url=self.client.authorization_url)
                 self.log.debug('REQUEST (via url query string)')
                 self.log.debug('parameters: %s' % str(oauth_request.parameters))
                 
@@ -144,8 +167,12 @@ class TurpialHTTP:
         elif args['cmd'] == 'authorize':
             pin = args['pin']
             self.log.debug('Obtain an access token')
-            oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, token=self.token, verifier=pin, http_url=self.client.access_token_url)
-            oauth_request.sign_request(self.signature_method_hmac_sha1, self.consumer, self.token)
+            oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
+                                                                       token=self.token,
+                                                                       verifier=pin,
+                                                                       http_url=self.client.access_token_url)
+            oauth_request.sign_request(self.signature_method_hmac_sha1,
+                                       self.consumer, self.token)
             
             self.log.debug('REQUEST (via headers)')
             self.log.debug('parameters: %s' % str(oauth_request.parameters))

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Widget para mostrar resultados de una búsqueda en Turpial
+"""Widget para mostrar resultados de una búsqueda en Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Ene 06, 2010
 
 import gtk
 
-from turpial.ui.gtk.tweetslist import *
+from turpial.ui.gtk.tweetslist import TweetList
 
 class SearchTweets(gtk.VBox):
     def __init__(self, mainwin, label=''):
@@ -19,8 +19,10 @@ class SearchTweets(gtk.VBox):
         self.clearbtn.set_image(self.mainwin.load_image('clear.png'))
         self.clearbtn.set_tooltip_text('Limpiar todos los resultados')
         try:
-            #self.input_topics.set_property("primary-icon-stock", gtk.STOCK_FIND)
-            self.input_topics.set_property("secondary-icon-stock", gtk.STOCK_FIND)
+            #self.input_topics.set_property("primary-icon-stock", 
+            #                               gtk.STOCK_FIND)
+            self.input_topics.set_property("secondary-icon-stock",
+                                           gtk.STOCK_FIND)
             self.input_topics.connect("icon-press", self.__on_icon_press)
         except: 
             pass

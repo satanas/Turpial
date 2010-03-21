@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Widget para mostrar respuestas de un tweet en Turpial
+"""Widget para mostrar respuestas de un tweet en Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Feb 02, 2010
 
 import gtk
 
-from turpial.ui import util as util
-from turpial.ui.gtk.waiting import*
-from turpial.ui.gtk.tweetslist import *
+from turpial.ui.gtk.tweetslist import TweetList
 
 class ReplyBox(gtk.Window):
     def __init__(self, parent):
@@ -39,7 +37,8 @@ class ReplyBox(gtk.Window):
         self.tweets.update_wrap(w)
         
     def __unclose(self, widget, event=None):
-        if not self.working: self.hide()
+        if not self.working:
+            self.hide()
         return True
         
     def show(self, twt_id, user):
@@ -50,7 +49,8 @@ class ReplyBox(gtk.Window):
         self.tweets.clear()
         self.tweets.start_update()
         #self.tweets.waiting.stop(True)
-        #self.tweets.lblerror.set_markup('<span background="#00FF00">Hola, mi nombre es culero connoorrr</span>')
+        #self.tweets.lblerror.set_markup('<span background="#00FF00">Hola,
+        # mi nombre es culero connoorrr</span>')
         self.show_all()
         
     def update(self, tweets):

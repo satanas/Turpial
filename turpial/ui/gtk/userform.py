@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Formulario para mostrar/actualizar el perfil del usuario en Turpial
+"""Formulario para mostrar/actualizar el perfil del usuario en Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Dic 21, 2009
@@ -100,24 +100,32 @@ class UserForm(gtk.VBox):
         
     def update(self, profile):
         self.user = profile['screen_name']
-        pix = self.mainwin.get_user_avatar(self.user, profile['profile_image_url'])
+        pix = self.mainwin.get_user_avatar(self.user,
+                                           profile['profile_image_url'])
         avatar = gtk.Image()
         avatar.set_from_pixbuf(pix)
         self.user_pic.set_image(avatar)
         del pix
         self.screen_name.set_markup('<b>@%s</b>' % profile['screen_name'])
-        self.tweets_count.set_markup('<span size="9000">%i Tweets</span>' % profile['statuses_count'])
-        self.following_count.set_markup('<span size="9000">%i Following</span>' % profile['friends_count'])
-        self.followers_count.set_markup('<span size="9000">%i Followers</span>' % profile['followers_count'])
+        self.tweets_count.set_markup('<span size="9000">%i Tweets</span>' % \
+                                     profile['statuses_count'])
+        self.following_count.set_markup('<span size="9000">%i Following</span>' % \
+                                        profile['friends_count'])
+        self.followers_count.set_markup('<span size="9000">%i Followers</span>' % \
+                                        profile['followers_count'])
         self.real_name.set_text(profile['name'])
-        if profile['location']: self.location.set_text(profile['location'])
-        if profile['url']: self.url.set_text(profile['url'])
+        if profile['location']:
+            self.location.set_text(profile['location'])
+        if profile['url']:
+            self.url.set_text(profile['url'])
         buffer = self.bio.get_buffer()
-        if profile['description']: buffer.set_text(profile['description'])
+        if profile['description']:
+            buffer.set_text(profile['description'])
         self.unlock()
         
     def update_user_pic(self, user, pic):
-        if self.user != user: return
+        if self.user != user:
+            return
         pix = self.mainwin.load_avatar(self.mainwin.imgdir, pic, True)
         self.user_pic.set_image(pix)
         

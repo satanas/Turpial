@@ -7,8 +7,7 @@
 
 import gtk
 
-from turpial.ui.gtk.about import *
-#from turpial.ui import util as util
+from turpial.ui.gtk.about import About
 
 class Dock(gtk.Alignment):
     def __init__(self, parent, mode='single'):

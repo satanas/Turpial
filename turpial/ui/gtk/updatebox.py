@@ -6,6 +6,7 @@
 # Dic 20, 2009
 
 import gtk
+import gobject
 
 from turpial.ui.gtk.waiting import CairoWaiting
 

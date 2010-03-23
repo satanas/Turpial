@@ -121,7 +121,7 @@ class TweetList(gtk.VBox):
         return text
         
     def __build_open_menu(self, user, msg):
-        open = gtk.MenuItem('Abrir')
+        open = gtk.MenuItem(_('Open'))
         
         open_menu = gtk.Menu()
         
@@ -189,8 +189,8 @@ class TweetList(gtk.VBox):
             else:
                 dm = "D @%s " % user
                 
-                reply = gtk.MenuItem('Responder')
-                delete = gtk.MenuItem('Borrar')
+                reply = gtk.MenuItem(_('Reply'))
+                delete = gtk.MenuItem(_('Delete'))
                 usermenu = gtk.MenuItem('@' + user)
                 open = self.__build_open_menu(user, msg)
                 
@@ -237,21 +237,20 @@ class TweetList(gtk.VBox):
                 rt = "RT @%s %s" % (user, msg)
                 dm = "D @%s " % user
                 
-                reply = gtk.MenuItem('Responder')
-                retweet_old = gtk.MenuItem('Retweet (Antiguo)')
-                retweet = gtk.MenuItem('Retweet')
-                save = gtk.MenuItem('+ Fav')
-                unsave = gtk.MenuItem('- Fav')
-                delete = gtk.MenuItem('Borrar')
-                #search = gtk.MenuItem('Search')
-                direct = gtk.MenuItem('DM')
-                follow = gtk.MenuItem('Follow')
-                unfollow = gtk.MenuItem('Unfollow')
-                loading = gtk.MenuItem('Cargando amigos...')
+                reply = gtk.MenuItem(_('Reply'))
+                retweet_old = gtk.MenuItem(_('Retweet (Old)'))
+                retweet = gtk.MenuItem(_('Retweet'))
+                save = gtk.MenuItem(_('+ Fav'))
+                unsave = gtk.MenuItem(_('- Fav'))
+                delete = gtk.MenuItem(_('Delete'))
+                direct = gtk.MenuItem(_('DM'))
+                follow = gtk.MenuItem(_('Follow'))
+                unfollow = gtk.MenuItem(_('Unfollow'))
+                loading = gtk.MenuItem(_('Loading friends...'))
                 loading.set_sensitive(False)
                 usermenu = gtk.MenuItem('@' + user)
-                inreplymenu = gtk.MenuItem('En respuesta a')
-                mutemenu = gtk.MenuItem('Silenciar')
+                inreplymenu = gtk.MenuItem(_('In reply to'))
+                mutemenu = gtk.MenuItem(_('Mute'))
                 
                 open = self.__build_open_menu(user, msg)
                 
@@ -405,10 +404,10 @@ class TweetList(gtk.VBox):
     def update_tweets(self, arr_tweets):
         if arr_tweets is None:
             self.stop_update(True,
-                             'Algo salió mal. Actualizaré de nuevo pronto')
+                             _('Something went wrong. I\'ll update again soon'))
             return 0
         elif len(arr_tweets) == 0:
-            self.stop_update(True, 'No hay tweets')
+            self.stop_update(True, _('No tweets available'))
             return 0
         else:
             count = util.count_new_tweets(arr_tweets, self.last)

@@ -157,8 +157,8 @@ class Main(BaseGui, gtk.Window):
             
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
-        tweet = gtk.MenuItem('Tweet')
-        exit = gtk.MenuItem('Salir')
+        tweet = gtk.MenuItem(_('Tweet'))
+        exit = gtk.MenuItem(_('Exit'))
         if self.mode == 2:
             menu.append(tweet)
         menu.append(exit)

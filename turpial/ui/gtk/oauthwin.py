@@ -17,7 +17,7 @@ class OAuthWindow(gtk.Window):
         gtk.Window.__init__(self)
         
         self.mainwin = parent
-        self.set_title('Autenticación Segura')
+        self.set_title(_('Secure Authentication'))
         self.set_default_size(800, 450)
         self.set_transient_for(parent)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
@@ -36,8 +36,8 @@ class OAuthWindow(gtk.Window):
         self.label.set_use_markup(True)
         self.label.set_alignment(0, 0)
         #self.label.set_line_wrap(True)
-        self.label.set_markup('Autoriza a Turpial y \
-copia el número devuelto (<b>PIN</b>) en la caja de texto a continuación:')
+        self.label.set_markup(_('Autorize Turpial and copy the given number \
+(<b>PIN</b>) in the text box below:'))
         #self.label.set_justify(gtk.JUSTIFY_FILL)
         
         lblbox = gtk.HBox(False, 2)
@@ -68,21 +68,21 @@ copia el número devuelto (<b>PIN</b>) en la caja de texto a continuación:')
     def __accept(self, widget):
         verifier = self.pin.get_text()
         if verifier == '': 
-            self.mainwin.cancel_login('Debe escribir un PIN válido')
+            self.mainwin.cancel_login(_('You must write a valid PIN'))
         else:
             self.mainwin.request_auth_token(verifier)
         self.quit(widget, done=True)
         
     def open(self, uri):
         print uri
-        self.view.load_string('Cargando...', "text/html", "iso-8859-15", "load")
+        self.view.load_string(_('Loading...'), "text/html", "iso-8859-15", "load")
         self.show_all()
         self.view.open(uri)
         
     def quit(self, widget, event=None, done=False):
         if not done: 
             self.view.stop_loading()
-            self.mainwin.cancel_login('Login cancelado por el usuario')
+            self.mainwin.cancel_login(_('Login cancelled by user'))
         self.hide()
         return True
 

@@ -47,7 +47,7 @@ def get_rates(val):
     t = time.strftime('%I:%M %P', time.gmtime(tsec))
     hits = val['remaining_hits']
     limit = val['hourly_limit']
-    return u"%s de %s llamadas a la API. Reset: %s" % (hits, limit, t)
+    return "%s %s %s %s: %s" % (hits, _('of'), limit, _('API calls. Reset'), t)
 
 def get_timestamp(tweet):
     # Tue Mar 13 00:12:41 +0000 2007 -> Tweets normales

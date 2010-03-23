@@ -55,9 +55,9 @@ class Notification:
         if self.config['home'] != 'on':
             return
         if count == 1:
-            twt = 'nuevo tweet' 
+            twt = _('new tweet')
         else:
-            twt = 'nuevos tweets'
+            twt = _('new tweets')
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
         if self.config['sound'] == 'on': 
             self.sound.tweets()
@@ -66,9 +66,9 @@ class Notification:
         if self.config['replies'] != 'on':
             return
         if count == 1:
-            twt = u'nueva mención'
+            twt = _('new mention')
         else:
-            twt = u'nuevas menciones'
+            twt = _('new mentions')
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
         if self.config['sound'] == 'on':
             self.sound.replies()
@@ -77,9 +77,9 @@ class Notification:
         if self.config['directs'] != 'on':
             return
         if count == 1: 
-            twt = 'nuevo DM' 
+            twt = _('new DM') 
         else:
-            twt = 'nuevos DM'
+            twt = _('new DMs')
         self.popup('Turpial (%i %s)' % (count, twt), tweet, icon)
         if self.config['sound'] == 'on':
             self.sound.directs()
@@ -88,8 +88,10 @@ class Notification:
         if self.config['login'] != 'on':
             return
         self.popup('@%s' % p['screen_name'],
-            'Tweets: %i\nFollowing: %i\nFollowers: %i' % (p['statuses_count'],
-            p['friends_count'], p['followers_count']))
+            '%s: %i\n%s: %i\n%s: %i' % 
+            (_('Tweets'), p['statuses_count'],
+            _('Following'), p['friends_count'], 
+            _('Followers'), p['followers_count']))
         if self.config['sound'] == 'on':
             self.sound.login()
         
@@ -97,6 +99,6 @@ class Notification:
         name = user['screen_name']
         
         if follow:
-            self.popup('Follow', 'Estas siguiendo a @%s' % name)
+            self.popup(_('Follow'), _('Now you follow to @%s') % name)
         else:
-            self.popup('Unfollow', 'Has dejado de seguir a @%s' % name)
+            self.popup(_('Unfollow'), _('You have unfollow to @%s') % name)

@@ -18,7 +18,7 @@ class Preferences(gtk.Window):
         self.mainwin = parent
         self.current = parent.read_config()
         self.set_default_size(360, 380)
-        self.set_title('Preferencias')
+        self.set_title(_('Preferences'))
         self.set_border_width(6)
         self.set_transient_for(parent)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
@@ -44,11 +44,11 @@ class Preferences(gtk.Window):
         notebook.set_scrollable(True)
         notebook.set_border_width(3)
         notebook.set_properties('tab-pos', gtk.POS_LEFT)
-        notebook.append_page(self.general, gtk.Label('General'))
-        notebook.append_page(self.notif, gtk.Label('Notificaciones'))
-        notebook.append_page(self.services, gtk.Label('Servicios'))
-        notebook.append_page(self.muted, gtk.Label('Silenciar'))
-        notebook.append_page(self.browser, gtk.Label('Navegador Web'))
+        notebook.append_page(self.general, gtk.Label(_('General')))
+        notebook.append_page(self.notif, gtk.Label(_('Notifications')))
+        notebook.append_page(self.services, gtk.Label(_('Services')))
+        notebook.append_page(self.muted, gtk.Label(_('Mute')))
+        notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
         #notebook.append_page(self.proxy, gtk.Label('Proxy'))
         
         vbox = gtk.VBox()
@@ -140,8 +140,8 @@ class TimeScroll(gtk.HBox):
         
 class GeneralTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, 'Ajusta cada cuanto tiempo quieres \
-actualizar el timeline, las menciones y los mensajes directos', current)
+        PreferencesTab.__init__(self, _('Adjust update frequency for \
+timeline, mentions and direct messages'), current)
         
         h = int(self.current['home-update-interval'])
         r = int(self.current['replies-update-interval'])
@@ -151,46 +151,45 @@ actualizar el timeline, las menciones y los mensajes directos', current)
         ws = True if self.current['workspace'] == 'wide' else False
         min = True if self.current['minimize-on-close'] == 'on' else False
         
-        self.home = TimeScroll('Timeline', h,
+        self.home = TimeScroll(_('Timeline'), h,
             callback=self.update_api_calls)
-        self.replies = TimeScroll('Menciones', r, min=2,
+        self.replies = TimeScroll(_('Mentions'), r, min=2,
             callback=self.update_api_calls)
-        self.directs = TimeScroll('Directos', d, min=5,
+        self.directs = TimeScroll(_('Directs'), d, min=5,
             callback=self.update_api_calls)
         
-        self.tweets = TimeScroll('Tweets mostrados', t, min=20, max=200,
+        self.tweets = TimeScroll(_('Tweets shown'), t, min=20, max=200,
             unit='', lbl_size=120)
         
-        self.estimated = gtk.Label(u'Usarás 0 llamadas a la API por hora')
+        self.estimated = gtk.Label(_('You will use 0 calls to API per hour'))
         est_align = gtk.Alignment(xalign=0.5)
         est_align.set_padding(0, 8, 0, 0)
         est_align.add(self.estimated)
         
-        self.workspace = gtk.CheckButton('Modo extendido')
+        self.workspace = gtk.CheckButton(_('Wide Mode'))
         self.workspace.set_active(ws)
         try:
             self.workspace.set_has_tooltip(True)
-            self.workspace.set_tooltip_text('Muestra un espacio de trabajo \
-de 3 columnas')
+            self.workspace.set_tooltip_text(_('Show a workspace of 3 columns'))
         except:
             pass
         
-        self.profile_colors = gtk.CheckButton('Cargar color de perfil \
-(Requiere reiniciar)')
+        self.profile_colors = gtk.CheckButton(_('Load profile color \
+(Needs restart Turpial)'))
         self.profile_colors.set_active(pf)
         try:
             self.profile_colors.set_has_tooltip(True)
-            self.profile_colors.set_tooltip_text('Utiliza los colores del \
-perfil de usuario para resaltar menciones, hashtags y URLs')
+            self.profile_colors.set_tooltip_text(_('Use user profile color \
+to highlight mentions, hashtags and URLs'))
         except:
             pass
         
-        self.minimize = gtk.CheckButton('Minimizar a la bandeja')
+        self.minimize = gtk.CheckButton(_('Minimize to tray'))
         self.minimize.set_active(min)
         try:
             self.minimize.set_has_tooltip(True)
-            self.minimize.set_tooltip_text('Envía a Turpial a la bandeja de \
-sistema en lugar de cerrarlo')
+            self.minimize.set_tooltip_text(_('Send Turpial to system tray \
+when close'))
         except:
             pass
         
@@ -208,8 +207,8 @@ sistema en lugar de cerrarlo')
     def update_api_calls(self):
         calls = (60 / self.home.value) + (60 / self.replies.value) + \
             (60 / self.directs.value)
-        self.estimated.set_text(u'Usarás aprox. %i llamadas a la API por hora' 
-            % calls)
+        self.estimated.set_text(_('You will use aprox. %i calls to API per \
+hour') % calls)
         
     def get_config(self):
         ws = 'wide' if self.workspace.get_active() else 'single'
@@ -228,8 +227,8 @@ sistema en lugar de cerrarlo')
 
 class NotificationsTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, 'Selecciona las notificaciones que \
-deseas recibir de Turpial', current)
+        PreferencesTab.__init__(self, _('Select what notifications you want \
+to receive from Turpial'), current)
         
         home = True if self.current['home'] == 'on' else False
         replies = True if self.current['replies'] == 'on' else False
@@ -237,48 +236,48 @@ deseas recibir de Turpial', current)
         login = True if self.current['login'] == 'on' else False
         sound = True if self.current['sound'] == 'on' else False
         
-        self.timeline = gtk.CheckButton('Timeline')
+        self.timeline = gtk.CheckButton(_('Timeline'))
         self.timeline.set_active(home)
         try:
             self.timeline.set_has_tooltip(True)
-            self.timeline.set_tooltip_text('Muestra una notificación cada vez \
-que se actualiza el timeline')
+            self.timeline.set_tooltip_text(_('Show a notification when \
+Timeline is updated'))
         except:
             pass
             
-        self.replies = gtk.CheckButton('Menciones')
+        self.replies = gtk.CheckButton(_('Mentions'))
         self.replies.set_active(replies)
         try:
             self.replies.set_has_tooltip(True)
-            self.replies.set_tooltip_text('Muestra una notificación cuando se \
-reciben menciones de otros usuarios')
+            self.replies.set_tooltip_text(_('Show a notification when you \
+get mentions from other users'))
         except:
             pass
             
-        self.directs = gtk.CheckButton('Mensajes Directos')
+        self.directs = gtk.CheckButton(_('Directs Messages'))
         self.directs.set_active(directs)
         try:
             self.directs.set_has_tooltip(True)
-            self.directs.set_tooltip_text(u'Muestra una notificación cuando se \
-reciben mensajes directos')
+            self.directs.set_tooltip_text(_('Show a notification when you \
+get direct messages'))
         except:
             pass
             
-        self.profile = gtk.CheckButton('Inicio')
+        self.profile = gtk.CheckButton(_('Login'))
         self.profile.set_active(login)
         try:
             self.profile.set_has_tooltip(True)
-            self.profile.set_tooltip_text(u'Muestra una notificación al inicio \
-de la sesión con información del perfil de usuario')
+            self.profile.set_tooltip_text(_('Show a notification at login \
+with your user info'))
         except:
             pass
         
-        self.sounds = gtk.CheckButton('Activar sonidos')
+        self.sounds = gtk.CheckButton(_('Activate sounds'))
         self.sounds.set_active(sound)
         try:
             self.sounds.set_has_tooltip(True)
-            self.sounds.set_tooltip_text(u'Activa los sonidos con cada \
-notificación')
+            self.sounds.set_tooltip_text(_('Activate sounds for each \
+notification'))
         except:
             pass
             
@@ -306,11 +305,11 @@ notificación')
         
 class ServicesTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, u'Selecciona los servicios que deseas \
-usar para cortar URLs y subir imágenes a Twitter', current)
+        PreferencesTab.__init__(self, _('Select your preferred services for \
+shorten URLs and upload images'), current)
         i = 0
         default = -1
-        url_lbl = gtk.Label('Cortar URL')
+        url_lbl = gtk.Label(_('Shorten URL'))
         self.shorten = gtk.combo_box_new_text()
         for key, v in URL_SERVICES.iteritems():
             self.shorten.append_text(key)
@@ -323,7 +322,7 @@ usar para cortar URLs y subir imágenes a Twitter', current)
         url_box.pack_start(url_lbl, False, False, 3)
         url_box.pack_start(self.shorten, False, False, 3)
         
-        pic_lbl = gtk.Label(u'Subir imágenes')
+        pic_lbl = gtk.Label(_('Upload images'))
         self.upload = gtk.combo_box_new_text()
         i = 0
         for key in PHOTO_SERVICES:
@@ -349,8 +348,8 @@ usar para cortar URLs y subir imágenes a Twitter', current)
         
 class MutedTab(PreferencesTab):
     def __init__(self, parent):
-        PreferencesTab.__init__(self, u'Selecciona los usuarios que deseas \
-silenciar temporalmente')
+        PreferencesTab.__init__(self, _('Select all those users that are \
+bothering you and shut them up temporarily'))
         
         self.muted = []
         self.mainwin = parent
@@ -388,8 +387,9 @@ silenciar temporalmente')
         label = gtk.Label()
         label.set_line_wrap(True)
         label.set_use_markup(True)
-        label.set_markup(u'<span foreground="#920d12">Aún no he terminado \
-de cargar todos los contactos. Intententa de nuevo en unos segundos</span>')
+        label.set_markup('<span foreground="#920d12">%s</span>' % 
+            _('I am still loading all of your friends. Try again in a few \
+seconds' ))
         label.set_justify(gtk.JUSTIFY_FILL)
         
         align = gtk.Alignment(xalign=0.0, yalign=0.0)
@@ -425,20 +425,20 @@ de cargar todos los contactos. Intententa de nuevo en unos segundos</span>')
 
 class BrowserTab(PreferencesTab):
     def __init__(self, parent, current):
-        PreferencesTab.__init__(self, u'Configura el navegador web para abrir \
-los enlaces', current)
+        PreferencesTab.__init__(self, _('Setup your favorite web browser to \
+open all links'), current)
         
         self.mainwin = parent
         
         chk_default = gtk.RadioButton(None,
-            'Navegador predeterminado del sistema')
+            _('Default web browser'))
         chk_other = gtk.RadioButton(chk_default,
-            'Escoger un navegador diferente')
+            _('Choose another web browser'))
         
-        cmd_lbl = gtk.Label('Comando')
+        cmd_lbl = gtk.Label(_('Command'))
         self.command = gtk.Entry()
-        btn_test = gtk.Button('Probar')
-        btn_browse = gtk.Button('Examinar')
+        btn_test = gtk.Button(_('Test'))
+        btn_browse = gtk.Button(_('Browse'))
         
         cmd_box = gtk.HBox(False)
         cmd_box.pack_start(cmd_lbl, False, False, 3)
@@ -477,8 +477,8 @@ los enlaces', current)
             subprocess.Popen([cmd, 'http://turpial.org.ve/'])
             
     def __browse(self, widget):
-        dia = gtk.FileChooserDialog(title=u'Seleccione la ruta del navegador \
-web con el que desea abrir los enlaces',
+        dia = gtk.FileChooserDialog(title=_('Select the full path of your \
+web browser'),
             parent=self.mainwin,
             action=gtk.FILE_CHOOSER_ACTION_OPEN,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,

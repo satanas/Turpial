@@ -17,23 +17,23 @@ class Dock(gtk.Alignment):
         
         self.btn_home = gtk.Button()
         self.btn_home.set_relief(gtk.RELIEF_NONE)
-        self.btn_home.set_tooltip_text('Inicio')
+        self.btn_home.set_tooltip_text(_('Home'))
         
         self.btn_profile = gtk.Button()
         self.btn_profile.set_relief(gtk.RELIEF_NONE)
-        self.btn_profile.set_tooltip_text('Perfil')
+        self.btn_profile.set_tooltip_text(_('Profile'))
         
         self.btn_update = gtk.Button()
         self.btn_update.set_relief(gtk.RELIEF_NONE)
-        self.btn_update.set_tooltip_text('Tweet')
+        self.btn_update.set_tooltip_text(_('Tweet'))
         
         self.btn_settings = gtk.Button()
         self.btn_settings.set_relief(gtk.RELIEF_NONE)
-        self.btn_settings.set_tooltip_text('Preferencias')
+        self.btn_settings.set_tooltip_text(_('Preferences'))
         
         self.btn_about = gtk.Button()
         self.btn_about.set_relief(gtk.RELIEF_NONE)
-        self.btn_about.set_tooltip_text('Acerca de')
+        self.btn_about.set_tooltip_text(_('About'))
         
         self.btn_home.connect('clicked', self.mainwin.show_home)
         self.btn_update.connect('clicked', self.show_update)

@@ -14,10 +14,11 @@ class UpdateBox(gtk.Window):
     def __init__(self, parent):
         gtk.Window.__init__(self)
         
+        self.what = _('What is happening?')
         self.blocked = False
         self.mainwin = parent
         self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
-        self.set_title(_('Actualizar estado'))
+        self.set_title(_('Update status'))
         self.set_resizable(False)
         #self.set_default_size(500, 120)
         self.set_size_request(500, 150)
@@ -27,7 +28,8 @@ class UpdateBox(gtk.Window):
         self.label = gtk.Label()
         self.label.set_use_markup(True)
         self.label.set_alignment(0, 0.5)
-        self.label.set_markup(u'<span size="medium"><b>¿Qué está pasando?</b></span>')
+        self.label.set_markup('<span size="medium"><b>%s</b></span>' % 
+            self.what)
         self.label.set_justify(gtk.JUSTIFY_LEFT)
         
         self.num_chars = gtk.Label()
@@ -51,11 +53,11 @@ class UpdateBox(gtk.Window):
         updatebox.pack_start(scroll, True, True, 3)
         
         self.url = gtk.Entry()
-        self.btn_url = gtk.Button('Cortar URL')
-        self.btn_url.set_tooltip_text('Cortar URL')
+        self.btn_url = gtk.Button(_('Shorten URL'))
+        self.btn_url.set_tooltip_text(_('Shorten URL'))
         
-        self.btn_pic = gtk.Button('Subir Imagen')
-        self.btn_pic.set_tooltip_text('Subir Imagen')
+        self.btn_pic = gtk.Button(_('Upload image'))
+        self.btn_pic.set_tooltip_text(_('Upload image'))
         
         tools = gtk.HBox(False)
         tools.pack_start(self.url, True, True, 3)
@@ -64,16 +66,16 @@ class UpdateBox(gtk.Window):
         tools.pack_start(self.btn_pic, False, False, 3)
         
         self.toolbox = gtk.Expander()
-        self.toolbox.set_label('Opciones')
+        self.toolbox.set_label(_('Options'))
         self.toolbox.set_expanded(False)
         self.toolbox.add(tools)
         
         self.btn_clr = gtk.Button()
         self.btn_clr.set_image(self.mainwin.load_image('clear.png'))
-        self.btn_clr.set_tooltip_text('Borrar todo')
+        self.btn_clr.set_tooltip_text(_('Clear all'))
         self.btn_clr.set_relief(gtk.RELIEF_NONE)
-        self.btn_upd = gtk.Button('Tweet')
-        chk_short = gtk.CheckButton('Autocortado de URLs')
+        self.btn_upd = gtk.Button(_('Tweet'))
+        chk_short = gtk.CheckButton(_('Autoshort URLs'))
         chk_short.set_sensitive(False)
         
         top = gtk.HBox(False)
@@ -144,14 +146,16 @@ class UpdateBox(gtk.Window):
         self.btn_upd.set_sensitive(True)
         self.btn_url.set_sensitive(True)
         self.waiting.stop(error=True)
-        self.lblerror.set_markup("<span size='small'>Oh oh... No se pudo enviar el tweet</span>")
+        self.lblerror.set_markup("<span size='small'>%s</span>" % 
+            _('Oh oh... I couldn\'t send the tweet'))
         self.set_focus(self.update_text)
         
     def show(self, text, id, user):
         self.in_reply_id = id
         self.in_reply_user = user
         if id != '' and user != '':
-            self.label.set_markup('<span size="medium"><b>En respuesta a %s</b></span>' % user)
+            self.label.set_markup('<span size="medium"><b>%s %s</b></span>' % 
+                (_('In reply to'), user))
         
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         self.set_focus(self.update_text)
@@ -164,7 +168,8 @@ class UpdateBox(gtk.Window):
         buffer.set_text('')
         self.url.set_text('')
         self.lblerror.set_markup('')
-        self.label.set_markup(u'<span size="medium"><b>¿Qué está pasando?</b></span>')
+        self.label.set_markup(u'<span size="medium"><b>%s</b></span>' % 
+            self.what)
         self.waiting.stop()
         self.toolbox.set_expanded(False)
         self.in_reply_id = None
@@ -194,7 +199,8 @@ class UpdateBox(gtk.Window):
         tweet = buffer.get_text(start, end)
         if tweet == '': 
             self.waiting.stop(error=True)
-            self.lblerror.set_markup("<span size='small'>Eyy... debes escribir algo</span>")
+            self.lblerror.set_markup("<span size='small'>%s</span>" % 
+                _('Eyy... you must write something'))
             return
         
         self.waiting.start()
@@ -208,7 +214,8 @@ class UpdateBox(gtk.Window):
     def update_shorten_url(self, short):
         if short is None:
             self.waiting.stop(error=True)
-            self.lblerror.set_markup("<span size='small'>Oops... No se pudo cortar la URL</span>")
+            self.lblerror.set_markup("<span size='small'>%s</span>" % 
+                _('Oops... I couldn\'t shrink that URL'))
             return
         buffer = self.update_text.get_buffer()
         end_offset = buffer.get_property('cursor-position')
@@ -235,7 +242,7 @@ class UpdateBox(gtk.Window):
         filtro.add_pattern('*.jpg')
         filtro.add_pattern('*.jpeg')
         
-        dia = gtk.FileChooserDialog(title='Seleccione la imagen que desea subir',
+        dia = gtk.FileChooserDialog(title=_('Select image to upload'),
             parent=self, action=gtk.FILE_CHOOSER_ACTION_OPEN,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                 gtk.STOCK_OK, gtk.RESPONSE_OK))
@@ -251,7 +258,8 @@ class UpdateBox(gtk.Window):
     def update_uploaded_pic(self, pic_url):
         if pic_url is None:
             self.waiting.stop(error=True)
-            self.lblerror.set_markup("<span size='small'>Oops... No se pudo subir la imagen</span>")
+            self.lblerror.set_markup("<span size='small'>%s</span>" % 
+                _('Oops... I couldn\'t upload that image'))
             return
         buffer = self.update_text.get_buffer()
         end_offset = buffer.get_property('cursor-position')

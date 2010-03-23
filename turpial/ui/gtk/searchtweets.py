@@ -17,7 +17,7 @@ class SearchTweets(gtk.VBox):
         self.input_topics = gtk.Entry()
         self.clearbtn = gtk.Button()
         self.clearbtn.set_image(self.mainwin.load_image('clear.png'))
-        self.clearbtn.set_tooltip_text('Limpiar todos los resultados')
+        self.clearbtn.set_tooltip_text(_('Clear results'))
         try:
             #self.input_topics.set_property("primary-icon-stock", 
             #                               gtk.STOCK_FIND)
@@ -59,7 +59,7 @@ class SearchTweets(gtk.VBox):
             self.mainwin.request_search_topic(topic)
             widget.set_text('')
         else:
-            widget.set_text('Debes indicar un tema a buscar')
+            widget.set_text(_('You must write something to search'))
         widget.grab_focus()
         
     def update_tweets(self, arr_tweets):

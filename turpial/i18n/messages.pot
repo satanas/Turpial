@@ -1,5 +1,5 @@
 # Translations template for turpial.
-# Copyright (C) 2010 ORGANIZATION
+# Copyright (C) 2010 Turpial
 # This file is distributed under the same license as the turpial project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: turpial 1.0-b1\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-03-24 23:02-0530\n"
+"Report-Msgid-Bugs-To: milmazz@gmail.com\n"
+"POT-Creation-Date: 2010-03-25 02:35-0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"

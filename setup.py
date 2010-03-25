@@ -10,6 +10,7 @@ except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
     from setuptools import setup
+from babel.messages import frontend as babel
 
 LONG_DESCRIPTION = """
 Este proyecto intenta ser un cliente alternativo para la red Twitter
@@ -51,6 +52,12 @@ setup(name="turpial",
         'console_scripts': [
             'turpial = turpial.main:Turpial',
         ],
+      },
+      cmdclass={
+        'compile_catalog': babel.compile_catalog,
+        'extract_messages': babel.extract_messages,
+        'init_catalog': babel.init_catalog,
+        'update_catalog': babel.update_catalog
       },
       data_files=[
         ('turpial/data/pixmaps', glob.glob(os.path.join('turpial', 'data', 'pixmaps', '*.png'))),

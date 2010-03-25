@@ -30,7 +30,7 @@ from turpial.ui import util as util
 
 try:
     import webkit
-    from turpial.ui.gtk.oauthwin import *
+    from turpial.ui.gtk.oauthwin import OAuthWindow
     extend_mode = True
 except:
     extend_mode = False

@@ -3,7 +3,7 @@
 # Copyright (C) 2010 Wil Alvarez
 # This file is distributed under the same license as the Turpial package.
 # Satanas <wil.alejandro@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Turpial 1.1.2-a1\n"
@@ -32,7 +32,7 @@ msgstr "Perfil"
 #: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:160
 #: turpial/ui/gtk/updatebox.py:77
 msgid "Tweet"
-msgstr ""
+msgstr "Tweet"
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/preferences.py:21
 msgid "Preferences"
@@ -47,22 +47,12 @@ msgid "Turpial Authorization"
 msgstr "Autorización de Turpial"
 
 #: turpial/ui/gtk/inputpin.py:24
-msgid ""
-"Twitter has implemented a new security system and needs that you authorize "
-"Turpial from your account"
-msgstr ""
-"Twitter ha implementado un nuevo sistema de seguridad y necesita que "
-"autorices Turpial desde tu cuenta"
+msgid "Twitter has implemented a new security system and needs that you authorize Turpial from your account"
+msgstr "Twitter ha implementado un nuevo sistema de seguridad y necesita que autorices Turpial desde tu cuenta"
 
 #: turpial/ui/gtk/inputpin.py:26
-msgid ""
-"In order to complete that step, Turpial has open a new page in your default "
-"browser, go there to authorize Turpial and copy the number given in the box "
-"below..."
-msgstr ""
-"Para completar ese paso, Turpial ha abierto una nueva página en tu navegador "
-"predeterminado, ve allí para autorizar a Turpial y copia el número dado en "
-"la caja a continuación..."
+msgid "In order to complete that step, Turpial has open a new page in your default browser, go there to authorize Turpial and copy the number given in the box below..."
+msgstr "Para completar ese paso, Turpial ha abierto una nueva página en tu navegador predeterminado, ve allí para autorizar a Turpial y copia el número dado en la caja a continuación..."
 
 #: turpial/ui/gtk/inputpin.py:29
 msgid "Input PIN"
@@ -71,7 +61,7 @@ msgstr "Introduce el PIN"
 #: turpial/ui/gtk/main.py:51 turpial/ui/gtk/main.py:54
 #: turpial/ui/gtk/preferences.py:154 turpial/ui/gtk/preferences.py:239
 msgid "Timeline"
-msgstr ""
+msgstr "Línea de tiempo"
 
 #: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:156
 #: turpial/ui/gtk/preferences.py:248
@@ -123,12 +113,8 @@ msgid "Secure Authentication"
 msgstr "Autenticación Segura"
 
 #: turpial/ui/gtk/oauthwin.py:39
-msgid ""
-"Autorize Turpial and copy the given number (<b>PIN</b>) in the text box "
-"below:"
-msgstr ""
-"Autoriza a Turpial y copia el número dado (<b>PIN</b>) en la caja de texto a "
-"continuación:"
+msgid "Autorize Turpial and copy the given number (<b>PIN</b>) in the text box below:"
+msgstr "Autoriza a Turpial y copia el número dado (<b>PIN</b>) en la caja de texto a continuación:"
 
 #: turpial/ui/gtk/oauthwin.py:71
 msgid "You must write a valid PIN"
@@ -140,7 +126,7 @@ msgstr "Cargando..."
 
 #: turpial/ui/gtk/preferences.py:47
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #: turpial/ui/gtk/preferences.py:48
 msgid "Notifications"
@@ -160,9 +146,7 @@ msgstr "Navegador Web"
 
 #: turpial/ui/gtk/preferences.py:143
 msgid "Adjust update frequency for timeline, mentions and direct messages"
-msgstr ""
-"Ajusta la frecuencia de actualización para el timeline, menciones y mensajes "
-"directos"
+msgstr "Ajusta la frecuencia de actualización para el timeline, menciones y mensajes directos"
 
 #: turpial/ui/gtk/preferences.py:161
 msgid "Tweets shown"
@@ -186,8 +170,7 @@ msgstr "Carga color de perfil (Requiere reiniciar Turpial)"
 
 #: turpial/ui/gtk/preferences.py:182
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr ""
-"Usa el color de perfil del usuario para resaltar menciones, hashtags y URLs"
+msgstr "Usa el color de perfil del usuario para resaltar menciones, hashtags y URLs"
 
 #: turpial/ui/gtk/preferences.py:187
 msgid "Minimize to tray"
@@ -228,8 +211,7 @@ msgstr "Inicio de sesión"
 
 #: turpial/ui/gtk/preferences.py:270
 msgid "Show a notification at login with your user info"
-msgstr ""
-"Muestra una notificación al inicio de sesión con información de tu usuario"
+msgstr "Muestra una notificación al inicio de sesión con información de tu usuario"
 
 #: turpial/ui/gtk/preferences.py:275
 msgid "Activate sounds"
@@ -253,11 +235,8 @@ msgid "Upload images"
 msgstr "Subir imágenes"
 
 #: turpial/ui/gtk/preferences.py:351
-msgid ""
-"Select all those users that are bothering you and shut them up temporarily"
-msgstr ""
-"Selecciona todos los usuarios que te están fastidiando y callalos "
-"temporalmente"
+msgid "Select all those users that are bothering you and shut them up temporarily"
+msgstr "Selecciona todos los usuarios que te están fastidiando y callalos temporalmente"
 
 #: turpial/ui/gtk/preferences.py:391
 msgid "I am still loading all of your friends. Try again in a few seconds"
@@ -329,20 +308,22 @@ msgid "Retweet (Old)"
 msgstr "Retweet (Antiguo)"
 
 #: turpial/ui/gtk/tweetslist.py:242
+#, fuzzy
 msgid "Retweet"
-msgstr ""
+msgstr "Retwittear"
 
 #: turpial/ui/gtk/tweetslist.py:243
 msgid "+ Fav"
-msgstr ""
+msgstr "+Fav"
 
 #: turpial/ui/gtk/tweetslist.py:244
 msgid "- Fav"
-msgstr ""
+msgstr "-Fav"
 
 #: turpial/ui/gtk/tweetslist.py:246
+#, fuzzy
 msgid "DM"
-msgstr ""
+msgstr "Mensaje Directo"
 
 #: turpial/ui/gtk/tweetslist.py:247 turpial/notification.py:102
 msgid "Follow"
@@ -423,11 +404,11 @@ msgstr "Ubicación"
 
 #: turpial/ui/gtk/userform.py:65
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:78
 msgid "Bio"
-msgstr ""
+msgstr "Bio"
 
 #: turpial/ui/gtk/userform.py:90 turpial/ui/gtk/userform.py:155
 msgid "Save"
@@ -471,7 +452,7 @@ msgstr "nuevos DMs"
 
 #: turpial/notification.py:92
 msgid "Tweets"
-msgstr ""
+msgstr "Mensajes"
 
 #: turpial/notification.py:93
 msgid "Following"

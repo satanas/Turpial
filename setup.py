@@ -10,6 +10,7 @@ except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
     from setuptools import setup
+
 from babel.messages import frontend as babel
 
 LONG_DESCRIPTION = """
@@ -57,7 +58,9 @@ setup(name="turpial",
         'compile_catalog': babel.compile_catalog,
         'extract_messages': babel.extract_messages,
         'init_catalog': babel.init_catalog,
-        'update_catalog': babel.update_catalog
+        'update_catalog': babel.update_catalog,
+#        'build': build,
+#        'build_l10n': build_l10n
       },
       data_files=[
         ('turpial/data/pixmaps', glob.glob(os.path.join('turpial', 'data', 'pixmaps', '*.png'))),

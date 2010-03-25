@@ -1,5 +1,5 @@
-LC_MESSAGES
 /turpial.sh
 bitacora
 *.pyc
 *.pyo
+*.mo

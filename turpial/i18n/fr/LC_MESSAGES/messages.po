@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: turpial 1.0-b1\n"
 "Report-Msgid-Bugs-To: milmazz@gmail.com\n"
 "POT-Creation-Date: 2010-03-25 02:35+0530\n"
-"PO-Revision-Date: 2010-03-25 08:26-0530\n"
+"PO-Revision-Date: 2010-03-27 22:45-0530\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fr <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
@@ -87,11 +87,11 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: turpial/ui/gtk/dock.py:24 turpial/ui/gtk/main.py:69
+#: turpial/ui/gtk/dock.py:24 turpial/ui/gtk/main.py:68
 msgid "Profile"
 msgstr ""
 
-#: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:160
+#: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:159
 #: turpial/ui/gtk/updatebox.py:77
 msgid "Tweet"
 msgstr ""
@@ -125,53 +125,53 @@ msgstr ""
 msgid "Input PIN"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:51 turpial/ui/gtk/main.py:54
+#: turpial/ui/gtk/main.py:50 turpial/ui/gtk/main.py:53
 #: turpial/ui/gtk/preferences.py:154 turpial/ui/gtk/preferences.py:239
 msgid "Timeline"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:156
+#: turpial/ui/gtk/main.py:54 turpial/ui/gtk/preferences.py:156
 #: turpial/ui/gtk/preferences.py:248
 msgid "Mentions"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:56 turpial/ui/gtk/preferences.py:158
+#: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:158
 msgid "Directs"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:68
+#: turpial/ui/gtk/main.py:67
 msgid "Favorites"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:70
+#: turpial/ui/gtk/main.py:69
 msgid "Search"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:161
+#: turpial/ui/gtk/main.py:160
 msgid "Exit"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:279
+#: turpial/ui/gtk/main.py:278
 msgid "User and Password"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:286
+#: turpial/ui/gtk/main.py:285
 msgid "Remember my credentials"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:288
+#: turpial/ui/gtk/main.py:287
 msgid "Connect"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:360
+#: turpial/ui/gtk/main.py:359
 msgid "Wait a few seconds while I load everything..."
 msgstr ""
 
-#: turpial/ui/gtk/main.py:419
+#: turpial/ui/gtk/main.py:418
 msgid "Must write a valid PIN"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:423 turpial/ui/gtk/oauthwin.py:85
+#: turpial/ui/gtk/main.py:422 turpial/ui/gtk/oauthwin.py:85
 msgid "Login cancelled by user"
 msgstr ""
 

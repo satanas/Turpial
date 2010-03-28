@@ -5,11 +5,11 @@ import glob
 import os
 
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
-    from setuptools import setup
+    from setuptools import setup, find_packages
 
 from babel.messages import frontend as babel
 
@@ -42,13 +42,11 @@ setup(name="turpial",
       url="http://code.google.com/p/turpial",
       download_url="http://code.google.com/p/turpial/downloads/list",
       license="GPLv3",
-      packages=[
-        'turpial',
-        'turpial.api',
-        'turpial.api.poster',
-        'turpial.ui',
-        'turpial.ui.gtk'
-      ],
+      packages=find_packages(),
+      package_data={
+        'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/themes/default/*',
+                    'i18n/*.*', 'i18n/*/LC_MESSAGES/*.*']
+      },
       entry_points={
         'console_scripts': [
             'turpial = turpial.main:Turpial',
@@ -61,14 +59,12 @@ setup(name="turpial",
         'update_catalog': babel.update_catalog,
       },
       data_files=[
-        ('turpial/data/pixmaps', glob.glob(os.path.join('turpial', 'data', 'pixmaps', '*.png'))),
-        ('turpial/data/sounds', glob.glob(os.path.join('turpial', 'data', 'sounds', '*.ogg'))),
         ('share/pixmaps', ['turpial/data/pixmaps/turpial_icon_48.png']),
         ('share/applications', ['turpial.desktop']),
         ('share/doc', ['doc/turpial.png',
                        'doc/turpial.dia',
                        'ChangeLog',
-                       'README',
+                       'README.rst',
                        'COPYING']),
       ],
 )

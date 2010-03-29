@@ -2,28 +2,30 @@
 # Copyright (C) 2010 ORGANIZATION
 # This file is distributed under the same license as the turpial project.
 # Ana Rangel <anita.rangel@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: turpial 1.0-b1\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-03-24 23:02+0530\n"
+"Report-Msgid-Bugs-To: milmazz@gmail.com\n"
+"POT-Creation-Date: 2010-03-27 22:43-0530\n"
 "PO-Revision-Date: 2010-03-27 22:45-0530\n"
 "Last-Translator: Ana Rangel <anita.rangel@gmail.com>\n"
 "Language-Team: no <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: turpial/notification.py:58
+#, fuzzy
 msgid "new tweet"
-msgstr ""
+msgstr "nye tweet"
 
 #: turpial/notification.py:60
+#, fuzzy
 msgid "new tweets"
-msgstr ""
+msgstr "nye tweets"
 
 #: turpial/notification.py:69
 msgid "new mention"
@@ -109,16 +111,11 @@ msgid "Turpial Authorization"
 msgstr "Turpial Autorisasjon"
 
 #: turpial/ui/gtk/inputpin.py:24
-msgid ""
-"Twitter has implemented a new security system and needs that you "
-"authorize Turpial from your account"
+msgid "Twitter has implemented a new security system and needs that you authorize Turpial from your account"
 msgstr ""
 
 #: turpial/ui/gtk/inputpin.py:26
-msgid ""
-"In order to complete that step, Turpial has open a new page in your "
-"default browser, go there to authorize Turpial and copy the number given "
-"in the box below..."
+msgid "In order to complete that step, Turpial has open a new page in your default browser, go there to authorize Turpial and copy the number given in the box below..."
 msgstr ""
 
 #: turpial/ui/gtk/inputpin.py:29
@@ -180,9 +177,7 @@ msgid "Secure Authentication"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:39
-msgid ""
-"Autorize Turpial and copy the given number (<b>PIN</b>) in the text box "
-"below:"
+msgid "Autorize Turpial and copy the given number (<b>PIN</b>) in the text box below:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:71
@@ -453,16 +448,19 @@ msgid "Oops... I couldn't upload that image"
 msgstr ""
 
 #: turpial/ui/gtk/userform.py:49
+#, fuzzy
 msgid "Name"
-msgstr ""
+msgstr "Navn"
 
 #: turpial/ui/gtk/userform.py:57
+#, fuzzy
 msgid "Location"
-msgstr ""
+msgstr "Sted"
 
 #: turpial/ui/gtk/userform.py:65
+#, fuzzy
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:78
 msgid "Bio"
@@ -475,4 +473,3 @@ msgstr ""
 #: turpial/ui/gtk/userform.py:147
 msgid "Saving..."
 msgstr ""
-

@@ -29,19 +29,19 @@ msgstr "nye tweets"
 
 #: turpial/notification.py:69
 msgid "new mention"
-msgstr ""
+msgstr "nye omtale"
 
 #: turpial/notification.py:71
 msgid "new mentions"
-msgstr ""
+msgstr "nye omtaler"
 
 #: turpial/notification.py:80
 msgid "new DM"
-msgstr ""
+msgstr "ny DM"
 
 #: turpial/notification.py:82
 msgid "new DMs"
-msgstr ""
+msgstr "nye DMs"
 
 #: turpial/notification.py:92
 msgid "Tweets"

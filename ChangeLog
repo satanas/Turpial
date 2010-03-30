@@ -1,4 +1,4 @@
-v1.0-b1(Feb 25, 2010):
+v1.0 (Feb 25, 2010):
     + Soporte para ver los hilos de conversaciones
     + Agregada funcionalidad para Silenciar usuarios
     + Mejorado el manejo de las imágenes de usuarios (PIL)
@@ -13,7 +13,7 @@ v1.0-b1(Feb 25, 2010):
     + Independizados los módulos del núcleo (core) de las interfaces gráficas (gtk, gobject, etc)
     + Corregidos bugs menores
 
-v0.9.3-a1(Ene 23, 2010):
+v0.9.3-a1 (Ene 23, 2010):
     + Castellanizada toda la aplicación (a excepción de términos muy específicos)
     + Corregido bug que impedía guardar la opción de cargar color del perfil
     + Corregido error que bloqueaba la opción 'Follow' del menú contextual cuando el usuario no tiene amigos

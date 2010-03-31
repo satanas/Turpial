@@ -27,11 +27,11 @@ msgstr "nouveaux tweets"
 
 #: turpial/notification.py:69
 msgid "new mention"
-msgstr ""
+msgstr "Nouvelle mention"
 
 #: turpial/notification.py:71
 msgid "new mentions"
-msgstr ""
+msgstr "Nouvelles mentions"
 
 #: turpial/notification.py:80
 msgid "new DM"
@@ -73,11 +73,11 @@ msgstr "Vous ne suivez plus @%s"
 
 #: turpial/ui/util.py:50
 msgid "of"
-msgstr ""
+msgstr "de"
 
 #: turpial/ui/util.py:50
 msgid "API calls. Reset"
-msgstr ""
+msgstr "Appels de l'API. Réinitialiser"
 
 #: turpial/ui/gtk/about.py:18
 msgid "Twitter client multi-interface written in Python"
@@ -97,59 +97,59 @@ msgid "Tweet"
 msgstr "Tweet"
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/preferences.py:21
-#, fuzzy
 msgid "Preferences"
 msgstr "Préférences"
 
 #: turpial/ui/gtk/dock.py:36
 msgid "About"
-msgstr ""
+msgstr "A Propos"
 
 #: turpial/ui/gtk/inputpin.py:12
 msgid "Turpial Authorization"
-msgstr ""
+msgstr "Autorisation Turpial"
 
 #: turpial/ui/gtk/inputpin.py:24
 msgid "Twitter has implemented a new security system and needs that you authorize Turpial from your account"
-msgstr ""
+msgstr "Twitter a implémenté un nouveau système de sécurisation et  nécessite que vous authorisez Turpial d'accéder à votre compte"
 
 #: turpial/ui/gtk/inputpin.py:26
+#, fuzzy
 msgid "In order to complete that step, Turpial has open a new page in your default browser, go there to authorize Turpial and copy the number given in the box below..."
-msgstr ""
+msgstr "Afin de finir cette étape, Turpial a ouvert une nouvelle page dans le navigateur web par défaut, allez-y pour authoriser Turpial et copiez le nombre donné ci-dessous ..."
 
 #: turpial/ui/gtk/inputpin.py:29
 msgid "Input PIN"
-msgstr ""
+msgstr "Entrée PIN"
 
 #: turpial/ui/gtk/main.py:50 turpial/ui/gtk/main.py:53
 #: turpial/ui/gtk/preferences.py:154 turpial/ui/gtk/preferences.py:239
 msgid "Timeline"
-msgstr ""
+msgstr "Timeline"
 
 #: turpial/ui/gtk/main.py:54 turpial/ui/gtk/preferences.py:156
 #: turpial/ui/gtk/preferences.py:248
 msgid "Mentions"
-msgstr ""
+msgstr "Mentions"
 
 #: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:158
 msgid "Directs"
-msgstr ""
+msgstr "Directs"
 
 #: turpial/ui/gtk/main.py:67
 msgid "Favorites"
-msgstr ""
+msgstr "Favoris"
 
 #: turpial/ui/gtk/main.py:69
 msgid "Search"
-msgstr ""
+msgstr "Recherche"
 
 #: turpial/ui/gtk/main.py:160
 msgid "Exit"
-msgstr ""
+msgstr "Quitter"
 
 #: turpial/ui/gtk/main.py:278
 msgid "User and Password"
-msgstr ""
+msgstr "Utilisateur et Mot de passe"
 
 #: turpial/ui/gtk/main.py:285
 msgid "Remember my credentials"
@@ -157,11 +157,12 @@ msgstr ""
 
 #: turpial/ui/gtk/main.py:287
 msgid "Connect"
-msgstr ""
+msgstr "Connexion"
 
 #: turpial/ui/gtk/main.py:359
+#, fuzzy
 msgid "Wait a few seconds while I load everything..."
-msgstr ""
+msgstr "Veuillez attendre que tout se charge ..."
 
 #: turpial/ui/gtk/main.py:418
 msgid "Must write a valid PIN"
@@ -353,28 +354,30 @@ msgid "Clear results"
 msgstr ""
 
 #: turpial/ui/gtk/searchtweets.py:62
+#, fuzzy
 msgid "You must write something to search"
-msgstr ""
+msgstr "Vous devez écrire quelquechose à rechercher"
 
 #: turpial/ui/gtk/tweetslist.py:124
 msgid "Open"
-msgstr ""
+msgstr "Ouvrir"
 
 #: turpial/ui/gtk/tweetslist.py:192 turpial/ui/gtk/tweetslist.py:240
 msgid "Reply"
-msgstr ""
+msgstr "Répondre"
 
 #: turpial/ui/gtk/tweetslist.py:193 turpial/ui/gtk/tweetslist.py:245
 msgid "Delete"
-msgstr ""
+msgstr "Supprimer"
 
 #: turpial/ui/gtk/tweetslist.py:241
+#, fuzzy
 msgid "Retweet (Old)"
-msgstr ""
+msgstr "Retweet (vieux)"
 
 #: turpial/ui/gtk/tweetslist.py:242
 msgid "Retweet"
-msgstr ""
+msgstr "Retweet"
 
 #: turpial/ui/gtk/tweetslist.py:243
 msgid "+ Fav"
@@ -410,7 +413,7 @@ msgstr "Quoi de neuf ?"
 
 #: turpial/ui/gtk/updatebox.py:21
 msgid "Update status"
-msgstr ""
+msgstr "Mettre à jour le status"
 
 #: turpial/ui/gtk/updatebox.py:59 turpial/ui/gtk/updatebox.py:60
 msgid "Upload image"
@@ -418,7 +421,7 @@ msgstr ""
 
 #: turpial/ui/gtk/updatebox.py:69
 msgid "Options"
-msgstr ""
+msgstr "Options"
 
 #: turpial/ui/gtk/updatebox.py:75
 msgid "Clear all"
@@ -441,8 +444,9 @@ msgid "Oops... I couldn't shrink that URL"
 msgstr ""
 
 #: turpial/ui/gtk/updatebox.py:245
+#, fuzzy
 msgid "Select image to upload"
-msgstr ""
+msgstr "Sélectionner l'image à envoyer"
 
 #: turpial/ui/gtk/updatebox.py:262
 msgid "Oops... I couldn't upload that image"
@@ -450,11 +454,11 @@ msgstr ""
 
 #: turpial/ui/gtk/userform.py:49
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: turpial/ui/gtk/userform.py:57
 msgid "Location"
-msgstr ""
+msgstr "Localisation"
 
 #: turpial/ui/gtk/userform.py:65
 msgid "URL"

@@ -1,20 +1,85 @@
-# English translations for Turpial package
-# Copyright (C) 2010 Wil Alvarez
-# This file is distributed under the same license as the Turpial package.
-# Satanas <wil.alejandro@gmail.com>, 2010.
-#
+# Norwegian translations for turpial.
+# Copyright (C) 2010 ORGANIZATION
+# This file is distributed under the same license as the turpial project.
+# Ana Rangel <anita.rangel@gmail.com>, 2010.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: Turpial 1.1.2-a1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-23 18:52-0430\n"
-"PO-Revision-Date: 2010-03-22 22:40-0430\n"
-"Last-Translator: Satanas <wil.alejandro@gmail.com>\n"
-"Language-Team: Spanish\n"
+"Project-Id-Version: turpial 1.0-b1\n"
+"Report-Msgid-Bugs-To: milmazz@gmail.com\n"
+"POT-Creation-Date: 2010-03-27 22:43-0530\n"
+"PO-Revision-Date: 2010-03-27 22:45-0530\n"
+"Last-Translator: Ana Rangel <anita.rangel@gmail.com>\n"
+"Language-Team: no <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Generated-By: Babel 0.9.4\n"
+
+#: turpial/notification.py:58
+#, fuzzy
+msgid "new tweet"
+msgstr "nye tweet"
+
+#: turpial/notification.py:60
+#, fuzzy
+msgid "new tweets"
+msgstr "nye tweets"
+
+#: turpial/notification.py:69
+msgid "new mention"
+msgstr "nye omtale"
+
+#: turpial/notification.py:71
+msgid "new mentions"
+msgstr "nye omtaler"
+
+#: turpial/notification.py:80
+msgid "new DM"
+msgstr "ny DM"
+
+#: turpial/notification.py:82
+msgid "new DMs"
+msgstr "nye DMs"
+
+#: turpial/notification.py:92
+msgid "Tweets"
+msgstr ""
+
+#: turpial/notification.py:93
+msgid "Following"
+msgstr ""
+
+#: turpial/notification.py:94
+msgid "Followers"
+msgstr ""
+
+#: turpial/notification.py:102 turpial/ui/gtk/tweetslist.py:247
+msgid "Follow"
+msgstr ""
+
+#: turpial/notification.py:102
+#, python-format
+msgid "Now you follow to @%s"
+msgstr ""
+
+#: turpial/notification.py:104 turpial/ui/gtk/tweetslist.py:248
+msgid "Unfollow"
+msgstr ""
+
+#: turpial/notification.py:104
+#, python-format
+msgid "You have unfollow to @%s"
+msgstr ""
+
+#: turpial/ui/util.py:50
+msgid "of"
+msgstr ""
+
+#: turpial/ui/util.py:50
+msgid "API calls. Reset"
+msgstr ""
 
 #: turpial/ui/gtk/about.py:18
 msgid "Twitter client multi-interface written in Python"
@@ -22,93 +87,88 @@ msgstr ""
 
 #: turpial/ui/gtk/dock.py:20
 msgid "Home"
-msgstr ""
+msgstr "Hjemme"
 
-#: turpial/ui/gtk/dock.py:24 turpial/ui/gtk/main.py:69
+#: turpial/ui/gtk/dock.py:24 turpial/ui/gtk/main.py:68
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
-#: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:160
+#: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:159
 #: turpial/ui/gtk/updatebox.py:77
 msgid "Tweet"
 msgstr ""
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/preferences.py:21
 msgid "Preferences"
-msgstr ""
+msgstr "Preferanser"
 
 #: turpial/ui/gtk/dock.py:36
 msgid "About"
-msgstr ""
+msgstr "Omtrent"
 
 #: turpial/ui/gtk/inputpin.py:12
 msgid "Turpial Authorization"
-msgstr ""
+msgstr "Turpial Autorisasjon"
 
 #: turpial/ui/gtk/inputpin.py:24
-msgid ""
-"Twitter has implemented a new security system and needs that you authorize "
-"Turpial from your account"
+msgid "Twitter has implemented a new security system and needs that you authorize Turpial from your account"
 msgstr ""
 
 #: turpial/ui/gtk/inputpin.py:26
-msgid ""
-"In order to complete that step, Turpial has open a new page in your default "
-"browser, go there to authorize Turpial and copy the number given in the box "
-"below..."
+msgid "In order to complete that step, Turpial has open a new page in your default browser, go there to authorize Turpial and copy the number given in the box below..."
 msgstr ""
 
 #: turpial/ui/gtk/inputpin.py:29
 msgid "Input PIN"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:51 turpial/ui/gtk/main.py:54
+#: turpial/ui/gtk/main.py:50 turpial/ui/gtk/main.py:53
 #: turpial/ui/gtk/preferences.py:154 turpial/ui/gtk/preferences.py:239
 msgid "Timeline"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:156
+#: turpial/ui/gtk/main.py:54 turpial/ui/gtk/preferences.py:156
 #: turpial/ui/gtk/preferences.py:248
 msgid "Mentions"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:56 turpial/ui/gtk/preferences.py:158
+#: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:158
 msgid "Directs"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:68
+#: turpial/ui/gtk/main.py:67
 msgid "Favorites"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:70
+#: turpial/ui/gtk/main.py:69
 msgid "Search"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:161
+#: turpial/ui/gtk/main.py:160
 msgid "Exit"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:279
+#: turpial/ui/gtk/main.py:278
 msgid "User and Password"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:286
+#: turpial/ui/gtk/main.py:285
 msgid "Remember my credentials"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:288
+#: turpial/ui/gtk/main.py:287
 msgid "Connect"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:360
+#: turpial/ui/gtk/main.py:359
 msgid "Wait a few seconds while I load everything..."
 msgstr ""
 
-#: turpial/ui/gtk/main.py:419
+#: turpial/ui/gtk/main.py:418
 msgid "Must write a valid PIN"
 msgstr ""
 
-#: turpial/ui/gtk/main.py:423 turpial/ui/gtk/oauthwin.py:85
+#: turpial/ui/gtk/main.py:422 turpial/ui/gtk/oauthwin.py:85
 msgid "Login cancelled by user"
 msgstr ""
 
@@ -117,9 +177,7 @@ msgid "Secure Authentication"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:39
-msgid ""
-"Autorize Turpial and copy the given number (<b>PIN</b>) in the text box "
-"below:"
+msgid "Autorize Turpial and copy the given number (<b>PIN</b>) in the text box below:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:71
@@ -241,8 +299,7 @@ msgid "Upload images"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:351
-msgid ""
-"Select all those users that are bothering you and shut them up temporarily"
+msgid "Select all those users that are bothering you and shut them up temporarily"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:391
@@ -330,14 +387,6 @@ msgstr ""
 msgid "DM"
 msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:247 turpial/notification.py:102
-msgid "Follow"
-msgstr ""
-
-#: turpial/ui/gtk/tweetslist.py:248 turpial/notification.py:104
-msgid "Unfollow"
-msgstr ""
-
 #: turpial/ui/gtk/tweetslist.py:249
 msgid "Loading friends..."
 msgstr ""
@@ -399,16 +448,19 @@ msgid "Oops... I couldn't upload that image"
 msgstr ""
 
 #: turpial/ui/gtk/userform.py:49
+#, fuzzy
 msgid "Name"
-msgstr ""
+msgstr "Navn"
 
 #: turpial/ui/gtk/userform.py:57
+#, fuzzy
 msgid "Location"
-msgstr ""
+msgstr "Sted"
 
 #: turpial/ui/gtk/userform.py:65
+#, fuzzy
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:78
 msgid "Bio"
@@ -420,58 +472,4 @@ msgstr ""
 
 #: turpial/ui/gtk/userform.py:147
 msgid "Saving..."
-msgstr ""
-
-#: turpial/ui/util.py:50
-msgid "of"
-msgstr ""
-
-#: turpial/ui/util.py:50
-msgid "API calls. Reset"
-msgstr ""
-
-#: turpial/notification.py:58
-msgid "new tweet"
-msgstr ""
-
-#: turpial/notification.py:60
-msgid "new tweets"
-msgstr ""
-
-#: turpial/notification.py:69
-msgid "new mention"
-msgstr ""
-
-#: turpial/notification.py:71
-msgid "new mentions"
-msgstr ""
-
-#: turpial/notification.py:80
-msgid "new DM"
-msgstr ""
-
-#: turpial/notification.py:82
-msgid "new DMs"
-msgstr ""
-
-#: turpial/notification.py:92
-msgid "Tweets"
-msgstr ""
-
-#: turpial/notification.py:93
-msgid "Following"
-msgstr ""
-
-#: turpial/notification.py:94
-msgid "Followers"
-msgstr ""
-
-#: turpial/notification.py:102
-#, python-format
-msgid "Now you follow to @%s"
-msgstr ""
-
-#: turpial/notification.py:104
-#, python-format
-msgid "You have unfollow to @%s"
 msgstr ""

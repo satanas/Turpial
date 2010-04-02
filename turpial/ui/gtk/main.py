@@ -22,16 +22,15 @@ from turpial.ui.gtk.replybox import ReplyBox
 from turpial.ui.gtk.loginlabel import LoginLabel
 from turpial.ui.gtk.waiting import CairoWaiting
 from turpial.ui.gtk.preferences import Preferences
-
-
+from turpial.ui.gtk.inputpin import InputPin
 from turpial.ui.gtk.dock import Dock
-from turpial.ui.base_ui import *
-from turpial.notification import *
+from turpial.ui.base_ui import BaseGui
+from turpial.notification import Notification
 from turpial.ui import util as util
 
 try:
     import webkit
-    from turpial.ui.gtk.oauthwin import *
+    from turpial.ui.gtk.oauthwin import OAuthWindow
     extend_mode = True
 except:
     extend_mode = False

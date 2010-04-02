@@ -13,7 +13,7 @@ import xml.sax.saxutils as saxutils
 AVATAR_SIZE = 48
 
 HASHTAG_PATTERN = re.compile('\#[\wáéíóúÁÉÍÓÚñÑçÇ]+')
-MENTION_PATTERN = re.compile('\@(\w+)[\W\S]')
+MENTION_PATTERN = re.compile('\@[\w+]')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
 URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_().]*[-A-Za-z0-9+&@#/%?=~_()])')
 

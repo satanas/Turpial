@@ -1,4 +1,11 @@
-v1.0 (Feb 25, 2010):
+v1.0-b3 (Mar 14, 2010):
+    + Corregido error con las expresiones regulares de detección de menciones
+    
+v1.0-b2 (Mar 14, 2010):
+    + Mejorada la estructura de directorios
+    + Agregadas validaciones al procesar peticiones oauth
+    
+v1.0-b1 (Feb 25, 2010):
     + Soporte para ver los hilos de conversaciones
     + Agregada funcionalidad para Silenciar usuarios
     + Mejorado el manejo de las imágenes de usuarios (PIL)

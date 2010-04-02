@@ -103,8 +103,8 @@ class TweetList(gtk.VBox):
         
         for h in mentions:
             if len(h) == 1: continue
-            torep = '@%s' % h
-            cad = '<span foreground="#%s">@%s</span>' % (self.mainwin.link_color, h)
+            torep = '%s' % h
+            cad = '<span foreground="#%s">%s</span>' % (self.mainwin.link_color, h)
             text = text.replace(torep, cad)
         return text
         
@@ -149,8 +149,8 @@ class TweetList(gtk.VBox):
             if m == user: continue
             if m in exist: continue
             exist.append(m)
-            user_prof = '/'.join(['http://www.twitter.com', m])
-            mentmenu = gtk.MenuItem('@'+m)
+            user_prof = '/'.join(['http://www.twitter.com', m[1:]])
+            mentmenu = gtk.MenuItem(m)
             mentmenu.connect('button-release-event', self.__open_url_with_event, user_prof)
             open_menu.append(mentmenu)
             

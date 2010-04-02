@@ -18,7 +18,7 @@ log = logging.getLogger('BaseUI')
 
 # Initialize gettext
 try:
-    gettext.install("turpial", 'turpial/i18n')
+    gettext.install("messages", 'turpial/i18n')
 except Exception, e:
     import __builtin__
     __builtin__.__dict__["_"] = lambda x: x

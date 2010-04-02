@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: turpial/ui/gtk/about.py:18
-msgid "Multi-Interface Twitter Client written in Python"
+msgid "Twitter client multi-interface written in Python"
 msgstr "In Python geschriebener Multi-Interface-Twitter-Client"
 
 #: turpial/ui/gtk/dock.py:20

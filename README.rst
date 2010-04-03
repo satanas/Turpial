@@ -29,6 +29,7 @@ Turpial necesita los siguientes paquetes para funcionar correctamente:
  * ``python-gtk2 >= 2.12``
  * ``python-notify >= 0.1.1``
  * ``python-pygame >= 1.7``
+ * ``python-pybabel >= 0.9.1``
   
 Una instalacion estandar de *Python* (como la que viene en la mayoria de las
 distribuciones GNU/Linux) es mas que suficiente. El resto de los modulos se 
@@ -38,14 +39,16 @@ comando (como superusuario)::
     # aptitude install python-simplejson \
                        python-gtk2 \
                        python-notify \
-                       python-pygame
+                       python-pygame \
+                       python-pybabel
 
 o si dispone de ``sudo``::
 
     $ sudo aptitude install python-simplejson \
                             python-gtk2 \
                             python-notify \
-                            python-pygame
+                            python-pygame \
+                            python-pybabel
 
 Instalacion
 -----------
@@ -82,3 +85,25 @@ pasos desde el directorio ``Turpial``::
 Para mas informacion visita la pagina de Preguntas y Respuestas Frecuentes:
 
 http://code.google.com/p/turpial/wiki/FAQ
+
+Contacto
+--------
+
+Puedes ponerte en contacto con el equipo de Turpial a través de cualquiera de 
+las siguientes direcciones (todas @gmail.com):
+
+wil.alejandro
+meza.eleazar
+milmazz
+kstnshadows
+
+A través de Twitter:
+
+@satanas82
+@elshaka
+@milmazz
+@Azrael37
+
+O a través de @turpialve en Twitter para hacer recomendaciones, reportar bugs o 
+simplemente para mantenerte al día en el desarrollo y los cambios de Turpial
+

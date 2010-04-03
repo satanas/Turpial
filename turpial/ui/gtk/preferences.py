@@ -17,6 +17,7 @@ class Preferences(gtk.Window):
         
         self.mainwin = parent
         self.current = parent.read_config()
+        self.global_cfg = parent.read_global_config()
         self.set_default_size(360, 380)
         self.set_title(_('Preferences'))
         self.set_border_width(6)
@@ -38,7 +39,7 @@ class Preferences(gtk.Window):
         self.services = ServicesTab(self.current['Services'])
         self.muted = MutedTab(self.mainwin)
         self.browser = BrowserTab(self.mainwin, self.current['Browser'])
-        self.proxy = ProxyTab(self.mainwin)
+        self.proxy = ProxyTab(self.global_cfg['Proxy'])
         
         notebook = gtk.Notebook()
         notebook.set_scrollable(True)
@@ -49,7 +50,7 @@ class Preferences(gtk.Window):
         notebook.append_page(self.services, gtk.Label(_('Services')))
         notebook.append_page(self.muted, gtk.Label(_('Mute')))
         notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
-        #notebook.append_page(self.proxy, gtk.Label('Proxy'))
+        notebook.append_page(self.proxy, gtk.Label(_('Proxy')))
         
         vbox = gtk.VBox()
         #vbox.set_spacing(4)
@@ -71,6 +72,7 @@ class Preferences(gtk.Window):
         notif = self.notif.get_config()
         services = self.services.get_config()
         browser = self.browser.get_config()
+        proxy = self.proxy.get_config()
         
         new_config = {
             'General': general,
@@ -78,9 +80,13 @@ class Preferences(gtk.Window):
             'Services': services,
             'Browser': browser,
         }
+        new_global = {
+            'Proxy': proxy,
+        }
         self.destroy()
         
         self.mainwin.save_config(new_config)
+        self.mainwin.save_global_config(new_global)
         self.mainwin.request_update_muted(self.muted.get_muted())
         
         
@@ -503,42 +509,54 @@ web browser'),
         
 class ProxyTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, u'Configura el proxy de la red', current)
+        PreferencesTab.__init__(self, _('Proxy settings for Turpial (Need \
+Restart)'), current)
         
-        chk_default = gtk.RadioButton(None,
-            'Navegador predeterminado del sistema')
-        chk_other = gtk.RadioButton(chk_default,
-            'Escoger un navegador diferente')
+        chk_none = gtk.RadioButton(None, _('No proxy'))
+        chk_url = gtk.RadioButton(chk_none, _('Twitter API proxy'))
         
-        cmd_lbl = gtk.Label('Comando')
-        command = gtk.Entry()
-        btn_test = gtk.Button('Probar')
-        btn_search = gtk.Button('Examinar')
+        try:
+            chk_url.set_has_tooltip(True)
+            chk_url.set_tooltip_text(_('Use a URL to access Twitter API \
+different of twitter.com'))
+        except:
+            pass
+        url_lbl = gtk.Label(_('Twitter API URL'))
+        self.url = gtk.Entry()
         
-        cmd_box = gtk.HBox(False)
-        cmd_box.pack_start(cmd_lbl, False, False, 3)
-        cmd_box.pack_start(command, True, True, 3)
+        self.url_box = gtk.HBox(False)
+        self.url_box.pack_start(url_lbl, False, False, 3)
+        self.url_box.pack_start(self.url, True, True, 3)
+        self.url_box.set_sensitive(False)
         
-        buttons_box = gtk.HButtonBox()
-        buttons_box.set_spacing(6)
-        buttons_box.set_layout(gtk.BUTTONBOX_END)
-        buttons_box.pack_start(btn_search)
-        buttons_box.pack_start(btn_test)
+        self.pack_start(chk_none, False, False, 2)
+        self.pack_start(chk_url, False, False, 2)
+        self.pack_start(self.url_box, False, False, 2)
         
-        other_vbox = gtk.VBox(False, 2)
-        other_vbox.pack_start(cmd_box, False, False, 3)
-        other_vbox.pack_start(buttons_box, False, False, 3)
+        if current['url'] != '':
+            self.url_box.set_sensitive(True)
+            self.url.set_text(current['url'])
+            chk_url.set_active(True)
+        else:
+            chk_none.set_active(True)
         
-        other_frame = gtk.Frame()
-        other_frame.add(other_vbox)
+        chk_none.connect('toggled', self.__activate, 'none')
+        chk_url.connect('toggled', self.__activate, 'url')
         
-        self.pack_start(chk_default, False, False, 2)
-        self.pack_start(chk_other, False, False, 2)
-        self.pack_start(other_frame, False, False, 2)
         self.show_all()
         
+    def __activate(self, widget, param):
+        if param == 'none':
+            self.url_box.set_sensitive(False)
+            self.url.set_text('')
+        elif param == 'url':
+            self.url_box.set_sensitive(True)
+            
     def get_config(self):
         return {
-            'shorten-url': self.shorten.get_active_text(),
-            'upload-pic': self.upload.get_active_text(),
+            'username': '',
+            'password': '',
+            'server': '',
+            'port': '',
+            'url': self.url.get_text()
         }

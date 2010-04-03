@@ -35,6 +35,8 @@ class Turpial:
             help='Select interface to use. (cmd|gtk)', default='gtk')
         parser.add_option('-c', '--clean', dest='clean', action='store_true',
             help='Clean all bytecodes', default=False)
+        parser.add_option('--test', dest='test', action='store_true',
+            help='Test mode. Only load timeline', default=False)
         
         (options, _) = parser.parse_args()
         
@@ -42,6 +44,7 @@ class Turpial:
         self.global_cfg = ConfigApp()
         self.profile = None
         self.remember = False
+        self.testmode = options.test
         
         if options.debug: 
             logging.basicConfig(level=logging.DEBUG)
@@ -70,7 +73,11 @@ class Turpial:
         self.log.debug('Iniciando Turpial')
         self.httpserv.start()
         self.api.start()
+        self.api.change_api_url(self.global_cfg.read('Proxy', 'url'))
         
+        if self.testmode:
+            self.log.debug('Modo Pruebas Activado')
+            
         self.ui.show_login(self.global_cfg)
         self.ui.main_loop()
         
@@ -95,8 +102,9 @@ class Turpial:
             self.ui.show_main(self.config, self.global_cfg, val)
             
             self._update_timeline()
+            if self.testmode: return
             self._update_replies()
-            #self._update_directs()
+            self._update_directs()
             self._update_favorites()
             self._update_rate_limits()
             
@@ -118,8 +126,12 @@ class Turpial:
             self.httpserv.set_credentials(self.api.username, self.api.password)
             
             auth = self.config.read_section('Auth')
-            self.api.start_oauth(auth, self.ui.show_oauth_pin_request,
-                                 self.__signin_done)
+            if self.api.has_oauth_support():
+                self.api.start_oauth(auth, self.ui.show_oauth_pin_request,
+                                     self.__signin_done)
+            else:
+                self.api.is_oauth = False
+                self.__signin_done(None, None, None)
     
     def __done_follow(self, friends, profile, user, follow):
         self.ui.update_user_profile(profile)
@@ -138,14 +150,18 @@ class Turpial:
         
     def __signin_done(self, key, secret, verifier):
         '''Inicio de sesion finalizado'''
-        self.config.write('Auth', 'oauth-key', key)
-        self.config.write('Auth', 'oauth-secret', secret)
-        self.config.write('Auth', 'oauth-verifier', verifier)
+        if key is not None:
+            self.config.write('Auth', 'oauth-key', key)
+        if secret is not None:
+            self.config.write('Auth', 'oauth-secret', secret)
+        if verifier is not None:
+            self.config.write('Auth', 'oauth-verifier', verifier)
         
         self.api.muted_users = self.config.load_muted_list()
         
         self.ui.show_main(self.config, self.global_cfg, self.profile)
         self._update_timeline()
+        if self.testmode: return
         self._update_replies()
         self._update_directs()
         self._update_rate_limits()
@@ -277,6 +293,9 @@ class Turpial:
         self.config.save(config)
         if update:
             self.ui.update_config(self.config)
+            
+    def save_global_config(self, config):
+        self.global_cfg.save(config)
         
     def save_muted_list(self):
         if self.config:

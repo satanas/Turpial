@@ -126,8 +126,14 @@ class BaseGui:
     def read_config(self):
         return self.__controller.config.read_all()
         
+    def read_global_config(self):
+        return self.__controller.global_cfg.read_all()
+        
     def save_config(self, new_config, update=True):
         self.__controller.save_config(new_config, update)
+        
+    def save_global_config(self, new_config):
+        self.__controller.save_global_config(new_config)
         
     def request_signin(self, username, password):
         self.__controller.signin(username, password)

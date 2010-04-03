@@ -12,11 +12,13 @@ from turpial.api.services import URL_SERVICES, PHOTO_SERVICES
 
 class Preferences(gtk.Window):
     """Ventana de preferencias de Turpial"""
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, mode='user'):
         gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
         
+        self.mode = mode
         self.mainwin = parent
-        self.current = parent.read_config()
+        if self.mode == 'user':
+            self.current = parent.read_config()
         self.global_cfg = parent.read_global_config()
         self.set_default_size(360, 380)
         self.set_title(_('Preferences'))
@@ -24,8 +26,8 @@ class Preferences(gtk.Window):
         self.set_transient_for(parent)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
-        btn_save = gtk.Button(stock=gtk.STOCK_SAVE)
-        btn_close = gtk.Button(stock=gtk.STOCK_CLOSE)
+        btn_save = gtk.Button(_('Save'))
+        btn_close = gtk.Button(_('Close'))
         
         box_button = gtk.HButtonBox()
         box_button.set_spacing(6)
@@ -34,22 +36,24 @@ class Preferences(gtk.Window):
         box_button.pack_start(btn_close)
         
         # Tabs
-        self.general = GeneralTab(self.current['General'])
-        self.notif = NotificationsTab(self.current['Notifications'])
-        self.services = ServicesTab(self.current['Services'])
-        self.muted = MutedTab(self.mainwin)
-        self.browser = BrowserTab(self.mainwin, self.current['Browser'])
+        if self.mode == 'user':
+            self.general = GeneralTab(self.current['General'])
+            self.notif = NotificationsTab(self.current['Notifications'])
+            self.services = ServicesTab(self.current['Services'])
+            self.muted = MutedTab(self.mainwin)
+            self.browser = BrowserTab(self.mainwin, self.current['Browser'])
         self.proxy = ProxyTab(self.global_cfg['Proxy'])
         
         notebook = gtk.Notebook()
         notebook.set_scrollable(True)
         notebook.set_border_width(3)
         notebook.set_properties('tab-pos', gtk.POS_LEFT)
-        notebook.append_page(self.general, gtk.Label(_('General')))
-        notebook.append_page(self.notif, gtk.Label(_('Notifications')))
-        notebook.append_page(self.services, gtk.Label(_('Services')))
-        notebook.append_page(self.muted, gtk.Label(_('Mute')))
-        notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
+        if self.mode == 'user':
+            notebook.append_page(self.general, gtk.Label(_('General')))
+            notebook.append_page(self.notif, gtk.Label(_('Notifications')))
+            notebook.append_page(self.services, gtk.Label(_('Services')))
+            notebook.append_page(self.muted, gtk.Label(_('Mute')))
+            notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
         notebook.append_page(self.proxy, gtk.Label(_('Proxy')))
         
         vbox = gtk.VBox()
@@ -68,26 +72,30 @@ class Preferences(gtk.Window):
         self.destroy()
         
     def __save(self, widget):
-        general = self.general.get_config()
-        notif = self.notif.get_config()
-        services = self.services.get_config()
-        browser = self.browser.get_config()
-        proxy = self.proxy.get_config()
+        if self.mode == 'user':
+            general = self.general.get_config()
+            notif = self.notif.get_config()
+            services = self.services.get_config()
+            browser = self.browser.get_config()
+            
+            new_config = {
+                'General': general,
+                'Notifications': notif,
+                'Services': services,
+                'Browser': browser,
+            }
+            
+            self.mainwin.save_config(new_config)
+            self.mainwin.request_update_muted(self.muted.get_muted())
         
-        new_config = {
-            'General': general,
-            'Notifications': notif,
-            'Services': services,
-            'Browser': browser,
-        }
+        proxy = self.proxy.get_config()
         new_global = {
             'Proxy': proxy,
         }
+        
         self.destroy()
         
-        self.mainwin.save_config(new_config)
         self.mainwin.save_global_config(new_global)
-        self.mainwin.request_update_muted(self.muted.get_muted())
         
         
 class PreferencesTab(gtk.VBox):

@@ -286,6 +286,14 @@ class Main(BaseGui, gtk.Window):
         
         self.btn_oauth = gtk.Button(_('Connect'))
         
+        self.btn_settings = gtk.Button()
+        self.btn_settings.set_relief(gtk.RELIEF_NONE)
+        self.btn_settings.set_tooltip_text(_('Preferences'))
+        self.btn_settings.set_image(self.load_image('settings-single.png'))
+        settings_box = gtk.Alignment(xalign=1.0, yalign=0.5)
+        settings_box.set_padding(70, 10, 40, 40)
+        settings_box.add(self.btn_settings)
+        
         self.waiting = CairoWaiting(self)
         align = gtk.Alignment(xalign=1, yalign=0.5)
         align.add(self.waiting)
@@ -294,7 +302,7 @@ class Main(BaseGui, gtk.Window):
         hbox.pack_start(lbl_user, False, False, 2)
         hbox.pack_start(align, True, True, 2)
         
-        table = gtk.Table(9, 1, False)
+        table = gtk.Table(10, 1, False)
         table.attach(avatar, 0, 1, 0, 1, gtk.FILL, gtk.FILL, 10, 50)
         table.attach(self.message, 0, 1, 1, 2, gtk.EXPAND | gtk.FILL, gtk.FILL, 20, 3)
         table.attach(hbox, 0, 1, 2, 3, gtk.EXPAND | gtk.FILL, gtk.FILL, 50, 0)
@@ -302,6 +310,7 @@ class Main(BaseGui, gtk.Window):
         table.attach(self.password, 0, 1, 5, 6, gtk.EXPAND | gtk.FILL, gtk.FILL, 50, 0)
         table.attach(self.btn_oauth, 0, 1, 7, 8, gtk.EXPAND, gtk.FILL, 0, 10)
         table.attach(self.remember, 0, 1, 8, 9, gtk.EXPAND, gtk.FILL, 0, 10)
+        table.attach(settings_box, 0, 1, 9, 10, gtk.EXPAND | gtk.FILL, gtk.EXPAND | gtk.FILL, 0, 10)
         
         self.vbox = gtk.VBox(False, 5)
         self.vbox.pack_start(table, False, False, 2)
@@ -312,6 +321,7 @@ class Main(BaseGui, gtk.Window):
         self.btn_oauth.connect('clicked', self.oauth)
         self.password.connect('activate', self.oauth)
         self.remember.connect("toggled", self.__toogle_remember)
+        self.btn_settings.connect('clicked', self.show_preferences, 'global')
         
         username = global_config.read('Login', 'username')
         password = global_config.read('Login', 'password')
@@ -399,8 +409,8 @@ class Main(BaseGui, gtk.Window):
             return
         self.updatebox.show(text, id, user)
         
-    def show_preferences(self, widget):
-        prefs = Preferences(self)
+    def show_preferences(self, widget, mode='user'):
+        prefs = Preferences(self, mode)
         
     def show_oauth_pin_request(self, url):
         if self.extend:

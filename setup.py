@@ -12,6 +12,7 @@ except ImportError:
     from setuptools import setup, find_packages
 
 from babel.messages import frontend as babel
+from turpial.config import GLOBAL_CFG
 
 LONG_DESCRIPTION = """
 Este proyecto intenta ser un cliente alternativo para la red Twitter
@@ -32,7 +33,7 @@ emplea diferentes recursos y tecnologías como Cairo y Webkit.
 """
 
 setup(name="turpial",
-      version="1.0-b1",
+      version=GLOBAL_CFG['App']['version'],
       description="Cliente Twitter escrito en Python",
       long_description=LONG_DESCRIPTION,
       author="Wil Alvarez",
@@ -61,7 +62,7 @@ setup(name="turpial",
       data_files=[
         ('share/pixmaps', ['turpial/data/pixmaps/turpial_icon_48.png']),
         ('share/applications', ['turpial.desktop']),
-        ('share/doc', ['doc/turpial.png',
+        ('share/doc/turpial', ['doc/turpial.png',
                        'doc/turpial.dia',
                        'ChangeLog',
                        'README.rst',

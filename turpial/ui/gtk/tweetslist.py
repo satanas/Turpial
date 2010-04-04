@@ -236,7 +236,13 @@ class TweetList(gtk.VBox):
                 rt = "RT @%s %s" % (user, msg)
                 dm = "D @%s " % user
                 
+                re_all = re
+                mentions = util.detect_mentions(msg)
+                for h in mentions:
+                    re_all += '%s ' % h
+                
                 reply = gtk.MenuItem(_('Reply'))
+                reply_all = gtk.MenuItem(_('Reply All'))
                 retweet_old = gtk.MenuItem(_('Retweet (Old)'))
                 retweet = gtk.MenuItem(_('Retweet'))
                 save = gtk.MenuItem(_('+ Fav'))
@@ -255,6 +261,7 @@ class TweetList(gtk.VBox):
                 
                 if not rtn['own']:
                     menu.append(reply)
+                    menu.append(reply_all)
                     menu.append(retweet_old)
                     menu.append(retweet)
                     menu.append(direct)
@@ -289,6 +296,8 @@ class TweetList(gtk.VBox):
                 user_profile = '/'.join(['http://www.twitter.com', user])
                 usermenu.connect('activate', self.__open_url, user_profile)
                 reply.connect('activate', self.__show_update_box, re, id, user)
+                reply_all.connect('activate', self.__show_update_box, re_all, 
+                    id, user)
                 retweet_old.connect('activate', self.__show_update_box, rt)
                 retweet.connect('activate', self.__retweet, id)
                 direct.connect('activate', self.__show_update_box, dm)
@@ -361,20 +370,24 @@ class TweetList(gtk.VBox):
                 for u in util.detect_urls(p['text'])]
         
         pango_twt = gobject.markup_escape_text(p['text'])
-        pango_twt = '<span size="9000"><b>@%s</b> %s</span>' % \
-                    (p['username'], pango_twt)
+        #pango_twt = '<span size="9000"><b>%s</b> %s</span>' % \
+        #            (p['username'], pango_twt)
+        user = '<span size="9000" foreground="#%s"><b>%s</b></span> ' % \
+            (self.mainwin.link_color, p['username'])
+        pango_twt = '<span size="9000">%s</span>' % pango_twt
         pango_twt = self.__highlight_hashtags(pango_twt)
         pango_twt = self.__highlight_mentions(pango_twt)
         pango_twt = self.__highlight_urls(urls, pango_twt)
         pango_twt += '<span size="2000">\n\n</span>'
+        pango_twt = user + pango_twt
         
         footer = '<span size="small" foreground="#999">%s' % p['datetime']
         if p['client']: 
-            footer += ' desde %s' % p['client']
+            footer += ' %s %s' % (_('from'), p['client'])
         if p['in_reply_to_user']:
-            footer += ' en respuesta a %s' % p['in_reply_to_user']
+            footer += ' %s %s' % (_('in reply to'), p['in_reply_to_user'])
         if p['retweet_by']:
-            footer += '\nRetweeted by %s' % p['retweet_by']
+            footer += '\n%s %s' % (_('Retweeted by'), p['retweet_by'])
         footer += '</span>'
         
         pango_twt += footer

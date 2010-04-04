@@ -153,7 +153,7 @@ attr-rgx=[a-z_][a-z0-9_]{2,30}$
 argument-rgx=[a-z_][a-z0-9_]{2,30}$
 
 # Regular expression which should only match correct variable names
-variable-rgx=[a-z_][a-z0-9_]{2,30}$
+#variable-rgx=[a-z_][a-z0-9_]{2,30}$
 
 # Regular expression which should only match correct list comprehension /
 # generator expression variable names
@@ -185,7 +185,7 @@ dummy-variables-rgx=_|dummy
 
 # List of additional names supposed to be defined in builtins. Remember that
 # you should avoid to define new builtins when possible.
-additional-builtins=
+additional-builtins=_
 
 
 # checks for sign of poor/misdesign:

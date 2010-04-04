@@ -18,6 +18,7 @@ CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
 URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_().]*[-A-Za-z0-9+&@#/%?=~_()])')
 
 def detect_client(tweet):
+    '''Parse the source of a tweet'''
     if not tweet.has_key('source'):
         return None
     text = saxutils.unescape(tweet['source'])
@@ -30,12 +31,15 @@ def detect_client(tweet):
     return None
     
 def detect_hashtags(text):
+    '''Returns an array with all hashtag in a tweet'''
     return HASHTAG_PATTERN.findall(text)
     
 def detect_mentions(text):
+    '''Returns an array with all mentions in a tweet'''
     return MENTION_PATTERN.findall(text)
     
 def detect_urls(text):
+    '''Returns an array with all URLs in a tweet'''
     urls = []
     temp = URL_PATTERN.findall(text)
     for u in temp:
@@ -43,6 +47,7 @@ def detect_urls(text):
     return urls
     
 def get_rates(val):
+    '''Returns the status bar message about API calls'''
     tsec = val['reset_time_in_seconds'] - time.timezone
     t = time.strftime('%I:%M %P', time.gmtime(tsec))
     hits = val['remaining_hits']
@@ -50,6 +55,7 @@ def get_rates(val):
     return "%s %s %s %s: %s" % (hits, _('of'), limit, _('API calls. Reset'), t)
 
 def get_timestamp(tweet):
+    '''Returns the timestamp for a tweet'''
     # Tue Mar 13 00:12:41 +0000 2007 -> Tweets normales
     # Wed, 08 Apr 2009 19:22:10 +0000 -> Busquedas
     month_names = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
@@ -85,6 +91,7 @@ def get_timestamp(tweet):
     return time.strftime('%b %d, %I:%M %p', t)
 
 def count_new_tweets(tweets, last):
+    '''Returns the number of new tweets in tweets'''
     if not last:
         return 0
     if (tweets is None) or (len(tweets) <= 0):
@@ -102,13 +109,16 @@ def count_new_tweets(tweets, last):
     return index
     
 def has_tweet(src, tweet):
+    '''Returns True if tweet is in src. False otherwise'''
     for t in src:
         if tweet['id'] == t['id']:
             return True
     return False
     
 def escape_text(text):
+    '''Returns a text HTML escaped'''
     return saxutils.escape(text)
     
 def unescape_text(text):
+    '''Returns a text HTML unescaped'''
     return saxutils.unescape(text)

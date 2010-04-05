@@ -9,8 +9,11 @@ try:
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
+    from setuptools import setup, find_packages
 
-LONG_DESCRIPTION="""
+from turpial.config import GLOBAL_CFG
+
+LONG_DESCRIPTION = """
 Este proyecto intenta ser un cliente alternativo para la red Twitter
 con múltiples interfaces. Está escrito en Python y tiene como meta ser
 una aplicación con bajo consumo de recursos y que se integre al
@@ -29,7 +32,7 @@ emplea diferentes recursos y tecnologías como Cairo y Webkit.
 """
 
 setup(name="turpial",
-      version="1.0-b1",
+      version=GLOBAL_CFG['App']['version'],
       description="Cliente Twitter escrito en Python",
       long_description=LONG_DESCRIPTION,
       author="Wil Alvarez",
@@ -39,24 +42,19 @@ setup(name="turpial",
       url="http://code.google.com/p/turpial",
       download_url="http://code.google.com/p/turpial/downloads/list",
       license="GPLv3",
-      packages=[
-        'turpial',
-        'turpial.api',
-        'turpial.api.poster',
-        'turpial.ui',
-        'turpial.ui.gtk_ui'
-      ],
+      packages=find_packages(),
+      package_data={
+        'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/themes/default/*']
+      },
       entry_points={
         'console_scripts': [
             'turpial = turpial.main:Turpial',
         ],
       },
-      data_files = [
-        ('turpial/data/pixmaps', glob.glob(os.path.join('turpial', 'data', 'pixmaps', '*.png'))),
-        ('turpial/data/sounds', glob.glob(os.path.join('turpial', 'data', 'sounds', '*.ogg'))),
-        ('/usr/share/pixmaps', ['turpial/data/pixmaps/turpial_icon_48.png']),
-        ('/usr/share/applications', ['turpial.desktop']),
-        ('share/doc', ['doc/turpial.png',
+      data_files=[
+        ('share/pixmaps', ['turpial/data/pixmaps/turpial_icon_48.png']),
+        ('share/applications', ['turpial.desktop']),
+        ('share/doc/turpial', ['doc/turpial.png',
                        'doc/turpial.dia',
                        'ChangeLog',
                        'README',

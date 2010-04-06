@@ -495,7 +495,7 @@ msgstr ""
 
 #: turpial/ui/gtk/updatebox.py:262
 msgid "Oops... I couldn't upload that image"
-msgstr ""
+msgstr "Ops.. kan ikke laste opp bildet "
 
 #: turpial/ui/gtk/userform.py:49
 #, fuzzy
@@ -514,8 +514,8 @@ msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:78
 msgid "Bio"
-msgstr ""
+msgstr "Bio"
 
 #: turpial/ui/gtk/userform.py:147
 msgid "Saving..."
-msgstr ""
+msgstr "Gjemme på..."

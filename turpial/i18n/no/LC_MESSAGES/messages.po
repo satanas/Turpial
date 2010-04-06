@@ -111,15 +111,15 @@ msgstr "Turpial Autorisasjon"
 
 #: turpial/ui/gtk/inputpin.py:24
 msgid "Twitter has implemented a new security system and needs that you authorize Turpial from your account"
-msgstr ""
+msgstr "Twitter har implementert et nytt sikkerhetssystem og behov at du autoriserer Turpial fra kontoen din"
 
 #: turpial/ui/gtk/inputpin.py:26
 msgid "In order to complete that step, Turpial has open a new page in your default browser, go there to authorize Turpial and copy the number given in the box below..."
-msgstr ""
+msgstr "For å fullføre dette trinnet, har Turpial åpne en ny side i din standard nettleser, gå dit for å godkjenne Turpial og kopiere nummeret gitt i boksen nedenfor ..."
 
 #: turpial/ui/gtk/inputpin.py:29
 msgid "Input PIN"
-msgstr ""
+msgstr "Inngang PIN"
 
 #: turpial/ui/gtk/main.py:50 turpial/ui/gtk/main.py:53
 #: turpial/ui/gtk/preferences.py:168 turpial/ui/gtk/preferences.py:253
@@ -129,7 +129,7 @@ msgstr "Tidlinje"
 #: turpial/ui/gtk/main.py:54 turpial/ui/gtk/preferences.py:170
 #: turpial/ui/gtk/preferences.py:262
 msgid "Mentions"
-msgstr ""
+msgstr "Nevner"
 
 #: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:172
 msgid "Directs"
@@ -137,7 +137,7 @@ msgstr "Privat"
 
 #: turpial/ui/gtk/main.py:67
 msgid "Favorites"
-msgstr ""
+msgstr "Favoritter"
 
 #: turpial/ui/gtk/main.py:69
 msgid "Search"
@@ -149,7 +149,7 @@ msgstr "Utgang"
 
 #: turpial/ui/gtk/main.py:278
 msgid "User and Password"
-msgstr ""
+msgstr "Bruker og Passord"
 
 #: turpial/ui/gtk/main.py:285
 msgid "Remember my credentials"

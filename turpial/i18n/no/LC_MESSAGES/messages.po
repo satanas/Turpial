@@ -173,7 +173,7 @@ msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:20
 msgid "Secure Authentication"
-msgstr ""
+msgstr "Sikker autentisering"
 
 #: turpial/ui/gtk/oauthwin.py:39
 msgid "Autorize Turpial and copy the given number (<b>PIN</b>) in the text box below:"
@@ -181,7 +181,7 @@ msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:71
 msgid "You must write a valid PIN"
-msgstr ""
+msgstr "Du må skrive en gyldig PIN"
 
 #: turpial/ui/gtk/oauthwin.py:78
 msgid "Loading..."

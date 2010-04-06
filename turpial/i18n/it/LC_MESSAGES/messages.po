@@ -2,19 +2,19 @@
 # Copyright (C) 2010 ORGANIZATION
 # This file is distributed under the same license as the turpial project.
 # Milton Mazzarri <milmazz@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: turpial 1.0-b1\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-03-24 23:02+0530\n"
+"Report-Msgid-Bugs-To: milmazz@gmail.com\n"
+"POT-Creation-Date: 2010-04-04 11:29-0530\n"
 "PO-Revision-Date: 2010-04-04 11:29-0530\n"
 "Last-Translator: Milton Mazzarri <milmazz@gmail.com>\n"
 "Language-Team: it <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: turpial/notification.py:58
@@ -27,11 +27,11 @@ msgstr "nuovi tweet"
 
 #: turpial/notification.py:69
 msgid "new mention"
-msgstr ""
+msgstr "Nuova Menzione"
 
 #: turpial/notification.py:71
 msgid "new mentions"
-msgstr ""
+msgstr "Nuove Menzioni"
 
 #: turpial/notification.py:80
 msgid "new DM"
@@ -47,7 +47,7 @@ msgstr "Tweets"
 
 #: turpial/notification.py:93
 msgid "Following"
-msgstr ""
+msgstr "Seguendo"
 
 #: turpial/notification.py:94
 msgid "Followers"
@@ -55,33 +55,33 @@ msgstr "Follower"
 
 #: turpial/notification.py:102 turpial/ui/gtk/tweetslist.py:252
 msgid "Follow"
-msgstr ""
+msgstr "Segui"
 
 #: turpial/notification.py:102
 #, python-format
 msgid "Now you follow to @%s"
-msgstr ""
+msgstr "Adesso segui @%s"
 
 #: turpial/notification.py:104 turpial/ui/gtk/tweetslist.py:253
 msgid "Unfollow"
-msgstr ""
+msgstr "Smetti di seguire"
 
 #: turpial/notification.py:104
 #, python-format
 msgid "You have unfollow to @%s"
-msgstr ""
+msgstr "Hai smesso di seguire @%s"
 
 #: turpial/ui/util.py:55
 msgid "of"
-msgstr ""
+msgstr "di"
 
 #: turpial/ui/util.py:55
 msgid "API calls. Reset"
-msgstr ""
+msgstr "Chiamata API. Reset"
 
 #: turpial/ui/gtk/about.py:18
 msgid "Twitter client multi-interface written in Python"
-msgstr ""
+msgstr "Client Twitter multi interfaccia scritto in Python"
 
 #: turpial/ui/gtk/dock.py:20
 msgid "Home"
@@ -107,29 +107,24 @@ msgstr "Circa"
 
 #: turpial/ui/gtk/inputpin.py:12
 msgid "Turpial Authorization"
-msgstr ""
+msgstr "Autorizzazione di Turpial"
 
 #: turpial/ui/gtk/inputpin.py:24
-msgid ""
-"Twitter has implemented a new security system and needs that you "
-"authorize Turpial from your account"
-msgstr ""
+msgid "Twitter has implemented a new security system and needs that you authorize Turpial from your account"
+msgstr "Twitter ha implementato un nuovo sistema di sicurezza e ha bisogno che tu lo autorizzi dal tuo account"
 
 #: turpial/ui/gtk/inputpin.py:26
-msgid ""
-"In order to complete that step, Turpial has open a new page in your "
-"default browser, go there to authorize Turpial and copy the number given "
-"in the box below..."
-msgstr ""
+msgid "In order to complete that step, Turpial has open a new page in your default browser, go there to authorize Turpial and copy the number given in the box below..."
+msgstr "Turpial ha aperto una nuova pagina nel tuo Browser predefinito. Autorizza Turpial e copia il numero di autorizzazione nel campo sotto."
 
 #: turpial/ui/gtk/inputpin.py:29
 msgid "Input PIN"
-msgstr ""
+msgstr "PIN"
 
 #: turpial/ui/gtk/main.py:50 turpial/ui/gtk/main.py:53
 #: turpial/ui/gtk/preferences.py:168 turpial/ui/gtk/preferences.py:253
 msgid "Timeline"
-msgstr ""
+msgstr "Timeline"
 
 #: turpial/ui/gtk/main.py:54 turpial/ui/gtk/preferences.py:170
 #: turpial/ui/gtk/preferences.py:262
@@ -154,23 +149,23 @@ msgstr "Esci"
 
 #: turpial/ui/gtk/main.py:278
 msgid "User and Password"
-msgstr ""
+msgstr "Utente e Password"
 
 #: turpial/ui/gtk/main.py:285
 msgid "Remember my credentials"
-msgstr ""
+msgstr "Ricorda le mie credenziali"
 
 #: turpial/ui/gtk/main.py:287
 msgid "Connect"
-msgstr ""
+msgstr "Connetti"
 
 #: turpial/ui/gtk/main.py:369
 msgid "Wait a few seconds while I load everything..."
-msgstr ""
+msgstr "Aspetta qualche secondo mentre carico tutto..."
 
 #: turpial/ui/gtk/main.py:428
 msgid "Must write a valid PIN"
-msgstr ""
+msgstr "Devi scrivere un PIN valido"
 
 #: turpial/ui/gtk/main.py:432 turpial/ui/gtk/oauthwin.py:85
 msgid "Login cancelled by user"
@@ -181,9 +176,7 @@ msgid "Secure Authentication"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:39
-msgid ""
-"Autorize Turpial and copy the given number (<b>PIN</b>) in the text box "
-"below:"
+msgid "Autorize Turpial and copy the given number (<b>PIN</b>) in the text box below:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:71
@@ -521,4 +514,3 @@ msgstr ""
 #: turpial/ui/gtk/userform.py:147
 msgid "Saving..."
 msgstr ""
-

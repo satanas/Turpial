@@ -198,27 +198,27 @@ msgstr "Stenge"
 
 #: turpial/ui/gtk/preferences.py:52
 msgid "General"
-msgstr ""
+msgstr "Generelle"
 
 #: turpial/ui/gtk/preferences.py:53
 msgid "Notifications"
-msgstr ""
+msgstr "Melding"
 
 #: turpial/ui/gtk/preferences.py:54
 msgid "Services"
-msgstr ""
+msgstr "Tjenester"
 
 #: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/tweetslist.py:258
 msgid "Mute"
-msgstr ""
+msgstr "Mute"
 
 #: turpial/ui/gtk/preferences.py:56
 msgid "Web Browser"
-msgstr ""
+msgstr "Nettleser"
 
 #: turpial/ui/gtk/preferences.py:57
 msgid "Proxy"
-msgstr ""
+msgstr "Proxy"
 
 #: turpial/ui/gtk/preferences.py:157
 msgid "Adjust update frequency for timeline, mentions and direct messages"

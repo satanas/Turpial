@@ -228,15 +228,16 @@ msgstr "Sistema la frequenza di aggiornamenti per la timeline, menzioni e messag
 
 #: turpial/ui/gtk/preferences.py:175
 msgid "Tweets shown"
-msgstr ""
+msgstr "Tweets mostrati"
 
 #: turpial/ui/gtk/preferences.py:178
 msgid "You will use 0 calls to API per hour"
 msgstr "Userai 0 chiamate dell'API/h"
 
 #: turpial/ui/gtk/preferences.py:183
+#, fuzzy
 msgid "Wide Mode"
-msgstr ""
+msgstr "Wide Mode"
 
 #: turpial/ui/gtk/preferences.py:187
 #, fuzzy
@@ -249,65 +250,66 @@ msgstr "Carica il colore del profilo (Richiede il riavvio dell'applicazione)"
 
 #: turpial/ui/gtk/preferences.py:196
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr ""
+msgstr "Usa il colore del profilo utente per evidenziare le menzioni, hashtags e URL"
 
 #: turpial/ui/gtk/preferences.py:201
 msgid "Minimize to tray"
-msgstr ""
+msgstr "Minimizzare al tray"
 
 #: turpial/ui/gtk/preferences.py:205
 msgid "Send Turpial to system tray when close"
-msgstr ""
+msgstr "Minimizzare Turpial nella System Tray alla chiusura"
 
 #: turpial/ui/gtk/preferences.py:224
 #, python-format
 msgid "You will use aprox. %i calls to API per hour"
-msgstr ""
+msgstr "Userai %i chiamate dell'API per ora approssimatamente"
 
 #: turpial/ui/gtk/preferences.py:244
 msgid "Select what notifications you want to receive from Turpial"
-msgstr ""
+msgstr "Seleziona che notifiche vuoi ricevere da Turpial"
 
 #: turpial/ui/gtk/preferences.py:257
 msgid "Show a notification when Timeline is updated"
-msgstr ""
+msgstr "Mostra una notifica quando la Timeline è stata aggiornata"
 
 #: turpial/ui/gtk/preferences.py:266
 msgid "Show a notification when you get mentions from other users"
-msgstr ""
+msgstr "Mostra una notifica quando si ottiene una menzione da altri utenti"
 
 #: turpial/ui/gtk/preferences.py:271
 msgid "Directs Messages"
-msgstr ""
+msgstr "Messaggi Diretti"
 
 #: turpial/ui/gtk/preferences.py:275
 msgid "Show a notification when you get direct messages"
-msgstr ""
+msgstr "Mostra una notifica quando ricevi messaggi diretti"
 
 #: turpial/ui/gtk/preferences.py:280
+#, fuzzy
 msgid "Login"
-msgstr ""
+msgstr "Accesso"
 
 #: turpial/ui/gtk/preferences.py:284
 msgid "Show a notification at login with your user info"
-msgstr ""
+msgstr "Mostra una notifica con l'informazione dell'utente quando si fa l'accesso "
 
 #: turpial/ui/gtk/preferences.py:289
 msgid "Activate sounds"
-msgstr ""
+msgstr "Attiva suoni"
 
 #: turpial/ui/gtk/preferences.py:293
 msgid "Activate sounds for each notification"
-msgstr ""
+msgstr "Attiva suoni per ogni notifica"
 
 #: turpial/ui/gtk/preferences.py:322
 msgid "Select your preferred services for shorten URLs and upload images"
-msgstr ""
+msgstr "Seleziona il tuo servizio preferito per accorciare URL e caricare immagini"
 
 #: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:56
 #: turpial/ui/gtk/updatebox.py:57
 msgid "Shorten URL"
-msgstr ""
+msgstr "Accorciare URL"
 
 #: turpial/ui/gtk/preferences.py:339
 msgid "Upload images"

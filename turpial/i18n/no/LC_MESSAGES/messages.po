@@ -226,11 +226,11 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:175
 msgid "Tweets shown"
-msgstr ""
+msgstr "Tvittene som viser"
 
 #: turpial/ui/gtk/preferences.py:178
 msgid "You will use 0 calls to API per hour"
-msgstr ""
+msgstr "Du skal bruke 0 kaller til API per tid"
 
 #: turpial/ui/gtk/preferences.py:183
 msgid "Wide Mode"

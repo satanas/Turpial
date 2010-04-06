@@ -187,12 +187,12 @@ msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:78
 msgid "Loading..."
-msgstr ""
+msgstr "Laster opp..."
 
 #: turpial/ui/gtk/preferences.py:29 turpial/ui/gtk/userform.py:90
 #: turpial/ui/gtk/userform.py:155
 msgid "Save"
-msgstr ""
+msgstr "Gjemme på"
 
 #: turpial/ui/gtk/preferences.py:30
 msgid "Close"

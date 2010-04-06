@@ -169,60 +169,62 @@ msgstr "Devi scrivere un PIN valido"
 
 #: turpial/ui/gtk/main.py:432 turpial/ui/gtk/oauthwin.py:85
 msgid "Login cancelled by user"
-msgstr ""
+msgstr "Login annullata dal utente"
 
 #: turpial/ui/gtk/oauthwin.py:20
 msgid "Secure Authentication"
-msgstr ""
+msgstr "Autenticazione Sicura"
 
 #: turpial/ui/gtk/oauthwin.py:39
 msgid "Autorize Turpial and copy the given number (<b>PIN</b>) in the text box below:"
-msgstr ""
+msgstr "Autorizza Turpial e copia il numero (<b>PIN</b>) nella casella sotto:"
 
 #: turpial/ui/gtk/oauthwin.py:71
 msgid "You must write a valid PIN"
-msgstr ""
+msgstr "Devi scrivere un PIN valido"
 
 #: turpial/ui/gtk/oauthwin.py:78
 msgid "Loading..."
-msgstr ""
+msgstr "Caricamento in corso..."
 
 #: turpial/ui/gtk/preferences.py:29 turpial/ui/gtk/userform.py:90
 #: turpial/ui/gtk/userform.py:155
 msgid "Save"
-msgstr ""
+msgstr "Salva"
 
 #: turpial/ui/gtk/preferences.py:30
 msgid "Close"
-msgstr ""
+msgstr "Chiudi"
 
 #: turpial/ui/gtk/preferences.py:52
 msgid "General"
-msgstr ""
+msgstr "Generali"
 
 #: turpial/ui/gtk/preferences.py:53
 msgid "Notifications"
-msgstr ""
+msgstr "Notifiche"
 
 #: turpial/ui/gtk/preferences.py:54
 msgid "Services"
-msgstr ""
+msgstr "Servizi"
 
 #: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/tweetslist.py:258
+#, fuzzy
 msgid "Mute"
-msgstr ""
+msgstr "Muto"
 
 #: turpial/ui/gtk/preferences.py:56
+#, fuzzy
 msgid "Web Browser"
-msgstr ""
+msgstr "Browser Web"
 
 #: turpial/ui/gtk/preferences.py:57
 msgid "Proxy"
-msgstr ""
+msgstr "Proxy"
 
 #: turpial/ui/gtk/preferences.py:157
 msgid "Adjust update frequency for timeline, mentions and direct messages"
-msgstr ""
+msgstr "Sistema la frequenza di aggiornamenti per la timeline, menzioni e messaggi diretti"
 
 #: turpial/ui/gtk/preferences.py:175
 msgid "Tweets shown"
@@ -230,19 +232,20 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:178
 msgid "You will use 0 calls to API per hour"
-msgstr ""
+msgstr "Userai 0 chiamate dell'API/h"
 
 #: turpial/ui/gtk/preferences.py:183
 msgid "Wide Mode"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:187
+#, fuzzy
 msgid "Show a workspace of 3 columns"
-msgstr ""
+msgstr "Mostra uno spazio di lavoro di 3 colonne"
 
 #: turpial/ui/gtk/preferences.py:191
 msgid "Load profile color (Needs restart Turpial)"
-msgstr ""
+msgstr "Carica il colore del profilo (Richiede il riavvio dell'applicazione)"
 
 #: turpial/ui/gtk/preferences.py:196
 msgid "Use user profile color to highlight mentions, hashtags and URLs"

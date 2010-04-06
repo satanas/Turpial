@@ -18,14 +18,12 @@ msgstr ""
 "Generated-By: Babel 0.9.4\n"
 
 #: turpial/notification.py:58
-#, fuzzy
 msgid "new tweet"
-msgstr "nye tweet"
+msgstr "nye tvit"
 
 #: turpial/notification.py:60
-#, fuzzy
 msgid "new tweets"
-msgstr "nye tweets"
+msgstr "nye tvittene"
 
 #: turpial/notification.py:69
 msgid "new mention"
@@ -66,12 +64,12 @@ msgstr "Nå følger du @%s"
 
 #: turpial/notification.py:104 turpial/ui/gtk/tweetslist.py:253
 msgid "Unfollow"
-msgstr ""
+msgstr "ufølge"
 
 #: turpial/notification.py:104
 #, python-format
 msgid "You have unfollow to @%s"
-msgstr ""
+msgstr "Du har ufølget @%s"
 
 #: turpial/ui/util.py:55
 msgid "of"
@@ -83,7 +81,7 @@ msgstr "API kaller. Nullstiller"
 
 #: turpial/ui/gtk/about.py:18
 msgid "Twitter client multi-interface written in Python"
-msgstr ""
+msgstr "skrevet i Python"
 
 #: turpial/ui/gtk/dock.py:20
 msgid "Home"
@@ -96,7 +94,7 @@ msgstr "Profil"
 #: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:159
 #: turpial/ui/gtk/updatebox.py:77
 msgid "Tweet"
-msgstr ""
+msgstr "å tvitre"
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/main.py:291
 #: turpial/ui/gtk/preferences.py:24
@@ -126,7 +124,7 @@ msgstr ""
 #: turpial/ui/gtk/main.py:50 turpial/ui/gtk/main.py:53
 #: turpial/ui/gtk/preferences.py:168 turpial/ui/gtk/preferences.py:253
 msgid "Timeline"
-msgstr ""
+msgstr "Tidlinje"
 
 #: turpial/ui/gtk/main.py:54 turpial/ui/gtk/preferences.py:170
 #: turpial/ui/gtk/preferences.py:262

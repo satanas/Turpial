@@ -493,24 +493,26 @@ msgstr ""
 
 #: turpial/ui/gtk/updatebox.py:262
 msgid "Oops... I couldn't upload that image"
-msgstr ""
+msgstr "Oops... Il caricamento dell'immagine è fallito"
 
 #: turpial/ui/gtk/userform.py:49
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: turpial/ui/gtk/userform.py:57
+#, fuzzy
 msgid "Location"
-msgstr ""
+msgstr "Posizione"
 
 #: turpial/ui/gtk/userform.py:65
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:78
+#, fuzzy
 msgid "Bio"
-msgstr ""
+msgstr "Bio"
 
 #: turpial/ui/gtk/userform.py:147
 msgid "Saving..."
-msgstr ""
+msgstr "Salvataggio in corso...."

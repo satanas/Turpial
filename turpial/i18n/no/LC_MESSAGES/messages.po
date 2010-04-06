@@ -157,7 +157,7 @@ msgstr "Husk mine attesterene"
 
 #: turpial/ui/gtk/main.py:287
 msgid "Connect"
-msgstr ""
+msgstr "Koble"
 
 #: turpial/ui/gtk/main.py:369
 msgid "Wait a few seconds while I load everything..."
@@ -169,7 +169,7 @@ msgstr "Må skrive en gyldig PIN"
 
 #: turpial/ui/gtk/main.py:432 turpial/ui/gtk/oauthwin.py:85
 msgid "Login cancelled by user"
-msgstr ""
+msgstr "Logg inn avbrutt av brukeren"
 
 #: turpial/ui/gtk/oauthwin.py:20
 msgid "Secure Authentication"
@@ -177,7 +177,7 @@ msgstr "Sikker autentisering"
 
 #: turpial/ui/gtk/oauthwin.py:39
 msgid "Autorize Turpial and copy the given number (<b>PIN</b>) in the text box below:"
-msgstr ""
+msgstr "Autorize Turpial og kopiere det angitte tallet (<b>PIN</ b>) i tekstboksen nedenfor:"
 
 #: turpial/ui/gtk/oauthwin.py:71
 msgid "You must write a valid PIN"

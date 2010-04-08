@@ -453,7 +453,7 @@ msgstr ""
 
 #: turpial/ui/gtk/updatebox.py:17
 msgid "What is happening?"
-msgstr ""
+msgstr "Hva som skjer?"
 
 #: turpial/ui/gtk/updatebox.py:21
 msgid "Update status"
@@ -461,11 +461,11 @@ msgstr ""
 
 #: turpial/ui/gtk/updatebox.py:59 turpial/ui/gtk/updatebox.py:60
 msgid "Upload image"
-msgstr ""
+msgstr "Laste opp bilde"
 
 #: turpial/ui/gtk/updatebox.py:69
 msgid "Options"
-msgstr ""
+msgstr "Muligheter"
 
 #: turpial/ui/gtk/updatebox.py:75
 msgid "Clear all"

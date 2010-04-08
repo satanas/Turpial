@@ -275,7 +275,7 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:271
 msgid "Directs Messages"
-msgstr ""
+msgstr "Direkte Melding"
 
 #: turpial/ui/gtk/preferences.py:275
 msgid "Show a notification when you get direct messages"
@@ -283,7 +283,7 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:280
 msgid "Login"
-msgstr ""
+msgstr "Logg in"
 
 #: turpial/ui/gtk/preferences.py:284
 msgid "Show a notification at login with your user info"
@@ -308,7 +308,7 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:339
 msgid "Upload images"
-msgstr ""
+msgstr "Laste opp bilder"
 
 #: turpial/ui/gtk/preferences.py:365
 msgid "Select all those users that are bothering you and shut them up temporarily"

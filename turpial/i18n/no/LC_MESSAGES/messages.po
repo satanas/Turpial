@@ -336,11 +336,11 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:454
 msgid "Test"
-msgstr ""
+msgstr "Prøve"
 
 #: turpial/ui/gtk/preferences.py:455
 msgid "Browse"
-msgstr ""
+msgstr "Leser"
 
 #: turpial/ui/gtk/preferences.py:494
 msgid "Select the full path of your web browser"
@@ -352,7 +352,7 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:523
 msgid "No proxy"
-msgstr ""
+msgstr "Ikke proxy"
 
 #: turpial/ui/gtk/preferences.py:524
 msgid "Twitter API proxy"
@@ -368,12 +368,12 @@ msgstr ""
 
 #: turpial/ui/gtk/replybox.py:19 turpial/ui/gtk/replybox.py:25
 msgid "In reply to..."
-msgstr ""
+msgstr "I ansvar til..."
 
 #: turpial/ui/gtk/replybox.py:47
 #, python-format
 msgid "In reply to %s"
-msgstr ""
+msgstr "I ansvar til %s"
 
 #: turpial/ui/gtk/replybox.py:59
 msgid "Oops... something went wrong"

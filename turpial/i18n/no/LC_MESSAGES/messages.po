@@ -481,7 +481,7 @@ msgstr ""
 
 #: turpial/ui/gtk/updatebox.py:203
 msgid "Eyy... you must write something"
-msgstr ""
+msgstr "Hei.. du må skrive noe"
 
 #: turpial/ui/gtk/updatebox.py:218
 msgid "Oops... I couldn't shrink that URL"

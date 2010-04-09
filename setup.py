@@ -43,6 +43,16 @@ setup(name="turpial",
       url="http://code.google.com/p/turpial",
       download_url="http://code.google.com/p/turpial/downloads/list",
       license="GPLv3",
+      keywords='twitter turpial oauth',
+      classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: X11 Applications :: GTK",
+        "Intended Audience :: End Users/Desktop",
+        "License :: OSI Approved :: GNU General Public License (GPL)",
+        "Operating System :: POSIX :: Linux",
+        "Programming Language :: Python",
+        "Topic :: Communications"
+      ],
       packages=find_packages(),
       package_data={
         'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/themes/default/*',

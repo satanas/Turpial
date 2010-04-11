@@ -16,13 +16,6 @@ from turpial.ui import util
 
 log = logging.getLogger('BaseUI')
 
-# Initialize gettext
-try:
-    gettext.install("messages", 'turpial/i18n')
-except Exception, e:
-    import __builtin__
-    __builtin__.__dict__["_"] = lambda x: x
-    
 class BaseGui:
     '''Parent class for every UI interface'''
     def __init__(self, controller):
@@ -34,6 +27,10 @@ class BaseGui:
         # Reescritos en la clase hija
         self.imgdir = ''
         
+        # Initialize gettext
+        gettext_domain = 'messages'
+        localedir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'i18n'))
+        trans = gettext.install(gettext_domain, localedir)
     # ------------------------------------------------------------
     # Private/Internal methods
     # ------------------------------------------------------------

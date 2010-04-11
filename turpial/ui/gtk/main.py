@@ -248,7 +248,12 @@ class Main(BaseGui, gtk.Window):
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)
         if pix:
-            return self.load_avatar(self.imgdir, pix)
+            # Try to load user avatar from file. If fail (by corrupt data, etc)
+            # then load default image
+            try:
+                return self.load_avatar(self.imgdir, pix)
+            except:
+                return self.load_image('unknown.png', pixbuf=True)
         else:
             return self.load_image('unknown.png', pixbuf=True)
     

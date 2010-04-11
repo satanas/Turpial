@@ -7,6 +7,7 @@
 
 import gtk
 import gobject
+import gtkspell
 
 from turpial.ui.gtk.waiting import CairoWaiting
 
@@ -117,6 +118,8 @@ class UpdateBox(gtk.Window):
         self.btn_pic.connect('clicked', self.upload_pic)
         self.toolbox.connect('activate', self.show_options)
         self.update_text.connect('mykeypress', self.__on_key_pressed)
+        
+        self.spell = gtkspell.Spell (self.update_text)
     
     def __on_key_pressed(self, widget, keyval, keymod):
         if keyval == gtk.keysyms.Return:

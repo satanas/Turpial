@@ -29,7 +29,7 @@ class BaseGui:
         
         # Initialize gettext
         gettext_domain = 'messages'
-        localedir = os.path.join(os.path.dirname(__file__), '..', 'i18n')
+        localedir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'i18n'))
         trans = gettext.install(gettext_domain, localedir)
     # ------------------------------------------------------------
     # Private/Internal methods

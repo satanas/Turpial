@@ -222,7 +222,7 @@ msgstr "Proxy"
 
 #: turpial/ui/gtk/preferences.py:157
 msgid "Adjust update frequency for timeline, mentions and direct messages"
-msgstr ""
+msgstr "Juster oppdateringsfrekvensen på tidslinjen, nevner og direkte meldinger"
 
 #: turpial/ui/gtk/preferences.py:175
 msgid "Tweets shown"
@@ -234,19 +234,19 @@ msgstr "Du skal bruke 0 kaller til API per tid"
 
 #: turpial/ui/gtk/preferences.py:183
 msgid "Wide Mode"
-msgstr ""
+msgstr "Wide-modus"
 
 #: turpial/ui/gtk/preferences.py:187
 msgid "Show a workspace of 3 columns"
-msgstr ""
+msgstr "Viser et arbeidsområde på 3 kolonner"
 
 #: turpial/ui/gtk/preferences.py:191
 msgid "Load profile color (Needs restart Turpial)"
-msgstr ""
+msgstr "Legg profilen farge (Trenger å starte på nytt Turpial)"
 
 #: turpial/ui/gtk/preferences.py:196
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr ""
+msgstr "Brukk profil farger for å fremheve meldinger, firkantemne og URLs"
 
 #: turpial/ui/gtk/preferences.py:201
 msgid "Minimize to tray"

@@ -324,11 +324,11 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:448
 msgid "Default web browser"
-msgstr ""
+msgstr "Standard nettleser"
 
 #: turpial/ui/gtk/preferences.py:450
 msgid "Choose another web browser"
-msgstr ""
+msgstr "Velg en annen nettleser"
 
 #: turpial/ui/gtk/preferences.py:452
 msgid "Command"
@@ -344,11 +344,11 @@ msgstr "Leser"
 
 #: turpial/ui/gtk/preferences.py:494
 msgid "Select the full path of your web browser"
-msgstr ""
+msgstr "Velg den fullstendige veg på din nettleser"
 
 #: turpial/ui/gtk/preferences.py:520
 msgid "Proxy settings for Turpial (Need Restart)"
-msgstr ""
+msgstr "Proxy-innstillinger for Turpial (Trenger Start på nytt)"
 
 #: turpial/ui/gtk/preferences.py:523
 msgid "No proxy"

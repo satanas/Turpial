@@ -44,7 +44,7 @@ msgstr "nuevos DMs"
 
 #: turpial/notification.py:92
 msgid "Tweets"
-msgstr "Mensajes"
+msgstr "Tweets"
 
 #: turpial/notification.py:93
 msgid "Following"
@@ -78,7 +78,7 @@ msgstr "de"
 
 #: turpial/ui/util.py:55
 msgid "API calls. Reset"
-msgstr "llamadas a la API. Reset"
+msgstr "llamadas a la API. Reinicio"
 
 #: turpial/ui/gtk/about.py:18
 msgid "Twitter client multi-interface written in Python"
@@ -209,7 +209,7 @@ msgstr "Guardar"
 
 #: turpial/ui/gtk/preferences.py:30
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
 #: turpial/ui/gtk/preferences.py:52
 msgid "General"
@@ -233,7 +233,7 @@ msgstr "Navegador Web"
 
 #: turpial/ui/gtk/preferences.py:57
 msgid "Proxy"
-msgstr ""
+msgstr "Proxy"
 
 #: turpial/ui/gtk/preferences.py:157
 msgid "Adjust update frequency for timeline, mentions and direct messages"
@@ -332,7 +332,7 @@ msgstr "Subir imágenes"
 #: turpial/ui/gtk/preferences.py:365
 msgid "Select all those users that are bothering you and shut them up temporarily"
 msgstr ""
-"Selecciona todos los usuarios que te están fastidiando y callalos "
+"Selecciona todos los usuarios que te están fastidiando y cállalos "
 "temporalmente"
 
 #: turpial/ui/gtk/preferences.py:405
@@ -369,23 +369,23 @@ msgstr "Selecciona la ruta completa de tu navegador web"
 
 #: turpial/ui/gtk/preferences.py:520
 msgid "Proxy settings for Turpial (Need Restart)"
-msgstr ""
+msgstr "Configuración de Proxy para Turpial (Requiere reiniciar)"
 
 #: turpial/ui/gtk/preferences.py:523
 msgid "No proxy"
-msgstr ""
+msgstr "Sin proxy"
 
 #: turpial/ui/gtk/preferences.py:524
 msgid "Twitter API proxy"
-msgstr ""
+msgstr "Proxy para el API de Twitter"
 
 #: turpial/ui/gtk/preferences.py:528
 msgid "Use a URL to access Twitter API different of twitter.com"
-msgstr ""
+msgstr "Usa una URL distinta de twitter.com para acceder a la API de Twitter"
 
 #: turpial/ui/gtk/preferences.py:532
 msgid "Twitter API URL"
-msgstr ""
+msgstr "Twitter API URL"
 
 #: turpial/ui/gtk/replybox.py:19 turpial/ui/gtk/replybox.py:25
 msgid "In reply to..."
@@ -421,34 +421,30 @@ msgid "Delete"
 msgstr "Borrar"
 
 #: turpial/ui/gtk/tweetslist.py:245
-#, fuzzy
 msgid "Reply All"
-msgstr "En respuesta a"
+msgstr "Responder a todos"
 
 #: turpial/ui/gtk/tweetslist.py:246
 msgid "Retweet (Old)"
-msgstr "Retweet (Antiguo)"
+msgstr "Retwittear (Antiguo)"
 
 #: turpial/ui/gtk/tweetslist.py:247
-#, fuzzy
 msgid "Retweet"
 msgstr "Retwittear"
 
 #: turpial/ui/gtk/tweetslist.py:248
 msgid "+ Fav"
-msgstr "+Fav"
+msgstr "+ Fav"
 
 #: turpial/ui/gtk/tweetslist.py:249
 msgid "- Fav"
-msgstr "-Fav"
+msgstr "- Fav"
 
 #: turpial/ui/gtk/tweetslist.py:251
-#, fuzzy
 msgid "DM"
 msgstr "Mensaje Directo"
 
 #: turpial/ui/gtk/tweetslist.py:254
-#, fuzzy
 msgid "Loading friends..."
 msgstr "Cargando amigos..."
 
@@ -458,17 +454,15 @@ msgstr "En respuesta a"
 
 #: turpial/ui/gtk/tweetslist.py:386
 msgid "from"
-msgstr ""
+msgstr "desde"
 
 #: turpial/ui/gtk/tweetslist.py:388
-#, fuzzy
 msgid "in reply to"
-msgstr "En respuesta a"
+msgstr "en respuesta a"
 
 #: turpial/ui/gtk/tweetslist.py:390
-#, fuzzy
 msgid "Retweeted by"
-msgstr "Retwittear"
+msgstr "Retweeteado por"
 
 #: turpial/ui/gtk/tweetslist.py:419
 msgid "Something went wrong. I'll update again soon"

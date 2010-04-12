@@ -40,6 +40,8 @@ URL_SERVICES = {
     "tr.im": ShortenObject("http://tr.im/api/trim_simple?url=%s"),
     "bit.ly": ShortenObject("http://api.bit.ly/shorten?version=2.0.1&login=turpial&apiKey=R_5a84eae6dd4158a0636358c4f9efdecc&longUrl=%s",
         True, True, 'shortUrl'),
+    "smlk.es": ShortenObject("http://smlk.es/api/create/?destination=%s",
+        True, True, 'link'),
     "su.pr": ShortenObject("http://su.pr/api/simpleshorten?url=%s"),
     "u.nu": ShortenObject("http://u.nu/unu-api-simple?url=%s"),
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
@@ -137,7 +139,11 @@ class HTTPServices(threading.Thread):
                     if service.json:
                         resp = json.loads(urllib2.urlopen(req).read())
                         print resp
-                        short = resp['results'][key_url][service.response_key]
+                        if args['service'] == "bit.ly":
+                            short = resp['results'][key_url][service.response_key]
+                        elif args['service'] == "siguemilink":
+                            short = "http://www.siguemilink.com/%s" % \
+                                resp[service.response_key]
                     else:
                         short = urllib2.urlopen(req).read()
                 except Exception, error:

@@ -1,3 +1,7 @@
+v1.0-b4 (Abr 04, 2010):
+    + Corregida la ubicación de la documentación al instalar (bug #132)
+    + Agregado soporte para instalación vía ez_setup.py si no hay setuptools
+    
 v1.0-b3 (Mar 14, 2010):
     + Corregido error con las expresiones regulares de detección de menciones
     

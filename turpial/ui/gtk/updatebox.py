@@ -7,7 +7,13 @@
 
 import gtk
 import gobject
-import gtkspell
+
+SPELLING = False
+try:
+    import gtkspell
+    SPELLING = True
+except:
+    pass
 
 from turpial.ui.gtk.waiting import CairoWaiting
 
@@ -119,7 +125,10 @@ class UpdateBox(gtk.Window):
         self.toolbox.connect('activate', self.show_options)
         self.update_text.connect('mykeypress', self.__on_key_pressed)
         
-        self.spell = gtkspell.Spell (self.update_text)
+        if SPELLING: 
+            self.spell = gtkspell.Spell (self.update_text)
+        else:
+            print 'DEBUG:UI:Can\'t load gtkspell'
     
     def __on_key_pressed(self, widget, keyval, keymod):
         if keyval == gtk.keysyms.Return:

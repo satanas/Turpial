@@ -250,20 +250,20 @@ msgstr "Brukk profil farger for å fremheve meldinger, firkantemne og URLs"
 
 #: turpial/ui/gtk/preferences.py:201
 msgid "Minimize to tray"
-msgstr ""
+msgstr "Minimere å brett"
 
 #: turpial/ui/gtk/preferences.py:205
 msgid "Send Turpial to system tray when close"
-msgstr ""
+msgstr "Send Turpial å system brett når du lukker"
 
 #: turpial/ui/gtk/preferences.py:224
 #, python-format
 msgid "You will use aprox. %i calls to API per hour"
-msgstr ""
+msgstr "Du vil bruke ca. %i samtaler til API per time"
 
 #: turpial/ui/gtk/preferences.py:244
 msgid "Select what notifications you want to receive from Turpial"
-msgstr ""
+msgstr "Velg hvilken melding du vil motta fra Turpial"
 
 #: turpial/ui/gtk/preferences.py:257
 msgid "Show a notification when Timeline is updated"

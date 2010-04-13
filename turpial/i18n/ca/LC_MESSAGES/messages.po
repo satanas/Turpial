@@ -348,7 +348,7 @@ msgstr "Selecciona la ruta completa del teu navegador web"
 
 #: turpial/ui/gtk/preferences.py:520
 msgid "Proxy settings for Turpial (Need Restart)"
-msgstr ""
+msgstr "Configuració de proxy per al Turpial (Necessita Reiniciar)"
 
 #: turpial/ui/gtk/preferences.py:523
 msgid "No proxy"

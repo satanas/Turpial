@@ -1,7 +1,7 @@
 # Catalan translations for turpial.
 # Copyright (C) 2010 Turpial
 # This file is distributed under the same license as the turpial project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# José Leonel Subero Gamarra <arawako@gmail.com>, 2010.
 # 
 msgid ""
 msgstr ""
@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: milmazz@gmail.com\n"
 "POT-Creation-Date: 2010-04-10 12:39+0530\n"
 "PO-Revision-Date: 2010-04-12 19:30-0530\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: José Leonel Subero Gamarra <arawako@gmail.com>\n"
 "Language-Team: ca <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"

@@ -267,84 +267,84 @@ msgstr "Selecciona les notificacions que vols rebre de Turpial"
 
 #: turpial/ui/gtk/preferences.py:257
 msgid "Show a notification when Timeline is updated"
-msgstr ""
+msgstr "Mostra una notificació quan s'actualitza el Timeline"
 
 #: turpial/ui/gtk/preferences.py:266
 msgid "Show a notification when you get mentions from other users"
-msgstr ""
+msgstr "Mostra una notificació quan tens mencions d'altres usuaris"
 
 #: turpial/ui/gtk/preferences.py:271
 msgid "Directs Messages"
-msgstr ""
+msgstr "Missatges Directes"
 
 #: turpial/ui/gtk/preferences.py:275
 msgid "Show a notification when you get direct messages"
-msgstr ""
+msgstr "Mostra una notificació quan tens missatges directes"
 
 #: turpial/ui/gtk/preferences.py:280
 msgid "Login"
-msgstr ""
+msgstr "Inici de sessió"
 
 #: turpial/ui/gtk/preferences.py:284
 msgid "Show a notification at login with your user info"
-msgstr ""
+msgstr "Mostra una notificació a l'inici de sessió amb informació del teu usuari"
 
 #: turpial/ui/gtk/preferences.py:289
 msgid "Activate sounds"
-msgstr ""
+msgstr "Activar sons"
 
 #: turpial/ui/gtk/preferences.py:293
 msgid "Activate sounds for each notification"
-msgstr ""
+msgstr "Activar sons per a cada notificació"
 
 #: turpial/ui/gtk/preferences.py:322
 msgid "Select your preferred services for shorten URLs and upload images"
-msgstr ""
+msgstr "Selecciona la teva servei favorit per escurçar URLs i pujar imatges"
 
 #: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:56
 #: turpial/ui/gtk/updatebox.py:57
 msgid "Shorten URL"
-msgstr ""
+msgstr "Tallar URL"
 
 #: turpial/ui/gtk/preferences.py:339
 msgid "Upload images"
-msgstr ""
+msgstr "Pujar imatges"
 
 #: turpial/ui/gtk/preferences.py:365
 msgid "Select all those users that are bothering you and shut them up temporarily"
-msgstr ""
+msgstr "Selecciona tots els usuaris que t'estan fastiguejant i callalos temporalment"
 
 #: turpial/ui/gtk/preferences.py:405
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr ""
+msgstr "Encara estic carregant a tots els teus amics. Intenta en uns segons"
 
 #: turpial/ui/gtk/preferences.py:442
 msgid "Setup your favorite web browser to open all links"
-msgstr ""
+msgstr "Configura el teu navegador favorit per obrir tots els enllaços"
 
 #: turpial/ui/gtk/preferences.py:448
 msgid "Default web browser"
-msgstr ""
+msgstr "Navegador web per defecte"
 
 #: turpial/ui/gtk/preferences.py:450
 msgid "Choose another web browser"
-msgstr ""
+msgstr "Tria un altre navegador web"
 
 #: turpial/ui/gtk/preferences.py:452
 msgid "Command"
-msgstr ""
+msgstr "Comando"
 
 #: turpial/ui/gtk/preferences.py:454
 msgid "Test"
-msgstr ""
+msgstr "Prova"
 
 #: turpial/ui/gtk/preferences.py:455
 msgid "Browse"
-msgstr ""
+msgstr "Examinar"
 
 #: turpial/ui/gtk/preferences.py:494
 msgid "Select the full path of your web browser"
-msgstr ""
+msgstr "Selecciona la ruta completa del teu navegador web"
 
 #: turpial/ui/gtk/preferences.py:520
 msgid "Proxy settings for Turpial (Need Restart)"
@@ -429,83 +429,83 @@ msgstr ""
 
 #: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:158
 msgid "In reply to"
-msgstr ""
+msgstr "En resposta a..."
 
 #: turpial/ui/gtk/tweetslist.py:386
 msgid "from"
-msgstr ""
+msgstr "de"
 
 #: turpial/ui/gtk/tweetslist.py:388
 msgid "in reply to"
-msgstr ""
+msgstr "En resposta a..."
 
 #: turpial/ui/gtk/tweetslist.py:390
 msgid "Retweeted by"
-msgstr ""
+msgstr "Retweeted per"
 
 #: turpial/ui/gtk/tweetslist.py:419
 msgid "Something went wrong. I'll update again soon"
-msgstr ""
+msgstr "Alguna cosa va sortir malament. Actualitzaré de nou aviat"
 
 #: turpial/ui/gtk/tweetslist.py:422
 msgid "No tweets available"
-msgstr ""
+msgstr "No hi ha tweets disponibles"
 
 #: turpial/ui/gtk/updatebox.py:17
 msgid "What is happening?"
-msgstr ""
+msgstr "Què està succeint?"
 
 #: turpial/ui/gtk/updatebox.py:21
 msgid "Update status"
-msgstr ""
+msgstr "Actualitzar estat"
 
 #: turpial/ui/gtk/updatebox.py:59 turpial/ui/gtk/updatebox.py:60
 msgid "Upload image"
-msgstr ""
+msgstr "Pujar imatge"
 
 #: turpial/ui/gtk/updatebox.py:69
 msgid "Options"
-msgstr ""
+msgstr "Opcions"
 
 #: turpial/ui/gtk/updatebox.py:75
 msgid "Clear all"
-msgstr ""
+msgstr "Esborrar tots"
 
 #: turpial/ui/gtk/updatebox.py:78
 msgid "Autoshort URLs"
-msgstr ""
+msgstr "Autotall URLs"
 
 #: turpial/ui/gtk/updatebox.py:150
 msgid "Oh oh... I couldn't send the tweet"
-msgstr ""
+msgstr "Oh oh ... No vaig poder enviar el tweeter"
 
 #: turpial/ui/gtk/updatebox.py:203
 msgid "Eyy... you must write something"
-msgstr ""
+msgstr "Eyy ... has d'escriure alguna cosa"
 
 #: turpial/ui/gtk/updatebox.py:218
 msgid "Oops... I couldn't shrink that URL"
-msgstr ""
+msgstr "Oops ... No vaig poder tallar la URL"
 
 #: turpial/ui/gtk/updatebox.py:245
 msgid "Select image to upload"
-msgstr ""
+msgstr "Selecciona una imatge per pujar"
 
 #: turpial/ui/gtk/updatebox.py:262
 msgid "Oops... I couldn't upload that image"
-msgstr ""
+msgstr "Oops ... No vaig poder pujar la imatge"
 
 #: turpial/ui/gtk/userform.py:49
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: turpial/ui/gtk/userform.py:57
 msgid "Location"
-msgstr ""
+msgstr "Ubicació"
 
 #: turpial/ui/gtk/userform.py:65
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:78
 msgid "Bio"

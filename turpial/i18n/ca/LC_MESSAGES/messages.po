@@ -161,7 +161,7 @@ msgstr "Connectar"
 
 #: turpial/ui/gtk/main.py:369
 msgid "Wait a few seconds while I load everything..."
-msgstr "Espera uns segons mentre càrrec tot ..."
+msgstr "Espera uns segons mentre càrrec tot..."
 
 #: turpial/ui/gtk/main.py:428
 msgid "Must write a valid PIN"
@@ -185,7 +185,7 @@ msgstr "Has escriure un PIN vàlid"
 
 #: turpial/ui/gtk/oauthwin.py:78
 msgid "Loading..."
-msgstr "Carregant ..."
+msgstr "Carregant..."
 
 #: turpial/ui/gtk/preferences.py:29 turpial/ui/gtk/userform.py:90
 #: turpial/ui/gtk/userform.py:155
@@ -368,7 +368,7 @@ msgstr "Twitter API URL"
 
 #: turpial/ui/gtk/replybox.py:19 turpial/ui/gtk/replybox.py:25
 msgid "In reply to..."
-msgstr "En resposta a ..."
+msgstr "En resposta a..."
 
 #: turpial/ui/gtk/replybox.py:47
 #, python-format
@@ -425,7 +425,7 @@ msgstr "DM"
 
 #: turpial/ui/gtk/tweetslist.py:254
 msgid "Loading friends..."
-msgstr "Carregant amics ..."
+msgstr "Carregant amics..."
 
 #: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:158
 msgid "In reply to"
@@ -477,15 +477,15 @@ msgstr "Autotall URLs"
 
 #: turpial/ui/gtk/updatebox.py:150
 msgid "Oh oh... I couldn't send the tweet"
-msgstr "Oh oh ... No vaig poder enviar el tweeter"
+msgstr "Oh oh... No vaig poder enviar el tweeter"
 
 #: turpial/ui/gtk/updatebox.py:203
 msgid "Eyy... you must write something"
-msgstr "Eyy ... has d'escriure alguna cosa"
+msgstr "Eyy... has d'escriure alguna cosa"
 
 #: turpial/ui/gtk/updatebox.py:218
 msgid "Oops... I couldn't shrink that URL"
-msgstr "Oops ... No vaig poder tallar la URL"
+msgstr "Oops... No vaig poder tallar la URL"
 
 #: turpial/ui/gtk/updatebox.py:245
 msgid "Select image to upload"
@@ -493,7 +493,7 @@ msgstr "Selecciona una imatge per pujar"
 
 #: turpial/ui/gtk/updatebox.py:262
 msgid "Oops... I couldn't upload that image"
-msgstr "Oops ... No vaig poder pujar la imatge"
+msgstr "Oops... No vaig poder pujar la imatge"
 
 #: turpial/ui/gtk/userform.py:49
 msgid "Name"

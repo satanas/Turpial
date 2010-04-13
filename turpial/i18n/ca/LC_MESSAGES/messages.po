@@ -352,80 +352,80 @@ msgstr "Configuració de proxy per al Turpial (Necessita Reiniciar)"
 
 #: turpial/ui/gtk/preferences.py:523
 msgid "No proxy"
-msgstr ""
+msgstr "Sense proxy"
 
 #: turpial/ui/gtk/preferences.py:524
 msgid "Twitter API proxy"
-msgstr ""
+msgstr "Twitter API proxy"
 
 #: turpial/ui/gtk/preferences.py:528
 msgid "Use a URL to access Twitter API different of twitter.com"
-msgstr ""
+msgstr "Utilitzeu una adreça URL per accedir a Twitter API diferents twitter.com"
 
 #: turpial/ui/gtk/preferences.py:532
 msgid "Twitter API URL"
-msgstr ""
+msgstr "Twitter API URL"
 
 #: turpial/ui/gtk/replybox.py:19 turpial/ui/gtk/replybox.py:25
 msgid "In reply to..."
-msgstr ""
+msgstr "En resposta a ..."
 
 #: turpial/ui/gtk/replybox.py:47
 #, python-format
 msgid "In reply to %s"
-msgstr ""
+msgstr "En resposta a %s"
 
 #: turpial/ui/gtk/replybox.py:59
 msgid "Oops... something went wrong"
-msgstr ""
+msgstr "Ui ... alguna cosa va sortir malament"
 
 #: turpial/ui/gtk/searchtweets.py:20
 msgid "Clear results"
-msgstr ""
+msgstr "Esborrar els resultats"
 
 #: turpial/ui/gtk/searchtweets.py:62
 msgid "You must write something to search"
-msgstr ""
+msgstr "Vostè ha d'escriure alguna cosa per cercar"
 
 #: turpial/ui/gtk/tweetslist.py:124
 msgid "Open"
-msgstr ""
+msgstr "Obert"
 
 #: turpial/ui/gtk/tweetslist.py:191 turpial/ui/gtk/tweetslist.py:244
 msgid "Reply"
-msgstr ""
+msgstr "Resposta"
 
 #: turpial/ui/gtk/tweetslist.py:192 turpial/ui/gtk/tweetslist.py:250
 msgid "Delete"
-msgstr ""
+msgstr "Esborrar"
 
 #: turpial/ui/gtk/tweetslist.py:245
 msgid "Reply All"
-msgstr ""
+msgstr "Respondre a tots"
 
 #: turpial/ui/gtk/tweetslist.py:246
 msgid "Retweet (Old)"
-msgstr ""
+msgstr "Retweet (antiga)"
 
 #: turpial/ui/gtk/tweetslist.py:247
 msgid "Retweet"
-msgstr ""
+msgstr "Retweet"
 
 #: turpial/ui/gtk/tweetslist.py:248
 msgid "+ Fav"
-msgstr ""
+msgstr "+ Pref"
 
 #: turpial/ui/gtk/tweetslist.py:249
 msgid "- Fav"
-msgstr ""
+msgstr "- Pref"
 
 #: turpial/ui/gtk/tweetslist.py:251
 msgid "DM"
-msgstr ""
+msgstr "DM"
 
 #: turpial/ui/gtk/tweetslist.py:254
 msgid "Loading friends..."
-msgstr ""
+msgstr "Carregant amics ..."
 
 #: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:158
 msgid "In reply to"
@@ -509,8 +509,8 @@ msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:78
 msgid "Bio"
-msgstr ""
+msgstr "Bio"
 
 #: turpial/ui/gtk/userform.py:147
 msgid "Saving..."
-msgstr ""
+msgstr "Guardant..."

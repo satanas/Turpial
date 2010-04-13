@@ -185,85 +185,85 @@ msgstr "Has escriure un PIN vàlid"
 
 #: turpial/ui/gtk/oauthwin.py:78
 msgid "Loading..."
-msgstr ""
+msgstr "Carregant ..."
 
 #: turpial/ui/gtk/preferences.py:29 turpial/ui/gtk/userform.py:90
 #: turpial/ui/gtk/userform.py:155
 msgid "Save"
-msgstr ""
+msgstr "Desa"
 
 #: turpial/ui/gtk/preferences.py:30
 msgid "Close"
-msgstr ""
+msgstr "tancar"
 
 #: turpial/ui/gtk/preferences.py:52
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #: turpial/ui/gtk/preferences.py:53
 msgid "Notifications"
-msgstr ""
+msgstr "Notificacions"
 
 #: turpial/ui/gtk/preferences.py:54
 msgid "Services"
-msgstr ""
+msgstr "Serveis"
 
 #: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/tweetslist.py:258
 msgid "Mute"
-msgstr ""
+msgstr "Mut"
 
 #: turpial/ui/gtk/preferences.py:56
 msgid "Web Browser"
-msgstr ""
+msgstr "Navegador Web"
 
 #: turpial/ui/gtk/preferences.py:57
 msgid "Proxy"
-msgstr ""
+msgstr "Proxy"
 
 #: turpial/ui/gtk/preferences.py:157
 msgid "Adjust update frequency for timeline, mentions and direct messages"
-msgstr ""
+msgstr "Ajusteu la freqüència d'actualització de línia de temps, les mencions i missatges directes"
 
 #: turpial/ui/gtk/preferences.py:175
 msgid "Tweets shown"
-msgstr ""
+msgstr "Tweets es mostra"
 
 #: turpial/ui/gtk/preferences.py:178
 msgid "You will use 0 calls to API per hour"
-msgstr ""
+msgstr "Faràs servir 0 crides a l'API per hora"
 
 #: turpial/ui/gtk/preferences.py:183
 msgid "Wide Mode"
-msgstr ""
+msgstr "Mode ampliada"
 
 #: turpial/ui/gtk/preferences.py:187
 msgid "Show a workspace of 3 columns"
-msgstr ""
+msgstr "Mostra un espai de treball de 3 columnes"
 
 #: turpial/ui/gtk/preferences.py:191
 msgid "Load profile color (Needs restart Turpial)"
-msgstr ""
+msgstr "Càrrega color de perfil (Requereix reiniciar Turpial)"
 
 #: turpial/ui/gtk/preferences.py:196
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr ""
+msgstr "Usa el color de perfil de l'usuari per ressaltar mencions, hashtags i URLs"
 
 #: turpial/ui/gtk/preferences.py:201
 msgid "Minimize to tray"
-msgstr ""
+msgstr "Minimitzar a la safata"
 
 #: turpial/ui/gtk/preferences.py:205
 msgid "Send Turpial to system tray when close"
-msgstr ""
+msgstr "Envia a Turpial a la safata de sistema en lloc de tancar"
 
 #: turpial/ui/gtk/preferences.py:224
 #, python-format
 msgid "You will use aprox. %i calls to API per hour"
-msgstr ""
+msgstr "Faràs servir aprox. %i crides a l'API per hora"
 
 #: turpial/ui/gtk/preferences.py:244
 msgid "Select what notifications you want to receive from Turpial"
-msgstr ""
+msgstr "Selecciona les notificacions que vols rebre de Turpial"
 
 #: turpial/ui/gtk/preferences.py:257
 msgid "Show a notification when Timeline is updated"

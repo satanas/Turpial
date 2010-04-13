@@ -103,85 +103,85 @@ msgstr "Preferències"
 
 #: turpial/ui/gtk/dock.py:36
 msgid "About"
-msgstr ""
+msgstr "Sobre"
 
 #: turpial/ui/gtk/inputpin.py:12
 msgid "Turpial Authorization"
-msgstr ""
+msgstr "Turpial d'autorització"
 
 #: turpial/ui/gtk/inputpin.py:24
 msgid "Twitter has implemented a new security system and needs that you authorize Turpial from your account"
-msgstr ""
+msgstr "Twitter ha implementat un nou sistema de seguretat i cal que vostè autoritzi a Turpial tenir accés al seu compte"
 
 #: turpial/ui/gtk/inputpin.py:26
 msgid "In order to complete that step, Turpial has open a new page in your default browser, go there to authorize Turpial and copy the number given in the box below..."
-msgstr ""
+msgstr "Per completar aquest pas, Turpial ha obert una nova pàgina a la teva navegador predeterminat, veu allà per autoritzar Turpial i copia el nombre donat a la caixa a continuació ..."
 
 #: turpial/ui/gtk/inputpin.py:29
 msgid "Input PIN"
-msgstr ""
+msgstr "Introdueix el PIN"
 
 #: turpial/ui/gtk/main.py:50 turpial/ui/gtk/main.py:53
 #: turpial/ui/gtk/preferences.py:168 turpial/ui/gtk/preferences.py:253
 msgid "Timeline"
-msgstr ""
+msgstr "Línia de temps"
 
 #: turpial/ui/gtk/main.py:54 turpial/ui/gtk/preferences.py:170
 #: turpial/ui/gtk/preferences.py:262
 msgid "Mentions"
-msgstr ""
+msgstr "Mencions"
 
 #: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:172
 msgid "Directs"
-msgstr ""
+msgstr "Directes"
 
 #: turpial/ui/gtk/main.py:67
 msgid "Favorites"
-msgstr ""
+msgstr "Favorits"
 
 #: turpial/ui/gtk/main.py:69
 msgid "Search"
-msgstr ""
+msgstr "Recerques"
 
 #: turpial/ui/gtk/main.py:160
 msgid "Exit"
-msgstr ""
+msgstr "Sortir"
 
 #: turpial/ui/gtk/main.py:278
 msgid "User and Password"
-msgstr ""
+msgstr "Usuari i Contrasenya"
 
 #: turpial/ui/gtk/main.py:285
 msgid "Remember my credentials"
-msgstr ""
+msgstr "Recordar les meves credencials"
 
 #: turpial/ui/gtk/main.py:287
 msgid "Connect"
-msgstr ""
+msgstr "Connectar"
 
 #: turpial/ui/gtk/main.py:369
 msgid "Wait a few seconds while I load everything..."
-msgstr ""
+msgstr "Espera uns segons mentre càrrec tot ..."
 
 #: turpial/ui/gtk/main.py:428
 msgid "Must write a valid PIN"
-msgstr ""
+msgstr "Has escriure un PIN vàlid"
 
 #: turpial/ui/gtk/main.py:432 turpial/ui/gtk/oauthwin.py:85
 msgid "Login cancelled by user"
-msgstr ""
+msgstr "Ingressar cancel per l'usuari"
 
 #: turpial/ui/gtk/oauthwin.py:20
 msgid "Secure Authentication"
-msgstr ""
+msgstr "Autenticació Segura"
 
 #: turpial/ui/gtk/oauthwin.py:39
 msgid "Autorize Turpial and copy the given number (<b>PIN</b>) in the text box below:"
-msgstr ""
+msgstr "Autoritza a Turpial i còpia el nombre donat (<b> PIN </ b>) a la caixa de text a continuació:"
 
 #: turpial/ui/gtk/oauthwin.py:71
 msgid "You must write a valid PIN"
-msgstr ""
+msgstr "Has escriure un PIN vàlid"
 
 #: turpial/ui/gtk/oauthwin.py:78
 msgid "Loading..."

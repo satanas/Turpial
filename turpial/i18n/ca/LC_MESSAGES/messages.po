@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Turpial
 # This file is distributed under the same license as the turpial project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: turpial 1.2.7-a1\n"
@@ -11,95 +11,95 @@ msgstr ""
 "PO-Revision-Date: 2010-04-12 19:30-0530\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ca <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: turpial/notification.py:58
 msgid "new tweet"
-msgstr ""
+msgstr "Nou tweet"
 
 #: turpial/notification.py:60
 msgid "new tweets"
-msgstr ""
+msgstr "Nous tweets"
 
 #: turpial/notification.py:69
 msgid "new mention"
-msgstr ""
+msgstr "Nova menció"
 
 #: turpial/notification.py:71
 msgid "new mentions"
-msgstr ""
+msgstr "Noves mencions"
 
 #: turpial/notification.py:80
 msgid "new DM"
-msgstr ""
+msgstr "Nou DM"
 
 #: turpial/notification.py:82
 msgid "new DMs"
-msgstr ""
+msgstr "Nous DMs"
 
 #: turpial/notification.py:92
 msgid "Tweets"
-msgstr ""
+msgstr "Missatges"
 
 #: turpial/notification.py:93
 msgid "Following"
-msgstr ""
+msgstr "Següent"
 
 #: turpial/notification.py:94
 msgid "Followers"
-msgstr ""
+msgstr "Seguidors"
 
 #: turpial/notification.py:102 turpial/ui/gtk/tweetslist.py:252
 msgid "Follow"
-msgstr ""
+msgstr "Seguir"
 
 #: turpial/notification.py:102
 #, python-format
 msgid "Now you follow to @%s"
-msgstr ""
+msgstr "Ara segueixes a @%s"
 
 #: turpial/notification.py:104 turpial/ui/gtk/tweetslist.py:253
 msgid "Unfollow"
-msgstr ""
+msgstr "No seguir"
 
 #: turpial/notification.py:104
 #, python-format
 msgid "You have unfollow to @%s"
-msgstr ""
+msgstr "Heu deixat de seguir @%s"
 
 #: turpial/ui/util.py:55
 msgid "of"
-msgstr ""
+msgstr "de"
 
 #: turpial/ui/util.py:55
 msgid "API calls. Reset"
-msgstr ""
+msgstr "Trucades a l'API. Reajustar"
 
 #: turpial/ui/gtk/about.py:18
 msgid "Twitter client multi-interface written in Python"
-msgstr ""
+msgstr "Client de Twitter multi-interfície escrit en Python"
 
 #: turpial/ui/gtk/dock.py:20
 msgid "Home"
-msgstr ""
+msgstr "Inici"
 
 #: turpial/ui/gtk/dock.py:24 turpial/ui/gtk/main.py:68
 msgid "Profile"
-msgstr ""
+msgstr "Perfil"
 
 #: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:159
 #: turpial/ui/gtk/updatebox.py:77
 msgid "Tweet"
-msgstr ""
+msgstr "Tweet"
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/main.py:291
 #: turpial/ui/gtk/preferences.py:24
 msgid "Preferences"
-msgstr ""
+msgstr "Preferències"
 
 #: turpial/ui/gtk/dock.py:36
 msgid "About"
@@ -110,16 +110,11 @@ msgid "Turpial Authorization"
 msgstr ""
 
 #: turpial/ui/gtk/inputpin.py:24
-msgid ""
-"Twitter has implemented a new security system and needs that you "
-"authorize Turpial from your account"
+msgid "Twitter has implemented a new security system and needs that you authorize Turpial from your account"
 msgstr ""
 
 #: turpial/ui/gtk/inputpin.py:26
-msgid ""
-"In order to complete that step, Turpial has open a new page in your "
-"default browser, go there to authorize Turpial and copy the number given "
-"in the box below..."
+msgid "In order to complete that step, Turpial has open a new page in your default browser, go there to authorize Turpial and copy the number given in the box below..."
 msgstr ""
 
 #: turpial/ui/gtk/inputpin.py:29
@@ -181,9 +176,7 @@ msgid "Secure Authentication"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:39
-msgid ""
-"Autorize Turpial and copy the given number (<b>PIN</b>) in the text box "
-"below:"
+msgid "Autorize Turpial and copy the given number (<b>PIN</b>) in the text box below:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:71
@@ -521,4 +514,3 @@ msgstr ""
 #: turpial/ui/gtk/userform.py:147
 msgid "Saving..."
 msgstr ""
-

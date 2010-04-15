@@ -28,6 +28,8 @@ from turpial.ui.base_ui import BaseGui
 from turpial.notification import Notification
 from turpial.ui import util as util
 
+from turpial.ui.gtk.tweetslistwk import TweetListWebkit
+
 try:
     import webkit
     from turpial.ui.gtk.oauthwin import OAuthWindow
@@ -47,8 +49,8 @@ class Home(Wrapper):
         Wrapper.__init__(self)
         
         if mainwin.extend:
-            self.timeline = TweetList(mainwin, _('Timeline'))
-            #self.timeline = TweetListWebkit(mainwin, 'Timeline')
+            #self.timeline = TweetList(mainwin, _('Timeline'))
+            self.timeline = TweetListWebkit(mainwin, 'Timeline')
         else:
             self.timeline = TweetList(mainwin, _('Timeline'))
         self.replies = TweetList(mainwin, _('Mentions'))
@@ -265,9 +267,9 @@ class Main(BaseGui, gtk.Window):
         self.request_signout()
         
     def main_loop(self):
-        gtk.gdk.threads_enter()
+        #gtk.gdk.threads_enter()
         gtk.main()
-        gtk.gdk.threads_leave()
+        #gtk.gdk.threads_leave()
         
     def show_login(self, global_config):
 
@@ -350,6 +352,7 @@ class Main(BaseGui, gtk.Window):
         self.username.set_sensitive(False)
         self.password.set_sensitive(False)
         self.remember.set_sensitive(False)
+        self.btn_settings.set_sensitive(False)
         self.request_oauth(self.username.get_text(), self.password.get_text(), self.remember.get_active())
         
     def cancel_login(self, error):
@@ -357,6 +360,7 @@ class Main(BaseGui, gtk.Window):
         self.waiting.stop(error=True)
         self.btn_oauth.set_sensitive(True)
         self.remember.set_sensitive(True)
+        self.btn_settings.set_sensitive(True)
         if not self.remember.get_active():
             self.username.set_sensitive(True)
             self.password.set_sensitive(True)

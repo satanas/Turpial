@@ -265,6 +265,10 @@ class BaseGui:
         '''Destroy a direct message'''
         self.__controller.destroy_direct(id)
         
+    def request_friends_list(self):
+        '''Get the friends list'''
+        return self.__controller.get_friends()
+        
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------

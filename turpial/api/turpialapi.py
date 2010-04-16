@@ -476,6 +476,13 @@ class TurpialAPI(threading.Thread):
                          'id': tweet_id, 'args': '', 'tweet':True,
                          'del': True}, callback)
         
+    def get_single_friends_list(self):
+        '''Returns a single friends list from the original twitter hash'''
+        list = []
+        for friend in self.friends:
+            list.append(friend['screen_name'])
+        return list
+        
     def end_session(self):
         '''Finalizando sesion'''
         self.__register({'uri': '%s/account/end_session' % self.apiurl,

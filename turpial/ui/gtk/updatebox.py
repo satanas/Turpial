@@ -16,6 +16,7 @@ except:
     pass
 
 from turpial.ui.gtk.waiting import CairoWaiting
+from turpial.ui.gtk.friendwin import FriendsWin
 
 class UpdateBox(gtk.Window):
     def __init__(self, parent):
@@ -81,6 +82,12 @@ class UpdateBox(gtk.Window):
         self.btn_clr.set_image(self.mainwin.load_image('clear.png'))
         self.btn_clr.set_tooltip_text(_('Clear all'))
         self.btn_clr.set_relief(gtk.RELIEF_NONE)
+        
+        self.btn_friends = gtk.Button()
+        self.btn_friends.set_image(self.mainwin.load_image('friends.png'))
+        self.btn_friends.set_tooltip_text(_('Add friends'))
+        self.btn_friends.set_relief(gtk.RELIEF_NONE)
+        
         self.btn_upd = gtk.Button(_('Tweet'))
         chk_short = gtk.CheckButton(_('Autoshort URLs'))
         chk_short.set_sensitive(False)
@@ -97,6 +104,7 @@ class UpdateBox(gtk.Window):
         
         buttonbox = gtk.HBox(False)
         buttonbox.pack_start(chk_short, False, False, 0)
+        buttonbox.pack_start(self.btn_friends, False, False, 0)
         buttonbox.pack_start(self.btn_clr, False, False, 0)
         buttonbox.pack_start(gtk.HSeparator(), False, False, 2)
         buttonbox.pack_start(self.btn_upd, False, False, 0)
@@ -118,6 +126,7 @@ class UpdateBox(gtk.Window):
         
         self.connect('delete-event', self.__unclose)
         buffer.connect('changed', self.count_chars)
+        self.btn_friends.connect('clicked', self.show_friend_dialog)
         self.btn_clr.connect('clicked', self.clear)
         self.btn_upd.connect('clicked', self.update)
         self.btn_url.connect('clicked', self.short_url)
@@ -141,6 +150,10 @@ class UpdateBox(gtk.Window):
         if not self.blocked:
             self.done()
         return True
+        
+    def show_friend_dialog(self, widget):
+        f = FriendsWin(self.mainwin, self.add_friend, 
+            self.mainwin.request_friends_list())
         
     def block(self):
         self.blocked = True
@@ -293,6 +306,22 @@ class UpdateBox(gtk.Window):
     def show_options(self, widget, event=None):
         self.url.set_text('')
         self.url.grab_focus()
+    
+    def add_friend(self, user):
+        if user is None: return
+        
+        buffer = self.update_text.get_buffer()
+        end_offset = buffer.get_property('cursor-position')
+        start_offset = end_offset - 1
+        
+        end = buffer.get_iter_at_offset(end_offset)
+        start = buffer.get_iter_at_offset(start_offset)
+        text = buffer.get_text(start, end)
+        
+        if (user != ' ') and (start_offset > 0):
+            user = ' ' + user
+        
+        buffer.insert_at_cursor(user)
 
 class MessageTextView(gtk.TextView):
     '''Class for the message textview (where user writes new messages)

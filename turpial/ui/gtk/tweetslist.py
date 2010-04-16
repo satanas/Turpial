@@ -261,7 +261,8 @@ class TweetList(gtk.VBox):
                 
                 if not rtn['own']:
                     menu.append(reply)
-                    menu.append(reply_all)
+                    if len(mentions) > 1:
+                        menu.append(reply_all)
                     menu.append(retweet_old)
                     menu.append(retweet)
                     menu.append(direct)

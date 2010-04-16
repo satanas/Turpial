@@ -2,20 +2,20 @@
 # Copyright (C) 2010 ORGANIZATION
 # This file is distributed under the same license as the turpial project.
 # Ana Rangel <anita.rangel@gmail.com>, 2010.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: turpial 1.0-b1\n"
 "Report-Msgid-Bugs-To: milmazz@gmail.com\n"
-"POT-Creation-Date: 2010-04-04 11:29-0530\n"
-"PO-Revision-Date: 2010-04-04 11:29-0530\n"
+"POT-Creation-Date: 2010-04-04 11:29+0530\n"
+"PO-Revision-Date: 2010-04-16 10:08-0530\n"
 "Last-Translator: Ana Rangel <anita.rangel@gmail.com>\n"
 "Language-Team: no <LL@li.org>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"Generated-By: Babel 0.9.4\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.1\n"
 
 #: turpial/notification.py:58
 msgid "new tweet"
@@ -58,7 +58,7 @@ msgid "Follow"
 msgstr "Følge"
 
 #: turpial/notification.py:102
-#, python-format
+#, fuzzy, python-format
 msgid "Now you follow to @%s"
 msgstr "Nå følger du @%s"
 
@@ -67,7 +67,7 @@ msgid "Unfollow"
 msgstr "ufølge"
 
 #: turpial/notification.py:104
-#, python-format
+#, fuzzy, python-format
 msgid "You have unfollow to @%s"
 msgstr "Du har ufølget @%s"
 
@@ -87,16 +87,16 @@ msgstr "skrevet i Python"
 msgid "Home"
 msgstr "Hjemme"
 
-#: turpial/ui/gtk/dock.py:24 turpial/ui/gtk/main.py:68
+#: turpial/ui/gtk/dock.py:24 turpial/ui/gtk/main.py:70
 msgid "Profile"
 msgstr "Profil"
 
-#: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:159
-#: turpial/ui/gtk/updatebox.py:77
+#: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:161
+#: turpial/ui/gtk/updatebox.py:91
 msgid "Tweet"
 msgstr "å tvitre"
 
-#: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/main.py:291
+#: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/main.py:298
 #: turpial/ui/gtk/preferences.py:24
 msgid "Preferences"
 msgstr "Preferanser"
@@ -105,69 +105,88 @@ msgstr "Preferanser"
 msgid "About"
 msgstr "Omtrent"
 
+#: turpial/ui/gtk/friendwin.py:14
+#, fuzzy
+msgid "Add friend"
+msgstr "Laster opp venner..."
+
+#: turpial/ui/gtk/friendwin.py:32 turpial/ui/gtk/preferences.py:405
+msgid "I am still loading all of your friends. Try again in a few seconds"
+msgstr ""
+
 #: turpial/ui/gtk/inputpin.py:12
 msgid "Turpial Authorization"
 msgstr "Turpial Autorisasjon"
 
 #: turpial/ui/gtk/inputpin.py:24
-msgid "Twitter has implemented a new security system and needs that you authorize Turpial from your account"
-msgstr "Twitter har implementert et nytt sikkerhetssystem og behov at du autoriserer Turpial fra kontoen din"
+msgid ""
+"Twitter has implemented a new security system and needs that you "
+"authorize Turpial from your account"
+msgstr ""
+"Twitter har implementert et nytt sikkerhetssystem og behov at du "
+"autoriserer Turpial fra kontoen din"
 
 #: turpial/ui/gtk/inputpin.py:26
-msgid "In order to complete that step, Turpial has open a new page in your default browser, go there to authorize Turpial and copy the number given in the box below..."
-msgstr "For å fullføre dette trinnet, har Turpial åpne en ny side i din standard nettleser, gå dit for å godkjenne Turpial og kopiere nummeret gitt i boksen nedenfor ..."
+msgid ""
+"In order to complete that step, Turpial has open a new page in your "
+"default browser, go there to authorize Turpial and copy the number given "
+"in the box below..."
+msgstr ""
+"For å fullføre dette trinnet, har Turpial åpne en ny side i din standard "
+"nettleser, gå dit for å godkjenne Turpial og kopiere nummeret gitt i "
+"boksen nedenfor ..."
 
 #: turpial/ui/gtk/inputpin.py:29
 msgid "Input PIN"
 msgstr "Inngang PIN"
 
-#: turpial/ui/gtk/main.py:50 turpial/ui/gtk/main.py:53
-#: turpial/ui/gtk/preferences.py:168 turpial/ui/gtk/preferences.py:253
+#: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:168
+#: turpial/ui/gtk/preferences.py:253
 msgid "Timeline"
 msgstr "Tidlinje"
 
-#: turpial/ui/gtk/main.py:54 turpial/ui/gtk/preferences.py:170
+#: turpial/ui/gtk/main.py:56 turpial/ui/gtk/preferences.py:170
 #: turpial/ui/gtk/preferences.py:262
 msgid "Mentions"
 msgstr "Nevner"
 
-#: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:172
+#: turpial/ui/gtk/main.py:57 turpial/ui/gtk/preferences.py:172
 msgid "Directs"
 msgstr "Privat"
 
-#: turpial/ui/gtk/main.py:67
+#: turpial/ui/gtk/main.py:69
 msgid "Favorites"
 msgstr "Favoritter"
 
-#: turpial/ui/gtk/main.py:69
+#: turpial/ui/gtk/main.py:71
 msgid "Search"
 msgstr "Søk"
 
-#: turpial/ui/gtk/main.py:160
+#: turpial/ui/gtk/main.py:162
 msgid "Exit"
 msgstr "Utgang"
 
-#: turpial/ui/gtk/main.py:278
+#: turpial/ui/gtk/main.py:285
 msgid "User and Password"
 msgstr "Bruker og Passord"
 
-#: turpial/ui/gtk/main.py:285
+#: turpial/ui/gtk/main.py:292
 msgid "Remember my credentials"
 msgstr "Husk mine attesterene"
 
-#: turpial/ui/gtk/main.py:287
+#: turpial/ui/gtk/main.py:294
 msgid "Connect"
 msgstr "Koble"
 
-#: turpial/ui/gtk/main.py:369
+#: turpial/ui/gtk/main.py:378
 msgid "Wait a few seconds while I load everything..."
 msgstr "Vent noen sekunder mens vi loader alt..."
 
-#: turpial/ui/gtk/main.py:428
+#: turpial/ui/gtk/main.py:437
 msgid "Must write a valid PIN"
 msgstr "Må skrive en gyldig PIN"
 
-#: turpial/ui/gtk/main.py:432 turpial/ui/gtk/oauthwin.py:85
+#: turpial/ui/gtk/main.py:441 turpial/ui/gtk/oauthwin.py:85
 msgid "Login cancelled by user"
 msgstr "Logg inn avbrutt av brukeren"
 
@@ -176,8 +195,12 @@ msgid "Secure Authentication"
 msgstr "Sikker autentisering"
 
 #: turpial/ui/gtk/oauthwin.py:39
-msgid "Autorize Turpial and copy the given number (<b>PIN</b>) in the text box below:"
-msgstr "Autorize Turpial og kopiere det angitte tallet (<b>PIN</ b>) i tekstboksen nedenfor:"
+msgid ""
+"Autorize Turpial and copy the given number (<b>PIN</b>) in the text box "
+"below:"
+msgstr ""
+"Autorize Turpial og kopiere det angitte tallet (<b>PIN</ b>) i "
+"tekstboksen nedenfor:"
 
 #: turpial/ui/gtk/oauthwin.py:71
 msgid "You must write a valid PIN"
@@ -209,10 +232,12 @@ msgid "Services"
 msgstr "Tjenester"
 
 #: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/tweetslist.py:258
+#, fuzzy
 msgid "Mute"
 msgstr "Mute"
 
 #: turpial/ui/gtk/preferences.py:56
+#, fuzzy
 msgid "Web Browser"
 msgstr "Nettleser"
 
@@ -233,10 +258,12 @@ msgid "You will use 0 calls to API per hour"
 msgstr "Du skal bruke 0 kaller til API per tid"
 
 #: turpial/ui/gtk/preferences.py:183
+#, fuzzy
 msgid "Wide Mode"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:187
+#, fuzzy
 msgid "Show a workspace of 3 columns"
 msgstr ""
 
@@ -282,6 +309,7 @@ msgid "Show a notification when you get direct messages"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:280
+#, fuzzy
 msgid "Login"
 msgstr "Logg in"
 
@@ -301,8 +329,8 @@ msgstr ""
 msgid "Select your preferred services for shorten URLs and upload images"
 msgstr ""
 
-#: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:56
-#: turpial/ui/gtk/updatebox.py:57
+#: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:64
+#: turpial/ui/gtk/updatebox.py:65
 msgid "Shorten URL"
 msgstr ""
 
@@ -312,10 +340,6 @@ msgstr "Laste opp bilder"
 
 #: turpial/ui/gtk/preferences.py:365
 msgid "Select all those users that are bothering you and shut them up temporarily"
-msgstr ""
-
-#: turpial/ui/gtk/preferences.py:405
-msgid "I am still loading all of your friends. Try again in a few seconds"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:442
@@ -400,6 +424,7 @@ msgid "Delete"
 msgstr "Viske ut"
 
 #: turpial/ui/gtk/tweetslist.py:245
+#, fuzzy
 msgid "Reply All"
 msgstr "Svare til alle"
 
@@ -425,73 +450,80 @@ msgstr "DM"
 
 #: turpial/ui/gtk/tweetslist.py:254
 msgid "Loading friends..."
-msgstr "Laster opp venner..."
+msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:158
+#: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:183
 msgid "In reply to"
 msgstr "I ansvar til"
 
-#: turpial/ui/gtk/tweetslist.py:386
+#: turpial/ui/gtk/tweetslist.py:387
 msgid "from"
 msgstr "fra"
 
-#: turpial/ui/gtk/tweetslist.py:388
+#: turpial/ui/gtk/tweetslist.py:389
+#, fuzzy
 msgid "in reply to"
 msgstr "i ansvar til"
 
-#: turpial/ui/gtk/tweetslist.py:390
+#: turpial/ui/gtk/tweetslist.py:391
+#, fuzzy
 msgid "Retweeted by"
 msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:419
+#: turpial/ui/gtk/tweetslist.py:420
 msgid "Something went wrong. I'll update again soon"
 msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:422
+#: turpial/ui/gtk/tweetslist.py:423
 msgid "No tweets available"
 msgstr ""
 
-#: turpial/ui/gtk/updatebox.py:17
+#: turpial/ui/gtk/updatebox.py:25
+#, fuzzy
 msgid "What is happening?"
 msgstr "Hva som skjer?"
 
-#: turpial/ui/gtk/updatebox.py:21
+#: turpial/ui/gtk/updatebox.py:29
 msgid "Update status"
 msgstr ""
 
-#: turpial/ui/gtk/updatebox.py:59 turpial/ui/gtk/updatebox.py:60
+#: turpial/ui/gtk/updatebox.py:67 turpial/ui/gtk/updatebox.py:68
 msgid "Upload image"
 msgstr "Laste opp bilde"
 
-#: turpial/ui/gtk/updatebox.py:69
+#: turpial/ui/gtk/updatebox.py:77
 msgid "Options"
 msgstr "Muligheter"
 
-#: turpial/ui/gtk/updatebox.py:75
+#: turpial/ui/gtk/updatebox.py:83
 msgid "Clear all"
 msgstr ""
 
-#: turpial/ui/gtk/updatebox.py:78
+#: turpial/ui/gtk/updatebox.py:88
+msgid "Add friends"
+msgstr ""
+
+#: turpial/ui/gtk/updatebox.py:92
 msgid "Autoshort URLs"
 msgstr ""
 
-#: turpial/ui/gtk/updatebox.py:150
+#: turpial/ui/gtk/updatebox.py:175
 msgid "Oh oh... I couldn't send the tweet"
 msgstr ""
 
-#: turpial/ui/gtk/updatebox.py:203
+#: turpial/ui/gtk/updatebox.py:228
 msgid "Eyy... you must write something"
 msgstr "Hei.. du må skrive noe"
 
-#: turpial/ui/gtk/updatebox.py:218
+#: turpial/ui/gtk/updatebox.py:243
 msgid "Oops... I couldn't shrink that URL"
 msgstr ""
 
-#: turpial/ui/gtk/updatebox.py:245
+#: turpial/ui/gtk/updatebox.py:270
 msgid "Select image to upload"
 msgstr ""
 
-#: turpial/ui/gtk/updatebox.py:262
+#: turpial/ui/gtk/updatebox.py:287
 msgid "Oops... I couldn't upload that image"
 msgstr "Ops.. kan ikke laste opp bildet "
 
@@ -511,9 +543,11 @@ msgid "URL"
 msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:78
+#, fuzzy
 msgid "Bio"
 msgstr "Bio"
 
 #: turpial/ui/gtk/userform.py:147
 msgid "Saving..."
 msgstr "Gjemme på..."
+

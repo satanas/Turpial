@@ -209,12 +209,10 @@ msgid "Services"
 msgstr "Servizi"
 
 #: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/tweetslist.py:258
-#, fuzzy
 msgid "Mute"
 msgstr "Muto"
 
 #: turpial/ui/gtk/preferences.py:56
-#, fuzzy
 msgid "Web Browser"
 msgstr "Browser Web"
 
@@ -235,12 +233,10 @@ msgid "You will use 0 calls to API per hour"
 msgstr "Userai 0 chiamate dell'API/h"
 
 #: turpial/ui/gtk/preferences.py:183
-#, fuzzy
 msgid "Wide Mode"
 msgstr "Wide Mode"
 
 #: turpial/ui/gtk/preferences.py:187
-#, fuzzy
 msgid "Show a workspace of 3 columns"
 msgstr "Mostra uno spazio di lavoro di 3 colonne"
 
@@ -286,7 +282,6 @@ msgid "Show a notification when you get direct messages"
 msgstr "Mostra una notifica quando ricevi messaggi diretti"
 
 #: turpial/ui/gtk/preferences.py:280
-#, fuzzy
 msgid "Login"
 msgstr "Accesso"
 
@@ -324,7 +319,6 @@ msgid "I am still loading all of your friends. Try again in a few seconds"
 msgstr "Sto ancora caricando i tuoi amici. Prova di nuovo tra qualche secondo"
 
 #: turpial/ui/gtk/preferences.py:442
-#, fuzzy
 msgid "Setup your favorite web browser to open all links"
 msgstr "Imposta il tuo browser preferito per aprire tutti i link"
 
@@ -357,7 +351,6 @@ msgid "Proxy settings for Turpial (Need Restart)"
 msgstr "Configurazioni del Proxy di Turpial (richiede riavvio)"
 
 #: turpial/ui/gtk/preferences.py:523
-#, fuzzy
 msgid "No proxy"
 msgstr "Nessun proxy"
 
@@ -395,7 +388,6 @@ msgid "You must write something to search"
 msgstr "È necessario scrivere qualcosa da cercare"
 
 #: turpial/ui/gtk/tweetslist.py:124
-#, fuzzy
 msgid "Open"
 msgstr "Aperto"
 
@@ -408,32 +400,26 @@ msgid "Delete"
 msgstr "Cancella"
 
 #: turpial/ui/gtk/tweetslist.py:245
-#, fuzzy
 msgid "Reply All"
 msgstr "Rispondi a tutti"
 
 #: turpial/ui/gtk/tweetslist.py:246
-#, fuzzy
 msgid "Retweet (Old)"
 msgstr "Retweet (Vecchia)"
 
 #: turpial/ui/gtk/tweetslist.py:247
-#, fuzzy
 msgid "Retweet"
 msgstr "Retweet"
 
 #: turpial/ui/gtk/tweetslist.py:248
-#, fuzzy
 msgid "+ Fav"
 msgstr "+ Fav"
 
 #: turpial/ui/gtk/tweetslist.py:249
-#, fuzzy
 msgid "- Fav"
 msgstr "- Fav"
 
 #: turpial/ui/gtk/tweetslist.py:251
-#, fuzzy
 msgid "DM"
 msgstr "DM"
 
@@ -442,12 +428,10 @@ msgid "Loading friends..."
 msgstr "Caricando amici ..."
 
 #: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:158
-#, fuzzy
 msgid "In reply to"
 msgstr "In risposta a"
 
 #: turpial/ui/gtk/tweetslist.py:386
-#, fuzzy
 msgid "from"
 msgstr "da"
 
@@ -456,7 +440,6 @@ msgid "in reply to"
 msgstr "in risposta a"
 
 #: turpial/ui/gtk/tweetslist.py:390
-#, fuzzy
 msgid "Retweeted by"
 msgstr "Retweeted da"
 
@@ -469,7 +452,6 @@ msgid "No tweets available"
 msgstr "Nessun tweet disponibile"
 
 #: turpial/ui/gtk/updatebox.py:17
-#, fuzzy
 msgid "What is happening?"
 msgstr "Cosa sta succedendo?"
 
@@ -478,12 +460,10 @@ msgid "Update status"
 msgstr "Aggiorna lo stato"
 
 #: turpial/ui/gtk/updatebox.py:59 turpial/ui/gtk/updatebox.py:60
-#, fuzzy
 msgid "Upload image"
 msgstr "Carica immagine"
 
 #: turpial/ui/gtk/updatebox.py:69
-#, fuzzy
 msgid "Options"
 msgstr "Opzioni"
 

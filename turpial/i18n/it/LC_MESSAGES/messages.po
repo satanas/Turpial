@@ -468,7 +468,6 @@ msgid "Options"
 msgstr "Opzioni"
 
 #: turpial/ui/gtk/updatebox.py:75
-#, fuzzy
 msgid "Clear all"
 msgstr "Cancella tutto"
 
@@ -481,7 +480,6 @@ msgid "Oh oh... I couldn't send the tweet"
 msgstr "Oh oh ... Non ho potuto inviare il tweet"
 
 #: turpial/ui/gtk/updatebox.py:203
-#, fuzzy
 msgid "Eyy... you must write something"
 msgstr "Eyy ... è necessario scrivere qualcosa"
 
@@ -490,7 +488,6 @@ msgid "Oops... I couldn't shrink that URL"
 msgstr "Oops ... Non ho potuto accorciare l'URL"
 
 #: turpial/ui/gtk/updatebox.py:245
-#, fuzzy
 msgid "Select image to upload"
 msgstr "Seleziona un'immagine da caricare"
 
@@ -503,7 +500,6 @@ msgid "Name"
 msgstr "Nome"
 
 #: turpial/ui/gtk/userform.py:57
-#, fuzzy
 msgid "Location"
 msgstr "Posizione"
 
@@ -512,7 +508,6 @@ msgid "URL"
 msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:78
-#, fuzzy
 msgid "Bio"
 msgstr "Bio"
 

@@ -313,63 +313,65 @@ msgstr "Accorciare URL"
 
 #: turpial/ui/gtk/preferences.py:339
 msgid "Upload images"
-msgstr ""
+msgstr "Carica immagini"
 
 #: turpial/ui/gtk/preferences.py:365
 msgid "Select all those users that are bothering you and shut them up temporarily"
-msgstr ""
+msgstr "Seleziona tutti gli utenti che ti danno fastidio e falli tacere"
 
 #: turpial/ui/gtk/preferences.py:405
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr ""
+msgstr "Sto ancora caricando i tuoi amici. Prova di nuovo tra qualche secondo"
 
 #: turpial/ui/gtk/preferences.py:442
+#, fuzzy
 msgid "Setup your favorite web browser to open all links"
-msgstr ""
+msgstr "Imposta il tuo browser preferito per aprire tutti i link"
 
 #: turpial/ui/gtk/preferences.py:448
 msgid "Default web browser"
-msgstr ""
+msgstr "Web browser di predefinito"
 
 #: turpial/ui/gtk/preferences.py:450
 msgid "Choose another web browser"
-msgstr ""
+msgstr "Scegli un altro web browser"
 
 #: turpial/ui/gtk/preferences.py:452
 msgid "Command"
-msgstr ""
+msgstr "Comando"
 
 #: turpial/ui/gtk/preferences.py:454
 msgid "Test"
-msgstr ""
+msgstr "Prova"
 
 #: turpial/ui/gtk/preferences.py:455
 msgid "Browse"
-msgstr ""
+msgstr "Naviga"
 
 #: turpial/ui/gtk/preferences.py:494
 msgid "Select the full path of your web browser"
-msgstr ""
+msgstr "Seleziona il percorso del tuo Web Browser"
 
 #: turpial/ui/gtk/preferences.py:520
 msgid "Proxy settings for Turpial (Need Restart)"
-msgstr ""
+msgstr "Configurazioni del Proxy di Turpial (richiede riavvio)"
 
 #: turpial/ui/gtk/preferences.py:523
+#, fuzzy
 msgid "No proxy"
-msgstr ""
+msgstr "Nessun proxy"
 
 #: turpial/ui/gtk/preferences.py:524
 msgid "Twitter API proxy"
-msgstr ""
+msgstr "Proxy dell'API di Twitter"
 
 #: turpial/ui/gtk/preferences.py:528
 msgid "Use a URL to access Twitter API different of twitter.com"
-msgstr ""
+msgstr "Usa un URL diversa da twitter.com per accedere all'API di Twitter"
 
 #: turpial/ui/gtk/preferences.py:532
 msgid "Twitter API URL"
-msgstr ""
+msgstr "URL dell'API di Twitter"
 
 #: turpial/ui/gtk/replybox.py:19 turpial/ui/gtk/replybox.py:25
 msgid "In reply to..."

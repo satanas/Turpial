@@ -1,3 +1,6 @@
+v1.0 (Abr 19, 2010):
+    + Versión Final
+    
 v1.0-b4 (Abr 04, 2010):
     + Corregida la ubicación de la documentación al instalar (bug #132)
     + Agregado soporte para instalación vía ez_setup.py si no hay setuptools

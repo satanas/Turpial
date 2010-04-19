@@ -1,17 +1,18 @@
-# English translations for Turpial package
-# Copyright (C) 2010 Wil Alvarez
-# This file is distributed under the same license as the Turpial package.
-# Satanas <wil.alejandro@gmail.com>, 2010.
+# Russian translations for turpial.
+# Copyright (C) 2010 Turpial
+# This file is distributed under the same license as the turpial project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Turpial 1.1.2-a1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-23 18:52+0430\n"
+"Project-Id-Version: turpial 1.0-b1\n"
+"Report-Msgid-Bugs-To: milmazz@gmail.com\n"
+"POT-Creation-Date: 2010-04-04 11:29+0530\n"
 "PO-Revision-Date: 2010-04-16 10:08-0530\n"
-"Last-Translator: Satanas <wil.alejandro@gmail.com>\n"
-"Language-Team: Spanish\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -225,10 +226,12 @@ msgid "Services"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/tweetslist.py:258
+#, fuzzy
 msgid "Mute"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:56
+#, fuzzy
 msgid "Web Browser"
 msgstr ""
 
@@ -249,10 +252,12 @@ msgid "You will use 0 calls to API per hour"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:183
+#, fuzzy
 msgid "Wide Mode"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:187
+#, fuzzy
 msgid "Show a workspace of 3 columns"
 msgstr ""
 
@@ -298,6 +303,7 @@ msgid "Show a notification when you get direct messages"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:280
+#, fuzzy
 msgid "Login"
 msgstr ""
 
@@ -467,6 +473,7 @@ msgid "No tweets available"
 msgstr ""
 
 #: turpial/ui/gtk/updatebox.py:25
+#, fuzzy
 msgid "What is happening?"
 msgstr ""
 
@@ -519,6 +526,7 @@ msgid "Name"
 msgstr ""
 
 #: turpial/ui/gtk/userform.py:57
+#, fuzzy
 msgid "Location"
 msgstr ""
 
@@ -527,6 +535,7 @@ msgid "URL"
 msgstr ""
 
 #: turpial/ui/gtk/userform.py:78
+#, fuzzy
 msgid "Bio"
 msgstr ""
 

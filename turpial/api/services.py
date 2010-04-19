@@ -48,9 +48,9 @@ PHOTO_SERVICES = {
     "TwitPic": TwitpicPicUploader(),
     "img.ly": ImglyPicUploader(),
     "Twitgoo": TwitgooPicUploader(),
-    "MobyPicture": MobypicturePicUploader(),
 }
 
+#"MobyPicture": MobypicturePicUploader(),
 
 class HTTPServices(threading.Thread):
     def __init__(self, username='', password='', imgdir='/tmp'):

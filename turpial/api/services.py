@@ -28,6 +28,7 @@ from turpial.api.interfaces.uploadpic.tweetphoto import TweetPhotoPicUploader
 from turpial.api.interfaces.uploadpic.twitpic import TwitpicPicUploader
 from turpial.api.interfaces.uploadpic.twitgoo import TwitgooPicUploader
 from turpial.api.interfaces.uploadpic.mobypicture import MobypicturePicUploader
+from turpial.api.interfaces.uploadpic.yfrog import YfrogPicUploader
 
 URL_SERVICES = {
     "cli.gs": CligsURLShorter(),
@@ -48,6 +49,7 @@ PHOTO_SERVICES = {
     "TwitPic": TwitpicPicUploader(),
     "img.ly": ImglyPicUploader(),
     "Twitgoo": TwitgooPicUploader(),
+    "Yfrog": YfrogPicUploader(),
 }
 
 #"MobyPicture": MobypicturePicUploader(),

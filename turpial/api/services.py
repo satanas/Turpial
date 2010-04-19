@@ -5,45 +5,34 @@
 # Author: Wil Alvarez (aka Satanas)
 # Dic 05, 2009
 
-import os
 import time
 import Queue
-import urllib2
 import logging
-import threading
 import traceback
+import threading
 
 from turpial.api.twitpic import TwitPicAPI
 from turpial.api.s60tweetphoto import TweetPhotoAPI
 from turpial.api.twitter_globals import TWEETPHOTO_KEY
-
-def _py26_or_greater():
-    import sys
-    return sys.hexversion > 0x20600f0
-    
-if _py26_or_greater():
-    import json
-else:
-    import simplejson as json
-    
-class ShortenObject:
-    def __init__(self, query, json=False, url_quote=True, response_key=None):
-        self.query = query
-        self.json = json
-        self.response_key = response_key
-        self.url_quote = url_quote
+from turpial.api.interfaces.generic import GenericService
+from turpial.api.interfaces.shorturl.cligs import CligsURLShorter
+from turpial.api.interfaces.shorturl.isgd import IsgdURLShorter
+from turpial.api.interfaces.shorturl.tinyurl import TinyurlURLShorter
+from turpial.api.interfaces.shorturl.trim import TrimURLShorter
+from turpial.api.interfaces.shorturl.bitly import BitlyURLShorter
+from turpial.api.interfaces.shorturl.smlkes import SmlkesURLShorter
+from turpial.api.interfaces.shorturl.supr import SuprURLShorter
+from turpial.api.interfaces.shorturl.unu import UnuURLShorter
 
 URL_SERVICES = {
-    "cli.gs": ShortenObject("http://cli.gs/api/v1/cligs/create?appid=gwibber&url=%s"),
-    "is.gd": ShortenObject("http://is.gd/api.php?longurl=%s"),
-    "tinyurl.com": ShortenObject("http://tinyurl.com/api-create.php?url=%s"),
-    "tr.im": ShortenObject("http://tr.im/api/trim_simple?url=%s"),
-    "bit.ly": ShortenObject("http://api.bit.ly/shorten?version=2.0.1&login=turpial&apiKey=R_5a84eae6dd4158a0636358c4f9efdecc&longUrl=%s",
-        True, True, 'shortUrl'),
-    "smlk.es": ShortenObject("http://smlk.es/api/create/?destination=%s",
-        True, True, 'link'),
-    "su.pr": ShortenObject("http://su.pr/api/simpleshorten?url=%s"),
-    "u.nu": ShortenObject("http://u.nu/unu-api-simple?url=%s"),
+    "cli.gs": CligsURLShorter(),
+    "is.gd": IsgdURLShorter(),
+    "tinyurl.com": TinyurlURLShorter(),
+    "tr.im": TrimURLShorter(),
+    "bit.ly": BitlyURLShorter(),
+    "smlk.es": SmlkesURLShorter(),
+    "su.pr": SuprURLShorter(),
+    "u.nu": UnuURLShorter(),
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
 }
 
@@ -100,58 +89,24 @@ class HTTPServices(threading.Thread):
                 continue
             
             (args, callback) = req
+            
             if args['cmd'] == 'download_pic':
-                ext = args['url'][-3:]
-                if ext == '':
-                    ext = 'png'
-                filename = args['url'].replace('http://', '0_')
-                filename = filename.replace('/', '_')
-                fullname = os.path.join(self.imgdir, filename)
-                
                 try:
-                    f = urllib2.urlopen(args['url']).read()
-                except:
+                    filename = GenericService._download_pic(self.imgdir, 
+                        args['url'])
+                    self.log.debug('Descargada imagen de %s' % args['user'])
+                    callback(args['user'], filename)
+                except Exception, error:
+                    self.log.debug("Error: %s\n%s" % (error, 
+                        traceback.print_exc()))
                     self.register(args, callback)
-                    continue
-                    
-                _file = open(fullname, 'w+')
-                _file.write(f)
-                _file.close()
-                
-                self.log.debug('Descargada imagen de usuario: %s' % 
-                               args['user'])
-                callback(args['user'], filename)
-                
             elif args['cmd'] == 'short_url':
                 self.log.debug('Cortando URL: %s' % args['url'])
+                urlshorter = URL_SERVICES[args['service']]
+                resp = urlshorter.do_service(args['url'])
+                self.log.debug('URL Cortada: %s' % resp.response)
+                callback(resp)
                 
-                key_url = args['url']
-                service = URL_SERVICES[args['service']]
-                if service.url_quote:
-                    longurl = urllib2.quote(args['url'])
-                    longurl = longurl.replace('/', '%2F')
-                else:
-                    longurl = args['url']
-                
-                try:
-                    req = service.query % longurl
-                    self.log.debug('Request: %s' % req)
-                    if service.json:
-                        resp = json.loads(urllib2.urlopen(req).read())
-                        print resp
-                        if args['service'] == "bit.ly":
-                            short = resp['results'][key_url][service.response_key]
-                        elif args['service'] == "siguemilink":
-                            short = "http://www.siguemilink.com/%s" % \
-                                resp[service.response_key]
-                    else:
-                        short = urllib2.urlopen(req).read()
-                except Exception, error:
-                    self.log.debug("Error: %s\n%s" % (error,
-                                                      traceback.print_exc()))
-                    short = None
-                self.log.debug('URL Cortada: %s' % short)
-                callback(short)
             elif args['cmd'] == 'upload_pic':
                 self.log.debug('Subiendo imagen [%s]: %s' % 
                                (args['service'], args['path']))

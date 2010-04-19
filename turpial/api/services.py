@@ -11,9 +11,6 @@ import logging
 import traceback
 import threading
 
-from turpial.api.twitpic import TwitPicAPI
-from turpial.api.s60tweetphoto import TweetPhotoAPI
-from turpial.api.twitter_globals import TWEETPHOTO_KEY
 from turpial.api.interfaces.generic import GenericService
 from turpial.api.interfaces.shorturl.cligs import CligsURLShorter
 from turpial.api.interfaces.shorturl.isgd import IsgdURLShorter
@@ -25,6 +22,12 @@ from turpial.api.interfaces.shorturl.supr import SuprURLShorter
 from turpial.api.interfaces.shorturl.unu import UnuURLShorter
 from turpial.api.interfaces.shorturl.zima import ZimaURLShorter
 from turpial.api.interfaces.shorturl.ur1ca import Ur1caURLShorter
+
+from turpial.api.interfaces.uploadpic.imgly import ImglyPicUploader
+from turpial.api.interfaces.uploadpic.tweetphoto import TweetPhotoPicUploader
+from turpial.api.interfaces.uploadpic.twitpic import TwitpicPicUploader
+from turpial.api.interfaces.uploadpic.twitgoo import TwitgooPicUploader
+from turpial.api.interfaces.uploadpic.mobypicture import MobypicturePicUploader
 
 URL_SERVICES = {
     "cli.gs": CligsURLShorter(),
@@ -40,10 +43,13 @@ URL_SERVICES = {
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
 }
 
-PHOTO_SERVICES = [
-    "TweetPhoto",
-    "TwitPic",
-]
+PHOTO_SERVICES = {
+    "TweetPhoto": TweetPhotoPicUploader(),
+    "TwitPic": TwitpicPicUploader(),
+    "img.ly": ImglyPicUploader(),
+    "Twitgoo": TwitgooPicUploader(),
+    "MobyPicture": MobypicturePicUploader(),
+}
 
 
 class HTTPServices(threading.Thread):
@@ -113,19 +119,11 @@ class HTTPServices(threading.Thread):
             elif args['cmd'] == 'upload_pic':
                 self.log.debug('Subiendo imagen [%s]: %s' % 
                                (args['service'], args['path']))
-                if args['service'] == "TweetPhoto":
-                    api = TweetPhotoAPI(self.username, self.password,
-                                        TWEETPHOTO_KEY)
-                    rtn = api.upload(image=args['path'])
-                    callback(rtn)
-                elif args['service'] == "TwitPic":
-                    api = TwitPicAPI(self.username, self.password)
-                    rtn = api.upload(image=args['path'])
-                    callback(rtn)
-                else:
-                    callback(None)
+                uploader = PHOTO_SERVICES[args['service']]
+                resp = uploader.do_service(self.username, self.password, 
+                    args['path'])
+                callback(resp)
                 
-        
         self.log.debug('Terminado')
         return
         

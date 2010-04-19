@@ -281,7 +281,7 @@ class UpdateBox(gtk.Window):
         dia.destroy()
         
     def update_uploaded_pic(self, pic_url):
-        if pic_url is None:
+        if pic_url.err:
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
                 _('Oops... I couldn\'t upload that image'))
@@ -295,9 +295,9 @@ class UpdateBox(gtk.Window):
         text = buffer.get_text(start, end)
         
         if (text != ' ') and (start_offset > 0):
-            pic_url = ' ' + pic_url
+            pic_url.response = ' ' + pic_url.response
         
-        buffer.insert_at_cursor(pic_url)
+        buffer.insert_at_cursor(pic_url.response)
         self.waiting.stop()
         self.lblerror.set_markup("")
         self.toolbox.set_expanded(False)

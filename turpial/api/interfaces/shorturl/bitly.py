@@ -21,9 +21,7 @@ class BitlyURLShorter(GenericService):
         self.base = "http://api.bit.ly/shorten?%s&%s&%s&longUrl=%s"
         
     def do_service(self, keyurl):
-        longurl = urllib2.quote(keyurl)
-        longurl = longurl.replace('/', '%2F')
-        
+        longurl = self._quote_url(keyurl)
         req = self.base % (VERSION, APP, APIKEY, longurl)
         try:
             resp = self._json_request(req)

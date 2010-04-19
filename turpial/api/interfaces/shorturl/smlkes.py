@@ -17,9 +17,7 @@ class SmlkesURLShorter(GenericService):
         self.base = "http://smlk.es/api/create/?destination=%s"
         
     def do_service(self, keyurl):
-        longurl = urllib2.quote(keyurl)
-        longurl = longurl.replace('/', '%2F')
-        
+        longurl = self._quote_url(longurl)
         req = self.base % longurl
         try:
             resp = self._json_request(req)

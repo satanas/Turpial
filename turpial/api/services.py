@@ -23,6 +23,8 @@ from turpial.api.interfaces.shorturl.bitly import BitlyURLShorter
 from turpial.api.interfaces.shorturl.smlkes import SmlkesURLShorter
 from turpial.api.interfaces.shorturl.supr import SuprURLShorter
 from turpial.api.interfaces.shorturl.unu import UnuURLShorter
+from turpial.api.interfaces.shorturl.zima import ZimaURLShorter
+from turpial.api.interfaces.shorturl.ur1ca import Ur1caURLShorter
 
 URL_SERVICES = {
     "cli.gs": CligsURLShorter(),
@@ -33,6 +35,8 @@ URL_SERVICES = {
     "smlk.es": SmlkesURLShorter(),
     "su.pr": SuprURLShorter(),
     "u.nu": UnuURLShorter(),
+    "zi.ma": ZimaURLShorter(),
+    "ur1.ca": Ur1caURLShorter(),
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
 }
 
@@ -106,7 +110,6 @@ class HTTPServices(threading.Thread):
                 resp = urlshorter.do_service(args['url'])
                 self.log.debug('URL Cortada: %s' % resp.response)
                 callback(resp)
-                
             elif args['cmd'] == 'upload_pic':
                 self.log.debug('Subiendo imagen [%s]: %s' % 
                                (args['service'], args['path']))

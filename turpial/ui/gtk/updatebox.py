@@ -237,7 +237,7 @@ class UpdateBox(gtk.Window):
         self.mainwin.request_short_url(self.url.get_text(), self.update_shorten_url)
         
     def update_shorten_url(self, short):
-        if short is None:
+        if short.err:
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
                 _('Oops... I couldn\'t shrink that URL'))
@@ -251,9 +251,9 @@ class UpdateBox(gtk.Window):
         text = buffer.get_text(start, end)
         
         if (text != ' ') and (start_offset > 0):
-            short = ' ' + short
+            short.response = ' ' + short.response
         
-        buffer.insert_at_cursor(short)
+        buffer.insert_at_cursor(short.response)
         self.waiting.stop()
         self.lblerror.set_markup("")
         self.toolbox.set_expanded(False)

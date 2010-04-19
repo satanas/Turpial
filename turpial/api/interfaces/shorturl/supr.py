@@ -16,6 +16,7 @@ class SuprURLShorter(GenericService):
         self.base = "http://su.pr/api/simpleshorten?url=%s"
         
     def do_service(self, longurl):
+        longurl = self._quote_url(longurl)
         req = self.base % longurl
         try:
             resp = self._get_request(req)

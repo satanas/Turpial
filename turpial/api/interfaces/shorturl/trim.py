@@ -16,6 +16,7 @@ class TrimURLShorter(GenericService):
         self.base = "http://tr.im/api/trim_simple?url=%s"
         
     def do_service(self, longurl):
+        longurl = self._quote_url(longurl)
         req = self.base % longurl
         try:
             resp = self._get_request(req)

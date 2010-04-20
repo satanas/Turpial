@@ -228,7 +228,9 @@ class TurpialAPI(threading.Thread):
         
     def __handle_friends(self, rtn, done_callback, cursor):
         '''Manejo de amigos'''
-        if rtn is None:
+        #FIXME: Problema con el valor devuelto
+        if (rtn is None) or (not 'users' in rtn) or (not isinstance(rtn, dict)):
+            print rtn
             self.log.debug('Error descargando amigos, intentando de nuevo')
             self.get_friends(done_callback, cursor)
         else:

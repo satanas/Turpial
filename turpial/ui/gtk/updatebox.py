@@ -318,7 +318,7 @@ class UpdateBox(gtk.Window):
         start = buffer.get_iter_at_offset(start_offset)
         text = buffer.get_text(start, end)
         
-        if (user != ' ') and (start_offset > 0):
+        if (text != ' ') and (start_offset > 0):
             user = ' ' + user
         
         buffer.insert_at_cursor(user)
@@ -335,6 +335,7 @@ class MessageTextView(gtk.TextView):
         self.set_left_margin(2)
         self.set_right_margin(2)
         self.set_wrap_mode(gtk.WRAP_WORD)
+        self.set_accepts_tab(False)
 
     def destroy(self):
         import gc

@@ -83,10 +83,10 @@ class UpdateBox(gtk.Window):
         self.btn_clr.set_tooltip_text(_('Clear all'))
         self.btn_clr.set_relief(gtk.RELIEF_NONE)
         
-        self.btn_friends = gtk.Button()
-        self.btn_friends.set_image(self.mainwin.load_image('friends.png'))
-        self.btn_friends.set_tooltip_text(_('Add friends'))
-        self.btn_friends.set_relief(gtk.RELIEF_NONE)
+        self.btn_frn = gtk.Button()
+        self.btn_frn.set_image(self.mainwin.load_image('friends.png'))
+        self.btn_frn.set_tooltip_text(_('Add friends'))
+        self.btn_frn.set_relief(gtk.RELIEF_NONE)
         
         self.btn_upd = gtk.Button(_('Tweet'))
         chk_short = gtk.CheckButton(_('Autoshort URLs'))
@@ -104,7 +104,7 @@ class UpdateBox(gtk.Window):
         
         buttonbox = gtk.HBox(False)
         buttonbox.pack_start(chk_short, False, False, 0)
-        buttonbox.pack_start(self.btn_friends, False, False, 0)
+        buttonbox.pack_start(self.btn_frn, False, False, 0)
         buttonbox.pack_start(self.btn_clr, False, False, 0)
         buttonbox.pack_start(gtk.HSeparator(), False, False, 2)
         buttonbox.pack_start(self.btn_upd, False, False, 0)
@@ -126,7 +126,7 @@ class UpdateBox(gtk.Window):
         
         self.connect('delete-event', self.__unclose)
         buffer.connect('changed', self.count_chars)
-        self.btn_friends.connect('clicked', self.show_friend_dialog)
+        self.btn_frn.connect('clicked', self.show_friend_dialog)
         self.btn_clr.connect('clicked', self.clear)
         self.btn_upd.connect('clicked', self.update)
         self.btn_url.connect('clicked', self.short_url)
@@ -162,6 +162,7 @@ class UpdateBox(gtk.Window):
         self.btn_clr.set_sensitive(False)
         self.btn_upd.set_sensitive(False)
         self.btn_url.set_sensitive(False)
+        self.btn_frn.set_sensitive(False)
         
     def release(self):
         self.blocked = False
@@ -170,6 +171,7 @@ class UpdateBox(gtk.Window):
         self.btn_clr.set_sensitive(True)
         self.btn_upd.set_sensitive(True)
         self.btn_url.set_sensitive(True)
+        self.btn_frn.set_sensitive(True)
         self.waiting.stop(error=True)
         self.lblerror.set_markup("<span size='small'>%s</span>" % 
             _('Oh oh... I couldn\'t send the tweet'))

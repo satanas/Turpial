@@ -49,11 +49,11 @@ class Home(Wrapper):
         Wrapper.__init__(self)
         
         if mainwin.extend:
-            #self.timeline = TweetList(mainwin, _('Timeline'))
             self.timeline = TweetListWebkit(mainwin, 'Timeline')
+            self.replies = TweetListWebkit(mainwin, _('Mentions'))
         else:
             self.timeline = TweetList(mainwin, _('Timeline'))
-        self.replies = TweetList(mainwin, _('Mentions'))
+            self.replies = TweetList(mainwin, _('Mentions'))
         self.direct = TweetList(mainwin, _('Directs'), 'direct')
         
         self._append_widget(self.timeline, WrapperAlign.left)

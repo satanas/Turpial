@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Widget para mostrar resultados de una búsqueda en Turpial
+"""Widget para mostrar resultados de una búsqueda en Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Ene 06, 2010
 
 import gtk
 
-from turpial.ui.gtk.tweetslist import *
+from turpial.ui.gtk.tweetslist import TweetList
 
 class SearchTweets(gtk.VBox):
     def __init__(self, mainwin, label=''):
@@ -17,10 +17,12 @@ class SearchTweets(gtk.VBox):
         self.input_topics = gtk.Entry()
         self.clearbtn = gtk.Button()
         self.clearbtn.set_image(self.mainwin.load_image('clear.png'))
-        self.clearbtn.set_tooltip_text('Limpiar todos los resultados')
+        self.clearbtn.set_tooltip_text(_('Clear results'))
         try:
-            #self.input_topics.set_property("primary-icon-stock", gtk.STOCK_FIND)
-            self.input_topics.set_property("secondary-icon-stock", gtk.STOCK_FIND)
+            #self.input_topics.set_property("primary-icon-stock", 
+            #                               gtk.STOCK_FIND)
+            self.input_topics.set_property("secondary-icon-stock",
+                                           gtk.STOCK_FIND)
             self.input_topics.connect("icon-press", self.__on_icon_press)
         except: 
             pass
@@ -53,8 +55,11 @@ class SearchTweets(gtk.VBox):
         
     def __search_topic(self, widget):
         topic = widget.get_text()
-        self.mainwin.request_search_topic(topic)
-        widget.set_text('')
+        if topic != '':
+            self.mainwin.request_search_topic(topic)
+            widget.set_text('')
+        else:
+            widget.set_text(_('You must write something to search'))
         widget.grab_focus()
         
     def update_tweets(self, arr_tweets):

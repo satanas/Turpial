@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Widget para mostrar perfiles como lista en Turpial
+"""Widget para mostrar perfiles como lista en Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Dic 21, 2009
@@ -28,8 +28,10 @@ class PeopleList(gtk.ScrolledWindow):
         self.set_shadow_type(gtk.SHADOW_IN)
         self.add(self.list)
         
-        # avatar, profile(pango), screen_name, name, url, location, bio, status, protected, following
-        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str, str, str, str, str, str)
+        # avatar, profile(pango), screen_name, name, url, location, bio, 
+        # status, protected, following
+        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str, str,
+                                   str, str, str, str)
         self.list.set_model(self.model)
         cell_avatar = gtk.CellRendererPixbuf()
         cell_avatar.set_property('yalign', 0)
@@ -72,7 +74,7 @@ class PeopleList(gtk.ScrolledWindow):
         pix = self.mainwin.get_user_avatar(username, p['profile_image_url'])
         profile = ''
         
-        self.model.append([pix, profile, username, p['name'], p['url'], 
+        self.model.append([pix, profile, username, p['name'], p['url'],
             p['location'], p['description'], '', '', ''])
         del pix
         

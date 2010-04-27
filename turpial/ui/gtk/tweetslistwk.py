@@ -166,7 +166,7 @@ class TweetListWebkit(gtk.VBox):
         self.page += twt
         if render: self.list.load_string(self.page, "text/html", "iso-8859-15", "timeline")
         #color = gtk.gdk.Color(255*257, 242*257, 212*257) if p['fav'] else None
-        color = gtk.gdk.Color(250*257, 237*257, 187*257) if p['fav'] else None
+        color = gtk.gdk.Color(250 * 257, 237 * 257, 187 * 257) if p['fav'] else None
         
     def update_user_pic(self, user, pic):
         # Evaluar si es más eficiente esto o cargar toda la lista cada vez

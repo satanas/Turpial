@@ -9,22 +9,22 @@ import gtk
 
 class About:
     def __init__(self, parent=None):
-        about=gtk.AboutDialog()
+        about = gtk.AboutDialog()
         about.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         about.set_logo(parent.load_image('turpial_icon.png', True))
         about.set_name('Turpial')
         about.set_version(parent.version)
         about.set_copyright('Copyright (C) 2009 - 2010 Wil Alvarez')
-        about.set_comments('Cliente de Twitter multi-interfaz escrito en Python')
+        about.set_comments(_('Twitter client multi-interface written in Python'))
         about.set_transient_for(parent)
         about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
         try:
             lic = file('COPYING', 'r')
-            license=lic.read()
+            license = lic.read()
             lic.close()
         except:
-            license='This script is free software; you can redistribute it'
+            license = 'This script is free software; you can redistribute it'
             'and\/or modify it under the\n\terms of the GNU General Public '
             'License as published by the Free Software\n\Foundation; either '
             'version 3 of the License, or (at your option) any later version.'

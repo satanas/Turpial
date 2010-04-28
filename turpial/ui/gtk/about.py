@@ -5,6 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # Dic 21, 2009
 
+import os
 import gtk
 
 class About:
@@ -20,10 +21,12 @@ class About:
         about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
         try:
-            lic = file('COPYING', 'r')
+            path = os.path.realpath(os.path.join(os.path.dirname(__file__), 
+                '..', '..', '..', 'COPYING'))
+            lic = file(path, 'r')
             license = lic.read()
             lic.close()
-        except:
+        except Exception, msg:
             license = 'This script is free software; you can redistribute it'
             'and\/or modify it under the\n\terms of the GNU General Public '
             'License as published by the Free Software\n\Foundation; either '
@@ -35,11 +38,13 @@ class About:
         about.set_license(license)
         authors = []
         try:
-            f = file('AUTHORS', 'r')
+            path = os.path.realpath(os.path.join(os.path.dirname(__file__), 
+                '..', '..', '..', 'AUTHORS'))
+            f = file(path, 'r')
             for line in f:
                 authors.append(line.strip('\n'))
             f.close()
-        except:
+        except Exception, msg:
             pass
             
         about.set_authors(authors)

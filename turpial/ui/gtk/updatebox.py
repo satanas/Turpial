@@ -44,7 +44,6 @@ class UpdateBox(gtk.Window):
         self.num_chars.set_use_markup(True)
         self.num_chars.set_markup('<span size="14000" foreground="#999"><b>140</b></span>')
         
-        #self.update_text = gtk.TextView()
         self.update_text = MessageTextView()
         self.update_text.set_border_width(2)
         self.update_text.set_left_margin(2)
@@ -228,6 +227,11 @@ class UpdateBox(gtk.Window):
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
                 _('Eyy... you must write something'))
+            return
+        elif buffer.get_char_count() > 140:
+            self.waiting.stop(error=True)
+            self.lblerror.set_markup("<span size='small'>%s</span>" % 
+                _('Ey!... that message looks like a testament'))
             return
         
         self.waiting.start()

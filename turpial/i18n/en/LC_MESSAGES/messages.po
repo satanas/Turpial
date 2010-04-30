@@ -504,13 +504,14 @@ msgid "Location"
 msgstr "Location"
 
 #: turpial/ui/gtk/userform.py:65
+#, fuzzy
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:78
 msgid "Bio"
-msgstr ""
+msgstr "Bio"
 
 #: turpial/ui/gtk/userform.py:147
 msgid "Saving..."
-msgstr ""
+msgstr "Saving..."

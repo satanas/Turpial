@@ -257,7 +257,7 @@ msgid "Send Turpial to system tray when close"
 msgstr "Send Turpial to system tray when closed"
 
 #: turpial/ui/gtk/preferences.py:224
-#, python-format, fuzzy
+#, python-format
 msgid "You will use aprox. %i calls to API per hour"
 msgstr "You will use aprox. %i calls to API per hour"
 
@@ -267,80 +267,80 @@ msgstr "Select the notifications you want from Turpial"
 
 #: turpial/ui/gtk/preferences.py:257
 msgid "Show a notification when Timeline is updated"
-msgstr ""
+msgstr "Show a notification when Timeline is updated"
 
 #: turpial/ui/gtk/preferences.py:266
 msgid "Show a notification when you get mentions from other users"
-msgstr ""
+msgstr "Show a notification when other users mention you in their tweets"
 
 #: turpial/ui/gtk/preferences.py:271
 msgid "Directs Messages"
-msgstr ""
+msgstr "Directs Messages"
 
 #: turpial/ui/gtk/preferences.py:275
 msgid "Show a notification when you get direct messages"
-msgstr ""
+msgstr "Show a notification when you get direct messages"
 
 #: turpial/ui/gtk/preferences.py:280
 msgid "Login"
-msgstr ""
+msgstr "Login"
 
 #: turpial/ui/gtk/preferences.py:284
 msgid "Show a notification at login with your user info"
-msgstr ""
+msgstr "Show a notification at login with your user info"
 
 #: turpial/ui/gtk/preferences.py:289
 msgid "Activate sounds"
-msgstr ""
+msgstr "Activate sounds"
 
 #: turpial/ui/gtk/preferences.py:293
 msgid "Activate sounds for each notification"
-msgstr ""
+msgstr "Activate sounds for each notification"
 
 #: turpial/ui/gtk/preferences.py:322
 msgid "Select your preferred services for shorten URLs and upload images"
-msgstr ""
+msgstr "Select your preferred services for shortening URLs and uploading images"
 
 #: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:56
 #: turpial/ui/gtk/updatebox.py:57
 msgid "Shorten URL"
-msgstr ""
+msgstr "Shorten URL"
 
 #: turpial/ui/gtk/preferences.py:339
 msgid "Upload images"
-msgstr ""
+msgstr "Upload image"
 
 #: turpial/ui/gtk/preferences.py:365
 msgid "Select all those users that are bothering you and shut them up temporarily"
-msgstr ""
+msgstr "Select users who are bothering you and block them temporarily"
 
 #: turpial/ui/gtk/preferences.py:405
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr ""
+msgstr "Still loading tweets. Try again in a few seconds"
 
 #: turpial/ui/gtk/preferences.py:442
 msgid "Setup your favorite web browser to open all links"
-msgstr ""
+msgstr "Setup your favorite web browser to open links"
 
 #: turpial/ui/gtk/preferences.py:448
 msgid "Default web browser"
-msgstr ""
+msgstr "Default web browser"
 
 #: turpial/ui/gtk/preferences.py:450
 msgid "Choose another web browser"
-msgstr ""
+msgstr "Choose another web browser"
 
 #: turpial/ui/gtk/preferences.py:452
 msgid "Command"
-msgstr ""
+msgstr "Command"
 
 #: turpial/ui/gtk/preferences.py:454
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 #: turpial/ui/gtk/preferences.py:455
 msgid "Browse"
-msgstr ""
+msgstr "Browse"
 
 #: turpial/ui/gtk/preferences.py:494
 msgid "Select the full path of your web browser"

@@ -504,7 +504,6 @@ msgid "Location"
 msgstr "Location"
 
 #: turpial/ui/gtk/userform.py:65
-#, fuzzy
 msgid "URL"
 msgstr "URL"
 

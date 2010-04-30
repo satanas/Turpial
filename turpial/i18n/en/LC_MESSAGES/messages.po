@@ -425,83 +425,83 @@ msgstr "DM"
 
 #: turpial/ui/gtk/tweetslist.py:254
 msgid "Loading friends..."
-msgstr ""
+msgstr "Loading friends..."
 
 #: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:158
 msgid "In reply to"
-msgstr ""
+msgstr "In reply to"
 
 #: turpial/ui/gtk/tweetslist.py:386
 msgid "from"
-msgstr ""
+msgstr "from"
 
 #: turpial/ui/gtk/tweetslist.py:388
 msgid "in reply to"
-msgstr ""
+msgstr "in reply to"
 
 #: turpial/ui/gtk/tweetslist.py:390
 msgid "Retweeted by"
-msgstr ""
+msgstr "Retweeted by"
 
 #: turpial/ui/gtk/tweetslist.py:419
 msgid "Something went wrong. I'll update again soon"
-msgstr ""
+msgstr "Something went wrong. Turpial will update again soon"
 
 #: turpial/ui/gtk/tweetslist.py:422
 msgid "No tweets available"
-msgstr ""
+msgstr "No tweets to show"
 
 #: turpial/ui/gtk/updatebox.py:17
 msgid "What is happening?"
-msgstr ""
+msgstr "What is happening?"
 
 #: turpial/ui/gtk/updatebox.py:21
 msgid "Update status"
-msgstr ""
+msgstr "Update status"
 
 #: turpial/ui/gtk/updatebox.py:59 turpial/ui/gtk/updatebox.py:60
 msgid "Upload image"
-msgstr ""
+msgstr "Upload image"
 
 #: turpial/ui/gtk/updatebox.py:69
 msgid "Options"
-msgstr ""
+msgstr "Options"
 
 #: turpial/ui/gtk/updatebox.py:75
 msgid "Clear all"
-msgstr ""
+msgstr "Clear all"
 
 #: turpial/ui/gtk/updatebox.py:78
 msgid "Autoshort URLs"
-msgstr ""
+msgstr "Autoshort URLs"
 
 #: turpial/ui/gtk/updatebox.py:150
 msgid "Oh oh... I couldn't send the tweet"
-msgstr ""
+msgstr "Ooops... Turpial couldn't send the tweet"
 
 #: turpial/ui/gtk/updatebox.py:203
 msgid "Eyy... you must write something"
-msgstr ""
+msgstr "Eyy... you must write something"
 
 #: turpial/ui/gtk/updatebox.py:218
 msgid "Oops... I couldn't shrink that URL"
-msgstr ""
+msgstr "Oops... Turpial couldn't shrink that URL"
 
 #: turpial/ui/gtk/updatebox.py:245
 msgid "Select image to upload"
-msgstr ""
+msgstr "Select an image to upload"
 
 #: turpial/ui/gtk/updatebox.py:262
 msgid "Oops... I couldn't upload that image"
-msgstr ""
+msgstr "Oops... Turpial couldn't upload that image"
 
 #: turpial/ui/gtk/userform.py:49
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: turpial/ui/gtk/userform.py:57
 msgid "Location"
-msgstr ""
+msgstr "Location"
 
 #: turpial/ui/gtk/userform.py:65
 msgid "URL"

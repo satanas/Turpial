@@ -1,6 +1,6 @@
 v1.3.2-a1 (May 11, 2010):
     + Creado asistente para gestionar la autenticación segura desde Turpial (requiere python-webkit)
-    + Soporte para español, inglés, portugués, chino tradicional y taiwanés, francés, 
+    + Soporte para español, inglés, portugués, chino tradicional y taiwanés, francés, italiano, ruso y alemán
     + Agregada opción 'Responder a Todos' al menú contextual de los tweets
     + Botón de preferencias en la ventana de login
     + Implementado soporte para Proxy de la API Twitter

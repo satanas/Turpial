@@ -5,23 +5,23 @@ import oauth as oauth
 SERVER = 'twitter.com'
 PORT = 80
 
-REQUEST_TOKEN_URL = 'http://twitter.com/oauth/request_token'
-ACCESS_TOKEN_URL = 'http://twitter.com/oauth/access_token'
-AUTHORIZATION_URL = 'http://twitter.com/oauth/authorize'
+REQUEST_TOKEN_URL = '%s/oauth/request_token'
+ACCESS_TOKEN_URL = '%s/oauth/access_token'
+AUTHORIZATION_URL = '%s/oauth/authorize'
 
 class TurpialAuthClient(oauth.OAuthClient):
 
     def __init__(self, server=SERVER, port=httplib.HTTP_PORT, 
         request_token_url=REQUEST_TOKEN_URL, access_token_url=ACCESS_TOKEN_URL, 
-        authorization_url=AUTHORIZATION_URL):
+        authorization_url=AUTHORIZATION_URL, api_url='http://twitter.com'):
             
         self.server = server
         self.port = port
-        self.request_token_url = request_token_url
-        self.access_token_url = access_token_url
-        self.authorization_url = authorization_url
+        self.request_token_url = request_token_url % api_url
+        self.access_token_url = access_token_url % api_url
+        self.authorization_url = authorization_url % api_url
         #self.connection = httplib.HTTPConnection("%s:%d" % (self.server, self.port))
-
+    
     def fetch_request_token(self, oauth_request):
         #connection = httplib.HTTPConnection("%s:%d" % (self.server, self.port))
         #connection.request(oauth_request.http_method, self.request_token_url, headers=oauth_request.to_header()) 

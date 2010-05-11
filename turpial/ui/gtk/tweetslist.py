@@ -9,9 +9,8 @@ import gtk
 import pango
 import gobject
 import logging
-import webbrowser
 
-from turpial.ui.gtk.waiting import *
+from turpial.ui.gtk.waiting import CairoWaiting
 from turpial.ui import util as util
 
 log = logging.getLogger('Gtk:Tweetlist')
@@ -93,18 +92,22 @@ class TweetList(gtk.VBox):
         
         for h in hashtags:
             torep = '%s' % h
-            cad = '<span foreground="#%s">%s</span>' % (self.mainwin.link_color, h)
+            cad = '<span foreground="#%s">%s</span>' % \
+                  (self.mainwin.link_color, h)
             text = text.replace(torep, cad)
         return text
         
     def __highlight_mentions(self, text):
         mentions = util.detect_mentions(text)
-        if len(mentions) == 0: return text
+        if len(mentions) == 0:
+            return text
         
         for h in mentions:
-            if len(h) == 1: continue
+            if len(h) == 1: 
+                continue
             torep = '%s' % h
-            cad = '<span foreground="#%s">%s</span>' % (self.mainwin.link_color, h)
+            cad = '<span foreground="#%s">%s</span>' % \
+                  (self.mainwin.link_color, h)
             text = text.replace(torep, cad)
         return text
         
@@ -112,12 +115,13 @@ class TweetList(gtk.VBox):
         #if len(urls) == 0: return text
         
         for u in urls:
-            cad = '<span foreground="#%s">%s</span>' % (self.mainwin.link_color, u)
+            cad = '<span foreground="#%s">%s</span>' % \
+                  (self.mainwin.link_color, u)
             text = text.replace(u, cad)
         return text
         
     def __build_open_menu(self, user, msg):
-        open = gtk.MenuItem('Abrir')
+        open = gtk.MenuItem(_('Open'))
         
         open_menu = gtk.Menu()
         
@@ -138,16 +142,18 @@ class TweetList(gtk.VBox):
             ht = "#search?q=%23" + h[1:]
             hashtag = '/'.join(['http://twitter.com', ht])
             hmenu = gtk.MenuItem(h)
-            hmenu.connect('button-release-event', self.__open_url_with_event, hashtag)
+            hmenu.connect('button-release-event',
+                          self.__open_url_with_event, hashtag)
             open_menu.append(hmenu)
             
-        if (len(total_urls) > 0 or len(total_tags) > 0) and len(total_users) > 0: 
+        if (len(total_urls) > 0 or len(total_tags) > 0) and \
+           len(total_users) > 0: 
             open_menu.append(gtk.SeparatorMenuItem())
         
         exist = []
         for m in total_users:
-            if m == user: continue
-            if m in exist: continue
+            if m == user or m in exist:
+                continue
             exist.append(m)
             user_prof = '/'.join(['http://www.twitter.com', m[1:]])
             mentmenu = gtk.MenuItem(m)
@@ -155,20 +161,22 @@ class TweetList(gtk.VBox):
             open_menu.append(mentmenu)
             
         open.set_submenu(open_menu)
-        if (len(total_urls) > 0) or (len(total_users) > 0) or (len(total_tags) > 0): 
+        if (len(total_urls) > 0) or (len(total_users) > 0) or \
+           (len(total_tags) > 0): 
             return open
         else:
             return None
         
     def __direct_popup_menu(self, widget, event):
         model, row = widget.get_selection().get_selected()
-        if (row is None): return False
+        if (row is None):
+            return False
         
         if (event.button == 3):
             user = model.get_value(row, 1)
             msg = model.get_value(row, 5)
             id = model.get_value(row, 6)
-            in_reply_to_id = model.get_value(row, 8)
+            #in_reply_to_id = model.get_value(row, 8)
              
             menu = gtk.Menu()
             rtn = self.mainwin.request_popup_info(id, user)
@@ -180,9 +188,9 @@ class TweetList(gtk.VBox):
             else:
                 dm = "D @%s " % user
                 
-                reply = gtk.MenuItem('Responder')
-                delete = gtk.MenuItem('Borrar')
-                usermenu = gtk.MenuItem('@'+user)
+                reply = gtk.MenuItem(_('Reply'))
+                delete = gtk.MenuItem(_('Delete'))
+                usermenu = gtk.MenuItem('@' + user)
                 open = self.__build_open_menu(user, msg)
                 
                 if not rtn['own']:
@@ -202,11 +210,12 @@ class TweetList(gtk.VBox):
                 delete.connect('activate', self.__delete_direct, id)
                 
                 menu.show_all()
-                menu.popup(None, None, None, event.button ,event.time)
+                menu.popup(None, None, None, event.button , event.time)
         
     def __popup_menu(self, widget, event):
         model, row = widget.get_selection().get_selected()
-        if (row is None): return False
+        if (row is None):
+            return False
         
         if (event.button == 3):
             user = model.get_value(row, 1)
@@ -227,26 +236,33 @@ class TweetList(gtk.VBox):
                 rt = "RT @%s %s" % (user, msg)
                 dm = "D @%s " % user
                 
-                reply = gtk.MenuItem('Responder')
-                retweet_old = gtk.MenuItem('Retweet (Antiguo)')
-                retweet = gtk.MenuItem('Retweet')
-                save = gtk.MenuItem('+ Fav')
-                unsave = gtk.MenuItem('- Fav')
-                delete = gtk.MenuItem('Borrar')
-                search = gtk.MenuItem('Search')
-                direct = gtk.MenuItem('DM')
-                follow = gtk.MenuItem('Follow')
-                unfollow = gtk.MenuItem('Unfollow')
-                loading = gtk.MenuItem('Cargando amigos...')
+                re_all = re
+                mentions = util.detect_mentions(msg)
+                for h in mentions:
+                    re_all += '%s ' % h
+                
+                reply = gtk.MenuItem(_('Reply'))
+                reply_all = gtk.MenuItem(_('Reply All'))
+                retweet_old = gtk.MenuItem(_('Retweet (Old)'))
+                retweet = gtk.MenuItem(_('Retweet'))
+                save = gtk.MenuItem(_('+ Fav'))
+                unsave = gtk.MenuItem(_('- Fav'))
+                delete = gtk.MenuItem(_('Delete'))
+                direct = gtk.MenuItem(_('DM'))
+                follow = gtk.MenuItem(_('Follow'))
+                unfollow = gtk.MenuItem(_('Unfollow'))
+                loading = gtk.MenuItem(_('Loading friends...'))
                 loading.set_sensitive(False)
-                usermenu = gtk.MenuItem('@'+user)
-                inreplymenu = gtk.MenuItem('En respuesta a')
-                mutemenu = gtk.MenuItem('Silenciar')
+                usermenu = gtk.MenuItem('@' + user)
+                inreplymenu = gtk.MenuItem(_('In reply to'))
+                mutemenu = gtk.MenuItem(_('Mute'))
                 
                 open = self.__build_open_menu(user, msg)
                 
                 if not rtn['own']:
                     menu.append(reply)
+                    if len(mentions) > 0:
+                        menu.append(reply_all)
                     menu.append(retweet_old)
                     menu.append(retweet)
                     menu.append(direct)
@@ -274,12 +290,15 @@ class TweetList(gtk.VBox):
                 menu.append(gtk.SeparatorMenuItem())
                 menu.append(usermenu)
                 if not rtn['own']: 
-                    if item != loading and item != follow: menu.append(mutemenu)
+                    if item != loading and item != follow:
+                        menu.append(mutemenu)
                     menu.append(item)
                 
                 user_profile = '/'.join(['http://www.twitter.com', user])
                 usermenu.connect('activate', self.__open_url, user_profile)
                 reply.connect('activate', self.__show_update_box, re, id, user)
+                reply_all.connect('activate', self.__show_update_box, re_all, 
+                    id, user)
                 retweet_old.connect('activate', self.__show_update_box, rt)
                 retweet.connect('activate', self.__retweet, id)
                 direct.connect('activate', self.__show_update_box, dm)
@@ -288,19 +307,19 @@ class TweetList(gtk.VBox):
                 delete.connect('activate', self.__delete, id)
                 follow.connect('activate', self.__follow, True, user)
                 unfollow.connect('activate', self.__follow, False, user)
-                inreplymenu.connect('activate', self.__in_reply_to, user, in_reply_to_id)
+                inreplymenu.connect('activate', self.__in_reply_to,
+                                    user, in_reply_to_id)
                 mutemenu.connect('activate', self.__mute, user)
             
             menu.show_all()
-            menu.popup(None, None, None, event.button ,event.time)
+            menu.popup(None, None, None, event.button , event.time)
         
     def __open_url_with_event(self, widget, event, url):
         if (event.button == 1) or (event.button == 3):
             self.__open_url(widget, url)
             
     def __open_url(self, widget, url):
-        log.debug('Opening url %s' % url)
-        webbrowser.open(url)
+        self.mainwin.open_url(url)
         
     def __show_update_box(self, widget, text, in_reply_id='', in_reply_user=''):
         self.mainwin.show_update_box(text, in_reply_id, in_reply_user)
@@ -348,30 +367,39 @@ class TweetList(gtk.VBox):
         p = self.mainwin.parse_tweet(tweet)
         pix = self.mainwin.get_user_avatar(p['username'], p['avatar'])
         
-        urls = [gobject.markup_escape_text(u) for u in util.detect_urls(p['text'])]
+        urls = [gobject.markup_escape_text(u) \
+                for u in util.detect_urls(p['text'])]
         
         pango_twt = gobject.markup_escape_text(p['text'])
-        pango_twt = '<span size="9000"><b>@%s</b> %s</span>' % (p['username'], pango_twt)
+        #pango_twt = '<span size="9000"><b>%s</b> %s</span>' % \
+        #            (p['username'], pango_twt)
+        user = '<span size="9000" foreground="#%s"><b>%s</b></span> ' % \
+            (self.mainwin.link_color, p['username'])
+        pango_twt = '<span size="9000">%s</span>' % pango_twt
         pango_twt = self.__highlight_hashtags(pango_twt)
         pango_twt = self.__highlight_mentions(pango_twt)
         pango_twt = self.__highlight_urls(urls, pango_twt)
         pango_twt += '<span size="2000">\n\n</span>'
+        pango_twt = user + pango_twt
         
         footer = '<span size="small" foreground="#999">%s' % p['datetime']
         if p['client']: 
-            footer += ' desde %s' % p['client']
+            footer += ' %s %s' % (_('from'), p['client'])
         if p['in_reply_to_user']:
-            footer += ' en respuesta a %s' % p['in_reply_to_user']
+            footer += ' %s %s' % (_('in reply to'), p['in_reply_to_user'])
         if p['retweet_by']:
-            footer += '\nRetweeted by %s' % p['retweet_by']
+            footer += '\n%s %s' % (_('Retweeted by'), p['retweet_by'])
         footer += '</span>'
         
         pango_twt += footer
         #color = gtk.gdk.Color(255*257, 242*257, 212*257) if p['fav'] else None
-        color = gtk.gdk.Color(250*257, 237*257, 187*257) if p['fav'] else None
+        if p['fav']:
+            color = gtk.gdk.Color(250 * 257, 237 * 257, 187 * 257)
+        else:
+            color = None
         
-        self.model.append([pix, p['username'], p['datetime'], p['client'], 
-            pango_twt, p['text'], p['id'], p['fav'], p['in_reply_to_id'], 
+        self.model.append([pix, p['username'], p['datetime'], p['client'],
+            pango_twt, p['text'], p['id'], p['fav'], p['in_reply_to_id'],
             p['in_reply_to_user'], p['retweet_by'], color])
         del pix
         
@@ -388,10 +416,11 @@ class TweetList(gtk.VBox):
         
     def update_tweets(self, arr_tweets):
         if arr_tweets is None:
-            self.stop_update(True, 'Oops... Algo salió mal. Actualizaré de nuevo pronto')
+            self.stop_update(True,
+                             _('Something went wrong. I\'ll update again soon'))
             return 0
         elif len(arr_tweets) == 0:
-            self.stop_update(True, 'No hay tweets')
+            self.stop_update(True, _('No tweets available'))
             return 0
         else:
             count = util.count_new_tweets(arr_tweets, self.last)

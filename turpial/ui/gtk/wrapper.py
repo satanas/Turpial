@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Contenedor genérico para los widgets del Turpial
+"""Contenedor genérico para los widgets del Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Dic 21, 2009
@@ -34,7 +34,8 @@ class Wrapper(gtk.VBox):
             
             for i in range(3):
                 widget = self.children[i]
-                if widget is None: continue
+                if widget is None:
+                    continue
                 
                 box = gtk.VBox(False)
                 box.pack_start(gtk.Label(widget.caption), False, False)
@@ -48,15 +49,18 @@ class Wrapper(gtk.VBox):
             
             for i in range(3):
                 widget = self.children[i]
-                if widget is None: continue
+                if widget is None:
+                    continue
                 
                 if widget.get_parent(): 
                     widget.reparent(self.wrapper)
-                    self.wrapper.set_tab_label(widget, gtk.Label(widget.caption))
+                    self.wrapper.set_tab_label(widget,
+                                               gtk.Label(widget.caption))
                 else:
                     self.wrapper.append_page(widget, gtk.Label(widget.caption))
                 
-                self.wrapper.set_tab_label_packing(widget, True, True, gtk.PACK_START)
+                self.wrapper.set_tab_label_packing(widget,
+                                                   True, True, gtk.PACK_START)
             
         self.add(self.wrapper)
         self.show_all()
@@ -70,6 +74,7 @@ class Wrapper(gtk.VBox):
         
         for i in range(3):
             widget = self.children[i]
-            if widget is None: continue
+            if widget is None:
+                continue
             
             widget.update_wrap(w)

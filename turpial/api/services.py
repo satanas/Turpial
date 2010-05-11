@@ -1,56 +1,58 @@
 # -*- coding: utf-8 -*-
 
-# Módulo para manejar los servicios HTTP de Turpial
+"""Módulo para manejar los servicios HTTP de Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Dic 05, 2009
 
-import os
 import time
 import Queue
-import urllib
-import urllib2
 import logging
-import threading
 import traceback
+import threading
 
-from turpial.api.twitpic import *
-from turpial.api.s60tweetphoto import *
-from turpial.api.twitter_globals import *
+from turpial.api.interfaces.generic import GenericService
+from turpial.api.interfaces.shorturl.cligs import CligsURLShorter
+from turpial.api.interfaces.shorturl.isgd import IsgdURLShorter
+from turpial.api.interfaces.shorturl.tinyurl import TinyurlURLShorter
+from turpial.api.interfaces.shorturl.trim import TrimURLShorter
+from turpial.api.interfaces.shorturl.bitly import BitlyURLShorter
+from turpial.api.interfaces.shorturl.smlkes import SmlkesURLShorter
+from turpial.api.interfaces.shorturl.supr import SuprURLShorter
+from turpial.api.interfaces.shorturl.unu import UnuURLShorter
+from turpial.api.interfaces.shorturl.zima import ZimaURLShorter
+from turpial.api.interfaces.shorturl.ur1ca import Ur1caURLShorter
 
-def _py26orgreater():
-    import sys
-    return sys.hexversion > 0x20600f0
-    
-if _py26orgreater():
-    import json
-else:
-    import simplejson as json
-    
-class ShortenObject:
-    def __init__(self, query, json=False, url_quote=True, response_key=None):
-        self.query = query
-        self.json = json
-        self.response_key = response_key
-        self.url_quote = url_quote
+from turpial.api.interfaces.uploadpic.imgly import ImglyPicUploader
+from turpial.api.interfaces.uploadpic.tweetphoto import TweetPhotoPicUploader
+from turpial.api.interfaces.uploadpic.twitpic import TwitpicPicUploader
+from turpial.api.interfaces.uploadpic.twitgoo import TwitgooPicUploader
+from turpial.api.interfaces.uploadpic.mobypicture import MobypicturePicUploader
+from turpial.api.interfaces.uploadpic.yfrog import YfrogPicUploader
 
 URL_SERVICES = {
-    "cli.gs": ShortenObject("http://cli.gs/api/v1/cligs/create?appid=gwibber&url=%s"),
-    "is.gd": ShortenObject("http://is.gd/api.php?longurl=%s"),
-    "tinyurl.com": ShortenObject("http://tinyurl.com/api-create.php?url=%s"),
-    "tr.im": ShortenObject("http://tr.im/api/trim_simple?url=%s"),
-    "bit.ly": ShortenObject("http://api.bit.ly/shorten?version=2.0.1&login=turpial&apiKey=R_5a84eae6dd4158a0636358c4f9efdecc&longUrl=%s",
-        True, True, 'shortUrl'),
-    "su.pr": ShortenObject("http://su.pr/api/simpleshorten?url=%s"),
-    "u.nu": ShortenObject("http://u.nu/unu-api-simple?url=%s"),
+    "cli.gs": CligsURLShorter(),
+    "is.gd": IsgdURLShorter(),
+    "tinyurl.com": TinyurlURLShorter(),
+    "tr.im": TrimURLShorter(),
+    "bit.ly": BitlyURLShorter(),
+    "smlk.es": SmlkesURLShorter(),
+    "su.pr": SuprURLShorter(),
+    "u.nu": UnuURLShorter(),
+    "zi.ma": ZimaURLShorter(),
+    "ur1.ca": Ur1caURLShorter(),
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
 }
 
-PHOTO_SERVICES = [
-    "TweetPhoto",
-    "TwitPic",
-]
+PHOTO_SERVICES = {
+    "TweetPhoto": TweetPhotoPicUploader(),
+    "TwitPic": TwitpicPicUploader(),
+    "img.ly": ImglyPicUploader(),
+    "Twitgoo": TwitgooPicUploader(),
+    "Yfrog": YfrogPicUploader(),
+}
 
+#"MobyPicture": MobypicturePicUploader(),
 
 class HTTPServices(threading.Thread):
     def __init__(self, username='', password='', imgdir='/tmp'):
@@ -65,6 +67,7 @@ class HTTPServices(threading.Thread):
         self.log.debug('Iniciado')
         
     def set_credentials(self, username, password):
+        '''Definicion de credenciales'''
         self.username = username
         self.password = password
         
@@ -72,13 +75,16 @@ class HTTPServices(threading.Thread):
         self.imgdir = imgdir
         
     def download_pic(self, user, pic_url, callback):
-        self.register({'cmd': 'download_pic', 'user': user, 'url': pic_url}, callback)
+        self.register({'cmd': 'download_pic', 'user': user, 'url': pic_url},
+                      callback)
     
     def short_url(self, service, url, callback):
-        self.register({'cmd': 'short_url', 'service': service, 'url': url}, callback)
+        self.register({'cmd': 'short_url', 'service': service, 'url': url},
+                      callback)
     
     def upload_pic(self, service, path, callback):
-        self.register({'cmd': 'upload_pic', 'service': service,  'path': path}, callback)
+        self.register({'cmd': 'upload_pic', 'service': service, 'path': path},
+                      callback)
         
     def register(self, args, callback):
         self.queue.put((args, callback))
@@ -95,65 +101,31 @@ class HTTPServices(threading.Thread):
                 continue
             
             (args, callback) = req
+            
             if args['cmd'] == 'download_pic':
-                ext = args['url'][-3:]
-                if ext == '': ext = 'png'
-                filename = args['url'].replace('http://', '0_')
-                filename = filename.replace('/', '_')
-                fullname = os.path.join(self.imgdir, filename)
-                
                 try:
-                    f = urllib2.urlopen(args['url']).read()
-                except:
+                    filename = GenericService._download_pic(self.imgdir, 
+                        args['url'])
+                    self.log.debug('Descargada imagen de %s' % args['user'])
+                    callback(args['user'], filename)
+                except Exception, error:
+                    self.log.debug("Error: %s\n%s" % (error, 
+                        traceback.print_exc()))
                     self.register(args, callback)
-                    continue
-                    
-                file = open(fullname, 'w+')
-                file.write(f)
-                file.close()
-                
-                self.log.debug('Descargada imagen de usuario: %s' % args['user'])
-                callback(args['user'], filename)
-                
             elif args['cmd'] == 'short_url':
                 self.log.debug('Cortando URL: %s' % args['url'])
-                
-                key_url = args['url']
-                service = URL_SERVICES[args['service']]
-                if service.url_quote:
-                    longurl = urllib2.quote(args['url'])
-                    longurl = longurl.replace('/', '%2F')
-                else:
-                    longurl = args['url']
-                
-                try:
-                    req = service.query % longurl
-                    self.log.debug('Request: %s' % req)
-                    if service.json:
-                        resp = json.loads(urllib2.urlopen(req).read())
-                        print resp
-                        short = resp['results'][key_url][service.response_key]
-                    else:
-                        short = urllib2.urlopen(req).read()
-                except Exception, e:
-                    self.log.debug("Error: %s\n%s" % (e, traceback.print_exc()))
-                    short = None
-                self.log.debug('URL Cortada: %s' % short)
-                callback(short)
+                urlshorter = URL_SERVICES[args['service']]
+                resp = urlshorter.do_service(args['url'])
+                self.log.debug('URL Cortada: %s' % resp.response)
+                callback(resp)
             elif args['cmd'] == 'upload_pic':
-                self.log.debug('Subiendo imagen [%s]: %s' % (args['service'], args['path']))
-                if args['service'] == "TweetPhoto":
-                    api = TweetPhotoAPI(self.username, self.password, TWEETPHOTO_KEY)
-                    rtn = api.upload(image=args['path'])
-                    callback(rtn)
-                elif args['service'] == "TwitPic":
-                    api = TwitPicAPI(self.username, self.password)
-                    rtn = api.upload(image=args['path'])
-                    callback(rtn)
-                else:
-                    callback(None)
+                self.log.debug('Subiendo imagen [%s]: %s' % 
+                               (args['service'], args['path']))
+                uploader = PHOTO_SERVICES[args['service']]
+                resp = uploader.do_service(self.username, self.password, 
+                    args['path'])
+                callback(resp)
                 
-        
         self.log.debug('Terminado')
         return
         

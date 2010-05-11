@@ -13,10 +13,29 @@ import logging
 import gobject
 import webbrowser
 
-from turpial.ui.gtk import *
-from turpial.ui.base_ui import *
-from turpial.notification import *
+from turpial.ui.gtk.wrapper import Wrapper, WrapperAlign
+from turpial.ui.gtk.tweetslist import TweetList
+from turpial.ui.gtk.userform import  UserForm
+from turpial.ui.gtk.searchtweets import SearchTweets
+from turpial.ui.gtk.updatebox import UpdateBox
+from turpial.ui.gtk.replybox import ReplyBox
+from turpial.ui.gtk.loginlabel import LoginLabel
+from turpial.ui.gtk.waiting import CairoWaiting
+from turpial.ui.gtk.preferences import Preferences
+from turpial.ui.gtk.inputpin import InputPin
+from turpial.ui.gtk.dock import Dock
+from turpial.ui.base_ui import BaseGui
+from turpial.notification import Notification
 from turpial.ui import util as util
+
+from turpial.ui.gtk.tweetslistwk import TweetListWebkit
+
+try:
+    import webkit
+    from turpial.ui.gtk.oauthwin import OAuthWindow
+    extend_mode = True
+except:
+    extend_mode = False
 
 gtk.gdk.threads_init()
 
@@ -30,12 +49,12 @@ class Home(Wrapper):
         Wrapper.__init__(self)
         
         if mainwin.extend:
-            self.timeline = TweetList(mainwin, 'Timeline')
-            #self.timeline = TweetListWebkit(mainwin, 'Timeline')
+            self.timeline = TweetListWebkit(mainwin, 'Timeline')
+            self.replies = TweetListWebkit(mainwin, _('Mentions'))
         else:
-            self.timeline = TweetList(mainwin, 'Timeline')
-        self.replies = TweetList(mainwin, 'Menciones')
-        self.direct = TweetList(mainwin, 'Directos', 'direct')
+            self.timeline = TweetList(mainwin, _('Timeline'))
+            self.replies = TweetList(mainwin, _('Mentions'))
+        self.direct = TweetList(mainwin, _('Directs'), 'direct')
         
         self._append_widget(self.timeline, WrapperAlign.left)
         self._append_widget(self.replies, WrapperAlign.middle)
@@ -47,9 +66,9 @@ class Profile(Wrapper):
     def __init__(self, mainwin, mode='single'):
         Wrapper.__init__(self)
         
-        self.favorites = TweetList(mainwin, 'Favoritos')
-        self.user_form = UserForm(mainwin, 'Perfil')
-        self.topics = SearchTweets(mainwin, u'Búsquedas')
+        self.favorites = TweetList(mainwin, _('Favorites'))
+        self.user_form = UserForm(mainwin, _('Profile'))
+        self.topics = SearchTweets(mainwin, _('Search'))
         
         self._append_widget(self.user_form, WrapperAlign.left)
         self._append_widget(self.favorites, WrapperAlign.middle)
@@ -61,13 +80,14 @@ class Profile(Wrapper):
         self.user_form.update(user_profile)
         
 class Main(BaseGui, gtk.Window):
-    __gsignals__ = dict(mykeypress = (gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (str,)))
+    __gsignals__ = dict(mykeypress=(gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (str,)))
 
     def __init__(self, controller, extend=False):
         BaseGui.__init__(self, controller)
         gtk.Window.__init__(self)
         
-        self.extend = extend
+        self.extend = extend and extend_mode
+        
         self.set_title('Turpial')
         self.set_size_request(280, 350)
         self.set_default_size(320, 480)
@@ -107,6 +127,12 @@ class Main(BaseGui, gtk.Window):
         self.updatebox = UpdateBox(self)
         self.replybox = ReplyBox(self)
         
+        if self.extend:
+            log.debug('Cargado modo GTK Extendido')
+            self.browser = OAuthWindow(self)
+        else:
+            log.debug('Cargado modo GTK Simple')
+        
         self.dock = Dock(self, self.workspace)
         self.__create_trayicon()
         
@@ -132,8 +158,8 @@ class Main(BaseGui, gtk.Window):
             
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
-        tweet = gtk.MenuItem('Tweet')
-        exit = gtk.MenuItem('Salir')
+        tweet = gtk.MenuItem(_('Tweet'))
+        exit = gtk.MenuItem(_('Exit'))
         if self.mode == 2:
             menu.append(tweet)
         menu.append(exit)
@@ -164,8 +190,8 @@ class Main(BaseGui, gtk.Window):
         log.debug('--Single: %s' % single_value)
         log.debug('--Wide: %s' % wide_value)
         log.debug('--Position: %s' % pos_value)
-        self.save_config({'General': {'single-win-size': single_value, 
-            'wide-win-size': wide_value, 'window-position': pos_value}}, 
+        self.save_config({'General': {'single-win-size': single_value,
+            'wide-win-size': wide_value, 'window-position': pos_value}},
             update=False)
             
     def __toogle_remember(self, widget):
@@ -203,11 +229,11 @@ class Main(BaseGui, gtk.Window):
         pw, ph = orig.get_width(), orig.get_height()
         
         if pw >= ph:
-            ratio = float(ph)/pw
+            ratio = float(ph) / pw
             fw = util.AVATAR_SIZE
             fh = int(fw * ratio)
         else:
-            ratio = float(pw)/ph
+            ratio = float(pw) / ph
             fh = util.AVATAR_SIZE
             fw = int(fh * ratio)
             
@@ -224,7 +250,12 @@ class Main(BaseGui, gtk.Window):
     def get_user_avatar(self, user, pic_url):
         pix = self.request_user_avatar(user, pic_url)
         if pix:
-            return self.load_avatar(self.imgdir, pix)
+            # Try to load user avatar from file. If fail (by corrupt data, etc)
+            # then load default image
+            try:
+                return self.load_avatar(self.imgdir, pix)
+            except:
+                return self.load_image('unknown.png', pixbuf=True)
         else:
             return self.load_image('unknown.png', pixbuf=True)
     
@@ -236,9 +267,9 @@ class Main(BaseGui, gtk.Window):
         self.request_signout()
         
     def main_loop(self):
-        gtk.gdk.threads_enter()
+        #gtk.gdk.threads_enter()
         gtk.main()
-        gtk.gdk.threads_leave()
+        #gtk.gdk.threads_leave()
         
     def show_login(self, global_config):
 
@@ -251,22 +282,24 @@ class Main(BaseGui, gtk.Window):
         lbl_user = gtk.Label()
         #lbl_user.set_justify(gtk.JUSTIFY_LEFT)
         lbl_user.set_use_markup(True)
-        lbl_user.set_markup(u'<span size="small">Usuario y Contraseña</span>')
+        lbl_user.set_markup(u'<span size="small">%s</span>' % _('User and Password'))
         lbl_user.set_alignment(0, 0.5)
-        
-        lbl_pass = gtk.Label()
-        lbl_pass.set_justify(gtk.JUSTIFY_LEFT)
-        lbl_pass.set_use_markup(True)
-        lbl_pass.set_markup('<span size="small">Password</span>')
         
         self.username = gtk.Entry()
         self.password = gtk.Entry()
         self.password.set_visibility(False)
         
-        self.remember = gtk.CheckButton('Recordar mis datos')
+        self.remember = gtk.CheckButton(_('Remember my credentials'))
         
-        self.btn_signup = gtk.Button('Autenticacion Vieja')
-        self.btn_oauth = gtk.Button(_('Conectar'))
+        self.btn_oauth = gtk.Button(_('Connect'))
+        
+        self.btn_settings = gtk.Button()
+        self.btn_settings.set_relief(gtk.RELIEF_NONE)
+        self.btn_settings.set_tooltip_text(_('Preferences'))
+        self.btn_settings.set_image(self.load_image('settings-single.png'))
+        settings_box = gtk.Alignment(xalign=1.0, yalign=0.5)
+        settings_box.set_padding(70, 10, 40, 40)
+        settings_box.add(self.btn_settings)
         
         self.waiting = CairoWaiting(self)
         align = gtk.Alignment(xalign=1, yalign=0.5)
@@ -276,14 +309,15 @@ class Main(BaseGui, gtk.Window):
         hbox.pack_start(lbl_user, False, False, 2)
         hbox.pack_start(align, True, True, 2)
         
-        table = gtk.Table(9,1,False)
-        table.attach(avatar,0,1,0,1,gtk.FILL,gtk.FILL, 10, 50)
-        table.attach(self.message,0,1,1,2,gtk.EXPAND|gtk.FILL,gtk.FILL, 20, 3)
-        table.attach(hbox,0,1,2,3,gtk.EXPAND|gtk.FILL,gtk.FILL,50,0)
-        table.attach(self.username,0,1,3,4,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
-        table.attach(self.password,0,1,5,6,gtk.EXPAND|gtk.FILL,gtk.FILL, 50, 0)
-        table.attach(self.btn_oauth,0,1,7,8,gtk.EXPAND,gtk.FILL,0, 10)
-        table.attach(self.remember,0,1,8,9,gtk.EXPAND,gtk.FILL,0, 10)
+        table = gtk.Table(10, 1, False)
+        table.attach(avatar, 0, 1, 0, 1, gtk.FILL, gtk.FILL, 10, 50)
+        table.attach(self.message, 0, 1, 1, 2, gtk.EXPAND | gtk.FILL, gtk.FILL, 20, 3)
+        table.attach(hbox, 0, 1, 2, 3, gtk.EXPAND | gtk.FILL, gtk.FILL, 50, 0)
+        table.attach(self.username, 0, 1, 3, 4, gtk.EXPAND | gtk.FILL, gtk.FILL, 50, 0)
+        table.attach(self.password, 0, 1, 5, 6, gtk.EXPAND | gtk.FILL, gtk.FILL, 50, 0)
+        table.attach(self.btn_oauth, 0, 1, 7, 8, gtk.EXPAND, gtk.FILL, 0, 10)
+        table.attach(self.remember, 0, 1, 8, 9, gtk.EXPAND, gtk.FILL, 0, 10)
+        table.attach(settings_box, 0, 1, 9, 10, gtk.EXPAND | gtk.FILL, gtk.EXPAND | gtk.FILL, 0, 10)
         
         self.vbox = gtk.VBox(False, 5)
         self.vbox.pack_start(table, False, False, 2)
@@ -291,10 +325,10 @@ class Main(BaseGui, gtk.Window):
         self.add(self.vbox)
         self.show_all()
         
-        self.btn_signup.connect('clicked', self.signin, self.username, self.password)
         self.btn_oauth.connect('clicked', self.oauth)
         self.password.connect('activate', self.oauth)
-        self.remember.connect("toggled",self.__toogle_remember)
+        self.remember.connect("toggled", self.__toogle_remember)
+        self.btn_settings.connect('clicked', self.show_preferences, 'global')
         
         username = global_config.read('Login', 'username')
         password = global_config.read('Login', 'password')
@@ -306,7 +340,6 @@ class Main(BaseGui, gtk.Window):
     def signin(self, widget, username, password):
         self.message.deactivate()
         self.waiting.start()
-        self.btn_signup.set_sensitive(False)
         self.btn_oauth.set_sensitive(False)
         self.username.set_sensitive(False)
         self.password.set_sensitive(False)
@@ -315,19 +348,19 @@ class Main(BaseGui, gtk.Window):
     def oauth(self, widget):
         self.message.deactivate()
         self.waiting.start()
-        self.btn_signup.set_sensitive(False)
         self.btn_oauth.set_sensitive(False)
         self.username.set_sensitive(False)
         self.password.set_sensitive(False)
         self.remember.set_sensitive(False)
+        self.btn_settings.set_sensitive(False)
         self.request_oauth(self.username.get_text(), self.password.get_text(), self.remember.get_active())
         
     def cancel_login(self, error):
         self.message.set_error(error)
         self.waiting.stop(error=True)
-        self.btn_signup.set_sensitive(True)
         self.btn_oauth.set_sensitive(True)
         self.remember.set_sensitive(True)
+        self.btn_settings.set_sensitive(True)
         if not self.remember.get_active():
             self.username.set_sensitive(True)
             self.password.set_sensitive(True)
@@ -336,13 +369,13 @@ class Main(BaseGui, gtk.Window):
         log.debug('Cargando ventana principal')
         self.mode = 2
         
-        self.update_config(config, global_cfg,  True)
+        self.update_config(config, global_cfg, True)
         
         gtk.gdk.threads_enter()
         self.contentbox.add(self.contenido)
         
         self.statusbar = gtk.Statusbar()
-        self.statusbar.push(0, 'Espera unos segundos mientras cargo...')
+        self.statusbar.push(0, _('Wait a few seconds while I load everything...'))
         if (self.vbox is not None): self.remove(self.vbox)
         
         self.vbox = gtk.VBox(False, 0)
@@ -367,7 +400,7 @@ class Main(BaseGui, gtk.Window):
         
         self.notify.login(p)
         
-        gobject.timeout_add(6*60*1000, self.download_rates)
+        gobject.timeout_add(6 * 60 * 1000, self.download_rates)
         
     def show_home(self, widget):
         self.contentbox.remove(self.contenido)
@@ -385,26 +418,30 @@ class Main(BaseGui, gtk.Window):
             return
         self.updatebox.show(text, id, user)
         
-    def show_preferences(self, widget):
-        prefs = Preferences(self)
+    def show_preferences(self, widget, mode='user'):
+        prefs = Preferences(self, mode)
         
     def show_oauth_pin_request(self, url):
-        webbrowser.open(url)
-        gtk.gdk.threads_enter()
-        p = InputPin(self)
-        response = p.run()
-        if response == gtk.RESPONSE_ACCEPT:
-            verifier = p.pin.get_text()
-            if verifier == '': 
-                self.cancel_login('Debe escribir el PIN válido')
-            else:
-                self.request_auth_token(verifier)
+        if self.extend:
+            gtk.gdk.threads_enter()
+            self.browser.open(url)
+            gtk.gdk.threads_leave()
         else:
-            self.cancel_login('Login cancelado por el usuario')
-            
-        p.destroy()
-        gtk.gdk.threads_leave()
-        
+            webbrowser.open(url)
+            gtk.gdk.threads_enter()
+            p = InputPin(self)
+            response = p.run()
+            if response == gtk.RESPONSE_ACCEPT:
+                verifier = p.pin.get_text()
+                if verifier == '': 
+                    self.cancel_login(_('Must write a valid PIN'))
+                else:
+                    self.request_auth_token(verifier)
+            else:
+                self.cancel_login(_('Login cancelled by user'))
+                
+            p.destroy()
+            gtk.gdk.threads_leave()
         
     def start_updating_timeline(self):
         self.home.timeline.start_update()
@@ -495,7 +532,7 @@ class Main(BaseGui, gtk.Window):
         self.notify.following(user, follow)
         
     def update_rate_limits(self, val):
-        if val is None: return
+        if val is None or val == []: return
         gtk.gdk.threads_enter()
         self.statusbar.push(0, util.get_rates(val))
         gtk.gdk.threads_leave()
@@ -567,13 +604,13 @@ class Main(BaseGui, gtk.Window):
             size = self.wide_win_size
             self.resize(size[0], size[1])
             self.set_default_size(size[0], size[1])
-            x = (size[0] - cur_w)/2
+            x = (size[0] - cur_w) / 2
             self.move(cur_x - x, cur_y)
         else:
             size = self.single_win_size
             self.resize(size[0], size[1])
             self.set_default_size(size[0], size[1])
-            x = (cur_w - size[0])/2
+            x = (cur_w - size[0]) / 2
             self.move(cur_x + x, cur_y)
         
         log.debug('Cambiando a modo %s (%s)' % (self.workspace, size))
@@ -607,19 +644,19 @@ class Main(BaseGui, gtk.Window):
         if (self.home_interval != home_interval):
             if self.home_timer: gobject.source_remove(self.home_timer)
             self.home_interval = home_interval
-            self.home_timer = gobject.timeout_add(self.home_interval*60*1000, self.download_timeline)
+            self.home_timer = gobject.timeout_add(self.home_interval * 60 * 1000, self.download_timeline)
             log.debug('--Creado timer de Timeline cada %i min' % self.home_interval)
             
         if (self.replies_interval != replies_interval):
             if self.replies_timer: gobject.source_remove(self.replies_timer)
             self.replies_interval = replies_interval
-            self.replies_timer = gobject.timeout_add(self.replies_interval*60*1000, self.download_replies)
+            self.replies_timer = gobject.timeout_add(self.replies_interval * 60 * 1000, self.download_replies)
             log.debug('--Creado timer de Replies cada %i min' % self.replies_interval)
             
         if (self.directs_interval != directs_interval):
             if self.directs_timer: gobject.source_remove(self.directs_timer)
             self.directs_interval = directs_interval
-            self.directs_timer = gobject.timeout_add(self.directs_interval*60*1000, self.download_directs)
+            self.directs_timer = gobject.timeout_add(self.directs_interval * 60 * 1000, self.download_directs)
             log.debug('--Creado timer de Directs cada %i min' % self.directs_interval)
             
         if thread: 

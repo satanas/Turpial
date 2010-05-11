@@ -1,0 +1,5 @@
+/turpial.sh
+bitacora
+*.pyc
+*.pyo
+*.mo

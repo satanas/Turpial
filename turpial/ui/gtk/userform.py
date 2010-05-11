@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Formulario para mostrar/actualizar el perfil del usuario en Turpial
+"""Formulario para mostrar/actualizar el perfil del usuario en Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Dic 21, 2009
@@ -46,7 +46,7 @@ class UserForm(gtk.VBox):
         
         self.real_name = gtk.Entry()
         self.real_name.set_max_length(20)
-        name_lbl = gtk.Label('Nombre')
+        name_lbl = gtk.Label(_('Name'))
         name_lbl.set_size_request(label_width, -1)
         name_box = gtk.HBox(False)
         name_box.pack_start(name_lbl, False, False, 2)
@@ -54,7 +54,7 @@ class UserForm(gtk.VBox):
         
         self.location = gtk.Entry()
         self.location.set_max_length(30)
-        loc_lbl = gtk.Label('Ubicacion')
+        loc_lbl = gtk.Label(_('Location'))
         loc_lbl.set_size_request(label_width, -1)
         loc_box = gtk.HBox(False)
         loc_box.pack_start(loc_lbl, False, False, 2)
@@ -62,7 +62,7 @@ class UserForm(gtk.VBox):
         
         self.url = gtk.Entry()
         self.url.set_max_length(100)
-        url_lbl = gtk.Label('URL')
+        url_lbl = gtk.Label(_('URL'))
         url_lbl.set_size_request(label_width, -1)
         url_box = gtk.HBox(False)
         url_box.pack_start(url_lbl, False, False, 2)
@@ -75,7 +75,7 @@ class UserForm(gtk.VBox):
         scrollwin.set_shadow_type(gtk.SHADOW_IN)
         scrollwin.set_size_request(-1, 80)
         scrollwin.add(self.bio)
-        bio_lbl = gtk.Label('Bio')
+        bio_lbl = gtk.Label(_('Bio'))
         bio_lbl.set_size_request(label_width, -1)
         bio_box = gtk.HBox(False)
         bio_box.pack_start(bio_lbl, False, False, 2)
@@ -87,7 +87,7 @@ class UserForm(gtk.VBox):
         form.pack_start(url_box, False, False, 4)
         form.pack_start(bio_box, False, False, 4)
         
-        self.submit = gtk.Button('Guardar')
+        self.submit = gtk.Button(_('Save'))
         submit_box = gtk.Alignment(1.0, 0.5)
         submit_box.set_property('right-padding', 5)
         submit_box.add(self.submit)
@@ -100,24 +100,32 @@ class UserForm(gtk.VBox):
         
     def update(self, profile):
         self.user = profile['screen_name']
-        pix = self.mainwin.get_user_avatar(self.user, profile['profile_image_url'])
+        pix = self.mainwin.get_user_avatar(self.user,
+                                           profile['profile_image_url'])
         avatar = gtk.Image()
         avatar.set_from_pixbuf(pix)
         self.user_pic.set_image(avatar)
         del pix
         self.screen_name.set_markup('<b>@%s</b>' % profile['screen_name'])
-        self.tweets_count.set_markup('<span size="9000">%i Tweets</span>' % profile['statuses_count'])
-        self.following_count.set_markup('<span size="9000">%i Following</span>' % profile['friends_count'])
-        self.followers_count.set_markup('<span size="9000">%i Followers</span>' % profile['followers_count'])
+        self.tweets_count.set_markup('<span size="9000">%i Tweets</span>' % \
+                                     profile['statuses_count'])
+        self.following_count.set_markup('<span size="9000">%i Following</span>' % \
+                                        profile['friends_count'])
+        self.followers_count.set_markup('<span size="9000">%i Followers</span>' % \
+                                        profile['followers_count'])
         self.real_name.set_text(profile['name'])
-        if profile['location']: self.location.set_text(profile['location'])
-        if profile['url']: self.url.set_text(profile['url'])
+        if profile['location']:
+            self.location.set_text(profile['location'])
+        if profile['url']:
+            self.url.set_text(profile['url'])
         buffer = self.bio.get_buffer()
-        if profile['description']: buffer.set_text(profile['description'])
+        if profile['description']:
+            buffer.set_text(profile['description'])
         self.unlock()
         
     def update_user_pic(self, user, pic):
-        if self.user != user: return
+        if self.user != user:
+            return
         pix = self.mainwin.load_avatar(self.mainwin.imgdir, pic, True)
         self.user_pic.set_image(pix)
         
@@ -136,7 +144,7 @@ class UserForm(gtk.VBox):
         self.location.set_sensitive(False)
         self.url.set_sensitive(False)
         self.bio.set_sensitive(False)
-        self.submit.set_label('Guardando...')
+        self.submit.set_label(_('Saving...'))
         self.submit.set_sensitive(False)
     
     def unlock(self):
@@ -144,7 +152,7 @@ class UserForm(gtk.VBox):
         self.location.set_sensitive(True)
         self.url.set_sensitive(True)
         self.bio.set_sensitive(True)
-        self.submit.set_label('Guardar')
+        self.submit.set_label(_('Save'))
         self.submit.set_sensitive(True)
         
     def update_wrap(self, w):

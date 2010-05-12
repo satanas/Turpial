@@ -134,8 +134,13 @@ class UpdateBox(gtk.Window):
         self.update_text.connect('mykeypress', self.__on_key_pressed)
         
         if SPELLING: 
-            self.spell = gtkspell.Spell (self.update_text)
+            try:
+                self.spell = gtkspell.Spell (self.update_text)
+            except:
+                # FIXME: Usar el log
+                print 'DEBUG:UI:Can\'t load gtkspell'
         else:
+            # FIXME: Usar el log
             print 'DEBUG:UI:Can\'t load gtkspell'
     
     def __on_key_pressed(self, widget, keyval, keymod):

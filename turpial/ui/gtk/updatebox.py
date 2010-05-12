@@ -136,9 +136,9 @@ class UpdateBox(gtk.Window):
         if SPELLING: 
             try:
                 self.spell = gtkspell.Spell (self.update_text)
-            except:
+            except Exception, e_msg:
                 # FIXME: Usar el log
-                print 'DEBUG:UI:Can\'t load gtkspell'
+                print 'DEBUG:UI:Can\'t load gtkspell -> %s' % e_msg
         else:
             # FIXME: Usar el log
             print 'DEBUG:UI:Can\'t load gtkspell'

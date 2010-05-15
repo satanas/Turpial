@@ -267,11 +267,11 @@ msgstr "Velg hvilken melding du vil motta fra Turpial"
 
 #: turpial/ui/gtk/preferences.py:257
 msgid "Show a notification when Timeline is updated"
-msgstr ""
+msgstr "Vis en meldning når tidslinjen blir oppdatert"
 
 #: turpial/ui/gtk/preferences.py:266
 msgid "Show a notification when you get mentions from other users"
-msgstr ""
+msgstr "Vis en meldning når du får nevner fra andre brukere"
 
 #: turpial/ui/gtk/preferences.py:271
 msgid "Directs Messages"
@@ -279,7 +279,7 @@ msgstr "Direkte Melding"
 
 #: turpial/ui/gtk/preferences.py:275
 msgid "Show a notification when you get direct messages"
-msgstr ""
+msgstr "Vis en varsling når du kommer direkte meldinger"
 
 #: turpial/ui/gtk/preferences.py:280
 msgid "Login"
@@ -287,11 +287,11 @@ msgstr "Logg in"
 
 #: turpial/ui/gtk/preferences.py:284
 msgid "Show a notification at login with your user info"
-msgstr ""
+msgstr "Vis et varsel ved pålogging med bruker din info"
 
 #: turpial/ui/gtk/preferences.py:289
 msgid "Activate sounds"
-msgstr ""
+msgstr "Aktiver lyder"
 
 #: turpial/ui/gtk/preferences.py:293
 msgid "Activate sounds for each notification"

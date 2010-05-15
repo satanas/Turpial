@@ -503,9 +503,8 @@ msgid "Name"
 msgstr "Navneord"
 
 #: turpial/ui/gtk/userform.py:57
-#, fuzzy
 msgid "Location"
-msgstr "Sted"
+msgstr "Plassering"
 
 #: turpial/ui/gtk/userform.py:65
 msgid "URL"

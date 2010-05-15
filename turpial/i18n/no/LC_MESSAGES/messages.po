@@ -295,16 +295,16 @@ msgstr "Aktiver lyder"
 
 #: turpial/ui/gtk/preferences.py:293
 msgid "Activate sounds for each notification"
-msgstr ""
+msgstr "Aktiver lyder for hver melding"
 
 #: turpial/ui/gtk/preferences.py:322
 msgid "Select your preferred services for shorten URLs and upload images"
-msgstr ""
+msgstr "Velg ønsket tjenester forkorte nettadresser og laste opp bilder"
 
 #: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:56
 #: turpial/ui/gtk/updatebox.py:57
 msgid "Shorten URL"
-msgstr ""
+msgstr "Forkorte nettadresse"
 
 #: turpial/ui/gtk/preferences.py:339
 msgid "Upload images"
@@ -312,11 +312,11 @@ msgstr "Laste opp bilder"
 
 #: turpial/ui/gtk/preferences.py:365
 msgid "Select all those users that are bothering you and shut them up temporarily"
-msgstr ""
+msgstr "Velg alle de brukere som plager deg og stenge dem opp midlertidig"
 
 #: turpial/ui/gtk/preferences.py:405
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr ""
+msgstr "Jeg er fortsatt lasting alle dine venner. Prøv igjen om noen sekunder"
 
 #: turpial/ui/gtk/preferences.py:442
 msgid "Setup your favorite web browser to open all links"

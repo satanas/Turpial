@@ -416,11 +416,11 @@ msgstr "Retvitre"
 
 #: turpial/ui/gtk/tweetslist.py:248
 msgid "+ Fav"
-msgstr ""
+msgstr "+Fav"
 
 #: turpial/ui/gtk/tweetslist.py:249
 msgid "- Fav"
-msgstr ""
+msgstr "-Fav"
 
 #: turpial/ui/gtk/tweetslist.py:251
 msgid "DM"
@@ -444,7 +444,7 @@ msgstr "i ansvar til"
 
 #: turpial/ui/gtk/tweetslist.py:390
 msgid "Retweeted by"
-msgstr ""
+msgstr "Retweeted av"
 
 #: turpial/ui/gtk/tweetslist.py:419
 msgid "Something went wrong. I'll update again soon"
@@ -452,7 +452,7 @@ msgstr "Noe gikk galt. Jeg skal oppdatere igjen snart"
 
 #: turpial/ui/gtk/tweetslist.py:422
 msgid "No tweets available"
-msgstr ""
+msgstr "Ikke tweets tilgjengelig"
 
 #: turpial/ui/gtk/updatebox.py:17
 msgid "What is happening?"
@@ -476,7 +476,7 @@ msgstr "Klare alt"
 
 #: turpial/ui/gtk/updatebox.py:78
 msgid "Autoshort URLs"
-msgstr ""
+msgstr "Forkorte nettadresser selv"
 
 #: turpial/ui/gtk/updatebox.py:150
 msgid "Oh oh... I couldn't send the tweet"

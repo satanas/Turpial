@@ -1,3 +1,27 @@
+v1.3.2-a2 (May 11, 2010):
+    + Corregido error crítico con los diccionarios de ortografía y los locales
+    + Corregido error con el servicio de SigueMiLink
+    
+v1.3.2-a1 (May 11, 2010):
+    + Creado asistente para gestionar la autenticación segura desde Turpial (requiere python-webkit)
+    + Soporte para español, inglés, portugués, chino tradicional y taiwanés, francés, 
+    + Agregada opción 'Responder a Todos' al menú contextual de los tweets
+    + Botón de preferencias en la ventana de login
+    + Implementado soporte para Proxy de la API Twitter
+    + Agregado nuevo parámetro para ejectuar turpial en modo prueba (--test)
+    + Mejorado el estilo de código
+    + Agregado soporte para SigueMiLink en los servicios de cortado de URL
+    + Soporte para corrección ortográfica
+    + Creado diálogo para agregar amigos (lista de amigos y filtrado de nombres)
+    + Agregado soporte para los servicios Yfrog, img.ly, mobypicture y twitgoo para subir imágenes
+    + Agregado soporte para los servicios zi.ma y ur1.ca de cortado URLs
+    + Optimizada la API de servicios de Turpial. Se han centralizados todos los servicios
+    + Implementada vista gtk extendida usando webkit (gtk+)
+    + Corregidos bugs menores y realizadas mejoras en la usabilidad
+    
+v1.0 (Abr 19, 2010):
+    + Versión Final
+    
 v1.0-b4 (Abr 04, 2010):
     + Corregida la ubicación de la documentación al instalar (bug #132)
     + Agregado soporte para instalación vía ez_setup.py si no hay setuptools

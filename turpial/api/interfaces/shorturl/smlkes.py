@@ -17,11 +17,11 @@ class SmlkesURLShorter(GenericService):
         self.base = "http://smlk.es/api/create/?destination=%s"
         
     def do_service(self, keyurl):
-        longurl = self._quote_url(longurl)
+        longurl = self._quote_url(keyurl)
         req = self.base % longurl
         try:
             resp = self._json_request(req)
-            print resp
+            #print resp
             short = "http://smlk.es/%s" % resp['link']
             return ServiceResponse(short)
         except Exception, error:

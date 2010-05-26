@@ -10,7 +10,7 @@ import logging
 class Protocol:
     ''' Clase que define las funciones básicas que debe implementar cualquier
     protocolo de microblogging para Turpial '''
-    def __init__(self):
+    def __init__(self, apiurl=''):
         self.__timeline = []
         self.__replies = []
         self.__directs = []
@@ -18,6 +18,7 @@ class Protocol:
         self.__friends = []
         self.__muted_users = []
         
+        self.apiurl = apiurl
         self.profile = None
         self.friendsloaded = False
         self.conversation = []
@@ -121,14 +122,11 @@ class Protocol:
         self._del_status(self.__favorite, id)
         self._del_status(self.__directs, id)
         
-    def prepare_status_to_del(self, id):
-        self.to_del.append(id)
-        
-    def prepare_status_to_fav(self, id):
-        self.to_fav.append(id)
-        
-    def prepare_status_to_unfav(self, id):
-        self.to_unfav.append(id)
+    def change_api_url(self, new_url):
+        if new_url == '': 
+            return
+        self.log.debug('Cambiada la API URL a %s' % new_url)
+        self.apiurl = new_url
         
     def mute_by_user(self, user):
         if not self.is_friend(user):
@@ -175,25 +173,30 @@ class Protocol:
     # HTTP related methods to be overwritten
     # ------------------------------------------------------------
     
+    def response_to_statuses(self, response):
+        ''' Toma la respuesta devuelta por el servidor y la transforma en un
+        arreglo de objetos de tipo Status '''
+        raise NotImplemented
+        
     def auth(self, username, password):
         raise NotImplemented
         
-    def get__timeline(self, count):
+    def get_timeline(self, count):
         raise NotImplemented
         
-    def get__replies(self, count):
+    def get_replies(self, count):
         raise NotImplemented
         
-    def get__directs(self, count):
+    def get_directs(self, count):
         raise NotImplemented
         
-    def get__favorites(self, count):
+    def get_favorites(self, count):
         raise NotImplemented
         
     def get_rate_limits(self):
         raise NotImplemented
         
-    def get_conversation(self):
+    def get_conversation(self, id):
         raise NotImplemented
         
     def get_friends_list(self):
@@ -208,7 +211,7 @@ class Protocol:
     def destroy_status(self, id):
         ''' Implement this function in this way:
         
-        self.prepare_status_to_del(id)
+        self.to_del.append(id)
         # All the dirty work goes here
         self._destroy_status(id)
         '''
@@ -220,7 +223,7 @@ class Protocol:
     def mark_favorite(self, id):
         ''' Implement this function in this way:
         
-        self.prepare_status_to_fav(id)
+        self.to_fav.append(id)
         # All the dirty work goes here
         self._set_status_favorite(id)
         '''
@@ -229,7 +232,7 @@ class Protocol:
     def unmark_favorite(self, id):
         ''' Implement this function in this way:
         
-        self.prepare_status_to_unfav(id)
+        self.to_unfav.append(id)
         # All the dirty work goes here
         self._unset_status_favorite(id)
         '''
@@ -241,16 +244,13 @@ class Protocol:
     def unfollow(self, user):
         raise NotImplemented
         
-    def follow(self, user):
-        raise NotImplemented
-        
     def send_direct(self, user, text):
         raise NotImplemented
         
     def destroy_direct(self, id):
         ''' Implement this function in this way:
         
-        self.prepare_status_to_del(id)
+        self.to_del.append(id)
         # All the dirty work goes here
         self._destroy_status(id)
         '''

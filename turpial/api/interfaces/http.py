@@ -29,7 +29,7 @@ class TurpialHTTP:
         self.password = None
         #self.log = logging.getLogger('TurpialHTTP')
         
-    def _simple_request(self, uri, args):
+    def _simple_request(self, uri, args={}):
         argStr = ''
         headers = {}
         response = ''
@@ -76,5 +76,5 @@ class TurpialHTTP:
         self.username = username
         self.password = password
         
-    def request(self, url, args):
+    def request(self, url, args={}):
         return self._simple_request(url, args)

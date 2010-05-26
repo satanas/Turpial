@@ -23,3 +23,6 @@ class Response:
     def __init__(self):
         self.items = []
         self.error = None
+        
+class Profile:
+    def __init__(self):

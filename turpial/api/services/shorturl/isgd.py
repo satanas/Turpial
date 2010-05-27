@@ -7,8 +7,8 @@
 
 import traceback
 
-from turpial.api.interfaces.generic import GenericService
-from turpial.api.interfaces.generic import ServiceResponse
+from turpial.api.interfaces.service import GenericService
+from turpial.api.interfaces.service import ServiceResponse
 
 class IsgdURLShorter(GenericService):
     def __init__(self):

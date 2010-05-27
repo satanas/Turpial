@@ -9,7 +9,7 @@ class Status:
     def __init__(self):
         self.id = None
         self.text = None
-        self.author = None
+        self.username = None
         self.avatar = None
         self.source = None
         self.timestamp = None
@@ -20,9 +20,26 @@ class Status:
         self.datetime = 0
 
 class Response:
-    def __init__(self):
-        self.items = []
-        self.error = None
+    def __init__(self, items=[], type='status', errmsg=''):
+        self.items = items
+        self.type = type #status/profile/rate/error/mixed
+        self.errmsg = errmsg
         
 class Profile:
     def __init__(self):
+        self.id = None
+        self.fullname = None
+        self.username = None
+        self.location = None
+        self.url = None
+        self.bio = None
+        self.following = None
+        self.followers_count = 0
+        self.friends_count = 0
+        
+class RateLimit:
+    def __init__(self):
+        self.limit = None
+        self.remain = None
+        self.reset_time = None
+        self.reset_time_in_sec = None

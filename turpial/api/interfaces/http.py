@@ -6,7 +6,6 @@
 # May 20, 2010
 
 import urllib2
-import traceback
 import logging
 
 from base64 import b64encode
@@ -27,9 +26,18 @@ class TurpialHTTP:
         self.post_actions = post_actions
         self.username = None
         self.password = None
-        #self.log = logging.getLogger('TurpialHTTP')
+        self.log = logging.getLogger('TurpialHTTP')
         
     def _simple_request(self, uri, args={}):
+        ''' Reimplement in child class '''
+        try:
+            req = self._build_simple_request(uri, args)
+            rtn = self._execute_simple_request(req)
+            return rtn
+        except Exception, e:
+            raise TurpialException(e)
+        
+    def _build_simple_request(self, uri, args={}):
         argStr = ''
         headers = {}
         response = ''
@@ -62,15 +70,13 @@ class TurpialHTTP:
             
         strReq = "%s%s" % (uri, argStr)
         req = urllib2.Request(strReq, argData, headers)
+        return req
+    
+    def _execute_simple_request(self, req):
+        handle = urllib2.urlopen(req)
+        response = handle.read()
+        return json.loads(response)
         
-        try:
-            handle = urllib2.urlopen(req)
-            response = handle.read()
-            rtn = json.loads(response)
-            return rtn
-        except Exception, e:
-            return None
-            
     def set_credentials(self, username, password):
         '''Estableciendo credenciales'''
         self.username = username
@@ -78,3 +84,11 @@ class TurpialHTTP:
         
     def request(self, url, args={}):
         return self._simple_request(url, args)
+        
+class TurpialException(Exception):
+    def __init__(self, msg):
+       self.msg = msg
+       
+    def __str__(self):
+       return repr(self.msg)
+       

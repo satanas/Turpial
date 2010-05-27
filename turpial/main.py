@@ -14,7 +14,7 @@ import logging
 from optparse import OptionParser
 
 from turpial.ui.gtk.main import Main as _GTK
-from turpial.api.services import HTTPServices
+from turpial.api.servicesapi import HTTPServices
 from turpial.api.turpialapi import TurpialAPI
 from turpial.config import ConfigHandler, ConfigApp
 

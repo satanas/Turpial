@@ -8,28 +8,13 @@
 import sys
 import time
 import Queue
-import urllib2
 import logging
 import threading
 import traceback
 
-from base64 import b64encode
-from urllib import urlencode
+from turpial.api.protocols.twitter import twitter
+from turpial.api.interfaces.post import Response
 
-from turpial.api import oauth
-from turpial.api.oauth_client import TurpialAuthClient
-from turpial.api.twitter_globals import POST_ACTIONS, \
-                                        CONSUMER_KEY, \
-                                        CONSUMER_SECRET
-
-def _py26_or_greater():
-    return sys.hexversion > 0x20600f0
-
-if _py26_or_greater():
-    import json
-else:
-    import simplejson as json
-    
 class TurpialAPI(threading.Thread):
     '''API basica de turpial basada en hilos'''
     def __init__(self):
@@ -39,56 +24,16 @@ class TurpialAPI(threading.Thread):
         self.log = logging.getLogger('API')
         self.queue = Queue.Queue()
         self.exit = False
-        
-        # OAuth stuffs
-        self.client = None
-        self.consumer = None
-        self.is_oauth = False
-        self.token = None
-        self.signature_method_hmac_sha1 = None
-        
-        self.format = 'json'
-        self.username = None
-        self.password = None
-        self.profile = None
-        self.tweets = []
-        self.replies = []
-        self.directs = []
-        self.favorites = []
-        self.muted_users = []
-        self.friends = []
-        self.friendsloaded = False
-        self.conversation = []
-        self.apiurl = 'http://api.twitter.com/1'
-        
-        self.to_fav = []
-        self.to_unfav = []
-        self.to_del = []
+        self.protocol = twitter.Twitter()
         self.log.debug('Iniciado')
         
-    def __register(self, args, callback):
-        self.queue.put((args, callback))
+    def __register(self, funct, args, callback):
+        self.queue.put((funct, args, callback))
     
-    def __del_tweet_from(self, tweets, id):
-        item = None
-        for twt in tweets:
-            if id == twt['id']:
-                item = twt
-                break
-        if item:
-            tweets.remove(item)
-        return tweets
-        
-    def __change_tweet_from(self, tweets, id, key, value):
-        index = None
-        for twt in tweets:
-            if id == twt['id']:
-                index = tweets.index(twt)
-                break
-        if index:
-            tweets[index][key] = value
-        return tweets
-        
+    def change_api_url(self, url):
+        pass
+    
+    '''
     def __handle_oauth(self, args, callback):
         if args['cmd'] == 'start':
             if self.has_oauth_support():
@@ -150,191 +95,21 @@ class TurpialAPI(threading.Thread):
             self.log.debug('secret: %s' % str(self.token.secret))
             self.is_oauth = True
             callback(self.token.key, self.token.secret, pin)
-            
-    def __handle_tweets(self, tweet, args):
-        if tweet is None or tweet == []:
-            return False
-        
-        if args.has_key('add'):
-            exist = False
-            for twt in self.tweets:
-                try:
-                    if tweet['id'] == twt['id']:
-                        exist = True
-                except Exception, error:
-                    print 'Ha ocurrido un error:'
-                    print error
-                    print twt
-                    print '---'
-                    print tweet
-                    continue
-                    
-            
-            if not exist:
-                self.tweets.insert(0, tweet)
-        elif args.has_key('del'):
-            if str(tweet['id']) in self.to_del:
-                self.to_del.remove(str(tweet['id']))
-            self.tweets = self.__del_tweet_from(self.tweets, tweet['id'])
-            self.favorites = self.__del_tweet_from(self.favorites, tweet['id'])
-            self.directs = self.__del_tweet_from(self.directs, tweet['id'])
-            #print self.directs
-        return True
-        
-    def __handle_retweets(self, tweet):
-        '''Manejo de retweet'''
-        if tweet is None or tweet == []:
-            return False
-        self.tweets = self.__change_tweet_from(self.tweets, tweet['id'],
-            'retweeted_status', tweet['retweeted_status'])
-        self.replies = self.__change_tweet_from(self.replies, tweet['id'],
-            'retweeted_status', tweet['retweeted_status'])
-        self.favorites = self.__change_tweet_from(self.favorites, tweet['id'],
-            'retweeted_status', tweet['retweeted_status'])
-        
-        return True
-        
-    def __handle_muted(self):
-        '''Manejo de amigos silenciados'''
-        if len(self.muted_users) == 0:
-            return self.tweets
-        
-        tweets = []
-        for twt in self.tweets:
-            if twt['user']['screen_name'] not in self.muted_users:
-                tweets.append(twt)
-                
-        return tweets
-        
-    def __handle_favorites(self, tweet, fav):
-        '''Manejo de tweet favorito'''
-        if tweet is None or tweet == []:
-            return False
-        
-        if fav:
-            tweet['favorited'] = True
-            self.favorites.insert(0, tweet)
-            self.to_fav.remove(str(tweet['id']))
-        else:
-            self.favorites = self.__del_tweet_from(self.favorites, tweet['id'])
-            self.to_unfav.remove(str(tweet['id']))
-            
-        self.tweets = self.__change_tweet_from(self.tweets, tweet['id'],
-                                               'favorited', fav)
-        self.replies = self.__change_tweet_from(self.replies, tweet['id'],
-                                                'favorited', fav)
-        
-        return True
-        
-    def __handle_friends(self, rtn, done_callback, cursor):
-        '''Manejo de amigos'''
-        #FIXME: Problema con el valor devuelto
-        if (rtn is None) or (not 'users' in rtn) or (not isinstance(rtn, dict)):
-            print rtn
-            self.log.debug('Error descargando amigos, intentando de nuevo')
-            self.get_friends(done_callback, cursor)
-        else:
-            for p in rtn['users']:
-                self.friends.append(p)
-            
-            if rtn['next_cursor'] > 0:
-                self.get_friends(done_callback, rtn['next_cursor'])
-            else:
-                self.friendsloaded = True
-                done_callback(self.friends)
-                
-    def __handle_conversation(self, rtn, done_callback):
-        '''Manejo de conversaciones'''
-        if rtn is None or rtn == []:
-            self.log.debug(u'Error descargando conversación')
-            done_callback(rtn)
-        else:
-            self.conversation.append(rtn)
-            
-            if rtn['in_reply_to_status_id']:
-                self.get_conversation(str(rtn['in_reply_to_status_id']),
-                                      done_callback, False)
-            else:
-                done_callback(self.conversation)
-        
-    def __handle_follow(self, user, follow):
-        if follow:
-            exist = False
-            for u in self.friends:
-                if user['id'] == u['id']:
-                    exist = True
-            
-            if not exist: 
-                self.friends.insert(0, user)
-                self.profile['friends_count'] += 1
-        else:
-            item = None
-            for u in self.friends:
-                if user['id'] == u['id']:
-                    item = u
-                    break
-            if item: 
-                self.friends.remove(item)
-                self.profile['friends_count'] -= 1
-            
-    def has_oauth_support(self):
-        if self.apiurl != 'http://api.twitter.com/1':
-            return False
-        return True
-        
-    def change_api_url(self, new_url):
-        if new_url == '': return
-        self.log.debug('Cambiada la API URL a %s' % new_url)
-        self.apiurl = new_url
-        
-    def is_friend(self, user):
-        for f in self.friends:
-            if user == f['screen_name']:
-                return True
-        return False
-        
-    def is_fav(self, tweet_id):
-        for twt in self.tweets:
-            if tweet_id == str(twt['id']):
-                return twt['favorited']
-        for twt in self.replies:
-            if tweet_id == str(twt['id']):
-                return twt['favorited']
-        for twt in self.favorites:
-            if tweet_id == str(twt['id']):
-                return twt['favorited']
-
-        
+    '''
     def auth(self, username, password, callback):
         '''Inicio de autenticacion basica'''
         self.log.debug('Iniciando autenticacion basica')
-        self.username = username
-        self.password = password
-        self.__register({'uri': '%s/account/verify_credentials' % self.apiurl,
-                         'login':True}, callback)
-        
-    def start_oauth(self, auth, show_pin_callback, done_callback):
-        '''Inicio de OAuth'''
-        self.log.debug('Iniciando OAuth')
-        self.__register({'cmd': 'start', 'oauth':True, 'auth': auth,
-                         'done':done_callback}, show_pin_callback)
-        
-    def authorize_oauth_token(self, pin, callback):
-        '''Solicitud de autenticacion del token'''
-        self.log.debug('Solicitando autenticacion del token')
-        self.__register({'cmd': 'authorize', 'oauth':True, 'pin': pin},
-                        callback)
-        
+        self.__register(self.protocol.auth, {'username': username, 
+            'password': password}, callback)
+    """
     def update_rate_limits(self, callback):
         self.__register({'uri': '%s/account/rate_limit_status' % self.apiurl},
                         callback)
         
     def update_timeline(self, callback, count=20):
         '''Actualizando linea de tiempo'''
-        self.log.debug('Descargando Timeline')
-        args = {'count': count}
-        self.__register({'uri': '%s/statuses/home_timeline' % self.apiurl,
-                         'args': args, 'timeline': True}, callback)
+        
+        self.__register(self.protocol, callback)
         
     def update_replies(self, callback, count=20):
         '''Actualizando respuestas'''
@@ -493,7 +268,7 @@ class TurpialAPI(threading.Thread):
     def quit(self):
         '''Definiendo la salida'''
         self.exit = True
-        
+    """
     def run(self):
         '''Bloque principal de ejecucion'''
         while not self.exit:
@@ -503,164 +278,19 @@ class TurpialAPI(threading.Thread):
             except Queue.Empty:
                 continue
             
-            (args, callback) = req
+            (funct, args, callback) = req
             
-            if args.has_key('oauth'):
-                self.__handle_oauth(args, callback)
-                continue
-            
-            if args.has_key('mute'):
-                callback(self.__handle_muted())
-                continue
-            
-            rtn = None
-            argStr = ""
-            argData = None
-            encoded_args = None
-            method = "GET"
-            uri = args['uri']
-                
-            for action in POST_ACTIONS:
-                if uri.endswith(action):
-                    method = "POST"
-            
-            if args.has_key('id'):
-                uri = "%s/%s" % (uri, args['id'])
-                
-            uri = "%s.%s" % (uri, self.format)
-            
-            if args.has_key('args'):
-                encoded_args = urlencode(args['args'])
-            
-            if (method == "GET"):
-                if encoded_args:
-                    argStr = "?%s" % (encoded_args)
-            else:
-                argData = encoded_args
-                
-            if self.is_oauth:
-                try:
-                    params = args['args'] if args.has_key('args') else {}
-                    oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
-                                                                               token=self.token,
-                                                                               http_method=method,
-                                                                               http_url=uri,
-                                                                               parameters=params)
-                    oauth_request.sign_request(self.signature_method_hmac_sha1,
-                                               self.consumer, self.token)
-                    rtn = json.loads(self.client.access_resource(oauth_request,
-                                                                 uri, method))
-                    #if rtn.has_key('error'): rtn = None
-                except urllib2.HTTPError, e:
-                    rtn = []
-                    print e
-                    if args.has_key('login'): 
-                        if e.code == 503 or e.code == 502:
-                            rtn = {'error': 'Caramba, Twitter está sobrecargado'}
-                        elif e.code == 401:
-                            rtn = {'error': 'Credenciales inválidas'}
-                        else:
-                            rtn = {'error': 'Error %i from Twitter.com' % e.code}
-                except Exception, e:
-                    self.log.debug("Error for URL: %s using parameters: (%s)\ndetails: %s" % (uri, params, traceback.print_exc()))
-                    if args.has_key('login'): 
-                        rtn = {'error': 'Error from Twitter.com'}
-            else:
-                headers = {}
-                if (self.username):
-                    headers["Authorization"] = "Basic " + b64encode("%s:%s" % (self.username, self.password))
-                strReq = "%s%s" % (uri, argStr)
-                req = urllib2.Request("%s%s" % (uri, argStr), argData, headers)
-                response = ''
-                try:
-                    # Use http://www.someproxy.com:3128 for http proxying
-                    #proxies = {'http': 'http://www.someproxy.com:3128'}
-                    #filehandle = urllib.urlopen(some_url, proxies=proxies)
-                    handle = urllib2.urlopen(req)
-                    response = handle.read()
-                    rtn = json.loads(response)
-                except urllib2.HTTPError, e:
-                    if (e.code == 304):
-                        rtn = []
-                    else:
-                        self.log.debug("Twitter sent status %i for URL: %s using parameters: (%s)\nDetails: %s\nRequest: %s\nResponse: %s" % (
-                            e.code, uri, encoded_args, e.fp.read(), strReq, response))
-                        if args.has_key('login'): 
-                            if e.code == 503 or e.code == 502:
-                                rtn = {'error': 'Caramba, Twitter está sobrecargado'}
-                            elif e.code == 401:
-                                rtn = {'error': 'Credenciales inválidas'}
-                            else:
-                                rtn = {'error': 'Error %i from Twitter.com' % e.code}
-                except (urllib2.URLError, Exception), e:
-                    self.log.debug("Problem to connect to twitter.com. Check network status.\nDetails: %s\nRequest: %s\nResponse: %s" % (
-                        e, strReq, response))
-                    if args.has_key('login'): 
-                        rtn = {'error': 'Can\'t connect to twitter.com'}
-            
-            if args.has_key('login'): 
-                self.profile = rtn
-                
-            if args.has_key('timeline'):
-                if rtn:
-                    self.tweets = rtn
-                rtn = self.__handle_muted()
-            elif args.has_key('replies'):
-                if rtn:
-                    self.replies = rtn
-            elif args.has_key('directs'):
-                if rtn:
-                    self.directs = rtn
-            elif args.has_key('favorites'):
-                if rtn:
-                    self.favorites = rtn
-                callback(self.tweets, self.replies, self.favorites)
-                continue
-                
-            if args.has_key('tweet'):
-                #print 'rtn', rtn
-                done = self.__handle_tweets(rtn, args)
-                if done:
-                    rtn = self.__handle_muted()
-                if args.has_key('del'):
-                    callback(rtn, self.replies, self.favorites, self.directs)
-                    continue
-            
-            if args.has_key('rt'):
-                done = self.__handle_retweets(rtn)
-                if done: 
-                    rtn = self.__handle_muted()
-                    callback(rtn, self.replies, self.favorites)
-                else:
-                    callback(None, None, None)
-                continue
-                
-            if args.has_key('fav'):
-                done = self.__handle_favorites(rtn, args['fav'])
-                callback(self.tweets, self.replies, self.favorites)
-                #if done: 
-                #    callback(self.tweets, self.replies, self.favorites)
-                #else:
-                #    callback(None,None,None)
-                continue
-                
-            if args.has_key('friends'):
-                callback(rtn, args['done'], args['args']['cursor'])
-                continue
-                
-            if args.has_key('conversation'):
-                callback(rtn, args['done'])
-                continue
-                
-            if args.has_key('follow'):
-                self.__handle_follow(rtn, args['follow'])
-                callback(self.friends, self.profile, rtn, args['follow'])
-                continue
-                
-            if args.has_key('exit'):
-                self.exit = True
-            else:
+            rtn = funct(args)
+            print rtn
+            #if len(rtn) == 1:
+            if isinstance(rtn, Response):
                 callback(rtn)
+            elif len(rtn) == 2:
+                callback(rtn[0],rtn[1])
+            elif len(rtn) == 3:
+                callback(rtn[0],rtn[1],rtn[2])
+            elif len(rtn) == 4:
+                callback(rtn[0],rtn[1],rtn[2],rtn[3])
             
         self.log.debug('Terminado')
         return

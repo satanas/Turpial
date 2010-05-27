@@ -8,7 +8,7 @@
 import gtk
 import subprocess
 
-from turpial.api.services import URL_SERVICES, PHOTO_SERVICES
+from turpial.api.servicesapi import URL_SERVICES, PHOTO_SERVICES
 
 class Preferences(gtk.Window):
     """Ventana de preferencias de Turpial"""

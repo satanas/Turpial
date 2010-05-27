@@ -7,8 +7,8 @@
 
 import traceback
 
-from turpial.api.interfaces.generic import GenericService
-from turpial.api.interfaces.generic import ServiceResponse
+from turpial.api.interfaces.service import GenericService
+from turpial.api.interfaces.service import ServiceResponse
 
 TWEETPHOTO_KEY = '09e874f8-a7ed-4ae4-a810-3cf7040b9c40'
 

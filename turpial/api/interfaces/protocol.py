@@ -10,18 +10,18 @@ import logging
 class Protocol:
     ''' Clase que define las funciones básicas que debe implementar cualquier
     protocolo de microblogging para Turpial '''
-    def __init__(self, apiurl=''):
-        self.__timeline = []
-        self.__replies = []
-        self.__directs = []
-        self.__favorites = []
-        self.__friends = []
+    def __init__(self, apiurl='', apiurl2=''):
+        self.timeline = []
+        self.replies = []
+        self.directs = []
+        self.favorites = []
+        self.friends = []
         self.__muted_users = []
         
         self.apiurl = apiurl
+        self.apiurl2 = apiurl2
         self.profile = None
         self.friendsloaded = False
-        self.conversation = []
         
         self.to_fav = []
         self.to_unfav = []
@@ -80,12 +80,32 @@ class Protocol:
             
     # -------------------------------------------------------------
     
+    def _add_friend(self, user):
+        exist = False
+        for friend in self.friends:
+            if user.username == friend.username:
+                exist = True
+        
+        if not exist: 
+            self.friends.insert(0, user)
+            self.profile.friends_count += 1
+            
+    def _del_friend(self, id):
+        item = None
+        for friend in self.friends:
+            if id == user.id:
+                item = friend
+                break
+        if item: 
+            self.friends.remove(item)
+            self.profile.friends_count -= 1
+            
     def _get_single_friends_list(self):
         ''' Retorna un arreglo simple de nicks de todos los amigos del usuario 
         o retorna None si aún no se han cargado '''
         single_list = []
         if self.friendsloaded:
-            for friend in self.__friends:
+            for friend in self.friends:
                 single_list.append(friend.screen_name)
             return single_list
         else:
@@ -96,9 +116,9 @@ class Protocol:
             return
         
         self.to_fav.remove(status.id)
-        self._add_status(self.__favorite, status)
-        self._fav_status(self.__timeline, status.id, True)
-        self._fav_status(self.__replies, status.id, True)
+        self._add_status(self.favorites, status)
+        self._fav_status(self.timeline, status.id, True)
+        self._fav_status(self.replies, status.id, True)
             
         #TODO: Marcar en las listas
         
@@ -109,18 +129,18 @@ class Protocol:
             return
             
         self.to_unfav.remove(status.id)
-        self._del_status(self.__favorite, status)
-        self._fav_status(self.__timeline, status.id, False)
-        self._fav_status(self.__replies, status.id, False)
+        self._del_status(self.favorites, status)
+        self._fav_status(self.timeline, status.id, False)
+        self._fav_status(self.replies, status.id, False)
             
         #TODO: Desmarcar en las listas
         
         self.log.debug('Desmarcado status %s como favorito' % id)
         
     def _destroy_status(self, id):
-        self._del_status(self.__timeline, id)
-        self._del_status(self.__favorite, id)
-        self._del_status(self.__directs, id)
+        self._del_status(self.timeline, id)
+        self._del_status(self.favorites, id)
+        self._del_status(self.directs, id)
         
     def change_api_url(self, new_url):
         if new_url == '': 
@@ -155,7 +175,7 @@ class Protocol:
         self.muted_users = list
             
     def is_friend(self, user):
-        for friend in self.__friends:
+        for friend in self.friends:
             if friend.screen_name == user:
                 return True
         return False
@@ -164,7 +184,7 @@ class Protocol:
         return user in self.__muted_users
         
     def is_favorite(self, id):
-        for sta in self.__favorites:
+        for sta in self.favorites:
             if sta.id == id:
                 return sta.favorite
         return False
@@ -173,43 +193,88 @@ class Protocol:
     # HTTP related methods to be overwritten
     # ------------------------------------------------------------
     
-    def response_to_statuses(self, response):
-        ''' Toma la respuesta devuelta por el servidor y la transforma en un
-        arreglo de objetos de tipo Status '''
+    def response_to_statuses(self, response, mute=False):
+        ''' Take the server response and transform into an array of Status 
+        objects inside a Response object '''
+        raise NotImplemented
+        
+    def response_to_profiles(self, response):
+        ''' Take the server response and transform into an array of Profile 
+        objects inside a Response object '''
         raise NotImplemented
         
     def auth(self, username, password):
         raise NotImplemented
         
     def get_timeline(self, count):
+        ''' 
+        Fetch the timeline from the server 
+        Returns: a Response object with self.timeline
+        '''
         raise NotImplemented
         
     def get_replies(self, count):
+        ''' 
+        Fetch the mentions from the server 
+        Returns: a Response object with self.replies
+        '''
         raise NotImplemented
         
     def get_directs(self, count):
+        ''' 
+        Fetch the directs from the server 
+        Returns: a Response object with self.directs
+        '''
         raise NotImplemented
         
     def get_favorites(self, count):
+        ''' 
+        Fetch the favorites from the server 
+        Returns: a Response object with self.favorites
+        '''
         raise NotImplemented
         
     def get_rate_limits(self):
+        ''' 
+        Fetch the rate limits from API 
+        Returns: a Response object with a RateLimit
+        '''
         raise NotImplemented
         
     def get_conversation(self, id):
+        ''' 
+        Fetch the whole conversation from a single status
+        Returns: a Response object of statuses
+        '''
         raise NotImplemented
         
     def get_friends_list(self):
+        ''' 
+        Fetch the whole friends list
+        Returns: a Response object of profiles
+        '''
         raise NotImplemented
         
     def update_profile(self, name, url, bio, location):
+        ''' 
+        Update the user profile
+        Returns: a Response object with the user profile
+        '''
         raise NotImplemented
         
     def update_status(self, in_reply_to_id):
+        ''' 
+        Post an update
+        Returns: a Response object with the posted status
+        '''
         raise NotImplemented
         
     def destroy_status(self, id):
-        ''' Implement this function in this way:
+        ''' 
+        Destroy a posted update
+        Returns: four Response object with self.timeline, self.favorites
+        
+        Implement this function in this way:
         
         self.to_del.append(id)
         # All the dirty work goes here
@@ -218,10 +283,19 @@ class Protocol:
         raise NotImplemented
         
     def repeat(self, id):
+        ''' 
+        Repeat to all your friends an update posted by somebody
+        Returns: a Response object with self.timeline
+        '''
         raise NotImplemented
         
     def mark_favorite(self, id):
-        ''' Implement this function in this way:
+        ''' 
+        Mark an update as favorite
+        Returns: three Response object with self.timeline, self.replies,
+        self.favorites
+        
+        Implement this function in this way:
         
         self.to_fav.append(id)
         # All the dirty work goes here
@@ -230,7 +304,12 @@ class Protocol:
         raise NotImplemented
         
     def unmark_favorite(self, id):
-        ''' Implement this function in this way:
+        ''' 
+        Unmark an update as favorite
+        Returns: three Response object with self.timeline, self.replies,
+        self.favorites
+        
+        Implement this function in this way:
         
         self.to_unfav.append(id)
         # All the dirty work goes here
@@ -239,16 +318,30 @@ class Protocol:
         raise NotImplemented
         
     def follow(self, user):
+        ''' 
+        Follow somebody
+        Returns: four objects: single_friend_list, self.profile, user and True
+        '''
         raise NotImplemented
         
     def unfollow(self, user):
+        ''' 
+        Unfollow somebody
+        Returns: four objects: single_friend_list, self.profile, user and False
+        '''
         raise NotImplemented
         
     def send_direct(self, user, text):
-        raise NotImplemented
+        # FIXME: Implementar
+        #raise NotImplemented
+        pass
         
     def destroy_direct(self, id):
-        ''' Implement this function in this way:
+        ''' 
+        Destroy a direct message
+        Returns: a Response object with self.directs
+        
+        Implement this function in this way:
         
         self.to_del.append(id)
         # All the dirty work goes here
@@ -256,5 +349,9 @@ class Protocol:
         '''
         raise NotImplemented
         
-    def search(self, query):
+    def search(self, query, count):
+        ''' 
+        Execute a query in server
+        Returns: a Response object with query results
+        '''
         raise NotImplemented

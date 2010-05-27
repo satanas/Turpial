@@ -8,8 +8,8 @@
 import urllib2
 import traceback
 
-from turpial.api.interfaces.generic import GenericService
-from turpial.api.interfaces.generic import ServiceResponse
+from turpial.api.interfaces.service import GenericService
+from turpial.api.interfaces.service import ServiceResponse
 
 APIKEY = 'apiKey=R_5a84eae6dd4158a0636358c4f9efdecc'
 VERSION = 'version=2.0.1'

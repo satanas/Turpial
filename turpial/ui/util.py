@@ -19,9 +19,9 @@ URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_:().]*[-A-Za-
 
 def detect_client(tweet):
     '''Parse the source of a tweet'''
-    if not tweet.has_key('source'):
+    if not tweet.source:
         return None
-    text = saxutils.unescape(tweet['source'])
+    text = saxutils.unescape(tweet.source)
     text = text.replace('&quot;', '"')
     if text == 'web':
         return text
@@ -46,13 +46,17 @@ def detect_urls(text):
         urls.append(u[0])
     return urls
     
-def get_rates(val):
+def get_rates(resp):
     '''Returns the status bar message about API calls'''
-    tsec = val['reset_time_in_seconds'] - time.timezone
-    t = time.strftime('%I:%M %P', time.gmtime(tsec))
-    hits = val['remaining_hits']
-    limit = val['hourly_limit']
-    return "%s %s %s %s: %s" % (hits, _('of'), limit, _('API calls. Reset'), t)
+    if resp.type == 'error':
+        return resp.errmsg
+    else:
+        val = resp.items
+        tsec = val.reset_time_in_seconds - time.timezone
+        t = time.strftime('%I:%M %P', time.gmtime(tsec))
+        hits = val.remaining_hits
+        limit = val.hourly_limit
+        return "%s %s %s %s: %s" % (hits, _('of'), limit, _('API calls. Reset'), t)
 
 def get_timestamp(tweet):
     '''Returns the timestamp for a tweet'''
@@ -61,7 +65,7 @@ def get_timestamp(tweet):
     month_names = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
         'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     
-    date_info = tweet['created_at'].split()
+    date_info = tweet.datetime.split()
     
     if date_info[1] in month_names:
         month = month_names.index(date_info[1])

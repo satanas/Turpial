@@ -99,28 +99,27 @@ class UserForm(gtk.VBox):
         self.submit.connect('clicked', self.save_user_profile)
         
     def update(self, profile):
-        self.user = profile['screen_name']
-        pix = self.mainwin.get_user_avatar(self.user,
-                                           profile['profile_image_url'])
+        self.user = profile.username
+        pix = self.mainwin.get_user_avatar(self.user, profile.avatar)
         avatar = gtk.Image()
         avatar.set_from_pixbuf(pix)
         self.user_pic.set_image(avatar)
         del pix
-        self.screen_name.set_markup('<b>@%s</b>' % profile['screen_name'])
+        self.screen_name.set_markup('<b>@%s</b>' % profile.username)
         self.tweets_count.set_markup('<span size="9000">%i Tweets</span>' % \
-                                     profile['statuses_count'])
+                                     profile.statuses_count)
         self.following_count.set_markup('<span size="9000">%i Following</span>' % \
-                                        profile['friends_count'])
+                                        profile.friends_count)
         self.followers_count.set_markup('<span size="9000">%i Followers</span>' % \
-                                        profile['followers_count'])
-        self.real_name.set_text(profile['name'])
-        if profile['location']:
-            self.location.set_text(profile['location'])
-        if profile['url']:
-            self.url.set_text(profile['url'])
+                                        profile.followers_count)
+        self.real_name.set_text(profile.fullname)
+        if profile.location:
+            self.location.set_text(profile.location)
+        if profile.url:
+            self.url.set_text(profile.url)
         buffer = self.bio.get_buffer()
-        if profile['description']:
-            buffer.set_text(profile['description'])
+        if profile.bio:
+            buffer.set_text(profile.bio)
         self.unlock()
         
     def update_user_pic(self, user, pic):

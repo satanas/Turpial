@@ -10,7 +10,7 @@ import logging
 class Protocol:
     ''' Clase que define las funciones básicas que debe implementar cualquier
     protocolo de microblogging para Turpial '''
-    def __init__(self, apiurl='', apiurl2=''):
+    def __init__(self, name, apiurl='', apiurl2=''):
         self.timeline = []
         self.replies = []
         self.directs = []
@@ -27,7 +27,7 @@ class Protocol:
         self.to_unfav = []
         self.to_del = []
         
-        self.log = logging.getLogger('Protocol')
+        self.log = logging.getLogger(name)
         self.log.debug('Iniciado')
         
     # ------------------------------------------------------------
@@ -142,6 +142,14 @@ class Protocol:
         self._del_status(self.favorites, id)
         self._del_status(self.directs, id)
         
+    def _get_muted_timeline(self):
+        timeline = []
+        for tweet in self.timeline:
+            if not self.is_muted(tweet.username):
+                timeline.append(tweet)
+        
+        return timeline
+        
     def change_api_url(self, new_url):
         if new_url == '': 
             return
@@ -176,7 +184,7 @@ class Protocol:
             
     def is_friend(self, user):
         for friend in self.friends:
-            if friend.screen_name == user:
+            if friend.username == user:
                 return True
         return False
         

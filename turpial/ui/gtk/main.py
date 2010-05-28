@@ -384,13 +384,13 @@ class Main(BaseGui, gtk.Window):
         self.vbox.pack_start(self.statusbar, False, False, 0)
         
         self.profile.set_user_profile(p)
-        self.me = p['screen_name']
+        self.me = p.username
         title = 'Turpial - %s' % self.me
         self.set_title(title)
         self.tray.set_tooltip(title)
         
         if config.read('General', 'profile-color') == 'on':
-            self.link_color = p['profile_link_color']
+            self.link_color = p.profile_link_color
         
         self.add(self.vbox)
         self.show_all()
@@ -514,11 +514,11 @@ class Main(BaseGui, gtk.Window):
         gtk.gdk.threads_leave()
         self.updating['directs'] = False
         
-    def update_favorites(self, tweets, replies, favs):
+    def update_favorites(self, favs):
         log.debug(u'Actualizando favoritos')
         gtk.gdk.threads_enter()
-        self.home.timeline.update_tweets(tweets)
-        self.home.replies.update_tweets(replies)
+        #self.home.timeline.update_tweets(tweets)
+        #self.home.replies.update_tweets(replies)
         self.profile.favorites.update_tweets(favs)
         gtk.gdk.threads_leave()
         

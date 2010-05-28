@@ -17,7 +17,7 @@ class Status:
         self.in_reply_to_user = None
         self.is_favorite = False
         self.retweeted_by = None
-        self.datetime = 0
+        self.datetime = None
 
 class Response:
     def __init__(self, items=[], type='status', errmsg=''):
@@ -30,16 +30,19 @@ class Profile:
         self.id = None
         self.fullname = None
         self.username = None
+        self.avatar = None
         self.location = None
         self.url = None
         self.bio = None
         self.following = None
-        self.followers_count = 0
-        self.friends_count = 0
+        self.followers_count = None
+        self.friends_count = None
+        self.password = None
+        self.profile_link_color = None
         
 class RateLimit:
     def __init__(self):
-        self.limit = None
-        self.remain = None
+        self.hourly_limit = None
+        self.remaining_hits = None
         self.reset_time = None
-        self.reset_time_in_sec = None
+        self.reset_time_in_seconds = None

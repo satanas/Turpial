@@ -110,20 +110,20 @@ class Turpial:
             
     def __validate_credentials(self, val):
         '''Chequeo de credenciales'''
-        if val.has_key('error'):
-            self.ui.cancel_login(val['error'])
+        if val.type == 'error':
+            self.ui.cancel_login(val.errmsg)
         else:
-            self.profile = val
-            self.config = ConfigHandler(val['screen_name'])
+            self.profile = val.items
+            self.config = ConfigHandler(self.profile.username)
             if self.remember:
-                self.global_cfg.write('Login', 'username', self.api.username)
+                self.global_cfg.write('Login', 'username', self.profile.username)
                 self.global_cfg.write('Login', 'password',
-                                      base64.b64encode(self.api.password))
+                                      base64.b64encode(self.profile.password))
             else:
                 self.global_cfg.write('Login', 'username', '')
                 self.global_cfg.write('Login', 'password', '')
             self.httpserv.update_img_dir(self.config.imgdir)
-            self.httpserv.set_credentials(self.api.username, self.api.password)
+            self.httpserv.set_credentials(self.profile.username, self.profile.password)
             
             auth = self.config.read_section('Auth')
             if self.api.has_oauth_support():
@@ -161,7 +161,8 @@ class Turpial:
         
         self.ui.show_main(self.config, self.global_cfg, self.profile)
         self._update_timeline()
-        if self.testmode: return
+        if self.testmode: 
+            return
         self._update_replies()
         self._update_directs()
         self._update_rate_limits()
@@ -229,10 +230,10 @@ class Turpial:
         self.api.destroy_status(tweet_id, self.ui.after_destroy)
         
     def set_favorite(self, tweet_id):
-        self.api.set_favorite(tweet_id, self.ui.update_favorites)
+        self.api.set_favorite(tweet_id, self.ui.tweet_changed)
         
     def unset_favorite(self, tweet_id):
-        self.api.unset_favorite(tweet_id, self.ui.update_favorites)
+        self.api.unset_favorite(tweet_id, self.ui.tweet_changed)
     
     def retweet(self, tweet_id):
         self.api.retweet(tweet_id, self.ui.tweet_changed)
@@ -273,19 +274,19 @@ class Turpial:
         self.api.search_topic(query, self.ui.update_search_topics)
         
     def get_popup_info(self, tweet_id, user):
-        if tweet_id in self.api.to_fav:
+        if self.api.is_marked_to_fav(tweet_id):
             return {'busy': 'Marcando favorito...'}
-        elif tweet_id in self.api.to_unfav:
+        elif self.api.is_marked_to_unfav(tweet_id):
             return {'busy': 'Desmarcando favorito...'}
-        elif tweet_id in self.api.to_del:
+        elif self.api.is_marked_to_del(tweet_id):
             return {'busy': 'Borrando...'}
             
         rtn = {}
-        if self.api.friendsloaded:
+        if self.api.friends_loaded():
             rtn['friend'] = self.api.is_friend(user)
 
         rtn['fav'] = self.api.is_fav(tweet_id)
-        rtn['own'] = (self.profile['screen_name'] == user)
+        rtn['own'] = (self.profile.username == user)
         
         return rtn
         

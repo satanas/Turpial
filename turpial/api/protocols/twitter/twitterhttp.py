@@ -22,28 +22,34 @@ class TwitterHTTP(TurpialHTTP):
             req = self._build_simple_request(uri, args)
             rtn = self._execute_simple_request(req)
             return rtn
-        except urllib2.HTTPError, e:
-            if (e.code == 304):
+        except urllib2.HTTPError, exc:
+            self.log.debug("HTTPError for URL: %s\nparameters: (%s)\n\
+details: %s" % (uri, args, traceback.print_exc()))
+            if (exc.code == 304):
                 return []
-            elif (e.code == 400) or (e.code == 403):
-                raise TurpialException('Hey! You are over the limit of API calls')
-            elif (e.code == 401):
-                raise TurpialException('Invalid username/password')
-            elif (e.code == 404):
+            elif (exc.code == 400):
                 raise TurpialException('Err... invalid request')
-            elif (e.code == 406):
+            elif (exc.code == 401):
+                raise TurpialException('Invalid username/password')
+            elif (exc.code == 403):
+                raise TurpialException('Hey! You are over the limit of API calls')
+            elif (exc.code == 404):
+                raise TurpialException('Err... invalid request')
+            elif (exc.code == 406):
                 raise TurpialException('You are searching a very weird thing')
-            elif (e.code == 420):
+            elif (exc.code == 420):
                 raise TurpialException('You are searching too much!')
-            elif (e.code == 500):
+            elif (exc.code == 500):
                 raise TurpialException('Oops! Something went wrong')
-            elif (e.code == 502):
+            elif (exc.code == 502):
                 raise TurpialException('Twitter is down. Try again later')
-            elif (e.code == 503):
+            elif (exc.code == 503):
                 raise TurpialException('Twitter is overcapacity')
-        except urllib2.URLError, e:
+        except urllib2.URLError, exc:
+            self.log.debug("URLError for URL: %s\nparameters: (%s)\n\
+details: %s" % (uri, args, traceback.print_exc()))
             raise TurpialException('Can\'t connect to Twitter')
-        except Exception, e:
+        except Exception, exc:
             self.log.debug("Unknown error for URL: %s\nparameters: (%s)\n\
-                details: %s" % (uri, args, traceback.print_exc()))
+details: %s" % (uri, args, traceback.print_exc()))
             raise TurpialException(e)

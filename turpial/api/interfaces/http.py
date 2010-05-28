@@ -49,13 +49,14 @@ class TurpialHTTP:
             if uri.endswith(action):
                 method = "POST"
                 break
-        print 'args %s' % args
+        
         if args.has_key('id'):
             uri = "%s/%s" % (uri, args['id'])
             del args['id']
         
         uri = "%s.%s" % (uri, self.format)
-        print 'uri %s' % uri
+        self.log.debug('URI: %s' % uri)
+        
         if len(args) > 0:
             encoded_args = urlencode(args)
         

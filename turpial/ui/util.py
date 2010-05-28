@@ -115,7 +115,7 @@ def count_new_tweets(tweets, last):
 def has_tweet(src, tweet):
     '''Returns True if tweet is in src. False otherwise'''
     for t in src:
-        if tweet['id'] == t['id']:
+        if tweet.id == t.id:
             return True
     return False
     

@@ -12,7 +12,7 @@ from turpial.api.interfaces.post import Status, Response, Profile, RateLimit
 
 class Twitter(Protocol):
     def __init__(self):
-        Protocol.__init__(self, 'Twitter', 'http://api.twitter.com/1', 
+        Protocol.__init__(self, 'Twitter', 'http://twitter.com', 
             'http://search.twitter.com')
         
         self.http = TwitterHTTP()

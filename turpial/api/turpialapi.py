@@ -301,7 +301,6 @@ class TurpialAPI(threading.Thread):
             else:
                 rtn = funct()
             
-            #if len(rtn) == 1:
             if isinstance(rtn, Response):
                 callback(rtn)
             elif len(rtn) == 2:

@@ -16,7 +16,7 @@ class Protocol:
         self.directs = []
         self.favorites = []
         self.friends = []
-        self.__muted_users = []
+        self.muted_users = []
         
         self.apiurl = apiurl
         self.apiurl2 = apiurl2
@@ -110,6 +110,14 @@ class Protocol:
             return single_list
         else:
             return None
+            
+    def get_muted_friends_list(self):
+        ''' Retorna la lista de nicks silenciados o retorna None si aún no se 
+        ha cargado la lista de amigos'''
+        if self.friendsloaded:
+            return self.muted_users
+        else:
+            return None
         
     def _set_status_favorite(self, status):
         if status is None:
@@ -142,7 +150,7 @@ class Protocol:
         self._del_status(self.favorites, id)
         self._del_status(self.directs, id)
         
-    def _get_muted_timeline(self):
+    def get_muted_timeline(self):
         timeline = []
         for tweet in self.timeline:
             if not self.is_muted(tweet.username):
@@ -189,7 +197,7 @@ class Protocol:
         return False
         
     def is_muted(self, user):
-        return user in self.__muted_users
+        return user in self.muted_users
         
     def is_favorite(self, id):
         for sta in self.favorites:

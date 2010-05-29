@@ -466,7 +466,7 @@ class Main(BaseGui, gtk.Window):
             tweet = None
             i = 0
             while 1:
-                if tweets[i]['user']['screen_name'] == self.me:
+                if tweets[i].username == self.me:
                     if not util.has_tweet(last, tweets[i]):
                         tweet = tweets[i]
                         break
@@ -476,9 +476,9 @@ class Main(BaseGui, gtk.Window):
                 i += 1
             
             p = self.parse_tweet(tweet)
-            icon = self.current_avatar_path(p['avatar'])
-            text = util.escape_text(p['text'])
-            text = "<b>@%s</b> %s" % (p['username'], text)
+            icon = self.current_avatar_path(p.avatar)
+            text = util.escape_text(p.text)
+            text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_tweets(count, text, icon)
             
         gtk.gdk.threads_leave()

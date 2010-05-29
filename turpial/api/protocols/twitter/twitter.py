@@ -128,7 +128,7 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/statuses/home_timeline' % 
                 self.apiurl, {'count': count})
             self.timeline = self.response_to_statuses(rtn)
-            return Response(self._get_muted_timeline(), 'status')
+            return Response(self.get_muted_timeline(), 'status')
         except Exception, exc:
             return Response(None, 'error', exc.msg)
         
@@ -178,19 +178,21 @@ class Twitter(Protocol):
         except Exception, exc:
             return Response(None, 'error', exc.msg)
         
-    def get_conversation(self, id):
+    def get_conversation(self, args):
         '''Obteniendo conversacion'''
+        id = args['id']
         conversation = []
         
         self.log.debug(u'Obteniendo conversación:')
+        
         while 1:
-            self.log.debug('--Tweet: %s' % id)
             try:
                 rtn = self.http.request('%s/statuses/show' % self.apiurl, 
                     {'id': id})
             except Exception, exc:
                 return Response(None, 'error', exc.msg)
-            
+                
+            self.log.debug('--Descargado Tweet: %s' % id)
             conversation.append(rtn)
             
             if rtn['in_reply_to_status_id']:
@@ -198,7 +200,7 @@ class Twitter(Protocol):
             else:
                 break
         
-        return self.response_to_statuses(conversation)
+        return Response(self.response_to_statuses(conversation), 'profile')
         
     def get_friends_list(self):
         '''Descargando lista de amigos'''

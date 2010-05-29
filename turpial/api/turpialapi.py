@@ -205,9 +205,10 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Solicitando Lista de Amigos')
         self.__register(self.protocol.get_friends_list, None, callback)
         
-    """
     def get_muted_list(self):
-        if self.friendsloaded:
+        return self.protocol.get_muted_friends_list()
+        '''
+        friendsloaded:
             friends = []
             for f in self.friends:
                 friends.append(f['screen_name'])
@@ -215,6 +216,8 @@ class TurpialAPI(threading.Thread):
             return friends, self.muted_users
         else:
             return None, None
+        '''
+    """
             
     def follow(self, user, callback):
         '''Siguiendo a un amigo'''
@@ -249,17 +252,13 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Buscando respuesta: %s' % tweet_id)
         self.__register({'uri': '%s/statuses/show' % self.apiurl,
                          'id': tweet_id}, callback)
-        
-    def get_conversation(self, tweet_id, callback, first=True):
+    """
+    def get_conversation(self, id, callback):
         '''Obteniendo conversacion'''
-        if first: 
-            self.conversation = []
-            self.log.debug(u'Obteniendo conversación:')
-        self.log.debug('--Tweet: %s' % tweet_id)
-        self.__register({'uri': '%s/statuses/show' % self.apiurl,
-                         'id': tweet_id, 'done': callback,
-                         'conversation': True}, self.__handle_conversation)
+        self.log.debug(u'Solicitando conversación')
+        self.__register(self.protocol.get_conversation, {'id': id}, callback)
         
+    """
     def destroy_direct(self, tweet_id, callback):
         '''Destruyendo tweet directo'''
         self.to_del.append(tweet_id)
@@ -296,10 +295,13 @@ class TurpialAPI(threading.Thread):
             
             (funct, args, callback) = req
             
+            # FIXME: Poner try/except
+            #-------------------------
             if args:
                 rtn = funct(args)
             else:
                 rtn = funct()
+            #-------------------------
             
             if isinstance(rtn, Response):
                 callback(rtn)

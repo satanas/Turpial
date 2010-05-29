@@ -60,16 +60,18 @@ class TurpialHTTP:
         if len(args) > 0:
             encoded_args = urlencode(args)
         
-        if method == "GET" and encoded_args:
-            argStr = "?%s" % (encoded_args)
+        if method == "GET":
+            if encoded_args:
+                argStr = "?%s" % (encoded_args)
         else:
             argData = encoded_args
             
         if (self.username):
             auth_info = b64encode("%s:%s" % (self.username, self.password))
             headers["Authorization"] = "Basic " + auth_info
-            
+        
         strReq = "%s%s" % (uri, argStr)
+        print "%s-%s-%s-%s-%s-%s-" % (method, encoded_args, argStr, argData, headers, strReq)
         req = urllib2.Request(strReq, argData, headers)
         return req
     

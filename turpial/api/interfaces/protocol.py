@@ -7,6 +7,8 @@
 
 import logging
 
+from turpial.api.interfaces.post import Response
+
 class Protocol:
     ''' Clase que define las funciones básicas que debe implementar cualquier
     protocolo de microblogging para Turpial '''
@@ -48,12 +50,15 @@ class Protocol:
         if status is None: 
             return
         
-        if self._find_status_by_id(to_arr, status.id):
-            self.log.debug('--El status %s ya existe. No se agrega' % status.id)
-            return
-        
-        to_arr.insert(0, status)
-        self.log.debug('--Agregado status %s' % status.id)
+        item = self._find_status_by_id(to_arr, status.id)
+        if item:
+            self.log.debug('--El status %s ya existe. Se edita' % status.id)
+            index = to_arr.index(item)
+            to_arr[index] = status
+        else:
+            self.log.debug('--Agregado status %s' % status.id)
+            to_arr.insert(0, status)
+            
         
     def _del_status(self, from_arr, id):
         ''' Borra un status de cualquiera de los arreglos '''
@@ -107,14 +112,6 @@ class Protocol:
             return single_list
         else:
             return None
-            
-    def get_muted_friends_list(self):
-        ''' Retorna la lista de nicks silenciados o retorna None si aún no se 
-        ha cargado la lista de amigos'''
-        if self.friendsloaded:
-            return self.muted_users
-        else:
-            return None
         
     def _set_status_favorite(self, status):
         if status is None:
@@ -149,21 +146,13 @@ class Protocol:
     def _destroy_direct(self, id):
         self._del_status(self.directs, id)
         
-    def get_muted_timeline(self):
-        timeline = []
-        for tweet in self.timeline:
-            if not self.is_muted(tweet.username):
-                timeline.append(tweet)
-        
-        return timeline
-        
-    def change_api_url(self, new_url):
+    def _change_api_url(self, new_url):
         if new_url == '': 
             return
         self.log.debug('Cambiada la API URL a %s' % new_url)
         self.apiurl = new_url
         
-    def mute_by_user(self, user):
+    def _mute_by_user(self, user):
         if not self.is_friend(user):
             self.log.debug('No se silencia a %s porque no es tu amigo' % user)
             return
@@ -174,7 +163,7 @@ class Protocol:
             self.log.debug('Silenciando a %s' % user)
             self.muted_users.append(user)
         
-    def unmute_by_user(self, user):
+    def _unmute_by_user(self, user):
         if not self.is_friend(user):
             self.log.debug('No se revela a %s porque no es tu amigo' % user)
             return
@@ -185,9 +174,25 @@ class Protocol:
             self.log.debug('Revelando a %s' % user)
             self.muted_users.remove(user)
             
-    def mute_by_list(self, list):
+    def _mute_by_list(self, list):
         self.log.debug('Silenciando por lista')
         self.muted_users = list
+        
+    def get_muted_friends_list(self):
+        ''' Retorna la lista de nicks silenciados o retorna None si aún no se 
+        ha cargado la lista de amigos'''
+        if self.friendsloaded:
+            return self.muted_users
+        else:
+            return None
+    
+    def get_muted_timeline(self):
+        timeline = []
+        for tweet in self.timeline:
+            if not self.is_muted(tweet.username):
+                timeline.append(tweet)
+        
+        return timeline
             
     def is_friend(self, user):
         for friend in self.friends:
@@ -210,6 +215,15 @@ class Protocol:
                 return sta.is_favorite
         return False
     
+    def mute(self, args):
+        arg = args['arg']
+        if type(arg).__name__ == 'list':
+            self._mute_by_list(arg)
+        else:
+            self._mute_by_user(arg)
+        
+        return Response(self.get_muted_timeline(), 'status')
+        
     # ------------------------------------------------------------
     # HTTP related methods to be overwritten
     # ------------------------------------------------------------

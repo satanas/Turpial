@@ -155,9 +155,9 @@ class BaseGui:
                                             self.__done_user_avatar)
         return None
         
-    def request_retweet(self, id):
-        '''Retweet'''
-        self.__controller.retweet(id)
+    def request_repeat(self, id):
+        '''Repeat status'''
+        self.__controller.repeat(id)
         
     def request_fav(self, id):
         '''Mark a tweet as favorite'''
@@ -208,13 +208,9 @@ class BaseGui:
         '''Update user profile'''
         self.__controller.update_profile(name, url, bio, location)
         
-    def request_search_topic(self, topic):
+    def request_search(self, topic):
         '''Search a topic in search.twitter.com'''
-        self.__controller.search_topic(topic)
-        
-    def request_search_people(self, query):
-        '''Search people in search.twitter.com'''
-        self.__controller.search_people(query)
+        self.__controller.search(topic)
         
     def request_trends(self):
         '''Get trendings'''
@@ -341,7 +337,7 @@ class BaseGui:
     def update_trends(self, current, day, week):
         raise NotImplementedError
         
-    def update_search_topics(self, topics):
+    def update_search(self, topics):
         raise NotImplementedError
     
     def update_friends(self, friends):

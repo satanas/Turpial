@@ -477,7 +477,7 @@ class Main(BaseGui, gtk.Window):
             
             p = self.parse_tweet(tweet)
             icon = self.current_avatar_path(p.avatar)
-            text = util.escape_text(p.text)
+            text = util.unescape_text(p.text)
             text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_tweets(count, text, icon)
             
@@ -492,7 +492,7 @@ class Main(BaseGui, gtk.Window):
         if count > 0 and self.updating['replies']:
             p = self.parse_tweet(tweets.items[0])
             icon = self.current_avatar_path(p.avatar)
-            text = util.escape_text(p.text)
+            text = util.unescape_text(p.text)
             text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_replies(count, text, icon)
         
@@ -507,7 +507,7 @@ class Main(BaseGui, gtk.Window):
         if count > 0 and self.updating['directs']:
             p = self.parse_tweet(recv.items[0])
             icon = self.current_avatar_path(p.avatar)
-            text = util.escape_text(p.text)
+            text = util.unescape_text(p.text)
             text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_directs(count, text, icon)
             
@@ -537,23 +537,11 @@ class Main(BaseGui, gtk.Window):
         self.statusbar.push(0, util.get_rates(val))
         gtk.gdk.threads_leave()
         
-    def update_search_topics(self, val):
+    def update_search(self, val):
         log.debug(u'Mostrando resultados de la búsqueda')
         gtk.gdk.threads_enter()
-        if val is None:
-            self.profile.topics.update_tweets(val)
-        else:
-            self.profile.topics.update_tweets(val['results'])
+        self.profile.topics.update_tweets(val)
         gtk.gdk.threads_leave()
-        
-    def update_search_people(self, val):
-        self.search.people.update_profiles(val)
-        #self.show_search(self)
-        #if self.workspace != 'wide':
-        #    self.contenido.wrapper.set_current_page(1)
-        
-    def update_trends(self, current, day, week):
-        self.search.trending.update_trends(current, day, week)
         
     def update_friends(self, friends):
         pass

@@ -217,6 +217,8 @@ class Turpial:
         '''Finalizar sesion'''
         self.save_muted_list()
         self.log.debug('Desconectando')
+        self.httpserv.quit()
+        self.httpserv.join()
         self.api.quit()
         self.api.join()
         sys.exit(0)
@@ -236,8 +238,8 @@ class Turpial:
     def unset_favorite(self, id):
         self.api.unset_favorite(id, self.ui.tweet_changed)
     
-    def retweet(self, id):
-        self.api.retweet(id, self.ui.tweet_changed)
+    def repeat(self, id):
+        self.api.repeat(id, self.__tweet_done)
     
     def follow(self, user):
         self.api.follow(user, self.__done_follow)
@@ -270,9 +272,9 @@ class Turpial:
         service = self.config.read('Services', 'upload-pic')
         self.httpserv.upload_pic(service, path, callback)
         
-    def search_topic(self, query):
+    def search(self, query):
         self.ui.start_search()
-        self.api.search_topic(query, self.ui.update_search_topics)
+        self.api.search(query, self.ui.update_search)
         
     def get_popup_info(self, tweet_id, user):
         if self.api.is_marked_to_fav(tweet_id):

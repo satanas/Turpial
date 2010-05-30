@@ -13,12 +13,12 @@ from turpial.api.interfaces.post import Status, Response, Profile, RateLimit
 
 class Twitter(Protocol):
     def __init__(self):
-        Protocol.__init__(self, 'Twitter', 'http://twitter.com', 
+        Protocol.__init__(self, 'Twitter', 'http://api.twitter.com/1', 
             'http://search.twitter.com')
         
         self.http = TwitterHTTP()
+        self.retweet_by_me = []
         
-    #def __validate_args(self, args, names):
     def __get_real_tweet(self, tweet):
         '''Get the tweet retweeted'''
         retweet_by = None
@@ -28,6 +28,13 @@ class Twitter(Protocol):
         
         return tweet, retweet_by
         
+    def __print_you(self, username):
+        ''' Print "you" is username is the name of the user'''
+        if username == self.profile.username:
+            return 'you'
+        else:
+            return username
+    
     def __create_status(self, resp):
         tweet, retweet_by = self.__get_real_tweet(resp)
         
@@ -92,17 +99,73 @@ class Twitter(Protocol):
         rate.reset_time_in_seconds = rl['reset_time_in_seconds']
         return rate
         
+    def __get_retweet_users(self, id):
+        users = ''
+        try:
+            rts = self.http.request('%s/statuses/%s/retweeted_by' % 
+                (self.apiurl, id))
+            
+            results = self.response_to_profiles(rts)
+            if len(results) == 1:
+                users = self.__print_you(results[0].username)
+            else:
+                length = len(results)
+                limit = 2 if length > 3 else length - 1
+                
+                for index in range(limit):
+                    users += self.__print_you(results[index].username) + ', '
+                
+                if length > 3:
+                    tail = ' and %i others' % (length - limit)
+                else:
+                    tail = ' and %s' % self.__print_you(results[limit].username)
+                users = users[:-2] + tail
+        except Exception, exc:
+            print exc
+        
+        return users
+    '''    
+    def __get_retweeted_by_me(self, count=None):
+        retweets = []
+        
+        try:
+            rts = self.http.request('%s/statuses/retweeted_by_me' % self.apiurl)
+            self.retweet_by_me = self.response_to_array(rts, 'id', True)
+        except Exception, exc:
+            print exc
+        return retweets
+    
+    def response_to_array(self, response, field, to_str=False):
+        array = []
+        for resp in response:
+            if to_str:
+                array.append(str(resp[field]))
+            else:
+                array.append(resp[field])
+        return array
+    '''
     def response_to_statuses(self, response, mute=False):
         statuses = []
         for resp in response:
-            statuses.append(self.__create_status(resp))
+            status = self.__create_status(resp)
+            #print type(status.id), status.id, status.id in self.retweet_by_me
+            #print self.retweet_by_me
+            #if status.id in self.retweet_by_me:
+            #    if status.retweet_by:
+            #        status.retweet_by = 'you and %s' % status.retweet_by
+            #    else:
+            #        status.retweet_by = 'you'
+            if status.retweet_by:
+                users = self.__get_retweet_users(status.id)
+                status.retweet_by = users
+            statuses.append(status)
         return statuses
         
     def response_to_profiles(self, response):
         profiles = []
         for pf in response:
             profiles.append(self.__create_profile(pf))
-        return Response(profiles, 'profile')
+        return profiles
             
     def auth(self, args):
         ''' Inicio de autenticacion basica '''
@@ -128,6 +191,7 @@ class Twitter(Protocol):
         try:
             rtn = self.http.request('%s/statuses/home_timeline' % 
                 self.apiurl, {'count': count})
+            #self.__get_retweeted_by_me(count)
             self.timeline = self.response_to_statuses(rtn)
             return Response(self.get_muted_timeline(), 'status')
         except TurpialException, exc:
@@ -269,7 +333,8 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/statuses/update' % self.apiurl, args)
             status = self.__create_status(rtn)
             self._add_status(self.timeline, status)
-            return Response(self.timeline, 'status')
+            timeline = self.get_muted_timeline()
+            return Response(timeline, 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
@@ -283,21 +348,26 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/statuses/destroy' % self.apiurl,
                 {'id': id})
             self._destroy_status(rtn['id'])
-            return (Response(self.timeline, 'status'), 
+            timeline = self.get_muted_timeline()
+            return (Response(timeline, 'status'), 
                 Response(self.favorites, 'status'))
         except TurpialException, exc:
             return (Response(None, 'error', exc.msg), 
                 Response(None, 'error', exc.msg))
         
-    def repeat(self, id):
+    def repeat(self, args):
         '''Haciendo retweet'''
+        id = args['id']
         self.log.debug('Retweet: %s' % id)
         
         try:
-            rtn = self.http.request('%s/statuses/retweet' % self.apiurl, 
-                {'id': id})
-            # FIXME: Insertarlo en el timeline
-            return Response(self.timeline, 'status')
+            rtn = self.http.request('%s/statuses/retweet' % self.apiurl, args)
+            users = self.__get_retweet_users(id)
+            status = self.__create_status(rtn)
+            status.retweet_by = users
+            self._add_status(self.timeline, status)
+            timeline = self.get_muted_timeline()
+            return Response(timeline, 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
@@ -312,7 +382,8 @@ class Twitter(Protocol):
                 {'id': id})
             status = self.__create_status(rtn)
             self._set_status_favorite(status)
-            return (Response(self.timeline, 'status'), 
+            timeline = self.get_muted_timeline()
+            return (Response(timeline, 'status'), 
                 Response(self.replies, 'status'),
                 Response(self.favorites, 'status'))
         except TurpialException, exc:
@@ -332,7 +403,8 @@ class Twitter(Protocol):
                 {'id': id})
             status = self.__create_status(rtn)
             self._unset_status_favorite(status)
-            return (Response(self.timeline, 'status'), 
+            timeline = self.get_muted_timeline()
+            return (Response(timeline, 'status'), 
                 Response(self.replies, 'status'),
                 Response(self.favorites, 'status'))
         except TurpialException, exc:
@@ -385,14 +457,79 @@ class Twitter(Protocol):
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
-    def search(self, query, count=100):
+    def search(self, args):
         ''' Buscando en Twitter '''
+        query = args['query']
+        count = args['count']
         self.log.debug('Buscando tweets: %s' % query)
         
         try:
             rtn = self.http.request('%s/search' % self.apiurl2, 
                 {'q': query, 'rpp': count})
-            return Response(rtn, 'status')
+            return Response(self.response_to_statuses(rtn['results']), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
-        
+            
+'''
+    def __handle_oauth(self, args, callback):
+        if args['cmd'] == 'start':
+            if self.has_oauth_support():
+                self.client = TurpialAuthClient()
+            else:
+                self.client = TurpialAuthClient(api_url=self.apiurl)
+            self.consumer = oauth.OAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
+            self.signature_method_hmac_sha1 = oauth.OAuthSignatureMethod_HMAC_SHA1()
+            auth = args['auth']
+            
+            if auth['oauth-key'] != '' and auth['oauth-secret'] != '' and \
+            auth['oauth-verifier'] != '':
+                self.token = oauth.OAuthToken(auth['oauth-key'],
+                                              auth['oauth-secret'])
+                self.token.set_verifier(auth['oauth-verifier'])
+                self.is_oauth = True
+                args['done'](self.token.key, self.token.secret,
+                             self.token.verifier)
+            else:
+                self.log.debug('Obtain a request token')
+                oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
+                                                                           http_url=self.client.request_token_url)
+                oauth_request.sign_request(self.signature_method_hmac_sha1,
+                                           self.consumer, None)
+                
+                self.log.debug('REQUEST (via headers)')
+                self.log.debug('parameters: %s' % str(oauth_request.parameters))
+                try:
+                    self.token = self.client.fetch_request_token(oauth_request)
+                except Exception, error:
+                    print "Error: %s\n%s" % (error, traceback.print_exc())
+                    raise Exception
+                
+                self.log.debug('GOT')
+                self.log.debug('key: %s' % str(self.token.key))
+                self.log.debug('secret: %s' % str(self.token.secret))
+                self.log.debug('callback confirmed? %s' % str(self.token.callback_confirmed))
+                
+                self.log.debug('Authorize the request token')
+                oauth_request = oauth.OAuthRequest.from_token_and_callback(token=self.token,
+                                                                           http_url=self.client.authorization_url)
+                self.log.debug('REQUEST (via url query string)')
+                self.log.debug('parameters: %s' % str(oauth_request.parameters))
+                callback(oauth_request.to_url())
+        elif args['cmd'] == 'authorize':
+            pin = args['pin']
+            self.log.debug('Obtain an access token')
+            oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
+                                                                       token=self.token,
+                                                                       verifier=pin,
+                                                                       http_url=self.client.access_token_url)
+            oauth_request.sign_request(self.signature_method_hmac_sha1,
+                                       self.consumer, self.token)
+            self.log.debug('REQUEST (via headers)')
+            self.log.debug('parameters: %s' % str(oauth_request.parameters))
+            self.token = self.client.fetch_access_token(oauth_request)
+            self.log.debug('GOT')
+            self.log.debug('key: %s' % str(self.token.key))
+            self.log.debug('secret: %s' % str(self.token.secret))
+            self.is_oauth = True
+            callback(self.token.key, self.token.secret, pin)
+    '''

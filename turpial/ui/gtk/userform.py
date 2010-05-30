@@ -119,10 +119,15 @@ class UserForm(gtk.VBox):
         self.submit.connect('clicked', self.save_user_profile)
         
     def update(self, response):
-        if response.type == 'error':
-            self.stop_update(True, response.errmsg)
-            return
-        profile = response.items
+        # FIXME: Mejorar esta validación
+        try:
+            if response.type == 'error':
+                self.stop_update(True, response.errmsg)
+                return
+            profile = response.items
+        except:
+            profile = response
+        
         self.user = profile.username
         pix = self.mainwin.get_user_avatar(self.user, profile.avatar)
         avatar = gtk.Image()

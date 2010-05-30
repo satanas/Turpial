@@ -52,70 +52,7 @@ class TurpialAPI(threading.Thread):
         
     def is_fav(self, id):
         return self.protocol.is_favorite(id)
-        
-    '''
-    def __handle_oauth(self, args, callback):
-        if args['cmd'] == 'start':
-            if self.has_oauth_support():
-                self.client = TurpialAuthClient()
-            else:
-                self.client = TurpialAuthClient(api_url=self.apiurl)
-            self.consumer = oauth.OAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
-            self.signature_method_hmac_sha1 = oauth.OAuthSignatureMethod_HMAC_SHA1()
-            auth = args['auth']
-            
-            if auth['oauth-key'] != '' and auth['oauth-secret'] != '' and \
-            auth['oauth-verifier'] != '':
-                self.token = oauth.OAuthToken(auth['oauth-key'],
-                                              auth['oauth-secret'])
-                self.token.set_verifier(auth['oauth-verifier'])
-                self.is_oauth = True
-                args['done'](self.token.key, self.token.secret,
-                             self.token.verifier)
-            else:
-                self.log.debug('Obtain a request token')
-                oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
-                                                                           http_url=self.client.request_token_url)
-                oauth_request.sign_request(self.signature_method_hmac_sha1,
-                                           self.consumer, None)
-                
-                self.log.debug('REQUEST (via headers)')
-                self.log.debug('parameters: %s' % str(oauth_request.parameters))
-                try:
-                    self.token = self.client.fetch_request_token(oauth_request)
-                except Exception, error:
-                    print "Error: %s\n%s" % (error, traceback.print_exc())
-                    raise Exception
-                
-                self.log.debug('GOT')
-                self.log.debug('key: %s' % str(self.token.key))
-                self.log.debug('secret: %s' % str(self.token.secret))
-                self.log.debug('callback confirmed? %s' % str(self.token.callback_confirmed))
-                
-                self.log.debug('Authorize the request token')
-                oauth_request = oauth.OAuthRequest.from_token_and_callback(token=self.token,
-                                                                           http_url=self.client.authorization_url)
-                self.log.debug('REQUEST (via url query string)')
-                self.log.debug('parameters: %s' % str(oauth_request.parameters))
-                callback(oauth_request.to_url())
-        elif args['cmd'] == 'authorize':
-            pin = args['pin']
-            self.log.debug('Obtain an access token')
-            oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
-                                                                       token=self.token,
-                                                                       verifier=pin,
-                                                                       http_url=self.client.access_token_url)
-            oauth_request.sign_request(self.signature_method_hmac_sha1,
-                                       self.consumer, self.token)
-            self.log.debug('REQUEST (via headers)')
-            self.log.debug('parameters: %s' % str(oauth_request.parameters))
-            self.token = self.client.fetch_access_token(oauth_request)
-            self.log.debug('GOT')
-            self.log.debug('key: %s' % str(self.token.key))
-            self.log.debug('secret: %s' % str(self.token.secret))
-            self.is_oauth = True
-            callback(self.token.key, self.token.secret, pin)
-    '''
+    
     def auth(self, username, password, callback):
         '''Inicio de autenticacion basica'''
         self.log.debug('Solicitando autenticacion basica')
@@ -162,14 +99,12 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Solicitando destrucción de directo: %s' % id)
         self.__register(self.protocol.destroy_direct, {'id': id}, callback)
         
-    """
-    def repeat(self, tweet_id, callback):
-        '''Haciendo retweet'''
-        self.log.debug('Retweet: %s' % tweet_id)
-        self.__register({'uri': '%s/statuses/retweet' % self.apiurl,
-                         'id':tweet_id, 'rt':True, 'args': ''}, callback)
+    
+    def repeat(self, id, callback):
+        '''Repitiendo status a todos los contactos'''
+        self.log.debug('Solicitando repetición de status: %s' % id)
+        self.__register(self.protocol.repeat, {'id': id}, callback)
         
-    """
     def set_favorite(self, id, callback):
         '''Estableciendo status como favorito'''
         self.log.debug('Solicitando status como favorito: %s' % id)
@@ -180,14 +115,13 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Solicitando status como no favorito: %s' % id)
         self.__register(self.protocol.unmark_favorite, {'id': id}, callback)
         
-    """
-    def search_topic(self, query, callback):
+    
+    def search(self, query, callback):
         '''Buscando tweet'''
-        args = {'q': query, 'rpp': 50}
-        self.log.debug('Buscando tweets: %s' % query)
-        self.__register({'uri': 'http://search.twitter.com/search',
-                         'args': args}, callback)
-    """
+        args = {'query': query, 'count': 3}
+        self.log.debug('Solicitando búsqueda: %s' % query)
+        self.__register(self.protocol.search, args, callback)
+    
     def update_profile(self, name, url, bio, location, callback):
         '''Actualizando perfil'''
         self.log.debug('Solicitando actualización de perfil')
@@ -225,34 +159,18 @@ class TurpialAPI(threading.Thread):
         self.__register({'uri': '%s/friendships/destroy' % self.apiurl,
                          'args': args, 'follow': False}, callback)
         
+    """
+    
     def mute(self, arg, callback):
         '''Actualizando usuarios silenciados'''
-        if type(arg).__name__ == 'list':
-            self.log.debug('Actualizando usuarios silenciados')
-            self.muted_users = arg
-        else:
-            friends, _ = self.get_muted_list()
-            if arg not in friends:
-                self.log.debug('No se silencia a %s porque no es tu amigo' % arg)
-            elif arg not in self.muted_users: 
-                self.log.debug('Silenciando a %s' % arg)
-                self.muted_users.append(arg)
-        self.__register({'mute': True}, callback)
+        self.log.debug('Solicitando silenciar')
+        self.__register(self.protocol.mute, {'arg': arg}, callback)
         
-    """
     def get_conversation(self, id, callback):
         '''Obteniendo conversacion'''
         self.log.debug(u'Solicitando conversación')
         self.__register(self.protocol.get_conversation, {'id': id}, callback)
     
-        
-    """
-    def end_session(self):
-        '''Finalizando sesion'''
-        self.__register({'uri': '%s/account/end_session' % self.apiurl,
-                         'args': '', 'exit': True}, None)
-        
-    """
     def quit(self):
         '''Definiendo la salida'''
         self.log.debug('Saliendo')
@@ -276,7 +194,7 @@ class TurpialAPI(threading.Thread):
                 rtn = funct()
             #-------------------------
             
-            # No procesar el resultado de la solicitud si se ha envia
+            # No procesar el resultado de la solicitud si está de salida
             if self.exit:
                 self.queue.task_done()
                 break

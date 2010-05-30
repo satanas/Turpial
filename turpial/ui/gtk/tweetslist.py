@@ -325,7 +325,7 @@ class TweetList(gtk.VBox):
         self.mainwin.show_update_box(text, in_reply_id, in_reply_user)
         
     def __retweet(self, widget, id):
-        self.mainwin.request_retweet(id)
+        self.mainwin.request_repeat(id)
         
     def __delete(self, widget, id):
         self.mainwin.request_destroy_status(id)
@@ -370,9 +370,9 @@ class TweetList(gtk.VBox):
         urls = [gobject.markup_escape_text(u) \
                 for u in util.detect_urls(p.text)]
         
+        pango_twt = util.unescape_text(p.text)
         pango_twt = gobject.markup_escape_text(p.text)
-        #pango_twt = '<span size="9000"><b>%s</b> %s</span>' % \
-        #            (p['username'], pango_twt)
+        
         user = '<span size="9000" foreground="#%s"><b>%s</b></span> ' % \
             (self.mainwin.link_color, p.username)
         pango_twt = '<span size="9000">%s</span>' % pango_twt

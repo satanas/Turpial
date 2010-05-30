@@ -5,7 +5,6 @@
 # Author: Wil Alvarez (aka Satanas)
 # Dic 05, 2009
 
-import time
 import Queue
 import logging
 import traceback
@@ -90,18 +89,23 @@ class HTTPServices(threading.Thread):
         self.queue.put((args, callback))
         
     def quit(self):
+        '''Definiendo la salida'''
+        self.log.debug('Saliendo')
         self.exit = True
         
     def run(self):
         while not self.exit:
-            time.sleep(0.3)
             try:
-                req = self.queue.get(False)
+                req = self.queue.get(True, 0.3)
             except Queue.Empty:
                 continue
             
             (args, callback) = req
             
+            if self.exit:
+                self.queue.task_done()
+                break
+                
             if args['cmd'] == 'download_pic':
                 try:
                     filename = GenericService._download_pic(self.imgdir, 
@@ -126,6 +130,8 @@ class HTTPServices(threading.Thread):
                     args['path'])
                 callback(resp)
                 
+            self.queue.task_done()
+            
         self.log.debug('Terminado')
         return
         

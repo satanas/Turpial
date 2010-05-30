@@ -261,9 +261,9 @@ class Main(BaseGui, gtk.Window):
     
     def quit(self, widget):
         self.__save_size()
-        gtk.main_quit()
         self.destroy()
         self.tray = None
+        gtk.main_quit()
         self.request_signout()
         
     def main_loop(self):
@@ -384,13 +384,13 @@ class Main(BaseGui, gtk.Window):
         self.vbox.pack_start(self.statusbar, False, False, 0)
         
         self.profile.set_user_profile(p)
-        self.me = p.username
+        self.me = p.items.username
         title = 'Turpial - %s' % self.me
         self.set_title(title)
         self.tray.set_tooltip(title)
         
         if config.read('General', 'profile-color') == 'on':
-            self.link_color = p.profile_link_color
+            self.link_color = p.items.profile_link_color
         
         self.add(self.vbox)
         self.show_all()
@@ -398,7 +398,7 @@ class Main(BaseGui, gtk.Window):
             self.move(self.win_pos[0], self.win_pos[1])
         gtk.gdk.threads_leave()
         
-        self.notify.login(p)
+        self.notify.login(p.items)
         
         gobject.timeout_add(6 * 60 * 1000, self.download_rates)
         
@@ -466,12 +466,12 @@ class Main(BaseGui, gtk.Window):
             tweet = None
             i = 0
             while 1:
-                if tweets[i].username == self.me:
-                    if not util.has_tweet(last, tweets[i]):
-                        tweet = tweets[i]
+                if tweets.items[i].username == self.me:
+                    if not util.has_tweet(last, tweets.items[i]):
+                        tweet = tweets.items[i]
                         break
                 else:
-                    tweet = tweets[i]
+                    tweet = tweets.items[i]
                     break
                 i += 1
             
@@ -490,10 +490,10 @@ class Main(BaseGui, gtk.Window):
         count = self.home.replies.update_tweets(tweets)
         
         if count > 0 and self.updating['replies']:
-            p = self.parse_tweet(tweets[0])
-            icon = self.current_avatar_path(p['avatar'])
-            text = util.escape_text(p['text'])
-            text = "<b>@%s</b> %s" % (p['username'], text)
+            p = self.parse_tweet(tweets.items[0])
+            icon = self.current_avatar_path(p.avatar)
+            text = util.escape_text(p.text)
+            text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_replies(count, text, icon)
         
         gtk.gdk.threads_leave()
@@ -505,10 +505,10 @@ class Main(BaseGui, gtk.Window):
         count = self.home.direct.update_tweets(recv)
         
         if count > 0 and self.updating['directs']:
-            p = self.parse_tweet(recv[0])
-            icon = self.current_avatar_path(p['avatar'])
-            text = util.escape_text(p['text'])
-            text = "<b>@%s</b> %s" % (p['username'], text)
+            p = self.parse_tweet(recv.items[0])
+            icon = self.current_avatar_path(p.avatar)
+            text = util.escape_text(p.text)
+            text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_directs(count, text, icon)
             
         gtk.gdk.threads_leave()

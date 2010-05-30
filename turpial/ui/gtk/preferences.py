@@ -367,7 +367,8 @@ bothering you and shut them up temporarily'))
         
         self.muted = []
         self.mainwin = parent
-        self.friends, self.muted = self.mainwin.request_muted_list()
+        self.muted = self.mainwin.request_muted_list()
+        self.friends = self.mainwin.request_friends_list()
         
         self.model = gtk.ListStore(str, bool)
         

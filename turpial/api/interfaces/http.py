@@ -42,7 +42,7 @@ class TurpialHTTP:
         headers = {}
         response = ''
         argData = None
-        encoded_args = None
+        encoded_args = ''
         method = "GET"
             
         for action in self.post_actions:
@@ -71,7 +71,7 @@ class TurpialHTTP:
             headers["Authorization"] = "Basic " + auth_info
         
         strReq = "%s%s" % (uri, argStr)
-        print "%s-%s-%s-%s-%s-%s-" % (method, encoded_args, argStr, argData, headers, strReq)
+        #print "%s-%s-%s-%s-%s-%s-" % (method, encoded_args, argStr, argData, headers, strReq)
         req = urllib2.Request(strReq, argData, headers)
         return req
     

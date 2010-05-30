@@ -6,7 +6,6 @@
 # Dic 22, 2009
 
 import sys
-import time
 import Queue
 import logging
 import threading
@@ -120,8 +119,8 @@ class TurpialAPI(threading.Thread):
     def auth(self, username, password, callback):
         '''Inicio de autenticacion basica'''
         self.log.debug('Solicitando autenticacion basica')
-        self.__register(self.protocol.auth, {'username': username, 
-            'password': password}, callback)
+        args = {'username': username, 'password': password}
+        self.__register(self.protocol.auth, args, callback)
             
     def update_timeline(self, callback, count=20):
         '''Actualizando linea de tiempo'''
@@ -144,28 +143,27 @@ class TurpialAPI(threading.Thread):
         self.__register(self.protocol.get_favorites, None, callback)
         
     def update_rate_limits(self, callback):
+        '''Actualizando limites de API'''
         self.__register(self.protocol.get_rate_limits, None, callback)
     
-    """
-        
     def update_status(self, text, in_reply_id, callback):
         '''Actualizando estado'''
-        if in_reply_id:
-            args = {'status': text, 'in_reply_to_status_id': in_reply_id}
-        else:
-            args = {'status': text}
-        self.log.debug(u'Nuevo tweet: %s' % text)
-        self.__register({'uri': '%s/statuses/update' % self.apiurl,
-                         'args': args, 'tweet':True, 'add': True}, callback)
+        self.log.debug(u'Solicitando nuevo estado: %s' % text)
+        args = {'text': text, 'in_reply_id': in_reply_id}
+        self.__register(self.protocol.update_status, args, callback)
+    
+    def destroy_status(self, id, callback):
+        '''Destruyendo estado'''
+        self.log.debug('Solicitando destrucción de estado: %s' % id)
+        self.__register(self.protocol.destroy_status, {'id': id}, callback)
         
-    def destroy_status(self, tweet_id, callback):
-        self.to_del.append(tweet_id)
-        self.log.debug('Destruyendo tweet: %s' % tweet_id)
-        self.__register({'uri': '%s/statuses/destroy' % self.apiurl,
-                         'id': tweet_id, 'args': '', 'tweet':True,
-                         'del': True}, callback)
+    def destroy_direct(self, id, callback):
+        '''Destruyendo directo'''
+        self.log.debug('Solicitando destrucción de directo: %s' % id)
+        self.__register(self.protocol.destroy_direct, {'id': id}, callback)
         
-    def retweet(self, tweet_id, callback):
+    """
+    def repeat(self, tweet_id, callback):
         '''Haciendo retweet'''
         self.log.debug('Retweet: %s' % tweet_id)
         self.__register({'uri': '%s/statuses/retweet' % self.apiurl,
@@ -175,13 +173,11 @@ class TurpialAPI(threading.Thread):
     def set_favorite(self, id, callback):
         '''Estableciendo status como favorito'''
         self.log.debug('Solicitando status como favorito: %s' % id)
-        
         self.__register(self.protocol.mark_favorite, {'id': id}, callback)
         
     def unset_favorite(self, id, callback):
         '''Desmarcando status como favorito'''
         self.log.debug('Solicitando status como no favorito: %s' % id)
-        
         self.__register(self.protocol.unmark_favorite, {'id': id}, callback)
         
     """
@@ -191,15 +187,13 @@ class TurpialAPI(threading.Thread):
         self.log.debug('Buscando tweets: %s' % query)
         self.__register({'uri': 'http://search.twitter.com/search',
                          'args': args}, callback)
-        
+    """
     def update_profile(self, name, url, bio, location, callback):
         '''Actualizando perfil'''
-        args = {'name': name, 'url': url, 'location': location,
-                'description': bio}
-        self.log.debug('Actualizando perfil')
-        self.__register({'uri': '%s/account/update_profile' % self.apiurl,
-                         'args': args}, callback)
-    """
+        self.log.debug('Solicitando actualización de perfil')
+        args = {'name': name, 'url': url, 'location': location, 'bio': bio}
+        self.__register(self.protocol.update_profile, args, callback)
+    
     def get_friends(self, callback):
         '''Descargando lista de amigos'''
         self.log.debug('Solicitando Lista de Amigos')
@@ -207,18 +201,16 @@ class TurpialAPI(threading.Thread):
         
     def get_muted_list(self):
         return self.protocol.get_muted_friends_list()
-        '''
-        friendsloaded:
-            friends = []
-            for f in self.friends:
-                friends.append(f['screen_name'])
-            
-            return friends, self.muted_users
-        else:
-            return None, None
-        '''
+        
+    def get_single_friends_list(self):
+        '''Returns a single friends list from the original twitter hash'''
+        list = []
+        for friend in self.protocol.friends:
+            list.append(friend.username)
+        return list
+    
     """
-            
+        
     def follow(self, user, callback):
         '''Siguiendo a un amigo'''
         args = {'screen_name': user}
@@ -247,33 +239,14 @@ class TurpialAPI(threading.Thread):
                 self.muted_users.append(arg)
         self.__register({'mute': True}, callback)
         
-    def in_reply_to(self, tweet_id, callback):
-        '''Buscando tweet en respuesta a'''
-        self.log.debug('Buscando respuesta: %s' % tweet_id)
-        self.__register({'uri': '%s/statuses/show' % self.apiurl,
-                         'id': tweet_id}, callback)
     """
     def get_conversation(self, id, callback):
         '''Obteniendo conversacion'''
         self.log.debug(u'Solicitando conversación')
         self.__register(self.protocol.get_conversation, {'id': id}, callback)
+    
         
     """
-    def destroy_direct(self, tweet_id, callback):
-        '''Destruyendo tweet directo'''
-        self.to_del.append(tweet_id)
-        self.log.debug('Destruyendo directo: %s' % tweet_id)
-        self.__register({'uri': '%s/direct_messages/destroy' % self.apiurl,
-                         'id': tweet_id, 'args': '', 'tweet':True,
-                         'del': True}, callback)
-        
-    def get_single_friends_list(self):
-        '''Returns a single friends list from the original twitter hash'''
-        list = []
-        for friend in self.friends:
-            list.append(friend['screen_name'])
-        return list
-        
     def end_session(self):
         '''Finalizando sesion'''
         self.__register({'uri': '%s/account/end_session' % self.apiurl,
@@ -282,14 +255,14 @@ class TurpialAPI(threading.Thread):
     """
     def quit(self):
         '''Definiendo la salida'''
+        self.log.debug('Saliendo')
         self.exit = True
     
     def run(self):
         '''Bloque principal de ejecucion'''
         while not self.exit:
-            time.sleep(0.3)
             try:
-                req = self.queue.get(False)
+                req = self.queue.get(True, 0.3)
             except Queue.Empty:
                 continue
             
@@ -303,6 +276,11 @@ class TurpialAPI(threading.Thread):
                 rtn = funct()
             #-------------------------
             
+            # No procesar el resultado de la solicitud si se ha envia
+            if self.exit:
+                self.queue.task_done()
+                break
+                
             if isinstance(rtn, Response):
                 callback(rtn)
             elif len(rtn) == 2:
@@ -311,6 +289,8 @@ class TurpialAPI(threading.Thread):
                 callback(rtn[0],rtn[1],rtn[2])
             elif len(rtn) == 4:
                 callback(rtn[0],rtn[1],rtn[2],rtn[3])
+            
+            self.queue.task_done()
             
         self.log.debug('Terminado')
         return

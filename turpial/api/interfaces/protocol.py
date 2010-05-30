@@ -37,6 +37,7 @@ class Protocol:
     # Status related functions
     # ------------------------------------------------------------
     def _find_status_by_id(self, from_arr, id):
+        id = str(id)
         for sta in from_arr:
             if sta.id == id:
                 return sta
@@ -48,7 +49,7 @@ class Protocol:
             return
         
         if self._find_status_by_id(to_arr, status.id):
-            self.log.debug('--El status %s ya existe. No se agrega' % sta.id)
+            self.log.debug('--El status %s ya existe. No se agrega' % status.id)
             return
         
         to_arr.insert(0, status)
@@ -56,22 +57,18 @@ class Protocol:
         
     def _del_status(self, from_arr, id):
         ''' Borra un status de cualquiera de los arreglos '''
-        if status is None: 
-            return
-        
-        item = self._find_status_by_id(from_arr, status.id)
+        id = str(id)
+        item = self._find_status_by_id(from_arr, id)
         if item:
-            from_arr.insert(item)
+            from_arr.remove(item)
             self.log.debug('--Removido status %s' % id)
         else:
             self.log.debug('--El status %s no existe. No se remueve' % id)
             
     def _fav_status(self, from_arr, id, fav):
         ''' Establece como favorito un status de cualquiera de los arreglos '''
-        if status is None: 
-            return
-        
-        item = self._find_status_by_id(from_arr, status.id)
+        id = str(id)
+        item = self._find_status_by_id(from_arr, id)
         if item:
             item.favorite = fav
             self.log.debug('--Cambiado status %s' % id)
@@ -148,6 +145,8 @@ class Protocol:
     def _destroy_status(self, id):
         self._del_status(self.timeline, id)
         self._del_status(self.favorites, id)
+        
+    def _destroy_direct(self, id):
         self._del_status(self.directs, id)
         
     def get_muted_timeline(self):
@@ -200,9 +199,15 @@ class Protocol:
         return user in self.muted_users
         
     def is_favorite(self, id):
+        for sta in self.timeline:
+            if sta.id == id:
+                return sta.is_favorite
+        for sta in self.replies:
+            if sta.id == id:
+                return sta.is_favorite
         for sta in self.favorites:
             if sta.id == id:
-                return sta.favorite
+                return sta.is_favorite
         return False
     
     # ------------------------------------------------------------

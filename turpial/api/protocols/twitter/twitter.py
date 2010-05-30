@@ -6,6 +6,7 @@
 # May 25, 2010
 
 from turpial.api.interfaces.protocol import Protocol
+from turpial.api.interfaces.http import TurpialException
 from turpial.api.protocols.twitter.twitterhttp import TwitterHTTP
 from turpial.api.interfaces.post import Status, Response, Profile, RateLimit
 
@@ -55,7 +56,7 @@ class Twitter(Protocol):
             source = tweet['source']
         
         status = Status()
-        status.id = tweet['id']
+        status.id = str(tweet['id'])
         status.username = username
         status.avatar = avatar
         status.source = source
@@ -116,7 +117,7 @@ class Twitter(Protocol):
             self.profile = self.__create_profile(rtn)
             self.profile.password = password
             return Response(self.profile, 'profile')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
     def get_timeline(self, args):
@@ -129,7 +130,7 @@ class Twitter(Protocol):
                 self.apiurl, {'count': count})
             self.timeline = self.response_to_statuses(rtn)
             return Response(self.get_muted_timeline(), 'status')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
     def get_replies(self, args):
@@ -142,7 +143,7 @@ class Twitter(Protocol):
                 self.apiurl, {'count': count})
             self.replies = self.response_to_statuses(rtn)
             return Response(self.replies, 'status')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
     def get_directs(self, args):
@@ -155,7 +156,7 @@ class Twitter(Protocol):
                 {'count': count})
             self.directs = self.response_to_statuses(rtn)
             return Response(self.directs, 'status')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
     def get_favorites(self):
@@ -166,7 +167,7 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/favorites' % self.apiurl)
             self.favorites = self.response_to_statuses(rtn)
             return Response(self.favorites, 'status')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
     def get_rate_limits(self):
@@ -175,7 +176,7 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/account/rate_limit_status' % 
                 self.apiurl)
             return Response(self.__create_rate(rtn), 'rate')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
     def get_conversation(self, args):
@@ -189,7 +190,7 @@ class Twitter(Protocol):
             try:
                 rtn = self.http.request('%s/statuses/show' % self.apiurl, 
                     {'id': id})
-            except Exception, exc:
+            except TurpialException, exc:
                 return Response(None, 'error', exc.msg)
                 
             self.log.debug('--Descargado Tweet: %s' % id)
@@ -214,7 +215,7 @@ class Twitter(Protocol):
             try:
                 rtn = self.http.request('%s/statuses/friends' % self.apiurl, 
                     {'cursor': cursor})
-            except Exception, exc:
+            except TurpialException, exc:
                 tries += 1
                 if tries < 6:
                     continue
@@ -236,20 +237,28 @@ class Twitter(Protocol):
         
         return self.friends
         
-    def update_profile(self, name, url, bio, location):
+    def update_profile(self, args):
         '''Actualizando perfil'''
         self.log.debug('Actualizando perfil')
+        
+        name = args['name']
+        url = args['url']
+        bio = args['bio']
+        location = args['location']
         
         try:
             rtn = self.http.request('%s/account/update_profile' % self.apiurl, 
                 {'name': name, 'url': url, 'location': location, 
                 'description': bio})
-            return Response(rtn, 'profile')
-        except Exception, exc:
+            return Response(self.__create_profile(rtn), 'profile')
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
-    def update_status(self, in_reply_to_id):
+    def update_status(self, args):
         '''Actualizando estado'''
+        in_reply_id = args['in_reply_id']
+        text = args['text']
+        
         if in_reply_id:
             args = {'status': text, 'in_reply_to_status_id': in_reply_id}
         else:
@@ -258,13 +267,15 @@ class Twitter(Protocol):
         
         try:
             rtn = self.http.request('%s/statuses/update' % self.apiurl, args)
-            self._add_status(self.timeline, rtn)
+            status = self.__create_status(rtn)
+            self._add_status(self.timeline, status)
             return Response(self.timeline, 'status')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
-    def destroy_status(self, id):
+    def destroy_status(self, args):
         '''Destruyendo tweet'''
+        id = args['id']
         self.to_del.append(id)
         self.log.debug('Destruyendo tweet: %s' % id)
         
@@ -272,10 +283,11 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/statuses/destroy' % self.apiurl,
                 {'id': id})
             self._destroy_status(rtn['id'])
-            return Response(self.timeline, 'status'), 
-            Response(self.favorites, 'status')
-        except Exception, exc:
-            return Response(None, 'error', exc.msg), Response(None, 'error', exc.msg)
+            return (Response(self.timeline, 'status'), 
+                Response(self.favorites, 'status'))
+        except TurpialException, exc:
+            return (Response(None, 'error', exc.msg), 
+                Response(None, 'error', exc.msg))
         
     def repeat(self, id):
         '''Haciendo retweet'''
@@ -286,7 +298,7 @@ class Twitter(Protocol):
                 {'id': id})
             # FIXME: Insertarlo en el timeline
             return Response(self.timeline, 'status')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
     def mark_favorite(self, args):
@@ -298,11 +310,13 @@ class Twitter(Protocol):
         try:
             rtn = self.http.request('%s/favorites/create' % self.apiurl, 
                 {'id': id})
-            self._set_status_favorite(rtn['id'])
+            status = self.__create_status(rtn)
+            self._set_status_favorite(status)
             return (Response(self.timeline, 'status'), 
                 Response(self.replies, 'status'),
                 Response(self.favorites, 'status'))
-        except Exception, exc:
+        except TurpialException, exc:
+            self.log.debug(exc)
             return (Response(None, 'error', exc.msg), 
                 Response(None, 'error', exc.msg), 
                 Response(None, 'error', exc.msg))
@@ -310,21 +324,22 @@ class Twitter(Protocol):
     def unmark_favorite(self, args):
         '''Desmarcando tweet como favorito'''
         id = args['id']
-        self.to_fav.append(id)
+        self.to_unfav.append(id)
         self.log.debug('Desmarcando tweet como favorito: %s' % id)
         
         try:
             rtn = self.http.request('%s/favorites/destroy' % self.apiurl, 
                 {'id': id})
-            self._unset_status_favorite(rtn['id'])
+            status = self.__create_status(rtn)
+            self._unset_status_favorite(status)
             return (Response(self.timeline, 'status'), 
                 Response(self.replies, 'status'),
                 Response(self.favorites, 'status'))
-        except Exception, exc:
+        except TurpialException, exc:
             return (Response(None, 'error', exc.msg), 
                 Response(None, 'error', exc.msg), 
                 Response(None, 'error', exc.msg))
-        
+                
     def follow(self, user):
         '''Siguiendo a un amigo'''
         self.log.debug('Siguiendo a: %s' % user)
@@ -336,7 +351,7 @@ class Twitter(Protocol):
             self._add_friend(user)
             return Response([self._get_single_friends_list(), self.profile, 
                 user, True], 'mixed')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
     def unfollow(self, user):
@@ -350,23 +365,24 @@ class Twitter(Protocol):
             self._del_friend(user)
             return Response([self._get_single_friends_list(), self.profile, 
                 user, False], 'mixed')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
     def send_direct(self, user, text):
         pass
         
-    def destroy_direct(self, id):
+    def destroy_direct(self, args):
         '''Destruyendo tweet directo'''
+        id = args['id']
         self.to_del.append(id)
         self.log.debug('Destruyendo directo: %s' % id)
         
         try:
             rtn = self.http.request('%s/direct_messages/destroy' % self.apiurl,
                 {'id': id})
-            self._destroy_status(id)
+            self._destroy_direct(rtn['id'])
             return Response(self.directs, 'status')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
     def search(self, query, count=100):
@@ -377,6 +393,6 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/search' % self.apiurl2, 
                 {'q': query, 'rpp': count})
             return Response(rtn, 'status')
-        except Exception, exc:
+        except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         

@@ -92,10 +92,13 @@ class BaseGui:
         xtweet.timestamp = util.get_timestamp(xtweet)
         return xtweet
         
-    def after_destroy(self, timeline, replies, favs, directs):
-        '''Update columns after destroy a tweet'''
+    def after_destroy_status(self, timeline, favs):
+        '''Update columns after destroy a status'''
         self.update_timeline(timeline)
-        self.update_favorites(timeline, replies, favs)
+        self.update_favorites(favs)
+        
+    def after_destroy_direct(self, directs):
+        '''Update columns after destroy a direct'''
         self.update_directs(directs)
         
     def read_config(self):
@@ -357,5 +360,8 @@ class BaseGui:
         raise NotImplementedError
         
     def update_config(self, config):
+        raise NotImplementedError
+    
+    def quit(self, arg):
         raise NotImplementedError
         

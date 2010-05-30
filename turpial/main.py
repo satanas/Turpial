@@ -131,7 +131,7 @@ class Turpial:
                                      self.__signin_done)
             else:
                 self.api.is_oauth = False
-                self.__signin_done(None, None, None)
+                self.__signin_done(None, None, None, val)
     
     def __done_follow(self, friends, profile, user, follow):
         self.ui.update_user_profile(profile)
@@ -139,16 +139,16 @@ class Turpial:
         self.ui.update_follow(user, follow)
         #self.ui.update_timeline(friends)
         
-    def __direct_done(self, tweet):
-        self.ui.tweet_done(tweet)
+    def __direct_done(self, status):
+        self.ui.tweet_done(status)
         
-    def __tweet_done(self, tweet):
-        if tweet:
-            self.profile['statuses_count'] += 1
+    def __tweet_done(self, status):
+        if status:
+            self.profile.statuses_count += 1
             self.ui.update_user_profile(self.profile)
-        self.ui.tweet_done(tweet)
+        self.ui.tweet_done(status)
         
-    def __signin_done(self, key, secret, verifier):
+    def __signin_done(self, key, secret, verifier, resp_profile=None):
         '''Inicio de sesion finalizado'''
         if key is not None:
             self.config.write('Auth', 'oauth-key', key)
@@ -159,7 +159,11 @@ class Turpial:
         
         self.api.muted_users = self.config.load_muted_list()
         
-        self.ui.show_main(self.config, self.global_cfg, self.profile)
+        if resp_profile:
+            self.ui.show_main(self.config, self.global_cfg, resp_profile)
+        else:
+            self.ui.show_main(self.config, self.global_cfg, self.profile)
+            
         self._update_timeline()
         if self.testmode: 
             return
@@ -172,20 +176,20 @@ class Turpial:
     def _update_timeline(self):
         '''Actualizar linea de tiempo'''
         self.ui.start_updating_timeline()
-        tweets = int(self.config.read('General', 'num-tweets'))
-        self.api.update_timeline(self.ui.update_timeline, tweets)
+        count = int(self.config.read('General', 'num-tweets'))
+        self.api.update_timeline(self.ui.update_timeline, count)
         
     def _update_replies(self):
         '''Actualizar numero de respuestas'''
         self.ui.start_updating_replies()
-        tweets = int(self.config.read('General', 'num-tweets'))
-        self.api.update_replies(self.ui.update_replies, tweets)
+        count = int(self.config.read('General', 'num-tweets'))
+        self.api.update_replies(self.ui.update_replies, count)
         
     def _update_directs(self):
         '''Actualizar mensajes directos'''
         self.ui.start_updating_directs()
-        tweets = int(self.config.read('General', 'num-tweets'))
-        self.api.update_directs(self.ui.update_directs, tweets)
+        count = int(self.config.read('General', 'num-tweets'))
+        self.api.update_directs(self.ui.update_directs, count)
         
     def _update_favorites(self):
         '''Actualizar favoritos'''
@@ -213,12 +217,9 @@ class Turpial:
         '''Finalizar sesion'''
         self.save_muted_list()
         self.log.debug('Desconectando')
-        exit(0)
-        #self.httpserv.quit()
-        #if self.profile: 
-        #    self.api.end_session()
-        #else:
-        #    self.api.quit()
+        self.api.quit()
+        self.api.join()
+        sys.exit(0)
     
     def update_status(self, text, reply_id=None):
         if text.startswith('D '):
@@ -226,17 +227,17 @@ class Turpial:
         else:
             self.api.update_status(text, reply_id, self.__tweet_done)
         
-    def destroy_status(self, tweet_id):
-        self.api.destroy_status(tweet_id, self.ui.after_destroy)
+    def destroy_status(self, id):
+        self.api.destroy_status(id, self.ui.after_destroy_status)
         
-    def set_favorite(self, tweet_id):
-        self.api.set_favorite(tweet_id, self.ui.tweet_changed)
+    def set_favorite(self, id):
+        self.api.set_favorite(id, self.ui.tweet_changed)
         
-    def unset_favorite(self, tweet_id):
-        self.api.unset_favorite(tweet_id, self.ui.tweet_changed)
+    def unset_favorite(self, id):
+        self.api.unset_favorite(id, self.ui.tweet_changed)
     
-    def retweet(self, tweet_id):
-        self.api.retweet(tweet_id, self.ui.tweet_changed)
+    def retweet(self, id):
+        self.api.retweet(id, self.ui.tweet_changed)
     
     def follow(self, user):
         self.api.follow(user, self.__done_follow)
@@ -248,11 +249,11 @@ class Turpial:
         self.api.update_profile(new_name, new_url, new_bio, new_location,
             self.ui.update_user_profile)
     
-    def in_reply_to(self, twt_id):
-        self.api.in_reply_to(twt_id, self.ui.update_in_reply_to)
+    def in_reply_to(self, id):
+        self.api.in_reply_to(id, self.ui.update_in_reply_to)
         
-    def get_conversation(self, twt_id):
-        self.api.get_conversation(twt_id, self.ui.update_conversation)
+    def get_conversation(self, id):
+        self.api.get_conversation(id, self.ui.update_conversation)
         
     def mute(self, user):
         self.ui.start_updating_timeline()
@@ -309,8 +310,8 @@ class Turpial:
         self.ui.start_updating_timeline()
         timeline = self.api.mute(muted_users, self.ui.update_timeline)
         
-    def destroy_direct(self, tweet_id):
-        self.api.destroy_direct(tweet_id, self.ui.after_destroy)
+    def destroy_direct(self, id):
+        self.api.destroy_direct(id, self.ui.after_destroy_direct)
         
     def get_friends(self):
         return self.api.get_single_friends_list()

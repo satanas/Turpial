@@ -325,8 +325,8 @@ class Main(BaseGui, gtk.Window):
         self.add(self.vbox)
         self.show_all()
         
-        self.btn_oauth.connect('clicked', self.oauth)
-        self.password.connect('activate', self.oauth)
+        self.btn_oauth.connect('clicked', self.signin)
+        self.password.connect('activate', self.signin)
         self.remember.connect("toggled", self.__toogle_remember)
         self.btn_settings.connect('clicked', self.show_preferences, 'global')
         
@@ -337,15 +337,7 @@ class Main(BaseGui, gtk.Window):
             self.password.set_text(base64.b64decode(password))
             self.remember.set_active(True)
         
-    def signin(self, widget, username, password):
-        self.message.deactivate()
-        self.waiting.start()
-        self.btn_oauth.set_sensitive(False)
-        self.username.set_sensitive(False)
-        self.password.set_sensitive(False)
-        self.request_signin(username.get_text(), password.get_text())
-        
-    def oauth(self, widget):
+    def signin(self, widget):
         self.message.deactivate()
         self.waiting.start()
         self.btn_oauth.set_sensitive(False)
@@ -353,7 +345,8 @@ class Main(BaseGui, gtk.Window):
         self.password.set_sensitive(False)
         self.remember.set_sensitive(False)
         self.btn_settings.set_sensitive(False)
-        self.request_oauth(self.username.get_text(), self.password.get_text(), self.remember.get_active())
+        self.request_signin(self.username.get_text(), self.password.get_text(), 
+            self.remember.get_active())
         
     def cancel_login(self, error):
         self.message.set_error(error)

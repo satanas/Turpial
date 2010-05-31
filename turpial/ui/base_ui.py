@@ -117,17 +117,9 @@ class BaseGui:
         '''Saves the global config'''
         self.__controller.save_global_config(new_config)
         
-    def request_signin(self, username, password):
+    def request_signin(self, username, password, remember):
         '''Request simple signin'''
-        self.__controller.signin(username, password)
-        
-    def request_oauth(self, username, password, remember):
-        '''Request signin using OAuth'''
-        self.__controller.signin_oauth(username, password, remember)
-        
-    def request_auth_token(self, pin):
-        '''Request OAuth token authorization'''
-        self.__controller.auth_token(pin)
+        self.__controller.signin(username, password, remember)
         
     def request_signout(self):
         '''Request signout'''

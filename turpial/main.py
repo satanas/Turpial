@@ -125,14 +125,7 @@ class Turpial:
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.profile.username, self.profile.password)
             
-            auth = self.config.read_section('Auth')
             self.__signin_done(None, None, None, val)
-            #if self.api.has_oauth_support():
-            #    self.api.start_oauth(auth, self.ui.show_oauth_pin_request,
-            #                         self.__signin_done)
-            #else:
-            #    self.api.is_oauth = False
-            #    self.__signin_done(None, None, None, val)
     
     def __done_follow(self, response):
         if response.type == 'error':
@@ -205,16 +198,9 @@ class Turpial:
         '''Actualizar amigos'''
         self.api.get_friends()
         
-    def signin(self, username, password):
-        self.config = ConfigHandler(username)
-        self.api.auth(username, password, self.__validate_signin)
-        
-    def signin_oauth(self, username, password, remember):
+    def signin(self, username, password, remember):
         self.remember = remember
         self.api.auth(username, password, self.__validate_credentials)
-        
-    def auth_token(self, pin):
-        self.api.authorize_oauth_token(pin, self.__signin_done)
         
     def signout(self):
         '''Finalizar sesion'''

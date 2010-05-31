@@ -334,13 +334,7 @@ class BaseGui:
     def update_user_profile(self, profile):
         raise NotImplementedError
         
-    def update_trends(self, current, day, week):
-        raise NotImplementedError
-        
     def update_search(self, topics):
-        raise NotImplementedError
-    
-    def update_friends(self, friends):
         raise NotImplementedError
         
     def update_in_reply_to(self, tweets):

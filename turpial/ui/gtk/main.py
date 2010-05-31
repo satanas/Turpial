@@ -543,9 +543,6 @@ class Main(BaseGui, gtk.Window):
         self.profile.topics.update_tweets(val)
         gtk.gdk.threads_leave()
         
-    def update_friends(self, friends):
-        pass
-        
     def update_user_avatar(self, user, pic):
         self.home.timeline.update_user_pic(user, pic)
         self.home.replies.update_user_pic(user, pic)

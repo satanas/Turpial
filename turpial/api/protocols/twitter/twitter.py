@@ -18,6 +18,7 @@ class Twitter(Protocol):
         
         self.http = TwitterHTTP()
         self.retweet_by_me = []
+        self.oauth_support = False
         
     def __get_real_tweet(self, tweet):
         '''Get the tweet retweeted'''
@@ -124,38 +125,12 @@ class Twitter(Protocol):
             print exc
         
         return users
-    '''    
-    def __get_retweeted_by_me(self, count=None):
-        retweets = []
         
-        try:
-            rts = self.http.request('%s/statuses/retweeted_by_me' % self.apiurl)
-            self.retweet_by_me = self.response_to_array(rts, 'id', True)
-        except Exception, exc:
-            print exc
-        return retweets
-    
-    def response_to_array(self, response, field, to_str=False):
-        array = []
-        for resp in response:
-            if to_str:
-                array.append(str(resp[field]))
-            else:
-                array.append(resp[field])
-        return array
-    '''
     def response_to_statuses(self, response, mute=False):
         statuses = []
         for resp in response:
             status = self.__create_status(resp)
-            #print type(status.id), status.id, status.id in self.retweet_by_me
-            #print self.retweet_by_me
-            #if status.id in self.retweet_by_me:
-            #    if status.retweet_by:
-            #        status.retweet_by = 'you and %s' % status.retweet_by
-            #    else:
-            #        status.retweet_by = 'you'
-            if status.retweet_by:
+            if status.retweet_by and self.oauth_support:
                 users = self.__get_retweet_users(status.id)
                 status.retweet_by = users
             statuses.append(status)
@@ -191,7 +166,6 @@ class Twitter(Protocol):
         try:
             rtn = self.http.request('%s/statuses/home_timeline' % 
                 self.apiurl, {'count': count})
-            #self.__get_retweeted_by_me(count)
             self.timeline = self.response_to_statuses(rtn)
             return Response(self.get_muted_timeline(), 'status')
         except TurpialException, exc:
@@ -299,8 +273,6 @@ class Twitter(Protocol):
         self.log.debug('--Descargados %i amigos' % count)
         self.friendsloaded = True
         
-        return self.friends
-        
     def update_profile(self, args):
         '''Actualizando perfil'''
         self.log.debug('Actualizando perfil')
@@ -365,6 +337,7 @@ class Twitter(Protocol):
             users = self.__get_retweet_users(id)
             status = self.__create_status(rtn)
             status.retweet_by = users
+            # FIXME: Modificar también los replies y favoritos
             self._add_status(self.timeline, status)
             timeline = self.get_muted_timeline()
             return Response(timeline, 'status')
@@ -374,7 +347,6 @@ class Twitter(Protocol):
     def mark_favorite(self, args):
         '''Marcando tweet como favorito'''
         id = args['id']
-        self.to_fav.append(id)
         self.log.debug('Marcando tweet como favorito: %s' % id)
         
         try:
@@ -395,7 +367,6 @@ class Twitter(Protocol):
     def unmark_favorite(self, args):
         '''Desmarcando tweet como favorito'''
         id = args['id']
-        self.to_unfav.append(id)
         self.log.debug('Desmarcando tweet como favorito: %s' % id)
         
         try:
@@ -412,8 +383,9 @@ class Twitter(Protocol):
                 Response(None, 'error', exc.msg), 
                 Response(None, 'error', exc.msg))
                 
-    def follow(self, user):
+    def follow(self, args):
         '''Siguiendo a un amigo'''
+        user = args['user']
         self.log.debug('Siguiendo a: %s' % user)
         
         try:
@@ -421,13 +393,13 @@ class Twitter(Protocol):
                 {'screen_name': user})
             user = self.__create_profile(rtn)
             self._add_friend(user)
-            return Response([self._get_single_friends_list(), self.profile, 
-                user, True], 'mixed')
+            return Response([self.profile, user, True], 'mixed')
         except TurpialException, exc:
-            return Response(None, 'error', exc.msg)
+            return Response(True, 'error', exc.msg)
         
-    def unfollow(self, user):
+    def unfollow(self, args):
         '''Dejando de seguir a un amigo'''
+        user = args['user']
         self.log.debug('Dejando de seguir a: %s' % user)
         
         try:
@@ -435,10 +407,9 @@ class Twitter(Protocol):
                 {'screen_name': user})
             user = self.__create_profile(rtn)
             self._del_friend(user)
-            return Response([self._get_single_friends_list(), self.profile, 
-                user, False], 'mixed')
+            return Response([self.profile, user, False], 'mixed')
         except TurpialException, exc:
-            return Response(None, 'error', exc.msg)
+            return Response(False, 'error', exc.msg)
         
     def send_direct(self, user, text):
         pass
@@ -446,7 +417,6 @@ class Twitter(Protocol):
     def destroy_direct(self, args):
         '''Destruyendo tweet directo'''
         id = args['id']
-        self.to_del.append(id)
         self.log.debug('Destruyendo directo: %s' % id)
         
         try:

@@ -126,18 +126,21 @@ class Turpial:
             self.httpserv.set_credentials(self.profile.username, self.profile.password)
             
             auth = self.config.read_section('Auth')
-            if self.api.has_oauth_support():
-                self.api.start_oauth(auth, self.ui.show_oauth_pin_request,
-                                     self.__signin_done)
-            else:
-                self.api.is_oauth = False
-                self.__signin_done(None, None, None, val)
+            self.__signin_done(None, None, None, val)
+            #if self.api.has_oauth_support():
+            #    self.api.start_oauth(auth, self.ui.show_oauth_pin_request,
+            #                         self.__signin_done)
+            #else:
+            #    self.api.is_oauth = False
+            #    self.__signin_done(None, None, None, val)
     
-    def __done_follow(self, friends, profile, user, follow):
-        self.ui.update_user_profile(profile)
-        self.ui.update_friends(friends)
-        self.ui.update_follow(user, follow)
-        #self.ui.update_timeline(friends)
+    def __done_follow(self, response):
+        if response.type == 'error':
+            self.ui.update_follow(response, response.items)
+        elif response.type == 'mixed':
+            self.profile, user, follow = response.items
+            self.ui.update_user_profile(self.profile)
+            self.ui.update_follow(user, follow)
         
     def __direct_done(self, status):
         self.ui.tweet_done(status)
@@ -200,7 +203,7 @@ class Turpial:
         
     def _update_friends(self):
         '''Actualizar amigos'''
-        self.api.get_friends(self.ui.update_friends)
+        self.api.get_friends()
         
     def signin(self, username, password):
         self.config = ConfigHandler(username)

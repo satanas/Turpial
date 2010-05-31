@@ -20,10 +20,11 @@ class TurpialAPI(threading.Thread):
         threading.Thread.__init__(self)
         
         self.setDaemon(False)
-        self.log = logging.getLogger('API')
         self.queue = Queue.Queue()
         self.exit = False
         self.protocol = twitter.Twitter()
+        
+        self.log = logging.getLogger('API')
         self.log.debug('Iniciado')
         
     def __register(self, funct, args, callback):
@@ -31,9 +32,6 @@ class TurpialAPI(threading.Thread):
     
     def change_api_url(self, url):
         pass
-        
-    def has_oauth_support(self):
-        return False
     
     def is_marked_to_fav(self, id):
         return id in self.protocol.to_fav
@@ -92,11 +90,13 @@ class TurpialAPI(threading.Thread):
     def destroy_status(self, id, callback):
         '''Destruyendo estado'''
         self.log.debug('Solicitando destrucción de estado: %s' % id)
+        self.protocol.to_del.append(id)
         self.__register(self.protocol.destroy_status, {'id': id}, callback)
         
     def destroy_direct(self, id, callback):
         '''Destruyendo directo'''
         self.log.debug('Solicitando destrucción de directo: %s' % id)
+        self.protocol.to_del.append(id)
         self.__register(self.protocol.destroy_direct, {'id': id}, callback)
         
     
@@ -108,11 +108,13 @@ class TurpialAPI(threading.Thread):
     def set_favorite(self, id, callback):
         '''Estableciendo status como favorito'''
         self.log.debug('Solicitando status como favorito: %s' % id)
+        self.protocol.to_fav.append(id)
         self.__register(self.protocol.mark_favorite, {'id': id}, callback)
         
     def unset_favorite(self, id, callback):
         '''Desmarcando status como favorito'''
         self.log.debug('Solicitando status como no favorito: %s' % id)
+        self.protocol.to_unfav.append(id)
         self.__register(self.protocol.unmark_favorite, {'id': id}, callback)
         
     
@@ -128,10 +130,10 @@ class TurpialAPI(threading.Thread):
         args = {'name': name, 'url': url, 'location': location, 'bio': bio}
         self.__register(self.protocol.update_profile, args, callback)
     
-    def get_friends(self, callback):
+    def get_friends(self):
         '''Descargando lista de amigos'''
         self.log.debug('Solicitando Lista de Amigos')
-        self.__register(self.protocol.get_friends_list, None, callback)
+        self.__register(self.protocol.get_friends_list, None, None)
         
     def get_muted_list(self):
         return self.protocol.get_muted_friends_list()
@@ -143,23 +145,17 @@ class TurpialAPI(threading.Thread):
             list.append(friend.username)
         return list
     
-    """
-        
     def follow(self, user, callback):
         '''Siguiendo a un amigo'''
-        args = {'screen_name': user}
-        self.log.debug('Siguiendo a: %s' % user)
-        self.__register({'uri': '%s/friendships/create' % self.apiurl,
-                         'args': args, 'follow': True}, callback)
+        self.log.debug('Solicitando seguir a: %s' % user)
+        args = {'user': user}
+        self.__register(self.protocol.follow, args, callback)
         
     def unfollow(self, user, callback):
         '''Dejando de seguir a un amigo'''
-        args = {'screen_name': user}
-        self.log.debug('Dejando de seguir a: %s' % user)
-        self.__register({'uri': '%s/friendships/destroy' % self.apiurl,
-                         'args': args, 'follow': False}, callback)
-        
-    """
+        args = {'user': user}
+        self.log.debug('Solicitando dejar de seguir a: %s' % user)
+        self.__register(self.protocol.unfollow, args, callback)
     
     def mute(self, arg, callback):
         '''Actualizando usuarios silenciados'''
@@ -199,7 +195,9 @@ class TurpialAPI(threading.Thread):
                 self.queue.task_done()
                 break
                 
-            if isinstance(rtn, Response):
+            if not callback:
+                pass
+            elif isinstance(rtn, Response):
                 callback(rtn)
             elif len(rtn) == 2:
                 callback(rtn[0],rtn[1])

@@ -28,7 +28,8 @@ details: %s" % (uri, args, traceback.print_exc()))
             if (exc.code == 304):
                 return []
             elif (exc.code == 400):
-                raise TurpialException('Err... invalid request')
+                #X-RateLimit-Remaining
+                raise TurpialException('You don\'t have more API calls')
             elif (exc.code == 401):
                 raise TurpialException('Invalid username/password')
             elif (exc.code == 403):

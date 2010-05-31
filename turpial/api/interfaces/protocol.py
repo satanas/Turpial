@@ -62,23 +62,23 @@ class Protocol:
         
     def _del_status(self, from_arr, id):
         ''' Borra un status de cualquiera de los arreglos '''
-        id = str(id)
         item = self._find_status_by_id(from_arr, id)
         if item:
             from_arr.remove(item)
             self.log.debug('--Removido status %s' % id)
         else:
-            self.log.debug('--El status %s no existe. No se remueve' % id)
+            self.log.debug('--El status %s no existe. No se borra' % id)
             
-    def _fav_status(self, from_arr, id, fav):
+    def _fav_status(self, from_arr, status, fav):
         ''' Establece como favorito un status de cualquiera de los arreglos '''
-        id = str(id)
-        item = self._find_status_by_id(from_arr, id)
+        item = self._find_status_by_id(from_arr, status.id)
         if item:
-            item.favorite = fav
-            self.log.debug('--Cambiado status %s' % id)
+            status.favorite = fav
+            index = from_arr.index(item)
+            from_arr[index] = status
+            self.log.debug('--Cambiado status %s' % status.id)
         else:
-            self.log.debug('--El status %s no existe. No se cambia' % id)
+            self.log.debug('--El status %s no existe. No se cambia' % status.id)
             
     # -------------------------------------------------------------
     
@@ -95,7 +95,7 @@ class Protocol:
     def _del_friend(self, id):
         item = None
         for friend in self.friends:
-            if id == user.id:
+            if id == friend.id:
                 item = friend
                 break
         if item: 
@@ -114,37 +114,29 @@ class Protocol:
             return None
         
     def _set_status_favorite(self, status):
-        if status is None:
-            return
-        
-        self.to_fav.remove(status.id)
         self._add_status(self.favorites, status)
-        self._fav_status(self.timeline, status.id, True)
-        self._fav_status(self.replies, status.id, True)
-            
-        #TODO: Marcar en las listas
+        self._fav_status(self.timeline, status, True)
+        self._fav_status(self.replies, status, True)
+        self.to_fav.remove(status.id)
         
-        self.log.debug('Marcado status %s como favorito' % id)
+        self.log.debug('Marcado status %s como favorito' % status.id)
         
     def _unset_status_favorite(self, status):
-        if status is None:
-            return
-            
+        self._del_status(self.favorites, status.id)
+        self._fav_status(self.timeline, status, False)
+        self._fav_status(self.replies, status, False)
         self.to_unfav.remove(status.id)
-        self._del_status(self.favorites, status)
-        self._fav_status(self.timeline, status.id, False)
-        self._fav_status(self.replies, status.id, False)
-            
-        #TODO: Desmarcar en las listas
         
-        self.log.debug('Desmarcado status %s como favorito' % id)
+        self.log.debug('Desmarcado status %s como favorito' % status.id)
         
     def _destroy_status(self, id):
         self._del_status(self.timeline, id)
         self._del_status(self.favorites, id)
+        self.to_del.remove(id)
         
     def _destroy_direct(self, id):
         self._del_status(self.directs, id)
+        self.to_del.remove(id)
         
     def _change_api_url(self, new_url):
         if new_url == '': 

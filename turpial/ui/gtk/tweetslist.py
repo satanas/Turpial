@@ -382,7 +382,7 @@ class TweetList(gtk.VBox):
         pango_twt += '<span size="2000">\n\n</span>'
         pango_twt = user + pango_twt
         
-        footer = '<span size="small" foreground="#999">%s' % p.datetime
+        footer = '<span size="small" foreground="#999">%s' % p.timestamp
         if p.source: 
             footer += ' %s %s' % (_('from'), p.source)
         if p.in_reply_to_user:
@@ -422,6 +422,7 @@ class TweetList(gtk.VBox):
             
         arr_tweets = response.items
         if len(arr_tweets) == 0:
+            self.clear()
             self.stop_update(True, _('No tweets available'))
             return 0
         else:

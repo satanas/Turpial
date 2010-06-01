@@ -5,7 +5,6 @@
 # Author: Wil Alvarez (aka Satanas)
 # Dic 22, 2009
 
-import sys
 import Queue
 import logging
 import threading

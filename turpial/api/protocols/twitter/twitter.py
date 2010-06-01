@@ -255,7 +255,7 @@ class Twitter(Protocol):
                     {'cursor': cursor})
             except TurpialException, exc:
                 tries += 1
-                if tries < 6:
+                if tries < 3:
                     continue
                 else:
                     return Response(None, 'error', exc.msg)

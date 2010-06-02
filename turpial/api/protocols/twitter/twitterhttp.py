@@ -9,6 +9,7 @@ import urllib2
 import logging
 import traceback
 
+from turpial.api.protocols.twitter.oauth_client import TurpialAuthClient
 from turpial.api.interfaces.http import TurpialHTTP, TurpialException
 from turpial.api.protocols.twitter.twitter_globals import POST_ACTIONS
 
@@ -16,12 +17,52 @@ class TwitterHTTP(TurpialHTTP):
     def __init__(self):
         TurpialHTTP.__init__(self, POST_ACTIONS)
         self.log = logging.getLogger('TwitterHTTP')
+        self.oauth_support = False
         
-    def _simple_request(self, uri, args={}):
+    def xauth(self, username, password, auth):
+        '''Estableciendo credenciales'''
+        self.username = username
+        self.password = password
+        
+        self.client = TurpialAuthClient()
+        
+        if auth['oauth-key'] != '' and auth['oauth-secret'] != '':
+            self.token = self.client.build_access_token(auth['oauth-key'], 
+                auth['oauth-secret'])
+            self.oauth_support = True
+            
+            return (self.token.key, self.token.secret)
+        else:
+            try:
+                self.token = self.client.fetch_xauth_access_token(username, password)
+                self.log.debug('GOT')
+                self.log.debug('key: %s' % str(self.token.key))
+                self.log.debug('secret: %s' % str(self.token.secret))
+                self.oauth_support = True
+                
+                return (self.token.key, self.token.secret)
+            except Exception, exc:
+                self.log.debug("Auth error: %s" % (traceback.print_exc()))
+                raise TurpialException('Authentication Error')
+        
+    def _simple_request(self, url, args={}):
+        req = self._build_request(url, args)
+        return self._execute_simple_request(req)
+        
+    def _secure_request(self, url, params={}):
+        req = self._build_request(url, params)
+        req.headers = self.client.apply_auth(req, params)
+        #rtn = self.client.access_resource(url, req.method, params)
+        rtn = self._execute_simple_request(req)
+        print 'secure:', rtn
+        return self._load_json(rtn)
+        
+    def request(self, uri, args={}):
         try:
-            req = self._build_simple_request(uri, args)
-            rtn = self._execute_simple_request(req)
-            return rtn
+            if self.oauth_support:
+                self._secure_request(uri, args)
+            else:
+                self._simple_request(uri, args)
         except urllib2.HTTPError, exc:
             self.log.debug("HTTPError for URL: %s\nparameters: (%s)\n\
 details: %s" % (uri, args, traceback.print_exc()))
@@ -53,4 +94,4 @@ details: %s" % (uri, args, traceback.print_exc()))
         except Exception, exc:
             self.log.debug("Unknown error for URL: %s\nparameters: (%s)\n\
 details: %s" % (uri, args, traceback.print_exc()))
-            raise TurpialException(e)
+            raise TurpialException(exc)

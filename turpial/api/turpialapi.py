@@ -50,10 +50,10 @@ class TurpialAPI(threading.Thread):
     def is_fav(self, id):
         return self.protocol.is_favorite(id)
     
-    def auth(self, username, password, callback):
-        '''Inicio de autenticacion basica'''
-        self.log.debug('Solicitando autenticacion basica')
-        args = {'username': username, 'password': password}
+    def auth(self, username, password, auth_info, callback):
+        '''Inicio de autenticacion'''
+        args = {'username': username, 'password': password, 'auth': auth_info}
+        self.log.debug('Solicitando autenticacion')
         self.__register(self.protocol.auth, args, callback)
             
     def update_timeline(self, callback, count=20):
@@ -82,8 +82,8 @@ class TurpialAPI(threading.Thread):
     
     def update_status(self, text, in_reply_id, callback):
         '''Actualizando estado'''
-        self.log.debug(u'Solicitando nuevo estado: %s' % text)
         args = {'text': text, 'in_reply_id': in_reply_id}
+        self.log.debug(u'Solicitando nuevo estado: %s' % text)
         self.__register(self.protocol.update_status, args, callback)
     
     def destroy_status(self, id, callback):
@@ -146,8 +146,8 @@ class TurpialAPI(threading.Thread):
     
     def follow(self, user, callback):
         '''Siguiendo a un amigo'''
-        self.log.debug('Solicitando seguir a: %s' % user)
         args = {'user': user}
+        self.log.debug('Solicitando seguir a: %s' % user)
         self.__register(self.protocol.follow, args, callback)
         
     def unfollow(self, user, callback):

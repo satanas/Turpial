@@ -143,17 +143,21 @@ class Twitter(Protocol):
         return profiles
             
     def auth(self, args):
-        ''' Inicio de autenticacion basica '''
-        self.log.debug('Iniciando autenticacion basica')
+        ''' Inicio de autenticacion segura '''
+        self.log.debug('Iniciando autenticacion segura')
         username = args['username']
         password = args['password']
+        auth = args['auth']
         
         try:
-            self.http.set_credentials(username, password)
+            #xAuth
+            key, secret = self.http.xauth(username, password, auth)
+            #self.http.set_credentials(username, password)
             rtn = self.http.request('%s/account/verify_credentials' % 
                 self.apiurl)
             self.profile = self.__create_profile(rtn)
             self.profile.password = password
+            #return Response([self.profile, key, secret], 'mixed')
             return Response(self.profile, 'profile')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
@@ -440,66 +444,3 @@ class Twitter(Protocol):
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
             
-'''
-    def __handle_oauth(self, args, callback):
-        if args['cmd'] == 'start':
-            if self.has_oauth_support():
-                self.client = TurpialAuthClient()
-            else:
-                self.client = TurpialAuthClient(api_url=self.apiurl)
-            self.consumer = oauth.OAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
-            self.signature_method_hmac_sha1 = oauth.OAuthSignatureMethod_HMAC_SHA1()
-            auth = args['auth']
-            
-            if auth['oauth-key'] != '' and auth['oauth-secret'] != '' and \
-            auth['oauth-verifier'] != '':
-                self.token = oauth.OAuthToken(auth['oauth-key'],
-                                              auth['oauth-secret'])
-                self.token.set_verifier(auth['oauth-verifier'])
-                self.is_oauth = True
-                args['done'](self.token.key, self.token.secret,
-                             self.token.verifier)
-            else:
-                self.log.debug('Obtain a request token')
-                oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
-                                                                           http_url=self.client.request_token_url)
-                oauth_request.sign_request(self.signature_method_hmac_sha1,
-                                           self.consumer, None)
-                
-                self.log.debug('REQUEST (via headers)')
-                self.log.debug('parameters: %s' % str(oauth_request.parameters))
-                try:
-                    self.token = self.client.fetch_request_token(oauth_request)
-                except Exception, error:
-                    print "Error: %s\n%s" % (error, traceback.print_exc())
-                    raise Exception
-                
-                self.log.debug('GOT')
-                self.log.debug('key: %s' % str(self.token.key))
-                self.log.debug('secret: %s' % str(self.token.secret))
-                self.log.debug('callback confirmed? %s' % str(self.token.callback_confirmed))
-                
-                self.log.debug('Authorize the request token')
-                oauth_request = oauth.OAuthRequest.from_token_and_callback(token=self.token,
-                                                                           http_url=self.client.authorization_url)
-                self.log.debug('REQUEST (via url query string)')
-                self.log.debug('parameters: %s' % str(oauth_request.parameters))
-                callback(oauth_request.to_url())
-        elif args['cmd'] == 'authorize':
-            pin = args['pin']
-            self.log.debug('Obtain an access token')
-            oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
-                                                                       token=self.token,
-                                                                       verifier=pin,
-                                                                       http_url=self.client.access_token_url)
-            oauth_request.sign_request(self.signature_method_hmac_sha1,
-                                       self.consumer, self.token)
-            self.log.debug('REQUEST (via headers)')
-            self.log.debug('parameters: %s' % str(oauth_request.parameters))
-            self.token = self.client.fetch_access_token(oauth_request)
-            self.log.debug('GOT')
-            self.log.debug('key: %s' % str(self.token.key))
-            self.log.debug('secret: %s' % str(self.token.secret))
-            self.is_oauth = True
-            callback(self.token.key, self.token.secret, pin)
-    '''

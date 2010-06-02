@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Turpial 1.1.2-a1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-03-23 18:52+0430\n"
-"PO-Revision-Date: 2010-04-16 10:08-0530\n"
+"PO-Revision-Date: 2010-06-01 23:47-0530\n"
 "Last-Translator: Satanas <wil.alejandro@gmail.com>\n"
 "Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -71,6 +71,28 @@ msgstr "Unfollow"
 msgid "You have unfollow to @%s"
 msgstr "You have now unfollowed @%s"
 
+#: turpial/api/interfaces/shorturl/bitly.py:31
+#: turpial/api/interfaces/shorturl/cligs.py:26
+#: turpial/api/interfaces/shorturl/isgd.py:26
+#: turpial/api/interfaces/shorturl/smlkes.py:29
+#: turpial/api/interfaces/shorturl/supr.py:26
+#: turpial/api/interfaces/shorturl/tinyurl.py:26
+#: turpial/api/interfaces/shorturl/trim.py:26
+#: turpial/api/interfaces/shorturl/unu.py:26
+#: turpial/api/interfaces/shorturl/ur1ca.py:35
+#: turpial/api/interfaces/shorturl/zima.py:26
+msgid "Problem shorting URL"
+msgstr ""
+
+#: turpial/api/interfaces/uploadpic/imgly.py:36
+#: turpial/api/interfaces/uploadpic/mobypicture.py:41
+#: turpial/api/interfaces/uploadpic/tweetphoto.py:39
+#: turpial/api/interfaces/uploadpic/twitgoo.py:36
+#: turpial/api/interfaces/uploadpic/twitpic.py:36
+#: turpial/api/interfaces/uploadpic/yfrog.py:36
+msgid "Problem uploading pic"
+msgstr ""
+
 #: turpial/ui/util.py:55
 msgid "of"
 msgstr "of"
@@ -79,7 +101,7 @@ msgstr "of"
 msgid "API calls. Reset"
 msgstr "Reset API Calls"
 
-#: turpial/ui/gtk/about.py:18
+#: turpial/ui/gtk/about.py:19
 msgid "Twitter client multi-interface written in Python"
 msgstr "Twitter client interface written in Python"
 
@@ -92,7 +114,7 @@ msgid "Profile"
 msgstr "Profile"
 
 #: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:161
-#: turpial/ui/gtk/updatebox.py:91
+#: turpial/ui/gtk/updatebox.py:90
 msgid "Tweet"
 msgstr "Tweet"
 
@@ -119,26 +141,36 @@ msgid "Turpial Authorization"
 msgstr "Turpial Authorization"
 
 #: turpial/ui/gtk/inputpin.py:24
-msgid "Twitter has implemented a new security system and needs that you authorize Turpial from your account"
-msgstr "Twitter has implemented a new security system and needs that you authorize Turpial from your account"
+msgid ""
+"Twitter has implemented a new security system and needs that you "
+"authorize Turpial from your account"
+msgstr ""
+"Twitter has implemented a new security system and needs that you "
+"authorize Turpial from your account"
 
 #: turpial/ui/gtk/inputpin.py:26
-msgid "In order to complete that step, Turpial has open a new page in your default browser, go there to authorize Turpial and copy the number given in the box below..."
-msgstr "In order to complete this step, Turpial has opened a new page in your default browser. Go there to authorize Turpial and copy the pin generated in the box below..."
+msgid ""
+"In order to complete that step, Turpial has open a new page in your "
+"default browser, go there to authorize Turpial and copy the number given "
+"in the box below..."
+msgstr ""
+"In order to complete this step, Turpial has opened a new page in your "
+"default browser. Go there to authorize Turpial and copy the pin generated"
+" in the box below..."
 
 #: turpial/ui/gtk/inputpin.py:29
 msgid "Input PIN"
 msgstr "Input PIN"
 
+#: turpial/ui/gtk/main.py:53 turpial/ui/gtk/main.py:56
+#: turpial/ui/gtk/preferences.py:170 turpial/ui/gtk/preferences.py:262
+msgid "Mentions"
+msgstr "Mentions"
+
 #: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:168
 #: turpial/ui/gtk/preferences.py:253
 msgid "Timeline"
 msgstr "Timeline"
-
-#: turpial/ui/gtk/main.py:56 turpial/ui/gtk/preferences.py:170
-#: turpial/ui/gtk/preferences.py:262
-msgid "Mentions"
-msgstr "Mentions"
 
 #: turpial/ui/gtk/main.py:57 turpial/ui/gtk/preferences.py:172
 msgid "Directs"
@@ -185,8 +217,12 @@ msgid "Secure Authentication"
 msgstr "Secure Authentication"
 
 #: turpial/ui/gtk/oauthwin.py:39
-msgid "Autorize Turpial and copy the given number (<b>PIN</b>) in the text box below:"
-msgstr "Autorize Turpial and copy the generated pin (<b>PIN</b>) in the text box below:"
+msgid ""
+"Autorize Turpial and copy the given number (<b>PIN</b>) in the text box "
+"below:"
+msgstr ""
+"Autorize Turpial and copy the generated pin (<b>PIN</b>) in the text box "
+"below:"
 
 #: turpial/ui/gtk/oauthwin.py:71
 msgid "You must write a valid PIN"
@@ -310,8 +346,8 @@ msgstr "Activate sounds for each notification"
 msgid "Select your preferred services for shorten URLs and upload images"
 msgstr "Select your preferred services for shortening URLs and uploading images"
 
-#: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:64
-#: turpial/ui/gtk/updatebox.py:65
+#: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:63
+#: turpial/ui/gtk/updatebox.py:64
 msgid "Shorten URL"
 msgstr "Shorten URL"
 
@@ -322,10 +358,6 @@ msgstr "Upload image"
 #: turpial/ui/gtk/preferences.py:365
 msgid "Select all those users that are bothering you and shut them up temporarily"
 msgstr "Select users who are bothering you and block them temporarily"
-
-#: turpial/ui/gtk/preferences.py:405
-msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr "Still loading tweets. Try again in a few seconds"
 
 #: turpial/ui/gtk/preferences.py:442
 msgid "Setup your favorite web browser to open all links"
@@ -384,7 +416,7 @@ msgstr "In reply to..."
 msgid "In reply to %s"
 msgstr "In reply to %s"
 
-#: turpial/ui/gtk/replybox.py:59
+#: turpial/ui/gtk/replybox.py:56
 msgid "Oops... something went wrong"
 msgstr "Oops... something went wrong"
 
@@ -437,7 +469,7 @@ msgstr "DM"
 msgid "Loading friends..."
 msgstr "Loading friends..."
 
-#: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:183
+#: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:189
 msgid "In reply to"
 msgstr "In reply to"
 
@@ -471,43 +503,47 @@ msgstr "What is happening?"
 msgid "Update status"
 msgstr "Update status"
 
-#: turpial/ui/gtk/updatebox.py:67 turpial/ui/gtk/updatebox.py:68
+#: turpial/ui/gtk/updatebox.py:66 turpial/ui/gtk/updatebox.py:67
 msgid "Upload image"
 msgstr "Upload image"
 
-#: turpial/ui/gtk/updatebox.py:77
+#: turpial/ui/gtk/updatebox.py:76
 msgid "Options"
 msgstr "Options"
 
-#: turpial/ui/gtk/updatebox.py:83
+#: turpial/ui/gtk/updatebox.py:82
 msgid "Clear all"
 msgstr "Clear all"
 
-#: turpial/ui/gtk/updatebox.py:88
+#: turpial/ui/gtk/updatebox.py:87
 msgid "Add friends"
 msgstr ""
 
-#: turpial/ui/gtk/updatebox.py:92
+#: turpial/ui/gtk/updatebox.py:91
 msgid "Autoshort URLs"
 msgstr "Autoshort URLs"
 
-#: turpial/ui/gtk/updatebox.py:175
+#: turpial/ui/gtk/updatebox.py:181
 msgid "Oh oh... I couldn't send the tweet"
 msgstr "Ooops... Turpial couldn't send the tweet"
 
-#: turpial/ui/gtk/updatebox.py:228
+#: turpial/ui/gtk/updatebox.py:234
 msgid "Eyy... you must write something"
 msgstr "Eyy... you must write something"
 
-#: turpial/ui/gtk/updatebox.py:243
+#: turpial/ui/gtk/updatebox.py:239
+msgid "Ey!... that message looks like a testament"
+msgstr ""
+
+#: turpial/ui/gtk/updatebox.py:254
 msgid "Oops... I couldn't shrink that URL"
 msgstr "Oops... Turpial couldn't shrink that URL"
 
-#: turpial/ui/gtk/updatebox.py:270
+#: turpial/ui/gtk/updatebox.py:281
 msgid "Select image to upload"
 msgstr "Select an image to upload"
 
-#: turpial/ui/gtk/updatebox.py:287
+#: turpial/ui/gtk/updatebox.py:298
 msgid "Oops... I couldn't upload that image"
 msgstr "Oops... Turpial couldn't upload that image"
 
@@ -530,3 +566,4 @@ msgstr "Bio"
 #: turpial/ui/gtk/userform.py:147
 msgid "Saving..."
 msgstr "Saving..."
+

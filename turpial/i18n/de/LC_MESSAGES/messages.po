@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version:  1.1.2-a1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-03-23 18:52+0430\n"
-"PO-Revision-Date: 2010-04-16 10:08-0530\n"
+"PO-Revision-Date: 2010-06-01 23:47-0530\n"
 "Last-Translator: Raúl Escalante <t6435bm@gmail.com>\n"
 "Language-Team: Deutsch <DE@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.1\n"
+"Generated-By: Babel 0.9.4\n"
 
 #: turpial/notification.py:58
 msgid "new tweet"
@@ -71,6 +71,28 @@ msgstr "Entfolgen"
 msgid "You have unfollow to @%s"
 msgstr "Du hast @%s entfolgt"
 
+#: turpial/api/interfaces/shorturl/bitly.py:31
+#: turpial/api/interfaces/shorturl/cligs.py:26
+#: turpial/api/interfaces/shorturl/isgd.py:26
+#: turpial/api/interfaces/shorturl/smlkes.py:29
+#: turpial/api/interfaces/shorturl/supr.py:26
+#: turpial/api/interfaces/shorturl/tinyurl.py:26
+#: turpial/api/interfaces/shorturl/trim.py:26
+#: turpial/api/interfaces/shorturl/unu.py:26
+#: turpial/api/interfaces/shorturl/ur1ca.py:35
+#: turpial/api/interfaces/shorturl/zima.py:26
+msgid "Problem shorting URL"
+msgstr ""
+
+#: turpial/api/interfaces/uploadpic/imgly.py:36
+#: turpial/api/interfaces/uploadpic/mobypicture.py:41
+#: turpial/api/interfaces/uploadpic/tweetphoto.py:39
+#: turpial/api/interfaces/uploadpic/twitgoo.py:36
+#: turpial/api/interfaces/uploadpic/twitpic.py:36
+#: turpial/api/interfaces/uploadpic/yfrog.py:36
+msgid "Problem uploading pic"
+msgstr ""
+
 #: turpial/ui/util.py:55
 msgid "of"
 msgstr "von"
@@ -79,7 +101,7 @@ msgstr "von"
 msgid "API calls. Reset"
 msgstr "API-Aufrufen. Reset"
 
-#: turpial/ui/gtk/about.py:18
+#: turpial/ui/gtk/about.py:19
 msgid "Twitter client multi-interface written in Python"
 msgstr "In Python geschriebener Multi-Interface-Twitter-Client"
 
@@ -92,7 +114,7 @@ msgid "Profile"
 msgstr "Profil"
 
 #: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:161
-#: turpial/ui/gtk/updatebox.py:91
+#: turpial/ui/gtk/updatebox.py:90
 msgid "Tweet"
 msgstr "Tweet"
 
@@ -142,15 +164,15 @@ msgstr ""
 msgid "Input PIN"
 msgstr "PIN eingeben"
 
+#: turpial/ui/gtk/main.py:53 turpial/ui/gtk/main.py:56
+#: turpial/ui/gtk/preferences.py:170 turpial/ui/gtk/preferences.py:262
+msgid "Mentions"
+msgstr "Erwähnungen"
+
 #: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:168
 #: turpial/ui/gtk/preferences.py:253
 msgid "Timeline"
 msgstr "Timeline"
-
-#: turpial/ui/gtk/main.py:56 turpial/ui/gtk/preferences.py:170
-#: turpial/ui/gtk/preferences.py:262
-msgid "Mentions"
-msgstr "Erwähnungen"
 
 #: turpial/ui/gtk/main.py:57 turpial/ui/gtk/preferences.py:172
 msgid "Directs"
@@ -330,8 +352,8 @@ msgstr ""
 "Wähle den von dir bevorzugten URL-Abkürzungs- und Bilder-Hochladen-Dienst"
 " aus"
 
-#: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:64
-#: turpial/ui/gtk/updatebox.py:65
+#: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:63
+#: turpial/ui/gtk/updatebox.py:64
 msgid "Shorten URL"
 msgstr "URL-Abkürzung"
 
@@ -402,7 +424,7 @@ msgstr "... antworten"
 msgid "In reply to %s"
 msgstr "%s antworten"
 
-#: turpial/ui/gtk/replybox.py:59
+#: turpial/ui/gtk/replybox.py:56
 msgid "Oops... something went wrong"
 msgstr "Ups... etwas ist fehlgeschlagen"
 
@@ -455,7 +477,7 @@ msgstr "DN"
 msgid "Loading friends..."
 msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:183
+#: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:189
 msgid "In reply to"
 msgstr "Antwort an"
 
@@ -489,43 +511,47 @@ msgstr "Was gibt's Neues?"
 msgid "Update status"
 msgstr "Update-Stand"
 
-#: turpial/ui/gtk/updatebox.py:67 turpial/ui/gtk/updatebox.py:68
+#: turpial/ui/gtk/updatebox.py:66 turpial/ui/gtk/updatebox.py:67
 msgid "Upload image"
 msgstr "Bild hochladen"
 
-#: turpial/ui/gtk/updatebox.py:77
+#: turpial/ui/gtk/updatebox.py:76
 msgid "Options"
 msgstr "Einstellungen"
 
-#: turpial/ui/gtk/updatebox.py:83
+#: turpial/ui/gtk/updatebox.py:82
 msgid "Clear all"
 msgstr "Alles entfernen"
 
-#: turpial/ui/gtk/updatebox.py:88
+#: turpial/ui/gtk/updatebox.py:87
 msgid "Add friends"
 msgstr ""
 
-#: turpial/ui/gtk/updatebox.py:92
+#: turpial/ui/gtk/updatebox.py:91
 msgid "Autoshort URLs"
 msgstr "URLs automatisch abkürzen"
 
-#: turpial/ui/gtk/updatebox.py:175
+#: turpial/ui/gtk/updatebox.py:181
 msgid "Oh oh... I couldn't send the tweet"
 msgstr "O o... Ich konnte den Tweet nicht senden"
 
-#: turpial/ui/gtk/updatebox.py:228
+#: turpial/ui/gtk/updatebox.py:234
 msgid "Eyy... you must write something"
 msgstr "He! Du musst etwas schreiben!"
 
-#: turpial/ui/gtk/updatebox.py:243
+#: turpial/ui/gtk/updatebox.py:239
+msgid "Ey!... that message looks like a testament"
+msgstr ""
+
+#: turpial/ui/gtk/updatebox.py:254
 msgid "Oops... I couldn't shrink that URL"
 msgstr "Ups... Ich konnte die URL nicht abkürzen"
 
-#: turpial/ui/gtk/updatebox.py:270
+#: turpial/ui/gtk/updatebox.py:281
 msgid "Select image to upload"
 msgstr "Bild zum Hochladen durchsuchen"
 
-#: turpial/ui/gtk/updatebox.py:287
+#: turpial/ui/gtk/updatebox.py:298
 msgid "Oops... I couldn't upload that image"
 msgstr "Ups... Ich konnte das Bild nicht hochladen"
 

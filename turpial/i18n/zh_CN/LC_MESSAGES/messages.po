@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: turpial 1.0-b1\n"
 "Report-Msgid-Bugs-To: milmazz@gmail.com\n"
 "POT-Creation-Date: 2010-03-27 22:43+0530\n"
-"PO-Revision-Date: 2010-04-16 10:08-0530\n"
+"PO-Revision-Date: 2010-06-01 23:47-0530\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: zh_CN <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.1\n"
+"Generated-By: Babel 0.9.4\n"
 
 #: turpial/notification.py:58
 msgid "new tweet"
@@ -71,6 +71,28 @@ msgstr "取消关注"
 msgid "You have unfollow to @%s"
 msgstr "您已经取消了对@%s的关注"
 
+#: turpial/api/interfaces/shorturl/bitly.py:31
+#: turpial/api/interfaces/shorturl/cligs.py:26
+#: turpial/api/interfaces/shorturl/isgd.py:26
+#: turpial/api/interfaces/shorturl/smlkes.py:29
+#: turpial/api/interfaces/shorturl/supr.py:26
+#: turpial/api/interfaces/shorturl/tinyurl.py:26
+#: turpial/api/interfaces/shorturl/trim.py:26
+#: turpial/api/interfaces/shorturl/unu.py:26
+#: turpial/api/interfaces/shorturl/ur1ca.py:35
+#: turpial/api/interfaces/shorturl/zima.py:26
+msgid "Problem shorting URL"
+msgstr ""
+
+#: turpial/api/interfaces/uploadpic/imgly.py:36
+#: turpial/api/interfaces/uploadpic/mobypicture.py:41
+#: turpial/api/interfaces/uploadpic/tweetphoto.py:39
+#: turpial/api/interfaces/uploadpic/twitgoo.py:36
+#: turpial/api/interfaces/uploadpic/twitpic.py:36
+#: turpial/api/interfaces/uploadpic/yfrog.py:36
+msgid "Problem uploading pic"
+msgstr ""
+
 #: turpial/ui/util.py:55
 msgid "of"
 msgstr "条API请求剩余，总"
@@ -79,7 +101,7 @@ msgstr "条API请求剩余，总"
 msgid "API calls. Reset"
 msgstr "条。下次更新时间："
 
-#: turpial/ui/gtk/about.py:18
+#: turpial/ui/gtk/about.py:19
 msgid "Twitter client multi-interface written in Python"
 msgstr "用Python写的多接口Twitter客户端"
 
@@ -92,7 +114,7 @@ msgid "Profile"
 msgstr "个人账户"
 
 #: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:161
-#: turpial/ui/gtk/updatebox.py:91
+#: turpial/ui/gtk/updatebox.py:90
 msgid "Tweet"
 msgstr "发布状态"
 
@@ -135,15 +157,15 @@ msgstr "为完成此步骤，Turpial在您的默认浏览器打开了一个页�
 msgid "Input PIN"
 msgstr "请输入认证密码"
 
+#: turpial/ui/gtk/main.py:53 turpial/ui/gtk/main.py:56
+#: turpial/ui/gtk/preferences.py:170 turpial/ui/gtk/preferences.py:262
+msgid "Mentions"
+msgstr "回复"
+
 #: turpial/ui/gtk/main.py:55 turpial/ui/gtk/preferences.py:168
 #: turpial/ui/gtk/preferences.py:253
 msgid "Timeline"
 msgstr "时间线"
-
-#: turpial/ui/gtk/main.py:56 turpial/ui/gtk/preferences.py:170
-#: turpial/ui/gtk/preferences.py:262
-msgid "Mentions"
-msgstr "回复"
 
 #: turpial/ui/gtk/main.py:57 turpial/ui/gtk/preferences.py:172
 msgid "Directs"
@@ -322,8 +344,8 @@ msgstr "对所有通知启用声音"
 msgid "Select your preferred services for shorten URLs and upload images"
 msgstr "选择您喜欢的短网址和图片上传服务"
 
-#: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:64
-#: turpial/ui/gtk/updatebox.py:65
+#: turpial/ui/gtk/preferences.py:326 turpial/ui/gtk/updatebox.py:63
+#: turpial/ui/gtk/updatebox.py:64
 msgid "Shorten URL"
 msgstr "缩短链接"
 
@@ -392,7 +414,7 @@ msgstr "回复给"
 msgid "In reply to %s"
 msgstr "对%s说"
 
-#: turpial/ui/gtk/replybox.py:59
+#: turpial/ui/gtk/replybox.py:56
 msgid "Oops... something went wrong"
 msgstr "呃...出了点小状况"
 
@@ -445,7 +467,7 @@ msgstr "私信"
 msgid "Loading friends..."
 msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:183
+#: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:189
 msgid "In reply to"
 msgstr "链式查看回复"
 
@@ -480,43 +502,47 @@ msgstr "发生什么了？"
 msgid "Update status"
 msgstr "更新状态"
 
-#: turpial/ui/gtk/updatebox.py:67 turpial/ui/gtk/updatebox.py:68
+#: turpial/ui/gtk/updatebox.py:66 turpial/ui/gtk/updatebox.py:67
 msgid "Upload image"
 msgstr "上传图片"
 
-#: turpial/ui/gtk/updatebox.py:77
+#: turpial/ui/gtk/updatebox.py:76
 msgid "Options"
 msgstr "选项"
 
-#: turpial/ui/gtk/updatebox.py:83
+#: turpial/ui/gtk/updatebox.py:82
 msgid "Clear all"
 msgstr "清空"
 
-#: turpial/ui/gtk/updatebox.py:88
+#: turpial/ui/gtk/updatebox.py:87
 msgid "Add friends"
 msgstr ""
 
-#: turpial/ui/gtk/updatebox.py:92
+#: turpial/ui/gtk/updatebox.py:91
 msgid "Autoshort URLs"
 msgstr "自动缩短链接"
 
-#: turpial/ui/gtk/updatebox.py:175
+#: turpial/ui/gtk/updatebox.py:181
 msgid "Oh oh... I couldn't send the tweet"
 msgstr "呃...发推不能"
 
-#: turpial/ui/gtk/updatebox.py:228
+#: turpial/ui/gtk/updatebox.py:234
 msgid "Eyy... you must write something"
 msgstr "哎呀，你总得写点什么吧"
 
-#: turpial/ui/gtk/updatebox.py:243
+#: turpial/ui/gtk/updatebox.py:239
+msgid "Ey!... that message looks like a testament"
+msgstr ""
+
+#: turpial/ui/gtk/updatebox.py:254
 msgid "Oops... I couldn't shrink that URL"
 msgstr "呃，链接缩短不能"
 
-#: turpial/ui/gtk/updatebox.py:270
+#: turpial/ui/gtk/updatebox.py:281
 msgid "Select image to upload"
 msgstr "选择图片"
 
-#: turpial/ui/gtk/updatebox.py:287
+#: turpial/ui/gtk/updatebox.py:298
 msgid "Oops... I couldn't upload that image"
 msgstr "呃，图片上传不能"
 

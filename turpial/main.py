@@ -311,5 +311,8 @@ class Turpial:
     def destroy_direct(self, tweet_id):
         self.api.destroy_direct(tweet_id, self.ui.after_destroy)
         
+    def get_friends(self):
+        return self.api.get_single_friends_list()
+        
 if __name__ == '__main__':
     t = Turpial()

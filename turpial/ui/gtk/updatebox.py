@@ -8,7 +8,15 @@
 import gtk
 import gobject
 
+SPELLING = False
+try:
+    import gtkspell
+    SPELLING = True
+except:
+    pass
+
 from turpial.ui.gtk.waiting import CairoWaiting
+from turpial.ui.gtk.friendwin import FriendsWin
 
 class UpdateBox(gtk.Window):
     def __init__(self, parent):
@@ -36,7 +44,6 @@ class UpdateBox(gtk.Window):
         self.num_chars.set_use_markup(True)
         self.num_chars.set_markup('<span size="14000" foreground="#999"><b>140</b></span>')
         
-        #self.update_text = gtk.TextView()
         self.update_text = MessageTextView()
         self.update_text.set_border_width(2)
         self.update_text.set_left_margin(2)
@@ -74,6 +81,12 @@ class UpdateBox(gtk.Window):
         self.btn_clr.set_image(self.mainwin.load_image('clear.png'))
         self.btn_clr.set_tooltip_text(_('Clear all'))
         self.btn_clr.set_relief(gtk.RELIEF_NONE)
+        
+        self.btn_frn = gtk.Button()
+        self.btn_frn.set_image(self.mainwin.load_image('friends.png'))
+        self.btn_frn.set_tooltip_text(_('Add friends'))
+        self.btn_frn.set_relief(gtk.RELIEF_NONE)
+        
         self.btn_upd = gtk.Button(_('Tweet'))
         chk_short = gtk.CheckButton(_('Autoshort URLs'))
         chk_short.set_sensitive(False)
@@ -90,6 +103,7 @@ class UpdateBox(gtk.Window):
         
         buttonbox = gtk.HBox(False)
         buttonbox.pack_start(chk_short, False, False, 0)
+        buttonbox.pack_start(self.btn_frn, False, False, 0)
         buttonbox.pack_start(self.btn_clr, False, False, 0)
         buttonbox.pack_start(gtk.HSeparator(), False, False, 2)
         buttonbox.pack_start(self.btn_upd, False, False, 0)
@@ -111,12 +125,23 @@ class UpdateBox(gtk.Window):
         
         self.connect('delete-event', self.__unclose)
         buffer.connect('changed', self.count_chars)
+        self.btn_frn.connect('clicked', self.show_friend_dialog)
         self.btn_clr.connect('clicked', self.clear)
         self.btn_upd.connect('clicked', self.update)
         self.btn_url.connect('clicked', self.short_url)
         self.btn_pic.connect('clicked', self.upload_pic)
         self.toolbox.connect('activate', self.show_options)
         self.update_text.connect('mykeypress', self.__on_key_pressed)
+        
+        if SPELLING: 
+            try:
+                self.spell = gtkspell.Spell (self.update_text)
+            except Exception, e_msg:
+                # FIXME: Usar el log
+                print 'DEBUG:UI:Can\'t load gtkspell -> %s' % e_msg
+        else:
+            # FIXME: Usar el log
+            print 'DEBUG:UI:Can\'t load gtkspell'
     
     def __on_key_pressed(self, widget, keyval, keymod):
         if keyval == gtk.keysyms.Return:
@@ -130,6 +155,10 @@ class UpdateBox(gtk.Window):
             self.done()
         return True
         
+    def show_friend_dialog(self, widget):
+        f = FriendsWin(self.mainwin, self.add_friend, 
+            self.mainwin.request_friends_list())
+        
     def block(self):
         self.blocked = True
         self.update_text.set_sensitive(False)
@@ -137,6 +166,7 @@ class UpdateBox(gtk.Window):
         self.btn_clr.set_sensitive(False)
         self.btn_upd.set_sensitive(False)
         self.btn_url.set_sensitive(False)
+        self.btn_frn.set_sensitive(False)
         
     def release(self):
         self.blocked = False
@@ -145,6 +175,7 @@ class UpdateBox(gtk.Window):
         self.btn_clr.set_sensitive(True)
         self.btn_upd.set_sensitive(True)
         self.btn_url.set_sensitive(True)
+        self.btn_frn.set_sensitive(True)
         self.waiting.stop(error=True)
         self.lblerror.set_markup("<span size='small'>%s</span>" % 
             _('Oh oh... I couldn\'t send the tweet'))
@@ -202,6 +233,11 @@ class UpdateBox(gtk.Window):
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
                 _('Eyy... you must write something'))
             return
+        elif buffer.get_char_count() > 140:
+            self.waiting.stop(error=True)
+            self.lblerror.set_markup("<span size='small'>%s</span>" % 
+                _('Ey!... that message looks like a testament'))
+            return
         
         self.waiting.start()
         self.mainwin.request_update_status(tweet, self.in_reply_id)
@@ -212,7 +248,7 @@ class UpdateBox(gtk.Window):
         self.mainwin.request_short_url(self.url.get_text(), self.update_shorten_url)
         
     def update_shorten_url(self, short):
-        if short is None:
+        if short.err:
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
                 _('Oops... I couldn\'t shrink that URL'))
@@ -226,9 +262,9 @@ class UpdateBox(gtk.Window):
         text = buffer.get_text(start, end)
         
         if (text != ' ') and (start_offset > 0):
-            short = ' ' + short
+            short.response = ' ' + short.response
         
-        buffer.insert_at_cursor(short)
+        buffer.insert_at_cursor(short.response)
         self.waiting.stop()
         self.lblerror.set_markup("")
         self.toolbox.set_expanded(False)
@@ -256,7 +292,7 @@ class UpdateBox(gtk.Window):
         dia.destroy()
         
     def update_uploaded_pic(self, pic_url):
-        if pic_url is None:
+        if pic_url.err:
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
                 _('Oops... I couldn\'t upload that image'))
@@ -270,9 +306,9 @@ class UpdateBox(gtk.Window):
         text = buffer.get_text(start, end)
         
         if (text != ' ') and (start_offset > 0):
-            pic_url = ' ' + pic_url
+            pic_url.response = ' ' + pic_url.response
         
-        buffer.insert_at_cursor(pic_url)
+        buffer.insert_at_cursor(pic_url.response)
         self.waiting.stop()
         self.lblerror.set_markup("")
         self.toolbox.set_expanded(False)
@@ -281,6 +317,22 @@ class UpdateBox(gtk.Window):
     def show_options(self, widget, event=None):
         self.url.set_text('')
         self.url.grab_focus()
+    
+    def add_friend(self, user):
+        if user is None: return
+        
+        buffer = self.update_text.get_buffer()
+        end_offset = buffer.get_property('cursor-position')
+        start_offset = end_offset - 1
+        
+        end = buffer.get_iter_at_offset(end_offset)
+        start = buffer.get_iter_at_offset(start_offset)
+        text = buffer.get_text(start, end)
+        
+        if (text != ' ') and (start_offset > 0):
+            user = ' ' + user
+        
+        buffer.insert_at_cursor(user)
 
 class MessageTextView(gtk.TextView):
     '''Class for the message textview (where user writes new messages)
@@ -294,6 +346,7 @@ class MessageTextView(gtk.TextView):
         self.set_left_margin(2)
         self.set_right_margin(2)
         self.set_wrap_mode(gtk.WRAP_WORD)
+        self.set_accepts_tab(False)
 
     def destroy(self):
         import gc

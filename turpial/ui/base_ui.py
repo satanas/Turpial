@@ -265,22 +265,32 @@ class BaseGui:
         '''Destroy a direct message'''
         self.__controller.destroy_direct(id)
         
+    def request_friends_list(self):
+        '''Get the friends list'''
+        return self.__controller.get_friends()
+        
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
     # Estos métodos deben ser llamados por la clase hija cada cierto tiempo
     
     def download_timeline(self):
+        if self.updating['home']: return True
+        
         self.updating['home'] = True
         self.__controller._update_timeline()
         return True
         
     def download_replies(self):
+        if self.updating['replies']: return True
+        
         self.updating['replies'] = True
         self.__controller._update_replies()
         return True
         
     def download_directs(self):
+        if self.updating['directs']: return True
+        
         self.updating['directs'] = True
         self.__controller._update_directs()
         return True

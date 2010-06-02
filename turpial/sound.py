@@ -6,23 +6,24 @@
 # Ene 08, 2010
 
 import os
-import pygame
+from pygame import mixer as pygamemixer
+from pygame import error as pygameerror
 
 class Sound:
     def __init__(self):
-        pygame.mixer.init()
+        pygamemixer.init()
         
     def __play(self, filename):
         path = os.path.realpath(os.path.join(os.path.dirname(__file__),
             'data', 'sounds', filename))
-        if not pygame.mixer: 
+        if not pygamemixer: 
             return
             
         try:
-            sound = pygame.mixer.Sound(path)
+            sound = pygamemixer.Sound(path)
             sound.set_volume(0.6)
             sound.play()
-        except pygame.error, message:
+        except pygameerror, message:
             print 'Cannot load sound:', path
             print message
         

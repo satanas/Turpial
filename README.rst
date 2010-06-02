@@ -30,6 +30,7 @@ Turpial necesita los siguientes paquetes para funcionar correctamente:
  * ``python-notify >= 0.1.1``
  * ``python-pygame >= 1.7``
  * ``python-pybabel >= 0.9.1``
+ * ``python-gtkspell >= 2.25.3``
   
 Una instalacion estandar de *Python* (como la que viene en la mayoria de las
 distribuciones GNU/Linux) es mas que suficiente. El resto de los modulos se 
@@ -40,7 +41,8 @@ comando (como superusuario)::
                        python-gtk2 \
                        python-notify \
                        python-pygame \
-                       python-pybabel
+                       python-pybabel \
+                       python-gtkspell
 
 o si dispone de ``sudo``::
 
@@ -48,7 +50,8 @@ o si dispone de ``sudo``::
                             python-gtk2 \
                             python-notify \
                             python-pygame \
-                            python-pybabel
+                            python-pybabel \
+                            python-gtkspell
 
 Instalacion
 -----------

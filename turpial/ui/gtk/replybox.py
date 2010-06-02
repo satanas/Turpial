@@ -48,9 +48,6 @@ class ReplyBox(gtk.Window):
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         self.tweets.clear()
         self.tweets.start_update()
-        #self.tweets.waiting.stop(True)
-        #self.tweets.lblerror.set_markup('<span background="#00FF00">Hola,
-        # mi nombre es culero connoorrr</span>')
         self.show_all()
         
     def update(self, tweets):

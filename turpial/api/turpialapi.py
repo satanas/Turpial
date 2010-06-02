@@ -228,7 +228,9 @@ class TurpialAPI(threading.Thread):
         
     def __handle_friends(self, rtn, done_callback, cursor):
         '''Manejo de amigos'''
-        if rtn is None:
+        #FIXME: Problema con el valor devuelto
+        if (rtn is None) or (not 'users' in rtn) or (not isinstance(rtn, dict)):
+            print rtn
             self.log.debug('Error descargando amigos, intentando de nuevo')
             self.get_friends(done_callback, cursor)
         else:
@@ -475,6 +477,13 @@ class TurpialAPI(threading.Thread):
         self.__register({'uri': '%s/direct_messages/destroy' % self.apiurl,
                          'id': tweet_id, 'args': '', 'tweet':True,
                          'del': True}, callback)
+        
+    def get_single_friends_list(self):
+        '''Returns a single friends list from the original twitter hash'''
+        list = []
+        for friend in self.friends:
+            list.append(friend['screen_name'])
+        return list
         
     def end_session(self):
         '''Finalizando sesion'''

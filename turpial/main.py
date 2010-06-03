@@ -112,8 +112,8 @@ class Turpial:
         '''Chequeo de credenciales'''
         if val.type == 'error':
             self.ui.cancel_login(val.errmsg)
-        elif val.type == 'mixed':
-            self.profile = val.items[0]
+        elif val.type == 'profile':
+            self.profile = val.items
             self.config = ConfigHandler(self.profile.username)
             self.config.initialize()
             if self.remember:
@@ -126,7 +126,7 @@ class Turpial:
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.profile.username, self.profile.password)
             
-            self.__signin_done(val.items[1], val.items[2], None, val)
+            self.__signin_done(None, None, None, val)
     
     def __done_follow(self, response):
         if response.type == 'error':

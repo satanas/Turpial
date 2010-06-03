@@ -151,16 +151,20 @@ class Twitter(Protocol):
         
         try:
             #xAuth
-            key, secret = self.http.xauth(username, password, auth)
-            #self.http.set_credentials(username, password)
+            #key, secret = self.http.xauth(username, password, auth)
+            self.http.set_credentials(username, password)
             rtn = self.http.request('%s/account/verify_credentials' % 
                 self.apiurl)
+            print rtn
             self.profile = self.__create_profile(rtn)
             self.profile.password = password
             #return Response([self.profile, key, secret], 'mixed')
             return Response(self.profile, 'profile')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
+        except Exception, exc:
+            self.log.debug('Authentication Error: %s' % exc)
+            return Response(None, 'error', 'Authentication Error')
         
     def get_timeline(self, args):
         '''Actualizando linea de tiempo'''

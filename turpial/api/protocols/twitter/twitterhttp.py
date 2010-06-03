@@ -60,9 +60,10 @@ class TwitterHTTP(TurpialHTTP):
     def request(self, uri, args={}):
         try:
             if self.oauth_support:
-                self._secure_request(uri, args)
+                rtn = self._secure_request(uri, args)
             else:
-                self._simple_request(uri, args)
+                rtn = self._simple_request(uri, args)
+            return rtn
         except urllib2.HTTPError, exc:
             self.log.debug("HTTPError for URL: %s\nparameters: (%s)\n\
 details: %s" % (uri, args, traceback.print_exc()))

@@ -1,0 +1,12 @@
+include turpial/data/pixmaps/*
+include turpial/data/sounds/*
+include turpial/data/themes/default/*
+include turpial.desktop
+include doc/*
+include ChangeLog
+include README.rst
+include COPYING
+include AUTHORS
+include pylintrc
+include turpial/i18n/*.*
+include turpial/i18n/*/LC_MESSAGES/*.*

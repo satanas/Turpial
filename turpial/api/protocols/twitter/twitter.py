@@ -7,7 +7,7 @@
 
 from turpial.api.interfaces.protocol import Protocol
 from turpial.api.interfaces.http import TurpialException
-from turpial.api.protocols.twitter.twitterhttp import TwitterHTTP
+from turpial.api.protocols.twitter.http import TwitterHTTP
 from turpial.api.interfaces.post import Status, Response, Profile, RateLimit
 
 
@@ -150,21 +150,18 @@ class Twitter(Protocol):
         auth = args['auth']
         
         try:
-            #xAuth
-            #key, secret = self.http.xauth(username, password, auth)
-            self.http.set_credentials(username, password)
+            key, secret = self.http.auth(username, password, auth)
             rtn = self.http.request('%s/account/verify_credentials' % 
                 self.apiurl)
-            print rtn
             self.profile = self.__create_profile(rtn)
             self.profile.password = password
             #return Response([self.profile, key, secret], 'mixed')
-            return Response(self.profile, 'profile')
+            return Response(self.profile, 'profile'), key, secret
         except TurpialException, exc:
-            return Response(None, 'error', exc.msg)
+            return Response(None, 'error', exc.msg), None, None
         except Exception, exc:
             self.log.debug('Authentication Error: %s' % exc)
-            return Response(None, 'error', 'Authentication Error')
+            return Response(None, 'error', 'Authentication Error'), None, None
         
     def get_timeline(self, args):
         '''Actualizando linea de tiempo'''

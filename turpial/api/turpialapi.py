@@ -119,7 +119,7 @@ class TurpialAPI(threading.Thread):
     
     def search(self, query, callback):
         '''Buscando tweet'''
-        args = {'query': query, 'count': 3}
+        args = {'query': query, 'count': 60}
         self.log.debug('Solicitando búsqueda: %s' % query)
         self.__register(self.protocol.search, args, callback)
     

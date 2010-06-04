@@ -35,8 +35,10 @@ class Turpial:
             help='Select interface to use. (cmd|gtk)', default='gtk')
         parser.add_option('-c', '--clean', dest='clean', action='store_true',
             help='Clean all bytecodes', default=False)
+        parser.add_option('--version', dest='version', action='store_true',
+            help='Show the version of Turpial', default=False)
         parser.add_option('--test', dest='test', action='store_true',
-            help='Test mode. Only load timeline', default=False)
+            help='Test mode. Only load timeline and friends', default=False)
         
         (options, _) = parser.parse_args()
         
@@ -46,7 +48,7 @@ class Turpial:
         self.remember = False
         self.testmode = options.test
         
-        if options.debug: 
+        if options.debug or options.clean: 
             logging.basicConfig(level=logging.DEBUG)
         else:
             logging.basicConfig(level=logging.INFO)
@@ -54,7 +56,11 @@ class Turpial:
         
         if options.clean:
             self.__clean()
-            self.signout()
+            sys.exit(0)
+            
+        if options.version:
+            print "Turpial version %s" % self.global_cfg.read('App', 'version')
+            sys.exit(0)
             
         self.interface = options.interface
         #if options.interface == 'gtk2':
@@ -92,28 +98,12 @@ class Turpial:
                     self.log.debug("Borrado %s" % path)
                     os.remove(path)
             
-    def __validate_signin(self, val):
-        '''Chequeo de inicio de sesion'''
-        if val.has_key('error'):
-            self.ui.cancel_login(val['error'])
-        else:
-            self.profile = val
-            self.ui.update_user_profile(val)
-            self.ui.show_main(self.config, self.global_cfg, val)
-            
-            self._update_timeline()
-            if self.testmode: return
-            self._update_replies()
-            self._update_directs()
-            self._update_favorites()
-            self._update_rate_limits()
-            
-    def __validate_credentials(self, val):
+    def __validate_credentials(self, val, key, secret):
         '''Chequeo de credenciales'''
         if val.type == 'error':
             self.ui.cancel_login(val.errmsg)
-        elif val.type == 'mixed':
-            self.profile = val.items[0]
+        elif val.type == 'profile':
+            self.profile = val.items
             self.config = ConfigHandler(self.profile.username)
             self.config.initialize()
             if self.remember:
@@ -126,7 +116,7 @@ class Turpial:
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.profile.username, self.profile.password)
             
-            self.__signin_done(val.items[1], val.items[2], None, val)
+            self.__signin_done(key, secret, val)
     
     def __done_follow(self, response):
         if response.type == 'error':
@@ -145,24 +135,20 @@ class Turpial:
             self.ui.update_user_profile(self.profile)
         self.ui.tweet_done(status)
         
-    def __signin_done(self, key, secret, verifier, resp_profile=None):
+    def __signin_done(self, key, secret, resp_profile):
         '''Inicio de sesion finalizado'''
         if key is not None:
             self.config.write('Auth', 'oauth-key', key)
         if secret is not None:
             self.config.write('Auth', 'oauth-secret', secret)
-        if verifier is not None:
-            self.config.write('Auth', 'oauth-verifier', verifier)
         
         self.api.muted_users = self.config.load_muted_list()
+        self.ui.show_main(self.config, self.global_cfg, resp_profile)
         
-        if resp_profile:
-            self.ui.show_main(self.config, self.global_cfg, resp_profile)
-        else:
-            self.ui.show_main(self.config, self.global_cfg, self.profile)
-            
         self._update_timeline()
-        if self.testmode: 
+        if self.testmode:
+            self._update_friends()
+            self._update_rate_limits()
             return
         self._update_replies()
         self._update_directs()

@@ -29,7 +29,6 @@ DEFAULT_CFG = {
     'Auth':{
         'oauth-key': '',
         'oauth-secret': '',
-        'oauth-verifier': '',
     },
     'General':{
         'home-update-interval': '3',

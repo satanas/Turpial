@@ -7,32 +7,25 @@
 
 import os
 import gtk
-import pango
 import base64
 import logging
 import gobject
 import webbrowser
 
-from turpial.ui.gtk.wrapper import Wrapper, WrapperAlign
-from turpial.ui.gtk.tweetslist import TweetList
-from turpial.ui.gtk.userform import  UserForm
-from turpial.ui.gtk.searchtweets import SearchTweets
 from turpial.ui.gtk.updatebox import UpdateBox
 from turpial.ui.gtk.replybox import ReplyBox
 from turpial.ui.gtk.loginlabel import LoginLabel
 from turpial.ui.gtk.waiting import CairoWaiting
 from turpial.ui.gtk.preferences import Preferences
-from turpial.ui.gtk.inputpin import InputPin
+from turpial.ui.gtk.home import Home
+from turpial.ui.gtk.profile import Profile
 from turpial.ui.gtk.dock import Dock
 from turpial.ui.base_ui import BaseGui
 from turpial.notification import Notification
 from turpial.ui import util as util
 
-from turpial.ui.gtk.tweetslistwk import TweetListWebkit
-
 try:
     import webkit
-    from turpial.ui.gtk.oauthwin import OAuthWindow
     extend_mode = True
 except:
     extend_mode = False
@@ -41,44 +34,6 @@ gtk.gdk.threads_init()
 
 log = logging.getLogger('Gtk')
 
-# ------------------------------------------------------------
-# Objetos del Dock (Main Objects)
-# ------------------------------------------------------------
-class Home(Wrapper):
-    def __init__(self, mainwin, mode='single'):
-        Wrapper.__init__(self)
-        
-        if mainwin.extend:
-            self.timeline = TweetListWebkit(mainwin, 'Timeline')
-            self.replies = TweetListWebkit(mainwin, _('Mentions'))
-        else:
-            self.timeline = TweetList(mainwin, _('Timeline'))
-            self.replies = TweetList(mainwin, _('Mentions'))
-        self.direct = TweetList(mainwin, _('Directs'), 'direct')
-        
-        self._append_widget(self.timeline, WrapperAlign.left)
-        self._append_widget(self.replies, WrapperAlign.middle)
-        self._append_widget(self.direct, WrapperAlign.right)
-        
-        self.change_mode(mode)
-        
-class Profile(Wrapper):
-    def __init__(self, mainwin, mode='single'):
-        Wrapper.__init__(self)
-        
-        self.favorites = TweetList(mainwin, _('Favorites'))
-        self.user_form = UserForm(mainwin, _('Profile'))
-        self.topics = SearchTweets(mainwin, _('Search'))
-        
-        self._append_widget(self.user_form, WrapperAlign.left)
-        self._append_widget(self.favorites, WrapperAlign.middle)
-        self._append_widget(self.topics, WrapperAlign.right)
-        
-        self.change_mode(mode)
-        
-    def set_user_profile(self, user_profile):
-        self.user_form.update(user_profile)
-        
 class Main(BaseGui, gtk.Window):
     __gsignals__ = dict(mykeypress=(gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (str,)))
 
@@ -129,7 +84,6 @@ class Main(BaseGui, gtk.Window):
         
         if self.extend:
             log.debug('Cargado modo GTK Extendido')
-            self.browser = OAuthWindow(self)
         else:
             log.debug('Cargado modo GTK Simple')
         
@@ -413,28 +367,6 @@ class Main(BaseGui, gtk.Window):
         
     def show_preferences(self, widget, mode='user'):
         prefs = Preferences(self, mode)
-        
-    def show_oauth_pin_request(self, url):
-        if self.extend:
-            gtk.gdk.threads_enter()
-            self.browser.open(url)
-            gtk.gdk.threads_leave()
-        else:
-            webbrowser.open(url)
-            gtk.gdk.threads_enter()
-            p = InputPin(self)
-            response = p.run()
-            if response == gtk.RESPONSE_ACCEPT:
-                verifier = p.pin.get_text()
-                if verifier == '': 
-                    self.cancel_login(_('Must write a valid PIN'))
-                else:
-                    self.request_auth_token(verifier)
-            else:
-                self.cancel_login(_('Login cancelled by user'))
-                
-            p.destroy()
-            gtk.gdk.threads_leave()
         
     def start_updating_timeline(self):
         self.home.timeline.start_update()

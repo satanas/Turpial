@@ -45,6 +45,8 @@ class Turpial:
         self.profile = None
         self.remember = False
         self.testmode = options.test
+        self.httpserv = None
+        self.api = None
         
         if options.debug: 
             logging.basicConfig(level=logging.DEBUG)
@@ -212,12 +214,11 @@ class Turpial:
         '''Finalizar sesion'''
         self.save_muted_list()
         self.log.debug('Desconectando')
-        exit(0)
-        #self.httpserv.quit()
-        #if self.profile: 
-        #    self.api.end_session()
-        #else:
-        #    self.api.quit()
+        if self.httpserv:
+            self.httpserv.quit()
+        if self.api: 
+            self.api.quit()
+        sys.exit(0)
     
     def update_status(self, text, reply_id=None):
         if text.startswith('D '):

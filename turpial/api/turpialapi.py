@@ -497,14 +497,17 @@ class TurpialAPI(threading.Thread):
     def run(self):
         '''Bloque principal de ejecucion'''
         while not self.exit:
-            time.sleep(0.3)
             try:
-                req = self.queue.get(False)
+                req = self.queue.get(True, 0.3)
             except Queue.Empty:
                 continue
             
             (args, callback) = req
             
+            if self.exit:
+                self.queue.task_done()
+                break
+                
             if args.has_key('oauth'):
                 self.__handle_oauth(args, callback)
                 continue
@@ -598,6 +601,10 @@ class TurpialAPI(threading.Thread):
                     if args.has_key('login'): 
                         rtn = {'error': 'Can\'t connect to twitter.com'}
             
+            if self.exit:
+                self.queue.task_done()
+                break
+                
             if args.has_key('login'): 
                 self.profile = rtn
                 
@@ -659,8 +666,11 @@ class TurpialAPI(threading.Thread):
                 
             if args.has_key('exit'):
                 self.exit = True
+                self.queue.task_done()
             else:
                 callback(rtn)
+            
+            self.queue.task_done()
             
         self.log.debug('Terminado')
         return

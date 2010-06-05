@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
-"""Interfaz para tr.im en Turpial"""
+"""Interfaz para cli.gs en Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
-# Abr 19, 2010
+# Abr 18, 2010
 
 import traceback
 
-from turpial.api.interfaces.generic import GenericService
-from turpial.api.interfaces.generic import ServiceResponse
+from turpial.api.interfaces.service import GenericService
+from turpial.api.interfaces.service import ServiceResponse
 
-class TrimURLShorter(GenericService):
+class CligsURLShorter(GenericService):
     def __init__(self):
         GenericService.__init__(self)
-        self.base = "http://tr.im/api/trim_simple?url=%s"
+        self.base = "http://cli.gs/api/v1/cligs/create?appid=gwibber&url=%s"
         
     def do_service(self, longurl):
         longurl = self._quote_url(longurl)

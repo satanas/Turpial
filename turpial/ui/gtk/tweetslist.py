@@ -325,7 +325,7 @@ class TweetList(gtk.VBox):
         self.mainwin.show_update_box(text, in_reply_id, in_reply_user)
         
     def __retweet(self, widget, id):
-        self.mainwin.request_retweet(id)
+        self.mainwin.request_repeat(id)
         
     def __delete(self, widget, id):
         self.mainwin.request_destroy_status(id)
@@ -365,16 +365,16 @@ class TweetList(gtk.VBox):
         
     def add_tweet(self, tweet):
         p = self.mainwin.parse_tweet(tweet)
-        pix = self.mainwin.get_user_avatar(p['username'], p['avatar'])
+        pix = self.mainwin.get_user_avatar(p.username, p.avatar)
         
         urls = [gobject.markup_escape_text(u) \
-                for u in util.detect_urls(p['text'])]
+                for u in util.detect_urls(p.text)]
         
-        pango_twt = gobject.markup_escape_text(p['text'])
-        #pango_twt = '<span size="9000"><b>%s</b> %s</span>' % \
-        #            (p['username'], pango_twt)
+        pango_twt = util.unescape_text(p.text)
+        pango_twt = gobject.markup_escape_text(p.text)
+        
         user = '<span size="9000" foreground="#%s"><b>%s</b></span> ' % \
-            (self.mainwin.link_color, p['username'])
+            (self.mainwin.link_color, p.username)
         pango_twt = '<span size="9000">%s</span>' % pango_twt
         pango_twt = self.__highlight_hashtags(pango_twt)
         pango_twt = self.__highlight_mentions(pango_twt)
@@ -382,25 +382,26 @@ class TweetList(gtk.VBox):
         pango_twt += '<span size="2000">\n\n</span>'
         pango_twt = user + pango_twt
         
-        footer = '<span size="small" foreground="#999">%s' % p['datetime']
-        if p['client']: 
-            footer += ' %s %s' % (_('from'), p['client'])
-        if p['in_reply_to_user']:
-            footer += ' %s %s' % (_('in reply to'), p['in_reply_to_user'])
-        if p['retweet_by']:
-            footer += '\n%s %s' % (_('Retweeted by'), p['retweet_by'])
+        footer = '<span size="small" foreground="#999">%s' % p.timestamp
+        if p.source: 
+            footer += ' %s %s' % (_('from'), p.source)
+        if p.in_reply_to_user:
+            footer += ' %s %s' % (_('in reply to'), p.in_reply_to_user)
+        if p.retweet_by:
+            footer += '\n%s %s' % (_('Retweeted by'), p.retweet_by)
         footer += '</span>'
         
         pango_twt += footer
+        
         #color = gtk.gdk.Color(255*257, 242*257, 212*257) if p['fav'] else None
-        if p['fav']:
+        if p.is_favorite:
             color = gtk.gdk.Color(250 * 257, 237 * 257, 187 * 257)
         else:
             color = None
         
-        self.model.append([pix, p['username'], p['datetime'], p['client'],
-            pango_twt, p['text'], p['id'], p['fav'], p['in_reply_to_id'],
-            p['in_reply_to_user'], p['retweet_by'], color])
+        self.model.append([pix, p.username, p.datetime, p.source,
+            pango_twt, p.text, p.id, p.is_favorite, p.in_reply_to_id,
+            p.in_reply_to_user, p.retweet_by, color])
         del pix
         
     def update_user_pic(self, user, pic):
@@ -414,12 +415,14 @@ class TweetList(gtk.VBox):
             iter = self.model.iter_next(iter)
         del pix
         
-    def update_tweets(self, arr_tweets):
-        if arr_tweets is None:
-            self.stop_update(True,
-                             _('Something went wrong. I\'ll update again soon'))
+    def update_tweets(self, response):
+        if response.type == 'error':
+            self.stop_update(True, response.errmsg)
             return 0
-        elif len(arr_tweets) == 0:
+            
+        arr_tweets = response.items
+        if len(arr_tweets) == 0:
+            self.clear()
             self.stop_update(True, _('No tweets available'))
             return 0
         else:

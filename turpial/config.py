@@ -11,7 +11,7 @@ import ConfigParser
 
 GLOBAL_CFG = {
     'App':{
-        'version': '1.3.2-b1',
+        'version': '1.4.0-a1',
     },
     'Login':{
         'username': '',
@@ -29,7 +29,6 @@ DEFAULT_CFG = {
     'Auth':{
         'oauth-key': '',
         'oauth-secret': '',
-        'oauth-verifier': '',
     },
     'General':{
         'home-update-interval': '3',
@@ -101,6 +100,9 @@ class ConfigBase:
                 else:
                     self.write(section, option, value)
                 
+    def load_failsafe(self):
+        self.__config = self.default
+        
     def save(self, config):
         """Guardando configuracion en fichero"""
         self.log.debug('Guardando todo')
@@ -161,11 +163,18 @@ class ConfigHandler(ConfigBase):
         ConfigBase.__init__(self)
         
         self.dir = os.path.join(os.path.expanduser('~'), '.config',
-                                'turpial', user)
+            'turpial', user)
         self.imgdir = os.path.join(self.dir, 'images')
         self.filepath = os.path.join(self.dir, 'config')
         self.mutedpath = os.path.join(self.dir, 'muted')
-        
+    
+    def initialize_failsafe(self):
+        if not os.path.isdir(self.dir): 
+            self.load_failsafe()
+        else:
+            self.initialize()
+            
+    def initialize(self):
         if not os.path.isdir(self.dir): 
             os.makedirs(self.dir)
         if not os.path.isdir(self.imgdir): 

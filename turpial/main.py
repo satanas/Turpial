@@ -14,7 +14,7 @@ import logging
 from optparse import OptionParser
 
 from turpial.ui.gtk.main import Main as _GTK
-from turpial.api.services import HTTPServices
+from turpial.api.servicesapi import HTTPServices
 from turpial.api.turpialapi import TurpialAPI
 from turpial.config import ConfigHandler, ConfigApp
 
@@ -35,8 +35,10 @@ class Turpial:
             help='Select interface to use. (cmd|gtk)', default='gtk')
         parser.add_option('-c', '--clean', dest='clean', action='store_true',
             help='Clean all bytecodes', default=False)
+        parser.add_option('--version', dest='version', action='store_true',
+            help='Show the version of Turpial', default=False)
         parser.add_option('--test', dest='test', action='store_true',
-            help='Test mode. Only load timeline', default=False)
+            help='Test mode. Only load timeline and friends', default=False)
         
         (options, _) = parser.parse_args()
         
@@ -46,7 +48,7 @@ class Turpial:
         self.remember = False
         self.testmode = options.test
         
-        if options.debug: 
+        if options.debug or options.clean: 
             logging.basicConfig(level=logging.DEBUG)
         else:
             logging.basicConfig(level=logging.INFO)
@@ -54,7 +56,11 @@ class Turpial:
         
         if options.clean:
             self.__clean()
-            self.signout()
+            sys.exit(0)
+            
+        if options.version:
+            print "Turpial version %s" % self.global_cfg.read('App', 'version')
+            sys.exit(0)
             
         self.interface = options.interface
         #if options.interface == 'gtk2':
@@ -92,76 +98,58 @@ class Turpial:
                     self.log.debug("Borrado %s" % path)
                     os.remove(path)
             
-    def __validate_signin(self, val):
-        '''Chequeo de inicio de sesion'''
-        if val.has_key('error'):
-            self.ui.cancel_login(val['error'])
-        else:
-            self.profile = val
-            self.ui.update_user_profile(val)
-            self.ui.show_main(self.config, self.global_cfg, val)
-            
-            self._update_timeline()
-            if self.testmode: return
-            self._update_replies()
-            self._update_directs()
-            self._update_favorites()
-            self._update_rate_limits()
-            
-    def __validate_credentials(self, val):
+    def __validate_credentials(self, val, key, secret):
         '''Chequeo de credenciales'''
-        if val.has_key('error'):
-            self.ui.cancel_login(val['error'])
-        else:
-            self.profile = val
-            self.config = ConfigHandler(val['screen_name'])
+        if val.type == 'error':
+            self.ui.cancel_login(val.errmsg)
+        elif val.type == 'profile':
+            self.profile = val.items
+            self.config = ConfigHandler(self.profile.username)
+            self.config.initialize()
             if self.remember:
-                self.global_cfg.write('Login', 'username', self.api.username)
+                self.global_cfg.write('Login', 'username', self.profile.username)
                 self.global_cfg.write('Login', 'password',
-                                      base64.b64encode(self.api.password))
+                                      base64.b64encode(self.profile.password))
             else:
                 self.global_cfg.write('Login', 'username', '')
                 self.global_cfg.write('Login', 'password', '')
             self.httpserv.update_img_dir(self.config.imgdir)
-            self.httpserv.set_credentials(self.api.username, self.api.password)
+            self.httpserv.set_credentials(self.profile.username, self.profile.password)
             
-            auth = self.config.read_section('Auth')
-            if self.api.has_oauth_support():
-                self.api.start_oauth(auth, self.ui.show_oauth_pin_request,
-                                     self.__signin_done)
-            else:
-                self.api.is_oauth = False
-                self.__signin_done(None, None, None)
+            self.__signin_done(key, secret, val)
     
-    def __done_follow(self, friends, profile, user, follow):
-        self.ui.update_user_profile(profile)
-        self.ui.update_friends(friends)
-        self.ui.update_follow(user, follow)
-        #self.ui.update_timeline(friends)
-        
-    def __direct_done(self, tweet):
-        self.ui.tweet_done(tweet)
-        
-    def __tweet_done(self, tweet):
-        if tweet:
-            self.profile['statuses_count'] += 1
+    def __done_follow(self, response):
+        if response.type == 'error':
+            self.ui.update_follow(response, response.items)
+        elif response.type == 'mixed':
+            self.profile, user, follow = response.items
             self.ui.update_user_profile(self.profile)
-        self.ui.tweet_done(tweet)
+            self.ui.update_follow(user, follow)
         
-    def __signin_done(self, key, secret, verifier):
+    def __direct_done(self, status):
+        self.ui.tweet_done(status)
+        
+    def __tweet_done(self, status):
+        if status:
+            self.profile.statuses_count += 1
+            self.ui.update_user_profile(self.profile)
+        self.ui.tweet_done(status)
+        
+    def __signin_done(self, key, secret, resp_profile):
         '''Inicio de sesion finalizado'''
         if key is not None:
             self.config.write('Auth', 'oauth-key', key)
         if secret is not None:
             self.config.write('Auth', 'oauth-secret', secret)
-        if verifier is not None:
-            self.config.write('Auth', 'oauth-verifier', verifier)
         
         self.api.muted_users = self.config.load_muted_list()
+        self.ui.show_main(self.config, self.global_cfg, resp_profile)
         
-        self.ui.show_main(self.config, self.global_cfg, self.profile)
         self._update_timeline()
-        if self.testmode: return
+        if self.testmode:
+            self._update_friends()
+            self._update_rate_limits()
+            return
         self._update_replies()
         self._update_directs()
         self._update_rate_limits()
@@ -171,20 +159,20 @@ class Turpial:
     def _update_timeline(self):
         '''Actualizar linea de tiempo'''
         self.ui.start_updating_timeline()
-        tweets = int(self.config.read('General', 'num-tweets'))
-        self.api.update_timeline(self.ui.update_timeline, tweets)
+        count = int(self.config.read('General', 'num-tweets'))
+        self.api.update_timeline(self.ui.update_timeline, count)
         
     def _update_replies(self):
         '''Actualizar numero de respuestas'''
         self.ui.start_updating_replies()
-        tweets = int(self.config.read('General', 'num-tweets'))
-        self.api.update_replies(self.ui.update_replies, tweets)
+        count = int(self.config.read('General', 'num-tweets'))
+        self.api.update_replies(self.ui.update_replies, count)
         
     def _update_directs(self):
         '''Actualizar mensajes directos'''
         self.ui.start_updating_directs()
-        tweets = int(self.config.read('General', 'num-tweets'))
-        self.api.update_directs(self.ui.update_directs, tweets)
+        count = int(self.config.read('General', 'num-tweets'))
+        self.api.update_directs(self.ui.update_directs, count)
         
     def _update_favorites(self):
         '''Actualizar favoritos'''
@@ -195,29 +183,24 @@ class Turpial:
         
     def _update_friends(self):
         '''Actualizar amigos'''
-        self.api.get_friends(self.ui.update_friends)
+        self.api.get_friends()
         
-    def signin(self, username, password):
-        self.config = ConfigHandler(username)
-        self.api.auth(username, password, self.__validate_signin)
-        
-    def signin_oauth(self, username, password, remember):
+    def signin(self, username, password, remember):
+        config = ConfigHandler(username)
+        config.initialize_failsafe()
+        auth = config.read_section('Auth')
         self.remember = remember
-        self.api.auth(username, password, self.__validate_credentials)
-        
-    def auth_token(self, pin):
-        self.api.authorize_oauth_token(pin, self.__signin_done)
+        self.api.auth(username, password, auth, self.__validate_credentials)
         
     def signout(self):
         '''Finalizar sesion'''
         self.save_muted_list()
         self.log.debug('Desconectando')
-        exit(0)
-        #self.httpserv.quit()
-        #if self.profile: 
-        #    self.api.end_session()
-        #else:
-        #    self.api.quit()
+        self.httpserv.quit()
+        self.httpserv.join()
+        self.api.quit()
+        self.api.join()
+        sys.exit(0)
     
     def update_status(self, text, reply_id=None):
         if text.startswith('D '):
@@ -225,17 +208,17 @@ class Turpial:
         else:
             self.api.update_status(text, reply_id, self.__tweet_done)
         
-    def destroy_status(self, tweet_id):
-        self.api.destroy_status(tweet_id, self.ui.after_destroy)
+    def destroy_status(self, id):
+        self.api.destroy_status(id, self.ui.after_destroy_status)
         
-    def set_favorite(self, tweet_id):
-        self.api.set_favorite(tweet_id, self.ui.update_favorites)
+    def set_favorite(self, id):
+        self.api.set_favorite(id, self.ui.tweet_changed)
         
-    def unset_favorite(self, tweet_id):
-        self.api.unset_favorite(tweet_id, self.ui.update_favorites)
+    def unset_favorite(self, id):
+        self.api.unset_favorite(id, self.ui.tweet_changed)
     
-    def retweet(self, tweet_id):
-        self.api.retweet(tweet_id, self.ui.tweet_changed)
+    def repeat(self, id):
+        self.api.repeat(id, self.__tweet_done)
     
     def follow(self, user):
         self.api.follow(user, self.__done_follow)
@@ -247,11 +230,11 @@ class Turpial:
         self.api.update_profile(new_name, new_url, new_bio, new_location,
             self.ui.update_user_profile)
     
-    def in_reply_to(self, twt_id):
-        self.api.in_reply_to(twt_id, self.ui.update_in_reply_to)
+    def in_reply_to(self, id):
+        self.api.in_reply_to(id, self.ui.update_in_reply_to)
         
-    def get_conversation(self, twt_id):
-        self.api.get_conversation(twt_id, self.ui.update_conversation)
+    def get_conversation(self, id):
+        self.api.get_conversation(id, self.ui.update_conversation)
         
     def mute(self, user):
         self.ui.start_updating_timeline()
@@ -268,24 +251,24 @@ class Turpial:
         service = self.config.read('Services', 'upload-pic')
         self.httpserv.upload_pic(service, path, callback)
         
-    def search_topic(self, query):
+    def search(self, query):
         self.ui.start_search()
-        self.api.search_topic(query, self.ui.update_search_topics)
+        self.api.search(query, self.ui.update_search)
         
     def get_popup_info(self, tweet_id, user):
-        if tweet_id in self.api.to_fav:
+        if self.api.is_marked_to_fav(tweet_id):
             return {'busy': 'Marcando favorito...'}
-        elif tweet_id in self.api.to_unfav:
+        elif self.api.is_marked_to_unfav(tweet_id):
             return {'busy': 'Desmarcando favorito...'}
-        elif tweet_id in self.api.to_del:
+        elif self.api.is_marked_to_del(tweet_id):
             return {'busy': 'Borrando...'}
             
         rtn = {}
-        if self.api.friendsloaded:
+        if self.api.friends_loaded():
             rtn['friend'] = self.api.is_friend(user)
 
         rtn['fav'] = self.api.is_fav(tweet_id)
-        rtn['own'] = (self.profile['screen_name'] == user)
+        rtn['own'] = (self.profile.username == user)
         
         return rtn
         
@@ -308,8 +291,8 @@ class Turpial:
         self.ui.start_updating_timeline()
         timeline = self.api.mute(muted_users, self.ui.update_timeline)
         
-    def destroy_direct(self, tweet_id):
-        self.api.destroy_direct(tweet_id, self.ui.after_destroy)
+    def destroy_direct(self, id):
+        self.api.destroy_direct(id, self.ui.after_destroy_direct)
         
     def get_friends(self):
         return self.api.get_single_friends_list()

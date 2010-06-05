@@ -86,44 +86,19 @@ class BaseGui:
     
     def parse_tweet(self, xtweet):
         '''Decompose tweet in basic parts'''
-        tweet, retweet_by = self.__get_real_tweet(xtweet)
         
-        if tweet.has_key('user'):
-            username = tweet['user']['screen_name']
-            avatar = tweet['user']['profile_image_url']
-        elif tweet.has_key('sender'):
-            username = tweet['sender']['screen_name']
-            avatar = tweet['sender']['profile_image_url']
-        elif tweet.has_key('from_user'):
-            username = tweet['from_user']
-            avatar = tweet['profile_image_url']
+        xtweet.text = util.unescape_text(xtweet.text)
+        xtweet.source = util.detect_client(xtweet)
+        xtweet.timestamp = util.get_timestamp(xtweet)
+        return xtweet
         
-        tweet['text'] = util.unescape_text(tweet['text'])
-        
-        client = util.detect_client(tweet)
-        datetime = util.get_timestamp(tweet)
-        
-        in_reply_to_id = None
-        in_reply_to_user = None
-        if tweet.has_key('in_reply_to_status_id') and \
-           tweet['in_reply_to_status_id']:
-            in_reply_to_id = tweet['in_reply_to_status_id']
-            in_reply_to_user = tweet['in_reply_to_screen_name']
-        
-        fav = False
-        if tweet.has_key('favorited'):
-            fav = tweet['favorited']
-        
-        return {'username': username, 'avatar': avatar, 'client': client,
-            'datetime':datetime, 'text': tweet['text'], 'id': tweet['id'],
-            'in_reply_to_id': in_reply_to_id,
-            'in_reply_to_user': in_reply_to_user,
-            'fav': fav, 'retweet_by': retweet_by}
-        
-    def after_destroy(self, timeline, replies, favs, directs):
-        '''Update columns after destroy a tweet'''
+    def after_destroy_status(self, timeline, favs):
+        '''Update columns after destroy a status'''
         self.update_timeline(timeline)
-        self.update_favorites(timeline, replies, favs)
+        self.update_favorites(favs)
+        
+    def after_destroy_direct(self, directs):
+        '''Update columns after destroy a direct'''
         self.update_directs(directs)
         
     def read_config(self):
@@ -142,17 +117,9 @@ class BaseGui:
         '''Saves the global config'''
         self.__controller.save_global_config(new_config)
         
-    def request_signin(self, username, password):
+    def request_signin(self, username, password, remember):
         '''Request simple signin'''
-        self.__controller.signin(username, password)
-        
-    def request_oauth(self, username, password, remember):
-        '''Request signin using OAuth'''
-        self.__controller.signin_oauth(username, password, remember)
-        
-    def request_auth_token(self, pin):
-        '''Request OAuth token authorization'''
-        self.__controller.auth_token(pin)
+        self.__controller.signin(username, password, remember)
         
     def request_signout(self):
         '''Request signout'''
@@ -180,9 +147,9 @@ class BaseGui:
                                             self.__done_user_avatar)
         return None
         
-    def request_retweet(self, id):
-        '''Retweet'''
-        self.__controller.retweet(id)
+    def request_repeat(self, id):
+        '''Repeat status'''
+        self.__controller.repeat(id)
         
     def request_fav(self, id):
         '''Mark a tweet as favorite'''
@@ -233,13 +200,9 @@ class BaseGui:
         '''Update user profile'''
         self.__controller.update_profile(name, url, bio, location)
         
-    def request_search_topic(self, topic):
+    def request_search(self, topic):
         '''Search a topic in search.twitter.com'''
-        self.__controller.search_topic(topic)
-        
-    def request_search_people(self, query):
-        '''Search people in search.twitter.com'''
-        self.__controller.search_people(query)
+        self.__controller.search(topic)
         
     def request_trends(self):
         '''Get trendings'''
@@ -348,7 +311,7 @@ class BaseGui:
     def update_directs(self, directs):
         raise NotImplementedError
         
-    def update_favorites(self, tweets, replies, favs):
+    def update_favorites(self, favs):
         raise NotImplementedError
         
     def update_rate_limits(self, rates):
@@ -363,13 +326,7 @@ class BaseGui:
     def update_user_profile(self, profile):
         raise NotImplementedError
         
-    def update_trends(self, current, day, week):
-        raise NotImplementedError
-        
-    def update_search_topics(self, topics):
-        raise NotImplementedError
-    
-    def update_friends(self, friends):
+    def update_search(self, topics):
         raise NotImplementedError
         
     def update_in_reply_to(self, tweets):
@@ -385,5 +342,8 @@ class BaseGui:
         raise NotImplementedError
         
     def update_config(self, config):
+        raise NotImplementedError
+    
+    def quit(self, arg):
         raise NotImplementedError
         

@@ -216,8 +216,10 @@ class Turpial:
         self.log.debug('Desconectando')
         if self.httpserv:
             self.httpserv.quit()
+            self.httpserv.join()
         if self.api: 
             self.api.quit()
+            self.api.join()
         sys.exit(0)
     
     def update_status(self, text, reply_id=None):

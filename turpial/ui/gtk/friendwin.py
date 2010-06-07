@@ -11,10 +11,12 @@ class FriendsWin(gtk.Window):
     def __init__(self, parent, callback, friends):
         gtk.Window.__init__(self)
         
+        self.updatebox = parent
         self.set_title(_('Add friend'))
         self.set_size_request(200, 250)
         self.set_transient_for(parent)
         self.set_resizable(False)
+        self.set_modal(True)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
         self.callback = callback
@@ -90,7 +92,10 @@ seconds' ))
         
     def __filter(self, model, iter, entry):
         user = model.get_value(iter, 0)
-        return user.startswith(entry.get_text())
+        user_l = user.lower()
+        user_u = user.upper()
+        return (user_l.startswith(entry.get_text()) or 
+            user_u.startswith(entry.get_text()))
         
     def __choose(self, treeview, path, view_column):
         iter = self.modelfilter.get_iter(path)
@@ -100,3 +105,4 @@ seconds' ))
         
     def __close(self, widget, event):
         self.destroy()
+        self.updatebox.set_focus(self.updatebox.update_text)

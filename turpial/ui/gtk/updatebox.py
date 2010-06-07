@@ -25,12 +25,13 @@ class UpdateBox(gtk.Window):
         self.what = _('What is happening?')
         self.blocked = False
         self.mainwin = parent
-        self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
+        #self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.set_title(_('Update status'))
         self.set_resizable(False)
         #self.set_default_size(500, 120)
         self.set_size_request(500, 150)
         self.set_transient_for(parent)
+        self.set_modal(True)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
         self.label = gtk.Label()
@@ -156,7 +157,7 @@ class UpdateBox(gtk.Window):
         return True
         
     def show_friend_dialog(self, widget):
-        f = FriendsWin(self.mainwin, self.add_friend, 
+        f = FriendsWin(self, self.add_friend, 
             self.mainwin.request_friends_list())
         
     def block(self):

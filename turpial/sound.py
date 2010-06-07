@@ -6,6 +6,8 @@
 # Ene 08, 2010
 
 import os
+import logging
+
 from pygame import mixer as pygamemixer
 from pygame import error as pygameerror
 

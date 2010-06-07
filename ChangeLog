@@ -1,3 +1,12 @@
+v1.3.2-b3 (Jun 05, 2010):
+    + Corregido error que cerraba Turpial si no existe tarjeta de sonido
+    
+v1.3.2-b2 (Jun 04, 2010):
+    + Corregido error que impedía cerrar Turpial desde la bandeja de sistema
+    
+v1.3.2-b1 (Jun 03, 2010):
+    + Publicada versión beta sin cambios respecto a la anterior
+    
 v1.3.2-a2 (May 17, 2010):
     + Corregido error crítico con los diccionarios de ortografía y los locales
     + Corregido error con el servicio de SigueMiLink

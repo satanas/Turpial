@@ -46,7 +46,7 @@ class Notification:
             if pynotify.init("Turpial"):
                 if not icon:
                     icon = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                        'data', 'pixmaps', 'turpial_icon_48.png'))
+                        'data', 'pixmaps', 'turpial.png'))
                 icon = "file://%s" % icon
                 notification = pynotify.Notification(title, message, icon)
                 notification.show()

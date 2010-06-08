@@ -85,6 +85,5 @@ setup(name="turpial",
                        'ChangeLog',
                        'README.rst',
                        'COPYING']),
-        ('share/locale', glob.glob('turpial/i18n/*/LC_MESSAGES/*.mo')),
       ],
 )

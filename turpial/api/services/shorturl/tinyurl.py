@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
-"""Interfaz para cli.gs en Turpial"""
+"""Interfaz para tinyurl.com en Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
-# Abr 18, 2010
+# Abr 19, 2010
 
 import traceback
 
-from turpial.api.interfaces.generic import GenericService
-from turpial.api.interfaces.generic import ServiceResponse
+from turpial.api.interfaces.service import GenericService
+from turpial.api.interfaces.service import ServiceResponse
 
-class CligsURLShorter(GenericService):
+class TinyurlURLShorter(GenericService):
     def __init__(self):
         GenericService.__init__(self)
-        self.base = "http://cli.gs/api/v1/cligs/create?appid=gwibber&url=%s"
+        self.base = "http://tinyurl.com/api-create.php?url=%s"
         
     def do_service(self, longurl):
         longurl = self._quote_url(longurl)

@@ -87,18 +87,25 @@ class Notification:
     def login(self, p):
         if self.config['login'] != 'on':
             return
-        self.popup('@%s' % p['screen_name'],
+        self.popup('@%s' % p.username,
             '%s: %i\n%s: %i\n%s: %i' % 
-            (_('Tweets'), p['statuses_count'],
-            _('Following'), p['friends_count'], 
-            _('Followers'), p['followers_count']))
+            (_('Tweets'), p.statuses_count,
+            _('Following'), p.friends_count, 
+            _('Followers'), p.followers_count))
         if self.config['sound'] == 'on':
             self.sound.login()
         
     def following(self, user, follow):
-        name = user['screen_name']
-        
-        if follow:
-            self.popup(_('Follow'), _('Now you follow to @%s') % name)
-        else:
-            self.popup(_('Unfollow'), _('You have unfollow to @%s') % name)
+        # FIXME: Mejorar esta validación
+        try:
+            test = user.type
+            if follow:
+                self.popup(_('Turpial (Follow)'), _('Problem following to @%s') % name)
+            else:
+                self.popup(_('Turpial (Unfollow)'), _('Problem unfollowing to @%s') % name)
+        except Exception, exc:
+            name = user.username
+            if follow:
+                self.popup(_('Turpial (Follow)'), _('Now you follow to @%s') % name)
+            else:
+                self.popup(_('Turpial (Unfollow)'), _('You have unfollow to @%s') % name)

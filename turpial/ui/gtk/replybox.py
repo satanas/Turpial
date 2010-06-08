@@ -50,12 +50,13 @@ class ReplyBox(gtk.Window):
         self.tweets.start_update()
         self.show_all()
         
-    def update(self, tweets):
+    def update(self, response):
         self.working = False
-        if not tweets or (len(tweets) == 0): 
-            self.tweets.stop_update(True, _('Oops... something went wrong'))
+        
+        if response.type == 'error':
+            self.tweets.stop_update(True, response.errmsg)
         else:
             self.tweets.stop_update()
             self.tweets.clear()
-            self.tweets.update_tweets(tweets)
+            self.tweets.update_tweets(response)
 

@@ -7,32 +7,25 @@
 
 import os
 import gtk
-import pango
 import base64
 import logging
 import gobject
 import webbrowser
 
-from turpial.ui.gtk.wrapper import Wrapper, WrapperAlign
-from turpial.ui.gtk.tweetslist import TweetList
-from turpial.ui.gtk.userform import  UserForm
-from turpial.ui.gtk.searchtweets import SearchTweets
 from turpial.ui.gtk.updatebox import UpdateBox
 from turpial.ui.gtk.replybox import ReplyBox
 from turpial.ui.gtk.loginlabel import LoginLabel
 from turpial.ui.gtk.waiting import CairoWaiting
 from turpial.ui.gtk.preferences import Preferences
-from turpial.ui.gtk.inputpin import InputPin
+from turpial.ui.gtk.home import Home
+from turpial.ui.gtk.profile import Profile
 from turpial.ui.gtk.dock import Dock
 from turpial.ui.base_ui import BaseGui
 from turpial.notification import Notification
 from turpial.ui import util as util
 
-from turpial.ui.gtk.tweetslistwk import TweetListWebkit
-
 try:
     import webkit
-    from turpial.ui.gtk.oauthwin import OAuthWindow
     extend_mode = True
 except:
     extend_mode = False
@@ -41,44 +34,6 @@ gtk.gdk.threads_init()
 
 log = logging.getLogger('Gtk')
 
-# ------------------------------------------------------------
-# Objetos del Dock (Main Objects)
-# ------------------------------------------------------------
-class Home(Wrapper):
-    def __init__(self, mainwin, mode='single'):
-        Wrapper.__init__(self)
-        
-        if mainwin.extend:
-            self.timeline = TweetListWebkit(mainwin, 'Timeline')
-            self.replies = TweetListWebkit(mainwin, _('Mentions'))
-        else:
-            self.timeline = TweetList(mainwin, _('Timeline'))
-            self.replies = TweetList(mainwin, _('Mentions'))
-        self.direct = TweetList(mainwin, _('Directs'), 'direct')
-        
-        self._append_widget(self.timeline, WrapperAlign.left)
-        self._append_widget(self.replies, WrapperAlign.middle)
-        self._append_widget(self.direct, WrapperAlign.right)
-        
-        self.change_mode(mode)
-        
-class Profile(Wrapper):
-    def __init__(self, mainwin, mode='single'):
-        Wrapper.__init__(self)
-        
-        self.favorites = TweetList(mainwin, _('Favorites'))
-        self.user_form = UserForm(mainwin, _('Profile'))
-        self.topics = SearchTweets(mainwin, _('Search'))
-        
-        self._append_widget(self.user_form, WrapperAlign.left)
-        self._append_widget(self.favorites, WrapperAlign.middle)
-        self._append_widget(self.topics, WrapperAlign.right)
-        
-        self.change_mode(mode)
-        
-    def set_user_profile(self, user_profile):
-        self.user_form.update(user_profile)
-        
 class Main(BaseGui, gtk.Window):
     __gsignals__ = dict(mykeypress=(gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (str,)))
 
@@ -129,7 +84,6 @@ class Main(BaseGui, gtk.Window):
         
         if self.extend:
             log.debug('Cargado modo GTK Extendido')
-            self.browser = OAuthWindow(self)
         else:
             log.debug('Cargado modo GTK Simple')
         
@@ -261,9 +215,9 @@ class Main(BaseGui, gtk.Window):
     
     def quit(self, widget):
         self.__save_size()
-        gtk.main_quit()
         self.destroy()
         self.tray = None
+        gtk.main_quit()
         self.request_signout()
         
     def main_loop(self):
@@ -325,8 +279,8 @@ class Main(BaseGui, gtk.Window):
         self.add(self.vbox)
         self.show_all()
         
-        self.btn_oauth.connect('clicked', self.oauth)
-        self.password.connect('activate', self.oauth)
+        self.btn_oauth.connect('clicked', self.signin)
+        self.password.connect('activate', self.signin)
         self.remember.connect("toggled", self.__toogle_remember)
         self.btn_settings.connect('clicked', self.show_preferences, 'global')
         
@@ -337,15 +291,7 @@ class Main(BaseGui, gtk.Window):
             self.password.set_text(base64.b64decode(password))
             self.remember.set_active(True)
         
-    def signin(self, widget, username, password):
-        self.message.deactivate()
-        self.waiting.start()
-        self.btn_oauth.set_sensitive(False)
-        self.username.set_sensitive(False)
-        self.password.set_sensitive(False)
-        self.request_signin(username.get_text(), password.get_text())
-        
-    def oauth(self, widget):
+    def signin(self, widget):
         self.message.deactivate()
         self.waiting.start()
         self.btn_oauth.set_sensitive(False)
@@ -353,7 +299,8 @@ class Main(BaseGui, gtk.Window):
         self.password.set_sensitive(False)
         self.remember.set_sensitive(False)
         self.btn_settings.set_sensitive(False)
-        self.request_oauth(self.username.get_text(), self.password.get_text(), self.remember.get_active())
+        self.request_signin(self.username.get_text(), self.password.get_text(), 
+            self.remember.get_active())
         
     def cancel_login(self, error):
         self.message.set_error(error)
@@ -384,13 +331,13 @@ class Main(BaseGui, gtk.Window):
         self.vbox.pack_start(self.statusbar, False, False, 0)
         
         self.profile.set_user_profile(p)
-        self.me = p['screen_name']
+        self.me = p.items.username
         title = 'Turpial - %s' % self.me
         self.set_title(title)
         self.tray.set_tooltip(title)
         
         if config.read('General', 'profile-color') == 'on':
-            self.link_color = p['profile_link_color']
+            self.link_color = p.items.profile_link_color
         
         self.add(self.vbox)
         self.show_all()
@@ -398,7 +345,7 @@ class Main(BaseGui, gtk.Window):
             self.move(self.win_pos[0], self.win_pos[1])
         gtk.gdk.threads_leave()
         
-        self.notify.login(p)
+        self.notify.login(p.items)
         
         gobject.timeout_add(6 * 60 * 1000, self.download_rates)
         
@@ -420,28 +367,6 @@ class Main(BaseGui, gtk.Window):
         
     def show_preferences(self, widget, mode='user'):
         prefs = Preferences(self, mode)
-        
-    def show_oauth_pin_request(self, url):
-        if self.extend:
-            gtk.gdk.threads_enter()
-            self.browser.open(url)
-            gtk.gdk.threads_leave()
-        else:
-            webbrowser.open(url)
-            gtk.gdk.threads_enter()
-            p = InputPin(self)
-            response = p.run()
-            if response == gtk.RESPONSE_ACCEPT:
-                verifier = p.pin.get_text()
-                if verifier == '': 
-                    self.cancel_login(_('Must write a valid PIN'))
-                else:
-                    self.request_auth_token(verifier)
-            else:
-                self.cancel_login(_('Login cancelled by user'))
-                
-            p.destroy()
-            gtk.gdk.threads_leave()
         
     def start_updating_timeline(self):
         self.home.timeline.start_update()
@@ -466,19 +391,19 @@ class Main(BaseGui, gtk.Window):
             tweet = None
             i = 0
             while 1:
-                if tweets[i]['user']['screen_name'] == self.me:
-                    if not util.has_tweet(last, tweets[i]):
-                        tweet = tweets[i]
+                if tweets.items[i].username == self.me:
+                    if not util.has_tweet(last, tweets.items[i]):
+                        tweet = tweets.items[i]
                         break
                 else:
-                    tweet = tweets[i]
+                    tweet = tweets.items[i]
                     break
                 i += 1
             
             p = self.parse_tweet(tweet)
-            icon = self.current_avatar_path(p['avatar'])
-            text = util.escape_text(p['text'])
-            text = "<b>@%s</b> %s" % (p['username'], text)
+            icon = self.current_avatar_path(p.avatar)
+            text = util.unescape_text(p.text)
+            text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_tweets(count, text, icon)
             
         gtk.gdk.threads_leave()
@@ -490,10 +415,10 @@ class Main(BaseGui, gtk.Window):
         count = self.home.replies.update_tweets(tweets)
         
         if count > 0 and self.updating['replies']:
-            p = self.parse_tweet(tweets[0])
-            icon = self.current_avatar_path(p['avatar'])
-            text = util.escape_text(p['text'])
-            text = "<b>@%s</b> %s" % (p['username'], text)
+            p = self.parse_tweet(tweets.items[0])
+            icon = self.current_avatar_path(p.avatar)
+            text = util.unescape_text(p.text)
+            text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_replies(count, text, icon)
         
         gtk.gdk.threads_leave()
@@ -505,20 +430,20 @@ class Main(BaseGui, gtk.Window):
         count = self.home.direct.update_tweets(recv)
         
         if count > 0 and self.updating['directs']:
-            p = self.parse_tweet(recv[0])
-            icon = self.current_avatar_path(p['avatar'])
-            text = util.escape_text(p['text'])
-            text = "<b>@%s</b> %s" % (p['username'], text)
+            p = self.parse_tweet(recv.items[0])
+            icon = self.current_avatar_path(p.avatar)
+            text = util.unescape_text(p.text)
+            text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_directs(count, text, icon)
             
         gtk.gdk.threads_leave()
         self.updating['directs'] = False
         
-    def update_favorites(self, tweets, replies, favs):
+    def update_favorites(self, favs):
         log.debug(u'Actualizando favoritos')
         gtk.gdk.threads_enter()
-        self.home.timeline.update_tweets(tweets)
-        self.home.replies.update_tweets(replies)
+        #self.home.timeline.update_tweets(tweets)
+        #self.home.replies.update_tweets(replies)
         self.profile.favorites.update_tweets(favs)
         gtk.gdk.threads_leave()
         
@@ -537,26 +462,11 @@ class Main(BaseGui, gtk.Window):
         self.statusbar.push(0, util.get_rates(val))
         gtk.gdk.threads_leave()
         
-    def update_search_topics(self, val):
+    def update_search(self, val):
         log.debug(u'Mostrando resultados de la búsqueda')
         gtk.gdk.threads_enter()
-        if val is None:
-            self.profile.topics.update_tweets(val)
-        else:
-            self.profile.topics.update_tweets(val['results'])
+        self.profile.topics.update_tweets(val)
         gtk.gdk.threads_leave()
-        
-    def update_search_people(self, val):
-        self.search.people.update_profiles(val)
-        #self.show_search(self)
-        #if self.workspace != 'wide':
-        #    self.contenido.wrapper.set_current_page(1)
-        
-    def update_trends(self, current, day, week):
-        self.search.trending.update_trends(current, day, week)
-        
-    def update_friends(self, friends):
-        pass
         
     def update_user_avatar(self, user, pic):
         self.home.timeline.update_user_pic(user, pic)

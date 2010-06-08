@@ -5,30 +5,29 @@
 # Author: Wil Alvarez (aka Satanas)
 # Dic 05, 2009
 
-import time
 import Queue
 import logging
 import traceback
 import threading
 
-from turpial.api.interfaces.generic import GenericService
-from turpial.api.interfaces.shorturl.cligs import CligsURLShorter
-from turpial.api.interfaces.shorturl.isgd import IsgdURLShorter
-from turpial.api.interfaces.shorturl.tinyurl import TinyurlURLShorter
-from turpial.api.interfaces.shorturl.trim import TrimURLShorter
-from turpial.api.interfaces.shorturl.bitly import BitlyURLShorter
-from turpial.api.interfaces.shorturl.smlkes import SmlkesURLShorter
-from turpial.api.interfaces.shorturl.supr import SuprURLShorter
-from turpial.api.interfaces.shorturl.unu import UnuURLShorter
-from turpial.api.interfaces.shorturl.zima import ZimaURLShorter
-from turpial.api.interfaces.shorturl.ur1ca import Ur1caURLShorter
+from turpial.api.interfaces.service import GenericService
+from turpial.api.services.shorturl.cligs import CligsURLShorter
+from turpial.api.services.shorturl.isgd import IsgdURLShorter
+from turpial.api.services.shorturl.tinyurl import TinyurlURLShorter
+from turpial.api.services.shorturl.trim import TrimURLShorter
+from turpial.api.services.shorturl.bitly import BitlyURLShorter
+from turpial.api.services.shorturl.smlkes import SmlkesURLShorter
+from turpial.api.services.shorturl.supr import SuprURLShorter
+from turpial.api.services.shorturl.unu import UnuURLShorter
+from turpial.api.services.shorturl.zima import ZimaURLShorter
+from turpial.api.services.shorturl.ur1ca import Ur1caURLShorter
 
-from turpial.api.interfaces.uploadpic.imgly import ImglyPicUploader
-from turpial.api.interfaces.uploadpic.tweetphoto import TweetPhotoPicUploader
-from turpial.api.interfaces.uploadpic.twitpic import TwitpicPicUploader
-from turpial.api.interfaces.uploadpic.twitgoo import TwitgooPicUploader
-from turpial.api.interfaces.uploadpic.mobypicture import MobypicturePicUploader
-from turpial.api.interfaces.uploadpic.yfrog import YfrogPicUploader
+from turpial.api.services.uploadpic.imgly import ImglyPicUploader
+from turpial.api.services.uploadpic.tweetphoto import TweetPhotoPicUploader
+from turpial.api.services.uploadpic.twitpic import TwitpicPicUploader
+from turpial.api.services.uploadpic.twitgoo import TwitgooPicUploader
+from turpial.api.services.uploadpic.mobypicture import MobypicturePicUploader
+from turpial.api.services.uploadpic.yfrog import YfrogPicUploader
 
 URL_SERVICES = {
     "cli.gs": CligsURLShorter(),
@@ -90,18 +89,23 @@ class HTTPServices(threading.Thread):
         self.queue.put((args, callback))
         
     def quit(self):
+        '''Definiendo la salida'''
+        self.log.debug('Saliendo')
         self.exit = True
         
     def run(self):
         while not self.exit:
-            time.sleep(0.3)
             try:
-                req = self.queue.get(False)
+                req = self.queue.get(True, 0.3)
             except Queue.Empty:
                 continue
             
             (args, callback) = req
             
+            if self.exit:
+                self.queue.task_done()
+                break
+                
             if args['cmd'] == 'download_pic':
                 try:
                     filename = GenericService._download_pic(self.imgdir, 
@@ -126,6 +130,8 @@ class HTTPServices(threading.Thread):
                     args['path'])
                 callback(resp)
                 
+            self.queue.task_done()
+            
         self.log.debug('Terminado')
         return
         

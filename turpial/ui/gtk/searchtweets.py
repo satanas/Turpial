@@ -56,17 +56,27 @@ class SearchTweets(gtk.VBox):
     def __search_topic(self, widget):
         topic = widget.get_text()
         if topic != '':
-            self.mainwin.request_search_topic(topic)
+            self.lock()
+            self.mainwin.request_search(topic)
             widget.set_text('')
         else:
             widget.set_text(_('You must write something to search'))
-        widget.grab_focus()
+            widget.grab_focus()
         
-    def update_tweets(self, arr_tweets):
-        self.topics.update_tweets(arr_tweets)
+    def update_tweets(self, response):
+        self.topics.update_tweets(response)
+        self.unlock()
         
     def update_user_pic(self, user, pic):
         self.topics.update_user_pic(user, pic)
         
     def update_wrap(self, width):
         self.topics.update_wrap(width)
+        
+    def lock(self):
+        self.input_topics.set_sensitive(False)
+        self.clearbtn.set_sensitive(False)
+        
+    def unlock(self):
+        self.input_topics.set_sensitive(True)
+        self.clearbtn.set_sensitive(True)

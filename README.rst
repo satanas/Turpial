@@ -31,6 +31,8 @@ Turpial necesita los siguientes paquetes para funcionar correctamente:
  * ``python-pygame >= 1.7``
  * ``python-pybabel >= 0.9.1``
  * ``python-gtkspell >= 2.25.3``
+ * ``python-webkit``
+ * ``python-setuptools``
   
 Una instalacion estandar de *Python* (como la que viene en la mayoria de las
 distribuciones GNU/Linux) es mas que suficiente. El resto de los modulos se 

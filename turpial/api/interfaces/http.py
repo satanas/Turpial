@@ -69,7 +69,7 @@ class TurpialHTTP:
         return json.loads(handle.read())
         
     def _basic_auth(self, httpreq):
-        if self.username and httpreq.method == 'POST':
+        if self.username:
             auth_info = b64encode("%s:%s" % (self.username, self.password))
             httpreq.headers["Authorization"] = "Basic " + auth_info
         return httpreq

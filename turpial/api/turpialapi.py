@@ -11,6 +11,7 @@ import threading
 import traceback
 
 from turpial.api.protocols.twitter import twitter
+from turpial.api.protocols.identica import identica
 from turpial.api.interfaces.post import Response
 
 class TurpialAPI(threading.Thread):
@@ -22,6 +23,7 @@ class TurpialAPI(threading.Thread):
         self.queue = Queue.Queue()
         self.exit = False
         self.protocol = twitter.Twitter()
+        #self.protocol = identica.Identica()
         
         self.log = logging.getLogger('API')
         self.log.debug('Iniciado')

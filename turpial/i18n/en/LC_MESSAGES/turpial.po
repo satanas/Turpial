@@ -1,17 +1,16 @@
-# English translations for PROJECT.
-# Copyright (C) 2010 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# English translations for Turpial package
+# Copyright (C) 2010 Wil Alvarez
+# This file is distributed under the same license as the Turpial package.
+# Satanas <wil.alejandro@gmail.com>, 2010.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-06-07 23:16-0530\n"
-"PO-Revision-Date: 2010-06-07 23:16-0530\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: en <LL@li.org>\n"
+"Project-Id-Version: Turpial 1.1.2-a1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-03-23 18:52+0430\n"
+"PO-Revision-Date: 2010-06-07 23:30-0530\n"
+"Last-Translator: Satanas <wil.alejandro@gmail.com>\n"
+"Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -73,12 +72,12 @@ msgid "Problem unfollowing to @%s"
 msgstr ""
 
 #: turpial/notification.py:109
-#, python-format
+#, fuzzy, python-format
 msgid "Now you follow to @%s"
 msgstr ""
 
 #: turpial/notification.py:111
-#, python-format
+#, fuzzy, python-format
 msgid "You have unfollow to @%s"
 msgstr ""
 
@@ -184,6 +183,7 @@ msgid "About"
 msgstr ""
 
 #: turpial/ui/gtk/friendwin.py:15
+#, fuzzy
 msgid "Add friend"
 msgstr ""
 
@@ -438,6 +438,7 @@ msgid "Delete"
 msgstr ""
 
 #: turpial/ui/gtk/tweetslist.py:245
+#, fuzzy
 msgid "Reply All"
 msgstr ""
 
@@ -482,10 +483,12 @@ msgid "from"
 msgstr ""
 
 #: turpial/ui/gtk/tweetslist.py:389 turpial/ui/gtk/tweetslistwk.py:159
+#, fuzzy
 msgid "in reply to"
 msgstr ""
 
 #: turpial/ui/gtk/tweetslist.py:391 turpial/ui/gtk/tweetslistwk.py:161
+#, fuzzy
 msgid "Retweeted by"
 msgstr ""
 
@@ -564,4 +567,54 @@ msgstr ""
 #: turpial/ui/gtk/userform.py:176
 msgid "Saving..."
 msgstr ""
+
+#~ msgid "Turpial Authorization"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Twitter has implemented a new security"
+#~ " system and needs that you authorize"
+#~ " Turpial from your account"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "In order to complete that step, "
+#~ "Turpial has open a new page in "
+#~ "your default browser, go there to "
+#~ "authorize Turpial and copy the number"
+#~ " given in the box below..."
+#~ msgstr ""
+
+#~ msgid "Input PIN"
+#~ msgstr ""
+
+#~ msgid "Must write a valid PIN"
+#~ msgstr ""
+
+#~ msgid "Login cancelled by user"
+#~ msgstr ""
+
+#~ msgid "Secure Authentication"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Autorize Turpial and copy the given "
+#~ "number (<b>PIN</b>) in the text box "
+#~ "below:"
+#~ msgstr ""
+
+#~ msgid "You must write a valid PIN"
+#~ msgstr ""
+
+#~ msgid "Loading..."
+#~ msgstr ""
+
+#~ msgid "Oops... something went wrong"
+#~ msgstr ""
+
+#~ msgid "Something went wrong. I'll update again soon"
+#~ msgstr ""
+
+#~ msgid "Eyy... you must write something"
+#~ msgstr ""
 

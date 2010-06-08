@@ -1,15 +1,14 @@
-# Hebrew translations for PROJECT.
-# Copyright (C) 2010 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
+# Hebrew translations for turpial.
+# Copyright (C) 2010 Turpial
+# This file is distributed under the same license as the turpial project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-06-07 23:16-0530\n"
-"PO-Revision-Date: 2010-06-07 23:16-0530\n"
+"Project-Id-Version: turpial 1.3.0-a1\n"
+"Report-Msgid-Bugs-To: milmazz@gmail.com\n"
+"POT-Creation-Date: 2010-04-16 10:08+0530\n"
+"PO-Revision-Date: 2010-06-07 23:30-0530\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: he <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -564,4 +563,54 @@ msgstr ""
 #: turpial/ui/gtk/userform.py:176
 msgid "Saving..."
 msgstr ""
+
+#~ msgid "Turpial Authorization"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Twitter has implemented a new security"
+#~ " system and needs that you authorize"
+#~ " Turpial from your account"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "In order to complete that step, "
+#~ "Turpial has open a new page in "
+#~ "your default browser, go there to "
+#~ "authorize Turpial and copy the number"
+#~ " given in the box below..."
+#~ msgstr ""
+
+#~ msgid "Input PIN"
+#~ msgstr ""
+
+#~ msgid "Must write a valid PIN"
+#~ msgstr ""
+
+#~ msgid "Login cancelled by user"
+#~ msgstr ""
+
+#~ msgid "Secure Authentication"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Autorize Turpial and copy the given "
+#~ "number (<b>PIN</b>) in the text box "
+#~ "below:"
+#~ msgstr ""
+
+#~ msgid "You must write a valid PIN"
+#~ msgstr ""
+
+#~ msgid "Loading..."
+#~ msgstr ""
+
+#~ msgid "Oops... something went wrong"
+#~ msgstr ""
+
+#~ msgid "Something went wrong. I'll update again soon"
+#~ msgstr ""
+
+#~ msgid "Eyy... you must write something"
+#~ msgstr ""
 

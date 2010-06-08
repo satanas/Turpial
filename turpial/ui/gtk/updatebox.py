@@ -232,12 +232,12 @@ class UpdateBox(gtk.Window):
         if tweet == '': 
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
-                _('Eyy... you must write something'))
+                _('Hey!... you must write something'))
             return
         elif buffer.get_char_count() > 140:
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
-                _('Ey!... that message looks like a testament'))
+                _('Hey!... that message looks like a testament'))
             return
         
         self.waiting.start()

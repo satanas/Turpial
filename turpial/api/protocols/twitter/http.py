@@ -49,17 +49,7 @@ class TwitterHTTP(TurpialHTTP):
         request.sign_request(self.sign_method_hmac_sha1,
             self.consumer, self.token)
         httpreq.headers.update(request.to_header())
-        #x = httpreq.headers['Authorization']
-        #httpreq.headers['Authorization'] = x.replace('realm="", ', '')
         
-        '''
-        if httpreq.method == 'POST':
-            httpreq.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-            #headers.update(oauth_request.to_header())
-            httpreq.argData = request.to_postdata()
-        #else:
-            #httpreq.uri = request.to_url()
-        '''
         return httpreq
             
     def auth(self, username, password, auth):
@@ -75,14 +65,11 @@ class TwitterHTTP(TurpialHTTP):
         else:
             try:
                 self.token = self.__fetch_xauth_access_token(username, password)
-                self.log.debug('GOT')
-                self.log.debug('key: %s' % str(self.token.key))
-                self.log.debug('secret: %s' % str(self.token.secret))
                 
                 return (self.token.key, self.token.secret)
             except Exception, exc:
                 self.log.debug("Auth error: %s" % (traceback.print_exc()))
-                raise TurpialException('Authentication Error')
+                raise TurpialException(_('Authentication Error'))
         
     def request(self, uri, args={}):
         try:
@@ -95,27 +82,29 @@ details: %s" % (uri, args, traceback.print_exc()))
                 return []
             elif (exc.code == 400):
                 #X-RateLimit-Remaining
-                raise TurpialException('You don\'t have more API calls')
+                raise TurpialException(_('Sorry, you don\'t have more API \
+calls'))
             elif (exc.code == 401):
-                raise TurpialException('Invalid username/password')
+                raise TurpialException(_('Invalid credentials'))
             elif (exc.code == 403):
-                raise TurpialException('Hey! You are over the limit of API calls')
+                raise TurpialException(_('Hey! You are over the limit of API \
+calls'))
             elif (exc.code == 404):
-                raise TurpialException('Err... invalid request')
+                raise TurpialException(_('Err... invalid request'))
             elif (exc.code == 406):
-                raise TurpialException('You are searching a very weird thing')
+                raise TurpialException(_('You are searching a very weird thing'))
             elif (exc.code == 420):
-                raise TurpialException('You are searching too much!')
+                raise TurpialException(_('You are searching too much!'))
             elif (exc.code == 500):
-                raise TurpialException('Oops! Something went wrong')
+                raise TurpialException(_('Oops! Something went wrong'))
             elif (exc.code == 502):
-                raise TurpialException('Twitter is down. Try again later')
+                raise TurpialException(_('Twitter is down. Try again later'))
             elif (exc.code == 503):
-                raise TurpialException('Twitter is overcapacity')
+                raise TurpialException(_('Twitter is overcapacity'))
         except urllib2.URLError, exc:
             self.log.debug("URLError for URL: %s\nparameters: (%s)\n\
 details: %s" % (uri, args, traceback.print_exc()))
-            raise TurpialException('Can\'t connect to Twitter')
+            raise TurpialException(_('Can\'t connect to Twitter'))
         except Exception, exc:
             self.log.debug("Unknown error for URL: %s\nparameters: (%s)\n\
 details: %s" % (uri, args, traceback.print_exc()))

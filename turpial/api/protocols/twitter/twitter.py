@@ -161,7 +161,8 @@ class Twitter(Protocol):
             return Response(None, 'error', exc.msg), None, None
         except Exception, exc:
             self.log.debug('Authentication Error: %s' % exc)
-            return Response(None, 'error', 'Authentication Error'), None, None
+            return Response(None, 'error', _('Authentication Error')), None, 
+                None
         
     def get_timeline(self, args):
         '''Actualizando linea de tiempo'''

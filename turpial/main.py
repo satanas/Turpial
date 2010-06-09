@@ -90,8 +90,9 @@ class Turpial:
     def __clean(self):
         '''Limpieza de ficheros .pyc y .pyo'''
         self.log.debug("Limpiando la casa...")
+        path = os.path.join(os.path.dirname(__file__))
         i = 0
-        for root, dirs, files in os.walk('.'):
+        for root, dirs, files in os.walk(path):
             for f in files:
                 path = os.path.join(root, f)
                 if path.endswith('.pyc') or path.endswith('.pyo'): 

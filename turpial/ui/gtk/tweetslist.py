@@ -239,6 +239,8 @@ class TweetList(gtk.VBox):
                 re_all = re
                 mentions = util.detect_mentions(msg)
                 for h in mentions:
+                    if h[1:] == self.mainwin.me:
+                        continue
                     re_all += '%s ' % h
                 
                 reply = gtk.MenuItem(_('Reply'))

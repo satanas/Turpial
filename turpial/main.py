@@ -188,12 +188,13 @@ class Turpial:
         '''Actualizar amigos'''
         self.api.get_friends()
         
-    def signin(self, username, password, remember):
+    def signin(self, username, password, remember, protocol):
         config = ConfigHandler(username)
         config.initialize_failsafe()
         auth = config.read_section('Auth')
         self.remember = remember
-        self.api.auth(username, password, auth, self.__validate_credentials)
+        self.api.auth(username, password, auth, protocol,
+            self.__validate_credentials)
         
     def signout(self):
         '''Finalizar sesion'''

@@ -324,7 +324,7 @@ class Twitter(Protocol):
         try:
             rtn = self.http.request('%s/statuses/destroy' % self.apiurl,
                 {'id': id})
-            self._destroy_status(rtn['id'])
+            self._destroy_status(str(rtn['id']))
             timeline = self.get_muted_timeline()
             return (Response(timeline, 'status'), 
                 Response(self.favorites, 'status'))

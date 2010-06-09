@@ -251,12 +251,13 @@ class Identica(Protocol):
         count = 0
         cursor = -1
         friends = []
-        return
+        
         self.log.debug('Descargando Lista de Amigos')
         while 1:
             try:
                 rtn = self.http.request('%s/statuses/friends' % self.apiurl, 
                     {'cursor': cursor})
+                print rtn
             except TurpialException, exc:
                 tries += 1
                 if tries < 3:
@@ -264,14 +265,15 @@ class Identica(Protocol):
                 else:
                     return Response(None, 'error', exc.msg)
                 
-            for user in rtn['users']:
+            for user in rtn:
                 friends.append(self.__create_profile(user))
                 count += 1
-            if rtn['next_cursor'] > 0:
-                cursor = rtn['next_cursor']
-                continue
-            else:
-                break
+            break
+            #if rtn['next_cursor'] > 0:
+            #    cursor = rtn['next_cursor']
+            #    continue
+            #else:
+            #    break
         
         self.friends = friends
         self.log.debug('--Descargados %i amigos' % count)
@@ -300,9 +302,10 @@ class Identica(Protocol):
         text = args['text']
         
         if in_reply_id:
-            args = {'status': text, 'in_reply_to_status_id': in_reply_id}
-        else:
-            args = {'status': text}
+            args['in_reply_to_status_id'] = in_reply_id
+        
+        args['status'] = text
+        args['source'] = 'Turpial'
         self.log.debug(u'Nuevo tweet: %s' % text)
         
         try:
@@ -323,7 +326,8 @@ class Identica(Protocol):
         try:
             rtn = self.http.request('%s/statuses/destroy' % self.apiurl,
                 {'id': id})
-            self._destroy_status(rtn['id'])
+            
+            self._destroy_status(str(rtn['id']))
             timeline = self.get_muted_timeline()
             return (Response(timeline, 'status'), 
                 Response(self.favorites, 'status'))
@@ -338,7 +342,7 @@ class Identica(Protocol):
         
         try:
             rtn = self.http.request('%s/statuses/retweet' % self.apiurl, args)
-            users = self.__get_retweet_users(id)
+            #users = self.__get_retweet_users(id)
             status = self.__create_status(rtn)
             status.retweet_by = users
             # FIXME: Modificar también los replies y favoritos

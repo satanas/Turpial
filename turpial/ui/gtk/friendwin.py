@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Prueba para Turpial en PyGTK
+# Diálogo para agregar amigos en Turpial
 #
 # Author: Wil Alvarez (aka Satanas)
 

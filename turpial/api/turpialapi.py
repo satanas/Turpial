@@ -22,8 +22,9 @@ class TurpialAPI(threading.Thread):
         self.setDaemon(False)
         self.queue = Queue.Queue()
         self.exit = False
-        self.protocol = twitter.Twitter()
+        #self.protocol = twitter.Twitter()
         #self.protocol = identica.Identica()
+        self.protocol = None
         
         self.log = logging.getLogger('API')
         self.log.debug('Iniciado')
@@ -52,10 +53,14 @@ class TurpialAPI(threading.Thread):
     def is_fav(self, id):
         return self.protocol.is_favorite(id)
     
-    def auth(self, username, password, auth_info, callback):
+    def auth(self, username, password, auth_info, protocol, callback):
         '''Inicio de autenticacion'''
         args = {'username': username, 'password': password, 'auth': auth_info}
         self.log.debug('Solicitando autenticacion')
+        if protocol == 0:
+            self.protocol = twitter.Twitter()
+        elif protocol == 1:
+            self.protocol = identica.Identica()
         self.__register(self.protocol.auth, args, callback)
             
     def update_timeline(self, callback, count=20):

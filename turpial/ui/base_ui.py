@@ -119,9 +119,9 @@ class BaseGui:
         '''Saves the global config'''
         self.__controller.save_global_config(new_config)
         
-    def request_signin(self, username, password, remember):
+    def request_signin(self, username, password, remember, protocol):
         '''Request simple signin'''
-        self.__controller.signin(username, password, remember)
+        self.__controller.signin(username, password, remember, protocol)
         
     def request_signout(self):
         '''Request signout'''

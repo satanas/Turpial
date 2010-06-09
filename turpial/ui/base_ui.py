@@ -28,9 +28,11 @@ class BaseGui:
         self.imgdir = ''
         
         # Initialize gettext
-        gettext_domain = 'messages'
-        localedir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'i18n'))
-        trans = gettext.install(gettext_domain, localedir)
+        gettext_domain = 'turpial'
+        # FIXME: Definir path de localedir en caso de no encontrar esperado
+        # localedir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'i18n'))
+        # trans = gettext.install(gettext_domain, localedir)
+        trans = gettext.install(gettext_domain)
     # ------------------------------------------------------------
     # Private/Internal methods
     # ------------------------------------------------------------

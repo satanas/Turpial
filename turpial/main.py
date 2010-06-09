@@ -47,6 +47,8 @@ class Turpial:
         self.profile = None
         self.remember = False
         self.testmode = options.test
+        self.httpserv = None
+        self.api = None
         
         if options.debug or options.clean: 
             logging.basicConfig(level=logging.DEBUG)
@@ -197,10 +199,12 @@ class Turpial:
         '''Finalizar sesion'''
         self.save_muted_list()
         self.log.debug('Desconectando')
-        self.httpserv.quit()
-        self.httpserv.join()
-        self.api.quit()
-        self.api.join()
+        if self.httpserv:
+            self.httpserv.quit()
+            self.httpserv.join()
+        if self.api: 
+            self.api.quit()
+            self.api.join()
         sys.exit(0)
     
     def update_status(self, text, reply_id=None):

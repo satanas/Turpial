@@ -195,7 +195,7 @@ class TurpialAPI(threading.Thread):
             if self.exit:
                 self.queue.task_done()
                 break
-                
+            
             if not callback:
                 pass
             elif isinstance(rtn, Response):

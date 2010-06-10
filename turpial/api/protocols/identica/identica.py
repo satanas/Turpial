@@ -257,7 +257,6 @@ class Identica(Protocol):
             try:
                 rtn = self.http.request('%s/statuses/friends' % self.apiurl, 
                     {'cursor': cursor})
-                print rtn
             except TurpialException, exc:
                 tries += 1
                 if tries < 3:

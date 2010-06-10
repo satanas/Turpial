@@ -70,8 +70,8 @@ class LoginBox(gtk.VBox):
         table.attach(self.username, 0, 1, 3, 4, gtk.EXPAND | gtk.FILL, gtk.FILL, 50, 0)
         table.attach(self.password, 0, 1, 5, 6, gtk.EXPAND | gtk.FILL, gtk.FILL, 50, 0)
         table.attach(self.combo_protocol, 0, 1, 7, 8, gtk.EXPAND, gtk.FILL, 0, 10)
-        table.attach(self.btn_oauth, 0, 1, 8, 9, gtk.EXPAND, gtk.FILL, 0, 10)
-        table.attach(self.remember, 0, 1, 9, 10, gtk.EXPAND, gtk.FILL, 0, 10)
+        table.attach(self.btn_oauth, 0, 1, 8, 9, gtk.EXPAND, gtk.FILL, 0, 3)
+        table.attach(self.remember, 0, 1, 9, 10, gtk.EXPAND, gtk.FILL, 0, 3)
         table.attach(settings_box, 0, 1, 10, 11, gtk.EXPAND | gtk.FILL, gtk.EXPAND | gtk.FILL, 0, 10)
         
         self.pack_start(table, False, False, 2)

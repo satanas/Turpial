@@ -6,6 +6,7 @@
 # Jun 08, 2010
 
 import gtk
+import base64
 
 from turpial.ui.gtk.loginlabel import LoginLabel
 from turpial.ui.gtk.waiting import CairoWaiting

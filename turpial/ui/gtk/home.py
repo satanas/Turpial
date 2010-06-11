@@ -6,9 +6,14 @@
 # Jun 03, 2010
 
 from turpial.ui.gtk.tweetslist import TweetList
-from turpial.ui.gtk.tweetslistwk import TweetListWebkit
 from turpial.ui.gtk.wrapper import Wrapper, WrapperAlign
 
+try:
+    import webkit
+    from turpial.ui.gtk.tweetslistwk import TweetListWebkit
+except:
+    pass
+    
 class Home(Wrapper):
     def __init__(self, mainwin, mode='single'):
         Wrapper.__init__(self)

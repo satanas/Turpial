@@ -88,7 +88,7 @@ class Identica(Protocol):
         profile.followers_count = pf['followers_count']
         profile.friends_count = pf['friends_count']
         profile.statuses_count = pf['statuses_count']
-        profile.profile_link_color = pf['profile_link_color'] or 'DD0000'
+        profile.profile_link_color = pf['profile_link_color'] or '#0F0F85'
         return profile
         
     def __create_rate(self, rl):

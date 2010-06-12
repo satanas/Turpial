@@ -92,7 +92,7 @@ class TweetList(gtk.VBox):
         
         for h in hashtags:
             torep = '%s' % h
-            cad = '<span foreground="#%s">%s</span>' % \
+            cad = '<span foreground="%s">%s</span>' % \
                   (self.mainwin.link_color, h)
             text = text.replace(torep, cad)
         return text
@@ -106,7 +106,7 @@ class TweetList(gtk.VBox):
             if len(h) == 1: 
                 continue
             torep = '%s' % h
-            cad = '<span foreground="#%s">%s</span>' % \
+            cad = '<span foreground="%s">%s</span>' % \
                   (self.mainwin.link_color, h)
             text = text.replace(torep, cad)
         return text
@@ -115,7 +115,7 @@ class TweetList(gtk.VBox):
         #if len(urls) == 0: return text
         
         for u in urls:
-            cad = '<span foreground="#%s">%s</span>' % \
+            cad = '<span foreground="%s">%s</span>' % \
                   (self.mainwin.link_color, u)
             text = text.replace(u, cad)
         return text
@@ -370,7 +370,7 @@ class TweetList(gtk.VBox):
         pango_twt = util.unescape_text(p.text)
         pango_twt = gobject.markup_escape_text(p.text)
         
-        user = '<span size="9000" foreground="#%s"><b>%s</b></span> ' % \
+        user = '<span size="9000" foreground="%s"><b>%s</b></span> ' % \
             (self.mainwin.link_color, p.username)
         pango_twt = '<span size="9000">%s</span>' % pango_twt
         pango_twt = self.__highlight_hashtags(pango_twt)

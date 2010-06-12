@@ -419,7 +419,7 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando nuevo tweet')
         gtk.gdk.threads_enter()
         self.updatebox.release()
-        if tweets: 
+        if tweets.type == 'status': 
             self.updatebox.done()
         gtk.gdk.threads_leave()
         self.update_timeline(tweets)

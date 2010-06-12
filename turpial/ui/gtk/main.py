@@ -14,8 +14,6 @@ import webbrowser
 
 from turpial.ui.gtk.updatebox import UpdateBox
 from turpial.ui.gtk.replybox import ReplyBox
-#from turpial.ui.gtk.loginlabel import LoginLabel
-#from turpial.ui.gtk.waiting import CairoWaiting
 from turpial.ui.gtk.login import LoginBox
 from turpial.ui.gtk.preferences import Preferences
 from turpial.ui.gtk.home import Home

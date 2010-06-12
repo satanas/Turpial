@@ -236,12 +236,7 @@ class TweetList(gtk.VBox):
                 rt = "RT @%s %s" % (user, msg)
                 dm = "D @%s " % user
                 
-                re_all = re
-                mentions = util.detect_mentions(msg)
-                for h in mentions:
-                    if h[1:] == self.mainwin.me:
-                        continue
-                    re_all += '%s ' % h
+                re_all, mentions = util.get_reply_all(re, self.mainwin.me, msg)
                 
                 reply = gtk.MenuItem(_('Reply'))
                 reply_all = gtk.MenuItem(_('Reply All'))
@@ -263,7 +258,7 @@ class TweetList(gtk.VBox):
                 
                 if not rtn['own']:
                     menu.append(reply)
-                    if len(mentions) > 0:
+                    if mentions > 0:
                         menu.append(reply_all)
                     menu.append(retweet_old)
                     menu.append(retweet)

@@ -8,7 +8,6 @@
 from turpial.ui.gtk.userform import  UserForm
 from turpial.ui.gtk.tweetslist import TweetList
 from turpial.ui.gtk.searchtweets import SearchTweets
-from turpial.ui.gtk.tweetslistwk import TweetListWebkit
 from turpial.ui.gtk.wrapper import Wrapper, WrapperAlign
 
 class Profile(Wrapper):

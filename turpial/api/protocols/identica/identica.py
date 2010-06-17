@@ -343,7 +343,7 @@ class Identica(Protocol):
             rtn = self.http.request('%s/statuses/retweet' % self.apiurl, args)
             #users = self.__get_retweet_users(id)
             status = self.__create_status(rtn)
-            status.retweet_by = users
+            #status.retweet_by = users
             # FIXME: Modificar también los replies y favoritos
             self._add_status(self.timeline, status)
             timeline = self.get_muted_timeline()

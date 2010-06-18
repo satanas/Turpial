@@ -28,11 +28,10 @@ from turpial.ui.base_ui import BaseGui
 from turpial.notification import Notification
 from turpial.ui import util as util
 
-from turpial.ui.gtk.tweetslistwk import TweetListWebkit
-
 try:
     import webkit
     from turpial.ui.gtk.oauthwin import OAuthWindow
+    from turpial.ui.gtk.tweetslistwk import TweetListWebkit
     extend_mode = True
 except:
     extend_mode = False

@@ -59,8 +59,6 @@ class Turpial:
             self.signout()
             
         self.interface = options.interface
-        #if options.interface == 'gtk2':
-        #    self.ui = gtk2_ui_main.Main(self)
         if options.interface == 'gtk+':
             self.ui = _GTK(self, extend=True)
         elif options.interface == 'gtk':

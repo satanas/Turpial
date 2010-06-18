@@ -29,7 +29,7 @@ def detect_client(tweet):
     rtn = CLIENT_PATTERN.search(text)
     if rtn:
         return rtn.groups()[1]
-    return None
+    return tweet.source
     
 def detect_hashtags(text):
     '''Returns an array with all hashtag in a tweet'''

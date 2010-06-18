@@ -1,3 +1,7 @@
+v1.3.3 (Jun 18, 2010):
+    + Corregido error con los archivos de traducción
+    + Corregida dependencia de webkit (ahora es opcional)
+    
 v1.3.2-b3 (Jun 05, 2010):
     + Corregido error que cerraba Turpial si no existe tarjeta de sonido
     

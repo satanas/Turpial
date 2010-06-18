@@ -47,7 +47,7 @@ class Main(BaseGui, gtk.Window):
         self.set_default_size(320, 480)
         self.current_width = 320
         self.current_height = 480
-        self.set_icon(self.load_image('turpial_icon.png', True))
+        self.set_icon(self.load_image('turpial.png', True))
         self.set_position(gtk.WIN_POS_CENTER)
         self.connect('delete-event', self.__close)
         self.connect('size-request', self.size_request)
@@ -94,7 +94,7 @@ class Main(BaseGui, gtk.Window):
             log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
             return
         self.tray = gtk.StatusIcon()
-        self.tray.set_from_pixbuf(self.load_image('turpial_icon.png', True))
+        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
         self.tray.set_tooltip('Turpial')
         self.tray.connect("activate", self.__on_trayicon_click)
         self.tray.connect("popup-menu", self.__show_tray_menu)

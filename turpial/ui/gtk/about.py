@@ -12,7 +12,7 @@ class About:
     def __init__(self, parent=None):
         about = gtk.AboutDialog()
         about.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
-        about.set_logo(parent.load_image('turpial_icon.png', True))
+        about.set_logo(parent.load_image('turpial.png', True))
         about.set_name('Turpial')
         about.set_version(parent.version)
         about.set_copyright('Copyright (C) 2009 - 2010 Wil Alvarez')

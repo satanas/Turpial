@@ -19,16 +19,16 @@ URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_:().]*[-A-Za-
 
 def detect_client(tweet):
     '''Parse the source of a tweet'''
-    if not tweet.source:
+    if not tweet.has_key('source'):
         return None
-    text = saxutils.unescape(tweet.source)
+    text = saxutils.unescape(tweet['source'])
     text = text.replace('&quot;', '"')
     if text == 'web':
         return text
     rtn = CLIENT_PATTERN.search(text)
     if rtn:
         return rtn.groups()[1]
-    return tweet.source
+    return tweet['source']
     
 def detect_hashtags(text):
     '''Returns an array with all hashtag in a tweet'''

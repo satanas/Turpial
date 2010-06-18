@@ -5,6 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # May 20, 2010
 
+import socket
 import urllib2
 import logging
 
@@ -27,6 +28,11 @@ class TurpialHTTP:
         self.password = None
         self.post_actions = post_actions
         self.log = logging.getLogger('TurpialHTTP')
+        
+        # timeout in seconds
+        timeout = 20
+        socket.setdefaulttimeout(timeout)
+        
         
     def __build(self, uri, args={}):
         '''Construir la petición HTTP'''

@@ -12,6 +12,13 @@ from turpial.sound import Sound
 
 log = logging.getLogger('Notify')
 
+try:
+    import pynotify
+    NOTIFY = True
+except ImportError:
+    log.debug("pynotify is not installed")
+    NOTIFY = False
+
 class Notification:
     """Manejo de notificaciones"""
     def __init__(self):
@@ -35,14 +42,7 @@ class Notification:
         self.active = False
         
     def popup(self, title, message, icon=None):
-        try:
-            import pynotify
-            self.integrated = True
-        except ImportError:
-            log.debug("pynotify is not installed")
-            self.integrated = False
-        
-        if self.active and self.integrated:
+        if self.active and NOTIFY:
             if pynotify.init("Turpial"):
                 if not icon:
                     iconpath = os.path.join(os.path.dirname(__file__), 'data', 

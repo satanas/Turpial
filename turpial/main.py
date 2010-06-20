@@ -87,7 +87,11 @@ class Turpial:
             self.log.debug('Modo Pruebas Activado')
             
         self.ui.show_login(self.global_cfg)
-        self.ui.main_loop()
+        try:
+            self.ui.main_loop()
+        except KeyboardInterrupt:
+            self.log.debug('Interceptado Keyboard Interrupt')
+            self.signout()
         
     def __clean(self):
         '''Limpieza de ficheros .pyc y .pyo'''

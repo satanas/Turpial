@@ -33,6 +33,7 @@ Turpial necesita los siguientes paquetes para funcionar correctamente:
  * ``python-gtkspell >= 2.25.3``
  * ``python-webkit``
  * ``python-setuptools``
+ * ``python-pkg-resources``
 
 Una instalacion estandar de *Python* (como la que viene en la mayoria de las
 distribuciones GNU/Linux) es mas que suficiente. El resto de los modulos se 
@@ -46,7 +47,8 @@ comando (como superusuario)::
                        python-pybabel \
                        python-gtkspell \
                        python-webkit \
-                       python-setuptools
+                       python-setuptools \
+                       python-pkg-resources
 
 o si dispone de ``sudo``::
 

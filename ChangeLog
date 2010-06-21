@@ -1,4 +1,7 @@
-v1.3.3 (Jun 18, 2010):
+v1.3.3-b2 (Jun 21, 2010):
+    + Corregida ruta de los archivos de traducción
+    
+v1.3.3-b1 (Jun 18, 2010):
     + Corregido error con los archivos de traducción
     + Corregida dependencia de webkit (ahora es opcional)
     

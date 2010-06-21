@@ -59,7 +59,8 @@ o si dispone de ``sudo``::
                             python-pybabel \
                             python-gtkspell \
                             python-webkit \
-                            python-setuptools
+                            python-setuptools \
+                            python-pkg-resources
 
 Instalacion
 -----------

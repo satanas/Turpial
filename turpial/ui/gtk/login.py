@@ -34,9 +34,11 @@ class LoginBox(gtk.VBox):
         
         list = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
         t_icon = self.mainwin.load_image('twitter.png', True)
-        list.append([t_icon, '<span size="small">Twitter</span>', 'twitter'])
+        #list.append([t_icon, '<span size="small">Twitter</span>', 'twitter'])
+        list.append([t_icon, 'Twitter', 'twitter'])
         i_icon = self.mainwin.load_image('identica.png', True)
-        list.append([i_icon, '<span size="small">Identi.ca</span>', 'identi.ca'])
+        #list.append([i_icon, '<span size="small">Identi.ca</span>', 'identi.ca'])
+        list.append([i_icon, 'Identi.ca', 'identi.ca'])
         
         self.combo_protocol = gtk.ComboBox(list)
         icon_cell = gtk.CellRendererPixbuf()

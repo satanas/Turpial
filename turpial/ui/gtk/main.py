@@ -296,7 +296,7 @@ class Main(BaseGui, gtk.Window):
         self.home.direct.start_update()
         
     def start_search(self):
-        self.profile.topics.topics.waiting.start()
+        self.profile.search.start_search()
         
     def update_timeline(self, tweets):
         log.debug(u'Actualizando el timeline')
@@ -383,7 +383,7 @@ class Main(BaseGui, gtk.Window):
     def update_search(self, val):
         log.debug(u'Mostrando resultados de la búsqueda')
         gtk.gdk.threads_enter()
-        self.profile.topics.update_tweets(val)
+        self.profile.search.update_tweets(val)
         gtk.gdk.threads_leave()
         
     def update_user_avatar(self, user, pic):
@@ -392,7 +392,7 @@ class Main(BaseGui, gtk.Window):
         self.home.direct.update_user_pic(user, pic)
         self.profile.favorites.update_user_pic(user, pic)
         self.profile.user_form.update_user_pic(user, pic)
-        self.profile.topics.update_user_pic(user, pic)
+        self.profile.search.update_user_pic(user, pic)
         
     def update_in_reply_to(self, tweet):
         gtk.gdk.threads_enter()

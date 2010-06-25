@@ -8,16 +8,14 @@
 import gtk
 import pango
 import gobject
-import logging
 
-from turpial.ui.gtk.waiting import CairoWaiting
 from turpial.ui import util as util
 
-log = logging.getLogger('Gtk:Tweetlist')
-
-class TweetList(gtk.VBox):
-    def __init__(self, mainwin, label='', menu='normal'):
-        gtk.VBox.__init__(self, False)
+class TweetList(gtk.ScrolledWindow):
+    def __init__(self, mainwin, menu='normal'):
+        gtk.ScrolledWindow.__init__(self)
+        self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        self.set_shadow_type(gtk.SHADOW_IN)
         
         self.last = None    # Last tweets updated
         self.mainwin = mainwin
@@ -28,35 +26,6 @@ class TweetList(gtk.VBox):
         self.list.set_level_indentation(0)
         self.list.set_rules_hint(True)
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
-        
-        self.label = gtk.Label(label)
-        self.caption = label
-        
-        self.lblerror = gtk.Label()
-        self.lblerror.set_use_markup(True)
-        self.waiting = CairoWaiting(mainwin)
-        align = gtk.Alignment(xalign=1, yalign=0.5)
-        align.add(self.waiting)
-        
-        self.errorbox = gtk.HBox(False)
-        self.errorbox.pack_start(self.lblerror, False, False, 2)
-        self.errorbox.pack_start(align, True, True, 2)
-        
-        self.listcombo = gtk.combo_box_new_text()
-        self.listcombo.append_text('Prueba 1')
-        self.listcombo.append_text('Prueba 2')
-        
-        self.refresh = gtk.Button()
-        self.refresh.set_image(self.mainwin.load_image('refresh.png'))
-        
-        listsbox = gtk.HBox(False)
-        listsbox.pack_start(self.listcombo, True, True, 2)
-        listsbox.pack_start(self.refresh, False, False, 2)
-        
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        scroll.set_shadow_type(gtk.SHADOW_IN)
-        scroll.add(self.list)
         
         self.model = gtk.ListStore(
             gtk.gdk.Pixbuf, # avatar
@@ -94,9 +63,7 @@ class TweetList(gtk.VBox):
         elif menu == 'direct':
             self.list.connect("button-release-event", self.__direct_popup_menu)
             
-        self.pack_start(listsbox, False, False)
-        self.pack_start(self.errorbox, False, False)
-        self.pack_start(scroll, True, True)
+        self.add(self.list)
         
     def __highlight_hashtags(self, text):
         hashtags = util.detect_hashtags(text)
@@ -423,34 +390,4 @@ class TweetList(gtk.VBox):
                 self.model.set_value(iter, 0, pix)
             iter = self.model.iter_next(iter)
         del pix
-        
-    def update_tweets(self, response):
-        if response.type == 'error':
-            self.stop_update(True, response.errmsg)
-            return 0
             
-        arr_tweets = response.items
-        if len(arr_tweets) == 0:
-            self.clear()
-            self.stop_update(True, _('No tweets available'))
-            return 0
-        else:
-            count = util.count_new_tweets(arr_tweets, self.last)
-            self.stop_update()
-            self.clear()
-            for tweet in arr_tweets:
-                self.add_tweet(tweet)
-            self.last = arr_tweets
-            
-            return count
-            
-    def start_update(self):
-        self.waiting.start()
-        self.lblerror.set_markup("")
-        self.errorbox.show()
-        
-    def stop_update(self, error=False, msg=''):
-        self.waiting.stop(error)
-        self.lblerror.set_markup(u"<span size='small'>%s</span>" % msg)
-        if not error:
-            self.errorbox.hide()

@@ -38,7 +38,7 @@ class Wrapper(gtk.VBox):
                     continue
                 
                 box = gtk.VBox(False)
-                box.pack_start(gtk.Label(widget.caption), False, False)
+                #box.pack_start(gtk.Label(widget.caption), False, False)
                 if widget.get_parent(): 
                     widget.reparent(box)
                 else:

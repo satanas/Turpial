@@ -38,9 +38,20 @@ class TweetList(gtk.VBox):
         align = gtk.Alignment(xalign=1, yalign=0.5)
         align.add(self.waiting)
         
-        bottombox = gtk.HBox(False)
-        bottombox.pack_start(self.lblerror, False, False, 2)
-        bottombox.pack_start(align, True, True, 2)
+        self.errorbox = gtk.HBox(False)
+        self.errorbox.pack_start(self.lblerror, False, False, 2)
+        self.errorbox.pack_start(align, True, True, 2)
+        
+        self.listcombo = gtk.combo_box_new_text()
+        self.listcombo.append_text('Prueba 1')
+        self.listcombo.append_text('Prueba 2')
+        
+        self.refresh = gtk.Button()
+        self.refresh.set_image(self.mainwin.load_image('refresh.png'))
+        
+        listsbox = gtk.HBox(False)
+        listsbox.pack_start(self.listcombo, True, True, 2)
+        listsbox.pack_start(self.refresh, False, False, 2)
         
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -83,8 +94,9 @@ class TweetList(gtk.VBox):
         elif menu == 'direct':
             self.list.connect("button-release-event", self.__direct_popup_menu)
             
+        self.pack_start(listsbox, False, False)
+        self.pack_start(self.errorbox, False, False)
         self.pack_start(scroll, True, True)
-        self.pack_start(bottombox, False, False)
         
     def __highlight_hashtags(self, text):
         hashtags = util.detect_hashtags(text)
@@ -435,7 +447,10 @@ class TweetList(gtk.VBox):
     def start_update(self):
         self.waiting.start()
         self.lblerror.set_markup("")
+        self.errorbox.show()
         
     def stop_update(self, error=False, msg=''):
         self.waiting.stop(error)
         self.lblerror.set_markup(u"<span size='small'>%s</span>" % msg)
+        if not error:
+            self.errorbox.hide()

@@ -6,7 +6,7 @@
 # Jun 03, 2010
 
 from turpial.ui.gtk.userform import  UserForm
-from turpial.ui.gtk.favcolumn import FavoriteColumn
+from turpial.ui.gtk.favcolumn import SingleColumn
 from turpial.ui.gtk.searchcolumn import SearchColumn
 from turpial.ui.gtk.wrapper import Wrapper, WrapperAlign
 

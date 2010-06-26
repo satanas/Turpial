@@ -5,7 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # Jun 03, 2010
 
-from turpial.ui.gtk.column import TweetColumn
+from turpial.ui.gtk.stdcolumn import StandardColumn
 from turpial.ui.gtk.wrapper import Wrapper, WrapperAlign
 
 try:
@@ -22,9 +22,9 @@ class Home(Wrapper):
             self.timeline = TweetListWebkit(mainwin, 'Timeline')
             self.replies = TweetListWebkit(mainwin, _('Mentions'))
         else:
-            self.timeline = TweetColumn(mainwin, _('Timeline'))
-            self.replies = TweetColumn(mainwin, _('Mentions'))
-        self.direct = TweetColumn(mainwin, _('Directs'), 'direct')
+            self.timeline = StandardColumn(mainwin, _('Timeline'))
+            self.replies = StandardColumn(mainwin, _('Mentions'))
+        self.direct = StandardColumn(mainwin, _('Directs'), 'direct')
         
         self._append_widget(self.timeline, WrapperAlign.left)
         self._append_widget(self.replies, WrapperAlign.middle)

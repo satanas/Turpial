@@ -31,7 +31,7 @@ class UpdateBox(gtk.Window):
         #self.set_default_size(500, 120)
         self.set_size_request(500, 150)
         self.set_transient_for(parent)
-        self.set_modal(True)
+        #self.set_modal(True)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
         self.label = gtk.Label()
@@ -293,7 +293,7 @@ class UpdateBox(gtk.Window):
         dia.destroy()
         
     def update_uploaded_pic(self, pic_url):
-        if pic_url.err:
+        if pic_url.err or not pic_url.response:
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
                 _('Oops... I couldn\'t upload that image'))

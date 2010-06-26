@@ -7,10 +7,11 @@
 
 import gtk
 
-from turpial.ui.gtk.tweetslist import TweetList
+from turpial.ui.gtk.statuslist import StatusList
 from turpial.ui.gtk.waiting import CairoWaiting
+from turpial.ui.gtk.errorbox import ErrorBox
 
-class SearchTweets(gtk.VBox):
+class SearchColumn(gtk.VBox):
     def __init__(self, mainwin, label=''):
         gtk.VBox.__init__(self, False)
         
@@ -19,8 +20,9 @@ class SearchTweets(gtk.VBox):
         self.mainwin = mainwin
         self.input_topics = gtk.Entry()
         self.clearbtn = gtk.Button()
-        self.clearbtn.set_image(self.mainwin.load_image('clear.png'))
+        self.clearbtn.set_image(self.mainwin.load_image('button-clear.png'))
         self.clearbtn.set_tooltip_text(_('Clear results'))
+        #self.clearbtn.set_relief(gtk.RELIEF_NONE)
         try:
             #self.input_topics.set_property("primary-icon-stock", 
             #                               gtk.STOCK_FIND)
@@ -30,10 +32,7 @@ class SearchTweets(gtk.VBox):
         except: 
             pass
         
-        self.tweetlist = TweetList(mainwin)
-        
-        self.lblerror = gtk.Label()
-        self.lblerror.set_use_markup(True)
+        self.tweetlist = StatusList(mainwin)
         
         self.waiting = CairoWaiting(mainwin)
         align = gtk.Alignment(xalign=1, yalign=0.5)
@@ -42,23 +41,22 @@ class SearchTweets(gtk.VBox):
         inputbox = gtk.HBox(False)
         inputbox.pack_start(self.input_topics, True, True)
         inputbox.pack_start(self.clearbtn, False, False)
+        inputbox.pack_start(align, False, False, 2)
         
         self.label = gtk.Label(label)
         self.caption = label
         
-        self.errorbox = gtk.HBox(False)
-        self.errorbox.pack_start(self.lblerror, False, False, 2)
-        self.errorbox.pack_start(align, False, False, 2)
+        self.errorbox = ErrorBox()
         
         self.pack_start(inputbox, False, False)
         self.pack_start(self.errorbox, False, False)
         self.pack_start(self.tweetlist, True, True)
         self.show_all()
-        #self.errorbox.hide()
         
         self.clearbtn.connect('clicked', self.__clear)
         self.input_topics.connect('activate', self.__search_topic)
         self.input_topics.grab_focus()
+        self.connect('expose-event', self.error_show)
         
     def __on_icon_press(self, widget, pos, e):
         #if pos == 0: 
@@ -80,6 +78,9 @@ class SearchTweets(gtk.VBox):
         else:
             widget.set_text(_('You must write something to search'))
             widget.grab_focus()
+        
+    def error_show(self, widget, event):
+        self.errorbox.show()
         
     def update_tweets(self, response):
         if response.type == 'error':
@@ -108,12 +109,12 @@ class SearchTweets(gtk.VBox):
         
     def start_search(self):
         self.waiting.start()
-        self.lblerror.set_markup("")
+        self.errorbox.hide()
         
     def stop_search(self, error=False, msg=''):
         self.waiting.stop(error)
-        self.lblerror.set_markup(u"<span size='small'>%s</span>" % msg)
-            
+        self.errorbox.show_error(msg, error)
+        
     def lock(self):
         self.input_topics.set_sensitive(False)
         self.clearbtn.set_sensitive(False)

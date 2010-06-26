@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Widget para mostrar tweets en Turpial
+# Widget para mostrar estados en Turpial
 #
 # Author: Wil Alvarez (aka Satanas)
 # Dic 20, 2009
@@ -11,7 +11,7 @@ import gobject
 
 from turpial.ui import util as util
 
-class TweetList(gtk.ScrolledWindow):
+class StatusList(gtk.ScrolledWindow):
     def __init__(self, mainwin, menu='normal'):
         gtk.ScrolledWindow.__init__(self)
         self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Widget para mostrar una columna estándar en Turpial
+# Widget para mostrar una columna de favoritos en Turpial
 #
 # Author: Wil Alvarez (aka Satanas)
-# Jun 25, 2010
+# Jun 26, 2010
 
 import gtk
 import pango
@@ -11,19 +11,19 @@ import gobject
 import logging
 
 from turpial.ui import util as util
-from turpial.ui.gtk.tweetslist import TweetList
+from turpial.ui.gtk.statuslist import StatusList
 from turpial.ui.gtk.waiting import CairoWaiting
 
 log = logging.getLogger('Gtk:Column')
 
-class TweetColumn(gtk.VBox):
+class SingleColumn(gtk.VBox):
     def __init__(self, mainwin, label='', menu='normal'):
         gtk.VBox.__init__(self, False)
         
         self.last = None    # Last tweets updated
         
         self.mainwin = mainwin
-        self.tweetlist = TweetList(mainwin, menu)
+        self.tweetlist = StatusList(mainwin, menu)
         self.lblerror = gtk.Label()
         self.lblerror.set_use_markup(True)
         self.waiting = CairoWaiting(mainwin)
@@ -35,22 +35,14 @@ class TweetColumn(gtk.VBox):
         
         self.errorbox = gtk.HBox(False)
         self.errorbox.pack_start(self.lblerror, False, False, 2)
+        self.errorbox.pack_start(align, False, False, 2)
         
-        self.listcombo = gtk.combo_box_new_text()
-        self.listcombo.append_text('Lista de prueba 1')
-        self.listcombo.append_text('Lista de prueba 2')
-        
-        self.refresh = gtk.Button()
-        self.refresh.set_image(self.mainwin.load_image('refresh.png'))
-        
-        listsbox = gtk.HBox(False)
-        listsbox.pack_start(self.listcombo, True, True, 0)
-        listsbox.pack_start(self.refresh, False, False, 0)
-        listsbox.pack_start(align, False, False, 2)
-        
-        self.pack_start(listsbox, False, False, 3)
         self.pack_start(self.errorbox, False, False)
         self.pack_start(self.tweetlist, True, True)
+        self.connect('expose-event', self.error_show)
+        
+    def error_show(self, widget, event):
+        self.errorbox.show()
         
     def update_tweets(self, response):
         if response.type == 'error':

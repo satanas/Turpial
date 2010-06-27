@@ -3,7 +3,7 @@
 # Widget para mostrar estados en Turpial
 #
 # Author: Wil Alvarez (aka Satanas)
-# Dic 20, 2009
+# Jun 25, 2009
 
 import gtk
 import pango

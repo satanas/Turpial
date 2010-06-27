@@ -5,7 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # Jun 03, 2010
 
-from turpial.ui.gtk.stdcolumn import StandardColumn
+from turpial.ui.gtk.columns import StandardColumn
 from turpial.ui.gtk.wrapper import Wrapper, WrapperAlign
 
 try:

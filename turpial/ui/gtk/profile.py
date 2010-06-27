@@ -6,9 +6,8 @@
 # Jun 03, 2010
 
 from turpial.ui.gtk.userform import  UserForm
-from turpial.ui.gtk.favcolumn import SingleColumn
-from turpial.ui.gtk.searchcolumn import SearchColumn
 from turpial.ui.gtk.wrapper import Wrapper, WrapperAlign
+from turpial.ui.gtk.columns import SingleColumn, SearchColumn
 
 class Profile(Wrapper):
     def __init__(self, mainwin, mode='single'):

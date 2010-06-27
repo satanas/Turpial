@@ -7,9 +7,9 @@
 
 import gtk
 
-from turpial.ui.gtk.favcolumn import FavoriteColumn
+from turpial.ui.gtk.columns import SingleColumn
 
-class ReplyBox(gtk.Window):
+class ConversationBox(gtk.Window):
     def __init__(self, parent):
         gtk.Window.__init__(self)
         
@@ -22,7 +22,7 @@ class ReplyBox(gtk.Window):
         self.set_transient_for(parent)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
-        self.tweets = FavoriteColumn(parent, _('In reply to...'))
+        self.tweets = SingleColumn(parent, _('In reply to...'))
         
         top = gtk.VBox(False, 0)
         top.pack_start(self.tweets, True, True, 0)

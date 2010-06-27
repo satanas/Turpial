@@ -13,7 +13,7 @@ import gobject
 import webbrowser
 
 from turpial.ui.gtk.updatebox import UpdateBox
-from turpial.ui.gtk.replybox import ReplyBox
+from turpial.ui.gtk.conversation import ConversationBox
 from turpial.ui.gtk.login import LoginBox
 from turpial.ui.gtk.preferences import Preferences
 from turpial.ui.gtk.home import Home
@@ -79,7 +79,7 @@ class Main(BaseGui, gtk.Window):
         self.profile = Profile(self)
         self.contenido = self.home
         self.updatebox = UpdateBox(self)
-        self.replybox = ReplyBox(self)
+        self.replybox = ConversationBox(self)
         
         if self.extend:
             log.debug('Cargado modo GTK Extendido')

@@ -6,13 +6,13 @@
 # Jun 26, 2010
 
 import gtk
-##import gobject
+import gobject
 
 class ErrorBox(gtk.HBox):
     def __init__(self, padding=0):
         gtk.HBox.__init__(self, False)
         
-        ##self.timer = None
+        self.timer = None
         
         self.message = gtk.Label()
         self.message.set_use_markup(True)
@@ -57,7 +57,7 @@ class ErrorBox(gtk.HBox):
         if show:
             self.message.set_markup(u"<span size='small'>%s</span>" % msg)
             self.show()
-            ##self.timer = gobject.timeout_add(6000, self.close)
+            self.timer = gobject.timeout_add(7000, self.close)
         
     def hide(self):
         self.message.set_markup("")
@@ -65,7 +65,7 @@ class ErrorBox(gtk.HBox):
         
     def close(self, widget=None, event=None):
         self.hide()
-        ##if self.timer:
-        ##    gobject.source_remove(self.timer)
+        if self.timer:
+            gobject.source_remove(self.timer)
         
         

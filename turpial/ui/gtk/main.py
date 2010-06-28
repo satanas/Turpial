@@ -296,7 +296,7 @@ class Main(BaseGui, gtk.Window):
         self.home.direct.start_update()
         
     def start_search(self):
-        self.profile.search.start_search()
+        self.profile.search.start_update()
         
     def update_timeline(self, tweets):
         log.debug(u'Actualizando el timeline')

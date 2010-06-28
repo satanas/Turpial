@@ -1,6 +1,16 @@
-v1.3.3 (Jun 18, 2010):
+v1.3.3-b3 (Jun 27, 2010):
+    + Agregado timeout a las conexiones en la API
+    + Eliminados módulos obsoletos
+    
+v1.3.3-b2 (Jun 21, 2010):
+    + Corregida ruta de los archivos de traducción
+    
+v1.3.3-b1 (Jun 18, 2010):
     + Corregido error con los archivos de traducción
     + Corregida dependencia de webkit (ahora es opcional)
+    
+v1.3.2 (Jun 17, 2010):
+    + Versión Estable
     
 v1.3.2-b3 (Jun 05, 2010):
     + Corregido error que cerraba Turpial si no existe tarjeta de sonido
@@ -11,7 +21,7 @@ v1.3.2-b2 (Jun 04, 2010):
 v1.3.2-b1 (Jun 03, 2010):
     + Publicada versión beta sin cambios respecto a la anterior
     
-v1.3.2-a2 (May 17, 2010):
+v1.3.2-a2 (May 11, 2010):
     + Corregido error crítico con los diccionarios de ortografía y los locales
     + Corregido error con el servicio de SigueMiLink
     

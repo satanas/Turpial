@@ -8,6 +8,7 @@
 import sys
 import time
 import Queue
+import socket
 import urllib2
 import logging
 import threading
@@ -60,6 +61,10 @@ class TurpialAPI(threading.Thread):
         self.friendsloaded = False
         self.conversation = []
         self.apiurl = 'http://api.twitter.com/1'
+        
+        # timeout in seconds
+        timeout = 20
+        socket.setdefaulttimeout(timeout)
         
         self.to_fav = []
         self.to_unfav = []

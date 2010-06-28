@@ -1,3 +1,7 @@
+v1.3.3-b3 (Jun 27, 2010):
+    + Agregado timeout a las conexiones en la API
+    + Eliminados módulos obsoletos
+    
 v1.3.3-b2 (Jun 21, 2010):
     + Corregida ruta de los archivos de traducción
     

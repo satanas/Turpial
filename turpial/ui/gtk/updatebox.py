@@ -25,7 +25,7 @@ class UpdateBox(gtk.Window):
         self.what = _('What is happening?')
         self.blocked = False
         self.mainwin = parent
-        self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
+        #self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.set_title(_('Update status'))
         self.set_resizable(False)
         #self.set_default_size(500, 120)
@@ -156,7 +156,7 @@ class UpdateBox(gtk.Window):
         return True
         
     def show_friend_dialog(self, widget):
-        f = FriendsWin(self.mainwin, self.add_friend, 
+        f = FriendsWin(self, self.add_friend, 
             self.mainwin.request_friends_list())
         
     def block(self):
@@ -231,12 +231,12 @@ class UpdateBox(gtk.Window):
         if tweet == '': 
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
-                _('Eyy... you must write something'))
+                _('Hey... you must write something'))
             return
         elif buffer.get_char_count() > 140:
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
-                _('Ey!... that message looks like a testament'))
+                _('Hey!... that message looks like a testament'))
             return
         
         self.waiting.start()
@@ -292,7 +292,7 @@ class UpdateBox(gtk.Window):
         dia.destroy()
         
     def update_uploaded_pic(self, pic_url):
-        if pic_url.err:
+        if pic_url.err or not pic_url.response:
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
                 _('Oops... I couldn\'t upload that image'))

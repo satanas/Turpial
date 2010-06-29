@@ -121,4 +121,22 @@ def escape_text(text):
     
 def unescape_text(text):
     '''Returns a text HTML unescaped'''
+    text = text.replace('&quot;', '"')
     return saxutils.unescape(text)
+    
+def get_reply_all(user, me, text):
+    ''' Devuelve una cadena con los nombres de todos los mencionados en un 
+    estado y el número de menciones no repetidas (que no incluyan al
+    mismo usuario) '''
+    re_all = user
+    count = 0
+    mentions = detect_mentions(text)
+    for h in mentions:
+        if h[1:] == me:
+            continue
+        if re_all.find(h[1:]) > 0:
+            continue
+        count += 1
+        re_all += '%s ' % h
+    
+    return re_all, count

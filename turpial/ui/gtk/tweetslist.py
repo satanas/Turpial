@@ -92,9 +92,12 @@ class TweetList(gtk.VBox):
         
         for h in hashtags:
             torep = '%s' % h
-            cad = '<span foreground="#%s">%s</span>' % \
-                  (self.mainwin.link_color, h)
-            text = text.replace(torep, cad)
+            try:
+                cad = '<span foreground="#%s">%s</span>' % \
+                    (self.mainwin.link_color, h)
+                text = text.replace(torep, cad)
+            except:
+                log.debug('Problemas para resaltar el hashtag: %s' % h)
         return text
         
     def __highlight_mentions(self, text):
@@ -236,10 +239,7 @@ class TweetList(gtk.VBox):
                 rt = "RT @%s %s" % (user, msg)
                 dm = "D @%s " % user
                 
-                re_all = re
-                mentions = util.detect_mentions(msg)
-                for h in mentions:
-                    re_all += '%s ' % h
+                re_all, mentions = util.get_reply_all(re, self.mainwin.me, msg)
                 
                 reply = gtk.MenuItem(_('Reply'))
                 reply_all = gtk.MenuItem(_('Reply All'))
@@ -370,7 +370,8 @@ class TweetList(gtk.VBox):
         urls = [gobject.markup_escape_text(u) \
                 for u in util.detect_urls(p['text'])]
         
-        pango_twt = gobject.markup_escape_text(p['text'])
+        pango_twt = util.unescape_text(p['text'])
+        pango_twt = gobject.markup_escape_text(pango_twt)
         #pango_twt = '<span size="9000"><b>%s</b> %s</span>' % \
         #            (p['username'], pango_twt)
         user = '<span size="9000" foreground="#%s"><b>%s</b></span> ' % \

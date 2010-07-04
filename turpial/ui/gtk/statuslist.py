@@ -8,8 +8,11 @@
 import gtk
 import pango
 import gobject
+import logging
 
 from turpial.ui import util as util
+
+log = logging.getLogger('Gtk:Statuslist')
 
 class StatusList(gtk.ScrolledWindow):
     def __init__(self, mainwin, menu='normal'):
@@ -71,9 +74,12 @@ class StatusList(gtk.ScrolledWindow):
         
         for h in hashtags:
             torep = '%s' % h
-            cad = '<span foreground="%s">%s</span>' % \
-                  (self.mainwin.link_color, h)
-            text = text.replace(torep, cad)
+            try:
+                cad = '<span foreground="%s">%s</span>' % \
+                    (self.mainwin.link_color, h)
+                text = text.replace(torep, cad)
+            except:
+                log.debug('Problemas para resaltar el hashtag: %s' % h)
         return text
         
     def __highlight_mentions(self, text):
@@ -347,7 +353,7 @@ class StatusList(gtk.ScrolledWindow):
                 for u in util.detect_urls(p.text)]
         
         pango_twt = util.unescape_text(p.text)
-        pango_twt = gobject.markup_escape_text(p.text)
+        pango_twt = gobject.markup_escape_text(pango_twt)
         
         user = '<span size="9000" foreground="%s"><b>%s</b></span> ' % \
             (self.mainwin.link_color, p.username)

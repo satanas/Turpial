@@ -87,8 +87,12 @@ calls'))
             elif (exc.code == 401):
                 raise TurpialException(_('Invalid credentials'))
             elif (exc.code == 403):
-                raise TurpialException(_('Hey! You are over the limit of API \
-calls'))
+                rtn = exc.read()
+                if rtn.find("Status is a duplicate.") > 0:
+                    msg = _('Your status was sent. Don\'t try again')
+                else:
+                    msg = _('Hey! You are over the limit of API calls')
+                raise TurpialException(msg)
             elif (exc.code == 404):
                 raise TurpialException(_('Err... invalid request'))
             elif (exc.code == 406):

@@ -169,7 +169,7 @@ class UpdateBox(gtk.Window):
         self.btn_url.set_sensitive(False)
         self.btn_frn.set_sensitive(False)
         
-    def release(self):
+    def release(self, msg=None):
         self.blocked = False
         self.update_text.set_sensitive(True)
         self.toolbox.set_sensitive(True)
@@ -178,8 +178,11 @@ class UpdateBox(gtk.Window):
         self.btn_url.set_sensitive(True)
         self.btn_frn.set_sensitive(True)
         self.waiting.stop(error=True)
-        self.lblerror.set_markup("<span size='small'>%s</span>" % 
-            _('Oh oh... I couldn\'t send the tweet'))
+        
+        if not msg:
+            msg = _('Oh oh... I couldn\'t send the tweet')
+        
+        self.lblerror.set_markup("<span size='small'>%s</span>" % msg)
         self.set_focus(self.update_text)
         
     def show(self, text, id, user):

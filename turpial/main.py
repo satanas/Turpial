@@ -307,5 +307,14 @@ class Turpial:
     def get_friends(self):
         return self.api.get_single_friends_list()
         
+    def get_hashtags_url(self):
+        return self.api.protocol.tags_url
+        
+    def get_groups_url(self):
+        return self.api.protocol.groups_url
+        
+    def get_profiles_url(self):
+        return self.api.protocol.profiles_url
+        
 if __name__ == '__main__':
     t = Turpial()

@@ -12,7 +12,8 @@ from turpial.api.interfaces.post import Response
 class Protocol:
     ''' Clase que define las funciones básicas que debe implementar cualquier
     protocolo de microblogging para Turpial '''
-    def __init__(self, name, apiurl='', apiurl2=''):
+    def __init__(self, name, apiurl='', apiurl2='', tags_url=None, 
+        groups_url=None, profiles_url=None):
         self.timeline = []
         self.replies = []
         self.directs = []
@@ -24,6 +25,10 @@ class Protocol:
         self.apiurl2 = apiurl2
         self.profile = None
         self.friendsloaded = False
+        
+        self.tags_url = tags_url
+        self.groups_url = groups_url
+        self.profiles_url = profiles_url
         
         self.to_fav = []
         self.to_unfav = []

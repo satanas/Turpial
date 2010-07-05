@@ -234,6 +234,18 @@ class BaseGui:
         '''Get the friends list'''
         return self.__controller.get_friends()
         
+    def request_hashtags_url(self):
+        '''Get the hashtag url'''
+        return self.__controller.get_hashtags_url()
+        
+    def request_groups_url(self):
+        '''Get the groups url'''
+        return self.__controller.get_groups_url()
+        
+    def request_profiles_url(self):
+        '''Get the profiles url'''
+        return self.__controller.get_profiles_url()
+        
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------

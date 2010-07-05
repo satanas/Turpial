@@ -14,7 +14,8 @@ from turpial.api.interfaces.post import Status, Response, Profile, RateLimit
 class Twitter(Protocol):
     def __init__(self):
         Protocol.__init__(self, 'Twitter', 'http://api.twitter.com/1', 
-            'http://search.twitter.com')
+            'http://search.twitter.com', 'http://twitter.com/#search?q=%23',
+            None, 'http://www.twitter.com')
         
         self.http = TwitterHTTP()
         self.retweet_by_me = []

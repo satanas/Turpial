@@ -82,6 +82,20 @@ class StatusList(gtk.ScrolledWindow):
                 log.debug('Problemas para resaltar el hashtag: %s' % h)
         return text
         
+    def __highlight_groups(self, text):
+        groups = util.detect_groups(text)
+        if len(groups) == 0: return text
+        
+        for h in groups:
+            torep = '%s' % h
+            try:
+                cad = '<span foreground="%s">%s</span>' % \
+                    (self.mainwin.link_color, h)
+                text = text.replace(torep, cad)
+            except:
+                log.debug('Problemas para resaltar el grupo: %s' % h)
+        return text
+        
     def __highlight_mentions(self, text):
         mentions = util.detect_mentions(text)
         if len(mentions) == 0:
@@ -113,6 +127,7 @@ class StatusList(gtk.ScrolledWindow):
         total_urls = util.detect_urls(msg)
         total_users = util.detect_mentions(msg)
         total_tags = util.detect_hashtags(msg)
+        total_groups = util.detect_groups(msg)
         
         for u in total_urls:
             url = u if len(u) < 30 else u[:30] + '...'
@@ -124,15 +139,21 @@ class StatusList(gtk.ScrolledWindow):
             open_menu.append(gtk.SeparatorMenuItem())
         
         for h in total_tags:
-            ht = "#search?q=%23" + h[1:]
-            hashtag = '/'.join(['http://twitter.com', ht])
+            hashtag = '/'.join([self.mainwin.request_hashtags_url(), h[1:]]) 
             hmenu = gtk.MenuItem(h)
             hmenu.connect('button-release-event',
                           self.__open_url_with_event, hashtag)
             open_menu.append(hmenu)
             
-        if (len(total_urls) > 0 or len(total_tags) > 0) and \
-           len(total_users) > 0: 
+        for h in total_groups:
+            hashtag = '/'.join([self.mainwin.request_groups_url(), h[1:]]) 
+            hmenu = gtk.MenuItem(h)
+            hmenu.connect('button-release-event',
+                          self.__open_url_with_event, hashtag)
+            open_menu.append(hmenu)
+            
+        if (len(total_urls) > 0 or len(total_tags) > 0 or 
+            len(total_groups) > 0) and len(total_users) > 0: 
             open_menu.append(gtk.SeparatorMenuItem())
         
         exist = []
@@ -140,14 +161,14 @@ class StatusList(gtk.ScrolledWindow):
             if m == user or m in exist:
                 continue
             exist.append(m)
-            user_prof = '/'.join(['http://www.twitter.com', m[1:]])
+            user_prof = '/'.join([self.mainwin.request_profiles_url(), m[1:]])
             mentmenu = gtk.MenuItem(m)
             mentmenu.connect('button-release-event', self.__open_url_with_event, user_prof)
             open_menu.append(mentmenu)
             
         open.set_submenu(open_menu)
         if (len(total_urls) > 0) or (len(total_users) > 0) or \
-           (len(total_tags) > 0): 
+           (len(total_tags) > 0) or (len(total_groups) > 0):
             return open
         else:
             return None
@@ -276,7 +297,8 @@ class StatusList(gtk.ScrolledWindow):
                         menu.append(mutemenu)
                     menu.append(item)
                 
-                user_profile = '/'.join(['http://www.twitter.com', user])
+                user_profile = '/'.join([self.mainwin.request_profiles_url(), 
+                    user])
                 usermenu.connect('activate', self.__open_url, user_profile)
                 reply.connect('activate', self.__show_update_box, re, id, user)
                 reply_all.connect('activate', self.__show_update_box, re_all, 
@@ -359,6 +381,7 @@ class StatusList(gtk.ScrolledWindow):
             (self.mainwin.link_color, p.username)
         pango_twt = '<span size="9000">%s</span>' % pango_twt
         pango_twt = self.__highlight_hashtags(pango_twt)
+        pango_twt = self.__highlight_groups(pango_twt)
         pango_twt = self.__highlight_mentions(pango_twt)
         pango_twt = self.__highlight_urls(urls, pango_twt)
         pango_twt += '<span size="2000">\n\n</span>'

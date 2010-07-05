@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: turpial 1.0-b1\n"
 "Report-Msgid-Bugs-To: milmazz@gmail.com\n"
 "POT-Creation-Date: 2010-03-27 22:43+0530\n"
-"PO-Revision-Date: 2010-06-07 23:30-0530\n"
+"PO-Revision-Date: 2010-07-05 14:11-0530\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: zh_CN <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -17,116 +17,127 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: turpial/notification.py:58
+#: turpial/notification.py:59
 msgid "new tweet"
 msgstr "条新消息"
 
-#: turpial/notification.py:60
+#: turpial/notification.py:61
 msgid "new tweets"
 msgstr "条新消息"
 
-#: turpial/notification.py:69
+#: turpial/notification.py:70
 msgid "new mention"
 msgstr "条新回复"
 
-#: turpial/notification.py:71
+#: turpial/notification.py:72
 msgid "new mentions"
 msgstr "条新回复"
 
-#: turpial/notification.py:80
+#: turpial/notification.py:81
 msgid "new DM"
 msgstr "条新私信"
 
-#: turpial/notification.py:82
+#: turpial/notification.py:83
 msgid "new DMs"
 msgstr "条新私信"
 
-#: turpial/notification.py:92
+#: turpial/notification.py:93
 msgid "Tweets"
 msgstr "条消息"
 
-#: turpial/notification.py:93
+#: turpial/notification.py:94
 msgid "Following"
 msgstr "好友"
 
-#: turpial/notification.py:94
+#: turpial/notification.py:95
 msgid "Followers"
 msgstr "关注者"
 
-#: turpial/notification.py:103 turpial/notification.py:109
+#: turpial/notification.py:104 turpial/notification.py:110
 msgid "Turpial (Follow)"
 msgstr ""
 
-#: turpial/notification.py:103
+#: turpial/notification.py:104
 #, fuzzy, python-format
 msgid "Problem following to @%s"
 msgstr "您现在关注着@%s"
 
-#: turpial/notification.py:105 turpial/notification.py:111
+#: turpial/notification.py:106 turpial/notification.py:112
 msgid "Turpial (Unfollow)"
 msgstr ""
 
-#: turpial/notification.py:105
+#: turpial/notification.py:106
 #, fuzzy, python-format
 msgid "Problem unfollowing to @%s"
 msgstr "您已经取消了对@%s的关注"
 
-#: turpial/notification.py:109
+#: turpial/notification.py:110
 #, fuzzy, python-format
 msgid "Now you follow to @%s"
 msgstr "您现在关注着@%s"
 
-#: turpial/notification.py:111
+#: turpial/notification.py:112
 #, fuzzy, python-format
 msgid "You have unfollow to @%s"
 msgstr "您已经取消了对@%s的关注"
 
-#: turpial/api/protocols/twitter/http.py:72
-#: turpial/api/protocols/twitter/twitter.py:164
-#, fuzzy
-msgid "Authentication Error"
-msgstr "安全认证"
-
+#: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:85
 msgid "Sorry, you don't have more API calls"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:88
 msgid "Invalid credentials"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:36
 #: turpial/api/protocols/twitter/http.py:90
 msgid "Hey! You are over the limit of API calls"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:39
 #: turpial/api/protocols/twitter/http.py:93
 msgid "Err... invalid request"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:41
 #: turpial/api/protocols/twitter/http.py:95
 msgid "You are searching a very weird thing"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:43
 #: turpial/api/protocols/twitter/http.py:97
 msgid "You are searching too much!"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:45
 #: turpial/api/protocols/twitter/http.py:99
 #, fuzzy
 msgid "Oops! Something went wrong"
 msgstr "呃...出了点小状况"
 
+#: turpial/api/protocols/identica/http.py:47
 #: turpial/api/protocols/twitter/http.py:101
 msgid "Twitter is down. Try again later"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:49
 #: turpial/api/protocols/twitter/http.py:103
 msgid "Twitter is overcapacity"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:53
 #: turpial/api/protocols/twitter/http.py:107
 msgid "Can't connect to Twitter"
 msgstr ""
+
+#: turpial/api/protocols/identica/identica.py:163
+#: turpial/api/protocols/twitter/http.py:72
+#: turpial/api/protocols/twitter/twitter.py:164
+#, fuzzy
+msgid "Authentication Error"
+msgstr "安全认证"
 
 #: turpial/api/services/shorturl/bitly.py:31
 #: turpial/api/services/shorturl/cligs.py:26
@@ -162,27 +173,34 @@ msgstr "条。下次更新时间："
 msgid "Twitter client multi-interface written in Python"
 msgstr "用Python写的多接口Twitter客户端"
 
+#: turpial/ui/gtk/about.py:49
+msgid "File 'AUTHORS' not found"
+msgstr ""
+
+#: turpial/ui/gtk/about.py:60
+msgid "File 'TRANSLATORS' not found"
+msgstr ""
+
 #: turpial/ui/gtk/dock.py:20
-msgid "Home"
-msgstr "回主窗口"
+msgid "Timeline, replies and others"
+msgstr ""
 
-#: turpial/ui/gtk/dock.py:24 turpial/ui/gtk/profile.py:19
-msgid "Profile"
-msgstr "个人账户"
+#: turpial/ui/gtk/dock.py:24
+msgid "Profile, favorites, search"
+msgstr ""
 
-#: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:115
-#: turpial/ui/gtk/updatebox.py:91
-msgid "Tweet"
-msgstr "发布状态"
+#: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/updatebox.py:29
+msgid "Update status"
+msgstr "更新状态"
 
-#: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/main.py:252
+#: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/login.py:52
 #: turpial/ui/gtk/preferences.py:24
 msgid "Preferences"
 msgstr "偏好设置"
 
 #: turpial/ui/gtk/dock.py:36
-msgid "About"
-msgstr "关于作者"
+msgid "About Turpial"
+msgstr ""
 
 #: turpial/ui/gtk/friendwin.py:15
 #, fuzzy
@@ -193,37 +211,41 @@ msgstr "加载好友中..."
 msgid "I am still loading all of your friends. Try again in a few seconds"
 msgstr "我还在加载您的好友呢，过会儿再来试试吧"
 
-#: turpial/ui/gtk/home.py:18 turpial/ui/gtk/home.py:21
+#: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:26
 #: turpial/ui/gtk/preferences.py:170 turpial/ui/gtk/preferences.py:262
 msgid "Mentions"
 msgstr "回复"
 
-#: turpial/ui/gtk/home.py:20 turpial/ui/gtk/preferences.py:168
+#: turpial/ui/gtk/home.py:25 turpial/ui/gtk/preferences.py:168
 #: turpial/ui/gtk/preferences.py:253
 msgid "Timeline"
 msgstr "时间线"
 
-#: turpial/ui/gtk/home.py:22 turpial/ui/gtk/preferences.py:172
+#: turpial/ui/gtk/home.py:27 turpial/ui/gtk/preferences.py:172
 msgid "Directs"
 msgstr "私信"
 
-#: turpial/ui/gtk/main.py:116
-msgid "Exit"
-msgstr "退出"
-
-#: turpial/ui/gtk/main.py:239
+#: turpial/ui/gtk/login.py:24
 msgid "User and Password"
 msgstr "用户名和密码"
 
-#: turpial/ui/gtk/main.py:246
+#: turpial/ui/gtk/login.py:31
 msgid "Remember my credentials"
 msgstr "下次自动登陆"
 
-#: turpial/ui/gtk/main.py:248
+#: turpial/ui/gtk/login.py:33
 msgid "Connect"
 msgstr "上线"
 
-#: turpial/ui/gtk/main.py:325
+#: turpial/ui/gtk/main.py:114 turpial/ui/gtk/updatebox.py:91
+msgid "Tweet"
+msgstr "发布状态"
+
+#: turpial/ui/gtk/main.py:115
+msgid "Exit"
+msgstr "退出"
+
+#: turpial/ui/gtk/main.py:242
 msgid "Wait a few seconds while I load everything..."
 msgstr "加载中，请稍候"
 
@@ -248,7 +270,7 @@ msgstr "通知"
 msgid "Services"
 msgstr "短链和图片服务"
 
-#: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/tweetslist.py:258
+#: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/tweetslist.py:255
 #, fuzzy
 msgid "Mute"
 msgstr "静音"
@@ -407,11 +429,15 @@ msgstr ""
 msgid "Twitter API URL"
 msgstr ""
 
-#: turpial/ui/gtk/profile.py:18
+#: turpial/ui/gtk/profile.py:17
 msgid "Favorites"
 msgstr "收藏"
 
-#: turpial/ui/gtk/profile.py:20
+#: turpial/ui/gtk/profile.py:18
+msgid "Profile"
+msgstr "个人账户"
+
+#: turpial/ui/gtk/profile.py:19
 msgid "Search"
 msgstr "搜索"
 
@@ -436,70 +462,70 @@ msgstr "总得告诉我你在找什么吧"
 msgid "Open"
 msgstr "打开"
 
-#: turpial/ui/gtk/tweetslist.py:191 turpial/ui/gtk/tweetslist.py:244
+#: turpial/ui/gtk/tweetslist.py:191 turpial/ui/gtk/tweetslist.py:241
 msgid "Reply"
 msgstr "回复"
 
-#: turpial/ui/gtk/tweetslist.py:192 turpial/ui/gtk/tweetslist.py:250
+#: turpial/ui/gtk/tweetslist.py:192 turpial/ui/gtk/tweetslist.py:247
 msgid "Delete"
 msgstr "删除"
 
-#: turpial/ui/gtk/tweetslist.py:245
+#: turpial/ui/gtk/tweetslist.py:242
 #, fuzzy
 msgid "Reply All"
 msgstr "链式查看回复"
 
-#: turpial/ui/gtk/tweetslist.py:246
+#: turpial/ui/gtk/tweetslist.py:243
 msgid "Retweet (Old)"
 msgstr "引用"
 
-#: turpial/ui/gtk/tweetslist.py:247
+#: turpial/ui/gtk/tweetslist.py:244
 msgid "Retweet"
 msgstr "转发"
 
-#: turpial/ui/gtk/tweetslist.py:248
+#: turpial/ui/gtk/tweetslist.py:245
 msgid "+ Fav"
 msgstr "添加收藏"
 
-#: turpial/ui/gtk/tweetslist.py:249
+#: turpial/ui/gtk/tweetslist.py:246
 msgid "- Fav"
 msgstr "移除收藏"
 
-#: turpial/ui/gtk/tweetslist.py:251
+#: turpial/ui/gtk/tweetslist.py:248
 msgid "DM"
 msgstr "私信"
 
-#: turpial/ui/gtk/tweetslist.py:252
+#: turpial/ui/gtk/tweetslist.py:249
 msgid "Follow"
 msgstr "关注"
 
-#: turpial/ui/gtk/tweetslist.py:253
+#: turpial/ui/gtk/tweetslist.py:250
 msgid "Unfollow"
 msgstr "取消关注"
 
-#: turpial/ui/gtk/tweetslist.py:254
+#: turpial/ui/gtk/tweetslist.py:251
 msgid "Loading friends..."
 msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:190
+#: turpial/ui/gtk/tweetslist.py:254 turpial/ui/gtk/updatebox.py:190
 msgid "In reply to"
 msgstr "链式查看回复"
 
-#: turpial/ui/gtk/tweetslist.py:387 turpial/ui/gtk/tweetslistwk.py:157
+#: turpial/ui/gtk/tweetslist.py:384 turpial/ui/gtk/tweetslistwk.py:157
 msgid "from"
 msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:389 turpial/ui/gtk/tweetslistwk.py:159
+#: turpial/ui/gtk/tweetslist.py:386 turpial/ui/gtk/tweetslistwk.py:159
 #, fuzzy
 msgid "in reply to"
 msgstr "链式查看回复"
 
-#: turpial/ui/gtk/tweetslist.py:391 turpial/ui/gtk/tweetslistwk.py:161
+#: turpial/ui/gtk/tweetslist.py:388 turpial/ui/gtk/tweetslistwk.py:161
 #, fuzzy
 msgid "Retweeted by"
 msgstr "转发"
 
-#: turpial/ui/gtk/tweetslist.py:426 turpial/ui/gtk/tweetslistwk.py:197
+#: turpial/ui/gtk/tweetslist.py:423 turpial/ui/gtk/tweetslistwk.py:197
 msgid "No tweets available"
 msgstr "没有消息呢"
 
@@ -507,10 +533,6 @@ msgstr "没有消息呢"
 #, fuzzy
 msgid "What is happening?"
 msgstr "发生什么了？"
-
-#: turpial/ui/gtk/updatebox.py:29
-msgid "Update status"
-msgstr "更新状态"
 
 #: turpial/ui/gtk/updatebox.py:67 turpial/ui/gtk/updatebox.py:68
 msgid "Upload image"
@@ -579,44 +601,9 @@ msgstr "自我介绍"
 msgid "Saving..."
 msgstr "保存中"
 
-#~ msgid "Turpial Authorization"
-#~ msgstr "授权Turpial访问您的账户"
+#~ msgid "Home"
+#~ msgstr "回主窗口"
 
-#~ msgid ""
-#~ "Twitter has implemented a new security"
-#~ " system and needs that you authorize"
-#~ " Turpial from your account"
-#~ msgstr "由于Twitter执行了新的安全机制，Turpial需要您授权它访问您的账户"
-
-#~ msgid ""
-#~ "In order to complete that step, "
-#~ "Turpial has open a new page in "
-#~ "your default browser, go there to "
-#~ "authorize Turpial and copy the number"
-#~ " given in the box below..."
-#~ msgstr "为完成此步骤，Turpial在您的默认浏览器打开了一个页面，请到该页面授权Turpial并在文本框中输入屏幕返回的数字"
-
-#~ msgid "Input PIN"
-#~ msgstr "请输入认证密码"
-
-#~ msgid "Must write a valid PIN"
-#~ msgstr "请输入有效的认证密码"
-
-#~ msgid "Login cancelled by user"
-#~ msgstr "登陆被打断"
-
-#~ msgid ""
-#~ "Autorize Turpial and copy the given "
-#~ "number (<b>PIN</b>) in the text box "
-#~ "below:"
-#~ msgstr "授权Turpial并把返回的数字（<b>认证密码</b>)复制到下面的文本框"
-
-#~ msgid "You must write a valid PIN"
-#~ msgstr "请输入正确的认证密码"
-
-#~ msgid "Loading..."
-#~ msgstr "加载中"
-
-#~ msgid "Something went wrong. I'll update again soon"
-#~ msgstr "出了点小状况，容我稍候再试试"
+#~ msgid "About"
+#~ msgstr "关于作者"
 

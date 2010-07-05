@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: turpial 1.0-b1\n"
 "Report-Msgid-Bugs-To: milmazz@gmail.com\n"
 "POT-Creation-Date: 2010-04-04 11:29+0530\n"
-"PO-Revision-Date: 2010-06-07 23:30-0530\n"
+"PO-Revision-Date: 2010-07-05 14:11-0530\n"
 "Last-Translator: Ana Rangel <anita.rangel@gmail.com>\n"
 "Language-Team: no <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -17,116 +17,127 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: turpial/notification.py:58
+#: turpial/notification.py:59
 msgid "new tweet"
 msgstr "nye tvit"
 
-#: turpial/notification.py:60
+#: turpial/notification.py:61
 msgid "new tweets"
 msgstr "nye tvittene"
 
-#: turpial/notification.py:69
+#: turpial/notification.py:70
 msgid "new mention"
 msgstr "nye omtale"
 
-#: turpial/notification.py:71
+#: turpial/notification.py:72
 msgid "new mentions"
 msgstr "nye omtaler"
 
-#: turpial/notification.py:80
+#: turpial/notification.py:81
 msgid "new DM"
 msgstr "ny DM"
 
-#: turpial/notification.py:82
+#: turpial/notification.py:83
 msgid "new DMs"
 msgstr "nye DMs"
 
-#: turpial/notification.py:92
+#: turpial/notification.py:93
 msgid "Tweets"
 msgstr "Tweets"
 
-#: turpial/notification.py:93
+#: turpial/notification.py:94
 msgid "Following"
 msgstr "Følgende"
 
-#: turpial/notification.py:94
+#: turpial/notification.py:95
 msgid "Followers"
 msgstr "Tilhenger"
 
-#: turpial/notification.py:103 turpial/notification.py:109
+#: turpial/notification.py:104 turpial/notification.py:110
 msgid "Turpial (Follow)"
 msgstr ""
 
-#: turpial/notification.py:103
+#: turpial/notification.py:104
 #, fuzzy, python-format
 msgid "Problem following to @%s"
 msgstr "Nå følger du @%s"
 
-#: turpial/notification.py:105 turpial/notification.py:111
+#: turpial/notification.py:106 turpial/notification.py:112
 msgid "Turpial (Unfollow)"
 msgstr ""
 
-#: turpial/notification.py:105
+#: turpial/notification.py:106
 #, fuzzy, python-format
 msgid "Problem unfollowing to @%s"
 msgstr "Du har ufølget @%s"
 
-#: turpial/notification.py:109
+#: turpial/notification.py:110
 #, fuzzy, python-format
 msgid "Now you follow to @%s"
 msgstr "Nå følger du @%s"
 
-#: turpial/notification.py:111
+#: turpial/notification.py:112
 #, fuzzy, python-format
 msgid "You have unfollow to @%s"
 msgstr "Du har ufølget @%s"
 
-#: turpial/api/protocols/twitter/http.py:72
-#: turpial/api/protocols/twitter/twitter.py:164
-#, fuzzy
-msgid "Authentication Error"
-msgstr "Sikker autentisering"
-
+#: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:85
 msgid "Sorry, you don't have more API calls"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:88
 msgid "Invalid credentials"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:36
 #: turpial/api/protocols/twitter/http.py:90
 msgid "Hey! You are over the limit of API calls"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:39
 #: turpial/api/protocols/twitter/http.py:93
 msgid "Err... invalid request"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:41
 #: turpial/api/protocols/twitter/http.py:95
 msgid "You are searching a very weird thing"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:43
 #: turpial/api/protocols/twitter/http.py:97
 msgid "You are searching too much!"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:45
 #: turpial/api/protocols/twitter/http.py:99
 #, fuzzy
 msgid "Oops! Something went wrong"
 msgstr "Ops... feil"
 
+#: turpial/api/protocols/identica/http.py:47
 #: turpial/api/protocols/twitter/http.py:101
 msgid "Twitter is down. Try again later"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:49
 #: turpial/api/protocols/twitter/http.py:103
 msgid "Twitter is overcapacity"
 msgstr ""
 
+#: turpial/api/protocols/identica/http.py:53
 #: turpial/api/protocols/twitter/http.py:107
 msgid "Can't connect to Twitter"
 msgstr ""
+
+#: turpial/api/protocols/identica/identica.py:163
+#: turpial/api/protocols/twitter/http.py:72
+#: turpial/api/protocols/twitter/twitter.py:164
+#, fuzzy
+msgid "Authentication Error"
+msgstr "Sikker autentisering"
 
 #: turpial/api/services/shorturl/bitly.py:31
 #: turpial/api/services/shorturl/cligs.py:26
@@ -162,27 +173,34 @@ msgstr "API kaller. Nullstiller"
 msgid "Twitter client multi-interface written in Python"
 msgstr "skrevet i Python"
 
+#: turpial/ui/gtk/about.py:49
+msgid "File 'AUTHORS' not found"
+msgstr ""
+
+#: turpial/ui/gtk/about.py:60
+msgid "File 'TRANSLATORS' not found"
+msgstr ""
+
 #: turpial/ui/gtk/dock.py:20
-msgid "Home"
-msgstr "Hjemme"
+msgid "Timeline, replies and others"
+msgstr ""
 
-#: turpial/ui/gtk/dock.py:24 turpial/ui/gtk/profile.py:19
-msgid "Profile"
-msgstr "Profil"
+#: turpial/ui/gtk/dock.py:24
+msgid "Profile, favorites, search"
+msgstr ""
 
-#: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/main.py:115
-#: turpial/ui/gtk/updatebox.py:91
-msgid "Tweet"
-msgstr "å tvitre"
+#: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/updatebox.py:29
+msgid "Update status"
+msgstr ""
 
-#: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/main.py:252
+#: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/login.py:52
 #: turpial/ui/gtk/preferences.py:24
 msgid "Preferences"
 msgstr "Preferanser"
 
 #: turpial/ui/gtk/dock.py:36
-msgid "About"
-msgstr "Omtrent"
+msgid "About Turpial"
+msgstr ""
 
 #: turpial/ui/gtk/friendwin.py:15
 #, fuzzy
@@ -193,37 +211,41 @@ msgstr "Laster opp venner..."
 msgid "I am still loading all of your friends. Try again in a few seconds"
 msgstr ""
 
-#: turpial/ui/gtk/home.py:18 turpial/ui/gtk/home.py:21
+#: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:26
 #: turpial/ui/gtk/preferences.py:170 turpial/ui/gtk/preferences.py:262
 msgid "Mentions"
 msgstr "Nevner"
 
-#: turpial/ui/gtk/home.py:20 turpial/ui/gtk/preferences.py:168
+#: turpial/ui/gtk/home.py:25 turpial/ui/gtk/preferences.py:168
 #: turpial/ui/gtk/preferences.py:253
 msgid "Timeline"
 msgstr "Tidlinje"
 
-#: turpial/ui/gtk/home.py:22 turpial/ui/gtk/preferences.py:172
+#: turpial/ui/gtk/home.py:27 turpial/ui/gtk/preferences.py:172
 msgid "Directs"
 msgstr "Privat"
 
-#: turpial/ui/gtk/main.py:116
-msgid "Exit"
-msgstr "Utgang"
-
-#: turpial/ui/gtk/main.py:239
+#: turpial/ui/gtk/login.py:24
 msgid "User and Password"
 msgstr "Bruker og Passord"
 
-#: turpial/ui/gtk/main.py:246
+#: turpial/ui/gtk/login.py:31
 msgid "Remember my credentials"
 msgstr "Husk mine attesterene"
 
-#: turpial/ui/gtk/main.py:248
+#: turpial/ui/gtk/login.py:33
 msgid "Connect"
 msgstr "Koble"
 
-#: turpial/ui/gtk/main.py:325
+#: turpial/ui/gtk/main.py:114 turpial/ui/gtk/updatebox.py:91
+msgid "Tweet"
+msgstr "å tvitre"
+
+#: turpial/ui/gtk/main.py:115
+msgid "Exit"
+msgstr "Utgang"
+
+#: turpial/ui/gtk/main.py:242
 msgid "Wait a few seconds while I load everything..."
 msgstr "Vent noen sekunder mens vi loader alt..."
 
@@ -248,7 +270,7 @@ msgstr "Melding"
 msgid "Services"
 msgstr "Tjenester"
 
-#: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/tweetslist.py:258
+#: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/tweetslist.py:255
 #, fuzzy
 msgid "Mute"
 msgstr "Mute"
@@ -407,11 +429,15 @@ msgstr ""
 msgid "Twitter API URL"
 msgstr ""
 
-#: turpial/ui/gtk/profile.py:18
+#: turpial/ui/gtk/profile.py:17
 msgid "Favorites"
 msgstr "Favoritter"
 
-#: turpial/ui/gtk/profile.py:20
+#: turpial/ui/gtk/profile.py:18
+msgid "Profile"
+msgstr "Profil"
+
+#: turpial/ui/gtk/profile.py:19
 msgid "Search"
 msgstr "Søk"
 
@@ -436,70 +462,70 @@ msgstr "Du må skrive noe til å søke"
 msgid "Open"
 msgstr "åpen"
 
-#: turpial/ui/gtk/tweetslist.py:191 turpial/ui/gtk/tweetslist.py:244
+#: turpial/ui/gtk/tweetslist.py:191 turpial/ui/gtk/tweetslist.py:241
 msgid "Reply"
 msgstr "Svare"
 
-#: turpial/ui/gtk/tweetslist.py:192 turpial/ui/gtk/tweetslist.py:250
+#: turpial/ui/gtk/tweetslist.py:192 turpial/ui/gtk/tweetslist.py:247
 msgid "Delete"
 msgstr "Viske ut"
 
-#: turpial/ui/gtk/tweetslist.py:245
+#: turpial/ui/gtk/tweetslist.py:242
 #, fuzzy
 msgid "Reply All"
 msgstr "Svare til alle"
 
-#: turpial/ui/gtk/tweetslist.py:246
+#: turpial/ui/gtk/tweetslist.py:243
 msgid "Retweet (Old)"
 msgstr "Retvitre (Gamle)"
 
-#: turpial/ui/gtk/tweetslist.py:247
+#: turpial/ui/gtk/tweetslist.py:244
 msgid "Retweet"
 msgstr "Retvitre"
 
-#: turpial/ui/gtk/tweetslist.py:248
+#: turpial/ui/gtk/tweetslist.py:245
 msgid "+ Fav"
 msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:249
+#: turpial/ui/gtk/tweetslist.py:246
 msgid "- Fav"
 msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:251
+#: turpial/ui/gtk/tweetslist.py:248
 msgid "DM"
 msgstr "DM"
 
-#: turpial/ui/gtk/tweetslist.py:252
+#: turpial/ui/gtk/tweetslist.py:249
 msgid "Follow"
 msgstr "Følge"
 
-#: turpial/ui/gtk/tweetslist.py:253
+#: turpial/ui/gtk/tweetslist.py:250
 msgid "Unfollow"
 msgstr "ufølge"
 
-#: turpial/ui/gtk/tweetslist.py:254
+#: turpial/ui/gtk/tweetslist.py:251
 msgid "Loading friends..."
 msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:257 turpial/ui/gtk/updatebox.py:190
+#: turpial/ui/gtk/tweetslist.py:254 turpial/ui/gtk/updatebox.py:190
 msgid "In reply to"
 msgstr "I ansvar til"
 
-#: turpial/ui/gtk/tweetslist.py:387 turpial/ui/gtk/tweetslistwk.py:157
+#: turpial/ui/gtk/tweetslist.py:384 turpial/ui/gtk/tweetslistwk.py:157
 msgid "from"
 msgstr "fra"
 
-#: turpial/ui/gtk/tweetslist.py:389 turpial/ui/gtk/tweetslistwk.py:159
+#: turpial/ui/gtk/tweetslist.py:386 turpial/ui/gtk/tweetslistwk.py:159
 #, fuzzy
 msgid "in reply to"
 msgstr "i ansvar til"
 
-#: turpial/ui/gtk/tweetslist.py:391 turpial/ui/gtk/tweetslistwk.py:161
+#: turpial/ui/gtk/tweetslist.py:388 turpial/ui/gtk/tweetslistwk.py:161
 #, fuzzy
 msgid "Retweeted by"
 msgstr ""
 
-#: turpial/ui/gtk/tweetslist.py:426 turpial/ui/gtk/tweetslistwk.py:197
+#: turpial/ui/gtk/tweetslist.py:423 turpial/ui/gtk/tweetslistwk.py:197
 msgid "No tweets available"
 msgstr ""
 
@@ -507,10 +533,6 @@ msgstr ""
 #, fuzzy
 msgid "What is happening?"
 msgstr "Hva som skjer?"
-
-#: turpial/ui/gtk/updatebox.py:29
-msgid "Update status"
-msgstr ""
 
 #: turpial/ui/gtk/updatebox.py:67 turpial/ui/gtk/updatebox.py:68
 msgid "Upload image"
@@ -581,55 +603,9 @@ msgstr "Bio"
 msgid "Saving..."
 msgstr "Gjemme på..."
 
-#~ msgid "Turpial Authorization"
-#~ msgstr "Turpial Autorisasjon"
+#~ msgid "Home"
+#~ msgstr "Hjemme"
 
-#~ msgid ""
-#~ "Twitter has implemented a new security"
-#~ " system and needs that you authorize"
-#~ " Turpial from your account"
-#~ msgstr ""
-#~ "Twitter har implementert et nytt "
-#~ "sikkerhetssystem og behov at du "
-#~ "autoriserer Turpial fra kontoen din"
-
-#~ msgid ""
-#~ "In order to complete that step, "
-#~ "Turpial has open a new page in "
-#~ "your default browser, go there to "
-#~ "authorize Turpial and copy the number"
-#~ " given in the box below..."
-#~ msgstr ""
-#~ "For å fullføre dette trinnet, har "
-#~ "Turpial åpne en ny side i din "
-#~ "standard nettleser, gå dit for å "
-#~ "godkjenne Turpial og kopiere nummeret "
-#~ "gitt i boksen nedenfor ..."
-
-#~ msgid "Input PIN"
-#~ msgstr "Inngang PIN"
-
-#~ msgid "Must write a valid PIN"
-#~ msgstr "Må skrive en gyldig PIN"
-
-#~ msgid "Login cancelled by user"
-#~ msgstr "Logg inn avbrutt av brukeren"
-
-#~ msgid ""
-#~ "Autorize Turpial and copy the given "
-#~ "number (<b>PIN</b>) in the text box "
-#~ "below:"
-#~ msgstr ""
-#~ "Autorize Turpial og kopiere det angitte"
-#~ " tallet (<b>PIN</ b>) i tekstboksen "
-#~ "nedenfor:"
-
-#~ msgid "You must write a valid PIN"
-#~ msgstr "Du må skrive en gyldig PIN"
-
-#~ msgid "Loading..."
-#~ msgstr "Laster opp..."
-
-#~ msgid "Something went wrong. I'll update again soon"
-#~ msgstr ""
+#~ msgid "About"
+#~ msgstr "Omtrent"
 

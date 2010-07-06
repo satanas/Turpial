@@ -104,18 +104,18 @@ Contacto
 Puedes ponerte en contacto con el equipo de Turpial a través de cualquiera de 
 las siguientes direcciones (todas @gmail.com):
 
-wil.alejandro
-meza.eleazar
-milmazz
-kstnshadows
+ * wil.alejandro
+ * meza.eleazar
+ * milmazz
+ * kstnshadows
 
 A través de Twitter:
 
-@satanas82
-@elshaka
-@milmazz
-@Azrael37
+ * [@satanas82](http://twitter.com/satanas82)
+ * [@elshaka](http://twitter.com/elshaka)
+ * [@milmazz](http://twitter.com/milmazz)
+ * [@Azrael37](http://twitter.com/Azrael37)
 
-O a través de @turpialve en Twitter para hacer recomendaciones, reportar bugs o 
+O a través de [@turpialve](http://twitter.com/turpialve) en Twitter para hacer recomendaciones, reportar bugs o 
 simplemente para mantenerte al día en el desarrollo y los cambios de Turpial
 

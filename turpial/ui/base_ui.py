@@ -246,6 +246,14 @@ class BaseGui:
         '''Get the profiles url'''
         return self.__controller.get_profiles_url()
         
+    def manual_update(self, id):
+        if id == 'timeline':
+            self.download_timeline()
+        elif id == 'replies':
+            self.download_replies()
+        elif id == 'directs':
+            self.download_directs()
+            
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------

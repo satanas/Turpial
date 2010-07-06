@@ -79,9 +79,10 @@ class GenericColumn(gtk.VBox):
         pass
         
 class StandardColumn(GenericColumn):
-    def __init__(self, mainwin, label='', menu='normal'):
+    def __init__(self, mainwin, label='', menu='normal', id=None):
         GenericColumn.__init__(self, mainwin, label, menu)
         
+        self.id = id
         self.listcombo = gtk.combo_box_new_text()
         self.listcombo.append_text('Lista de prueba 1')
         self.listcombo.append_text('Lista de prueba 2')
@@ -98,6 +99,25 @@ class StandardColumn(GenericColumn):
         self.pack_start(listsbox, False, False)
         self.pack_start(self.errorbox, False, False)
         self.pack_start(self.tweetlist, True, True)
+        
+        self.refresh.connect('clicked', self.__manual_update)
+        
+    def __manual_update(self, widget):
+        self.mainwin.manual_update(self.id)
+        
+    def start_update(self):
+        self.waiting.start()
+        self.errorbox.hide()
+        self.refresh.set_sensitive(False)
+        self.listcombo.set_sensitive(False)
+        
+    def stop_update(self, error=False, msg=''):
+        self.waiting.stop(error)
+        self.errorbox.show_error(msg, error)
+        self.refresh.set_sensitive(True)
+        self.listcombo.set_sensitive(True)
+        
+    
         
 class SingleColumn(GenericColumn):
     def __init__(self, mainwin, label='', menu='normal'):

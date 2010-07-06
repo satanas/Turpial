@@ -22,9 +22,11 @@ class Home(Wrapper):
             self.timeline = TweetListWebkit(mainwin, 'Timeline')
             self.replies = TweetListWebkit(mainwin, _('Mentions'))
         else:
-            self.timeline = StandardColumn(mainwin, _('Timeline'))
-            self.replies = StandardColumn(mainwin, _('Mentions'))
-        self.direct = StandardColumn(mainwin, _('Directs'), 'direct')
+            self.timeline = StandardColumn(mainwin, _('Timeline'), 
+                id='timeline')
+            self.replies = StandardColumn(mainwin, _('Mentions'), id='replies')
+        self.direct = StandardColumn(mainwin, _('Directs'), 'direct', 
+            id='directs')
         
         self._append_widget(self.timeline, WrapperAlign.left)
         self._append_widget(self.replies, WrapperAlign.middle)

@@ -19,6 +19,7 @@ from turpial.ui.gtk.preferences import Preferences
 from turpial.ui.gtk.home import Home
 from turpial.ui.gtk.profile import Profile
 from turpial.ui.gtk.dock import Dock
+from turpial.ui.gtk.follow import Follow
 from turpial.ui.base_ui import BaseGui
 from turpial.notification import Notification
 from turpial.ui import util as util
@@ -111,25 +112,31 @@ class Main(BaseGui, gtk.Window):
             #self.present()
             
     def __on_focus(self, widget, event):
-        print 'focus'
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
         
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
         tweet = gtk.MenuItem(_('Tweet'))
+        follow = gtk.MenuItem(_('Follow'))
         exit = gtk.MenuItem(_('Exit'))
         if self.mode == 2:
             menu.append(tweet)
+            menu.append(follow)
+            menu.append(gtk.SeparatorMenuItem())
         menu.append(exit)
         
         exit.connect('activate', self.quit)
         tweet.connect('activate', self.__show_update_box_from_menu)
+        follow.connect('activate', self.__follow_from_menu)
             
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
         
     def __show_update_box_from_menu(self, widget):
         self.show_update_box()
+        
+    def __follow_from_menu(self, widget):
+        f = Follow(self)
         
     def __close(self, widget, event=None):
         if self.minimize == 'on':

@@ -11,6 +11,7 @@ import gobject
 import logging
 
 from turpial.ui import util as util
+from turpial.ui.gtk.follow import Follow
 
 log = logging.getLogger('Gtk:Statuslist')
 
@@ -345,7 +346,7 @@ class StatusList(gtk.ScrolledWindow):
     
     def __follow(self, widget, follow, user):
         if follow:
-            self.mainwin.request_follow(user)
+            f = Follow(self.mainwin, user)
         else:
             self.mainwin.request_unfollow(user)
         

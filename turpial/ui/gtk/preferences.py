@@ -167,9 +167,9 @@ timeline, mentions and direct messages'), current)
         
         self.home = TimeScroll(_('Timeline'), h,
             callback=self.update_api_calls)
-        self.replies = TimeScroll(_('Mentions'), r, min=2,
+        self.replies = TimeScroll(_('Mentions'), r,
             callback=self.update_api_calls)
-        self.directs = TimeScroll(_('Directs'), d, min=5,
+        self.directs = TimeScroll(_('Directs'), d, 
             callback=self.update_api_calls)
         
         self.tweets = TimeScroll(_('Tweets shown'), t, min=20, max=200,

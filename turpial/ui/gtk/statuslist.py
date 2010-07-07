@@ -411,6 +411,17 @@ class StatusList(gtk.ScrolledWindow):
             self.model.insert(0, row)
         else:
             self.model.append(row)
+        '''
+        model, row = self.list.get_selection().get_selected()
+        if row:
+            path = self.model.get_path(row)
+            if path[0] <= 1:
+                self.list.get_selection().select_path((0,))
+                self.list.set_cursor((0,))
+        else:
+            self.list.get_selection().select_path((0,))
+            self.list.set_cursor((0,))
+        '''
         del pix
         
     def del_last(self):

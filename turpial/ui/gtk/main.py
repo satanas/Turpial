@@ -53,6 +53,7 @@ class Main(BaseGui, gtk.Window):
         self.connect('size-request', self.size_request)
         self.connect('configure-event', self.move_event)
         self.connect('mykeypress', self.__on_key_press)
+        self.connect('focus-in-event', self.__on_focus)
         
         self.mode = 0
         self.vbox = None
@@ -109,6 +110,10 @@ class Main(BaseGui, gtk.Window):
             self.show()
             #self.present()
             
+    def __on_focus(self, widget, event):
+        print 'focus'
+        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
+        
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
         tweet = gtk.MenuItem(_('Tweet'))
@@ -323,6 +328,8 @@ class Main(BaseGui, gtk.Window):
             text = util.unescape_text(p.text)
             text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_tweets(count, text, icon)
+            if not self.get_property('is-active'):
+                self.tray.set_from_pixbuf(self.load_image('turpial-tray-update.png', True))
             
         gtk.gdk.threads_leave()
         self.updating['home'] = False
@@ -338,6 +345,8 @@ class Main(BaseGui, gtk.Window):
             text = util.unescape_text(p.text)
             text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_replies(count, text, icon)
+            if not self.get_property('is-active'):
+                self.tray.set_from_pixbuf(self.load_image('turpial-tray-update.png', True))
         
         gtk.gdk.threads_leave()
         self.updating['replies'] = False
@@ -353,6 +362,8 @@ class Main(BaseGui, gtk.Window):
             text = util.unescape_text(p.text)
             text = "<b>@%s</b> %s" % (p.username, text)
             self.notify.new_directs(count, text, icon)
+            if not self.get_property('is-active'):
+                self.tray.set_from_pixbuf(self.load_image('turpial-tray-update.png', True))
             
         gtk.gdk.threads_leave()
         self.updating['directs'] = False

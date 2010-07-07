@@ -50,12 +50,18 @@ class GenericColumn(gtk.VBox):
             else:
                 count = util.count_new_tweets(arr_tweets, self.last)
                 self.stop_update()
+                
+                self.tweetlist.clear()
+                for tweet in arr_tweets:
+                    self.tweetlist.add_tweet(tweet, False)
+                '''
                 for tweet in arr_tweets:
                     if self.last is None:
                         self.tweetlist.add_tweet(tweet, False)
                     elif not util.has_tweet(self.last, tweet):
                         self.tweetlist.add_tweet(tweet)
                         self.tweetlist.del_last()
+                '''
                 self.last = arr_tweets
             
         self.on_update()

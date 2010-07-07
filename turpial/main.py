@@ -126,10 +126,14 @@ class Turpial:
             self.__signin_done(key, secret, val)
     
     def __done_follow(self, response):
+        user = response.items[1]
+        follow = response.items[2]
+        
         if response.type == 'error':
-            self.ui.update_follow(response, response.items)
+            msg = response.errmsg % user
+            self.ui.following_error(msg, follow)
         elif response.type == 'mixed':
-            self.profile, user, follow = response.items
+            self.profile = response.items[0]
             self.ui.update_user_profile(self.profile)
             self.ui.update_follow(user, follow)
         

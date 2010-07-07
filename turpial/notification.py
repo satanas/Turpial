@@ -95,18 +95,16 @@ class Notification:
             _('Followers'), p.followers_count))
         if self.config['sound'] == 'on':
             self.sound.login()
-        
+    
     def following(self, user, follow):
-        # FIXME: Mejorar esta validación
-        try:
-            test = user.type
-            if follow:
-                self.popup(_('Turpial (Follow)'), _('Problem following to @%s') % name)
-            else:
-                self.popup(_('Turpial (Unfollow)'), _('Problem unfollowing to @%s') % name)
-        except Exception, exc:
-            name = user.username
-            if follow:
-                self.popup(_('Turpial (Follow)'), _('Now you follow to @%s') % name)
-            else:
-                self.popup(_('Turpial (Unfollow)'), _('You have unfollow to @%s') % name)
+        name = user.username
+        if follow:
+            self.popup(_('Turpial (Follow)'), _('Now you follow to @%s') % name)
+        else:
+            self.popup(_('Turpial (Unfollow)'), _('You have unfollow to @%s') % name)
+                
+    def following_error(self, message, follow):
+        if follow:
+            self.popup(_('Turpial (Follow)'), message)
+        else:
+            self.popup(_('Turpial (Unfollow)'), message)

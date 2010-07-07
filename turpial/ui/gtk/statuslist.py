@@ -120,7 +120,7 @@ class StatusList(gtk.ScrolledWindow):
         return text
         
     def __build_open_menu(self, user, msg):
-        open = gtk.MenuItem(_('Open'))
+        _open = gtk.MenuItem(_('Open'))
         
         open_menu = gtk.Menu()
         
@@ -166,10 +166,10 @@ class StatusList(gtk.ScrolledWindow):
             mentmenu.connect('button-release-event', self.__open_url_with_event, user_prof)
             open_menu.append(mentmenu)
             
-        open.set_submenu(open_menu)
+        _open.set_submenu(open_menu)
         if (len(total_urls) > 0) or (len(total_users) > 0) or \
            (len(total_tags) > 0) or (len(total_groups) > 0):
-            return open
+            return _open
         else:
             return None
         
@@ -197,15 +197,15 @@ class StatusList(gtk.ScrolledWindow):
                 reply = gtk.MenuItem(_('Reply'))
                 delete = gtk.MenuItem(_('Delete'))
                 usermenu = gtk.MenuItem('@' + user)
-                open = self.__build_open_menu(user, msg)
+                _open = self.__build_open_menu(user, msg)
                 
                 if not rtn['own']:
                     menu.append(reply)
                 
                 menu.append(delete)
                 
-                if open:
-                    menu.append(open)
+                if _open:
+                    menu.append(_open)
                 
                 menu.append(gtk.SeparatorMenuItem())
                 menu.append(usermenu)
@@ -260,7 +260,7 @@ class StatusList(gtk.ScrolledWindow):
                 inreplymenu = gtk.MenuItem(_('In reply to'))
                 mutemenu = gtk.MenuItem(_('Mute'))
                 
-                open = self.__build_open_menu(user, msg)
+                _open = self.__build_open_menu(user, msg)
                 
                 if not rtn['own']:
                     menu.append(reply)
@@ -284,8 +284,8 @@ class StatusList(gtk.ScrolledWindow):
                 else:
                     menu.append(save)
                     
-                if open:
-                    menu.append(open)
+                if _open:
+                    menu.append(_open)
                 
                 if in_reply_to_id:
                     menu.append(inreplymenu)
@@ -367,7 +367,7 @@ class StatusList(gtk.ScrolledWindow):
             self.model.row_changed(path, iter)
             iter = self.model.iter_next(iter)
         
-    def add_tweet(self, tweet):
+    def add_tweet(self, tweet, insert=True):
         p = self.mainwin.parse_tweet(tweet)
         pix = self.mainwin.get_user_avatar(p.username, p.avatar)
         
@@ -403,11 +403,24 @@ class StatusList(gtk.ScrolledWindow):
             color = gtk.gdk.Color(250 * 257, 237 * 257, 187 * 257)
         else:
             color = None
+        row = [pix, p.username, p.datetime, p.source, pango_twt, p.text, p.id, 
+            p.is_favorite, p.in_reply_to_id, p.in_reply_to_user, p.retweet_by, 
+            color]
         
-        self.model.append([pix, p.username, p.datetime, p.source,
-            pango_twt, p.text, p.id, p.is_favorite, p.in_reply_to_id,
-            p.in_reply_to_user, p.retweet_by, color])
+        if insert:
+            self.model.insert(0, row)
+        else:
+            self.model.append(row)
         del pix
+        
+    def del_last(self):
+        last = self.model.iter_n_children(None)
+        print 'Last:', last
+        iter = self.model.get_iter_from_string(str(last - 1))
+        #iter = self.model.get_iter_from_string('0')
+        print 'Borrando último tweet:', self.model.get_value(iter, 5)
+        self.model.remove(iter)
+        
         
     def update_user_pic(self, user, pic):
         # Evaluar si es más eficiente esto o cargar toda la lista cada vez

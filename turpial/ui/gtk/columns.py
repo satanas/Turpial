@@ -50,9 +50,12 @@ class GenericColumn(gtk.VBox):
             else:
                 count = util.count_new_tweets(arr_tweets, self.last)
                 self.stop_update()
-                self.tweetlist.clear()
                 for tweet in arr_tweets:
-                    self.tweetlist.add_tweet(tweet)
+                    if self.last is None:
+                        self.tweetlist.add_tweet(tweet, False)
+                    elif not util.has_tweet(self.last, tweet):
+                        self.tweetlist.add_tweet(tweet)
+                        self.tweetlist.del_last()
                 self.last = arr_tweets
             
         self.on_update()
@@ -116,8 +119,6 @@ class StandardColumn(GenericColumn):
         self.errorbox.show_error(msg, error)
         self.refresh.set_sensitive(True)
         self.listcombo.set_sensitive(True)
-        
-    
         
 class SingleColumn(GenericColumn):
     def __init__(self, mainwin, label='', menu='normal'):

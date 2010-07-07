@@ -40,6 +40,7 @@ class Profile:
         self.password = None
         self.profile_link_color = None
         self.statuses_count = None
+        self.last_update = None
         
 class RateLimit:
     def __init__(self):

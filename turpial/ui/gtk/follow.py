@@ -12,7 +12,7 @@ class Follow(gtk.Window):
         gtk.Window.__init__(self)
         
         self.mainwin = mainwin
-        self.set_title('Follow')
+        self.set_title(_('Follow'))
         self.set_size_request(260, 80)
         self.set_transient_for(mainwin)
         self.set_resizable(False)
@@ -20,11 +20,11 @@ class Follow(gtk.Window):
         self.set_border_width(6)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
-        lbl_user = gtk.Label('User')
+        lbl_user = gtk.Label(_('User'))
         self.user = gtk.Entry()
         
-        btn_ok = gtk.Button('Ok')
-        btn_cancel = gtk.Button('Cancel')
+        btn_ok = gtk.Button(_('Ok'))
+        btn_cancel = gtk.Button(_('Cancel'))
         
         hbox = gtk.HBox(False, 6)
         hbox.pack_start(lbl_user, False, False)

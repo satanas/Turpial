@@ -99,9 +99,9 @@ class Notification:
     def following(self, user, follow):
         name = user.username
         if follow:
-            self.popup(_('Turpial (Follow)'), _('Now you follow to @%s') % name)
+            self.popup(_('Turpial (Follow)'), _('You are now following @%s') % name)
         else:
-            self.popup(_('Turpial (Unfollow)'), _('You have unfollow to @%s') % name)
+            self.popup(_('Turpial (Unfollow)'), _('You are no longer following @%s') % name)
                 
     def following_error(self, message, follow):
         if follow:

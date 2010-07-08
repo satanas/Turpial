@@ -33,8 +33,15 @@ calls'))
             elif (exc.code == 401):
                 raise TurpialException(_('Invalid credentials'))
             elif (exc.code == 403):
-                raise TurpialException(_('Hey! You are over the limit of API \
-calls'))
+                rtn = exc.read()
+                print 'Error 403:', rtn
+                if rtn.find("Status is a duplicate.") > 0:
+                    msg = _('Your status was sent. Don\'t try again')
+                elif rtn.find("is already on your list.") > 0:
+                    msg = _('%s already is a friend')
+                else:
+                    msg = _('Hey! You are over the limit of API calls')
+                raise TurpialException(msg)
             elif (exc.code == 404):
                 raise TurpialException(_('Err... invalid request'))
             elif (exc.code == 406):

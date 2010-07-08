@@ -533,6 +533,9 @@ class Main(BaseGui, gtk.Window):
     def move_event(self, widget, event):
         self.win_pos = self.get_position()
         
+    def following_error(self, message, follow):
+        self.notify.following_error(message, follow)
+        
     def __on_key_press(self, widget, keycomb):
         if self.mode < 2: return
         if keycomb == 'ctrl+n':

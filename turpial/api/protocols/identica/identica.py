@@ -403,7 +403,7 @@ class Identica(Protocol):
             self._add_friend(user)
             return Response([self.profile, user, True], 'mixed')
         except TurpialException, exc:
-            return Response(True, 'error', exc.msg)
+            return Response([None, user, True], 'error', exc.msg)
         
     def unfollow(self, args):
         '''Dejando de seguir a un amigo'''

@@ -323,7 +323,6 @@ class Twitter(Protocol):
     def destroy_status(self, args):
         '''Destruyendo tweet'''
         id = args['id']
-        self.to_del.append(id)
         self.log.debug('Destruyendo tweet: %s' % id)
         
         try:
@@ -432,7 +431,7 @@ class Twitter(Protocol):
         try:
             rtn = self.http.request('%s/direct_messages/destroy' % self.apiurl,
                 {'id': id})
-            self._destroy_direct(rtn['id'])
+            self._destroy_direct(str(rtn['id']))
             return Response(self.directs, 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)

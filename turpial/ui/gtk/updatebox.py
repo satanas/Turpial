@@ -124,6 +124,7 @@ class UpdateBox(gtk.Window):
         
         self.add(vbox)
         
+        self.connect('key-release-event', self.__test)
         self.connect('delete-event', self.__unclose)
         buffer.connect('changed', self.count_chars)
         self.btn_frn.connect('clicked', self.show_friend_dialog)
@@ -150,7 +151,12 @@ class UpdateBox(gtk.Window):
         elif keyval == gtk.keysyms.Escape:
             self.__unclose(widget)
         return False
-            
+    
+    def __test(self, widget, event=None):
+        print event.type
+        print event.keyval
+        print event.state
+        
     def __unclose(self, widget, event=None):
         if not self.blocked:
             self.done()

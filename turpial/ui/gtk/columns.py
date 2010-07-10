@@ -51,17 +51,18 @@ class GenericColumn(gtk.VBox):
                 count = util.count_new_tweets(arr_tweets, self.last)
                 self.stop_update()
                 
-                self.tweetlist.clear()
-                for tweet in arr_tweets:
-                    self.tweetlist.add_tweet(tweet, False)
-                '''
-                for tweet in arr_tweets:
-                    if self.last is None:
+                if self.tweetlist.autoscroll:
+                    self.tweetlist.clear()
+                    for tweet in arr_tweets:
                         self.tweetlist.add_tweet(tweet, False)
-                    elif not util.has_tweet(self.last, tweet):
-                        self.tweetlist.add_tweet(tweet)
-                        self.tweetlist.del_last()
-                '''
+                else:
+                    for tweet in arr_tweets:
+                        if self.last is None:
+                            self.tweetlist.add_tweet(tweet, False)
+                        elif not util.has_tweet(self.last, tweet):
+                            self.tweetlist.add_tweet(tweet)
+                            self.tweetlist.del_last()
+                
                 self.last = arr_tweets
             
         self.on_update()
@@ -98,9 +99,17 @@ class StandardColumn(GenericColumn):
         
         self.refresh = gtk.Button()
         self.refresh.set_image(self.mainwin.load_image('refresh.png'))
+        self.refresh.set_tooltip_text(_('Manual Update'))
         #self.refresh.set_relief(gtk.RELIEF_NONE)
         
+        self.autoscroll = gtk.ToggleButton()
+        self.autoscroll.set_image(self.mainwin.load_image('autoscroll.png'))
+        self.autoscroll.set_tooltip_text(_('Automatic Scroll'))
+        self.autoscroll.set_active(True)
+        self.tweetlist.set_autoscroll(True)
+        
         listsbox = gtk.HBox(False)
+        listsbox.pack_start(self.autoscroll, False, False)
         listsbox.pack_start(self.listcombo, True, True)
         listsbox.pack_start(self.refresh, False, False)
         listsbox.pack_start(self.walign, False, False, 2)
@@ -110,9 +119,14 @@ class StandardColumn(GenericColumn):
         self.pack_start(self.tweetlist, True, True)
         
         self.refresh.connect('clicked', self.__manual_update)
+        self.autoscroll.connect('toggled', self.__toggle_autoscroll)
         
     def __manual_update(self, widget):
         self.mainwin.manual_update(self.id)
+        
+    def __toggle_autoscroll(self, widget):
+        value = self.autoscroll.get_active()
+        self.tweetlist.set_autoscroll(value)
         
     def start_update(self):
         self.waiting.start()
@@ -146,7 +160,7 @@ class SearchColumn(GenericColumn):
         
         self.input_topics = gtk.Entry()
         self.clearbtn = gtk.Button()
-        self.clearbtn.set_image(self.mainwin.load_image('button-clear.png'))
+        self.clearbtn.set_image(self.mainwin.load_image('clear.png'))
         self.clearbtn.set_tooltip_text(_('Clear results'))
         #self.clearbtn.set_relief(gtk.RELIEF_NONE)
         try:

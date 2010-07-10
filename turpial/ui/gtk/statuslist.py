@@ -24,6 +24,7 @@ class StatusList(gtk.ScrolledWindow):
         self.last = None    # Last tweets updated
         self.mainwin = mainwin
         self.mark_new = mark_new
+        self.autoscroll = True
         
         self.list = gtk.TreeView()
         self.list.set_headers_visible(False)
@@ -419,17 +420,18 @@ class StatusList(gtk.ScrolledWindow):
             self.model.insert(0, row)
         else:
             self.model.append(row)
-        '''
-        model, row = self.list.get_selection().get_selected()
-        if row:
-            path = self.model.get_path(row)
-            if path[0] <= 1:
+        
+        if not self.autoscroll:
+            model, row = self.list.get_selection().get_selected()
+            if row:
+                path = self.model.get_path(row)
+                if path[0] <= 1:
+                    self.list.get_selection().select_path((0,))
+                    self.list.set_cursor((0,))
+            else:
                 self.list.get_selection().select_path((0,))
                 self.list.set_cursor((0,))
-        else:
-            self.list.get_selection().select_path((0,))
-            self.list.set_cursor((0,))
-        '''
+        
         del pix
         
     def del_last(self):
@@ -450,6 +452,9 @@ class StatusList(gtk.ScrolledWindow):
                 self.model.set_value(iter, 0, pix)
             iter = self.model.iter_next(iter)
         del pix
+        
+    def set_autoscroll(self, value):
+        self.autoscroll = value
         
     def unset_bg_color(self):
         iter = self.model.get_iter_first()

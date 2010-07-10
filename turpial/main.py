@@ -309,9 +309,7 @@ class Turpial:
         self.api.destroy_direct(id, self.ui.after_destroy_direct)
         
     def get_friends(self):
-        friends = self.api.get_single_friends_list()
-        friends.sort()
-        return friends
+        return self.api.get_single_friends_list()
         
     def get_hashtags_url(self):
         return self.api.protocol.tags_url

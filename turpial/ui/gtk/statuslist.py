@@ -16,13 +16,14 @@ from turpial.ui.gtk.follow import Follow
 log = logging.getLogger('Gtk:Statuslist')
 
 class StatusList(gtk.ScrolledWindow):
-    def __init__(self, mainwin, menu='normal'):
+    def __init__(self, mainwin, menu='normal', mark_new=False):
         gtk.ScrolledWindow.__init__(self)
         self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.set_shadow_type(gtk.SHADOW_IN)
         
         self.last = None    # Last tweets updated
         self.mainwin = mainwin
+        self.mark_new = mark_new
         
         self.list = gtk.TreeView()
         self.list.set_headers_visible(False)
@@ -404,6 +405,12 @@ class StatusList(gtk.ScrolledWindow):
             color = gtk.gdk.Color(250 * 257, 237 * 257, 187 * 257)
         else:
             color = None
+            '''
+            if self.mark_new:
+                color = gtk.gdk.Color(151 * 257, 191 * 257, 227 * 257)
+            else:
+                color = None
+            '''
         row = [pix, p.username, p.datetime, p.source, pango_twt, p.text, p.id, 
             p.is_favorite, p.in_reply_to_id, p.in_reply_to_user, p.retweet_by, 
             color]
@@ -433,7 +440,6 @@ class StatusList(gtk.ScrolledWindow):
         print 'Borrando último tweet:', self.model.get_value(iter, 5)
         self.model.remove(iter)
         
-        
     def update_user_pic(self, user, pic):
         # Evaluar si es más eficiente esto o cargar toda la lista cada vez
         pix = self.mainwin.load_avatar(self.mainwin.imgdir, pic)
@@ -444,4 +450,12 @@ class StatusList(gtk.ScrolledWindow):
                 self.model.set_value(iter, 0, pix)
             iter = self.model.iter_next(iter)
         del pix
+        
+    def unset_bg_color(self):
+        iter = self.model.get_iter_first()
+        while iter:
+            color = self.model.get_value(iter, 11)
+            if color:
+                self.model.set_value(iter, 11, None)
+            iter = self.model.iter_next(iter)
             

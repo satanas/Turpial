@@ -146,9 +146,13 @@ class TurpialAPI(threading.Thread):
         
     def get_single_friends_list(self):
         '''Returns a single friends list from the original twitter hash'''
-        list = []
-        for friend in self.protocol.friends:
-            list.append(friend.username)
+        if self.protocol.friendsloaded:
+            list = []
+            for friend in self.protocol.friends:
+                list.append(friend.username)
+            list.sort()
+        else:
+            list = None
         return list
     
     def follow(self, user, callback):

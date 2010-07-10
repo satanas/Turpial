@@ -24,15 +24,10 @@ class FriendsWin(gtk.Window):
         
         self.model = gtk.ListStore(str)
         self.model.set_sort_column_id(0, gtk.SORT_ASCENDING)
-        for friend in friends:
-            self.model.append([friend])
         
         label = gtk.Label()
         label.set_line_wrap(True)
         label.set_use_markup(True)
-        label.set_markup('<span foreground="#920d12">%s</span>' % 
-            _('I am still loading all of your friends. Try again in a few \
-seconds' ))
         label.set_justify(gtk.JUSTIFY_FILL)
         label.set_width_chars(25)
         
@@ -66,15 +61,27 @@ seconds' ))
         hbox = gtk.HBox(False)
         hbox2 = gtk.HBox(False)
         
-        
-        if len(friends) > 0:
-            hbox.pack_start(self.entry, True, True, 2)
-            hbox2.pack_start(scroll, True, True, 2)
+        if friends is not None:
+            for friend in friends:
+                self.model.append([friend])
             
-            vbox = gtk.VBox(False)
-            vbox.pack_start(hbox, False, False, 1)
-            vbox.pack_start(hbox2, True, True, 1)
+            if len(friends) > 0:
+                hbox.pack_start(self.entry, True, True, 2)
+                hbox2.pack_start(scroll, True, True, 2)
+                
+                vbox = gtk.VBox(False)
+                vbox.pack_start(hbox, False, False, 1)
+                vbox.pack_start(hbox2, True, True, 1)
+            elif len(friends) == 0:
+                label.set_markup('<span foreground="#920d12">%s</span>' % 
+                _('What? You don\'t have any friends. Try to go out and know \
+some nice people' ))
+                vbox = gtk.HBox(False)
+                vbox.pack_start(align, True, True, 2)
         else:
+            label.set_markup('<span foreground="#920d12">%s</span>' % 
+            _('I am still loading all of your friends. Try again in a few \
+seconds' ))
             vbox = gtk.HBox(False)
             vbox.pack_start(align, True, True, 2)
         

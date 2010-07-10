@@ -402,22 +402,28 @@ bothering you and shut them up temporarily'))
         label = gtk.Label()
         label.set_line_wrap(True)
         label.set_use_markup(True)
-        label.set_markup('<span foreground="#920d12">%s</span>' % 
-            _('I am still loading all of your friends. Try again in a few \
-seconds' ))
         label.set_justify(gtk.JUSTIFY_FILL)
         
         align = gtk.Alignment(xalign=0.0, yalign=0.0)
         align.set_padding(0, 5, 10, 10)
         align.add(label)
         
-        if self.friends:
-            for f in self.friends:
-                mark = True if (f in self.muted) else False
-                self.model.append([f, mark])
-                
-            self.pack_start(scroll, True, True, 2)
+        if self.friends is not None:
+            if len(self.friends) > 0:
+                for f in self.friends:
+                    mark = True if (f in self.muted) else False
+                    self.model.append([f, mark])
+                    
+                self.pack_start(scroll, True, True, 2)
+            elif len(self.friends) == 0:
+                label.set_markup('<span foreground="#920d12">%s</span>' % 
+                _('What? You don\'t have any friends. Try to go out and know \
+some nice people' ))
+                self.pack_start(align, True, True, 2)
         else:
+            label.set_markup('<span foreground="#920d12">%s</span>' % 
+            _('I am still loading all of your friends. Try again in a few \
+seconds' ))
             self.pack_start(align, True, True, 2)
         
         self.show_all()

@@ -23,7 +23,7 @@ class Home(Wrapper):
             self.replies = TweetListWebkit(mainwin, _('Mentions'))
         else:
             self.timeline = StandardColumn(mainwin, _('Timeline'), 
-                id='timeline')
+                id='timeline', marknew=True)
             self.replies = StandardColumn(mainwin, _('Mentions'), id='replies')
         self.direct = StandardColumn(mainwin, _('Directs'), 'direct', 
             id='directs')

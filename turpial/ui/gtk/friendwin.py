@@ -80,6 +80,7 @@ seconds' ))
         
         self.add(vbox)
         
+        self.connect('key-release-event', self.__detect_shortcut)
         self.connect('delete-event', self.__close)
         self.entry.connect('changed', self.__find)
         self.list.connect('row-activated', self.__choose)
@@ -87,6 +88,12 @@ seconds' ))
         self.show_all()
         self.entry.grab_focus()
         
+    def __detect_shortcut(self, widget, event=None):
+        keyname = gtk.gdk.keyval_name(event.keyval)
+        
+        if keyname.lower() == 'escape':
+            self.__close(widget)
+            
     def __find(self, widget):
         self.modelfilter.refilter()
         
@@ -103,6 +110,6 @@ seconds' ))
         self.callback(user)
         self.__close(treeview, None)
         
-    def __close(self, widget, event):
+    def __close(self, widget, event=None):
         self.destroy()
         self.updatebox.set_focus(self.updatebox.update_text)

@@ -80,15 +80,16 @@ class UpdateBox(gtk.Window):
         
         self.btn_clr = gtk.Button()
         self.btn_clr.set_image(self.mainwin.load_image('clear.png'))
-        self.btn_clr.set_tooltip_text(_('Clear all'))
+        self.btn_clr.set_tooltip_text(_('Clear all') + ' (Ctrl+L)')
         self.btn_clr.set_relief(gtk.RELIEF_NONE)
         
         self.btn_frn = gtk.Button()
         self.btn_frn.set_image(self.mainwin.load_image('friends.png'))
-        self.btn_frn.set_tooltip_text(_('Add friends'))
+        self.btn_frn.set_tooltip_text(_('Add friends') + ' (Ctrl+F)')
         self.btn_frn.set_relief(gtk.RELIEF_NONE)
         
         self.btn_upd = gtk.Button(_('Tweet'))
+        self.btn_upd.set_tooltip_text(_('Update your status') + ' (Ctrl+T)')
         chk_short = gtk.CheckButton(_('Autoshort URLs'))
         chk_short.set_sensitive(False)
         
@@ -124,7 +125,7 @@ class UpdateBox(gtk.Window):
         
         self.add(vbox)
         
-        self.connect('key-release-event', self.__test)
+        self.connect('key-press-event', self.__detect_shortcut)
         self.connect('delete-event', self.__unclose)
         buffer.connect('changed', self.count_chars)
         self.btn_frn.connect('clicked', self.show_friend_dialog)
@@ -152,10 +153,19 @@ class UpdateBox(gtk.Window):
             self.__unclose(widget)
         return False
     
-    def __test(self, widget, event=None):
-        print event.type
-        print event.keyval
-        print event.state
+    def __detect_shortcut(self, widget, event=None):
+        keyname = gtk.gdk.keyval_name(event.keyval)
+        
+        if (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'f':
+            self.show_friend_dialog(widget)
+            return True
+        elif (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'l':
+            self.clear(widget)
+            return True
+        elif (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 't':
+            self.update(widget)
+            return True
+        return False
         
     def __unclose(self, widget, event=None):
         if not self.blocked:

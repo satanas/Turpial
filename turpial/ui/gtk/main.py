@@ -53,7 +53,7 @@ class Main(BaseGui, gtk.Window):
         self.connect('delete-event', self.__close)
         self.connect('size-request', self.size_request)
         self.connect('configure-event', self.move_event)
-        self.connect('mykeypress', self.__on_key_press)
+        self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
         
         self.mode = 0
@@ -101,7 +101,6 @@ class Main(BaseGui, gtk.Window):
         self.tray.connect("activate", self.__on_trayicon_click)
         self.tray.connect("popup-menu", self.__show_tray_menu)
         
-        
     def __on_trayicon_click(self, widget):
         if(self.showed is True):
             self.showed = False
@@ -109,7 +108,6 @@ class Main(BaseGui, gtk.Window):
         else:
             self.showed = True
             self.show()
-            #self.present()
             
     def __on_focus(self, widget, event):
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
@@ -224,9 +222,7 @@ class Main(BaseGui, gtk.Window):
         self.request_signout()
         
     def main_loop(self):
-        #gtk.gdk.threads_enter()
         gtk.main()
-        #gtk.gdk.threads_leave()
         
     def show_login(self, global_config):
 
@@ -277,7 +273,6 @@ class Main(BaseGui, gtk.Window):
         self.notify.login(p.items)
         
         gobject.timeout_add(6 * 60 * 1000, self.download_rates)
-        
         
     def show_home(self, widget):
         self.contentbox.remove(self.contenido)
@@ -536,13 +531,10 @@ class Main(BaseGui, gtk.Window):
     def following_error(self, message, follow):
         self.notify.following_error(message, follow)
         
-    def __on_key_press(self, widget, keycomb):
-        if self.mode < 2: return
-        if keycomb == 'ctrl+n':
+    def __on_key_press(self, widget, event):
+        keyname = gtk.gdk.keyval_name(event.keyval)
+        if (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'n':
             self.show_update_box()
-        
-#if gobject.pygtk_version < (2, 8, 0):
-gobject.type_register(Main)
-
-gtk.binding_entry_add_signal(Main, gtk.keysyms.n, gtk.gdk.CONTROL_MASK, 'mykeypress', str, 'ctrl+n')
+            return True
+        return False
 

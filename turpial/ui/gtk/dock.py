@@ -25,7 +25,7 @@ class Dock(gtk.Alignment):
         
         self.btn_update = gtk.Button()
         self.btn_update.set_relief(gtk.RELIEF_NONE)
-        self.btn_update.set_tooltip_text(_('Update status'))
+        self.btn_update.set_tooltip_text(_('Update status') + ' (Ctrl+T)')
         
         self.btn_settings = gtk.Button()
         self.btn_settings.set_relief(gtk.RELIEF_NONE)

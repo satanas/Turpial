@@ -7,6 +7,7 @@
 
 import os
 import logging
+import traceback
 
 from pygame import mixer as pygamemixer
 from pygame import error as pygameerror

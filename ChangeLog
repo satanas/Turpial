@@ -1,5 +1,5 @@
 v1.3.3 (Jul 10, 2010):
-    + Versión Estable
+    + Versión estable
     
 v1.3.3-b3 (Jun 27, 2010):
     + Agregado timeout a las conexiones en la API
@@ -7,6 +7,7 @@ v1.3.3-b3 (Jun 27, 2010):
     + Corregido error crítico en la detección de hashtags con caracteres especiales
     + Corregidos errores menores de usabilidad
     + Mejorada la detección de caracteres especiales
+    + Corregida dependencia de traceback en el módulo de sonido
     
 v1.3.3-b2 (Jun 21, 2010):
     + Corregida ruta de los archivos de traducción

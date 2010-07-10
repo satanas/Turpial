@@ -1,3 +1,6 @@
+v1.3.3 (Jul 10, 2010):
+    + Versión Estable
+    
 v1.3.3-b3 (Jun 27, 2010):
     + Agregado timeout a las conexiones en la API
     + Eliminados módulos obsoletos

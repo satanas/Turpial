@@ -106,10 +106,14 @@ seconds' ))
         
     def __filter(self, model, iter, entry):
         user = model.get_value(iter, 0)
+        if not user: return False
+        
+        query = entry.get_text().lower()
         user_l = user.lower()
-        user_u = user.upper()
-        return (user_l.startswith(entry.get_text()) or 
-            user_u.startswith(entry.get_text()))
+        #user_u = user.upper()
+        #return (user_l.startswith() or 
+        #    user_u.startswith(entry.get_text()))
+        return user_l.startswith(query)
         
     def __choose(self, treeview, path, view_column):
         iter = self.modelfilter.get_iter(path)

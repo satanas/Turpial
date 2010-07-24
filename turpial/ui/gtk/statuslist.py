@@ -135,6 +135,9 @@ class StatusList(gtk.ScrolledWindow):
         total_tags = util.detect_hashtags(msg)
         total_groups = util.detect_groups(msg)
         
+        if not self.mainwin.request_groups_url(): 
+            total_groups = []
+        
         for u in total_urls:
             url = u if len(u) < 30 else u[:30] + '...'
             umenu = gtk.MenuItem(url)
@@ -152,9 +155,6 @@ class StatusList(gtk.ScrolledWindow):
             open_menu.append(hmenu)
             
         for h in total_groups:
-            if not self.mainwin.request_groups_url(): 
-                break
-            
             hashtag = '/'.join([self.mainwin.request_groups_url(), h[1:]]) 
             hmenu = gtk.MenuItem(h)
             hmenu.connect('button-release-event',

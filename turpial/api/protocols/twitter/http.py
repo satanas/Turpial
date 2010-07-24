@@ -93,6 +93,8 @@ calls'))
                     msg = _('Your status was sent. Don\'t try again')
                 elif rtn.find("is already on your list.") > 0:
                     msg = _('%s already is a friend')
+                elif rtn.find("already requested to follow") > 0:
+                    msg = _('You\'ve already requested to follow %s')
                 else:
                     msg = _('Hey! You are over the limit of API calls')
                 raise TurpialException(msg)

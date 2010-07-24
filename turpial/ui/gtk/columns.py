@@ -104,7 +104,7 @@ class StandardColumn(GenericColumn):
         
         self.autoscroll = gtk.ToggleButton()
         self.autoscroll.set_image(self.mainwin.load_image('autoscroll.png'))
-        self.autoscroll.set_tooltip_text(_('Automatic Scroll'))
+        self.autoscroll.set_tooltip_text(_('Autoscrolling'))
         self.autoscroll.set_active(True)
         self.tweetlist.set_autoscroll(True)
         
@@ -133,12 +133,14 @@ class StandardColumn(GenericColumn):
         self.errorbox.hide()
         self.refresh.set_sensitive(False)
         self.listcombo.set_sensitive(False)
+        self.autoscroll.set_sensitive(False)
         
     def stop_update(self, error=False, msg=''):
         self.waiting.stop(error)
         self.errorbox.show_error(msg, error)
         self.refresh.set_sensitive(True)
         self.listcombo.set_sensitive(True)
+        self.autoscroll.set_sensitive(True)
         
     def clear_bg_color(self):
         self.tweetlist.unset_bg_color()

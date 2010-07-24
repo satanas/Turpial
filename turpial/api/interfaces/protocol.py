@@ -63,8 +63,7 @@ class Protocol:
         else:
             self.log.debug('--Agregado status %s' % status.id)
             to_arr.insert(0, status)
-            
-        
+    
     def _del_status(self, from_arr, id):
         ''' Borra un status de cualquiera de los arreglos '''
         item = self._find_status_by_id(from_arr, id)
@@ -92,8 +91,10 @@ class Protocol:
         for friend in self.friends:
             if user.username == friend.username:
                 exist = True
+                break
         
         if not exist: 
+            self.log.debug('Agregado %s a la lista de amigos' % user.username)
             self.friends.insert(0, user)
             self.profile.friends_count += 1
             
@@ -104,6 +105,7 @@ class Protocol:
                 item = friend
                 break
         if item: 
+            self.log.debug('Removido %s de la lista de amigos' % item.username)
             self.friends.remove(item)
             self.profile.friends_count -= 1
             

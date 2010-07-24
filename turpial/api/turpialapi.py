@@ -105,7 +105,6 @@ class TurpialAPI(threading.Thread):
         self.protocol.to_del.append(id)
         self.__register(self.protocol.destroy_direct, {'id': id}, callback)
         
-    
     def repeat(self, id, callback):
         '''Repitiendo status a todos los contactos'''
         self.log.debug('Solicitando repetición de status: %s' % id)
@@ -123,7 +122,6 @@ class TurpialAPI(threading.Thread):
         self.protocol.to_unfav.append(id)
         self.__register(self.protocol.unmark_favorite, {'id': id}, callback)
         
-    
     def search(self, query, callback):
         '''Buscando tweet'''
         args = {'query': query, 'count': 60}

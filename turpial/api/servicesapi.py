@@ -108,11 +108,12 @@ class HTTPServices(threading.Thread):
                 
             if args['cmd'] == 'download_pic':
                 try:
-                    filename = GenericService._download_pic(self.imgdir, 
-                        args['url'])
+                    filename = GenericService._download_pic(self.imgdir, args['url'])
                     self.log.debug('Descargada imagen de %s' % args['user'])
                     callback(args['user'], filename)
                 except Exception, error:
+                    rtn = error.read()
+                    print 'Message:', rtn
                     self.log.debug("Error: %s\n%s" % (error, 
                         traceback.print_exc()))
                     self.register(args, callback)

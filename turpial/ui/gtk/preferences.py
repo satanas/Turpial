@@ -42,6 +42,7 @@ class Preferences(gtk.Window):
             self.services = ServicesTab(self.current['Services'])
             self.muted = MutedTab(self.mainwin)
             self.browser = BrowserTab(self.mainwin, self.current['Browser'])
+            self.columns = ColumnsTab(self.mainwin, self.current['Columns'])
         self.proxy = ProxyTab(self.global_cfg['Proxy'])
         
         notebook = gtk.Notebook()
@@ -50,6 +51,7 @@ class Preferences(gtk.Window):
         notebook.set_properties('tab-pos', gtk.POS_LEFT)
         if self.mode == 'user':
             notebook.append_page(self.general, gtk.Label(_('General')))
+            #notebook.append_page(self.columns, gtk.Label(_('Columns')))
             notebook.append_page(self.notif, gtk.Label(_('Notifications')))
             notebook.append_page(self.services, gtk.Label(_('Services')))
             notebook.append_page(self.muted, gtk.Label(_('Mute')))
@@ -77,6 +79,7 @@ class Preferences(gtk.Window):
             notif = self.notif.get_config()
             services = self.services.get_config()
             browser = self.browser.get_config()
+            columns = self.columns.get_config()
             
             new_config = {
                 'General': general,
@@ -96,7 +99,6 @@ class Preferences(gtk.Window):
         self.destroy()
         
         self.mainwin.save_global_config(new_global)
-        
         
 class PreferencesTab(gtk.VBox):
     def __init__(self, desc, current=None):
@@ -122,7 +124,7 @@ class PreferencesTab(gtk.VBox):
         
 class TimeScroll(gtk.HBox):
     def __init__(self, label='', val=5, min=1, max=60, step=3, page=6, size=0,
-        callback=None, lbl_size=70, unit='min'):
+        callback=None, lbl_size=120, unit='min'):
         gtk.HBox.__init__(self, False)
         
         self.callback = callback
@@ -165,11 +167,11 @@ timeline, mentions and direct messages'), current)
         ws = True if self.current['workspace'] == 'wide' else False
         min = True if self.current['minimize-on-close'] == 'on' else False
         
-        self.home = TimeScroll(_('Timeline'), h,
+        self.home = TimeScroll(_('Column 1 (Left)'), h,
             callback=self.update_api_calls)
-        self.replies = TimeScroll(_('Mentions'), r,
+        self.replies = TimeScroll(_('Column 2 (Middle)'), r,
             callback=self.update_api_calls)
-        self.directs = TimeScroll(_('Directs'), d, 
+        self.directs = TimeScroll(_('Column 3 (Right)'), d, 
             callback=self.update_api_calls)
         
         self.tweets = TimeScroll(_('Tweets shown'), t, min=20, max=200,
@@ -323,7 +325,10 @@ class ServicesTab(PreferencesTab):
 shorten URLs and upload images'), current)
         i = 0
         default = -1
+        lbl_size = 120
+        
         url_lbl = gtk.Label(_('Shorten URL'))
+        url_lbl.set_size_request(lbl_size, -1)
         self.shorten = gtk.combo_box_new_text()
         for key, v in URL_SERVICES.iteritems():
             self.shorten.append_text(key)
@@ -337,6 +342,7 @@ shorten URLs and upload images'), current)
         url_box.pack_start(self.shorten, False, False, 3)
         
         pic_lbl = gtk.Label(_('Upload images'))
+        pic_lbl.set_size_request(lbl_size, -1)
         self.upload = gtk.combo_box_new_text()
         i = 0
         for key in PHOTO_SERVICES:
@@ -575,3 +581,4 @@ different of twitter.com'))
             'port': '',
             'url': self.url.get_text()
         }
+        

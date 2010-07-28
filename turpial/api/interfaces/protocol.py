@@ -19,6 +19,7 @@ class Protocol:
         self.directs = []
         self.favorites = []
         self.friends = []
+        self.lists = [] #Posiblemente se use más adelante
         self.muted_users = []
         
         self.apiurl = apiurl
@@ -386,6 +387,20 @@ class Protocol:
     def search(self, query, count):
         ''' 
         Execute a query in server
+        Returns: a Response object with query results
+        '''
+        raise NotImplemented
+        
+    def get_lists(self):
+        ''' 
+        Fetch all lists for the user in that protocol
+        Returns: a Response object with query results
+        '''
+        raise NotImplemented
+        
+    def get_list_statuses(self, args):
+        ''' 
+        Fetch all statuses for a specific list
         Returns: a Response object with query results
         '''
         raise NotImplemented

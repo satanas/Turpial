@@ -63,6 +63,16 @@ class TurpialAPI(threading.Thread):
             self.protocol = identica.Identica()
         self.__register(self.protocol.auth, args, callback)
             
+    def update_column(self, callback, count, column):
+        if column.id == 'timeline':
+            self.update_timeline(callback, count)
+        elif column.id == 'replies':
+            self.update_replies(callback, count)
+        elif column.id == 'directs':
+            self.update_directs(callback, count)
+        else:
+            self.update_list(callback, column, count)
+            
     def update_timeline(self, callback, count=20):
         '''Actualizando linea de tiempo'''
         self.log.debug('Solicitando Timeline')
@@ -77,6 +87,12 @@ class TurpialAPI(threading.Thread):
         '''Actualizando mensajes directos'''
         self.log.debug('Solicitando Directos')
         self.__register(self.protocol.get_directs, {'count': count}, callback)
+        
+    def update_list(self, callback, column, count=20):
+        '''Actualizando lista'''
+        self.log.debug('Solicitando Lista %s' % column.id)
+        self.__register(self.protocol.get_list_statuses, {'count': count, 
+            'id': column.id, 'user': column.user}, callback)
         
     def update_favorites(self, callback):
         '''Actualizando favoritos'''
@@ -174,6 +190,12 @@ class TurpialAPI(threading.Thread):
         '''Obteniendo conversacion'''
         self.log.debug(u'Solicitando conversación')
         self.__register(self.protocol.get_conversation, {'id': id}, callback)
+        
+    def get_lists(self):
+        if len(self.protocol.lists) <= 0:
+            return self.protocol.get_lists()
+        else:
+            return self.protocol.lists
     
     def quit(self):
         '''Definiendo la salida'''

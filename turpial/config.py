@@ -43,6 +43,11 @@ DEFAULT_CFG = {
         'window-position': '-1,-1',
         'num-tweets': '60',
     },
+    'Columns':{
+        'column1': 'timeline',
+        'column2': 'replies',
+        'column3': 'directs',
+    },
     'Notifications':{
         'sound': 'on',
         'login': 'on',

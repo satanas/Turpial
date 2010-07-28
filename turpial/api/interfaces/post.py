@@ -41,6 +41,16 @@ class Profile:
         self.profile_link_color = None
         self.statuses_count = None
         self.last_update = None
+
+class List:
+    def __init__(self):
+        self.id = None
+        self.slug = None
+        self.name = None
+        self.mode = None
+        self.user = None
+        self.member_count = None
+        self.description = None
         
 class RateLimit:
     def __init__(self):

@@ -89,13 +89,26 @@ class GenericColumn(gtk.VBox):
         pass
         
 class StandardColumn(GenericColumn):
-    def __init__(self, mainwin, label='', menu='normal', id=None, marknew=False):
+    def __init__(self, mainwin, label='', menu='normal', pos=None, viewed=None, marknew=False):
         GenericColumn.__init__(self, mainwin, label, menu, marknew)
         
-        self.id = id
-        self.listcombo = gtk.combo_box_new_text()
-        self.listcombo.append_text('Lista de prueba 1')
-        self.listcombo.append_text('Lista de prueba 2')
+        self.pos = pos
+        '''
+        if viewed:
+            self.viewed = viewed[pos]
+            self.listcombo = gtk.Button(self.viewed.title)
+        else:
+            self.viewed = viewed
+            self.listcombo = gtk.Button(_('Loading...'))
+        '''
+        self.handler = None
+        
+        model = gtk.ListStore(str, str)
+        cell = gtk.CellRendererText()
+        self.listcombo = gtk.ComboBox()
+        self.listcombo.pack_start(cell, True)
+        self.listcombo.add_attribute(cell, 'text', 1)
+        self.listcombo.set_model(model)
         
         self.refresh = gtk.Button()
         self.refresh.set_image(self.mainwin.load_image('refresh.png'))
@@ -122,11 +135,42 @@ class StandardColumn(GenericColumn):
         self.autoscroll.connect('toggled', self.__toggle_autoscroll)
         
     def __manual_update(self, widget):
-        self.mainwin.manual_update(self.id)
+        self.mainwin.manual_update(self.pos)
         
     def __toggle_autoscroll(self, widget):
         value = self.autoscroll.get_active()
         self.tweetlist.set_autoscroll(value)
+        
+    def __change_list(self, widget):
+        model = self.listcombo.get_model()
+        iter = self.listcombo.get_active_iter()
+        new_id = model.get_value(iter, 0)
+        self.mainwin.request_change_column(self.pos, new_id)
+        
+    def fill_combo(self, columns, new_viewed):
+        self.viewed = new_viewed[self.pos]
+        
+        i = 0
+        default = -1
+        model = self.listcombo.get_model()
+        for key, obj in columns.iteritems():
+            model.append([key, obj.title])
+            if key == self.viewed.id:
+                default = i
+            i += 1
+        
+        self.last_index = default
+        self.listcombo.set_model(model)
+        self.listcombo.set_active(self.last_index)
+        self.handler = self.listcombo.connect('changed', self.__change_list)
+        
+    def set_combo_item(self, reset=False):
+        self.listcombo.disconnect(self.handler)
+        if reset:
+            self.listcombo.set_active(self.last_index)
+        else:
+            self.last_index = self.listcombo.get_active()
+        self.handler = self.listcombo.connect('changed', self.__change_list)
         
     def start_update(self):
         self.waiting.start()
@@ -136,6 +180,10 @@ class StandardColumn(GenericColumn):
         self.autoscroll.set_sensitive(False)
         
     def stop_update(self, error=False, msg=''):
+        if error:
+            self.set_combo_item(True)
+        else:
+            self.set_combo_item()
         self.waiting.stop(error)
         self.errorbox.show_error(msg, error)
         self.refresh.set_sensitive(True)

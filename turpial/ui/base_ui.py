@@ -22,7 +22,10 @@ class BaseGui:
         self.__controller = controller
         self.__user_pics = {}
         self.__queued_pics = []
-        self.updating = {'home': False, 'replies': False, 'directs': False}
+        self.updating = {1: False, 2: False, 3: False}
+        
+        self.columns_lists = {}
+        self.columns_viewed = []
         
         # Reescritos en la clase hija
         self.imgdir = ''
@@ -180,7 +183,6 @@ class BaseGui:
     def request_direct(self, user, message):
         '''Send direct message'''
         log.debug('Enviando mensaje directo a %s' % user)
-        # self.__controller.send_direct(user, message)
         
     def request_destroy_status(self, id):
         '''Destroy a tweet'''
@@ -246,38 +248,58 @@ class BaseGui:
         '''Get the profiles url'''
         return self.__controller.get_profiles_url()
         
+    def request_change_column(self, index, new_id):
+        ''' Change the column at index for the indicated by new_id '''
+        self.__controller.change_column(index, new_id)
+        
     def manual_update(self, id):
-        if id == 'timeline':
-            self.download_timeline()
-        elif id == 'replies':
-            self.download_replies()
-        elif id == 'directs':
-            self.download_directs()
+        if id == 0:
+            self.download_column1()
+        elif id == 1:
+            self.download_column2()
+        elif id == 2:
+            self.download_column3()
+    
+    def update_timeline(self, tweets):
+        if self.columns_viewed[0].id == 'timeline':
+            self.update_column1(tweets)
+        elif self.columns_viewed[1].id == 'timeline':
+            self.update_column2(tweets)
+        elif self.columns_viewed[2].id == 'timeline':
+            self.update_column3(tweets)
             
+    def update_directs(self, tweets):
+        if self.columns_viewed[0].id == 'directs':
+            self.update_column1(tweets)
+        elif self.columns_viewed[1].id == 'directs':
+            self.update_column2(tweets)
+        elif self.columns_viewed[2].id == 'directs':
+            self.update_column3(tweets)
+        
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
     # Estos métodos deben ser llamados por la clase hija cada cierto tiempo
     
-    def download_timeline(self):
-        if self.updating['home']: return True
+    def download_column1(self):
+        if self.updating[1]: return True
         
-        self.updating['home'] = True
-        self.__controller._update_timeline()
+        self.updating[1] = True
+        self.__controller._update_column1()
         return True
         
-    def download_replies(self):
-        if self.updating['replies']: return True
+    def download_column2(self):
+        if self.updating[2]: return True
         
-        self.updating['replies'] = True
-        self.__controller._update_replies()
+        self.updating[2] = True
+        self.__controller._update_column2()
         return True
         
-    def download_directs(self):
-        if self.updating['directs']: return True
+    def download_column3(self):
+        if self.updating[3]: return True
         
-        self.updating['directs'] = True
-        self.__controller._update_directs()
+        self.updating[3] = True
+        self.__controller._update_column3()
         return True
         
     def download_rates(self):
@@ -303,19 +325,22 @@ class BaseGui:
     def show_main(self, config, profile):
         raise NotImplementedError
         
+    def set_lists(self, lists, viewed):
+        raise NotImplementedError
+        
     def show_oauth_pin_request(self, url):
         raise NotImplementedError
         
     def cancel_login(self):
         raise NotImplementedError
         
-    def start_updating_timeline(self):
+    def start_updating_column1(self):
         raise NotImplementedError
         
-    def start_updating_replies(self):
+    def start_updating_column2(self):
         raise NotImplementedError
         
-    def start_updating_directs(self):
+    def start_updating_column3(self):
         raise NotImplementedError
         
     def start_search(self):
@@ -324,13 +349,13 @@ class BaseGui:
     def update_tweet(self, tweet):
         raise NotImplementedError
         
-    def update_timeline(self, tweets):
+    def update_column1(self, tweets):
         raise NotImplementedError
         
-    def update_replies(self, replies):
+    def update_column2(self, replies):
         raise NotImplementedError
         
-    def update_directs(self, directs):
+    def update_column3(self, directs):
         raise NotImplementedError
         
     def update_favorites(self, favs):
@@ -366,6 +391,9 @@ class BaseGui:
     def update_config(self, config):
         raise NotImplementedError
     
+    def set_column_item(self, index, reset=False):
+        raise NotImplementedError
+            
     def quit(self, arg):
         raise NotImplementedError
         

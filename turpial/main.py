@@ -153,37 +153,57 @@ class Turpial:
         if secret is not None:
             self.config.write('Auth', 'oauth-secret', secret)
         
+        # TODO: Llenar con el resto de listas
+        self.lists = {
+            'timeline': MicroBloggingList('timeline', '', _('Timeline')),
+            'replies': MicroBloggingList('replies', '', _('Replies')),
+            'directs': MicroBloggingList('directs', '', _('Directs')),
+        }
+        plists = self.api.get_lists()
+        for ls in plists:
+            self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, ls.name)
+        
+        self.viewed_cols = [
+            self.lists[self.config.read('Columns', 'column1')],
+            self.lists[self.config.read('Columns', 'column2')],
+            self.lists[self.config.read('Columns', 'column3')]
+        ]
+        
         self.api.muted_users = self.config.load_muted_list()
         self.ui.show_main(self.config, self.global_cfg, resp_profile)
+        self.ui.set_lists(self.lists, self.viewed_cols)
         
-        self._update_timeline()
+        self._update_column1()
         if self.testmode:
             self._update_friends()
             self._update_rate_limits()
             return
-        self._update_replies()
-        self._update_directs()
+        self._update_column2()
+        self._update_column3()
         self._update_rate_limits()
         self._update_favorites()
         self._update_friends()
         
-    def _update_timeline(self):
-        '''Actualizar linea de tiempo'''
-        self.ui.start_updating_timeline()
+    def _update_column1(self):
+        '''Actualizar columna 1'''
+        self.ui.start_updating_column1()
         count = int(self.config.read('General', 'num-tweets'))
-        self.api.update_timeline(self.ui.update_timeline, count)
+        column = self.viewed_cols[0]
+        self.api.update_column(self.ui.update_column1, count, column)
         
-    def _update_replies(self):
-        '''Actualizar numero de respuestas'''
-        self.ui.start_updating_replies()
+    def _update_column2(self):
+        '''Actualizar columna 2'''
+        self.ui.start_updating_column2()
         count = int(self.config.read('General', 'num-tweets'))
-        self.api.update_replies(self.ui.update_replies, count)
+        column = self.viewed_cols[1]
+        self.api.update_column(self.ui.update_column2, count, column)
         
-    def _update_directs(self):
-        '''Actualizar mensajes directos'''
-        self.ui.start_updating_directs()
+    def _update_column3(self):
+        '''Actualizar columna 3'''
+        self.ui.start_updating_column3()
         count = int(self.config.read('General', 'num-tweets'))
-        self.api.update_directs(self.ui.update_directs, count)
+        column = self.viewed_cols[2]
+        self.api.update_column(self.ui.update_column3, count, column)
         
     def _update_favorites(self):
         '''Actualizar favoritos'''
@@ -302,8 +322,9 @@ class Turpial:
         return self.api.get_muted_list()
             
     def update_muted(self, muted_users):
-        self.ui.start_updating_timeline()
-        timeline = self.api.mute(muted_users, self.ui.update_timeline)
+        #self.ui.start_updating_timeline()
+        #timeline = self.api.mute(muted_users, self.ui.update_timeline)
+        self.api.mute(muted_users, None)
         
     def destroy_direct(self, id):
         self.api.destroy_direct(id, self.ui.after_destroy_direct)
@@ -320,5 +341,27 @@ class Turpial:
     def get_profiles_url(self):
         return self.api.protocol.profiles_url
         
+    def change_column(self, index, new_id):
+        if self.lists.has_key(new_id):
+            self.viewed_cols[index] = self.lists[new_id]
+            if index == 0:
+                self._update_column1()
+            elif index == 1:
+                self._update_column2()
+            elif index == 2:
+                self._update_column3()
+            #self.ui.set_column_item(index)
+        else:
+            self.ui.set_column_item(index, reset=True)
+            self.log.debug('Error cambiando la columna. El id %s no existe ' % \
+new_id)
+        
+class MicroBloggingList:
+    ''' Lista de los diferentes protocolos '''
+    def __init__(self, id, user, title):
+        self.id = id
+        self.user = user
+        self.title = title
+    
 if __name__ == '__main__':
     t = Turpial()

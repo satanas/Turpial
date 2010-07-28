@@ -279,6 +279,14 @@ class Main(BaseGui, gtk.Window):
         
         gobject.timeout_add(6 * 60 * 1000, self.download_rates)
         
+    def set_lists(self, lists, viewed):
+        self.columns_lists = lists
+        self.columns_viewed = viewed
+        self.home.set_viewed_columns(lists, viewed)
+        
+    def set_column_item(self, index, reset=False):
+        self.home.set_combo_item(index, reset)
+        
     def show_home(self, widget):
         self.contentbox.remove(self.contenido)
         self.contenido = self.home
@@ -298,26 +306,26 @@ class Main(BaseGui, gtk.Window):
     def show_preferences(self, widget, mode='user'):
         prefs = Preferences(self, mode)
         
-    def start_updating_timeline(self):
+    def start_updating_column1(self):
         self.home.timeline.start_update()
         
-    def start_updating_replies(self):
+    def start_updating_column2(self):
         self.home.replies.start_update()
         
-    def start_updating_directs(self):
+    def start_updating_column3(self):
         self.home.direct.start_update()
         
     def start_search(self):
         self.profile.search.start_update()
         
-    def update_timeline(self, tweets):
+    def update_column1(self, tweets):
         log.debug(u'Actualizando el timeline')
         gtk.gdk.threads_enter()
         
         last = self.home.timeline.last
         count = self.home.timeline.update_tweets(tweets)
         
-        if count > 0 and self.updating['home']:
+        if count > 0 and self.updating[1]:
             tweet = None
             i = 0
             while 1:
@@ -339,14 +347,14 @@ class Main(BaseGui, gtk.Window):
                 self.tray.set_from_pixbuf(self.load_image('turpial-tray-update.png', True))
             
         gtk.gdk.threads_leave()
-        self.updating['home'] = False
+        self.updating[1] = False
         
-    def update_replies(self, tweets):
+    def update_column2(self, tweets):
         log.debug(u'Actualizando las replies')
         gtk.gdk.threads_enter()
         count = self.home.replies.update_tweets(tweets)
         
-        if count > 0 and self.updating['replies']:
+        if count > 0 and self.updating[2]:
             p = self.parse_tweet(tweets.items[0])
             icon = self.current_avatar_path(p.avatar)
             text = util.unescape_text(p.text)
@@ -356,14 +364,14 @@ class Main(BaseGui, gtk.Window):
                 self.tray.set_from_pixbuf(self.load_image('turpial-tray-update.png', True))
         
         gtk.gdk.threads_leave()
-        self.updating['replies'] = False
+        self.updating[2] = False
         
-    def update_directs(self, recv):
+    def update_column3(self, recv):
         log.debug(u'Actualizando mensajes directos')
         gtk.gdk.threads_enter()
         count = self.home.direct.update_tweets(recv)
         
-        if count > 0 and self.updating['directs']:
+        if count > 0 and self.updating[3]:
             p = self.parse_tweet(recv.items[0])
             icon = self.current_avatar_path(p.avatar)
             text = util.unescape_text(p.text)
@@ -373,7 +381,7 @@ class Main(BaseGui, gtk.Window):
                 self.tray.set_from_pixbuf(self.load_image('turpial-tray-update.png', True))
             
         gtk.gdk.threads_leave()
-        self.updating['directs'] = False
+        self.updating[3] = False
         
     def update_favorites(self, favs):
         log.debug(u'Actualizando favoritos')
@@ -442,6 +450,7 @@ class Main(BaseGui, gtk.Window):
         else:
             self.updatebox.release(tweets.errmsg)
         gtk.gdk.threads_leave()
+        
         self.update_timeline(tweets)
         
     def set_mode(self):
@@ -492,19 +501,19 @@ class Main(BaseGui, gtk.Window):
         if (self.home_interval != home_interval):
             if self.home_timer: gobject.source_remove(self.home_timer)
             self.home_interval = home_interval
-            self.home_timer = gobject.timeout_add(self.home_interval * 60 * 1000, self.download_timeline)
+            self.home_timer = gobject.timeout_add(self.home_interval * 60 * 1000, self.download_column1)
             log.debug('--Creado timer de Timeline cada %i min' % self.home_interval)
             
         if (self.replies_interval != replies_interval):
             if self.replies_timer: gobject.source_remove(self.replies_timer)
             self.replies_interval = replies_interval
-            self.replies_timer = gobject.timeout_add(self.replies_interval * 60 * 1000, self.download_replies)
+            self.replies_timer = gobject.timeout_add(self.replies_interval * 60 * 1000, self.download_column2)
             log.debug('--Creado timer de Replies cada %i min' % self.replies_interval)
             
         if (self.directs_interval != directs_interval):
             if self.directs_timer: gobject.source_remove(self.directs_timer)
             self.directs_interval = directs_interval
-            self.directs_timer = gobject.timeout_add(self.directs_interval * 60 * 1000, self.download_directs)
+            self.directs_timer = gobject.timeout_add(self.directs_interval * 60 * 1000, self.download_column3)
             log.debug('--Creado timer de Directs cada %i min' % self.directs_interval)
             
         if thread: 

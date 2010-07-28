@@ -8,7 +8,7 @@
 from turpial.api.interfaces.protocol import Protocol
 from turpial.api.interfaces.http import TurpialException
 from turpial.api.protocols.twitter.http import TwitterHTTP
-from turpial.api.interfaces.post import Status, Response, Profile, RateLimit
+from turpial.api.interfaces.post import Status, Response, Profile, List, RateLimit
 
 
 class Twitter(Protocol):
@@ -94,6 +94,17 @@ class Twitter(Protocol):
             profile.last_update = pf['status']['text']
         profile.profile_link_color = ('#%s' % pf['profile_link_color']) or '#0F0F85'
         return profile
+        
+    def __create_list(self, ls):
+        _list = List()
+        _list.id = ls['id']
+        _list.slug = ls['slug']
+        _list.name = ls['name']
+        _list.mode = ls['mode']
+        _list.user = ls['user']['screen_name']
+        _list.member_count = ls['member_count']
+        _list.description = ls['description']
+        return _list
         
     def __create_rate(self, rl):
         rate = RateLimit()
@@ -446,6 +457,75 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/search' % self.apiurl2, 
                 {'q': query, 'rpp': count})
             return Response(self.response_to_statuses(rtn['results']), 'status')
+        except TurpialException, exc:
+            return Response(None, 'error', exc.msg)
+            
+    def get_lists(self):
+        ''' Obteniendo las listas del usuario '''
+        tries = 0
+        count = 0
+        cursor = -1
+        lists = []
+        
+        self.log.debug('Descargando Listas del usuario')
+        # Descargando listas propias
+        while 1:
+            try:
+                rtn = self.http.request('%s/%s/lists' % (self.apiurl, 
+                    self.profile.username), {'cursor': cursor})
+            except TurpialException, exc:
+                tries += 1
+                if tries < 3:
+                    continue
+                else:
+                    return Response(None, 'error', exc.msg)
+                
+            for ls in rtn['lists']:
+                lists.append(self.__create_list(ls))
+                count += 1
+            if rtn['next_cursor'] > 0:
+                cursor = rtn['next_cursor']
+                continue
+            else:
+                break
+        
+        # Descargando listas a las que estás suscrito
+        while 1:
+            try:
+                rtn = self.http.request('%s/%s/lists/subscriptions' % (self.apiurl, 
+                    self.profile.username), {'cursor': cursor})
+            except TurpialException, exc:
+                tries += 1
+                if tries < 3:
+                    continue
+                else:
+                    return Response(None, 'error', exc.msg)
+                
+            for ls in rtn['lists']:
+                lists.append(self.__create_list(ls))
+                count += 1
+            if rtn['next_cursor'] > 0:
+                cursor = rtn['next_cursor']
+                continue
+            else:
+                break
+        
+        self.lists = lists
+        self.log.debug('--Descargadas %i listas' % count)
+        return self.lists
+        
+    def get_list_statuses(self, args):
+        '''Actualizando estados de una lista'''
+        id = args['id']
+        user = args['user']
+        count = args['count']
+        self.log.debug('Descargando lista %s' % id)
+        
+        try:
+            rtn = self.http.request('%s/%s/lists/%s/statuses' % (self.apiurl, 
+                user, id), {'count': count})
+            statuses = self.response_to_statuses(rtn)
+            return Response(statuses, 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
             

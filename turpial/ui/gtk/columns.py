@@ -93,15 +93,8 @@ class StandardColumn(GenericColumn):
         GenericColumn.__init__(self, mainwin, label, menu, marknew)
         
         self.pos = pos
-        '''
-        if viewed:
-            self.viewed = viewed[pos]
-            self.listcombo = gtk.Button(self.viewed.title)
-        else:
-            self.viewed = viewed
-            self.listcombo = gtk.Button(_('Loading...'))
-        '''
         self.handler = None
+        self.changing_col = False
         
         model = gtk.ListStore(str, str)
         cell = gtk.CellRendererText()
@@ -145,6 +138,7 @@ class StandardColumn(GenericColumn):
         model = self.listcombo.get_model()
         iter = self.listcombo.get_active_iter()
         new_id = model.get_value(iter, 0)
+        self.changing_col = True
         self.mainwin.request_change_column(self.pos, new_id)
         
     def fill_combo(self, columns, new_viewed):
@@ -170,6 +164,18 @@ class StandardColumn(GenericColumn):
             self.listcombo.set_active(self.last_index)
         else:
             self.last_index = self.listcombo.get_active()
+            
+            if self.changing_col:
+                model = self.listcombo.get_model()
+                iter = self.listcombo.get_active_iter()
+                new_id = model.get_value(iter, 0)
+                
+                new_config = {'Columns': {}}
+                column = 'column%i' % (self.pos + 1)
+                new_config['Columns'][column] = new_id
+                self.mainwin.save_config(new_config)
+        
+        self.changing_col = False
         self.handler = self.listcombo.connect('changed', self.__change_list)
         
     def start_update(self):

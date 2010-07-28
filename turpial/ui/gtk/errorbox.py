@@ -56,8 +56,10 @@ class ErrorBox(gtk.HBox):
     def show_error(self, msg, show=True):
         if show:
             self.message.set_markup(u"<span size='small'>%s</span>" % msg)
-            self.show()
             self.timer = gobject.timeout_add(7000, self.close)
+            self.show()
+        else:
+            self.hide()
         
     def hide(self):
         self.message.set_markup("")

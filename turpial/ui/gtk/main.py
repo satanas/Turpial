@@ -229,12 +229,12 @@ class Main(BaseGui, gtk.Window):
     def main_loop(self):
         gtk.main()
         
-    def show_login(self, global_config):
+    def show_login(self):
 
         self.mode = 1
         if self.vbox is not None: self.remove(self.vbox)
         
-        self.vbox = LoginBox(self, global_config)
+        self.vbox = LoginBox(self)
         
         self.add(self.vbox)
         self.show_all()

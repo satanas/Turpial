@@ -35,6 +35,11 @@ class Preferences(gtk.Window):
         box_button.pack_start(btn_save)
         box_button.pack_start(btn_close)
         
+        notebook = gtk.Notebook()
+        notebook.set_scrollable(True)
+        notebook.set_border_width(3)
+        notebook.set_properties('tab-pos', gtk.POS_LEFT)
+        
         # Tabs
         if self.mode == 'user':
             self.general = GeneralTab(self.current['General'])
@@ -42,20 +47,14 @@ class Preferences(gtk.Window):
             self.services = ServicesTab(self.current['Services'])
             self.muted = MutedTab(self.mainwin)
             self.browser = BrowserTab(self.mainwin, self.current['Browser'])
-            self.columns = ColumnsTab(self.mainwin, self.current['Columns'])
-        self.proxy = ProxyTab(self.global_cfg['Proxy'])
-        
-        notebook = gtk.Notebook()
-        notebook.set_scrollable(True)
-        notebook.set_border_width(3)
-        notebook.set_properties('tab-pos', gtk.POS_LEFT)
-        if self.mode == 'user':
+            
             notebook.append_page(self.general, gtk.Label(_('General')))
-            #notebook.append_page(self.columns, gtk.Label(_('Columns')))
             notebook.append_page(self.notif, gtk.Label(_('Notifications')))
             notebook.append_page(self.services, gtk.Label(_('Services')))
             notebook.append_page(self.muted, gtk.Label(_('Mute')))
             notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
+            
+        self.proxy = ProxyTab(self.global_cfg['Proxy'])
         notebook.append_page(self.proxy, gtk.Label(_('Proxy')))
         
         vbox = gtk.VBox()

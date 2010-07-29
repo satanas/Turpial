@@ -121,10 +121,18 @@ class BaseGui:
     def save_global_config(self, new_config):
         '''Saves the global config'''
         self.__controller.save_global_config(new_config)
+    
+    def request_remember(self, username, password, rem=False):
+        '''Request remember'''
+        self.__controller.remember(username, password, rem)
         
-    def request_signin(self, username, password, remember, protocol):
+    def request_remembered(self):
         '''Request simple signin'''
-        self.__controller.signin(username, password, remember, protocol)
+        return self.__controller.get_remembered()
+    
+    def request_signin(self, username, password, protocol):
+        '''Request simple signin'''
+        self.__controller.signin(username, password, protocol)
         
     def request_signout(self):
         '''Request signout'''
@@ -319,7 +327,7 @@ class BaseGui:
     def main_loop(self):
         raise NotImplementedError
         
-    def show_login(self, global_config):
+    def show_login(self):
         raise NotImplementedError
         
     def show_main(self, config, profile):

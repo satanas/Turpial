@@ -447,4 +447,9 @@ class Identica(Protocol):
             return Response(self.response_to_statuses(rtn['results']), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
-            
+    
+    def get_lists(self):
+        return []
+        
+    def get_list_statuses(self, args):
+        pass

@@ -45,7 +45,6 @@ class Turpial:
         self.config = None
         self.global_cfg = ConfigApp()
         self.profile = None
-        self.remember = False
         self.testmode = options.test
         self.httpserv = None
         self.api = None
@@ -86,7 +85,7 @@ class Turpial:
         if self.testmode:
             self.log.debug('Modo Pruebas Activado')
             
-        self.ui.show_login(self.global_cfg)
+        self.ui.show_login()
         try:
             self.ui.main_loop()
         except KeyboardInterrupt:
@@ -113,6 +112,7 @@ class Turpial:
             self.profile = val.items
             self.config = ConfigHandler(self.profile.username)
             self.config.initialize()
+            '''
             if self.remember:
                 self.global_cfg.write('Login', 'username', self.profile.username)
                 self.global_cfg.write('Login', 'password',
@@ -120,6 +120,7 @@ class Turpial:
             else:
                 self.global_cfg.write('Login', 'username', '')
                 self.global_cfg.write('Login', 'password', '')
+            '''
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.profile.username, self.profile.password)
             
@@ -148,10 +149,6 @@ class Turpial:
         
     def __signin_done(self, key, secret, resp_profile):
         '''Inicio de sesion finalizado'''
-        if key is not None:
-            self.config.write('Auth', 'oauth-key', key)
-        if secret is not None:
-            self.config.write('Auth', 'oauth-secret', secret)
         
         # TODO: Llenar con el resto de listas
         self.lists = {
@@ -215,12 +212,41 @@ class Turpial:
     def _update_friends(self):
         '''Actualizar amigos'''
         self.api.get_friends()
+    
+    def get_remembered(self):
+        us = self.global_cfg.read('Login', 'username')
+        pw = self.global_cfg.read('Login', 'password')
+        if us != '' and pw != '':
+            a = base64.b64decode(pw)
+            b = a[1:-1]
+            c = base64.b32decode(b)
+            d = c[1:-1]
+            e = base64.b16decode(d)
+            pwd = e[0:len(us)]+ e[len(us):]
+            print pwd
+            return us, pwd, True
+        else:
+            return us, pw, False
         
-    def signin(self, username, password, remember, protocol):
+    def remember(self, us, pw, rem=False):
+        a = base64.b16encode(pw)
+        b = us[0] + a + ('%s' % us[-1])
+        c = base64.b32encode(b)
+        d = ('%s' % us[-1]) + c + us[0]
+        e = base64.b64encode(d)
+        pwd = e[0:len(us)]+ e[len(us):]
+        
+        if rem:
+            self.global_cfg.write('Login', 'username', us)
+            self.global_cfg.write('Login', 'password', pwd)
+        else:
+            self.global_cfg.write('Login', 'username', '')
+            self.global_cfg.write('Login', 'password', '')
+    
+    def signin(self, username, password, protocol):
         config = ConfigHandler(username)
         config.initialize_failsafe()
         auth = config.read_section('Auth')
-        self.remember = remember
         self.api.auth(username, password, auth, protocol,
             self.__validate_credentials)
         
@@ -353,8 +379,7 @@ class Turpial:
             #self.ui.set_column_item(index)
         else:
             self.ui.set_column_item(index, reset=True)
-            self.log.debug('Error cambiando la columna. El id %s no existe ' % \
-new_id)
+            self.log.debug('Error: la columna %s no existe' % new_id)
         
 class MicroBloggingList:
     ''' Lista de los diferentes protocolos '''

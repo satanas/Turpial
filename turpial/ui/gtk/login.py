@@ -12,12 +12,13 @@ from turpial.ui.gtk.loginlabel import LoginLabel
 from turpial.ui.gtk.waiting import CairoWaiting
 
 class LoginBox(gtk.VBox):
-    def __init__(self, mainwin, global_config):
+    def __init__(self, mainwin):
         gtk.VBox.__init__(self, False, 5)
         
         self.mainwin = mainwin
         avatar = self.mainwin.load_image('logo2.png')
         self.message = LoginLabel(self)
+        us, pw, rem = self.mainwin.request_remembered()
         
         lbl_user = gtk.Label()
         lbl_user.set_use_markup(True)
@@ -25,8 +26,10 @@ class LoginBox(gtk.VBox):
         lbl_user.set_alignment(0, 0.5)
         
         self.username = gtk.Entry()
+        self.username.set_text(us)
         self.password = gtk.Entry()
         self.password.set_visibility(False)
+        self.password.set_text(pw)
         
         self.remember = gtk.CheckButton(_('Remember my credentials'))
         
@@ -34,10 +37,8 @@ class LoginBox(gtk.VBox):
         
         list = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
         t_icon = self.mainwin.load_image('twitter.png', True)
-        #list.append([t_icon, '<span size="small">Twitter</span>', 'twitter'])
         list.append([t_icon, 'Twitter', 'twitter'])
         i_icon = self.mainwin.load_image('identica.png', True)
-        #list.append([i_icon, '<span size="small">Identi.ca</span>', 'identi.ca'])
         list.append([i_icon, 'Identi.ca', 'identi.ca'])
         
         self.combo_protocol = gtk.ComboBox(list)
@@ -80,23 +81,31 @@ class LoginBox(gtk.VBox):
         
         self.btn_oauth.connect('clicked', self.signin)
         self.password.connect('activate', self.signin)
-        self.remember.connect("toggled", self.__toogle_remember)
+        self.rhandler = self.remember.connect("toggled", self.__toogle_remember)
         self.btn_settings.connect('clicked', self.mainwin.show_preferences, 'global')
+        self.remember.set_active(rem)
         
-        username = global_config.read('Login', 'username')
-        password = global_config.read('Login', 'password')
-        if username != '' and password != '':
-            self.username.set_text(username)
-            self.password.set_text(base64.b64decode(password))
-            self.remember.set_active(True)
-            
     def __toogle_remember(self, widget):
-        if self.remember.get_active():
+        user = self.username.get_text()
+        pwd = self.password.get_text()
+        rem = self.remember.get_active()
+        
+        if user == '' or pwd == '':
+            self.remember.disconnect(self.rhandler)
+            self.remember.set_active(False)
+            self.rhandler = self.remember.connect("toggled", 
+                self.__toogle_remember)
+            self.cancel_login(_('Fields can\'t be empty'))
+            return
+        
+        if rem:
             self.username.set_sensitive(False)
             self.password.set_sensitive(False)
         else:
             self.username.set_sensitive(True)
             self.password.set_sensitive(True)
+        
+        self.mainwin.request_remember(user, pwd, rem)
             
     def signin(self, widget):
         self.message.deactivate()
@@ -108,8 +117,7 @@ class LoginBox(gtk.VBox):
         self.btn_settings.set_sensitive(False)
         self.combo_protocol.set_sensitive(False)
         self.mainwin.request_signin(self.username.get_text(), 
-            self.password.get_text(), self.remember.get_active(),
-            self.combo_protocol.get_active())
+            self.password.get_text(), self.combo_protocol.get_active())
         
     def cancel_login(self, error):
         self.message.set_error(error)

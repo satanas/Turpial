@@ -78,7 +78,6 @@ class Preferences(gtk.Window):
             notif = self.notif.get_config()
             services = self.services.get_config()
             browser = self.browser.get_config()
-            columns = self.columns.get_config()
             
             new_config = {
                 'General': general,

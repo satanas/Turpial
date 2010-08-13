@@ -113,22 +113,8 @@ class Turpial:
         if val.has_key('error'):
             self.ui.cancel_login(val['error'])
         else:
-            self.profile = val
-            self.config = ConfigHandler(val['screen_name'])
-            if self.remember:
-                self.global_cfg.write('Login', 'username', self.api.username)
-                self.global_cfg.write('Login', 'password',
-                                      base64.b64encode(self.api.password))
-            else:
-                self.global_cfg.write('Login', 'username', '')
-                self.global_cfg.write('Login', 'password', '')
-            self.httpserv.update_img_dir(self.config.imgdir)
-            self.httpserv.set_credentials(self.api.username, self.api.password)
-            
-            auth = self.config.read_section('Auth')
             if self.api.has_oauth_support():
-                self.api.start_oauth(auth, self.ui.show_oauth_pin_request,
-                                     self.__signin_done)
+                self.api.validate_credentials(self.__signin_done)
             else:
                 self.api.is_oauth = False
                 self.__signin_done(None, None, None)
@@ -148,25 +134,34 @@ class Turpial:
             self.ui.update_user_profile(self.profile)
         self.ui.tweet_done(tweet)
         
-    def __signin_done(self, key, secret, verifier):
+    def __signin_done(self, val):
         '''Inicio de sesion finalizado'''
-        if key is not None:
-            self.config.write('Auth', 'oauth-key', key)
-        if secret is not None:
-            self.config.write('Auth', 'oauth-secret', secret)
-        if verifier is not None:
-            self.config.write('Auth', 'oauth-verifier', verifier)
+        if val.has_key('error'):
+            self.ui.cancel_login(val['error'])
+        else:
+            self.profile = val
+            self.config = ConfigHandler(val['screen_name'])
+            if self.remember:
+                self.global_cfg.write('Login', 'username', self.api.username)
+                self.global_cfg.write('Login', 'password',
+                    base64.b64encode(self.api.password))
+            else:
+                self.global_cfg.write('Login', 'username', '')
+                self.global_cfg.write('Login', 'password', '')
+            
+            self.httpserv.update_img_dir(self.config.imgdir)
+            self.httpserv.set_credentials(self.api.username, self.api.password)
         
-        self.api.muted_users = self.config.load_muted_list()
-        
-        self.ui.show_main(self.config, self.global_cfg, self.profile)
-        self._update_timeline()
-        if self.testmode: return
-        self._update_replies()
-        self._update_directs()
-        self._update_rate_limits()
-        self._update_favorites()
-        self._update_friends()
+            self.api.muted_users = self.config.load_muted_list()
+            
+            self.ui.show_main(self.config, self.global_cfg, self.profile)
+            self._update_timeline()
+            if self.testmode: return
+            self._update_replies()
+            self._update_directs()
+            self._update_rate_limits()
+            self._update_favorites()
+            self._update_friends()
         
     def _update_timeline(self):
         '''Actualizar linea de tiempo'''

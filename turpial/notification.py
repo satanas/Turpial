@@ -12,6 +12,13 @@ from turpial.sound import Sound
 
 log = logging.getLogger('Notify')
 
+try:
+    import pynotify
+    NOTIFY = True
+except ImportError:
+    log.debug("pynotify is not installed")
+    NOTIFY = False
+
 class Notification:
     """Manejo de notificaciones"""
     def __init__(self):
@@ -35,18 +42,12 @@ class Notification:
         self.active = False
         
     def popup(self, title, message, icon=None):
-        try:
-            import pynotify
-            self.integrated = True
-        except ImportError:
-            log.debug("pynotify is not installed")
-            self.integrated = False
-        
-        if self.active and self.integrated:
+        if self.active and NOTIFY:
             if pynotify.init("Turpial"):
                 if not icon:
-                    icon = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                        'data', 'pixmaps', 'turpial_icon_48.png'))
+                    iconpath = os.path.join(os.path.dirname(__file__), 'data', 
+                        'pixmaps', 'turpial-notification.png')
+                    icon = os.path.realpath(iconpath)
                 icon = "file://%s" % icon
                 notification = pynotify.Notification(title, message, icon)
                 notification.show()
@@ -87,18 +88,23 @@ class Notification:
     def login(self, p):
         if self.config['login'] != 'on':
             return
-        self.popup('@%s' % p['screen_name'],
+        self.popup('@%s' % p.username,
             '%s: %i\n%s: %i\n%s: %i' % 
-            (_('Tweets'), p['statuses_count'],
-            _('Following'), p['friends_count'], 
-            _('Followers'), p['followers_count']))
+            (_('Tweets'), p.statuses_count,
+            _('Following'), p.friends_count, 
+            _('Followers'), p.followers_count))
         if self.config['sound'] == 'on':
             self.sound.login()
-        
+    
     def following(self, user, follow):
-        name = user['screen_name']
-        
+        name = user.username
         if follow:
-            self.popup(_('Follow'), _('Now you follow to @%s') % name)
+            self.popup(_('Turpial (Follow)'), _('You are now following @%s') % name)
         else:
-            self.popup(_('Unfollow'), _('You have unfollow to @%s') % name)
+            self.popup(_('Turpial (Unfollow)'), _('You are no longer following @%s') % name)
+                
+    def following_error(self, message, follow):
+        if follow:
+            self.popup(_('Turpial (Follow)'), message)
+        else:
+            self.popup(_('Turpial (Unfollow)'), message)

@@ -8,7 +8,7 @@
 import gtk
 import subprocess
 
-from turpial.api.services import URL_SERVICES, PHOTO_SERVICES
+from turpial.api.servicesapi import URL_SERVICES, PHOTO_SERVICES
 
 class Preferences(gtk.Window):
     """Ventana de preferencias de Turpial"""
@@ -35,6 +35,11 @@ class Preferences(gtk.Window):
         box_button.pack_start(btn_save)
         box_button.pack_start(btn_close)
         
+        notebook = gtk.Notebook()
+        notebook.set_scrollable(True)
+        notebook.set_border_width(3)
+        notebook.set_properties('tab-pos', gtk.POS_LEFT)
+        
         # Tabs
         if self.mode == 'user':
             self.general = GeneralTab(self.current['General'])
@@ -42,18 +47,14 @@ class Preferences(gtk.Window):
             self.services = ServicesTab(self.current['Services'])
             self.muted = MutedTab(self.mainwin)
             self.browser = BrowserTab(self.mainwin, self.current['Browser'])
-        self.proxy = ProxyTab(self.global_cfg['Proxy'])
-        
-        notebook = gtk.Notebook()
-        notebook.set_scrollable(True)
-        notebook.set_border_width(3)
-        notebook.set_properties('tab-pos', gtk.POS_LEFT)
-        if self.mode == 'user':
+            
             notebook.append_page(self.general, gtk.Label(_('General')))
             notebook.append_page(self.notif, gtk.Label(_('Notifications')))
             notebook.append_page(self.services, gtk.Label(_('Services')))
             notebook.append_page(self.muted, gtk.Label(_('Mute')))
             notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
+            
+        self.proxy = ProxyTab(self.global_cfg['Proxy'])
         notebook.append_page(self.proxy, gtk.Label(_('Proxy')))
         
         vbox = gtk.VBox()
@@ -97,7 +98,6 @@ class Preferences(gtk.Window):
         
         self.mainwin.save_global_config(new_global)
         
-        
 class PreferencesTab(gtk.VBox):
     def __init__(self, desc, current=None):
         gtk.VBox.__init__(self, False)
@@ -122,7 +122,7 @@ class PreferencesTab(gtk.VBox):
         
 class TimeScroll(gtk.HBox):
     def __init__(self, label='', val=5, min=1, max=60, step=3, page=6, size=0,
-        callback=None, lbl_size=70, unit='min'):
+        callback=None, lbl_size=120, unit='min'):
         gtk.HBox.__init__(self, False)
         
         self.callback = callback
@@ -165,11 +165,11 @@ timeline, mentions and direct messages'), current)
         ws = True if self.current['workspace'] == 'wide' else False
         min = True if self.current['minimize-on-close'] == 'on' else False
         
-        self.home = TimeScroll(_('Timeline'), h,
+        self.home = TimeScroll(_('Column 1 (Left)'), h,
             callback=self.update_api_calls)
-        self.replies = TimeScroll(_('Mentions'), r, min=2,
+        self.replies = TimeScroll(_('Column 2 (Middle)'), r,
             callback=self.update_api_calls)
-        self.directs = TimeScroll(_('Directs'), d, min=5,
+        self.directs = TimeScroll(_('Column 3 (Right)'), d, 
             callback=self.update_api_calls)
         
         self.tweets = TimeScroll(_('Tweets shown'), t, min=20, max=200,
@@ -323,7 +323,10 @@ class ServicesTab(PreferencesTab):
 shorten URLs and upload images'), current)
         i = 0
         default = -1
+        lbl_size = 120
+        
         url_lbl = gtk.Label(_('Shorten URL'))
+        url_lbl.set_size_request(lbl_size, -1)
         self.shorten = gtk.combo_box_new_text()
         for key, v in URL_SERVICES.iteritems():
             self.shorten.append_text(key)
@@ -337,6 +340,7 @@ shorten URLs and upload images'), current)
         url_box.pack_start(self.shorten, False, False, 3)
         
         pic_lbl = gtk.Label(_('Upload images'))
+        pic_lbl.set_size_request(lbl_size, -1)
         self.upload = gtk.combo_box_new_text()
         i = 0
         for key in PHOTO_SERVICES:
@@ -367,7 +371,8 @@ bothering you and shut them up temporarily'))
         
         self.muted = []
         self.mainwin = parent
-        self.friends, self.muted = self.mainwin.request_muted_list()
+        self.muted = self.mainwin.request_muted_list()
+        self.friends = self.mainwin.request_friends_list()
         
         self.model = gtk.ListStore(str, bool)
         
@@ -401,22 +406,28 @@ bothering you and shut them up temporarily'))
         label = gtk.Label()
         label.set_line_wrap(True)
         label.set_use_markup(True)
-        label.set_markup('<span foreground="#920d12">%s</span>' % 
-            _('I am still loading all of your friends. Try again in a few \
-seconds' ))
         label.set_justify(gtk.JUSTIFY_FILL)
         
         align = gtk.Alignment(xalign=0.0, yalign=0.0)
         align.set_padding(0, 5, 10, 10)
         align.add(label)
         
-        if self.friends:
-            for f in self.friends:
-                mark = True if (f in self.muted) else False
-                self.model.append([f, mark])
-                
-            self.pack_start(scroll, True, True, 2)
+        if self.friends is not None:
+            if len(self.friends) > 0:
+                for f in self.friends:
+                    mark = True if (f in self.muted) else False
+                    self.model.append([f, mark])
+                    
+                self.pack_start(scroll, True, True, 2)
+            elif len(self.friends) == 0:
+                label.set_markup('<span foreground="#920d12">%s</span>' % 
+                _('What? You don\'t have any friends. Try to go out and know \
+some nice people' ))
+                self.pack_start(align, True, True, 2)
         else:
+            label.set_markup('<span foreground="#920d12">%s</span>' % 
+            _('I am still loading all of your friends. Try again in a few \
+seconds' ))
             self.pack_start(align, True, True, 2)
         
         self.show_all()
@@ -568,3 +579,4 @@ different of twitter.com'))
             'port': '',
             'url': self.url.get_text()
         }
+        

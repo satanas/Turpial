@@ -31,7 +31,10 @@ Turpial necesita los siguientes paquetes para funcionar correctamente:
  * ``python-pygame >= 1.7``
  * ``python-pybabel >= 0.9.1``
  * ``python-gtkspell >= 2.25.3``
-  
+ * ``python-webkit``
+ * ``python-setuptools``
+ * ``python-pkg-resources``
+
 Una instalacion estandar de *Python* (como la que viene en la mayoria de las
 distribuciones GNU/Linux) es mas que suficiente. El resto de los modulos se 
 pueden instalar en las distribuciones basadas en Debian con el siguiente 
@@ -42,7 +45,10 @@ comando (como superusuario)::
                        python-notify \
                        python-pygame \
                        python-pybabel \
-                       python-gtkspell
+                       python-gtkspell \
+                       python-webkit \
+                       python-setuptools \
+                       python-pkg-resources
 
 o si dispone de ``sudo``::
 
@@ -51,7 +57,10 @@ o si dispone de ``sudo``::
                             python-notify \
                             python-pygame \
                             python-pybabel \
-                            python-gtkspell
+                            python-gtkspell \
+                            python-webkit \
+                            python-setuptools \
+                            python-pkg-resources
 
 Instalacion
 -----------

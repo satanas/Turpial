@@ -22,15 +22,20 @@ class BaseGui:
         self.__controller = controller
         self.__user_pics = {}
         self.__queued_pics = []
-        self.updating = {'home': False, 'replies': False, 'directs': False}
+        self.updating = {1: False, 2: False, 3: False}
+        
+        self.columns_lists = {}
+        self.columns_viewed = []
         
         # Reescritos en la clase hija
         self.imgdir = ''
         
         # Initialize gettext
-        gettext_domain = 'messages'
-        localedir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'i18n'))
-        trans = gettext.install(gettext_domain, localedir)
+        gettext_domain = 'turpial'
+        # FIXME: Definir path de localedir en caso de no encontrar esperado
+        # localedir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'i18n'))
+        # trans = gettext.install(gettext_domain, localedir)
+        trans = gettext.install(gettext_domain)
     # ------------------------------------------------------------
     # Private/Internal methods
     # ------------------------------------------------------------
@@ -86,44 +91,19 @@ class BaseGui:
     
     def parse_tweet(self, xtweet):
         '''Decompose tweet in basic parts'''
-        tweet, retweet_by = self.__get_real_tweet(xtweet)
         
-        if tweet.has_key('user'):
-            username = tweet['user']['screen_name']
-            avatar = tweet['user']['profile_image_url']
-        elif tweet.has_key('sender'):
-            username = tweet['sender']['screen_name']
-            avatar = tweet['sender']['profile_image_url']
-        elif tweet.has_key('from_user'):
-            username = tweet['from_user']
-            avatar = tweet['profile_image_url']
+        xtweet.text = util.unescape_text(xtweet.text)
+        xtweet.source = util.detect_client(xtweet)
+        xtweet.timestamp = util.get_timestamp(xtweet)
+        return xtweet
         
-        tweet['text'] = util.unescape_text(tweet['text'])
-        
-        client = util.detect_client(tweet)
-        datetime = util.get_timestamp(tweet)
-        
-        in_reply_to_id = None
-        in_reply_to_user = None
-        if tweet.has_key('in_reply_to_status_id') and \
-           tweet['in_reply_to_status_id']:
-            in_reply_to_id = tweet['in_reply_to_status_id']
-            in_reply_to_user = tweet['in_reply_to_screen_name']
-        
-        fav = False
-        if tweet.has_key('favorited'):
-            fav = tweet['favorited']
-        
-        return {'username': username, 'avatar': avatar, 'client': client,
-            'datetime':datetime, 'text': tweet['text'], 'id': tweet['id'],
-            'in_reply_to_id': in_reply_to_id,
-            'in_reply_to_user': in_reply_to_user,
-            'fav': fav, 'retweet_by': retweet_by}
-        
-    def after_destroy(self, timeline, replies, favs, directs):
-        '''Update columns after destroy a tweet'''
+    def after_destroy_status(self, timeline, favs):
+        '''Update columns after destroy a status'''
         self.update_timeline(timeline)
-        self.update_favorites(timeline, replies, favs)
+        self.update_favorites(favs)
+        
+    def after_destroy_direct(self, directs):
+        '''Update columns after destroy a direct'''
         self.update_directs(directs)
         
     def read_config(self):
@@ -141,18 +121,18 @@ class BaseGui:
     def save_global_config(self, new_config):
         '''Saves the global config'''
         self.__controller.save_global_config(new_config)
+    
+    def request_remember(self, username, password, rem=False):
+        '''Request remember'''
+        self.__controller.remember(username, password, rem)
         
-    def request_signin(self, username, password):
+    def request_remembered(self):
         '''Request simple signin'''
-        self.__controller.signin(username, password)
-        
-    def request_oauth(self, username, password, remember):
-        '''Request signin using OAuth'''
-        self.__controller.signin_oauth(username, password, remember)
-        
-    def request_auth_token(self, pin):
-        '''Request OAuth token authorization'''
-        self.__controller.auth_token(pin)
+        return self.__controller.get_remembered()
+    
+    def request_signin(self, username, password, protocol):
+        '''Request simple signin'''
+        self.__controller.signin(username, password, protocol)
         
     def request_signout(self):
         '''Request signout'''
@@ -180,9 +160,9 @@ class BaseGui:
                                             self.__done_user_avatar)
         return None
         
-    def request_retweet(self, id):
-        '''Retweet'''
-        self.__controller.retweet(id)
+    def request_repeat(self, id):
+        '''Repeat status'''
+        self.__controller.repeat(id)
         
     def request_fav(self, id):
         '''Mark a tweet as favorite'''
@@ -211,7 +191,6 @@ class BaseGui:
     def request_direct(self, user, message):
         '''Send direct message'''
         log.debug('Enviando mensaje directo a %s' % user)
-        # self.__controller.send_direct(user, message)
         
     def request_destroy_status(self, id):
         '''Destroy a tweet'''
@@ -233,13 +212,9 @@ class BaseGui:
         '''Update user profile'''
         self.__controller.update_profile(name, url, bio, location)
         
-    def request_search_topic(self, topic):
+    def request_search(self, topic):
         '''Search a topic in search.twitter.com'''
-        self.__controller.search_topic(topic)
-        
-    def request_search_people(self, query):
-        '''Search people in search.twitter.com'''
-        self.__controller.search_people(query)
+        self.__controller.search(topic)
         
     def request_trends(self):
         '''Get trendings'''
@@ -269,30 +244,70 @@ class BaseGui:
         '''Get the friends list'''
         return self.__controller.get_friends()
         
+    def request_hashtags_url(self):
+        '''Get the hashtag url'''
+        return self.__controller.get_hashtags_url()
+        
+    def request_groups_url(self):
+        '''Get the groups url'''
+        return self.__controller.get_groups_url()
+        
+    def request_profiles_url(self):
+        '''Get the profiles url'''
+        return self.__controller.get_profiles_url()
+        
+    def request_change_column(self, index, new_id):
+        ''' Change the column at index for the indicated by new_id '''
+        self.__controller.change_column(index, new_id)
+        
+    def manual_update(self, id):
+        if id == 0:
+            self.download_column1()
+        elif id == 1:
+            self.download_column2()
+        elif id == 2:
+            self.download_column3()
+    
+    def update_timeline(self, tweets):
+        if self.columns_viewed[0].id == 'timeline':
+            self.update_column1(tweets)
+        elif self.columns_viewed[1].id == 'timeline':
+            self.update_column2(tweets)
+        elif self.columns_viewed[2].id == 'timeline':
+            self.update_column3(tweets)
+            
+    def update_directs(self, tweets):
+        if self.columns_viewed[0].id == 'directs':
+            self.update_column1(tweets)
+        elif self.columns_viewed[1].id == 'directs':
+            self.update_column2(tweets)
+        elif self.columns_viewed[2].id == 'directs':
+            self.update_column3(tweets)
+        
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
     # Estos métodos deben ser llamados por la clase hija cada cierto tiempo
     
-    def download_timeline(self):
-        if self.updating['home']: return True
+    def download_column1(self):
+        if self.updating[1]: return True
         
-        self.updating['home'] = True
-        self.__controller._update_timeline()
+        self.updating[1] = True
+        self.__controller._update_column1()
         return True
         
-    def download_replies(self):
-        if self.updating['replies']: return True
+    def download_column2(self):
+        if self.updating[2]: return True
         
-        self.updating['replies'] = True
-        self.__controller._update_replies()
+        self.updating[2] = True
+        self.__controller._update_column2()
         return True
         
-    def download_directs(self):
-        if self.updating['directs']: return True
+    def download_column3(self):
+        if self.updating[3]: return True
         
-        self.updating['directs'] = True
-        self.__controller._update_directs()
+        self.updating[3] = True
+        self.__controller._update_column3()
         return True
         
     def download_rates(self):
@@ -312,10 +327,13 @@ class BaseGui:
     def main_loop(self):
         raise NotImplementedError
         
-    def show_login(self, global_config):
+    def show_login(self):
         raise NotImplementedError
         
     def show_main(self, config, profile):
+        raise NotImplementedError
+        
+    def set_lists(self, lists, viewed):
         raise NotImplementedError
         
     def show_oauth_pin_request(self, url):
@@ -324,13 +342,13 @@ class BaseGui:
     def cancel_login(self):
         raise NotImplementedError
         
-    def start_updating_timeline(self):
+    def start_updating_column1(self):
         raise NotImplementedError
         
-    def start_updating_replies(self):
+    def start_updating_column2(self):
         raise NotImplementedError
         
-    def start_updating_directs(self):
+    def start_updating_column3(self):
         raise NotImplementedError
         
     def start_search(self):
@@ -339,16 +357,16 @@ class BaseGui:
     def update_tweet(self, tweet):
         raise NotImplementedError
         
-    def update_timeline(self, tweets):
+    def update_column1(self, tweets):
         raise NotImplementedError
         
-    def update_replies(self, replies):
+    def update_column2(self, replies):
         raise NotImplementedError
         
-    def update_directs(self, directs):
+    def update_column3(self, directs):
         raise NotImplementedError
         
-    def update_favorites(self, tweets, replies, favs):
+    def update_favorites(self, favs):
         raise NotImplementedError
         
     def update_rate_limits(self, rates):
@@ -363,13 +381,7 @@ class BaseGui:
     def update_user_profile(self, profile):
         raise NotImplementedError
         
-    def update_trends(self, current, day, week):
-        raise NotImplementedError
-        
-    def update_search_topics(self, topics):
-        raise NotImplementedError
-    
-    def update_friends(self, friends):
+    def update_search(self, topics):
         raise NotImplementedError
         
     def update_in_reply_to(self, tweets):
@@ -385,5 +397,11 @@ class BaseGui:
         raise NotImplementedError
         
     def update_config(self, config):
+        raise NotImplementedError
+    
+    def set_column_item(self, index, reset=False):
+        raise NotImplementedError
+            
+    def quit(self, arg):
         raise NotImplementedError
         

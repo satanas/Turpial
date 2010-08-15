@@ -26,11 +26,17 @@ class TweetListWebkit(gtk.VBox):
         
         self.last = None    # Last tweets updated
         self.mainwin = mainwin
-        style_path = os.path.join('data', 'themes', 'default', 'style.css')
-        template_path = os.path.join('data', 'themes', 'default', 'tweet_template.html')
+        style_path = os.path.join(os.path.dirname(__file__), '..', '..', 
+            'data', 'themes', 'default', 'style.css')
+        template_path = os.path.join(os.path.dirname(__file__), '..', '..', 
+            'data', 'themes', 'default', 'tweet_template.html')
         
         #self.header = '<link href="%s" rel="stylesheet" type="text/css">' % style_path
-        self.header = ''
+        #self.header = ''
+        f = open(style_path, 'r')
+        self.css_template = f.read()
+        f.close()
+        self.header = '<style type="text/css"> %s </style>' % self.css_template
         self.page = self.header
         f = open(template_path, 'r')
         self.tweet_template = f.read()
@@ -45,7 +51,7 @@ class TweetListWebkit(gtk.VBox):
         
         self.lblerror = gtk.Label()
         self.lblerror.set_use_markup(True)
-        self.waiting = CairoWaiting(self)
+        self.waiting = CairoWaiting(self.mainwin)
         align = gtk.Alignment(xalign=1, yalign=0.5)
         align.add(self.waiting)
         
@@ -53,12 +59,12 @@ class TweetListWebkit(gtk.VBox):
         bottombox.pack_start(self.lblerror, False, False, 2)
         bottombox.pack_start(align, True, True, 2)
         
-        #scroll = gtk.ScrolledWindow()
-        #scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        #scroll.set_shadow_type(gtk.SHADOW_IN)
-        #scroll.add(self.list)
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        scroll.set_shadow_type(gtk.SHADOW_IN)
+        scroll.add(self.list)
             
-        self.pack_start(self.list, True, True)
+        self.pack_start(scroll, True, True)
         self.pack_start(bottombox, False, False)
         
     def __highlight_hashtags(self, text):
@@ -141,32 +147,33 @@ class TweetListWebkit(gtk.VBox):
         
         p = self.mainwin.parse_tweet(tweet)
         
-        urls = util.detect_urls(p['text'])
-        html_twt = p['text']
+        urls = util.detect_urls(p.text)
+        html_twt = p.text
         html_twt = self.__highlight_hashtags(html_twt)
         html_twt = self.__highlight_mentions(html_twt)
         html_twt = self.__highlight_urls(urls, html_twt)
         
-        if p['client']: 
-            client = 'desde %s' % p['client']
-        if p['in_reply_to_user']:
-            in_reply = ' en respuesta a %s' % p['in_reply_to_user']
-        if p['retweet_by']:
-            retweeted += 'Retweeted by %s' % p['retweet_by']
+        if p.source: 
+            client = ' %s %s' % (_('from'), p.source)
+        if p.in_reply_to_user:
+            in_reply = ' %s %s' % (_('in reply to'), p.in_reply_to_user)
+        if p.retweet_by:
+            retweeted += '%s %s' % (_('Retweeted by'), p.retweet_by)
         
         twt = self.tweet_template
-        twt = twt.replace('${avatar}', p['avatar'])
-        twt = twt.replace('${username}', p['username'])
+        twt = twt.replace('${avatar}', p.avatar)
+        twt = twt.replace('${username}', p.username)
         twt = twt.replace('${text}', html_twt)
-        twt = twt.replace('${date}', p['datetime'])
+        twt = twt.replace('${date}', p.timestamp)
         twt = twt.replace('${client}', client)
         twt = twt.replace('${in_reply_to}', in_reply)
         twt = twt.replace('${retweeted_by}', retweeted)
         
         self.page += twt
-        if render: self.list.load_string(self.page, "text/html", "iso-8859-15", "timeline")
+        if render: 
+            gobject.idle_add(self.list.load_string, self.page, "text/html", "iso-8859-15", "timeline")
         #color = gtk.gdk.Color(255*257, 242*257, 212*257) if p['fav'] else None
-        color = gtk.gdk.Color(250 * 257, 237 * 257, 187 * 257) if p['fav'] else None
+        color = gtk.gdk.Color(250*257, 237*257, 187*257) if p.is_favorite else None
         
     def update_user_pic(self, user, pic):
         # Evaluar si es más eficiente esto o cargar toda la lista cada vez
@@ -179,12 +186,15 @@ class TweetListWebkit(gtk.VBox):
             iter = self.model.iter_next(iter)
         del pix
         
-    def update_tweets(self, arr_tweets):
-        if arr_tweets is None:
-            self.stop_update(True, 'Oops... Algo salió mal. Actualizaré de nuevo pronto')
+    def update_tweets(self, response):
+        if response.type == 'error':
+            self.stop_update(True, response.errmsg)
             return 0
-        elif len(arr_tweets) == 0:
-            self.stop_update(True, 'No hay tweets')
+            
+        arr_tweets = response.items
+        if len(arr_tweets) == 0:
+            self.clear()
+            self.stop_update(True, _('No tweets available'))
             return 0
         else:
             count = util.count_new_tweets(arr_tweets, self.last)
@@ -193,8 +203,7 @@ class TweetListWebkit(gtk.VBox):
             for tweet in arr_tweets:
                 self.add_tweet(tweet, False)
             self.last = arr_tweets
-            print self.page
-            self.list.load_string(self.page, "text/html", "utf-8", "timeline")
+            gobject.idle_add(self.list.load_string, self.page, "text/html", "utf-8", "timeline")
             return count
             
     def start_update(self):

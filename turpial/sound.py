@@ -6,17 +6,29 @@
 # Ene 08, 2010
 
 import os
+import logging
+import traceback
+
 from pygame import mixer as pygamemixer
 from pygame import error as pygameerror
 
 class Sound:
     def __init__(self):
-        pygamemixer.init()
+        self.sound = False
+        self.log = logging.getLogger('Sound')
+        try:
+            pygamemixer.init()
+            self.log.debug('Iniciado')
+            self.sound = True
+        except Exception, exc:
+            self.log.debug(traceback.print_exc())
+            self.sound = False
         
     def __play(self, filename):
         path = os.path.realpath(os.path.join(os.path.dirname(__file__),
             'data', 'sounds', filename))
-        if not pygamemixer: 
+        
+        if not self.sound: 
             return
             
         try:
@@ -24,8 +36,8 @@ class Sound:
             sound.set_volume(0.6)
             sound.play()
         except pygameerror, message:
-            print 'Cannot load sound:', path
-            print message
+            self.log.debug('Can\'t load sound: %s\nDetails: %s' % (path, 
+                message))
         
     def login(self):
         self.__play('cambur_pinton.ogg')

@@ -5,25 +5,29 @@
 # Author: Wil Alvarez (aka Satanas)
 # Dic 21, 2009
 
+import os
 import gtk
 
 class About:
     def __init__(self, parent=None):
         about = gtk.AboutDialog()
         about.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
-        about.set_logo(parent.load_image('turpial_icon.png', True))
+        about.set_logo(parent.load_image('turpial.png', True))
         about.set_name('Turpial')
         about.set_version(parent.version)
         about.set_copyright('Copyright (C) 2009 - 2010 Wil Alvarez')
         about.set_comments(_('Twitter client multi-interface written in Python'))
         about.set_transient_for(parent)
         about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        about.set_website('http://turpial.org.ve')
         
         try:
-            lic = file('COPYING', 'r')
+            path = os.path.realpath(os.path.join(os.path.dirname(__file__), 
+                '..', '..', '..', 'COPYING'))
+            lic = file(path, 'r')
             license = lic.read()
             lic.close()
-        except:
+        except Exception, msg:
             license = 'This script is free software; you can redistribute it'
             'and\/or modify it under the\n\terms of the GNU General Public '
             'License as published by the Free Software\n\Foundation; either '
@@ -35,14 +39,26 @@ class About:
         about.set_license(license)
         authors = []
         try:
-            f = file('AUTHORS', 'r')
+            path = os.path.realpath(os.path.join(os.path.dirname(__file__), 
+                '..', '..', '..', 'AUTHORS'))
+            f = file(path, 'r')
             for line in f:
                 authors.append(line.strip('\n'))
             f.close()
-        except:
-            pass
-            
+        except Exception, msg:
+            authors = [_("File 'AUTHORS' not found")]
         about.set_authors(authors)
+        
+        translators = ''
+        try:
+            path = os.path.realpath(os.path.join(os.path.dirname(__file__), 
+                '..', '..', '..', 'TRANSLATORS'))
+            f = file(path, 'r')
+            translators = f.read()
+            f.close()
+        except Exception, msg:
+            translators = _("File 'TRANSLATORS' not found")
+        about.set_translator_credits(translators)
         
         about.connect("response", self.__response)
         about.connect("close", self.__close)

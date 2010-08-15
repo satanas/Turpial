@@ -25,12 +25,13 @@ class UpdateBox(gtk.Window):
         self.what = _('What is happening?')
         self.blocked = False
         self.mainwin = parent
-        self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
+        #self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.set_title(_('Update status'))
         self.set_resizable(False)
         #self.set_default_size(500, 120)
         self.set_size_request(500, 150)
         self.set_transient_for(parent)
+        #self.set_modal(True)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
         self.label = gtk.Label()
@@ -44,7 +45,6 @@ class UpdateBox(gtk.Window):
         self.num_chars.set_use_markup(True)
         self.num_chars.set_markup('<span size="14000" foreground="#999"><b>140</b></span>')
         
-        #self.update_text = gtk.TextView()
         self.update_text = MessageTextView()
         self.update_text.set_border_width(2)
         self.update_text.set_left_margin(2)
@@ -80,15 +80,16 @@ class UpdateBox(gtk.Window):
         
         self.btn_clr = gtk.Button()
         self.btn_clr.set_image(self.mainwin.load_image('clear.png'))
-        self.btn_clr.set_tooltip_text(_('Clear all'))
+        self.btn_clr.set_tooltip_text(_('Clear all') + ' (Ctrl+L)')
         self.btn_clr.set_relief(gtk.RELIEF_NONE)
         
-        self.btn_friends = gtk.Button()
-        self.btn_friends.set_image(self.mainwin.load_image('friends.png'))
-        self.btn_friends.set_tooltip_text(_('Add friends'))
-        self.btn_friends.set_relief(gtk.RELIEF_NONE)
+        self.btn_frn = gtk.Button()
+        self.btn_frn.set_image(self.mainwin.load_image('friends.png'))
+        self.btn_frn.set_tooltip_text(_('Add friends') + ' (Ctrl+F)')
+        self.btn_frn.set_relief(gtk.RELIEF_NONE)
         
         self.btn_upd = gtk.Button(_('Tweet'))
+        self.btn_upd.set_tooltip_text(_('Update your status') + ' (Ctrl+T)')
         chk_short = gtk.CheckButton(_('Autoshort URLs'))
         chk_short.set_sensitive(False)
         
@@ -104,7 +105,7 @@ class UpdateBox(gtk.Window):
         
         buttonbox = gtk.HBox(False)
         buttonbox.pack_start(chk_short, False, False, 0)
-        buttonbox.pack_start(self.btn_friends, False, False, 0)
+        buttonbox.pack_start(self.btn_frn, False, False, 0)
         buttonbox.pack_start(self.btn_clr, False, False, 0)
         buttonbox.pack_start(gtk.HSeparator(), False, False, 2)
         buttonbox.pack_start(self.btn_upd, False, False, 0)
@@ -124,9 +125,10 @@ class UpdateBox(gtk.Window):
         
         self.add(vbox)
         
+        self.connect('key-press-event', self.__detect_shortcut)
         self.connect('delete-event', self.__unclose)
         buffer.connect('changed', self.count_chars)
-        self.btn_friends.connect('clicked', self.show_friend_dialog)
+        self.btn_frn.connect('clicked', self.show_friend_dialog)
         self.btn_clr.connect('clicked', self.clear)
         self.btn_upd.connect('clicked', self.update)
         self.btn_url.connect('clicked', self.short_url)
@@ -135,8 +137,13 @@ class UpdateBox(gtk.Window):
         self.update_text.connect('mykeypress', self.__on_key_pressed)
         
         if SPELLING: 
-            self.spell = gtkspell.Spell (self.update_text)
+            try:
+                self.spell = gtkspell.Spell (self.update_text)
+            except Exception, e_msg:
+                # FIXME: Usar el log
+                print 'DEBUG:UI:Can\'t load gtkspell -> %s' % e_msg
         else:
+            # FIXME: Usar el log
             print 'DEBUG:UI:Can\'t load gtkspell'
     
     def __on_key_pressed(self, widget, keyval, keymod):
@@ -145,14 +152,28 @@ class UpdateBox(gtk.Window):
         elif keyval == gtk.keysyms.Escape:
             self.__unclose(widget)
         return False
-            
+    
+    def __detect_shortcut(self, widget, event=None):
+        keyname = gtk.gdk.keyval_name(event.keyval)
+        
+        if (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'f':
+            self.show_friend_dialog(widget)
+            return True
+        elif (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'l':
+            self.clear(widget)
+            return True
+        elif (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 't':
+            self.update(widget)
+            return True
+        return False
+        
     def __unclose(self, widget, event=None):
         if not self.blocked:
             self.done()
         return True
         
     def show_friend_dialog(self, widget):
-        f = FriendsWin(self.mainwin, self.add_friend, 
+        f = FriendsWin(self, self.add_friend, 
             self.mainwin.request_friends_list())
         
     def block(self):
@@ -162,17 +183,22 @@ class UpdateBox(gtk.Window):
         self.btn_clr.set_sensitive(False)
         self.btn_upd.set_sensitive(False)
         self.btn_url.set_sensitive(False)
+        self.btn_frn.set_sensitive(False)
         
-    def release(self):
+    def release(self, msg=None):
         self.blocked = False
         self.update_text.set_sensitive(True)
         self.toolbox.set_sensitive(True)
         self.btn_clr.set_sensitive(True)
         self.btn_upd.set_sensitive(True)
         self.btn_url.set_sensitive(True)
+        self.btn_frn.set_sensitive(True)
         self.waiting.stop(error=True)
-        self.lblerror.set_markup("<span size='small'>%s</span>" % 
-            _('Oh oh... I couldn\'t send the tweet'))
+        
+        if not msg:
+            msg = _('Oh oh... I couldn\'t send the tweet')
+        
+        self.lblerror.set_markup("<span size='small'>%s</span>" % msg)
         self.set_focus(self.update_text)
         
     def show(self, text, id, user):
@@ -225,7 +251,12 @@ class UpdateBox(gtk.Window):
         if tweet == '': 
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
-                _('Eyy... you must write something'))
+                _('Hey!... you must write something'))
+            return
+        elif buffer.get_char_count() > 140:
+            self.waiting.stop(error=True)
+            self.lblerror.set_markup("<span size='small'>%s</span>" % 
+                _('Hey!... that message looks like a testament'))
             return
         
         self.waiting.start()
@@ -281,7 +312,7 @@ class UpdateBox(gtk.Window):
         dia.destroy()
         
     def update_uploaded_pic(self, pic_url):
-        if pic_url.err:
+        if pic_url.err or not pic_url.response:
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
                 _('Oops... I couldn\'t upload that image'))
@@ -318,7 +349,7 @@ class UpdateBox(gtk.Window):
         start = buffer.get_iter_at_offset(start_offset)
         text = buffer.get_text(start, end)
         
-        if (user != ' ') and (start_offset > 0):
+        if (text != ' ') and (start_offset > 0):
             user = ' ' + user
         
         buffer.insert_at_cursor(user)
@@ -335,6 +366,7 @@ class MessageTextView(gtk.TextView):
         self.set_left_margin(2)
         self.set_right_margin(2)
         self.set_wrap_mode(gtk.WRAP_WORD)
+        self.set_accepts_tab(False)
 
     def destroy(self):
         import gc

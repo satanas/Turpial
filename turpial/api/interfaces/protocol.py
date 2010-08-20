@@ -262,6 +262,13 @@ class Protocol:
         '''
         raise NotImplemented
         
+    def get_sent(self, count):
+        ''' 
+        Fetch the sent messages from the server 
+        Returns: a Response object with self.sent
+        '''
+        raise NotImplemented
+        
     def get_favorites(self, count):
         ''' 
         Fetch the favorites from the server 

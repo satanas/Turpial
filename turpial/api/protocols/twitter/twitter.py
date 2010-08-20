@@ -215,6 +215,19 @@ class Twitter(Protocol):
             return Response(self.directs, 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
+            
+    def get_sent(self, args):
+        '''Actualizando mensajes enviados'''
+        self.log.debug('Descargando enviados')
+        count = args['count']
+        
+        try:
+            rtn = self.http.request('%s/statuses/user_timeline' % self.apiurl, 
+                {'count': count})
+            self.directs = self.response_to_statuses(rtn)
+            return Response(self.directs, 'status')
+        except TurpialException, exc:
+            return Response(None, 'error', exc.msg)
         
     def get_favorites(self):
         '''Actualizando favoritos'''

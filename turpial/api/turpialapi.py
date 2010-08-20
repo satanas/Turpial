@@ -70,6 +70,8 @@ class TurpialAPI(threading.Thread):
             self.update_replies(callback, count)
         elif column.id == 'directs':
             self.update_directs(callback, count)
+        elif column.id == 'sent':
+            self.update_sent(callback, count)
         else:
             self.update_list(callback, column, count)
             
@@ -87,6 +89,11 @@ class TurpialAPI(threading.Thread):
         '''Actualizando mensajes directos'''
         self.log.debug('Solicitando Directos')
         self.__register(self.protocol.get_directs, {'count': count}, callback)
+        
+    def update_sent(self, callback, count=20):
+        '''Actualizando mensajes enviados'''
+        self.log.debug('Solicitando Enviados')
+        self.__register(self.protocol.get_sent, {'count': count}, callback)
         
     def update_list(self, callback, column, count=20):
         '''Actualizando lista'''

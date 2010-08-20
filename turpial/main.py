@@ -155,6 +155,7 @@ class Turpial:
             'timeline': MicroBloggingList('timeline', '', _('Timeline')),
             'replies': MicroBloggingList('replies', '', _('Replies')),
             'directs': MicroBloggingList('directs', '', _('Directs')),
+            'sent': MicroBloggingList('sent', '', _('My Tweets')),
         }
         plists = self.api.get_lists()
         for ls in plists:

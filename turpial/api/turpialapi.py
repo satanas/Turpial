@@ -268,12 +268,18 @@ class TurpialAPI(threading.Thread):
         
     def is_fav(self, tweet_id):
         for twt in self.tweets:
+            if not twt:
+                continue
             if tweet_id == str(twt['id']):
                 return twt['favorited']
         for twt in self.replies:
+            if not twt:
+                continue
             if tweet_id == str(twt['id']):
                 return twt['favorited']
         for twt in self.favorites:
+            if not twt:
+                continue
             if tweet_id == str(twt['id']):
                 return twt['favorited']
         

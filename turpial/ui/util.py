@@ -100,6 +100,8 @@ def count_new_tweets(tweets, last):
     index = 0
     for twt in tweets:
         found = False
+        if not twt:
+            continue
         for t in last:
             if twt['id'] == t['id']:
                 found = True

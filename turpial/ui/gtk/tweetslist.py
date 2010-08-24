@@ -428,6 +428,10 @@ class TweetList(gtk.VBox):
             self.stop_update()
             self.clear()
             for tweet in arr_tweets:
+                if not tweet:
+                    continue
+                #print tweet
+                #print "**************"
                 self.add_tweet(tweet)
             self.last = arr_tweets
             

@@ -20,6 +20,44 @@ if _py26_or_greater():
     import json
 else:
     import simplejson as json
+    
+def detect_desktop_environment():
+    desktop_environment = 'generic'
+    if os.environ.get('KDE_FULL_SESSION') == 'true':
+        desktop_environment = 'kde'
+    elif os.environ.get('GNOME_DESKTOP_SESSION_ID'):
+        desktop_environment = 'gnome'
+    else:
+        try:
+            info = getoutput('xprop -root _DT_SAVE_MODE')
+            if ' = "xfce4"' in info:
+                desktop_environment = 'xfce'
+        except (OSError, RuntimeError):
+            pass
+    return desktop_environment
+
+if detect_desktop_environment() == 'gnome':
+    try:
+        import gconf
+        gclient = gconf.client_get_default()
+        proxies = {}
+        if gclient.get_bool('/system/http_proxy/use_http_proxy'):
+            proxies['http'] = "http://%s:%d" % (
+                gclient.get_string('/system/http_proxy/host'), 
+                gclient.get_int('/system/http_proxy/port'))
+            if gclient.get_bool('/system/http_proxy/use_same_proxy'):
+                proxies['https'] = proxies['http'].replace('http:', 'https:')
+            elif gclient.get_string('/system/proxy/secure_host'):
+                proxies['https'] = "https://%s:%d" % (
+                    gclient.get_string('/system/http/secure_host'), 
+                    gclient.get_int('/system/proxy/secure_port'))
+
+        if proxies:
+            proxy_handler = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_handler, urllib2.HTTPHandler)
+            urllib2.install_opener(opener)
+    except:
+        print "Can't laod proxy configuration"
 
 class TurpialHTTP:
     def __init__(self, post_actions):

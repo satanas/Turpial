@@ -224,7 +224,6 @@ class Turpial:
             d = c[1:-1]
             e = base64.b16decode(d)
             pwd = e[0:len(us)]+ e[len(us):]
-            print pwd
             return us, pwd, True
         else:
             return us, pw, False

@@ -48,6 +48,7 @@ class Turpial:
         self.testmode = options.test
         self.httpserv = None
         self.api = None
+        self.version = self.global_cfg.read('App', 'version')
         
         if options.debug or options.clean: 
             logging.basicConfig(level=logging.DEBUG)
@@ -60,7 +61,7 @@ class Turpial:
             sys.exit(0)
             
         if options.version:
-            print "Turpial version %s" % self.global_cfg.read('App', 'version')
+            print "Turpial version %s" % self.version
             sys.exit(0)
             
         self.interface = options.interface
@@ -77,7 +78,7 @@ class Turpial:
         self.httpserv = HTTPServices()
         self.api = TurpialAPI()
         
-        self.log.debug('Iniciando Turpial')
+        self.log.debug('Iniciando Turpial v%s' % self.version)
         self.httpserv.start()
         self.api.start()
         self.api.change_api_url(self.global_cfg.read('Proxy', 'url'))

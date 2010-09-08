@@ -205,12 +205,18 @@ class Protocol:
         
     def is_favorite(self, id):
         for sta in self.timeline:
+            if not sta:
+                continue
             if sta.id == id:
                 return sta.is_favorite
         for sta in self.replies:
+            if not sta:
+                continue
             if sta.id == id:
                 return sta.is_favorite
         for sta in self.favorites:
+            if not sta:
+                continue
             if sta.id == id:
                 return sta.is_favorite
         return False

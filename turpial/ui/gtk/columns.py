@@ -54,9 +54,13 @@ class GenericColumn(gtk.VBox):
                 if self.tweetlist.autoscroll:
                     self.tweetlist.clear()
                     for tweet in arr_tweets:
+                        if not tweet:
+                            continue
                         self.tweetlist.add_tweet(tweet, False)
                 else:
                     for tweet in arr_tweets:
+                        if not tweet:
+                            continue
                         if self.last is None:
                             self.tweetlist.add_tweet(tweet, False)
                         elif not util.has_tweet(self.last, tweet):

@@ -143,6 +143,8 @@ class Twitter(Protocol):
     def response_to_statuses(self, response, mute=False):
         statuses = []
         for resp in response:
+            if not resp:
+                continue
             status = self.__create_status(resp)
             if status.retweet_by and self.oauth_support:
                 users = self.__get_retweet_users(status.id)

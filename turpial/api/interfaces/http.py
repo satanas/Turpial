@@ -5,6 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # May 20, 2010
 
+import os
 import socket
 import urllib2
 import logging
@@ -21,6 +22,12 @@ if _py26_or_greater():
 else:
     import simplejson as json
     
+try:
+    import gconf
+    GCONF = True
+except:
+    GCONF = False
+    
 def detect_desktop_environment():
     desktop_environment = 'generic'
     if os.environ.get('KDE_FULL_SESSION') == 'true':
@@ -36,29 +43,6 @@ def detect_desktop_environment():
             pass
     return desktop_environment
 
-if detect_desktop_environment() == 'gnome':
-    try:
-        import gconf
-        gclient = gconf.client_get_default()
-        proxies = {}
-        if gclient.get_bool('/system/http_proxy/use_http_proxy'):
-            proxies['http'] = "http://%s:%d" % (
-                gclient.get_string('/system/http_proxy/host'), 
-                gclient.get_int('/system/http_proxy/port'))
-            if gclient.get_bool('/system/http_proxy/use_same_proxy'):
-                proxies['https'] = proxies['http'].replace('http:', 'https:')
-            elif gclient.get_string('/system/proxy/secure_host'):
-                proxies['https'] = "https://%s:%d" % (
-                    gclient.get_string('/system/http/secure_host'), 
-                    gclient.get_int('/system/proxy/secure_port'))
-
-        if proxies:
-            proxy_handler = urllib2.ProxyHandler(proxies)
-            opener = urllib2.build_opener(proxy_handler, urllib2.HTTPHandler)
-            urllib2.install_opener(opener)
-    except:
-        print "Can't laod proxy configuration"
-
 class TurpialHTTP:
     def __init__(self, post_actions):
         self.format = 'json'
@@ -70,7 +54,28 @@ class TurpialHTTP:
         # timeout in seconds
         timeout = 20
         socket.setdefaulttimeout(timeout)
+        proxies = {}
         
+        if detect_desktop_environment() == 'gnome' and GCONF:
+            gclient = gconf.client_get_default()
+            if gclient.get_bool('/system/http_proxy/use_http_proxy'):
+                proxies['http'] = "http://%s:%d" % (
+                    gclient.get_string('/system/http_proxy/host'), 
+                    gclient.get_int('/system/http_proxy/port'))
+                if gclient.get_bool('/system/http_proxy/use_same_proxy'):
+                    proxies['https'] = proxies['http'].replace('http:', 'https:')
+                elif gclient.get_string('/system/proxy/secure_host'):
+                    proxies['https'] = "https://%s:%d" % (
+                        gclient.get_string('/system/http/secure_host'), 
+                        gclient.get_int('/system/proxy/secure_port'))
+            
+            if proxies:
+                self.log.debug('Proxies detectados: %s' % proxies)
+                proxy_handler = urllib2.ProxyHandler(proxies)
+                opener = urllib2.build_opener(proxy_handler, urllib2.HTTPHandler)
+                urllib2.install_opener(opener)
+            else:
+                self.log.debug('No se detectarion proxies en el sistema')
         
     def __build(self, uri, args={}):
         '''Construir la petición HTTP'''

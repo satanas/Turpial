@@ -30,7 +30,7 @@ class StatusList(gtk.ScrolledWindow):
         self.list.set_headers_visible(False)
         self.list.set_events(gtk.gdk.POINTER_MOTION_MASK)
         self.list.set_level_indentation(0)
-        self.list.set_rules_hint(True)
+        #self.list.set_rules_hint(True)
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
         
         self.model = gtk.ListStore(
@@ -61,7 +61,7 @@ class StatusList(gtk.ScrolledWindow):
         column.pack_start(cell_avatar, False)
         column.pack_start(self.cell_tweet, True)
         column.set_attributes(self.cell_tweet, markup=4, cell_background_gdk=11)
-        column.set_attributes(cell_avatar, pixbuf=0)
+        column.set_attributes(cell_avatar, pixbuf=0, cell_background_gdk=11)
         self.list.append_column(column)
         
         if menu == 'normal':
@@ -407,17 +407,21 @@ class StatusList(gtk.ScrolledWindow):
         
         pango_twt += footer
         
-        #color = gtk.gdk.Color(255*257, 242*257, 212*257) if p['fav'] else None
+        #naranja = gtk.gdk.Color(250 * 257, 241 * 257, 205 * 257)
+        #amarillo = gtk.gdk.Color(255 * 257, 251 * 257, 230 * 257)
+        #verde = gtk.gdk.Color(233 * 257, 247 * 257, 233 * 257)
+        #azul = gtk.gdk.Color(235 * 257, 242 * 257, 255 * 257)
+        
+        mention = True if pango_twt.find('@'+self.mainwin.me) >= 0 else False
         if p.is_favorite:
-            color = gtk.gdk.Color(250 * 257, 237 * 257, 187 * 257)
+            color = gtk.gdk.Color(250 * 257, 241 * 257, 205 * 257)
+        elif mention:
+            color = gtk.gdk.Color(233 * 257, 247 * 257, 233 * 257)
+        #elif self.mark_new:
+        #    color = gtk.gdk.Color(235 * 257, 242 * 257, 255 * 257)
         else:
             color = None
-            '''
-            if self.mark_new:
-                color = gtk.gdk.Color(151 * 257, 191 * 257, 227 * 257)
-            else:
-                color = None
-            '''
+            
         row = [pix, p.username, p.datetime, p.source, pango_twt, p.text, p.id, 
             p.is_favorite, p.in_reply_to_id, p.in_reply_to_user, p.retweet_by, 
             color]
@@ -462,11 +466,15 @@ class StatusList(gtk.ScrolledWindow):
     def set_autoscroll(self, value):
         self.autoscroll = value
         
+    '''
     def unset_bg_color(self):
+        print "unset_bg_color"
         iter = self.model.get_iter_first()
         while iter:
             color = self.model.get_value(iter, 11)
-            if color:
-                self.model.set_value(iter, 11, None)
+            fav = self.model.get_value(iter, 7)
+            if not fav: 
+                if color:
+                    self.model.set_value(iter, 11, None)
             iter = self.model.iter_next(iter)
-            
+    '''

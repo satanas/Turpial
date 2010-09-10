@@ -111,7 +111,6 @@ class Main(BaseGui, gtk.Window):
             
     def __on_focus(self, widget, event):
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
-        gobject.timeout_add(5000, self.__unset_bg_color)
         
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
@@ -157,10 +156,6 @@ class Main(BaseGui, gtk.Window):
         self.save_config({'General': {'single-win-size': single_value,
             'wide-win-size': wide_value, 'window-position': pos_value}},
             update=False)
-    
-    def __unset_bg_color(self):
-        self.home.timeline.clear_bg_color()
-        return False
         
     def load_image(self, path, pixbuf=False):
         img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),

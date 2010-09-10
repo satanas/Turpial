@@ -174,8 +174,8 @@ class Turpial:
         
         self._update_column1()
         if self.testmode:
-            self._update_friends()
             self._update_rate_limits()
+            self._update_friends()
             return
         self._update_column2()
         self._update_column3()

@@ -93,7 +93,7 @@ class GenericColumn(gtk.VBox):
         pass
         
 class StandardColumn(GenericColumn):
-    def __init__(self, mainwin, label='', menu='normal', pos=None, viewed=None, marknew=False):
+    def __init__(self, mainwin, label='', menu='normal', pos=None, viewed=None, marknew=True):
         GenericColumn.__init__(self, mainwin, label, menu, marknew)
         
         self.pos = pos

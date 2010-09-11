@@ -412,7 +412,10 @@ class StatusList(gtk.ScrolledWindow):
         #verde = gtk.gdk.Color(233 * 257, 247 * 257, 233 * 257)
         #azul = gtk.gdk.Color(235 * 257, 242 * 257, 255 * 257)
         
-        mention = True if pango_twt.find('@'+self.mainwin.me) >= 0 else False
+        msg = p.text.lower()
+        me = '@'+self.mainwin.me
+        mention = True if msg.find(me.lower()) >= 0 else False
+        
         if p.is_favorite:
             color = gtk.gdk.Color(250 * 257, 241 * 257, 205 * 257)
         elif mention:

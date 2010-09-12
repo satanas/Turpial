@@ -92,6 +92,7 @@ class Twitter(Protocol):
         profile.statuses_count = pf['statuses_count']
         if pf.has_key('status'):
             profile.last_update = pf['status']['text']
+            profile.last_update_id = pf['status']['id']
         profile.profile_link_color = ('#%s' % pf['profile_link_color']) or '#0F0F85'
         return profile
         
@@ -338,9 +339,11 @@ class Twitter(Protocol):
         try:
             rtn = self.http.request('%s/statuses/update' % self.apiurl, args)
             # Evita que se duplique el último estado del usuario
-            if rtn['text'] != self.profile.last_update:
+            if rtn['id'] != self.profile.last_update_id:
                 status = self.__create_status(rtn)
                 self._add_status(self.timeline, status)
+                self.profile.last_update = rtn['text']
+                self.profile.last_update_id = rtn['id']
             timeline = self.get_muted_timeline()
             return Response(timeline, 'status')
         except TurpialException, exc:

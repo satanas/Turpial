@@ -218,16 +218,21 @@ class Turpial:
     def get_remembered(self):
         us = self.global_cfg.read('Login', 'username')
         pw = self.global_cfg.read('Login', 'password')
-        if us != '' and pw != '':
-            a = base64.b64decode(pw)
-            b = a[1:-1]
-            c = base64.b32decode(b)
-            d = c[1:-1]
-            e = base64.b16decode(d)
-            pwd = e[0:len(us)]+ e[len(us):]
-            return us, pwd, True
-        else:
-            return us, pw, False
+        try:
+            if us != '' and pw != '':
+                a = base64.b64decode(pw)
+                b = a[1:-1]
+                c = base64.b32decode(b)
+                d = c[1:-1]
+                e = base64.b16decode(d)
+                pwd = e[0:len(us)]+ e[len(us):]
+                return us, pwd, True
+            else:
+                return us, pw, False
+        except TypeError:
+            self.global_cfg.write('Login', 'username','')
+            self.global_cfg.write('Login', 'password','')
+            return '', '', False
         
     def remember(self, us, pw, rem=False):
         a = base64.b16encode(pw)

@@ -11,7 +11,7 @@ import ConfigParser
 
 GLOBAL_CFG = {
     'App':{
-        'version': '1.4.7-a1',
+        'version': '1.4.7-a4',
     },
     'Login':{
         'username': '',

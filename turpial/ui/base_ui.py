@@ -39,7 +39,7 @@ class BaseGui:
             log.debug('LOCALEDIR: %s' % localedir)
         else:
             trans = gettext.install(gettext_domain)
-        
+            
     # ------------------------------------------------------------
     # Private/Internal methods
     # ------------------------------------------------------------

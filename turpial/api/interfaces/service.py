@@ -128,7 +128,7 @@ class GenericService:
                 return tag.split(">")[1].strip()
         
     def do_service(self, arg):
-        raise NotImplemented
+        raise NotImplementedError
         
 class ServiceResponse:
     def __init__(self, response=None, err=False, err_msg=None):

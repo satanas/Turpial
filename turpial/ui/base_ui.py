@@ -32,10 +32,14 @@ class BaseGui:
         
         # Initialize gettext
         gettext_domain = 'turpial'
-        # FIXME: Definir path de localedir en caso de no encontrar esperado
-        # localedir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'i18n'))
-        # trans = gettext.install(gettext_domain, localedir)
-        trans = gettext.install(gettext_domain)
+        # Definicion de localedir en modo desarrollo
+        if os.path.isdir(os.path.join(os.path.dirname(__file__), '..', 'i18n')):
+            localedir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'i18n'))
+            trans = gettext.install(gettext_domain, localedir)
+            log.debug('LOCALEDIR: %s' % localedir)
+        else:
+            trans = gettext.install(gettext_domain)
+        
     # ------------------------------------------------------------
     # Private/Internal methods
     # ------------------------------------------------------------
@@ -322,7 +326,7 @@ class BaseGui:
     # ------------------------------------------------------------
     
     def resize_avatar(self, pic):
-        raise NotImplemented
+        raise NotImplementedError
         
     def main_loop(self):
         raise NotImplementedError

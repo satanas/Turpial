@@ -237,85 +237,85 @@ class Protocol:
     def response_to_statuses(self, response, mute=False):
         ''' Take the server response and transform into an array of Status 
         objects inside a Response object '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def response_to_profiles(self, response):
         ''' Take the server response and transform into an array of Profile 
         objects inside a Response object '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def auth(self, username, password):
-        raise NotImplemented
+        raise NotImplementedError
         
     def get_timeline(self, count):
         ''' 
         Fetch the timeline from the server 
         Returns: a Response object with self.timeline
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def get_replies(self, count):
         ''' 
         Fetch the mentions from the server 
         Returns: a Response object with self.replies
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def get_directs(self, count):
         ''' 
         Fetch the directs from the server 
         Returns: a Response object with self.directs
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def get_sent(self, count):
         ''' 
         Fetch the sent messages from the server 
         Returns: a Response object with self.sent
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def get_favorites(self, count):
         ''' 
         Fetch the favorites from the server 
         Returns: a Response object with self.favorites
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def get_rate_limits(self):
         ''' 
         Fetch the rate limits from API 
         Returns: a Response object with a RateLimit
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def get_conversation(self, id):
         ''' 
         Fetch the whole conversation from a single status
         Returns: a Response object of statuses
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def get_friends_list(self):
         ''' 
         Fetch the whole friends list
         Returns: a Response object of profiles
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def update_profile(self, name, url, bio, location):
         ''' 
         Update the user profile
         Returns: a Response object with the user profile
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def update_status(self, in_reply_to_id):
         ''' 
         Post an update
         Returns: a Response object with the posted status
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def destroy_status(self, id):
         ''' 
@@ -328,14 +328,14 @@ class Protocol:
         # All the dirty work goes here
         self._destroy_status(id)
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def repeat(self, id):
         ''' 
         Repeat to all your friends an update posted by somebody
         Returns: a Response object with self.timeline
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def mark_favorite(self, id):
         ''' 
@@ -349,7 +349,7 @@ class Protocol:
         # All the dirty work goes here
         self._set_status_favorite(id)
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def unmark_favorite(self, id):
         ''' 
@@ -363,25 +363,25 @@ class Protocol:
         # All the dirty work goes here
         self._unset_status_favorite(id)
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def follow(self, user):
         ''' 
         Follow somebody
         Returns: four objects: single_friend_list, self.profile, user and True
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def unfollow(self, user):
         ''' 
         Unfollow somebody
         Returns: four objects: single_friend_list, self.profile, user and False
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def send_direct(self, user, text):
         # FIXME: Implementar
-        #raise NotImplemented
+        #raise NotImplementedError
         pass
         
     def destroy_direct(self, id):
@@ -395,25 +395,25 @@ class Protocol:
         # All the dirty work goes here
         self._destroy_status(id)
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def search(self, query, count):
         ''' 
         Execute a query in server
         Returns: a Response object with query results
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def get_lists(self):
         ''' 
         Fetch all lists for the user in that protocol
         Returns: a Response object with query results
         '''
-        raise NotImplemented
+        raise NotImplementedError
         
     def get_list_statuses(self, args):
         ''' 
         Fetch all statuses for a specific list
         Returns: a Response object with query results
         '''
-        raise NotImplemented
+        raise NotImplementedError

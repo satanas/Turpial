@@ -126,13 +126,13 @@ class BaseGui:
         '''Saves the global config'''
         self.__controller.save_global_config(new_config)
     
-    def request_remember(self, username, password, rem=False):
+    def request_remember(self, username, password, protocol, rem=False):
         '''Request remember'''
-        self.__controller.remember(username, password, rem)
+        self.__controller.remember(username, password, protocol, rem)
         
-    def request_remembered(self):
+    def request_remembered(self, protocol):
         '''Request simple signin'''
-        return self.__controller.get_remembered()
+        return self.__controller.get_remembered(protocol)
     
     def request_signin(self, username, password, protocol):
         '''Request simple signin'''

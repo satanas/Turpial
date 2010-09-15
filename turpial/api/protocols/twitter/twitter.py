@@ -165,6 +165,7 @@ class Twitter(Protocol):
         username = args['username']
         password = args['password']
         auth = args['auth']
+        protocol = args['protocol']
         
         try:
             key, secret = self.http.auth(username, password)
@@ -173,12 +174,12 @@ class Twitter(Protocol):
             self.profile = self.__create_profile(rtn)
             self.profile.password = password
             #return Response([self.profile, key, secret], 'mixed')
-            return Response(self.profile, 'profile'), key, secret
+            return Response(self.profile, 'profile'), key, secret, protocol
         except TurpialException, exc:
-            return Response(None, 'error', exc.msg), None, None
+            return Response(None, 'error', exc.msg), None, None, None
         except Exception, exc:
             self.log.debug('Authentication Error: %s' % exc)
-            return Response(None, 'error', _('Authentication Error')), None, None
+            return Response(None, 'error', _('Authentication Error')), None, None, None
         
     def get_timeline(self, args):
         '''Actualizando linea de tiempo'''

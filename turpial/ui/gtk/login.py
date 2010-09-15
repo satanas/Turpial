@@ -10,6 +10,7 @@ import base64
 
 from turpial.ui.gtk.loginlabel import LoginLabel
 from turpial.ui.gtk.waiting import CairoWaiting
+from turpial.config import PROTOCOLS
 
 class LoginBox(gtk.VBox):
     def __init__(self, mainwin):
@@ -18,7 +19,7 @@ class LoginBox(gtk.VBox):
         self.mainwin = mainwin
         avatar = self.mainwin.load_image('logo2.png')
         self.message = LoginLabel(self)
-        us, pw, rem = self.mainwin.request_remembered()
+        us, pw, rem = self.mainwin.request_remembered(PROTOCOLS[0])
         
         lbl_user = gtk.Label()
         lbl_user.set_use_markup(True)
@@ -36,10 +37,10 @@ class LoginBox(gtk.VBox):
         self.btn_oauth = gtk.Button(_('Connect'))
         
         list = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
-        t_icon = self.mainwin.load_image('twitter.png', True)
-        list.append([t_icon, 'Twitter', 'twitter'])
-        i_icon = self.mainwin.load_image('identica.png', True)
-        list.append([i_icon, 'Identi.ca', 'identi.ca'])
+        for p in PROTOCOLS:
+            image = '%s.png' % p
+            t_icon = self.mainwin.load_image(image, True)
+            list.append([t_icon, p, p])
         
         self.combo_protocol = gtk.ComboBox(list)
         icon_cell = gtk.CellRendererPixbuf()
@@ -83,12 +84,14 @@ class LoginBox(gtk.VBox):
         self.password.connect('activate', self.signin)
         self.rhandler = self.remember.connect("toggled", self.__toogle_remember)
         self.btn_settings.connect('clicked', self.mainwin.show_preferences, 'global')
+        self.combo_protocol.connect('changed', self.__change_protocol)
         self.remember.set_active(rem)
         
     def __toogle_remember(self, widget):
         user = self.username.get_text()
         pwd = self.password.get_text()
         rem = self.remember.get_active()
+        prot = self.combo_protocol.get_active()
         
         if user == '' or pwd == '':
             self.remember.disconnect(self.rhandler)
@@ -105,8 +108,25 @@ class LoginBox(gtk.VBox):
             self.username.set_sensitive(True)
             self.password.set_sensitive(True)
         
-        self.mainwin.request_remember(user, pwd, rem)
+        self.mainwin.request_remember(user, pwd, prot, rem)
             
+    def __change_protocol(self, widget):
+        prot = self.combo_protocol.get_active()
+        us, pw, rem = self.mainwin.request_remembered(PROTOCOLS[prot])
+        
+        self.username.set_text(us)
+        self.password.set_text(pw)
+        self.remember.disconnect(self.rhandler)
+        self.remember.set_active(rem)
+        self.rhandler = self.remember.connect("toggled", self.__toogle_remember)
+        
+        if rem:
+            self.username.set_sensitive(False)
+            self.password.set_sensitive(False)
+        else:
+            self.username.set_sensitive(True)
+            self.password.set_sensitive(True)
+        
     def signin(self, widget):
         self.message.deactivate()
         self.waiting.start()
@@ -116,8 +136,10 @@ class LoginBox(gtk.VBox):
         self.remember.set_sensitive(False)
         self.btn_settings.set_sensitive(False)
         self.combo_protocol.set_sensitive(False)
+        
+        prot = self.combo_protocol.get_active()
         self.mainwin.request_signin(self.username.get_text(), 
-            self.password.get_text(), self.combo_protocol.get_active())
+            self.password.get_text(), PROTOCOLS[prot])
         
     def cancel_login(self, error):
         self.message.set_error(error)

@@ -16,7 +16,7 @@ from optparse import OptionParser
 from turpial.ui.gtk.main import Main as _GTK
 from turpial.api.servicesapi import HTTPServices
 from turpial.api.turpialapi import TurpialAPI
-from turpial.config import ConfigHandler, ConfigApp
+from turpial.config import ConfigHandler, ConfigApp, ConfigProtocol, PROTOCOLS
 
 try:
     import ctypes
@@ -44,11 +44,15 @@ class Turpial:
         
         self.config = None
         self.global_cfg = ConfigApp()
+        self.protocol_cfg = {}
         self.profile = None
         self.testmode = options.test
         self.httpserv = None
         self.api = None
         self.version = self.global_cfg.read('App', 'version')
+        
+        for p in PROTOCOLS:
+            self.protocol_cfg[p] = ConfigProtocol(p)
         
         if options.debug or options.clean: 
             logging.basicConfig(level=logging.DEBUG)
@@ -105,23 +109,15 @@ class Turpial:
                     self.log.debug("Borrado %s" % path)
                     os.remove(path)
             
-    def __validate_credentials(self, val, key, secret):
+    def __validate_credentials(self, val, key, secret, protocol):
         '''Chequeo de credenciales'''
         if val.type == 'error':
             self.ui.cancel_login(val.errmsg)
         elif val.type == 'profile':
             self.profile = val.items
-            self.config = ConfigHandler(self.profile.username)
+            self.config = ConfigHandler(self.profile.username, protocol)
             self.config.initialize()
-            '''
-            if self.remember:
-                self.global_cfg.write('Login', 'username', self.profile.username)
-                self.global_cfg.write('Login', 'password',
-                                      base64.b64encode(self.profile.password))
-            else:
-                self.global_cfg.write('Login', 'username', '')
-                self.global_cfg.write('Login', 'password', '')
-            '''
+            
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.profile.username, self.profile.password)
             
@@ -215,9 +211,9 @@ class Turpial:
         '''Actualizar amigos'''
         self.api.get_friends()
     
-    def get_remembered(self):
-        us = self.global_cfg.read('Login', 'username')
-        pw = self.global_cfg.read('Login', 'password')
+    def get_remembered(self, protocol):
+        us = self.protocol_cfg[protocol].read('Login', 'username')
+        pw = self.protocol_cfg[protocol].read('Login', 'password')
         try:
             if us != '' and pw != '':
                 a = base64.b64decode(pw)
@@ -230,11 +226,11 @@ class Turpial:
             else:
                 return us, pw, False
         except TypeError:
-            self.global_cfg.write('Login', 'username','')
-            self.global_cfg.write('Login', 'password','')
+            self.protocol_cfg[protocol].write('Login', 'username','')
+            self.protocol_cfg[protocol].write('Login', 'password','')
             return '', '', False
         
-    def remember(self, us, pw, rem=False):
+    def remember(self, us, pw, pro, rem=False):
         a = base64.b16encode(pw)
         b = us[0] + a + ('%s' % us[-1])
         c = base64.b32encode(b)
@@ -242,15 +238,16 @@ class Turpial:
         e = base64.b64encode(d)
         pwd = e[0:len(us)]+ e[len(us):]
         
+        protocol = PROTOCOLS[pro]
         if rem:
-            self.global_cfg.write('Login', 'username', us)
-            self.global_cfg.write('Login', 'password', pwd)
+            self.protocol_cfg[protocol].write('Login', 'username', us)
+            self.protocol_cfg[protocol].write('Login', 'password', pwd)
         else:
-            self.global_cfg.write('Login', 'username', '')
-            self.global_cfg.write('Login', 'password', '')
+            self.protocol_cfg[protocol].write('Login', 'username', '')
+            self.protocol_cfg[protocol].write('Login', 'password', '')
     
     def signin(self, username, password, protocol):
-        config = ConfigHandler(username)
+        config = ConfigHandler(username, protocol)
         config.initialize_failsafe()
         auth = config.read_section('Auth')
         self.api.auth(username, password, auth, protocol,

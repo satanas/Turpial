@@ -542,7 +542,7 @@ class Twitter(Protocol):
         
         try:
             rtn = self.http.request('%s/%s/lists/%s/statuses' % (self.apiurl, 
-                user, id), {'count': count})
+                user, id), {'per_page': count})
             statuses = self.response_to_statuses(rtn)
             return Response(statuses, 'status')
         except TurpialException, exc:

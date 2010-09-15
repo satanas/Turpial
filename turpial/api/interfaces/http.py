@@ -72,7 +72,7 @@ class TurpialHTTP:
                     proxies['https'] = proxies['http']
                 elif gclient.get_string('/system/proxy/secure_host'):
                     proxies['https'] = "%s:%d" % (
-                        gclient.get_string('/system/http/secure_host'), 
+                        gclient.get_string('/system/proxy/secure_host'), 
                         gclient.get_int('/system/proxy/secure_port'))
             
             if proxies:
@@ -84,7 +84,7 @@ class TurpialHTTP:
                     opener = urllib2.build_opener(ConnectHTTPSHandler(proxy=proxies['http']))
                     urllib2.install_opener(opener)
             else:
-                self.log.debug('No se detectarion proxies en el sistema')
+                self.log.debug('No se detectaron proxies en el sistema')
         
     def __build(self, uri, args={}):
         '''Construir la petición HTTP'''

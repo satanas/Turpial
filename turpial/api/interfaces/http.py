@@ -36,6 +36,9 @@ def detect_desktop_environment():
         desktop_environment = 'kde'
     elif os.environ.get('GNOME_DESKTOP_SESSION_ID'):
         desktop_environment = 'gnome'
+    # FIXME: Deshabilitado temporalmente mientras se encuentra una forma de 
+    # detectar otros tipos de escritorios
+    '''
     else:
         try:
             info = getoutput('xprop -root _DT_SAVE_MODE')
@@ -43,6 +46,7 @@ def detect_desktop_environment():
                 desktop_environment = 'xfce'
         except (OSError, RuntimeError):
             pass
+    '''
     return desktop_environment
 
 class TurpialHTTP:

@@ -77,12 +77,14 @@ class TurpialHTTP:
             
             if proxies:
                 self.log.debug('Proxies detectados: %s' % proxies)
-                if proxies.has_key('https'):
-                    opener = urllib2.build_opener(ConnectHTTPSHandler(proxy=proxies['https']))
-                    urllib2.install_opener(opener)
+                if _py26_or_greater():
+                    opener = urllib2.build_opener(urllib2.ProxyHandler(proxies), urllib2.HTTPHandler)
                 else:
-                    opener = urllib2.build_opener(ConnectHTTPSHandler(proxy=proxies['http']))
-                    urllib2.install_opener(opener)
+                    if proxies.has_key('https'):
+                        opener = urllib2.build_opener(ConnectHTTPSHandler(proxy=proxies['https']))
+                    else:
+                        opener = urllib2.build_opener(ConnectHTTPSHandler(proxy=proxies['http']))
+                urllib2.install_opener(opener)
             else:
                 self.log.debug('No se detectaron proxies en el sistema')
         

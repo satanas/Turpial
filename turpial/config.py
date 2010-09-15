@@ -9,6 +9,12 @@ import os
 import logging
 import ConfigParser
 
+try:
+    from xdg import BaseDirectory
+    XDG_CACHE = True
+except:
+    XDG_CACHE = False
+
 GLOBAL_CFG = {
     'App':{
         'version': '1.4.7-a4',
@@ -26,10 +32,6 @@ GLOBAL_CFG = {
     }
 }
 DEFAULT_CFG = {
-    'Auth':{
-        'oauth-key': '',
-        'oauth-secret': '',
-    },
     'General':{
         'home-update-interval': '3',
         'replies-update-interval': '10',
@@ -169,7 +171,12 @@ class ConfigHandler(ConfigBase):
         
         self.dir = os.path.join(os.path.expanduser('~'), '.config',
             'turpial', user)
-        self.imgdir = os.path.join(self.dir, 'images')
+        if XDG_CACHE:
+            self.imgdir = os.path.join(BaseDirectory.xdg_cache_home, 
+                'turpial', user)
+        else:
+            self.imgdir = os.path.join(self.dir, 'images')
+        self.log.debug('CACHEDIR: %s' % self.imgdir)
         self.filepath = os.path.join(self.dir, 'config')
         self.mutedpath = os.path.join(self.dir, 'muted')
     

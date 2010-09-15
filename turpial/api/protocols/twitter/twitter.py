@@ -167,7 +167,7 @@ class Twitter(Protocol):
         auth = args['auth']
         
         try:
-            key, secret = self.http.auth(username, password, auth)
+            key, secret = self.http.auth(username, password)
             rtn = self.http.request('%s/account/verify_credentials' % 
                 self.apiurl)
             self.profile = self.__create_profile(rtn)

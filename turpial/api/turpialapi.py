@@ -218,6 +218,8 @@ class TurpialAPI(threading.Thread):
                 req = self.queue.get(True, 0.3)
             except Queue.Empty:
                 continue
+            except:
+                continue
             
             (funct, args, callback) = req
             

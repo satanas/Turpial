@@ -468,6 +468,7 @@ class Main(BaseGui, gtk.Window):
         log.debug('Cambiando a modo %s (%s)' % (self.workspace, size))
         self.dock.change_mode(self.workspace)
         self.home.change_mode(self.workspace)
+        self.home.update_wrap(cur_w, self.workspace)
         self.profile.change_mode(self.workspace)
         self.show_all()
         

@@ -163,6 +163,9 @@ class StandardColumn(GenericColumn):
         self.last_index = default
         self.listcombo.set_model(model)
         self.listcombo.set_active(self.last_index)
+        iter = self.listcombo.get_active_iter()
+        self.caption = model.get_value(iter, 1)
+        self.label = gtk.Label(self.caption)
         self.handler = self.listcombo.connect('changed', self.__change_list)
         
     def set_combo_item(self, reset=False):

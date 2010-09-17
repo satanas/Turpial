@@ -165,8 +165,8 @@ class Turpial:
         ]
         
         self.api.muted_users = self.config.load_muted_list()
-        self.ui.show_main(self.config, self.global_cfg, resp_profile)
         self.ui.set_lists(self.lists, self.viewed_cols)
+        self.ui.show_main(self.config, self.global_cfg, resp_profile)
         
         self._update_column1()
         if self.testmode:

@@ -146,6 +146,10 @@ class StandardColumn(GenericColumn):
         self.changing_col = True
         self.caption = new_caption
         self.label = gtk.Label(new_caption)
+        try:
+            self.get_parent().set_tab_label(self, self.label)
+        except:
+            pass
         self.mainwin.request_change_column(self.pos, new_id)
         
     def fill_combo(self, columns, new_viewed):

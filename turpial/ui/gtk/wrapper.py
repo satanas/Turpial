@@ -45,6 +45,11 @@ class Wrapper(gtk.VBox):
                     box.pack_start(widget, True, True)
                 self.wrapper.pack_start(box)
         else:
+            try:
+                current_tab = self.wrapper.get_current_page()
+            except:
+                current_tab = 0
+
             self.wrapper = gtk.Notebook()
             
             for i in range(3):
@@ -61,7 +66,9 @@ class Wrapper(gtk.VBox):
                 
                 self.wrapper.set_tab_label_packing(widget,
                                                    True, True, gtk.PACK_START)
-            
+            if current_tab <> -1:
+                self.wrapper.set_current_page(current_tab)
+
         self.add(self.wrapper)
         self.show_all()
         

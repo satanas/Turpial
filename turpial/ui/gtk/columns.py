@@ -142,7 +142,10 @@ class StandardColumn(GenericColumn):
         model = self.listcombo.get_model()
         iter = self.listcombo.get_active_iter()
         new_id = model.get_value(iter, 0)
+        new_caption = model.get_value(iter, 1)
         self.changing_col = True
+        self.caption = new_caption
+        self.label = gtk.Label(new_caption)
         self.mainwin.request_change_column(self.pos, new_id)
         
     def fill_combo(self, columns, new_viewed):

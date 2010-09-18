@@ -468,12 +468,12 @@ class Main(BaseGui, gtk.Window):
         log.debug('Cambiando a modo %s (%s)' % (self.workspace, size))
         self.dock.change_mode(self.workspace)
         self.home.change_mode(self.workspace)
+        self.home.update_wrap(cur_w, self.workspace)
         self.profile.change_mode(self.workspace)
         self.show_all()
         
     def update_config(self, config, global_cfg=None, thread=False):
         log.debug('Actualizando configuracion')
-        self.workspace = config.read('General', 'workspace')
         self.minimize = config.read('General', 'minimize-on-close')
         home_interval = int(config.read('General', 'home-update-interval'))
         replies_interval = int(config.read('General', 'replies-update-interval'))
@@ -490,8 +490,13 @@ class Main(BaseGui, gtk.Window):
             self.wide_win_size = (int(wide_size[0]), int(wide_size[1]))
             self.win_pos = (int(win_pos[0]), int(win_pos[1]))
             gtk.gdk.threads_enter()
-            
-        self.set_mode()
+        
+        if self.workspace <> config.read('General', 'workspace'):
+            self.workspace = config.read('General', 'workspace')
+            self.set_mode()
+        elif thread:
+            #This is needed to show the correct tab caption at startup
+            self.set_mode()
         
         if (self.home_interval != home_interval):
             if self.home_timer: gobject.source_remove(self.home_timer)

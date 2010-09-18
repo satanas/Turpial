@@ -144,8 +144,11 @@ class StandardColumn(GenericColumn):
         new_id = model.get_value(iter, 0)
         self.caption = model.get_value(iter, 1)
         self.changing_col = True
-        print self.caption
         self.label.set_label(self.caption)
+        try:
+            self.get_parent().set_tab_label(self, self.label)
+        except:
+            pass
         self.mainwin.request_change_column(self.pos, new_id)
         
     def fill_combo(self, columns, new_viewed):

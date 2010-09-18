@@ -379,7 +379,6 @@ class Turpial:
                 self._update_column2()
             elif index == 2:
                 self._update_column3()
-            #self.ui.set_column_item(index)
         else:
             self.ui.set_column_item(index, reset=True)
             self.log.debug('Error: la columna %s no existe' % new_id)

@@ -22,7 +22,7 @@ class BaseGui:
         self.__controller = controller
         self.__user_pics = {}
         self.__queued_pics = []
-        self.updating = {1: False, 2: False, 3: False}
+        self.updating = [False, False, False]
         
         self.columns_lists = {}
         self.columns_viewed = []
@@ -109,6 +109,10 @@ class BaseGui:
     def after_destroy_direct(self, directs):
         '''Update columns after destroy a direct'''
         self.update_directs(directs)
+        
+    def read_config_value(self, section, option):
+        '''Read specific value from config'''
+        return self.__controller.config.read(section, option)
         
     def read_config(self):
         '''Read all the user config'''
@@ -260,6 +264,10 @@ class BaseGui:
         '''Get the profiles url'''
         return self.__controller.get_profiles_url()
         
+    def request_viewed_columns(self):
+        '''Get the array for viewed columns'''
+        return self.__controller.get_viewed_columns()
+        
     def request_change_column(self, index, new_id):
         ''' Change the column at index for the indicated by new_id '''
         self.__controller.change_column(index, new_id)
@@ -294,23 +302,23 @@ class BaseGui:
     # Estos métodos deben ser llamados por la clase hija cada cierto tiempo
     
     def download_column1(self):
-        if self.updating[1]: return True
+        if self.updating[0]: return True
         
-        self.updating[1] = True
+        self.updating[0] = True
         self.__controller._update_column1()
         return True
         
     def download_column2(self):
-        if self.updating[2]: return True
+        if self.updating[1]: return True
         
-        self.updating[2] = True
+        self.updating[1] = True
         self.__controller._update_column2()
         return True
         
     def download_column3(self):
-        if self.updating[3]: return True
+        if self.updating[2]: return True
         
-        self.updating[3] = True
+        self.updating[2] = True
         self.__controller._update_column3()
         return True
         

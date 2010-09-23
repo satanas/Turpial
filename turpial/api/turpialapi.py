@@ -94,7 +94,7 @@ class TurpialAPI(threading.Thread):
         
     def update_sent(self, callback, count=20):
         '''Actualizando mensajes enviados'''
-        self.log.debug('Solicitando Enviados')
+        self.log.debug('Solicitando Mis Tweets')
         self.__register(self.protocol.get_sent, {'count': count}, callback)
         
     def update_list(self, callback, column, count=20):

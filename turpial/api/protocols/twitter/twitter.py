@@ -222,7 +222,7 @@ class Twitter(Protocol):
             
     def get_sent(self, args):
         '''Actualizando mensajes enviados'''
-        self.log.debug('Descargando enviados')
+        self.log.debug('Descargando mis tweets')
         count = args['count']
         
         try:

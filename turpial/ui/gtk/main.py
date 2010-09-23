@@ -23,6 +23,7 @@ from turpial.ui.gtk.follow import Follow
 from turpial.ui.base_ui import BaseGui
 from turpial.notification import Notification
 from turpial.ui import util as util
+from turpial.sound import Sound
 
 try:
     import webkit
@@ -75,6 +76,7 @@ class Main(BaseGui, gtk.Window):
         self.replies_timer = None
         self.directs_timer = None
         
+        self.sound = Sound()
         self.notify = Notification()
         
         self.home = Home(self, self.workspace)
@@ -157,6 +159,42 @@ class Main(BaseGui, gtk.Window):
             'wide-win-size': wide_value, 'window-position': pos_value}},
             update=False)
         
+    def _notify_new_tweets(self, column, tweets, last, count):
+        tweet = None
+        i = 0
+        while 1:
+            if tweets.items[i].username == self.me:
+                if not util.has_tweet(last, tweets.items[i]):
+                    tweet = tweets.items[i]
+                    break
+            else:
+                tweet = tweets.items[i]
+                break
+            i += 1
+        
+        if count == 1:
+            tobject = column.single_unit
+        else:
+            tobject = column.plural_unit
+        
+        p = self.parse_tweet(tweet)
+        icon = self.current_avatar_path(p.avatar)
+        twt = util.unescape_text(p.text)
+        text = "<b>@%s</b> %s" % (p.username, twt)
+        
+        self.notify.new_tweets(column.title, count, tobject, text, icon)
+        
+        if self.read_config_value('Notifications', 'sound') == 'on':
+            if column.id == 'replies':
+                self.sound.replies()
+            elif column.id == 'directs':
+                self.sound.directs()
+            else:
+                self.sound.tweets()
+        
+        if not self.get_property('is-active'):
+            self.tray.set_from_pixbuf(self.load_image('turpial-tray-update.png', True))
+                
     def load_image(self, path, pixbuf=False):
         img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
             '..', '..', 'data', 'pixmaps', path))
@@ -270,7 +308,10 @@ class Main(BaseGui, gtk.Window):
             self.move(self.win_pos[0], self.win_pos[1])
         gtk.gdk.threads_leave()
         
-        self.notify.login(p.items)
+        if config.read('Notifications', 'login') == 'on':
+            self.notify.login(p.items)
+            if config.read('Notifications', 'sound') == 'on':
+                self.sound.login()
         
         gobject.timeout_add(6 * 60 * 1000, self.download_rates)
         
@@ -314,69 +355,49 @@ class Main(BaseGui, gtk.Window):
         self.profile.search.start_update()
         
     def update_column1(self, tweets):
-        log.debug(u'Actualizando el timeline')
         gtk.gdk.threads_enter()
         
         last = self.home.timeline.last
         count = self.home.timeline.update_tweets(tweets)
+        column = self.request_viewed_columns()[0]
+        show_notif = self.read_config_value('Notifications', 'home')
         
-        if count > 0 and self.updating[1]:
-            tweet = None
-            i = 0
-            while 1:
-                if tweets.items[i].username == self.me:
-                    if not util.has_tweet(last, tweets.items[i]):
-                        tweet = tweets.items[i]
-                        break
-                else:
-                    tweet = tweets.items[i]
-                    break
-                i += 1
+        log.debug(u'Actualizando %s' % column.title)
+        if count > 0 and self.updating[0] and show_notif == 'on':
+            self._notify_new_tweets(column, tweets, last, count)
             
-            p = self.parse_tweet(tweet)
-            icon = self.current_avatar_path(p.avatar)
-            text = util.unescape_text(p.text)
-            text = "<b>@%s</b> %s" % (p.username, text)
-            self.notify.new_tweets(count, text, icon)
-            if not self.get_property('is-active'):
-                self.tray.set_from_pixbuf(self.load_image('turpial-tray-update.png', True))
-            
+        gtk.gdk.threads_leave()
+        self.updating[0] = False
+        
+    def update_column2(self, tweets):
+        gtk.gdk.threads_enter()
+        
+        last = self.home.replies.last
+        count = self.home.replies.update_tweets(tweets)
+        column = self.request_viewed_columns()[1]
+        show_notif = self.read_config_value('Notifications', 'replies')
+        
+        log.debug(u'Actualizando %s' % column.title)
+        if count > 0 and self.updating[1] and show_notif == 'on':
+            self._notify_new_tweets(column, tweets, last, count)
+        
         gtk.gdk.threads_leave()
         self.updating[1] = False
         
-    def update_column2(self, tweets):
-        log.debug(u'Actualizando las replies')
+    def update_column3(self, tweets):
         gtk.gdk.threads_enter()
-        count = self.home.replies.update_tweets(tweets)
         
-        if count > 0 and self.updating[2]:
-            p = self.parse_tweet(tweets.items[0])
-            icon = self.current_avatar_path(p.avatar)
-            text = util.unescape_text(p.text)
-            text = "<b>@%s</b> %s" % (p.username, text)
-            self.notify.new_replies(count, text, icon)
-            if not self.get_property('is-active'):
-                self.tray.set_from_pixbuf(self.load_image('turpial-tray-update.png', True))
+        last = self.home.direct.last
+        count = self.home.direct.update_tweets(tweets)
+        column = self.request_viewed_columns()[2]
+        show_notif = self.read_config_value('Notifications', 'directs')
         
-        gtk.gdk.threads_leave()
-        self.updating[2] = False
-        
-    def update_column3(self, recv):
-        log.debug(u'Actualizando mensajes directos')
-        gtk.gdk.threads_enter()
-        count = self.home.direct.update_tweets(recv)
-        
-        if count > 0 and self.updating[3]:
-            p = self.parse_tweet(recv.items[0])
-            icon = self.current_avatar_path(p.avatar)
-            text = util.unescape_text(p.text)
-            text = "<b>@%s</b> %s" % (p.username, text)
-            self.notify.new_directs(count, text, icon)
-            if not self.get_property('is-active'):
-                self.tray.set_from_pixbuf(self.load_image('turpial-tray-update.png', True))
+        log.debug(u'Actualizando %s' % column.title)
+        if count > 0 and self.updating[2] and show_notif == 'on':
+            self._notify_new_tweets(column, tweets, last, count)
             
         gtk.gdk.threads_leave()
-        self.updating[3] = False
+        self.updating[2] = False
         
     def update_favorites(self, favs):
         log.debug(u'Actualizando favoritos')
@@ -478,7 +499,6 @@ class Main(BaseGui, gtk.Window):
         home_interval = int(config.read('General', 'home-update-interval'))
         replies_interval = int(config.read('General', 'replies-update-interval'))
         directs_interval = int(config.read('General', 'directs-update-interval'))
-        self.notify.update_config(config.read_section('Notifications'))
         
         if thread: 
             self.version = global_cfg.read('App', 'version')

@@ -149,14 +149,19 @@ class Turpial:
         
         # TODO: Llenar con el resto de listas
         self.lists = {
-            'timeline': MicroBloggingList('timeline', '', _('Timeline')),
-            'replies': MicroBloggingList('replies', '', _('Replies')),
-            'directs': MicroBloggingList('directs', '', _('Directs')),
-            'sent': MicroBloggingList('sent', '', _('My Tweets')),
+            'timeline': MicroBloggingList('timeline', '', _('Timeline'),
+                _('tweet'), _('tweets')),
+            'replies': MicroBloggingList('replies', '', _('Replies'),
+                _('mention'), _('mentions')),
+            'directs': MicroBloggingList('directs', '', _('Directs'),
+                _('direct'), _('directs')),
+            'sent': MicroBloggingList('sent', '', _('My Tweets'), 
+                _('tweet'), _('tweets')),
         }
         plists = self.api.get_lists()
         for ls in plists:
-            self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, ls.name)
+            self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, 
+                ls.name, _('tweet'), _('tweets'))
         
         self.viewed_cols = [
             self.lists[self.config.read('Columns', 'column1')],
@@ -370,6 +375,9 @@ class Turpial:
     def get_profiles_url(self):
         return self.api.protocol.profiles_url
         
+    def get_viewed_columns(self):
+        return self.viewed_cols
+        
     def change_column(self, index, new_id):
         if self.lists.has_key(new_id):
             self.viewed_cols[index] = self.lists[new_id]
@@ -385,10 +393,12 @@ class Turpial:
         
 class MicroBloggingList:
     ''' Lista de los diferentes protocolos '''
-    def __init__(self, id, user, title):
+    def __init__(self, id, user, title, sunit, punit):
         self.id = id
         self.user = user
         self.title = title
+        self.single_unit = sunit
+        self.plural_unit = punit
     
 if __name__ == '__main__':
     t = Turpial()

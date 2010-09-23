@@ -130,13 +130,14 @@ class TimeScroll(gtk.HBox):
         self.unit = unit
         lbl = gtk.Label(label)
         lbl.set_size_request(lbl_size, -1)
+        lbl.set_justify(gtk.JUSTIFY_LEFT)
         adj = gtk.Adjustment(val, min, max, step, page, size)
         scale = gtk.HScale()
         scale.set_digits(0)
         scale.set_adjustment(adj)
         scale.set_property('value-pos', gtk.POS_RIGHT)
         
-        self.pack_start(lbl, False, False, 3)
+        self.pack_start(lbl, False, True, 3)
         self.pack_start(scale, True, True, 3)
         
         self.show_all()
@@ -250,30 +251,36 @@ to receive from Turpial'), current)
         login = True if self.current['login'] == 'on' else False
         sound = True if self.current['sound'] == 'on' else False
         
-        self.timeline = gtk.CheckButton(_('Timeline'))
+        self.timeline = gtk.CheckButton(_('Column 1 (Left)'))
         self.timeline.set_active(home)
         try:
             self.timeline.set_has_tooltip(True)
+            '''
             self.timeline.set_tooltip_text(_('Show a notification when \
-Timeline is updated'))
+            Timeline is updated'))
+            '''
         except:
             pass
             
-        self.replies = gtk.CheckButton(_('Mentions'))
+        self.replies = gtk.CheckButton(_('Column 2 (Middle)'))
         self.replies.set_active(replies)
         try:
             self.replies.set_has_tooltip(True)
+            '''
             self.replies.set_tooltip_text(_('Show a notification when you \
-get mentions from other users'))
+            get mentions from other users'))
+            '''
         except:
             pass
             
-        self.directs = gtk.CheckButton(_('Directs Messages'))
+        self.directs = gtk.CheckButton(_('Column 3 (Right)'))
         self.directs.set_active(directs)
         try:
             self.directs.set_has_tooltip(True)
+            '''
             self.directs.set_tooltip_text(_('Show a notification when you \
-get direct messages'))
+            get direct messages'))
+            '''
         except:
             pass
             

@@ -77,7 +77,7 @@ msgstr "Turpial (Seguir)"
 
 #: turpial/notification.py:102
 msgid "You are now following @%s"
-msgstr "Has dejado de seguir a @%s"
+msgstr "Ahora sigues a @%s"
 
 #: turpial/notification.py:104 turpial/notification.py:110
 msgid "Turpial (Unfollow)"
@@ -85,7 +85,7 @@ msgstr "Turpial (No seguir)"
 
 #: turpial/notification.py:104
 msgid "You are no longer following @%s"
-msgstr "Ahora sigues a @%s"
+msgstr "Has dejado de seguir a @%s"
 
 #: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:85

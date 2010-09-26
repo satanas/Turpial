@@ -13,7 +13,6 @@ import base64
 import logging
 from optparse import OptionParser
 
-from turpial.ui.gtk.main import Main as _GTK
 from turpial.api.servicesapi import HTTPServices
 from turpial.api.turpialapi import TurpialAPI
 from turpial.config import ConfigHandler, ConfigApp, ConfigProtocol, PROTOCOLS
@@ -25,20 +24,35 @@ try:
 except ImportError:
     pass
 
+INTERFACES = []
+try:
+    from turpial.ui.gtk.main import Main as _GTK
+    UI_GTK = True
+    INTERFACES.append('gtk')
+    INTERFACES.append('gtk+')
+except:
+    UI_GTK = False
+
 class Turpial:
     '''Inicio de Turpial'''
     def __init__(self):
+        ui_avail = '('
+        for ui in INTERFACES:
+            ui_avail += ui + '|'
+        ui_avail = ui_avail[:-1] + ')'
+        default_ui = INTERFACES[0] if len(INTERFACES) > 0 else ''
+        
         parser = OptionParser()
         parser.add_option('-d', '--debug', dest='debug', action='store_true',
-            help='Debug Mode', default=False)
+            help='show debug info in shell during execution', default=False)
         parser.add_option('-i', '--interface', dest='interface',
-            help='Select interface to use. (cmd|gtk)', default='gtk')
+            help='select interface to use %s' % ui_avail, default=default_ui)
         parser.add_option('-c', '--clean', dest='clean', action='store_true',
-            help='Clean all bytecodes', default=False)
+            help='clean all bytecodes', default=False)
         parser.add_option('--version', dest='version', action='store_true',
-            help='Show the version of Turpial', default=False)
+            help='show the version of Turpial and exit', default=False)
         parser.add_option('--test', dest='test', action='store_true',
-            help='Test mode. Only load timeline and friends', default=False)
+            help='only load timeline and friends', default=False)
         
         (options, _) = parser.parse_args()
         
@@ -65,18 +79,18 @@ class Turpial:
             sys.exit(0)
             
         if options.version:
-            print "Turpial version %s" % self.version
+            print "Turpial v%s" % self.version
             sys.exit(0)
             
         self.interface = options.interface
         #if options.interface == 'gtk2':
         #    self.ui = gtk2_ui_main.Main(self)
-        if options.interface == 'gtk+':
+        if options.interface == 'gtk+' and UI_GTK:
             self.ui = _GTK(self, extend=True)
-        elif options.interface == 'gtk':
+        elif options.interface == 'gtk' and UI_GTK:
             self.ui = _GTK(self)
         else:
-            print 'No existe tal interfaz. Saliendo...'
+            print 'No existe una interfaz válida. Saliendo...'
             sys.exit(-1)
         
         self.httpserv = HTTPServices()

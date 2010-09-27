@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
-"""Interfaz para twitgoo en Turpial"""
+"""Interfaz para Posterous en Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
-# Abr 19, 2010
+# Sep 27, 2010
 
 import traceback
 
 from turpial.api.interfaces.service import GenericService
 from turpial.api.interfaces.service import ServiceResponse
 
-class TwitgooPicUploader(GenericService):
+class PosterousPicUploader(GenericService):
     def __init__(self):
         GenericService.__init__(self)
-        self.server = "twitgoo.com"
-        self.base = "/api/upload"
+        self.server = "posterous.com"
+        self.base = "/api2/upload.xml"
         self.provider = 'https://api.twitter.com/1/account/verify_credentials.json'
         
     def do_service(self, username, password, filepath, httpobj):
@@ -28,7 +28,7 @@ class TwitgooPicUploader(GenericService):
         
         try:
             resp = self._upload_pic(self.server, self.base, fields, files, httpobj)
-            link = self._parse_xml('mediaurl', resp)
+            link = self._parse_xml('url', resp)
             return ServiceResponse(link)
         except Exception, error:
             self.log.debug("Error: %s\n%s" % (error, traceback.print_exc()))

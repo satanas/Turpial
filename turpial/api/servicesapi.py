@@ -28,6 +28,7 @@ from turpial.api.services.uploadpic.twitpic import TwitpicPicUploader
 from turpial.api.services.uploadpic.twitgoo import TwitgooPicUploader
 from turpial.api.services.uploadpic.mobypicture import MobypicturePicUploader
 from turpial.api.services.uploadpic.yfrog import YfrogPicUploader
+from turpial.api.services.uploadpic.posterous import PosterousPicUploader
 
 URL_SERVICES = {
     "cli.gs": CligsURLShorter(),
@@ -48,10 +49,10 @@ PHOTO_SERVICES = {
     "TwitPic": TwitpicPicUploader(),
     "img.ly": ImglyPicUploader(),
     "Twitgoo": TwitgooPicUploader(),
-    "Yfrog": YfrogPicUploader(),
+    "MobyPicture": MobypicturePicUploader(),
+    "Posterous": PosterousPicUploader(),
 }
-
-#"MobyPicture": MobypicturePicUploader(),
+#"Yfrog": YfrogPicUploader(),
 
 class HTTPServices(threading.Thread):
     def __init__(self, username='', password='', imgdir='/tmp'):
@@ -115,7 +116,12 @@ class HTTPServices(threading.Thread):
                     filename = GenericService._download_pic(self.imgdir, args['url'])
                     self.log.debug('Descargada imagen de %s' % args['user'])
                     callback(args['user'], filename)
+                except urllib.URLError, error:
+                    self.log.debug("Error: %s\n%s" % (error, 
+                        traceback.print_exc()))
+                    self.register(args, callback)
                 except Exception, error:
+                    print error
                     rtn = error.read()
                     print 'Message:', rtn
                     self.log.debug("Error: %s\n%s" % (error, 

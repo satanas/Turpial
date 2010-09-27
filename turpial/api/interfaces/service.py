@@ -10,6 +10,8 @@ import httplib
 import urllib2
 import logging
 
+from turpial.api.interfaces.http import TurpialHTTPRequest
+
 def _py26_or_greater():
     import sys
     return sys.hexversion > 0x20600f0
@@ -64,7 +66,7 @@ class GenericService:
         longurl = longurl.replace('/', '%2F')
         return longurl
     
-    def _upload_pic(self, host, upload_url, fields, files):
+    def _upload_pic(self, host, upload_url, fields, files, httpobj=None):
         """
         Post fields and files to an http host as multipart/form-data.
         fields is a sequence of (name, value) elements for regular form fields.
@@ -74,10 +76,22 @@ class GenericService:
         """
         content_type, body = self._encode_multipart_formdata(fields, files)
         h = httplib.HTTPConnection(host)
+        
         headers = {
             'User-Agent': 'Turpial',
             'Content-Type': content_type
         }
+        
+        if httpobj:
+            httpreq = TurpialHTTPRequest(method='GET', uri=self.provider)
+            httpresp = httpobj.apply_auth(httpreq)
+            auth_head = httpresp.headers['Authorization']
+            auth_head = auth_head.replace('OAuth realm=""', 
+                'OAuth realm="http://api.twitter.com/"')
+            
+            headers['X-Verify-Credentials-Authorization'] = auth_head
+            headers['X-Auth-Service-Provider'] = self.provider
+        
         h.request('POST', upload_url, body, headers)
         res = h.getresponse()
         #return res.status, res.reason, res.read()

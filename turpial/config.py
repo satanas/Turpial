@@ -63,7 +63,7 @@ DEFAULT_CFG = {
     },
     'Services':{
         'shorten-url': 'is.gd',
-        'upload-pic': 'TweetPhoto',
+        'upload-pic': 'TwitPic',
     },
     'Browser':{
         'cmd': ''

@@ -593,7 +593,7 @@ class TweetPhotoApi(object):
 		return data
 		
 
-	def Upload(self,fileName=None,image=None, message=None, tags=None, geoLocation=None,post_to_twitter= False):
+	def Upload(self,fileName=None,image=None, message=None, tags=None, geoLocation=None,post_to_twitter= False, headers=None):
 		""" Upload a photo to TweetPhoto Web Service from the authenticated user 
 		
 			The pyTweetPhoto.TweetPhotoApi must be authenticated.
@@ -613,7 +613,8 @@ class TweetPhotoApi(object):
 		if not self._username or not self._password or not self._apikey:
 			raise TweetPhotoError('the pyTweetPhoto.TweetPhotoApi instance must be authenticated.')
 		
-		url = 'http://tweetphotoapi.com/api/tpapi.svc/json/upload2'
+		#url = 'http://tweetphotoapi.com/api/tpapi.svc/json/upload2'
+		url = 'http://api.plixi.com/api/tpapi.svc/upload2'
 		
 		if not image and not fileName:
 			raise TweetPhotoError('There must be some image data or filename to upload the data.')
@@ -631,7 +632,7 @@ class TweetPhotoApi(object):
 				raise TweetPhotoError('Text must be less than or equal to %s characters.' % CHARACTER_LIMIT)
 		
 				
-		self._request_headers['TPAPI'] = self._username + ',' + self._password
+		#self._request_headers['TPAPI'] = self._username + ',' + self._password
 		self._request_headers['TPAPIKEY'] =	self._apikey
 		self._request_headers['TPMIMETYPE'] = self.GetContentType(fileName)
 		
@@ -651,11 +652,16 @@ class TweetPhotoApi(object):
 			self._request_headers['TPLAT'] = g[0]
 			self._request_headers['TPLONG'] = g[1]
 		
+		if headers:
+			self._request_headers['X-Verify-Credentials-Authorization'] = headers['X-Verify-Credentials-Authorization']
+			self._request_headers['X-Auth-Service-Provider'] = headers['X-Auth-Service-Provider']
+		
 		self._request_headers['content-type'] = 'application/x-www-form-urlencoded'
 		self._request_headers['content-length'] = str(len(filedata))
-		
-		json  = self._FetchUpload(url,post_data=filedata)
-		data  = simplejson.loads(json)
+		#print self._request_headers
+		data  = self._FetchUpload(url,post_data=filedata)
+		#print json
+		#data  = simplejson.loads(json)
 		self._CheckForTweetPhotoError(data)
 		return data
 		

@@ -6,6 +6,7 @@
 # Dic 05, 2009
 
 import Queue
+import urllib2
 import logging
 import traceback
 import threading
@@ -45,14 +46,14 @@ URL_SERVICES = {
 }
 
 PHOTO_SERVICES = {
-    "TweetPhoto": TweetPhotoPicUploader(),
+    "Plixi": TweetPhotoPicUploader(),
     "TwitPic": TwitpicPicUploader(),
     "img.ly": ImglyPicUploader(),
     "Twitgoo": TwitgooPicUploader(),
     "MobyPicture": MobypicturePicUploader(),
     "Posterous": PosterousPicUploader(),
+    "Yfrog": YfrogPicUploader(),
 }
-#"Yfrog": YfrogPicUploader(),
 
 class HTTPServices(threading.Thread):
     def __init__(self, username='', password='', imgdir='/tmp'):
@@ -116,7 +117,7 @@ class HTTPServices(threading.Thread):
                     filename = GenericService._download_pic(self.imgdir, args['url'])
                     self.log.debug('Descargada imagen de %s' % args['user'])
                     callback(args['user'], filename)
-                except urllib.URLError, error:
+                except urllib2.URLError, error:
                     self.log.debug("Error: %s\n%s" % (error, 
                         traceback.print_exc()))
                     self.register(args, callback)

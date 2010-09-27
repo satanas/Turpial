@@ -83,6 +83,8 @@ class GenericService:
         }
         
         if httpobj:
+            if self.provider[-4:] == '.xml':
+                httpobj.change_format('xml')
             httpreq = TurpialHTTPRequest(method='GET', uri=self.provider)
             httpresp = httpobj.apply_auth(httpreq)
             auth_head = httpresp.headers['Authorization']
@@ -91,6 +93,9 @@ class GenericService:
             
             headers['X-Verify-Credentials-Authorization'] = auth_head
             headers['X-Auth-Service-Provider'] = self.provider
+            
+            if self.provider[-4:] == '.xml':
+                httpobj.change_format('json')
         
         h.request('POST', upload_url, body, headers)
         res = h.getresponse()

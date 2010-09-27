@@ -133,7 +133,8 @@ class Turpial:
             self.config.initialize()
             
             self.httpserv.update_img_dir(self.config.imgdir)
-            self.httpserv.set_credentials(self.profile.username, self.profile.password)
+            self.httpserv.set_credentials(self.profile.username, 
+                self.profile.password, self.api.protocol.http)
             
             self.__signin_done(key, secret, val)
     

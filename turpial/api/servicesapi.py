@@ -63,12 +63,14 @@ class HTTPServices(threading.Thread):
         self.imgdir = imgdir
         self.username = username
         self.password = password
+        self.httpobj = None
         self.log.debug('Iniciado')
         
-    def set_credentials(self, username, password):
+    def set_credentials(self, username, password, httpobj):
         '''Definicion de credenciales'''
         self.username = username
         self.password = password
+        self.httpobj = httpobj
         
     def update_img_dir(self, imgdir):
         self.imgdir = imgdir
@@ -130,7 +132,7 @@ class HTTPServices(threading.Thread):
                                (args['service'], args['path']))
                 uploader = PHOTO_SERVICES[args['service']]
                 resp = uploader.do_service(self.username, self.password, 
-                    args['path'])
+                    args['path'], self.httpobj)
                 callback(resp)
                 
             self.queue.task_done()

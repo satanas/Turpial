@@ -21,7 +21,7 @@ class TweetPhotoPicUploader(GenericService):
         self.log = logging.getLogger('Service')
         self.provider = 'https://api.twitter.com/1/account/verify_credentials.xml'
         
-    def do_service(self, username, password, filepath, httpobj):
+    def do_service(self, username, password, filepath, message, httpobj):
         try:
             httpobj.change_format('xml')
             httpreq = TurpialHTTPRequest(method='GET', uri=self.provider)
@@ -42,8 +42,9 @@ class TweetPhotoPicUploader(GenericService):
             _file.close()
             
             api = TweetPhotoApi(username, password, TWEETPHOTO_KEY)
-            resp = api.Upload(fileName=filepath,image=imgbin,headers=headers)
-            print resp
+            resp = api.Upload(fileName=filepath, image=imgbin, message=message,
+                headers=headers)
+            
             link = self._parse_xml('MediaUrl', resp)
             return ServiceResponse(link)
         except Exception, error:

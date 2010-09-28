@@ -330,9 +330,9 @@ class Turpial:
     def download_user_pic(self, user, pic_url, callback):
         self.httpserv.download_pic(user, pic_url, callback)
         
-    def upload_pic(self, path, callback):
+    def upload_pic(self, path, message, callback):
         service = self.config.read('Services', 'upload-pic')
-        self.httpserv.upload_pic(service, path, callback)
+        self.httpserv.upload_pic(service, path, message, callback)
         
     def search(self, query):
         self.ui.start_search()

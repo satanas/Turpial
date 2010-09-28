@@ -13,6 +13,7 @@ import gobject
 import webbrowser
 
 from turpial.ui.gtk.updatebox import UpdateBox
+from turpial.ui.gtk.uploadpicbox import UploadPicBox
 from turpial.ui.gtk.conversation import ConversationBox
 from turpial.ui.gtk.login import LoginBox
 from turpial.ui.gtk.preferences import Preferences
@@ -83,6 +84,7 @@ class Main(BaseGui, gtk.Window):
         self.profile = Profile(self)
         self.contenido = self.home
         self.updatebox = UpdateBox(self)
+        self.uploadpic = UploadPicBox(self)
         self.replybox = ConversationBox(self)
         
         if self.extend:
@@ -127,7 +129,7 @@ class Main(BaseGui, gtk.Window):
         
         exit.connect('activate', self.quit)
         tweet.connect('activate', self.__show_update_box_from_menu)
-        follow.connect('activate', self.__follow_from_menu)
+        follow.connect('activate', self.__show_follow_box_from_menu)
             
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
@@ -135,8 +137,8 @@ class Main(BaseGui, gtk.Window):
     def __show_update_box_from_menu(self, widget):
         self.show_update_box()
         
-    def __follow_from_menu(self, widget):
-        f = Follow(self)
+    def __show_follow_box_from_menu(self, widget):
+        self.show_follow_box()
         
     def __close(self, widget, event=None):
         if self.minimize == 'on':
@@ -339,6 +341,15 @@ class Main(BaseGui, gtk.Window):
             return
         self.updatebox.show(text, id, user)
         
+    def show_follow_box(self):
+        f = Follow(self)
+        
+    def show_uploadpic_box(self):
+        if self.uploadpic.get_property('visible'): 
+            self.uploadpic.present()
+            return
+        self.uploadpic.show()
+        
     def show_preferences(self, widget, mode='user'):
         prefs = Preferences(self, mode)
         
@@ -461,10 +472,17 @@ class Main(BaseGui, gtk.Window):
         log.debug(u'Actualizando nuevo tweet')
         gtk.gdk.threads_enter()
         if tweets.type == 'status':
-            self.updatebox.release()
-            self.updatebox.done()
+            if self.updatebox.get_property('visible'):
+                self.updatebox.release()
+                self.updatebox.done()
+            if self.uploadpic.get_property('visible'): 
+                self.uploadpic.release()
+                self.uploadpic.done()
         else:
-            self.updatebox.release(tweets.errmsg)
+            if self.updatebox.get_property('visible'):
+                self.updatebox.release(tweets.errmsg)
+            if self.uploadpic.get_property('visible'):
+                self.uploadpic.release()
         gtk.gdk.threads_leave()
         
         self.update_timeline(tweets)

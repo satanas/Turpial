@@ -54,7 +54,7 @@ class LoginBox(gtk.VBox):
         self.btn_settings = gtk.Button()
         self.btn_settings.set_relief(gtk.RELIEF_NONE)
         self.btn_settings.set_tooltip_text(_('Preferences'))
-        self.btn_settings.set_image(self.mainwin.load_image('settings-single.png'))
+        self.btn_settings.set_image(self.mainwin.load_image('dock-settings.png'))
         settings_box = gtk.Alignment(xalign=1.0, yalign=0.5)
         settings_box.set_padding(70, 10, 40, 40)
         settings_box.add(self.btn_settings)

@@ -108,12 +108,12 @@ class StandardColumn(GenericColumn):
         self.listcombo.set_model(model)
         
         self.refresh = gtk.Button()
-        self.refresh.set_image(self.mainwin.load_image('refresh.png'))
+        self.refresh.set_image(self.mainwin.load_image('action-refresh.png'))
         self.refresh.set_tooltip_text(_('Manual Update'))
         #self.refresh.set_relief(gtk.RELIEF_NONE)
         
         self.autoscroll = gtk.ToggleButton()
-        self.autoscroll.set_image(self.mainwin.load_image('autoscroll.png'))
+        self.autoscroll.set_image(self.mainwin.load_image('action-autoscroll.png'))
         self.autoscroll.set_tooltip_text(_('Autoscrolling'))
         self.autoscroll.set_active(True)
         self.tweetlist.set_autoscroll(True)
@@ -229,7 +229,7 @@ class SearchColumn(GenericColumn):
         
         self.input_topics = gtk.Entry()
         self.clearbtn = gtk.Button()
-        self.clearbtn.set_image(self.mainwin.load_image('clear.png'))
+        self.clearbtn.set_image(self.mainwin.load_image('action-clear.png'))
         self.clearbtn.set_tooltip_text(_('Clear results'))
         #self.clearbtn.set_relief(gtk.RELIEF_NONE)
         try:

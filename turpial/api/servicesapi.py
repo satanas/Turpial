@@ -85,9 +85,9 @@ class HTTPServices(threading.Thread):
         self.register({'cmd': 'short_url', 'service': service, 'url': url},
                       callback)
     
-    def upload_pic(self, service, path, callback):
-        self.register({'cmd': 'upload_pic', 'service': service, 'path': path},
-                      callback)
+    def upload_pic(self, service, path, message, callback):
+        self.register({'cmd': 'upload_pic', 'service': service, 'path': path,
+                      'message': message}, callback)
         
     def register(self, args, callback):
         self.queue.put((args, callback))
@@ -120,14 +120,15 @@ class HTTPServices(threading.Thread):
                 except urllib2.URLError, error:
                     self.log.debug("Error: %s\n%s" % (error, 
                         traceback.print_exc()))
-                    self.register(args, callback)
+                    #FIXME
+                    #self.register(args, callback)
                 except Exception, error:
                     print error
                     rtn = error.read()
                     print 'Message:', rtn
                     self.log.debug("Error: %s\n%s" % (error, 
                         traceback.print_exc()))
-                    self.register(args, callback)
+                    #self.register(args, callback)
             elif args['cmd'] == 'short_url':
                 self.log.debug('Cortando URL: %s' % args['url'])
                 urlshorter = URL_SERVICES[args['service']]
@@ -139,7 +140,7 @@ class HTTPServices(threading.Thread):
                                (args['service'], args['path']))
                 uploader = PHOTO_SERVICES[args['service']]
                 resp = uploader.do_service(self.username, self.password, 
-                    args['path'], self.httpobj)
+                    args['path'], args['message'], self.httpobj)
                 callback(resp)
                 
             self.queue.task_done()

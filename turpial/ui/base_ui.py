@@ -208,9 +208,9 @@ class BaseGui:
         '''Short URL'''
         self.__controller.short_url(longurl, callback)
         
-    def request_upload_pic(self, filename, callback):
+    def request_upload_pic(self, filename, message, callback):
         '''Upload a pic'''
-        self.__controller.upload_pic(filename, callback)
+        self.__controller.upload_pic(filename, message, callback)
         
     def request_update_status(self, text, in_reply_id):
         '''Tweet'''

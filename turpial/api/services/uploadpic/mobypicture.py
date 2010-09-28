@@ -19,7 +19,7 @@ class MobypicturePicUploader(GenericService):
         self.base = "/2.0/upload.xml"
         self.provider = 'https://api.twitter.com/1/account/verify_credentials.json'
         
-    def do_service(self, username, password, filepath, httpobj):
+    def do_service(self, username, password, filepath, message, httpobj):
         _file = open(filepath, 'r')
         files = (
             ('media', self._get_pic_name(filepath), _file.read()),
@@ -28,10 +28,10 @@ class MobypicturePicUploader(GenericService):
         
         fields = (
             ('key', KEY),
+            ('message', message),
         )
         try:
             resp = self._upload_pic(self.server, self.base, fields, files, httpobj)
-            print resp
             link = self._parse_xml('mediaurl', resp)
             return ServiceResponse(link)
         except Exception, error:

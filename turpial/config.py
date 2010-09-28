@@ -19,7 +19,7 @@ PROTOCOLS = ['twitter', 'identica']
 
 GLOBAL_CFG = {
     'App':{
-        'version': '1.4.8-a1',
+        'version': '1.4.9-a1',
     },
     'Proxy':{
         'username': '',

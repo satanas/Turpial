@@ -174,6 +174,7 @@ class UploadPicBox(gtk.Window):
         self.btn_clr.set_sensitive(False)
         self.btn_upd.set_sensitive(False)
         self.btn_frn.set_sensitive(False)
+        self.btn_pic.set_sensitive(False)
         
     def release(self, msg=None):
         self.blocked = False
@@ -181,6 +182,7 @@ class UploadPicBox(gtk.Window):
         self.btn_clr.set_sensitive(True)
         self.btn_upd.set_sensitive(True)
         self.btn_frn.set_sensitive(True)
+        self.btn_pic.set_sensitive(True)
         self.waiting.stop(error=True)
         
         if not msg:
@@ -271,9 +273,7 @@ class UploadPicBox(gtk.Window):
         
     def update_uploaded_pic(self, pic_url):
         if pic_url.err or not pic_url.response:
-            self.waiting.stop(error=True)
-            self.lblerror.set_markup("<span size='small'>%s</span>" % 
-                _('Oops... I couldn\'t upload that image'))
+            self.release(pic_url.err_msg)
             return
         
         self.pic_url = pic_url.response

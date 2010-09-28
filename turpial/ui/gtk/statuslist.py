@@ -148,7 +148,8 @@ class StatusList(gtk.ScrolledWindow):
             open_menu.append(gtk.SeparatorMenuItem())
         
         for h in total_tags:
-            hashtag = '/'.join([self.mainwin.request_hashtags_url(), h[1:]]) 
+            hashtag = self.mainwin.request_hashtags_url() + h[1:]
+            print hashtag
             hmenu = gtk.MenuItem(h)
             hmenu.connect('button-release-event',
                           self.__open_url_with_event, hashtag)

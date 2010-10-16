@@ -623,7 +623,7 @@ msgstr "Выбрать изображение для выгрузки"
 
 #: turpial/ui/gtk/updatebox.py:318
 msgid "Oops... I couldn't upload that image"
-msgstr "Упс... Не могу выгрузить этот изображение"
+msgstr "Упс... Не могу выгрузить это изображение"
 
 #: turpial/ui/gtk/userform.py:51
 msgid "Name"

@@ -180,7 +180,7 @@ msgstr "Проблема с сокращением URL"
 #: turpial/api/services/uploadpic/twitpic.py:36
 #: turpial/api/services/uploadpic/yfrog.py:36
 msgid "Problem uploading pic"
-msgstr "Проблема с загрузкой картинки"
+msgstr "Проблема с выгрузкой картинки"
 
 #: turpial/ui/util.py:65
 msgid "of"
@@ -369,7 +369,7 @@ msgstr "Показанные твиты"
 
 #: turpial/ui/gtk/preferences.py:178
 msgid "You will use 0 calls to API per hour"
-msgstr "Вы будете использовать 0 вызововo API в час"
+msgstr "Вы будете использовать 0 вызовов API в час"
 
 #: turpial/ui/gtk/preferences.py:183
 msgid "Wide Mode"
@@ -459,188 +459,188 @@ msgstr "Выбрать Ваш любимый Веб-браузер для отк
 
 #: turpial/ui/gtk/preferences.py:459
 msgid "Default web browser"
-msgstr ""
+msgstr "Веб-браузер по умолчанию"
 
 #: turpial/ui/gtk/preferences.py:461
 msgid "Choose another web browser"
-msgstr ""
+msgstr "Выбрать другой браузер"
 
 #: turpial/ui/gtk/preferences.py:463
 msgid "Command"
-msgstr ""
+msgstr "Команда"
 
 #: turpial/ui/gtk/preferences.py:465
 msgid "Test"
-msgstr ""
+msgstr "Проверить"
 
 #: turpial/ui/gtk/preferences.py:466
 msgid "Browse"
-msgstr ""
+msgstr "Просмотреть"
 
 #: turpial/ui/gtk/preferences.py:505
 msgid "Select the full path of your web browser"
-msgstr ""
+msgstr "Выбрать полный путь к Вашему браузеру"
 
 #: turpial/ui/gtk/preferences.py:531
 msgid "Proxy settings for Turpial (Need Restart)"
-msgstr ""
+msgstr "Настройки прокси для Turpial (Необходим перезапуск)"
 
 #: turpial/ui/gtk/preferences.py:534
 msgid "No proxy"
-msgstr ""
+msgstr "Нет прокси"
 
 #: turpial/ui/gtk/preferences.py:535
 msgid "Twitter API proxy"
-msgstr ""
+msgstr "Прокси API Твиттера"
 
 #: turpial/ui/gtk/preferences.py:539
 msgid "Use a URL to access Twitter API different of twitter.com"
-msgstr ""
+msgstr "Использовать URL, отличный от twitter.com, для доступа к API Твиттера"
 
 #: turpial/ui/gtk/preferences.py:543
 msgid "Twitter API URL"
-msgstr ""
+msgstr "API URL Твиттера"
 
 #: turpial/ui/gtk/profile.py:16
 msgid "Favorites"
-msgstr ""
+msgstr "Избранное"
 
 #: turpial/ui/gtk/profile.py:17
 msgid "Profile"
-msgstr ""
+msgstr "Профиль"
 
 #: turpial/ui/gtk/profile.py:18
 msgid "Search"
-msgstr ""
+msgstr "Искать"
 
 #: turpial/ui/gtk/statuslist.py:129
 msgid "Open"
-msgstr ""
+msgstr "Открыть"
 
 #: turpial/ui/gtk/statuslist.py:206 turpial/ui/gtk/statuslist.py:256
 msgid "Reply"
-msgstr ""
+msgstr "Ответить"
 
 #: turpial/ui/gtk/statuslist.py:207 turpial/ui/gtk/statuslist.py:262
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 #: turpial/ui/gtk/statuslist.py:257
 msgid "Reply All"
-msgstr ""
+msgstr "Ответить всем"
 
 #: turpial/ui/gtk/statuslist.py:258
 msgid "Retweet (Old)"
-msgstr ""
+msgstr "Цитировать (по-старому)"
 
 #: turpial/ui/gtk/statuslist.py:259
 msgid "Retweet"
-msgstr ""
+msgstr "Цитировать"
 
 #: turpial/ui/gtk/statuslist.py:260
 msgid "+ Fav"
-msgstr ""
+msgstr "+ Избр"
 
 #: turpial/ui/gtk/statuslist.py:261
 msgid "- Fav"
-msgstr ""
+msgstr "- Избр"
 
 #: turpial/ui/gtk/statuslist.py:263
 msgid "DM"
-msgstr ""
+msgstr "ЛС"
 
 #: turpial/ui/gtk/statuslist.py:265
 msgid "Unfollow"
-msgstr ""
+msgstr "Отписаться"
 
 #: turpial/ui/gtk/statuslist.py:266
 msgid "Loading friends..."
-msgstr ""
+msgstr "Загружаю друзей..."
 
 #: turpial/ui/gtk/statuslist.py:269 turpial/ui/gtk/updatebox.py:209
 msgid "In reply to"
-msgstr ""
+msgstr "В ответ на"
 
 #: turpial/ui/gtk/statuslist.py:401 turpial/ui/gtk/tweetslistwk.py:157
 msgid "from"
-msgstr ""
+msgstr "от"
 
 #: turpial/ui/gtk/statuslist.py:403 turpial/ui/gtk/tweetslistwk.py:159
 msgid "in reply to"
-msgstr ""
+msgstr "в ответ на"
 
 #: turpial/ui/gtk/statuslist.py:405 turpial/ui/gtk/tweetslistwk.py:161
 msgid "Retweeted by"
-msgstr ""
+msgstr "Цитировано"
 
 #: turpial/ui/gtk/updatebox.py:25
 msgid "What is happening?"
-msgstr ""
+msgstr "Что делается?"
 
 #: turpial/ui/gtk/updatebox.py:67 turpial/ui/gtk/updatebox.py:68
 msgid "Upload image"
-msgstr ""
+msgstr "Выгрузить изображение"
 
 #: turpial/ui/gtk/updatebox.py:77
 msgid "Options"
-msgstr ""
+msgstr "Настройки"
 
 #: turpial/ui/gtk/updatebox.py:83
 msgid "Clear all"
-msgstr ""
+msgstr "Очистить всё"
 
 #: turpial/ui/gtk/updatebox.py:88
 msgid "Add friends"
-msgstr ""
+msgstr "Добавить друзей"
 
 #: turpial/ui/gtk/updatebox.py:92
 msgid "Update your status"
-msgstr ""
+msgstr "Обновить Ваш статус"
 
 #: turpial/ui/gtk/updatebox.py:93
 msgid "Autoshort URLs"
-msgstr ""
+msgstr "Автосокращение URL"
 
 #: turpial/ui/gtk/updatebox.py:199
 msgid "Oh oh... I couldn't send the tweet"
-msgstr ""
+msgstr "Ох... Не могу отправить твит"
 
 #: turpial/ui/gtk/updatebox.py:254
 msgid "Hey!... you must write something"
-msgstr ""
+msgstr "Эй! Надо бы что-нибудь написать"
 
 #: turpial/ui/gtk/updatebox.py:259
 msgid "Hey!... that message looks like a testament"
-msgstr ""
+msgstr "Эй! Это сообщение похоже на завещание"
 
 #: turpial/ui/gtk/updatebox.py:274
 msgid "Oops... I couldn't shrink that URL"
-msgstr ""
+msgstr "Упс... Не могу сократить этот URL"
 
 #: turpial/ui/gtk/updatebox.py:301
 msgid "Select image to upload"
-msgstr ""
+msgstr "Выбрать изображение для выгрузки"
 
 #: turpial/ui/gtk/updatebox.py:318
 msgid "Oops... I couldn't upload that image"
-msgstr ""
+msgstr "Упс... Не могу выгрузить этот изображение"
 
 #: turpial/ui/gtk/userform.py:51
 msgid "Name"
-msgstr ""
+msgstr "Имя"
 
 #: turpial/ui/gtk/userform.py:59
 msgid "Location"
-msgstr ""
+msgstr "Местонахождение"
 
 #: turpial/ui/gtk/userform.py:67
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:80
 msgid "Bio"
-msgstr ""
+msgstr "О себе"
 
 #: turpial/ui/gtk/userform.py:176
 msgid "Saving..."
-msgstr ""
+msgstr "Сохраняю..."

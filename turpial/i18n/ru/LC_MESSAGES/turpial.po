@@ -279,7 +279,7 @@ msgstr "Что? У Вас нет друзей. Выйдите и познако�
 
 #: turpial/ui/gtk/friendwin.py:83 turpial/ui/gtk/preferences.py:429
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr "Я все еще загружаю информацию обо всех Ваших  друзьях. Попробуйте вновь через несколько секунд"
+msgstr "Я все еще загружаю информацию обо всех Ваших друзьях. Попробуйте вновь через несколько секунд"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 #: turpial/ui/gtk/preferences.py:262
@@ -631,7 +631,7 @@ msgstr "Имя"
 
 #: turpial/ui/gtk/userform.py:59
 msgid "Location"
-msgstr "Местонахождение"
+msgstr "Место"
 
 #: turpial/ui/gtk/userform.py:67
 msgid "URL"

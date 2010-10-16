@@ -200,7 +200,7 @@ msgstr "Файл 'AUTHORS' не найден"
 
 #: turpial/ui/gtk/about.py:60
 msgid "File 'TRANSLATORS' not found"
-msgstr ""
+msgstr "Файл 'TRANSLATORS' не найден"
 
 #: turpial/ui/gtk/columns.py:49 turpial/ui/gtk/tweetslistwk.py:197
 msgid "No tweets available"
@@ -212,168 +212,168 @@ msgstr "Обновление вручную"
 
 #: turpial/ui/gtk/columns.py:117
 msgid "Autoscrolling"
-msgstr ""
+msgstr "Автопрокрутка"
 
 #: turpial/ui/gtk/columns.py:224
 msgid "Clear results"
-msgstr ""
+msgstr "Очистить результаты"
 
 #: turpial/ui/gtk/columns.py:266
 msgid "You must write something to search"
-msgstr ""
+msgstr "Введите что-нибудь для поиска"
 
 #: turpial/ui/gtk/conversation.py:19 turpial/ui/gtk/conversation.py:25
 msgid "In reply to..."
-msgstr ""
+msgstr "В ответ на..."
 
 #: turpial/ui/gtk/conversation.py:47
 #, python-format
 msgid "In reply to %s"
-msgstr ""
+msgstr "В ответ на %s"
 
 #: turpial/ui/gtk/dock.py:20
 msgid "Timeline, replies and others"
-msgstr ""
+msgstr "Лента, ответы и другое"
 
 #: turpial/ui/gtk/dock.py:24
 msgid "Profile, favorites, search"
-msgstr ""
+msgstr "Профиль, избранное, поиск"
 
 #: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/updatebox.py:29
 msgid "Update status"
-msgstr ""
+msgstr "Обновить статус"
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/login.py:55
 #: turpial/ui/gtk/preferences.py:24
 msgid "Preferences"
-msgstr ""
+msgstr "Настройки"
 
 #: turpial/ui/gtk/dock.py:36
 msgid "About Turpial"
-msgstr ""
+msgstr "О Turpial"
 
 #: turpial/ui/gtk/follow.py:15 turpial/ui/gtk/main.py:118
 #: turpial/ui/gtk/statuslist.py:264
 msgid "Follow"
-msgstr ""
+msgstr "Подписаться"
 
 #: turpial/ui/gtk/follow.py:23
 msgid "User"
-msgstr ""
+msgstr "Пользователь"
 
 #: turpial/ui/gtk/follow.py:26
 msgid "Ok"
-msgstr ""
+msgstr "Да"
 
 #: turpial/ui/gtk/follow.py:28
 msgid "Cancel"
-msgstr ""
+msgstr "Отмена"
 
 #: turpial/ui/gtk/friendwin.py:15
 msgid "Add friend"
-msgstr ""
+msgstr "Добавить друга"
 
 #: turpial/ui/gtk/friendwin.py:77 turpial/ui/gtk/preferences.py:424
 msgid "What? You don't have any friends. Try to go out and know some nice people"
-msgstr ""
+msgstr "Что? У Вас нет друзей. Выйдите и познакомьтесь с несколькими милыми людьми"
 
 #: turpial/ui/gtk/friendwin.py:83 turpial/ui/gtk/preferences.py:429
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr ""
+msgstr "Я все еще загружаю информацию обо всех Ваших  друзьях. Попробуйте вновь через несколько секунд"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 #: turpial/ui/gtk/preferences.py:262
 msgid "Mentions"
-msgstr ""
+msgstr "Упоминания"
 
 #: turpial/ui/gtk/login.py:25
 msgid "User and Password"
-msgstr ""
+msgstr "Пользователь и Пароль"
 
 #: turpial/ui/gtk/login.py:34
 msgid "Remember my credentials"
-msgstr ""
+msgstr "Запомнить мои логин/пароль"
 
 #: turpial/ui/gtk/login.py:36
 msgid "Connect"
-msgstr ""
+msgstr "Соединение"
 
 #: turpial/ui/gtk/login.py:98
 msgid "Fields can't be empty"
-msgstr ""
+msgstr "Поля не могут быть незаполненными"
 
 #: turpial/ui/gtk/main.py:117 turpial/ui/gtk/updatebox.py:91
 msgid "Tweet"
-msgstr ""
+msgstr "Твитнуть"
 
 #: turpial/ui/gtk/main.py:119
 msgid "Exit"
-msgstr ""
+msgstr "Выйти"
 
 #: turpial/ui/gtk/main.py:250
 msgid "Wait a few seconds while I load everything..."
-msgstr ""
+msgstr "Подождите несколько секунд, по я все загружу..."
 
 #: turpial/ui/gtk/preferences.py:29 turpial/ui/gtk/userform.py:92
 #: turpial/ui/gtk/userform.py:185
 msgid "Save"
-msgstr ""
+msgstr "Сохранить"
 
 #: turpial/ui/gtk/preferences.py:30
 msgid "Close"
-msgstr ""
+msgstr "Закрыть"
 
 #: turpial/ui/gtk/preferences.py:51
 msgid "General"
-msgstr ""
+msgstr "Общее"
 
 #: turpial/ui/gtk/preferences.py:52
 msgid "Notifications"
-msgstr ""
+msgstr "Уведомления"
 
 #: turpial/ui/gtk/preferences.py:53
 msgid "Services"
-msgstr ""
+msgstr "Сервисы"
 
 #: turpial/ui/gtk/preferences.py:54 turpial/ui/gtk/statuslist.py:270
 msgid "Mute"
-msgstr ""
+msgstr "Заткнуть"
 
 #: turpial/ui/gtk/preferences.py:55
 msgid "Web Browser"
-msgstr ""
+msgstr "Веб-браузер"
 
 #: turpial/ui/gtk/preferences.py:58
 msgid "Proxy"
-msgstr ""
+msgstr "Прокси"
 
 #: turpial/ui/gtk/preferences.py:157
 msgid "Adjust update frequency for timeline, mentions and direct messages"
-msgstr ""
+msgstr "Настройка частоты обновления ленты, упоминаний и личных сообщений"
 
 #: turpial/ui/gtk/preferences.py:168
 msgid "Column 1 (Left)"
-msgstr ""
+msgstr "Колонка 1 (Левая)"
 
 #: turpial/ui/gtk/preferences.py:170
 msgid "Column 2 (Middle)"
-msgstr ""
+msgstr "Колонка 2 (Средняя)"
 
 #: turpial/ui/gtk/preferences.py:172
 msgid "Column 3 (Right)"
-msgstr ""
+msgstr "Колонка 3 (Правая)"
 
 #: turpial/ui/gtk/preferences.py:175
 msgid "Tweets shown"
-msgstr ""
+msgstr "Показанные твиты"
 
 #: turpial/ui/gtk/preferences.py:178
 msgid "You will use 0 calls to API per hour"
-msgstr ""
+msgstr "Вы будете использовать 0 вызововo API в час"
 
 #: turpial/ui/gtk/preferences.py:183
 msgid "Wide Mode"
-msgstr ""
+msgstr "Расширенный режим"
 
 #: turpial/ui/gtk/preferences.py:187
 msgid "Show a workspace of 3 columns"

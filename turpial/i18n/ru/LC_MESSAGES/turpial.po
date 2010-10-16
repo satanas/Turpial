@@ -1,7 +1,7 @@
 # Russian translations for turpial.
 # Copyright (C) 2010 Turpial
 # This file is distributed under the same license as the turpial project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# ANATOLY SHCHERBINA aka NOBUS1967 <nobus1967@yandex.ru>, 2010.
 # 
 msgid ""
 msgstr ""
@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
 "POT-Creation-Date: 2010-09-12 23:22-0530\n"
 "PO-Revision-Date: 2010-09-12 23:23-0530\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: ANATOLY SHCHERBINA <nobus1967@yandex.ru>\n"
 "Language-Team: ru <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"

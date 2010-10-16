@@ -2,107 +2,106 @@
 # Copyright (C) 2010 Turpial
 # This file is distributed under the same license as the turpial project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: turpial 1.0-b1\n"
-"Report-Msgid-Bugs-To: milmazz@gmail.com\n"
-"POT-Creation-Date: 2010-04-04 11:29+0530\n"
+"Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
+"POT-Creation-Date: 2010-09-12 23:22-0530\n"
 "PO-Revision-Date: 2010-09-12 23:23-0530\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ru <LL@li.org>\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: turpial/main.py:156 turpial/ui/gtk/home.py:25
 #: turpial/ui/gtk/preferences.py:253
 msgid "Timeline"
-msgstr ""
+msgstr "Лента"
 
 #: turpial/main.py:157
 msgid "Replies"
-msgstr ""
+msgstr "Ответы"
 
 #: turpial/main.py:158 turpial/ui/gtk/home.py:29
 msgid "Directs"
-msgstr ""
+msgstr "Личные сообщения"
 
 #: turpial/main.py:159
 msgid "My Tweets"
-msgstr ""
+msgstr "Мои твиты"
 
 #: turpial/notification.py:59
 msgid "new tweet"
-msgstr ""
+msgstr "новый твит"
 
 #: turpial/notification.py:61
 msgid "new tweets"
-msgstr ""
+msgstr "новые твиты"
 
 #: turpial/notification.py:70
 msgid "new mention"
-msgstr ""
+msgstr "новое упоминанияе"
 
 #: turpial/notification.py:72
 msgid "new mentions"
-msgstr ""
+msgstr "новые упоминания"
 
 #: turpial/notification.py:81
 msgid "new DM"
-msgstr ""
+msgstr "новое ЛС"
 
 #: turpial/notification.py:83
 msgid "new DMs"
-msgstr ""
+msgstr "новые ЛС"
 
 #: turpial/notification.py:93
 msgid "Tweets"
-msgstr ""
+msgstr "твиты"
 
 #: turpial/notification.py:94
 msgid "Following"
-msgstr ""
+msgstr "Подписка"
 
 #: turpial/notification.py:95
 msgid "Followers"
-msgstr ""
+msgstr "Подписчики"
 
 #: turpial/notification.py:102 turpial/notification.py:108
 msgid "Turpial (Follow)"
-msgstr ""
+msgstr "Turpial (Подписаться)"
 
 #: turpial/notification.py:102
 #, python-format
 msgid "You are now following @%s"
-msgstr ""
+msgstr "Вы сейчас подписаны на @%s"
 
 #: turpial/notification.py:104 turpial/notification.py:110
 msgid "Turpial (Unfollow)"
-msgstr ""
+msgstr "Turpial (отменить подписку)"
 
 #: turpial/notification.py:104
 #, python-format
 msgid "You are no longer following @%s"
-msgstr ""
+msgstr "Вы более не подписаны на @%s"
 
 #: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:85
 msgid "Sorry, you don't have more API calls"
-msgstr ""
+msgstr "Извините, но больше нет вызовов API"
 
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:88
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Неверные логин/пароль"
 
 #: turpial/api/protocols/identica/http.py:39
 #: turpial/api/protocols/twitter/http.py:93
 msgid "Your status was sent. Don't try again"
-msgstr ""
+msgstr "Ваш статус отправлен, повтор не требуется"
 
 #: turpial/api/protocols/identica/http.py:41
 #: turpial/api/protocols/twitter/http.py:95
@@ -271,7 +270,6 @@ msgid "Cancel"
 msgstr ""
 
 #: turpial/ui/gtk/friendwin.py:15
-#, fuzzy
 msgid "Add friend"
 msgstr ""
 
@@ -338,12 +336,10 @@ msgid "Services"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:54 turpial/ui/gtk/statuslist.py:270
-#, fuzzy
 msgid "Mute"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:55
-#, fuzzy
 msgid "Web Browser"
 msgstr ""
 
@@ -376,12 +372,10 @@ msgid "You will use 0 calls to API per hour"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:183
-#, fuzzy
 msgid "Wide Mode"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:187
-#, fuzzy
 msgid "Show a workspace of 3 columns"
 msgstr ""
 
@@ -427,7 +421,6 @@ msgid "Show a notification when you get direct messages"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:280
-#, fuzzy
 msgid "Login"
 msgstr ""
 
@@ -533,7 +526,6 @@ msgid "Delete"
 msgstr ""
 
 #: turpial/ui/gtk/statuslist.py:257
-#, fuzzy
 msgid "Reply All"
 msgstr ""
 
@@ -574,17 +566,14 @@ msgid "from"
 msgstr ""
 
 #: turpial/ui/gtk/statuslist.py:403 turpial/ui/gtk/tweetslistwk.py:159
-#, fuzzy
 msgid "in reply to"
 msgstr ""
 
 #: turpial/ui/gtk/statuslist.py:405 turpial/ui/gtk/tweetslistwk.py:161
-#, fuzzy
 msgid "Retweeted by"
 msgstr ""
 
 #: turpial/ui/gtk/updatebox.py:25
-#, fuzzy
 msgid "What is happening?"
 msgstr ""
 
@@ -641,7 +630,6 @@ msgid "Name"
 msgstr ""
 
 #: turpial/ui/gtk/userform.py:59
-#, fuzzy
 msgid "Location"
 msgstr ""
 
@@ -650,23 +638,9 @@ msgid "URL"
 msgstr ""
 
 #: turpial/ui/gtk/userform.py:80
-#, fuzzy
 msgid "Bio"
 msgstr ""
 
 #: turpial/ui/gtk/userform.py:176
 msgid "Saving..."
 msgstr ""
-
-#~ msgid "Problem following to @%s"
-#~ msgstr ""
-
-#~ msgid "Problem unfollowing to @%s"
-#~ msgstr ""
-
-#~ msgid "Now you follow to @%s"
-#~ msgstr ""
-
-#~ msgid "You have unfollow to @%s"
-#~ msgstr ""
-

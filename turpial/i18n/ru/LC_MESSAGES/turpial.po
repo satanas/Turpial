@@ -81,7 +81,7 @@ msgstr "Вы сейчас подписаны на @%s"
 
 #: turpial/notification.py:104 turpial/notification.py:110
 msgid "Turpial (Unfollow)"
-msgstr "Turpial (отменить подписку)"
+msgstr "Turpial (Отменить подписку)"
 
 #: turpial/notification.py:104
 #, python-format
@@ -107,58 +107,58 @@ msgstr "Ваш статус отправлен, повтор не требует
 #: turpial/api/protocols/twitter/http.py:95
 #, python-format
 msgid "%s already is a friend"
-msgstr ""
+msgstr "%s уже в друзьях"
 
 #: turpial/api/protocols/identica/http.py:43
 #: turpial/api/protocols/twitter/http.py:99
 msgid "Hey! You are over the limit of API calls"
-msgstr ""
+msgstr "Эй! Вы превысили лимит вызовов API"
 
 #: turpial/api/protocols/identica/http.py:46
 #: turpial/api/protocols/twitter/http.py:102
 msgid "Err... invalid request"
-msgstr ""
+msgstr "Ой... неверный вызов"
 
 #: turpial/api/protocols/identica/http.py:48
 #: turpial/api/protocols/twitter/http.py:104
 msgid "You are searching a very weird thing"
-msgstr ""
+msgstr "Вы ищете нечто очень странное"
 
 #: turpial/api/protocols/identica/http.py:50
 #: turpial/api/protocols/twitter/http.py:106
 msgid "You are searching too much!"
-msgstr ""
+msgstr "Вы слишком многое ищите!"
 
 #: turpial/api/protocols/identica/http.py:52
 #: turpial/api/protocols/twitter/http.py:108
 msgid "Oops! Something went wrong"
-msgstr ""
+msgstr "Упс! Произошло что-то не то"
 
 #: turpial/api/protocols/identica/http.py:54
 #: turpial/api/protocols/twitter/http.py:110
 msgid "Twitter is down. Try again later"
-msgstr ""
+msgstr "Твиттер упал. Попробуйте позже"
 
 #: turpial/api/protocols/identica/http.py:56
 #: turpial/api/protocols/twitter/http.py:112
 msgid "Twitter is overcapacity"
-msgstr ""
+msgstr "Твиттер перегружен"
 
 #: turpial/api/protocols/identica/http.py:60
 #: turpial/api/protocols/twitter/http.py:116
 msgid "Can't connect to Twitter"
-msgstr ""
+msgstr "Нельзя подключиться к Твиттеру"
 
 #: turpial/api/protocols/identica/identica.py:164
 #: turpial/api/protocols/twitter/http.py:72
 #: turpial/api/protocols/twitter/twitter.py:181
 msgid "Authentication Error"
-msgstr ""
+msgstr "Ошибка аутентификации"
 
 #: turpial/api/protocols/twitter/http.py:97
 #, python-format
 msgid "You've already requested to follow %s"
-msgstr ""
+msgstr "Вы уже запрашивали подписку на %s"
 
 #: turpial/api/services/shorturl/bitly.py:31
 #: turpial/api/services/shorturl/cligs.py:26
@@ -171,7 +171,7 @@ msgstr ""
 #: turpial/api/services/shorturl/ur1ca.py:35
 #: turpial/api/services/shorturl/zima.py:26
 msgid "Problem shorting URL"
-msgstr ""
+msgstr "Проблема с сокращением URL"
 
 #: turpial/api/services/uploadpic/imgly.py:36
 #: turpial/api/services/uploadpic/mobypicture.py:41
@@ -180,23 +180,23 @@ msgstr ""
 #: turpial/api/services/uploadpic/twitpic.py:36
 #: turpial/api/services/uploadpic/yfrog.py:36
 msgid "Problem uploading pic"
-msgstr ""
+msgstr "Проблема с загрузкой картинки"
 
 #: turpial/ui/util.py:65
 msgid "of"
-msgstr ""
+msgstr "из"
 
 #: turpial/ui/util.py:65
 msgid "API calls. Reset"
-msgstr ""
+msgstr "Вызовы API. Сброс"
 
 #: turpial/ui/gtk/about.py:19
 msgid "Twitter client multi-interface written in Python"
-msgstr ""
+msgstr "Мульти-интерфейсный Твиттер-клиент, написанный на Python"
 
 #: turpial/ui/gtk/about.py:49
 msgid "File 'AUTHORS' not found"
-msgstr ""
+msgstr "Файл 'AUTHORS' не найден"
 
 #: turpial/ui/gtk/about.py:60
 msgid "File 'TRANSLATORS' not found"
@@ -204,11 +204,11 @@ msgstr ""
 
 #: turpial/ui/gtk/columns.py:49 turpial/ui/gtk/tweetslistwk.py:197
 msgid "No tweets available"
-msgstr ""
+msgstr "Нет доступных твитов"
 
 #: turpial/ui/gtk/columns.py:112
 msgid "Manual Update"
-msgstr ""
+msgstr "Обновление вручную"
 
 #: turpial/ui/gtk/columns.py:117
 msgid "Autoscrolling"

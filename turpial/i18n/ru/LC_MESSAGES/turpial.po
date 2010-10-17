@@ -188,7 +188,7 @@ msgstr "из"
 
 #: turpial/ui/util.py:65
 msgid "API calls. Reset"
-msgstr "Вызовы API. Сброс"
+msgstr "вызовы API. Сброс"
 
 #: turpial/ui/gtk/about.py:19
 msgid "Twitter client multi-interface written in Python"

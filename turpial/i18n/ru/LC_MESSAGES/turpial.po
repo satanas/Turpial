@@ -60,7 +60,7 @@ msgstr "новые ЛС"
 
 #: turpial/notification.py:93
 msgid "Tweets"
-msgstr "твиты"
+msgstr "Твиты"
 
 #: turpial/notification.py:94
 msgid "Following"

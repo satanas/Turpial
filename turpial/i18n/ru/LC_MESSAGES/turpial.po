@@ -292,7 +292,7 @@ msgstr "Пользователь и Пароль"
 
 #: turpial/ui/gtk/login.py:34
 msgid "Remember my credentials"
-msgstr "Запомнить мои логин/пароль"
+msgstr "Запомнить мои данные"
 
 #: turpial/ui/gtk/login.py:36
 msgid "Connect"

@@ -575,7 +575,7 @@ msgstr "Цитировано"
 
 #: turpial/ui/gtk/updatebox.py:25
 msgid "What is happening?"
-msgstr "Что делается?"
+msgstr "Что происходит?"
 
 #: turpial/ui/gtk/updatebox.py:67 turpial/ui/gtk/updatebox.py:68
 msgid "Upload image"

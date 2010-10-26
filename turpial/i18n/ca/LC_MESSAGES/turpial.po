@@ -2,107 +2,108 @@
 # Copyright (C) 2010 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-06-07 23:16+0530\n"
+"Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
+"POT-Creation-Date: 2010-09-12 23:22-0530\n"
 "PO-Revision-Date: 2010-09-12 23:23-0530\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ca <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: turpial/main.py:156 turpial/ui/gtk/home.py:25
 #: turpial/ui/gtk/preferences.py:253
 msgid "Timeline"
-msgstr ""
+msgstr "Línia de temps"
 
 #: turpial/main.py:157
 msgid "Replies"
-msgstr ""
+msgstr "Respostes"
 
 #: turpial/main.py:158 turpial/ui/gtk/home.py:29
 msgid "Directs"
-msgstr ""
+msgstr "Directes"
 
 #: turpial/main.py:159
+#, fuzzy
 msgid "My Tweets"
-msgstr ""
+msgstr "Els meus Tweets"
 
 #: turpial/notification.py:59
 msgid "new tweet"
-msgstr ""
+msgstr "Nou tweet"
 
 #: turpial/notification.py:61
 msgid "new tweets"
-msgstr ""
+msgstr "Nous tweet"
 
 #: turpial/notification.py:70
 msgid "new mention"
-msgstr ""
+msgstr "Nou esment"
 
 #: turpial/notification.py:72
 msgid "new mentions"
-msgstr ""
+msgstr "Nous esments"
 
 #: turpial/notification.py:81
 msgid "new DM"
-msgstr ""
+msgstr "nou DM"
 
 #: turpial/notification.py:83
 msgid "new DMs"
-msgstr ""
+msgstr "nous  DMs"
 
 #: turpial/notification.py:93
 msgid "Tweets"
-msgstr ""
+msgstr "Tweets"
 
 #: turpial/notification.py:94
 msgid "Following"
-msgstr ""
+msgstr "Seguint"
 
 #: turpial/notification.py:95
 msgid "Followers"
-msgstr ""
+msgstr "Seguidors"
 
 #: turpial/notification.py:102 turpial/notification.py:108
+#, fuzzy
 msgid "Turpial (Follow)"
-msgstr ""
+msgstr "Turpial (Segueix)"
 
 #: turpial/notification.py:102
 #, python-format
 msgid "You are now following @%s"
-msgstr ""
+msgstr "No estàs seguint @%s"
 
 #: turpial/notification.py:104 turpial/notification.py:110
 msgid "Turpial (Unfollow)"
-msgstr ""
+msgstr "Turpial (Deixi de seguir)"
 
 #: turpial/notification.py:104
 #, python-format
 msgid "You are no longer following @%s"
-msgstr ""
+msgstr "Ja no ets següents @% s"
 
 #: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:85
 msgid "Sorry, you don't have more API calls"
-msgstr ""
+msgstr "Disculpa, no tens mes trucades API "
 
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:88
 msgid "Invalid credentials"
-msgstr ""
+msgstr "credencials invalides"
 
 #: turpial/api/protocols/identica/http.py:39
 #: turpial/api/protocols/twitter/http.py:93
 msgid "Your status was sent. Don't try again"
-msgstr ""
+msgstr "El teu estatus ha estat enviat. No tornis a enviar-lo"
 
 #: turpial/api/protocols/identica/http.py:41
 #: turpial/api/protocols/twitter/http.py:95
@@ -645,16 +646,3 @@ msgstr ""
 #: turpial/ui/gtk/userform.py:176
 msgid "Saving..."
 msgstr ""
-
-#~ msgid "Problem following to @%s"
-#~ msgstr ""
-
-#~ msgid "Problem unfollowing to @%s"
-#~ msgstr ""
-
-#~ msgid "Now you follow to @%s"
-#~ msgstr ""
-
-#~ msgid "You have unfollow to @%s"
-#~ msgstr ""
-

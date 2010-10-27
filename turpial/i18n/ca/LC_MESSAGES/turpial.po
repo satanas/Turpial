@@ -85,9 +85,9 @@ msgid "Turpial (Unfollow)"
 msgstr "Turpial (Deixa de seguir)"
 
 #: turpial/notification.py:104
-#, python-format, fuzzy
+#, python-format
 msgid "You are no longer following @%s"
-msgstr "Ja no ets següents @% s"
+msgstr "Ja no ets següents @%s"
 
 #: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:85
@@ -226,12 +226,12 @@ msgstr "Has d'escriure alguna cosa per buscar"
 
 #: turpial/ui/gtk/conversation.py:19 turpial/ui/gtk/conversation.py:25
 msgid "In reply to..."
-msgstr "En resposta a ..."
+msgstr "En resposta a..."
 
 #: turpial/ui/gtk/conversation.py:47
 #, python-format
 msgid "In reply to %s"
-msgstr "En resposta a % s"
+msgstr "En resposta a %s"
 
 #: turpial/ui/gtk/dock.py:20
 msgid "Timeline, replies and others"
@@ -264,6 +264,7 @@ msgid "User"
 msgstr "Usuari"
 
 #: turpial/ui/gtk/follow.py:26
+#, fuzzy
 msgid "Ok"
 msgstr "Ok"
 
@@ -473,51 +474,54 @@ msgstr "Trieu un altre navegador web"
 
 #: turpial/ui/gtk/preferences.py:463
 msgid "Command"
-msgstr ""
+msgstr "Ordre"
 
 #: turpial/ui/gtk/preferences.py:465
 msgid "Test"
-msgstr ""
+msgstr "Prova"
 
 #: turpial/ui/gtk/preferences.py:466
 msgid "Browse"
-msgstr ""
+msgstr "Examinar"
 
 #: turpial/ui/gtk/preferences.py:505
 msgid "Select the full path of your web browser"
-msgstr ""
+msgstr "Selecciona la ruta completa del teu navegador"
 
 #: turpial/ui/gtk/preferences.py:531
 msgid "Proxy settings for Turpial (Need Restart)"
-msgstr ""
+msgstr "Configuració del servidor intermediari per al Turpial (Necessites Reiniciar)"
 
 #: turpial/ui/gtk/preferences.py:534
 msgid "No proxy"
-msgstr ""
+msgstr "Sense servidor intermediari"
 
 #: turpial/ui/gtk/preferences.py:535
+#, fuzzy
 msgid "Twitter API proxy"
-msgstr ""
+msgstr "Servidor intermediari de l'API del Twitter "
 
 #: turpial/ui/gtk/preferences.py:539
+#, fuzzy
 msgid "Use a URL to access Twitter API different of twitter.com"
-msgstr ""
+msgstr "Utilitzeu una adreça URL per accedir a API de Twitter diferent de twitter.com"
 
 #: turpial/ui/gtk/preferences.py:543
+#, fuzzy
 msgid "Twitter API URL"
-msgstr ""
+msgstr "URL de l'API del Twitter"
 
 #: turpial/ui/gtk/profile.py:16
 msgid "Favorites"
-msgstr ""
+msgstr "Favorits"
 
 #: turpial/ui/gtk/profile.py:17
 msgid "Profile"
-msgstr ""
+msgstr "Perfil"
 
 #: turpial/ui/gtk/profile.py:18
 msgid "Search"
-msgstr ""
+msgstr "Cerca"
 
 #: turpial/ui/gtk/statuslist.py:129
 msgid "Open"

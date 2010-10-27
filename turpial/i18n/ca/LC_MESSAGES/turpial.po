@@ -75,23 +75,25 @@ msgid "Turpial (Follow)"
 msgstr "Turpial (Segueix)"
 
 #: turpial/notification.py:102
-#, python-format
+#, python-format, fuzzy
 msgid "You are now following @%s"
-msgstr "No estàs seguint @%s"
+msgstr "No estàs seguint a @%s"
 
 #: turpial/notification.py:104 turpial/notification.py:110
+#, fuzzy
 msgid "Turpial (Unfollow)"
-msgstr "Turpial (Deixi de seguir)"
+msgstr "Turpial (Deixa de seguir)"
 
 #: turpial/notification.py:104
-#, python-format
+#, python-format, fuzzy
 msgid "You are no longer following @%s"
 msgstr "Ja no ets següents @% s"
 
 #: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:85
+#, fuzzy
 msgid "Sorry, you don't have more API calls"
-msgstr "Disculpa, no tens mes trucades API "
+msgstr "Disculpa, no tens mes crides API "
 
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:88
@@ -368,8 +370,9 @@ msgid "Tweets shown"
 msgstr "Tweets mostrats"
 
 #: turpial/ui/gtk/preferences.py:178
+#, fuzzy
 msgid "You will use 0 calls to API per hour"
-msgstr ""
+msgstr "Usarà 0 crides a la API per hora"
 
 #: turpial/ui/gtk/preferences.py:183
 msgid "Wide Mode"

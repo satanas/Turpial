@@ -204,87 +204,87 @@ msgstr "No trobat l'arxiu 'TRANSLATORS'"
 
 #: turpial/ui/gtk/columns.py:49 turpial/ui/gtk/tweetslistwk.py:197
 msgid "No tweets available"
-msgstr ""
+msgstr "Cap tweet disponible"
 
 #: turpial/ui/gtk/columns.py:112
 msgid "Manual Update"
-msgstr ""
+msgstr "Actualització manual"
 
 #: turpial/ui/gtk/columns.py:117
 msgid "Autoscrolling"
-msgstr ""
+msgstr "Desplaçament automàtic"
 
 #: turpial/ui/gtk/columns.py:224
 msgid "Clear results"
-msgstr ""
+msgstr "Esborrar els resultats"
 
 #: turpial/ui/gtk/columns.py:266
 msgid "You must write something to search"
-msgstr ""
+msgstr "Has d'escriure alguna cosa per buscar"
 
 #: turpial/ui/gtk/conversation.py:19 turpial/ui/gtk/conversation.py:25
 msgid "In reply to..."
-msgstr ""
+msgstr "En resposta a ..."
 
 #: turpial/ui/gtk/conversation.py:47
 #, python-format
 msgid "In reply to %s"
-msgstr ""
+msgstr "En resposta a % s"
 
 #: turpial/ui/gtk/dock.py:20
 msgid "Timeline, replies and others"
-msgstr ""
+msgstr "Línia de temps, respostes i altres"
 
 #: turpial/ui/gtk/dock.py:24
 msgid "Profile, favorites, search"
-msgstr ""
+msgstr "Perfil, favorits, cerca"
 
 #: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/updatebox.py:29
 msgid "Update status"
-msgstr ""
+msgstr "Actualitzar l'estat"
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/login.py:55
 #: turpial/ui/gtk/preferences.py:24
 msgid "Preferences"
-msgstr ""
+msgstr "Preferències"
 
 #: turpial/ui/gtk/dock.py:36
 msgid "About Turpial"
-msgstr ""
+msgstr "Sobre Turpial"
 
 #: turpial/ui/gtk/follow.py:15 turpial/ui/gtk/main.py:118
 #: turpial/ui/gtk/statuslist.py:264
 msgid "Follow"
-msgstr ""
+msgstr "Segueix"
 
 #: turpial/ui/gtk/follow.py:23
 msgid "User"
-msgstr ""
+msgstr "Usuari"
 
 #: turpial/ui/gtk/follow.py:26
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: turpial/ui/gtk/follow.py:28
 msgid "Cancel"
-msgstr ""
+msgstr "Anul·la"
 
 #: turpial/ui/gtk/friendwin.py:15
 msgid "Add friend"
-msgstr ""
+msgstr "Afegir amic"
 
 #: turpial/ui/gtk/friendwin.py:77 turpial/ui/gtk/preferences.py:424
 msgid "What? You don't have any friends. Try to go out and know some nice people"
-msgstr ""
+msgstr "Què? No tens amics. Intenta sortir i conèixer gent agradable"
 
 #: turpial/ui/gtk/friendwin.py:83 turpial/ui/gtk/preferences.py:429
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr ""
+msgstr "Encara estic carregant tots els teus amics. Torna a provar-ho en uns segons"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 #: turpial/ui/gtk/preferences.py:262
 msgid "Mentions"
-msgstr ""
+msgstr "Mencions"
 
 #: turpial/ui/gtk/login.py:25
 msgid "User and Password"

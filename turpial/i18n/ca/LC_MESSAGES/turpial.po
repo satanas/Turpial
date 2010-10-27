@@ -443,32 +443,33 @@ msgstr "Activar els sons de cada notificació"
 
 #: turpial/ui/gtk/preferences.py:322
 msgid "Select your preferred services for shorten URLs and upload images"
-msgstr ""
+msgstr "Selecciona el teu servei preferit per escurçar adreces URL i carregar imatges"
 
 #: turpial/ui/gtk/preferences.py:328 turpial/ui/gtk/updatebox.py:64
 #: turpial/ui/gtk/updatebox.py:65
 msgid "Shorten URL"
-msgstr ""
+msgstr "Escurçar URL"
 
 #: turpial/ui/gtk/preferences.py:342
 msgid "Upload images"
-msgstr ""
+msgstr "Carregar imatges"
 
 #: turpial/ui/gtk/preferences.py:369
+#, fuzzy
 msgid "Select all those users that are bothering you and shut them up temporarily"
-msgstr ""
+msgstr "Selecciona tots aquells usuaris que estan molestant i silencia'ls temporalment"
 
 #: turpial/ui/gtk/preferences.py:453
 msgid "Setup your favorite web browser to open all links"
-msgstr ""
+msgstr "Configureu el vostre navegador web favorit per obrir els enllaços"
 
 #: turpial/ui/gtk/preferences.py:459
 msgid "Default web browser"
-msgstr ""
+msgstr "Navegador web per defecte"
 
 #: turpial/ui/gtk/preferences.py:461
 msgid "Choose another web browser"
-msgstr ""
+msgstr "Trieu un altre navegador web"
 
 #: turpial/ui/gtk/preferences.py:463
 msgid "Command"

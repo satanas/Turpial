@@ -288,84 +288,84 @@ msgstr "Mencions"
 
 #: turpial/ui/gtk/login.py:25
 msgid "User and Password"
-msgstr ""
+msgstr "Usuari i Contrasenya"
 
 #: turpial/ui/gtk/login.py:34
 msgid "Remember my credentials"
-msgstr ""
+msgstr "Recorda les meves credencials"
 
 #: turpial/ui/gtk/login.py:36
 msgid "Connect"
-msgstr ""
+msgstr "Connectar"
 
 #: turpial/ui/gtk/login.py:98
 msgid "Fields can't be empty"
-msgstr ""
+msgstr "Els camps no poden estar buits"
 
 #: turpial/ui/gtk/main.py:117 turpial/ui/gtk/updatebox.py:91
 msgid "Tweet"
-msgstr ""
+msgstr "Tweet"
 
 #: turpial/ui/gtk/main.py:119
 msgid "Exit"
-msgstr ""
+msgstr "Sortir"
 
 #: turpial/ui/gtk/main.py:250
 msgid "Wait a few seconds while I load everything..."
-msgstr ""
+msgstr "Espereu uns segons mentre ho carrego tot ..."
 
 #: turpial/ui/gtk/preferences.py:29 turpial/ui/gtk/userform.py:92
 #: turpial/ui/gtk/userform.py:185
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: turpial/ui/gtk/preferences.py:30
 msgid "Close"
-msgstr ""
+msgstr "Tancar"
 
 #: turpial/ui/gtk/preferences.py:51
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #: turpial/ui/gtk/preferences.py:52
 msgid "Notifications"
-msgstr ""
+msgstr "Notificacions"
 
 #: turpial/ui/gtk/preferences.py:53
 msgid "Services"
-msgstr ""
+msgstr "Serveis"
 
 #: turpial/ui/gtk/preferences.py:54 turpial/ui/gtk/statuslist.py:270
 msgid "Mute"
-msgstr ""
+msgstr "Mutis"
 
 #: turpial/ui/gtk/preferences.py:55
 msgid "Web Browser"
-msgstr ""
+msgstr "Navegador Web"
 
 #: turpial/ui/gtk/preferences.py:58
 msgid "Proxy"
-msgstr ""
+msgstr "Proxy"
 
 #: turpial/ui/gtk/preferences.py:157
 msgid "Adjust update frequency for timeline, mentions and direct messages"
-msgstr ""
+msgstr "Ajusta la freqüència d'actualització de la línia de temps, les mencions i els missatges directes"
 
 #: turpial/ui/gtk/preferences.py:168
 msgid "Column 1 (Left)"
-msgstr ""
+msgstr "Columna 1 (esquerra)"
 
 #: turpial/ui/gtk/preferences.py:170
 msgid "Column 2 (Middle)"
-msgstr ""
+msgstr "Columna 2 (Mig)"
 
 #: turpial/ui/gtk/preferences.py:172
 msgid "Column 3 (Right)"
-msgstr ""
+msgstr "Columna 3 (Dret)"
 
 #: turpial/ui/gtk/preferences.py:175
 msgid "Tweets shown"
-msgstr ""
+msgstr "Tweets mostrats"
 
 #: turpial/ui/gtk/preferences.py:178
 msgid "You will use 0 calls to API per hour"

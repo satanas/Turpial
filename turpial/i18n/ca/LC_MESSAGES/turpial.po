@@ -411,35 +411,35 @@ msgstr "Seleccioneu les notificacions que desitgeu rebre del Turpial"
 
 #: turpial/ui/gtk/preferences.py:257
 msgid "Show a notification when Timeline is updated"
-msgstr ""
+msgstr "Mostrar una notificació quan la línia de temps s'actualitzi"
 
 #: turpial/ui/gtk/preferences.py:266
 msgid "Show a notification when you get mentions from other users"
-msgstr ""
+msgstr "Mostrar una notificació quan rebi mencions d'altres usuaris"
 
 #: turpial/ui/gtk/preferences.py:271
 msgid "Directs Messages"
-msgstr ""
+msgstr "Missatges Directes"
 
 #: turpial/ui/gtk/preferences.py:275
 msgid "Show a notification when you get direct messages"
-msgstr ""
+msgstr "Mostrar una notificació quan rebi missatges directes"
 
 #: turpial/ui/gtk/preferences.py:280
 msgid "Login"
-msgstr ""
+msgstr "Inicia sessió"
 
 #: turpial/ui/gtk/preferences.py:284
 msgid "Show a notification at login with your user info"
-msgstr ""
+msgstr "Mostrar una notificació en iniciar la sessió amb la meva informació d'usuari"
 
 #: turpial/ui/gtk/preferences.py:289
 msgid "Activate sounds"
-msgstr ""
+msgstr "Activar els sons"
 
 #: turpial/ui/gtk/preferences.py:293
 msgid "Activate sounds for each notification"
-msgstr ""
+msgstr "Activar els sons de cada notificació"
 
 #: turpial/ui/gtk/preferences.py:322
 msgid "Select your preferred services for shorten URLs and upload images"

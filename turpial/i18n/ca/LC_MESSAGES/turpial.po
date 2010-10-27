@@ -390,24 +390,24 @@ msgstr "Carrega el perfil de color (Necessitats reiniciar Turpial)"
 
 #: turpial/ui/gtk/preferences.py:196
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr ""
+msgstr "Utilitzeu el color del perfil d'usuari per ressaltar les mencions, hashtags i URLs"
 
 #: turpial/ui/gtk/preferences.py:201
 msgid "Minimize to tray"
-msgstr ""
+msgstr "Minimitzar a la safata"
 
 #: turpial/ui/gtk/preferences.py:205
 msgid "Send Turpial to system tray when close"
-msgstr ""
+msgstr "Enviar Turpial a la safata del sistema quan es tanqui"
 
 #: turpial/ui/gtk/preferences.py:224
 #, python-format
 msgid "You will use aprox. %i calls to API per hour"
-msgstr ""
+msgstr "Fareu servir aprox. %i crides a l'API per hora"
 
 #: turpial/ui/gtk/preferences.py:244
 msgid "Select what notifications you want to receive from Turpial"
-msgstr ""
+msgstr "Seleccioneu les notificacions que desitgeu rebre del Turpial"
 
 #: turpial/ui/gtk/preferences.py:257
 msgid "Show a notification when Timeline is updated"

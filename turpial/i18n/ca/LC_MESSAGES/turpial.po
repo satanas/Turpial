@@ -93,7 +93,7 @@ msgstr "Ja no ets següents @% s"
 #: turpial/api/protocols/twitter/http.py:85
 #, fuzzy
 msgid "Sorry, you don't have more API calls"
-msgstr "Disculpa, no tens mes crides API "
+msgstr "Disculpa, no tens mes crides a la API "
 
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:88
@@ -103,7 +103,7 @@ msgstr "credencials invalides"
 #: turpial/api/protocols/identica/http.py:39
 #: turpial/api/protocols/twitter/http.py:93
 msgid "Your status was sent. Don't try again"
-msgstr "El teu estatus ha estat enviat. No tornis a enviar-lo"
+msgstr "El teu estatus ha estat enviat. No ho tornis a enviar"
 
 #: turpial/api/protocols/identica/http.py:41
 #: turpial/api/protocols/twitter/http.py:95

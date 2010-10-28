@@ -312,7 +312,7 @@ msgstr "Выйти"
 
 #: turpial/ui/gtk/main.py:250
 msgid "Wait a few seconds while I load everything..."
-msgstr "Подождите несколько секунд, по я все загружу..."
+msgstr "Подождите несколько секунд, пока я все загружу..."
 
 #: turpial/ui/gtk/preferences.py:29 turpial/ui/gtk/userform.py:92
 #: turpial/ui/gtk/userform.py:185
@@ -406,7 +406,7 @@ msgstr "Выбрать, какие уведомления Вы хотели бы
 
 #: turpial/ui/gtk/preferences.py:257
 msgid "Show a notification when Timeline is updated"
-msgstr "Показать уведомление об обновлении Turpial"
+msgstr "Показать уведомление об обновлении ленты"
 
 #: turpial/ui/gtk/preferences.py:266
 msgid "Show a notification when you get mentions from other users"
@@ -447,7 +447,7 @@ msgstr "Сокращенный URL"
 
 #: turpial/ui/gtk/preferences.py:342
 msgid "Upload images"
-msgstr "Вызрузка картинок"
+msgstr "Выгрузка картинок"
 
 #: turpial/ui/gtk/preferences.py:369
 msgid "Select all those users that are bothering you and shut them up temporarily"

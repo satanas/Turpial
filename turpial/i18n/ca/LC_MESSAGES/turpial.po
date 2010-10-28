@@ -524,133 +524,151 @@ msgid "Search"
 msgstr "Cerca"
 
 #: turpial/ui/gtk/statuslist.py:129
+#, fuzzy
 msgid "Open"
-msgstr ""
+msgstr "Obert"
 
 #: turpial/ui/gtk/statuslist.py:206 turpial/ui/gtk/statuslist.py:256
+#, fuzzy
 msgid "Reply"
-msgstr ""
+msgstr "Respondre"
 
 #: turpial/ui/gtk/statuslist.py:207 turpial/ui/gtk/statuslist.py:262
+#, fuzzy
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
 #: turpial/ui/gtk/statuslist.py:257
+#, fuzzy
 msgid "Reply All"
-msgstr ""
+msgstr "Respondre a tots"
 
 #: turpial/ui/gtk/statuslist.py:258
+#, fuzzy
 msgid "Retweet (Old)"
-msgstr ""
+msgstr "Retweet (Antic)"
 
 #: turpial/ui/gtk/statuslist.py:259
+#, fuzzy
 msgid "Retweet"
-msgstr ""
+msgstr "Retweet"
 
 #: turpial/ui/gtk/statuslist.py:260
+#, fuzzy
 msgid "+ Fav"
-msgstr ""
+msgstr "+ Fav"
 
 #: turpial/ui/gtk/statuslist.py:261
+#, fuzzy
 msgid "- Fav"
-msgstr ""
+msgstr "- Fav"
 
 #: turpial/ui/gtk/statuslist.py:263
+#, fuzzy
 msgid "DM"
-msgstr ""
+msgstr "DM"
 
 #: turpial/ui/gtk/statuslist.py:265
+#, fuzzy
 msgid "Unfollow"
-msgstr ""
+msgstr "Deixar de seguir"
 
 #: turpial/ui/gtk/statuslist.py:266
 msgid "Loading friends..."
-msgstr ""
+msgstr "Carregant amics ..."
 
 #: turpial/ui/gtk/statuslist.py:269 turpial/ui/gtk/updatebox.py:209
+#, fuzzy
 msgid "In reply to"
-msgstr ""
+msgstr "En resposta a"
 
 #: turpial/ui/gtk/statuslist.py:401 turpial/ui/gtk/tweetslistwk.py:157
+#, fuzzy
 msgid "from"
-msgstr ""
+msgstr "de"
 
 #: turpial/ui/gtk/statuslist.py:403 turpial/ui/gtk/tweetslistwk.py:159
 msgid "in reply to"
-msgstr ""
+msgstr "en resposta a"
 
 #: turpial/ui/gtk/statuslist.py:405 turpial/ui/gtk/tweetslistwk.py:161
 msgid "Retweeted by"
-msgstr ""
+msgstr "Retweet per"
 
 #: turpial/ui/gtk/updatebox.py:25
 msgid "What is happening?"
-msgstr ""
+msgstr "Què està passant?"
 
 #: turpial/ui/gtk/updatebox.py:67 turpial/ui/gtk/updatebox.py:68
 msgid "Upload image"
-msgstr ""
+msgstr "Pujar imatge"
 
 #: turpial/ui/gtk/updatebox.py:77
+#, fuzzy
 msgid "Options"
-msgstr ""
+msgstr "Opcions"
 
 #: turpial/ui/gtk/updatebox.py:83
 msgid "Clear all"
-msgstr ""
+msgstr "Esborrar tot"
 
 #: turpial/ui/gtk/updatebox.py:88
 msgid "Add friends"
-msgstr ""
+msgstr "Afegeix amics"
 
 #: turpial/ui/gtk/updatebox.py:92
 msgid "Update your status"
-msgstr ""
+msgstr "Actualitza el teu estat"
 
 #: turpial/ui/gtk/updatebox.py:93
+#, fuzzy
 msgid "Autoshort URLs"
-msgstr ""
+msgstr "Auto escurça URLs"
 
 #: turpial/ui/gtk/updatebox.py:199
+#, fuzzy
 msgid "Oh oh... I couldn't send the tweet"
-msgstr ""
+msgstr "Oh oh ... No he pogut enviar el tweet"
 
 #: turpial/ui/gtk/updatebox.py:254
+#, fuzzy
 msgid "Hey!... you must write something"
-msgstr ""
+msgstr "Iep!...  has d'escriure alguna cosa"
 
 #: turpial/ui/gtk/updatebox.py:259
 msgid "Hey!... that message looks like a testament"
-msgstr ""
+msgstr "Hey!... aquest missatge es veu com un testament"
 
 #: turpial/ui/gtk/updatebox.py:274
 msgid "Oops... I couldn't shrink that URL"
-msgstr ""
+msgstr "Ui...  No he pogut reduir aquesta URL"
 
 #: turpial/ui/gtk/updatebox.py:301
 msgid "Select image to upload"
-msgstr ""
+msgstr "Seleccioneu una imatge per pujar"
 
 #: turpial/ui/gtk/updatebox.py:318
+#, fuzzy
 msgid "Oops... I couldn't upload that image"
-msgstr ""
+msgstr "Ui... No he pogut pujar la imatge"
 
 #: turpial/ui/gtk/userform.py:51
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: turpial/ui/gtk/userform.py:59
 msgid "Location"
-msgstr ""
+msgstr "Localització"
 
 #: turpial/ui/gtk/userform.py:67
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:80
+#, fuzzy
 msgid "Bio"
-msgstr ""
+msgstr "Bio"
 
 #: turpial/ui/gtk/userform.py:176
 msgid "Saving..."
-msgstr ""
+msgstr "Guardant..."

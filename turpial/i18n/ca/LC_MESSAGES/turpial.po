@@ -378,11 +378,11 @@ msgstr "Mode estès"
 
 #: turpial/ui/gtk/preferences.py:187
 msgid "Show a workspace of 3 columns"
-msgstr "Mostrar una àrea de treball de 3 columnes"
+msgstr "Mostra una espai de treball de 3 columnes"
 
 #: turpial/ui/gtk/preferences.py:191
 msgid "Load profile color (Needs restart Turpial)"
-msgstr "Carrega el perfil de color (Necessites reiniciar Turpial)"
+msgstr "Carrega el color del perfil (Necessites reiniciar Turpial)"
 
 #: turpial/ui/gtk/preferences.py:196
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
@@ -394,24 +394,24 @@ msgstr "Minimitzar a la safata"
 
 #: turpial/ui/gtk/preferences.py:205
 msgid "Send Turpial to system tray when close"
-msgstr "Enviar Turpial a la safata del sistema quan es tanqui"
+msgstr "Enviar Turpial a la safata del sistema en comptes de tancar-ho"
 
 #: turpial/ui/gtk/preferences.py:224
 #, python-format
 msgid "You will use aprox. %i calls to API per hour"
-msgstr "Fareu servir aprox. %i crides a l'API per hora"
+msgstr "Fareu servir aprox. %i crides a la API per hora"
 
 #: turpial/ui/gtk/preferences.py:244
 msgid "Select what notifications you want to receive from Turpial"
-msgstr "Seleccioneu les notificacions que desitgeu rebre del Turpial"
+msgstr "Selecciona les notificacions que desitgis rebre del Turpial"
 
 #: turpial/ui/gtk/preferences.py:257
 msgid "Show a notification when Timeline is updated"
-msgstr "Mostrar una notificació quan la línia de temps s'actualitzi"
+msgstr "Mostra una notificació quan la línia de temps s'actualitzi"
 
 #: turpial/ui/gtk/preferences.py:266
 msgid "Show a notification when you get mentions from other users"
-msgstr "Mostrar una notificació quan rebi mencions d'altres usuaris"
+msgstr "Mostra una notificació quan altres usuaris t'esmentin"
 
 #: turpial/ui/gtk/preferences.py:271
 msgid "Directs Messages"
@@ -419,23 +419,23 @@ msgstr "Missatges Directes"
 
 #: turpial/ui/gtk/preferences.py:275
 msgid "Show a notification when you get direct messages"
-msgstr "Mostrar una notificació quan rebi missatges directes"
+msgstr "Mostra una notificació quan rebis missatges directes"
 
 #: turpial/ui/gtk/preferences.py:280
 msgid "Login"
-msgstr "Inicia sessió"
+msgstr "Inici de sessió"
 
 #: turpial/ui/gtk/preferences.py:284
 msgid "Show a notification at login with your user info"
-msgstr "Mostrar una notificació en iniciar la sessió amb la meva informació d'usuari"
+msgstr "Mostra una notificació en iniciar la sessió amb la teva informació d'usuari"
 
 #: turpial/ui/gtk/preferences.py:289
 msgid "Activate sounds"
-msgstr "Activar els sons"
+msgstr "Activar sons"
 
 #: turpial/ui/gtk/preferences.py:293
 msgid "Activate sounds for each notification"
-msgstr "Activar els sons de cada notificació"
+msgstr "Activar els sons per a cada notificació"
 
 #: turpial/ui/gtk/preferences.py:322
 msgid "Select your preferred services for shorten URLs and upload images"
@@ -456,7 +456,7 @@ msgstr "Selecciona tots aquells usuaris que estan molestant i silencia'ls tempor
 
 #: turpial/ui/gtk/preferences.py:453
 msgid "Setup your favorite web browser to open all links"
-msgstr "Configureu el vostre navegador web favorit per obrir els enllaços"
+msgstr "Configureu el vostre navegador web favorit per obrir tots els enllaços"
 
 #: turpial/ui/gtk/preferences.py:459
 msgid "Default web browser"

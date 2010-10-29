@@ -75,14 +75,14 @@ msgid "Turpial (Follow)"
 msgstr "Turpial (Segueix)"
 
 #: turpial/notification.py:102
-#, python-format, fuzzy
+#, python-format
 msgid "You are now following @%s"
-msgstr "No estàs seguint a @%s"
+msgstr "Ara estàs seguint a @%s"
 
 #: turpial/notification.py:104 turpial/notification.py:110
 #, fuzzy
 msgid "Turpial (Unfollow)"
-msgstr "Turpial (Deixa de seguir)"
+msgstr "Turpial (Deixar de seguir)"
 
 #: turpial/notification.py:104
 #, python-format
@@ -91,7 +91,6 @@ msgstr "Ja no ets següents @%s"
 
 #: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:85
-#, fuzzy
 msgid "Sorry, you don't have more API calls"
 msgstr "Disculpa, no tens mes crides a la API "
 
@@ -376,7 +375,6 @@ msgid "You will use 0 calls to API per hour"
 msgstr "Utilitzaràs 0 crides a API per hora"
 
 #: turpial/ui/gtk/preferences.py:183
-#, fuzzy
 msgid "Wide Mode"
 msgstr "Mode ample"
 
@@ -385,9 +383,8 @@ msgid "Show a workspace of 3 columns"
 msgstr "Mostrar una àrea de treball de 3 columnes"
 
 #: turpial/ui/gtk/preferences.py:191
-#, fuzzy
 msgid "Load profile color (Needs restart Turpial)"
-msgstr "Carrega el perfil de color (Necessitats reiniciar Turpial)"
+msgstr "Carrega el perfil de color (Necessites reiniciar Turpial)"
 
 #: turpial/ui/gtk/preferences.py:196
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
@@ -456,7 +453,6 @@ msgid "Upload images"
 msgstr "Carregar imatges"
 
 #: turpial/ui/gtk/preferences.py:369
-#, fuzzy
 msgid "Select all those users that are bothering you and shut them up temporarily"
 msgstr "Selecciona tots aquells usuaris que estan molestant i silencia'ls temporalment"
 

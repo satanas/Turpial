@@ -456,11 +456,11 @@ msgstr "Selecciona tots aquells usuaris que estan molestant i silencia'ls tempor
 
 #: turpial/ui/gtk/preferences.py:453
 msgid "Setup your favorite web browser to open all links"
-msgstr "Configureu el vostre navegador web favorit per obrir tots els enllaços"
+msgstr "Configura el teu navegador web favorit per obrir tots els enllaços"
 
 #: turpial/ui/gtk/preferences.py:459
 msgid "Default web browser"
-msgstr "Navegador web per defecte"
+msgstr "Navegador web predeterminat"
 
 #: turpial/ui/gtk/preferences.py:461
 msgid "Choose another web browser"
@@ -480,34 +480,31 @@ msgstr "Examinar"
 
 #: turpial/ui/gtk/preferences.py:505
 msgid "Select the full path of your web browser"
-msgstr "Selecciona la ruta completa del teu navegador"
+msgstr "Selecciona la ruta completa del teu navegador web"
 
 #: turpial/ui/gtk/preferences.py:531
 msgid "Proxy settings for Turpial (Need Restart)"
-msgstr "Configuració del servidor intermediari per al Turpial (Necessites Reiniciar)"
+msgstr "Configuració del Proxy per al Turpial (Necessites Reiniciar)"
 
 #: turpial/ui/gtk/preferences.py:534
 msgid "No proxy"
-msgstr "Sense servidor intermediari"
+msgstr "Sense Proxy"
 
 #: turpial/ui/gtk/preferences.py:535
-#, fuzzy
 msgid "Twitter API proxy"
-msgstr "Servidor intermediari de l'API del Twitter "
+msgstr "Proxy per el API de Twitter"
 
 #: turpial/ui/gtk/preferences.py:539
-#, fuzzy
 msgid "Use a URL to access Twitter API different of twitter.com"
-msgstr "Utilitzeu una adreça URL per accedir a API de Twitter diferent de twitter.com"
+msgstr "Usa una URL diferent de twitter.com per accedir a la API de Twitter"
 
 #: turpial/ui/gtk/preferences.py:543
-#, fuzzy
 msgid "Twitter API URL"
-msgstr "URL de l'API del Twitter"
+msgstr "URL de la API de Twitter"
 
 #: turpial/ui/gtk/profile.py:16
 msgid "Favorites"
-msgstr "Favorits"
+msgstr "Preferits"
 
 #: turpial/ui/gtk/profile.py:17
 msgid "Profile"
@@ -515,71 +512,59 @@ msgstr "Perfil"
 
 #: turpial/ui/gtk/profile.py:18
 msgid "Search"
-msgstr "Cerca"
+msgstr "Recerca"
 
 #: turpial/ui/gtk/statuslist.py:129
-#, fuzzy
 msgid "Open"
-msgstr "Obert"
+msgstr "Obrir"
 
 #: turpial/ui/gtk/statuslist.py:206 turpial/ui/gtk/statuslist.py:256
-#, fuzzy
 msgid "Reply"
 msgstr "Respondre"
 
 #: turpial/ui/gtk/statuslist.py:207 turpial/ui/gtk/statuslist.py:262
-#, fuzzy
 msgid "Delete"
 msgstr "Eliminar"
 
 #: turpial/ui/gtk/statuslist.py:257
-#, fuzzy
 msgid "Reply All"
 msgstr "Respondre a tots"
 
 #: turpial/ui/gtk/statuslist.py:258
-#, fuzzy
 msgid "Retweet (Old)"
-msgstr "Retweet (Antic)"
+msgstr "Re-enviar piulet (Antic)"
 
 #: turpial/ui/gtk/statuslist.py:259
-#, fuzzy
 msgid "Retweet"
-msgstr "Retweet"
+msgstr "Re-enviar piulet"
 
 #: turpial/ui/gtk/statuslist.py:260
-#, fuzzy
 msgid "+ Fav"
 msgstr "+ Fav"
 
 #: turpial/ui/gtk/statuslist.py:261
-#, fuzzy
 msgid "- Fav"
 msgstr "- Fav"
 
 #: turpial/ui/gtk/statuslist.py:263
-#, fuzzy
 msgid "DM"
-msgstr "DM"
+msgstr "MD"
 
 #: turpial/ui/gtk/statuslist.py:265
-#, fuzzy
 msgid "Unfollow"
 msgstr "Deixar de seguir"
 
 #: turpial/ui/gtk/statuslist.py:266
 msgid "Loading friends..."
-msgstr "Carregant amics ..."
+msgstr "Carregant amics..."
 
 #: turpial/ui/gtk/statuslist.py:269 turpial/ui/gtk/updatebox.py:209
-#, fuzzy
 msgid "In reply to"
 msgstr "En resposta a"
 
 #: turpial/ui/gtk/statuslist.py:401 turpial/ui/gtk/tweetslistwk.py:157
-#, fuzzy
 msgid "from"
-msgstr "de"
+msgstr "des de"
 
 #: turpial/ui/gtk/statuslist.py:403 turpial/ui/gtk/tweetslistwk.py:159
 msgid "in reply to"
@@ -587,7 +572,7 @@ msgstr "en resposta a"
 
 #: turpial/ui/gtk/statuslist.py:405 turpial/ui/gtk/tweetslistwk.py:161
 msgid "Retweeted by"
-msgstr "Retweet per"
+msgstr "Piulet re-enviat per"
 
 #: turpial/ui/gtk/updatebox.py:25
 msgid "What is happening?"
@@ -598,40 +583,36 @@ msgid "Upload image"
 msgstr "Pujar imatge"
 
 #: turpial/ui/gtk/updatebox.py:77
-#, fuzzy
 msgid "Options"
 msgstr "Opcions"
 
 #: turpial/ui/gtk/updatebox.py:83
 msgid "Clear all"
-msgstr "Esborrar tot"
+msgstr "Natejar tot"
 
 #: turpial/ui/gtk/updatebox.py:88
 msgid "Add friends"
-msgstr "Afegeix amics"
+msgstr "Afegir amics"
 
 #: turpial/ui/gtk/updatebox.py:92
 msgid "Update your status"
 msgstr "Actualitza el teu estat"
 
 #: turpial/ui/gtk/updatebox.py:93
-#, fuzzy
 msgid "Autoshort URLs"
 msgstr "Auto escurça URLs"
 
 #: turpial/ui/gtk/updatebox.py:199
-#, fuzzy
 msgid "Oh oh... I couldn't send the tweet"
-msgstr "Oh oh ... No he pogut enviar el tweet"
+msgstr "Oh oh... No he pogut enviar el piulet"
 
 #: turpial/ui/gtk/updatebox.py:254
-#, fuzzy
 msgid "Hey!... you must write something"
 msgstr "Iep!...  has d'escriure alguna cosa"
 
 #: turpial/ui/gtk/updatebox.py:259
 msgid "Hey!... that message looks like a testament"
-msgstr "Hey!... aquest missatge es veu com un testament"
+msgstr "Hey!... aquest missatge sembla un testament"
 
 #: turpial/ui/gtk/updatebox.py:274
 msgid "Oops... I couldn't shrink that URL"

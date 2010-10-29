@@ -620,10 +620,9 @@ msgstr "Ui...  No he pogut reduir aquesta URL"
 
 #: turpial/ui/gtk/updatebox.py:301
 msgid "Select image to upload"
-msgstr "Seleccioneu una imatge per pujar"
+msgstr "Selecciona una imatge per pujar"
 
 #: turpial/ui/gtk/updatebox.py:318
-#, fuzzy
 msgid "Oops... I couldn't upload that image"
 msgstr "Ui... No he pogut pujar la imatge"
 
@@ -640,7 +639,6 @@ msgid "URL"
 msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:80
-#, fuzzy
 msgid "Bio"
 msgstr "Bio"
 

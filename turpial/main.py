@@ -90,7 +90,8 @@ class Turpial:
         elif options.interface == 'gtk' and UI_GTK:
             self.ui = _GTK(self)
         else:
-            print 'No existe una interfaz válida. Saliendo...'
+            print 'No existe una interfaz válida. Las interfaces válidas son: %s' % INTERFACES
+            print 'Saliendo...'
             sys.exit(-1)
         
         self.httpserv = HTTPServices()

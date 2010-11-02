@@ -66,7 +66,7 @@ class Main(BaseGui, gtk.Window):
         self.showed = True
         self.minimize = 'on'
         self.workspace = 'single'
-        self.link_color = 'ff6633'
+        self.link_color = '#ff6633'
         self.home_interval = -1
         self.replies_interval = -1
         self.directs_interval = -1
@@ -86,8 +86,6 @@ class Main(BaseGui, gtk.Window):
         self.updatebox = UpdateBox(self)
         self.uploadpic = UploadPicBox(self)
         self.replybox = ConversationBox(self)
-        self.followbox = Follow(self)
-        self.
         
         if self.extend:
             log.debug('Cargado modo GTK Extendido')
@@ -344,10 +342,7 @@ class Main(BaseGui, gtk.Window):
         self.updatebox.show(text, id, user)
         
     def show_follow_box(self):
-        if self.followbox.get_property('visible'): 
-            self.followbox.present()
-            return
-        self.followbox.show()
+        f = Follow(self)
         
     def show_uploadpic_box(self):
         if self.uploadpic.get_property('visible'): 

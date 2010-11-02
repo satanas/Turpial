@@ -86,6 +86,8 @@ class Main(BaseGui, gtk.Window):
         self.updatebox = UpdateBox(self)
         self.uploadpic = UploadPicBox(self)
         self.replybox = ConversationBox(self)
+        self.followbox = Follow(self)
+        self.
         
         if self.extend:
             log.debug('Cargado modo GTK Extendido')
@@ -342,7 +344,10 @@ class Main(BaseGui, gtk.Window):
         self.updatebox.show(text, id, user)
         
     def show_follow_box(self):
-        f = Follow(self)
+        if self.followbox.get_property('visible'): 
+            self.followbox.present()
+            return
+        self.followbox.show()
         
     def show_uploadpic_box(self):
         if self.uploadpic.get_property('visible'): 

@@ -16,7 +16,7 @@ class Follow(gtk.Window):
         self.set_size_request(260, 80)
         self.set_transient_for(mainwin)
         self.set_resizable(False)
-        self.set_modal(True)
+        #self.set_modal(True)
         self.set_border_width(6)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         

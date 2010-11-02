@@ -1,3 +1,11 @@
+v1.4.9-a6 (Nov 01, 2010):
+    + Establecido color para los tweets propios
+    + Mejorada la expresión regular para detectar URLs (gracias e Encels por el aporte)
+    + Corregido error que impedía visualizar los mensajes enviados (issue 233)
+    + Corregida la modalidad de las ventanas secundarias
+    + Removido el servicio acortador de URLs u.nu (descontinuado)
+    + Mejoradas validaciones al momento de subir imágenes
+    
 v1.3.3-b4 (Jul 10, 2010):
     + Corregida dependencia de traceback en el módulo de sonido
     

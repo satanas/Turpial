@@ -39,7 +39,6 @@ URL_SERVICES = {
     "bit.ly": BitlyURLShorter(),
     "smlk.es": SmlkesURLShorter(),
     "su.pr": SuprURLShorter(),
-    "u.nu": UnuURLShorter(),
     "zi.ma": ZimaURLShorter(),
     "ur1.ca": Ur1caURLShorter(),
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),

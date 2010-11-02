@@ -101,6 +101,16 @@ class GenericService:
         res = h.getresponse()
         #return res.status, res.reason, res.read()
         return res.read()
+        
+    def _open_file(self, filepath):
+        _file = open(filepath, 'r')
+        imgbin = _file.read()
+        _file.close()
+        return imgbin
+        
+    def _error_opening_file(self, filepath):
+        self.log.debug("Error: El archivo %s no existe" % filepath)
+        return ServiceResponse(err=True, err_msg=_('Select something to uploading'))
     
     def _encode_multipart_formdata(self, fields, files):
         """

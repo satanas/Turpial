@@ -18,11 +18,14 @@ class ImglyPicUploader(GenericService):
         self.provider = 'https://api.twitter.com/1/account/verify_credentials.json'
         
     def do_service(self, username, password, filepath, message, httpobj):
-        _file = open(filepath, 'r')
+        try:
+            _image = self._open_file(filepath)
+        except:
+            return self._error_opening_file(filepath)
+        
         files = (
-            ('media', self._get_pic_name(filepath), _file.read()),
+            ('media', self._get_pic_name(filepath), _image),
         )
-        _file.close()
         
         fields = (
             ('message', message),

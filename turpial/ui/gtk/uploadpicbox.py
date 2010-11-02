@@ -101,12 +101,13 @@ class UploadPicBox(gtk.Window):
         bottom = gtk.HBox(False)
         bottom.pack_start(self.waiting, False, False, 5)
         bottom.pack_start(error_align, True, True, 4)
-        bottom.pack_start(abuttonbox, True, True, 5)
+        #bottom.pack_start(abuttonbox, True, True, 5)
         
         vbox = gtk.VBox(False)
         vbox.pack_start(pic_box, False, False, 2)
         vbox.pack_start(top, False, False, 2)
         vbox.pack_start(updatebox, True, True, 2)
+        vbox.pack_start(abuttonbox, False, False, 2)
         vbox.pack_start(bottom, False, False, 2)
         
         self.add(vbox)

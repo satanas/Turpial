@@ -23,6 +23,11 @@ class TweetPhotoPicUploader(GenericService):
         
     def do_service(self, username, password, filepath, message, httpobj):
         try:
+            _image = self._open_file(filepath)
+        except:
+            return self._error_opening_file(filepath)
+            
+        try:
             httpobj.change_format('xml')
             httpreq = TurpialHTTPRequest(method='GET', uri=self.provider)
             httpresp = httpobj.apply_auth(httpreq)
@@ -37,12 +42,8 @@ class TweetPhotoPicUploader(GenericService):
             
             httpobj.change_format('json')
             
-            _file = open(filepath, 'r')
-            imgbin = _file.read()
-            _file.close()
-            
             api = TweetPhotoApi(username, password, TWEETPHOTO_KEY)
-            resp = api.Upload(fileName=filepath, image=imgbin, message=message,
+            resp = api.Upload(fileName=filepath, image=_image, message=message,
                 headers=headers)
             
             link = self._parse_xml('MediaUrl', resp)

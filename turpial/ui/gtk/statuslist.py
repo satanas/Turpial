@@ -416,9 +416,12 @@ class StatusList(gtk.ScrolledWindow):
         msg = p.text.lower()
         me = '@'+self.mainwin.me
         mention = True if msg.find(me.lower()) >= 0 else False
+        own = True if p.username.lower() == self.mainwin.me.lower() else False
         
         if p.is_favorite:
             color = gtk.gdk.Color(250 * 257, 241 * 257, 205 * 257)
+        elif own:
+            color = gtk.gdk.Color(255 * 257, 229 * 257, 229 * 257)
         elif mention:
             color = gtk.gdk.Color(233 * 257, 247 * 257, 233 * 257)
         #elif self.mark_new:

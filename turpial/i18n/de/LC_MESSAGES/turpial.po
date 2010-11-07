@@ -483,23 +483,23 @@ msgstr "Den vollen Pfad zu deinem Web-Browser angeben"
 
 #: turpial/ui/gtk/preferences.py:531
 msgid "Proxy settings for Turpial (Need Restart)"
-msgstr ""
+msgstr "Proxy-Einstellungen für Turpial (Wiederstart erforderlich)"
 
 #: turpial/ui/gtk/preferences.py:534
 msgid "No proxy"
-msgstr ""
+msgstr "Kein Proxy verwenden"
 
 #: turpial/ui/gtk/preferences.py:535
 msgid "Twitter API proxy"
-msgstr ""
+msgstr "Twitter-API-Proxy"
 
 #: turpial/ui/gtk/preferences.py:539
 msgid "Use a URL to access Twitter API different of twitter.com"
-msgstr ""
+msgstr "Eine URL anders als twitter.com zur Verbindung mit der Twitter-API verwenden"
 
 #: turpial/ui/gtk/preferences.py:543
 msgid "Twitter API URL"
-msgstr ""
+msgstr "Twitter-API-URL"
 
 #: turpial/ui/gtk/profile.py:16
 msgid "Favorites"
@@ -526,9 +526,8 @@ msgid "Delete"
 msgstr "Löschen"
 
 #: turpial/ui/gtk/statuslist.py:257
-#, fuzzy
 msgid "Reply All"
-msgstr "Antwort an"
+msgstr "Alle antworten"
 
 #: turpial/ui/gtk/statuslist.py:258
 msgid "Retweet (Old)"
@@ -556,7 +555,7 @@ msgstr "Entfolgen"
 
 #: turpial/ui/gtk/statuslist.py:266
 msgid "Loading friends..."
-msgstr ""
+msgstr "Freundesliste wird geladen..."
 
 #: turpial/ui/gtk/statuslist.py:269 turpial/ui/gtk/updatebox.py:209
 msgid "In reply to"
@@ -564,17 +563,15 @@ msgstr "Antwort an"
 
 #: turpial/ui/gtk/statuslist.py:401 turpial/ui/gtk/tweetslistwk.py:157
 msgid "from"
-msgstr ""
+msgstr "von"
 
 #: turpial/ui/gtk/statuslist.py:403 turpial/ui/gtk/tweetslistwk.py:159
-#, fuzzy
 msgid "in reply to"
-msgstr "Antwort an"
+msgstr "als Antwort auf"
 
 #: turpial/ui/gtk/statuslist.py:405 turpial/ui/gtk/tweetslistwk.py:161
-#, fuzzy
 msgid "Retweeted by"
-msgstr "Retweeten"
+msgstr "Retweetet von"
 
 #: turpial/ui/gtk/updatebox.py:25
 msgid "What is happening?"
@@ -594,12 +591,11 @@ msgstr "Alles entfernen"
 
 #: turpial/ui/gtk/updatebox.py:88
 msgid "Add friends"
-msgstr ""
+msgstr "Freunde hinzufügen"
 
 #: turpial/ui/gtk/updatebox.py:92
-#, fuzzy
 msgid "Update your status"
-msgstr "Update-Stand"
+msgstr "Aktualisiere deinen Status"
 
 #: turpial/ui/gtk/updatebox.py:93
 msgid "Autoshort URLs"
@@ -610,13 +606,12 @@ msgid "Oh oh... I couldn't send the tweet"
 msgstr "O o... Ich konnte den Tweet nicht senden"
 
 #: turpial/ui/gtk/updatebox.py:254
-#, fuzzy
 msgid "Hey!... you must write something"
 msgstr "He! Du musst etwas schreiben!"
 
 #: turpial/ui/gtk/updatebox.py:259
 msgid "Hey!... that message looks like a testament"
-msgstr ""
+msgstr "He! Die Nachricht schaut wie ein Roman aus!"
 
 #: turpial/ui/gtk/updatebox.py:274
 msgid "Oops... I couldn't shrink that URL"

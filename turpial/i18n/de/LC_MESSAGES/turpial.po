@@ -224,12 +224,12 @@ msgstr "Gib einen Suchbegriff ein"
 
 #: turpial/ui/gtk/conversation.py:19 turpial/ui/gtk/conversation.py:25
 msgid "In reply to..."
-msgstr "... antworten"
+msgstr "Als Antwort auf..."
 
 #: turpial/ui/gtk/conversation.py:47
 #, python-format
 msgid "In reply to %s"
-msgstr "%s antworten"
+msgstr "Als Antwort auf %s"
 
 #: turpial/ui/gtk/dock.py:20
 msgid "Timeline, replies and others"

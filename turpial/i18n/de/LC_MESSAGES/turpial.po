@@ -559,7 +559,7 @@ msgstr "Freundesliste wird geladen..."
 
 #: turpial/ui/gtk/statuslist.py:269 turpial/ui/gtk/updatebox.py:209
 msgid "In reply to"
-msgstr "Antwort an"
+msgstr "Antwort auf"
 
 #: turpial/ui/gtk/statuslist.py:401 turpial/ui/gtk/tweetslistwk.py:157
 msgid "from"

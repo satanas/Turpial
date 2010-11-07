@@ -112,7 +112,7 @@ msgstr "%s ist schon ein Freund"
 #: turpial/api/protocols/identica/http.py:43
 #: turpial/api/protocols/twitter/http.py:99
 msgid "Hey! You are over the limit of API calls"
-msgstr "Hey! Grenze für die Anzahl von API-Aufrufen erreicht!"
+msgstr "Hey! Anzahlgrenze von API-Aufrufen erreicht!"
 
 #: turpial/api/protocols/identica/http.py:46
 #: turpial/api/protocols/twitter/http.py:102
@@ -241,7 +241,7 @@ msgstr "Profile, Favoriten, Suche"
 
 #: turpial/ui/gtk/dock.py:28 turpial/ui/gtk/updatebox.py:29
 msgid "Update status"
-msgstr "Update-Stand"
+msgstr "Aktualisierung-Status"
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/login.py:55
 #: turpial/ui/gtk/preferences.py:24
@@ -389,7 +389,7 @@ msgstr "Benutzer-Profilfarbe zum Hervorheben von Erwähnungen, Hashtags und URLs
 
 #: turpial/ui/gtk/preferences.py:201
 msgid "Minimize to tray"
-msgstr "Ins Benachrichtigungsfeld Minimieren"
+msgstr "Ins Benachrichtigungsfeld minimieren"
 
 #: turpial/ui/gtk/preferences.py:205
 msgid "Send Turpial to system tray when close"

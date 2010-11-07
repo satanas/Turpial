@@ -2,19 +2,19 @@
 # Copyright (C) 2010
 # This file is distributed under the same license as the Turpial package.
 # Raúl Escalante <t6435bm@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version:  1.1.2-a1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-23 18:52+0430\n"
+"Project-Id-Version: 1.1.2-a1\n"
+"Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
+"POT-Creation-Date: 2010-09-12 23:22-0530\n"
 "PO-Revision-Date: 2010-09-12 23:23-0530\n"
 "Last-Translator: Raúl Escalante <t6435bm@gmail.com>\n"
 "Language-Team: Deutsch <DE@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: turpial/main.py:156 turpial/ui/gtk/home.py:25
@@ -24,16 +24,15 @@ msgstr "Timeline"
 
 #: turpial/main.py:157
 msgid "Replies"
-msgstr ""
+msgstr "Antworten"
 
 #: turpial/main.py:158 turpial/ui/gtk/home.py:29
 msgid "Directs"
 msgstr "Direktnachrichten"
 
 #: turpial/main.py:159
-#, fuzzy
 msgid "My Tweets"
-msgstr "Neue Tweets"
+msgstr "Meine Tweets"
 
 #: turpial/notification.py:59
 msgid "new tweet"
@@ -73,95 +72,93 @@ msgstr "Followers"
 
 #: turpial/notification.py:102 turpial/notification.py:108
 msgid "Turpial (Follow)"
-msgstr ""
+msgstr "Turpial (Folgen)"
 
 #: turpial/notification.py:102
-#, fuzzy, python-format
+#, python-format
 msgid "You are now following @%s"
-msgstr "Du hast @%s entfolgt"
+msgstr "Jetzt folgst du @%s"
 
 #: turpial/notification.py:104 turpial/notification.py:110
 msgid "Turpial (Unfollow)"
-msgstr ""
+msgstr "Turpial (Entfolgen)"
 
 #: turpial/notification.py:104
-#, fuzzy, python-format
+#, python-format
 msgid "You are no longer following @%s"
-msgstr "Jetzt folgst du @%s"
+msgstr "Jetzt folgst du @%s nicht mehr"
 
 #: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:85
 msgid "Sorry, you don't have more API calls"
-msgstr ""
+msgstr "Entschuldigung, keine verfügbaren API-Aufrufe mehr"
 
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:88
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Ungültige Anmeldedaten"
 
 #: turpial/api/protocols/identica/http.py:39
 #: turpial/api/protocols/twitter/http.py:93
 msgid "Your status was sent. Don't try again"
-msgstr ""
+msgstr "Dein Status wurde schon gesendet; weitere Versuche nicht nötig"
 
 #: turpial/api/protocols/identica/http.py:41
 #: turpial/api/protocols/twitter/http.py:95
 #, python-format
 msgid "%s already is a friend"
-msgstr ""
+msgstr "%s ist schon ein Freund"
 
 #: turpial/api/protocols/identica/http.py:43
 #: turpial/api/protocols/twitter/http.py:99
 msgid "Hey! You are over the limit of API calls"
-msgstr ""
+msgstr "Hey! Grenze für die Anzahl von API-Aufrufen erreicht!"
 
 #: turpial/api/protocols/identica/http.py:46
 #: turpial/api/protocols/twitter/http.py:102
 msgid "Err... invalid request"
-msgstr ""
+msgstr "Äh... ungültige Abfrage"
 
 #: turpial/api/protocols/identica/http.py:48
 #: turpial/api/protocols/twitter/http.py:104
 msgid "You are searching a very weird thing"
-msgstr ""
+msgstr "Du suchst nach etwas ziemlich Sonderbarem"
 
 #: turpial/api/protocols/identica/http.py:50
 #: turpial/api/protocols/twitter/http.py:106
 msgid "You are searching too much!"
-msgstr ""
+msgstr "Du suchst zu viel!"
 
 #: turpial/api/protocols/identica/http.py:52
 #: turpial/api/protocols/twitter/http.py:108
-#, fuzzy
 msgid "Oops! Something went wrong"
-msgstr "Ups... etwas ist fehlgeschlagen"
+msgstr "Ups! Etwas ist schief gelaufen!"
 
 #: turpial/api/protocols/identica/http.py:54
 #: turpial/api/protocols/twitter/http.py:110
 msgid "Twitter is down. Try again later"
-msgstr ""
+msgstr "Twitter ist nicht verfügbar. Versuch es später wieder"
 
 #: turpial/api/protocols/identica/http.py:56
 #: turpial/api/protocols/twitter/http.py:112
 msgid "Twitter is overcapacity"
-msgstr ""
+msgstr "Twitter ist überlastet"
 
 #: turpial/api/protocols/identica/http.py:60
 #: turpial/api/protocols/twitter/http.py:116
 msgid "Can't connect to Twitter"
-msgstr ""
+msgstr "Ich kann keine Verbindung mit Twitter aufnehmen"
 
 #: turpial/api/protocols/identica/identica.py:164
 #: turpial/api/protocols/twitter/http.py:72
 #: turpial/api/protocols/twitter/twitter.py:181
-#, fuzzy
 msgid "Authentication Error"
-msgstr "Sichere Authentifizierung"
+msgstr "Fehler bei der Authentifizierung"
 
 #: turpial/api/protocols/twitter/http.py:97
 #, python-format
 msgid "You've already requested to follow %s"
-msgstr ""
+msgstr "Folgeanfrage an %s steht schon an"
 
 #: turpial/api/services/shorturl/bitly.py:31
 #: turpial/api/services/shorturl/cligs.py:26
@@ -283,9 +280,7 @@ msgstr ""
 
 #: turpial/ui/gtk/friendwin.py:83 turpial/ui/gtk/preferences.py:429
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr ""
-"Deine Freundesliste wird noch geladen. Versuch es in wenigen Sekunden "
-"wieder"
+msgstr "Deine Freundesliste wird noch geladen. Versuch es in wenigen Sekunden wieder"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 #: turpial/ui/gtk/preferences.py:262
@@ -355,9 +350,7 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:157
 msgid "Adjust update frequency for timeline, mentions and direct messages"
-msgstr ""
-"Aktualisierungshäufigkeit für Timeline, Erwähnungen und Direktnachrichten"
-" einstellen"
+msgstr "Aktualisierungshäufigkeit für Timeline, Erwähnungen und Direktnachrichten einstellen"
 
 #: turpial/ui/gtk/preferences.py:168
 msgid "Column 1 (Left)"
@@ -393,9 +386,7 @@ msgstr "Profilfarbe laden (Turpial-Wiederstart erforderlich)"
 
 #: turpial/ui/gtk/preferences.py:196
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr ""
-"Benutzer-Profilfarbe zum Hervorheben von Erwähnungen, Hashtags und URLs "
-"verwenden"
+msgstr "Benutzer-Profilfarbe zum Hervorheben von Erwähnungen, Hashtags und URLs verwenden"
 
 #: turpial/ui/gtk/preferences.py:201
 msgid "Minimize to tray"
@@ -448,9 +439,7 @@ msgstr "Klänge auf Benachrichtigungen aktivieren"
 
 #: turpial/ui/gtk/preferences.py:322
 msgid "Select your preferred services for shorten URLs and upload images"
-msgstr ""
-"Wähle den von dir bevorzugten URL-Abkürzungs- und Bilder-Hochladen-Dienst"
-" aus"
+msgstr "Wähle den von dir bevorzugten URL-Abkürzungs- und Bilder-Hochladen-Dienst aus"
 
 #: turpial/ui/gtk/preferences.py:328 turpial/ui/gtk/updatebox.py:64
 #: turpial/ui/gtk/updatebox.py:65
@@ -463,9 +452,7 @@ msgstr "Bilder-Hochladen"
 
 #: turpial/ui/gtk/preferences.py:369
 msgid "Select all those users that are bothering you and shut them up temporarily"
-msgstr ""
-"Wähle all jene Benutzer aus, die dich nerven und schalte sie vorläufig "
-"stumm"
+msgstr "Wähle all jene Benutzer aus, die dich nerven und schalte sie vorläufig stumm"
 
 #: turpial/ui/gtk/preferences.py:453
 msgid "Setup your favorite web browser to open all links"
@@ -669,4 +656,3 @@ msgstr "Speichervorgang läuft..."
 
 #~ msgid "Now you follow to @%s"
 #~ msgstr "Jetzt folgst du @%s"
-

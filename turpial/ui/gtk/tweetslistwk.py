@@ -201,6 +201,8 @@ class TweetListWebkit(gtk.VBox):
             self.stop_update()
             self.clear()
             for tweet in arr_tweets:
+                if not tweet:
+                    continue
                 self.add_tweet(tweet, False)
             self.last = arr_tweets
             gobject.idle_add(self.list.load_string, self.page, "text/html", "utf-8", "timeline")

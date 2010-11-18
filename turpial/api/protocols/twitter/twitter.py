@@ -14,7 +14,7 @@ from turpial.api.interfaces.post import Status, Response, Profile, List, RateLim
 class Twitter(Protocol):
     def __init__(self):
         Protocol.__init__(self, 'Twitter', 'http://api.twitter.com/1', 
-            'http://search.twitter.com', 'http://twitter.com/#search?q=%23',
+            'http://search.twitter.com', 'http://twitter.com/search?q=%23',
             None, 'http://www.twitter.com')
         
         self.http = TwitterHTTP()
@@ -92,6 +92,7 @@ class Twitter(Protocol):
         profile.statuses_count = pf['statuses_count']
         if pf.has_key('status'):
             profile.last_update = pf['status']['text']
+            profile.last_update_id = pf['status']['id']
         profile.profile_link_color = ('#%s' % pf['profile_link_color']) or '#0F0F85'
         return profile
         
@@ -143,6 +144,8 @@ class Twitter(Protocol):
     def response_to_statuses(self, response, mute=False):
         statuses = []
         for resp in response:
+            if not resp:
+                continue
             status = self.__create_status(resp)
             if status.retweet_by and self.oauth_support:
                 users = self.__get_retweet_users(status.id)
@@ -162,20 +165,21 @@ class Twitter(Protocol):
         username = args['username']
         password = args['password']
         auth = args['auth']
+        protocol = args['protocol']
         
         try:
-            key, secret = self.http.auth(username, password, auth)
+            key, secret = self.http.auth(username, password)
             rtn = self.http.request('%s/account/verify_credentials' % 
                 self.apiurl)
             self.profile = self.__create_profile(rtn)
             self.profile.password = password
             #return Response([self.profile, key, secret], 'mixed')
-            return Response(self.profile, 'profile'), key, secret
+            return Response(self.profile, 'profile'), key, secret, protocol
         except TurpialException, exc:
-            return Response(None, 'error', exc.msg), None, None
+            return Response(None, 'error', exc.msg), None, None, None
         except Exception, exc:
             self.log.debug('Authentication Error: %s' % exc)
-            return Response(None, 'error', _('Authentication Error')), None, None
+            return Response(None, 'error', _('Authentication Error')), None, None, None
         
     def get_timeline(self, args):
         '''Actualizando linea de tiempo'''
@@ -210,6 +214,19 @@ class Twitter(Protocol):
         
         try:
             rtn = self.http.request('%s/direct_messages' % self.apiurl, 
+                {'count': count})
+            self.directs = self.response_to_statuses(rtn)
+            return Response(self.directs, 'status')
+        except TurpialException, exc:
+            return Response(None, 'error', exc.msg)
+            
+    def get_sent(self, args):
+        '''Actualizando mensajes enviados'''
+        self.log.debug('Descargando mis tweets')
+        count = args['count']
+        
+        try:
+            rtn = self.http.request('%s/statuses/user_timeline' % self.apiurl, 
                 {'count': count})
             self.directs = self.response_to_statuses(rtn)
             return Response(self.directs, 'status')
@@ -323,9 +340,11 @@ class Twitter(Protocol):
         try:
             rtn = self.http.request('%s/statuses/update' % self.apiurl, args)
             # Evita que se duplique el último estado del usuario
-            if rtn['text'] != self.profile.last_update:
+            if rtn['id'] != self.profile.last_update_id:
                 status = self.__create_status(rtn)
                 self._add_status(self.timeline, status)
+                self.profile.last_update = rtn['text']
+                self.profile.last_update_id = rtn['id']
             timeline = self.get_muted_timeline()
             return Response(timeline, 'status')
         except TurpialException, exc:
@@ -523,7 +542,7 @@ class Twitter(Protocol):
         
         try:
             rtn = self.http.request('%s/%s/lists/%s/statuses' % (self.apiurl, 
-                user, id), {'count': count})
+                user, id), {'per_page': count})
             statuses = self.response_to_statuses(rtn)
             return Response(statuses, 'status')
         except TurpialException, exc:

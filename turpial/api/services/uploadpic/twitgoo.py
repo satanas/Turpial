@@ -15,20 +15,24 @@ class TwitgooPicUploader(GenericService):
         GenericService.__init__(self)
         self.server = "twitgoo.com"
         self.base = "/api/upload"
+        self.provider = 'https://api.twitter.com/1/account/verify_credentials.json'
         
-    def do_service(self, username, password, filepath):
-        _file = open(filepath, 'r')
-        files = (
-            ('media', self._get_pic_name(filepath), _file.read()),
-        )
-        _file.close()
-        
-        fields = (
-            ('username', username),
-            ('password', password),
-        )
+    def do_service(self, username, password, filepath, message, httpobj):
         try:
-            resp = self._upload_pic(self.server, self.base, fields, files)
+            _image = self._open_file(filepath)
+        except:
+            return self._error_opening_file(filepath)
+            
+        files = (
+            ('media', self._get_pic_name(filepath), _image),
+        )
+                
+        fields = (
+            ('message', message),
+        )
+        
+        try:
+            resp = self._upload_pic(self.server, self.base, fields, files, httpobj)
             link = self._parse_xml('mediaurl', resp)
             return ServiceResponse(link)
         except Exception, error:

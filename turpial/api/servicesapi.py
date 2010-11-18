@@ -6,11 +6,12 @@
 # Dic 05, 2009
 
 import Queue
+import urllib2
 import logging
 import traceback
 import threading
 
-from turpial.api.interfaces.service import GenericService
+from turpial.api.interfaces.service import GenericService, ServiceResponse
 from turpial.api.services.shorturl.cligs import CligsURLShorter
 from turpial.api.services.shorturl.isgd import IsgdURLShorter
 from turpial.api.services.shorturl.tinyurl import TinyurlURLShorter
@@ -28,6 +29,7 @@ from turpial.api.services.uploadpic.twitpic import TwitpicPicUploader
 from turpial.api.services.uploadpic.twitgoo import TwitgooPicUploader
 from turpial.api.services.uploadpic.mobypicture import MobypicturePicUploader
 from turpial.api.services.uploadpic.yfrog import YfrogPicUploader
+from turpial.api.services.uploadpic.posterous import PosterousPicUploader
 
 URL_SERVICES = {
     "cli.gs": CligsURLShorter(),
@@ -37,21 +39,20 @@ URL_SERVICES = {
     "bit.ly": BitlyURLShorter(),
     "smlk.es": SmlkesURLShorter(),
     "su.pr": SuprURLShorter(),
-    "u.nu": UnuURLShorter(),
     "zi.ma": ZimaURLShorter(),
     "ur1.ca": Ur1caURLShorter(),
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
 }
 
 PHOTO_SERVICES = {
-    "TweetPhoto": TweetPhotoPicUploader(),
+    "Plixi": TweetPhotoPicUploader(),
     "TwitPic": TwitpicPicUploader(),
     "img.ly": ImglyPicUploader(),
     "Twitgoo": TwitgooPicUploader(),
+    "MobyPicture": MobypicturePicUploader(),
+    "Posterous": PosterousPicUploader(),
     "Yfrog": YfrogPicUploader(),
 }
-
-#"MobyPicture": MobypicturePicUploader(),
 
 class HTTPServices(threading.Thread):
     def __init__(self, username='', password='', imgdir='/tmp'):
@@ -63,12 +64,14 @@ class HTTPServices(threading.Thread):
         self.imgdir = imgdir
         self.username = username
         self.password = password
+        self.httpobj = None
         self.log.debug('Iniciado')
         
-    def set_credentials(self, username, password):
+    def set_credentials(self, username, password, httpobj):
         '''Definicion de credenciales'''
         self.username = username
         self.password = password
+        self.httpobj = httpobj
         
     def update_img_dir(self, imgdir):
         self.imgdir = imgdir
@@ -81,9 +84,9 @@ class HTTPServices(threading.Thread):
         self.register({'cmd': 'short_url', 'service': service, 'url': url},
                       callback)
     
-    def upload_pic(self, service, path, callback):
-        self.register({'cmd': 'upload_pic', 'service': service, 'path': path},
-                      callback)
+    def upload_pic(self, service, path, message, callback):
+        self.register({'cmd': 'upload_pic', 'service': service, 'path': path,
+                      'message': message}, callback)
         
     def register(self, args, callback):
         self.queue.put((args, callback))
@@ -99,6 +102,8 @@ class HTTPServices(threading.Thread):
                 req = self.queue.get(True, 0.3)
             except Queue.Empty:
                 continue
+            except:
+                continue
             
             (args, callback) = req
             
@@ -111,12 +116,18 @@ class HTTPServices(threading.Thread):
                     filename = GenericService._download_pic(self.imgdir, args['url'])
                     self.log.debug('Descargada imagen de %s' % args['user'])
                     callback(args['user'], filename)
+                except urllib2.URLError, error:
+                    self.log.debug("Error: %s\n%s" % (error, 
+                        traceback.print_exc()))
+                    #FIXME
+                    #self.register(args, callback)
                 except Exception, error:
+                    print error
                     rtn = error.read()
                     print 'Message:', rtn
                     self.log.debug("Error: %s\n%s" % (error, 
                         traceback.print_exc()))
-                    self.register(args, callback)
+                    #self.register(args, callback)
             elif args['cmd'] == 'short_url':
                 self.log.debug('Cortando URL: %s' % args['url'])
                 urlshorter = URL_SERVICES[args['service']]
@@ -126,9 +137,13 @@ class HTTPServices(threading.Thread):
             elif args['cmd'] == 'upload_pic':
                 self.log.debug('Subiendo imagen [%s]: %s' % 
                                (args['service'], args['path']))
-                uploader = PHOTO_SERVICES[args['service']]
-                resp = uploader.do_service(self.username, self.password, 
-                    args['path'])
+                if args['service']:
+                    uploader = PHOTO_SERVICES[args['service']]
+                    resp = uploader.do_service(self.username, self.password, 
+                        args['path'], args['message'], self.httpobj)
+                else:
+                    resp = ServiceResponse(err=True, 
+                        err_msg=_('Select a service for upload pics'))
                 callback(resp)
                 
             self.queue.task_done()

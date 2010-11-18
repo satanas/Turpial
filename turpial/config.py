@@ -9,13 +9,17 @@ import os
 import logging
 import ConfigParser
 
+try:
+    from xdg import BaseDirectory
+    XDG_CACHE = True
+except:
+    XDG_CACHE = False
+
+PROTOCOLS = ['twitter', 'identica']
+
 GLOBAL_CFG = {
     'App':{
-        'version': '1.4.7-a1',
-    },
-    'Login':{
-        'username': '',
-        'password': '',
+        'version': '1.4.9-a6',
     },
     'Proxy':{
         'username': '',
@@ -25,11 +29,13 @@ GLOBAL_CFG = {
         'url': '',
     }
 }
+PROTOCOL_CFG = {
+    'Login':{
+        'username': '',
+        'password': '',
+    }
+}
 DEFAULT_CFG = {
-    'Auth':{
-        'oauth-key': '',
-        'oauth-secret': '',
-    },
     'General':{
         'home-update-interval': '3',
         'replies-update-interval': '10',
@@ -57,7 +63,7 @@ DEFAULT_CFG = {
     },
     'Services':{
         'shorten-url': 'is.gd',
-        'upload-pic': 'TweetPhoto',
+        'upload-pic': 'TwitPic',
     },
     'Browser':{
         'cmd': ''
@@ -164,14 +170,22 @@ class ConfigHandler(ConfigBase):
     """Manejador de la configuracion, creacion de estructura inicial de
     directorios, archivos y listas."""
 
-    def __init__(self, user):
+    def __init__(self, user, protocol):
         ConfigBase.__init__(self)
         
         self.dir = os.path.join(os.path.expanduser('~'), '.config',
-            'turpial', user)
-        self.imgdir = os.path.join(self.dir, 'images')
+            'turpial', protocol, user)
+        if XDG_CACHE:
+            self.imgdir = os.path.join(BaseDirectory.xdg_cache_home, 
+                'turpial', protocol, user, 'images')
+        else:
+            self.imgdir = os.path.join(self.dir, 'images')
         self.filepath = os.path.join(self.dir, 'config')
         self.mutedpath = os.path.join(self.dir, 'muted')
+        
+        self.log.debug('CACHEDIR: %s' % self.imgdir)
+        self.log.debug('CONFIGFILE: %s' % self.filepath)
+        self.log.debug('MUTEDFILE: %s' % self.mutedpath)
     
     def initialize_failsafe(self):
         if not os.path.isdir(self.dir): 
@@ -230,3 +244,20 @@ class ConfigApp(ConfigBase):
         
         if self.read('App', 'version') != self.default['App']['version']:
             self.write('App', 'version', self.default['App']['version'])
+            
+class ConfigProtocol(ConfigBase):
+    """Configuracion del protocolo"""
+    
+    def __init__(self, protocol):
+        ConfigBase.__init__(self, default=PROTOCOL_CFG)
+        
+        self.dir = os.path.join(os.path.expanduser('~'), '.config', 
+            'turpial', protocol)
+        self.filepath = os.path.join(self.dir, 'config')
+        
+        if not os.path.isdir(self.dir): 
+            os.makedirs(self.dir)
+        if not os.path.isfile(self.filepath): 
+            self.create()
+        
+        self.load()

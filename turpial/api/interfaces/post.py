@@ -41,6 +41,7 @@ class Profile:
         self.profile_link_color = None
         self.statuses_count = None
         self.last_update = None
+        self.last_update_id = None
 
 class List:
     def __init__(self):

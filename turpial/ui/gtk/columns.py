@@ -54,9 +54,13 @@ class GenericColumn(gtk.VBox):
                 if self.tweetlist.autoscroll:
                     self.tweetlist.clear()
                     for tweet in arr_tweets:
+                        if not tweet:
+                            continue
                         self.tweetlist.add_tweet(tweet, False)
                 else:
                     for tweet in arr_tweets:
+                        if not tweet:
+                            continue
                         if self.last is None:
                             self.tweetlist.add_tweet(tweet, False)
                         elif not util.has_tweet(self.last, tweet):
@@ -89,7 +93,7 @@ class GenericColumn(gtk.VBox):
         pass
         
 class StandardColumn(GenericColumn):
-    def __init__(self, mainwin, label='', menu='normal', pos=None, viewed=None, marknew=False):
+    def __init__(self, mainwin, label='', menu='normal', pos=None, viewed=None, marknew=True):
         GenericColumn.__init__(self, mainwin, label, menu, marknew)
         
         self.pos = pos
@@ -104,12 +108,12 @@ class StandardColumn(GenericColumn):
         self.listcombo.set_model(model)
         
         self.refresh = gtk.Button()
-        self.refresh.set_image(self.mainwin.load_image('refresh.png'))
+        self.refresh.set_image(self.mainwin.load_image('action-refresh.png'))
         self.refresh.set_tooltip_text(_('Manual Update'))
         #self.refresh.set_relief(gtk.RELIEF_NONE)
         
         self.autoscroll = gtk.ToggleButton()
-        self.autoscroll.set_image(self.mainwin.load_image('autoscroll.png'))
+        self.autoscroll.set_image(self.mainwin.load_image('action-autoscroll.png'))
         self.autoscroll.set_tooltip_text(_('Autoscrolling'))
         self.autoscroll.set_active(True)
         self.tweetlist.set_autoscroll(True)
@@ -138,7 +142,13 @@ class StandardColumn(GenericColumn):
         model = self.listcombo.get_model()
         iter = self.listcombo.get_active_iter()
         new_id = model.get_value(iter, 0)
+        self.caption = model.get_value(iter, 1)
         self.changing_col = True
+        self.label.set_label(self.caption)
+        try:
+            self.get_parent().set_tab_label(self, self.label)
+        except:
+            pass
         self.mainwin.request_change_column(self.pos, new_id)
         
     def fill_combo(self, columns, new_viewed):
@@ -156,6 +166,9 @@ class StandardColumn(GenericColumn):
         self.last_index = default
         self.listcombo.set_model(model)
         self.listcombo.set_active(self.last_index)
+        iter = self.listcombo.get_active_iter()
+        self.caption = model.get_value(iter, 1)
+        self.label = gtk.Label(self.caption)
         self.handler = self.listcombo.connect('changed', self.__change_list)
         
     def set_combo_item(self, reset=False):
@@ -216,7 +229,7 @@ class SearchColumn(GenericColumn):
         
         self.input_topics = gtk.Entry()
         self.clearbtn = gtk.Button()
-        self.clearbtn.set_image(self.mainwin.load_image('clear.png'))
+        self.clearbtn.set_image(self.mainwin.load_image('action-clear.png'))
         self.clearbtn.set_tooltip_text(_('Clear results'))
         #self.clearbtn.set_relief(gtk.RELIEF_NONE)
         try:

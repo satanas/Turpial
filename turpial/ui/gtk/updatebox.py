@@ -64,14 +64,9 @@ class UpdateBox(gtk.Window):
         self.btn_url = gtk.Button(_('Shorten URL'))
         self.btn_url.set_tooltip_text(_('Shorten URL'))
         
-        self.btn_pic = gtk.Button(_('Upload image'))
-        self.btn_pic.set_tooltip_text(_('Upload image'))
-        
         tools = gtk.HBox(False)
         tools.pack_start(self.url, True, True, 3)
         tools.pack_start(self.btn_url, False, False)
-        tools.pack_start(gtk.HSeparator(), False, False)
-        tools.pack_start(self.btn_pic, False, False, 3)
         
         self.toolbox = gtk.Expander()
         self.toolbox.set_label(_('Options'))
@@ -79,12 +74,12 @@ class UpdateBox(gtk.Window):
         self.toolbox.add(tools)
         
         self.btn_clr = gtk.Button()
-        self.btn_clr.set_image(self.mainwin.load_image('clear.png'))
+        self.btn_clr.set_image(self.mainwin.load_image('action-clear.png'))
         self.btn_clr.set_tooltip_text(_('Clear all') + ' (Ctrl+L)')
         self.btn_clr.set_relief(gtk.RELIEF_NONE)
         
         self.btn_frn = gtk.Button()
-        self.btn_frn.set_image(self.mainwin.load_image('friends.png'))
+        self.btn_frn.set_image(self.mainwin.load_image('action-add-friends.png'))
         self.btn_frn.set_tooltip_text(_('Add friends') + ' (Ctrl+F)')
         self.btn_frn.set_relief(gtk.RELIEF_NONE)
         
@@ -104,7 +99,7 @@ class UpdateBox(gtk.Window):
         error_align.add(self.lblerror)
         
         buttonbox = gtk.HBox(False)
-        buttonbox.pack_start(chk_short, False, False, 0)
+        #buttonbox.pack_start(chk_short, False, False, 0)
         buttonbox.pack_start(self.btn_frn, False, False, 0)
         buttonbox.pack_start(self.btn_clr, False, False, 0)
         buttonbox.pack_start(gtk.HSeparator(), False, False, 2)
@@ -132,7 +127,6 @@ class UpdateBox(gtk.Window):
         self.btn_clr.connect('clicked', self.clear)
         self.btn_upd.connect('clicked', self.update)
         self.btn_url.connect('clicked', self.short_url)
-        self.btn_pic.connect('clicked', self.upload_pic)
         self.toolbox.connect('activate', self.show_options)
         self.update_text.connect('mykeypress', self.__on_key_pressed)
         
@@ -285,50 +279,6 @@ class UpdateBox(gtk.Window):
             short.response = ' ' + short.response
         
         buffer.insert_at_cursor(short.response)
-        self.waiting.stop()
-        self.lblerror.set_markup("")
-        self.toolbox.set_expanded(False)
-        self.set_focus(self.update_text)
-        
-    def upload_pic(self, widget):
-        filtro = gtk.FileFilter()
-        filtro.set_name('PNG, JPEG & GIF Images')
-        filtro.add_pattern('*.png')
-        filtro.add_pattern('*.gif')
-        filtro.add_pattern('*.jpg')
-        filtro.add_pattern('*.jpeg')
-        
-        dia = gtk.FileChooserDialog(title=_('Select image to upload'),
-            parent=self, action=gtk.FILE_CHOOSER_ACTION_OPEN,
-            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                gtk.STOCK_OK, gtk.RESPONSE_OK))
-        dia.add_filter(filtro)
-        resp = dia.run()
-        
-        if resp == gtk.RESPONSE_OK:
-            self.waiting.start()
-            self.mainwin.request_upload_pic(dia.get_filename(),
-                                            self.update_uploaded_pic)
-        dia.destroy()
-        
-    def update_uploaded_pic(self, pic_url):
-        if pic_url.err or not pic_url.response:
-            self.waiting.stop(error=True)
-            self.lblerror.set_markup("<span size='small'>%s</span>" % 
-                _('Oops... I couldn\'t upload that image'))
-            return
-        buffer = self.update_text.get_buffer()
-        end_offset = buffer.get_property('cursor-position')
-        start_offset = end_offset - 1
-        
-        end = buffer.get_iter_at_offset(end_offset)
-        start = buffer.get_iter_at_offset(start_offset)
-        text = buffer.get_text(start, end)
-        
-        if (text != ' ') and (start_offset > 0):
-            pic_url.response = ' ' + pic_url.response
-        
-        buffer.insert_at_cursor(pic_url.response)
         self.waiting.stop()
         self.lblerror.set_markup("")
         self.toolbox.set_expanded(False)

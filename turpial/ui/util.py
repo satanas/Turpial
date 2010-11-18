@@ -17,7 +17,8 @@ HASHTAG_PATTERN = re.compile('(?<![\w])#[\wáéíóúÁÉÍÓÚñÑçÇ]+')
 GROUP_PATTERN = re.compile('(?<![\w])![\wáéíóúÁÉÍÓÚñÑçÇ]+')
 MENTION_PATTERN = re.compile('(?<![\w])@[\w]+')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
-URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_:.\[\]]*[-A-Za-z0-9+&@#/%?=~_:\[\]()])')
+#URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_:.\[\]]*[-A-Za-z0-9+&@#/%?=~_:\[\]()])')
+URL_PATTERN = re.compile('((http|ftp|https)://[-\w.]*(\s|/[-\w+&@#/%!?=~_:.\[\]()]*))') 
 
 def detect_client(tweet):
     '''Parse the source of a tweet'''
@@ -111,6 +112,8 @@ def count_new_tweets(tweets, last):
     for twt in tweets:
         found = False
         for t in last:
+            if not twt or not t:
+                continue
             if twt.id == t.id:
                 found = True
                 break

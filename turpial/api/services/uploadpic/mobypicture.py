@@ -16,25 +16,26 @@ class MobypicturePicUploader(GenericService):
     def __init__(self):
         GenericService.__init__(self)
         self.server = "api.mobypicture.com"
-        self.base = "/"
+        self.base = "/2.0/upload.xml"
+        self.provider = 'https://api.twitter.com/1/account/verify_credentials.json'
         
-    def do_service(self, username, password, filepath):
-        _file = open(filepath, 'r')
+    def do_service(self, username, password, filepath, message, httpobj):
+        try:
+            _image = self._open_file(filepath)
+        except:
+            return self._error_opening_file(filepath)
+            
         files = (
-            ('i', self._get_pic_name(filepath), _file.read()),
+            ('media', self._get_pic_name(filepath), _image),
         )
-        _file.close()
         
         fields = (
-            ('u', username),
-            ('p', password),
-            ('action', 'postMediaUrl'),
-            ('format', 'xml'),
-            ('k', KEY),
+            ('key', KEY),
+            ('message', message),
         )
         try:
-            resp = self._upload_pic(self.server, self.base, fields, files)
-            link = self._parse_xml('url', resp)
+            resp = self._upload_pic(self.server, self.base, fields, files, httpobj)
+            link = self._parse_xml('mediaurl', resp)
             return ServiceResponse(link)
         except Exception, error:
             self.log.debug("Error: %s\n%s" % (error, traceback.print_exc()))

@@ -52,24 +52,18 @@ class TwitterHTTP(TurpialHTTP):
         
         return httpreq
             
-    def auth(self, username, password, auth):
+    def auth(self, username, password):
         '''Estableciendo credenciales'''
         self.username = username
         self.password = password
-        key = auth['oauth-key']
-        secret = auth['oauth-secret']
         
-        if key != '' and secret != '':
-            self.token = oauth.OAuthToken(key, secret)
+        try:
+            self.token = self.__fetch_xauth_access_token(username, password)
+            
             return (self.token.key, self.token.secret)
-        else:
-            try:
-                self.token = self.__fetch_xauth_access_token(username, password)
-                
-                return (self.token.key, self.token.secret)
-            except Exception, exc:
-                self.log.debug("Auth error: %s" % (traceback.print_exc()))
-                raise TurpialException(_('Authentication Error'))
+        except Exception, exc:
+            self.log.debug("Auth error: %s" % (traceback.print_exc()))
+            raise TurpialException(_('Authentication Error'))
         
     def request(self, uri, args={}):
         try:

@@ -61,7 +61,7 @@ class Wrapper(gtk.VBox):
                 
                 self.wrapper.set_tab_label_packing(widget,
                                                    True, True, gtk.PACK_START)
-            
+
         self.add(self.wrapper)
         self.show_all()
         

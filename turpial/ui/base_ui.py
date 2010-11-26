@@ -342,7 +342,7 @@ class BaseGui:
     def show_login(self):
         raise NotImplementedError
         
-    def show_main(self, config, profile):
+    def show_main(self, config, global_config, profile):
         raise NotImplementedError
         
     def set_lists(self, lists, viewed):

@@ -17,6 +17,8 @@ from turpial.api.servicesapi import HTTPServices
 from turpial.api.turpialapi import TurpialAPI
 from turpial.config import ConfigHandler, ConfigApp, ConfigProtocol, PROTOCOLS
 
+from turpial.ui.cmd.main import Main as _CMD
+
 try:
     import ctypes
     libc = ctypes.CDLL('libc.so.6')
@@ -24,7 +26,7 @@ try:
 except ImportError:
     pass
 
-INTERFACES = []
+INTERFACES = ['cmd']
 try:
     from turpial.ui.gtk.main import Main as _GTK
     UI_GTK = True
@@ -53,6 +55,12 @@ class Turpial:
             help='show the version of Turpial and exit', default=False)
         parser.add_option('--test', dest='test', action='store_true',
             help='only load timeline and friends', default=False)
+        parser.add_option('--user', dest='user', 
+            help='user account')
+        parser.add_option('--passwd', dest='passwd', 
+            help='user password')
+        parser.add_option('--message', dest='message', 
+            help='message to be post')
         
         (options, _) = parser.parse_args()
         
@@ -89,6 +97,8 @@ class Turpial:
             self.ui = _GTK(self, extend=True)
         elif options.interface == 'gtk' and UI_GTK:
             self.ui = _GTK(self)
+        elif options.interface == 'cmd':
+            self.ui = _CMD(self, options)
         else:
             print 'No existe una interfaz válida. Saliendo...'
             sys.exit(-1)

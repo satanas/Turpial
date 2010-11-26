@@ -55,7 +55,7 @@ class Preferences(gtk.Window):
             notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
             
         self.proxy = ProxyTab(self.global_cfg['Proxy'])
-        notebook.append_page(self.proxy, gtk.Label(_('Proxy')))
+        notebook.append_page(self.proxy, gtk.Label(_('API Proxy')))
         
         vbox = gtk.VBox()
         #vbox.set_spacing(4)

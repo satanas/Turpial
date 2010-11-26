@@ -16,7 +16,6 @@ from optparse import OptionParser
 from turpial.api.servicesapi import HTTPServices
 from turpial.api.turpialapi import TurpialAPI
 from turpial.config import ConfigHandler, ConfigApp, ConfigProtocol, PROTOCOLS
-
 from turpial.ui.cmd.main import Main as _CMD
 
 try:
@@ -32,7 +31,7 @@ try:
     UI_GTK = True
     INTERFACES.append('gtk')
     INTERFACES.append('gtk+')
-except:
+except ImportError:
     UI_GTK = False
 
 class Turpial:
@@ -42,7 +41,7 @@ class Turpial:
         for ui in INTERFACES:
             ui_avail += ui + '|'
         ui_avail = ui_avail[:-1] + ')'
-        default_ui = INTERFACES[0] if len(INTERFACES) > 0 else ''
+        default_ui = INTERFACES[1] if len(INTERFACES) > 1 else ''
         
         parser = OptionParser()
         parser.add_option('-d', '--debug', dest='debug', action='store_true',
@@ -93,11 +92,11 @@ class Turpial:
         self.interface = options.interface
         #if options.interface == 'gtk2':
         #    self.ui = gtk2_ui_main.Main(self)
-        if options.interface == 'gtk+' and UI_GTK:
+        if options.interface == 'gtk+' and ('gtk+' in INTERFACES):
             self.ui = _GTK(self, extend=True)
-        elif options.interface == 'gtk' and UI_GTK:
+        elif options.interface == 'gtk' and ('gtk' in INTERFACES):
             self.ui = _GTK(self)
-        elif options.interface == 'cmd':
+        elif options.interface == 'cmd' and ('cmd' in INTERFACES):
             self.ui = _CMD(self, options)
         else:
             print 'No existe una interfaz válida. Las interfaces válidas son: %s' % INTERFACES

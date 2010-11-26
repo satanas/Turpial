@@ -28,9 +28,6 @@ class Main(BaseGui):
         self.request_signout()
         
     def main_loop(self):
-        print "no papa, ahora viene la consola"
-        
-    def show_login(self):
         if not self.options.user:
             print "Debe ingresar el nombre de usuario"
             self.quit()
@@ -42,6 +39,9 @@ class Main(BaseGui):
             self.quit()
         self.controller.signin(self.options.user, self.options.passwd, PROTOCOLS[0])
         self.controller.update_status(self.options.message)
+        
+    def show_login(self):
+        pass
 
     def tweet_done(self, tweets):
         log.debug(u'Actualizando nuevo tweet')

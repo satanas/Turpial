@@ -23,8 +23,8 @@ class Follow(gtk.Window):
         lbl_user = gtk.Label(_('User'))
         self.user = gtk.Entry()
         
-        btn_ok = gtk.Button(_('Ok'))
-        btn_ok.set_flags(gtk.CAN_DEFAULT)
+        self.btn_ok = gtk.Button(_('Ok'))
+        self.btn_ok.set_flags(gtk.CAN_DEFAULT)
         btn_cancel = gtk.Button(_('Cancel'))
         
         hbox = gtk.HBox(False, 6)
@@ -41,15 +41,15 @@ class Follow(gtk.Window):
         vbox.pack_start(hbox, False, False)
         vbox.pack_start(box_button, False, False)
         
-        btn_ok.connect('clicked', self.__follow)
+        self.btn_ok.connect('clicked', self.__follow)
         btn_cancel.connect('clicked', self.__close)
         self.user.connect('activate', self.__follow)
         self.connect('delete-event', self.__close)
         
         self.add(vbox)
         self.show_all()
-        btn_ok.grab_default()
-        self.set_default(btn_ok)
+        self.btn_ok.grab_default()
+        self.set_default(self.btn_ok)
         self.user.set_text(friend)
         self.user.select_region(0, -1)
         
@@ -61,3 +61,4 @@ class Follow(gtk.Window):
         if user != '':
             self.mainwin.request_follow(user)
         self.__close(widget)
+        

@@ -100,7 +100,8 @@ class Turpial:
         elif options.interface == 'cmd':
             self.ui = _CMD(self, options)
         else:
-            print 'No existe una interfaz válida. Saliendo...'
+            print 'No existe una interfaz válida. Las interfaces válidas son: %s' % INTERFACES
+            print 'Saliendo...'
             sys.exit(-1)
         
         self.httpserv = HTTPServices()

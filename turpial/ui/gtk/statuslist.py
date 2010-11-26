@@ -15,6 +15,11 @@ from turpial.ui.gtk.follow import Follow
 
 log = logging.getLogger('Gtk:Statuslist')
 
+OFFENSE_CHARS = {
+    'ü': 'u',
+    'Ü': 'U',
+}
+
 class StatusList(gtk.ScrolledWindow):
     def __init__(self, mainwin, menu='normal', mark_new=False):
         gtk.ScrolledWindow.__init__(self)
@@ -381,6 +386,11 @@ class StatusList(gtk.ScrolledWindow):
         p = self.mainwin.parse_tweet(tweet)
         pix = self.mainwin.get_user_avatar(p.username, p.avatar)
         
+        # Detect invalid chars that offend pango
+        for inv_chr in OFFENSE_CHARS:
+            if p.text.find(inv_chr) >= 0:
+                p.text = p.text.replace(inv_chr, OFFENSE_CHARS[inv_chr])
+        
         urls = [gobject.markup_escape_text(u) \
                 for u in util.detect_urls(p.text)]
         
@@ -395,7 +405,11 @@ class StatusList(gtk.ScrolledWindow):
         pango_twt = self.__highlight_mentions(pango_twt)
         pango_twt = self.__highlight_urls(urls, pango_twt)
         pango_twt += '<span size="2000">\n\n</span>'
-        pango_twt = user + pango_twt
+        try:
+            pango_twt = user + pango_twt
+        except UnicodeDecodeError:
+            print pango_twt
+            print user            
         
         footer = '<span size="small" foreground="#999">%s' % p.timestamp
         if p.source: 
@@ -416,9 +430,12 @@ class StatusList(gtk.ScrolledWindow):
         msg = p.text.lower()
         me = '@'+self.mainwin.me
         mention = True if msg.find(me.lower()) >= 0 else False
+        own = True if p.username.lower() == self.mainwin.me.lower() else False
         
         if p.is_favorite:
             color = gtk.gdk.Color(250 * 257, 241 * 257, 205 * 257)
+        elif own:
+            color = gtk.gdk.Color(255 * 257, 229 * 257, 229 * 257)
         elif mention:
             color = gtk.gdk.Color(233 * 257, 247 * 257, 233 * 257)
         #elif self.mark_new:

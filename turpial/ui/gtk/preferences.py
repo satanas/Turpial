@@ -24,6 +24,7 @@ class Preferences(gtk.Window):
         self.set_title(_('Preferences'))
         self.set_border_width(6)
         self.set_transient_for(parent)
+        self.set_modal(True)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
         btn_save = gtk.Button(_('Save'))

@@ -11,7 +11,7 @@ import logging
 import traceback
 import threading
 
-from turpial.api.interfaces.service import GenericService
+from turpial.api.interfaces.service import GenericService, ServiceResponse
 from turpial.api.services.shorturl.cligs import CligsURLShorter
 from turpial.api.services.shorturl.isgd import IsgdURLShorter
 from turpial.api.services.shorturl.tinyurl import TinyurlURLShorter
@@ -39,7 +39,6 @@ URL_SERVICES = {
     "bit.ly": BitlyURLShorter(),
     "smlk.es": SmlkesURLShorter(),
     "su.pr": SuprURLShorter(),
-    "u.nu": UnuURLShorter(),
     "zi.ma": ZimaURLShorter(),
     "ur1.ca": Ur1caURLShorter(),
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
@@ -138,9 +137,13 @@ class HTTPServices(threading.Thread):
             elif args['cmd'] == 'upload_pic':
                 self.log.debug('Subiendo imagen [%s]: %s' % 
                                (args['service'], args['path']))
-                uploader = PHOTO_SERVICES[args['service']]
-                resp = uploader.do_service(self.username, self.password, 
-                    args['path'], args['message'], self.httpobj)
+                if args['service']:
+                    uploader = PHOTO_SERVICES[args['service']]
+                    resp = uploader.do_service(self.username, self.password, 
+                        args['path'], args['message'], self.httpobj)
+                else:
+                    resp = ServiceResponse(err=True, 
+                        err_msg=_('Select a service for upload pics'))
                 callback(resp)
                 
             self.queue.task_done()

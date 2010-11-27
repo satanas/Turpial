@@ -252,6 +252,10 @@ class UploadPicBox(gtk.Window):
         filtro.add_pattern('*.gif')
         filtro.add_pattern('*.jpg')
         filtro.add_pattern('*.jpeg')
+        filtro.add_pattern('*.PNG')
+        filtro.add_pattern('*.GIF')
+        filtro.add_pattern('*.JPG')
+        filtro.add_pattern('*.JPG')
         
         dia = gtk.FileChooserDialog(title=_('Select image to upload'),
             parent=self, action=gtk.FILE_CHOOSER_ACTION_OPEN,

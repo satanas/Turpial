@@ -1,4 +1,5 @@
 # Catalan translations for turpial.
+# Traduccions de català turpial
 # Copyright (C) 2010 Turpial
 # This file is distributed under the same license as the turpial project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.

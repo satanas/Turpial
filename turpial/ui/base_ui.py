@@ -328,6 +328,11 @@ class BaseGui:
         
     def download_favorites(self):
         self.__controller._update_favorites()
+        return True
+        
+    def download_friends(self):
+        self.__controller._update_friends()
+        return True
         
     # ------------------------------------------------------------
     # Methods to be overwritten

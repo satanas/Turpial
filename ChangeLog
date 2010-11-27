@@ -1,3 +1,7 @@
+v1.4.9-a9 (Nov 27, 2010):
+    + Corregida la inconsistencia del menú contextual (issue #177)
+    + Optimizada la generación del menú para consumir menos recursos
+    
 v1.4.9-a8 (Nov 26, 2010):
     + Implementada base para la interfaz cmd (actualización de estados mediante un comando)
     + Actualizadas plantillas de idiomas

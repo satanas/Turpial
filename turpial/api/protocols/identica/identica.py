@@ -9,6 +9,8 @@ from turpial.api.interfaces.protocol import Protocol
 from turpial.api.interfaces.http import TurpialException
 from turpial.api.protocols.identica.http import IdenticaHTTP
 from turpial.api.interfaces.post import Status, Response, Profile, RateLimit
+from turpial.config import PROTOCOLS
+from turpial.config import UPDATE_TYPE_DM, UPDATE_TYPE_STD, UPDATE_TYPE_PROFILE
 
 
 class Identica(Protocol):
@@ -36,7 +38,7 @@ class Identica(Protocol):
         else:
             return username
     
-    def __create_status(self, resp):
+    def __create_status(self, resp, type=UPDATE_TYPE_STD):
         tweet, retweet_by = self.__get_real_tweet(resp)
         
         if tweet.has_key('user'):
@@ -74,6 +76,8 @@ class Identica(Protocol):
         status.is_favorite = fav
         status.retweet_by = retweet_by
         status.datetime = tweet['created_at']
+        status.type = type
+        status.protocol = PROTOCOLS[1]
         return status
         
     def __create_profile(self, pf):
@@ -126,10 +130,10 @@ class Identica(Protocol):
         
         return users
         
-    def response_to_statuses(self, response, mute=False):
+    def response_to_statuses(self, response, mute=False, type=UPDATE_TYPE_STD):
         statuses = []
         for resp in response:
-            status = self.__create_status(resp)
+            status = self.__create_status(resp, type)
             #if status.retweet_by:
             #    users = self.__get_retweet_users(status.id)
             #    status.retweet_by = users
@@ -198,7 +202,7 @@ class Identica(Protocol):
         try:
             rtn = self.http.request('%s/direct_messages' % self.apiurl, 
                 {'count': count})
-            self.directs = self.response_to_statuses(rtn)
+            self.directs = self.response_to_statuses(rtn, type=UPDATE_TYPE_DM)
             return Response(self.directs, 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)

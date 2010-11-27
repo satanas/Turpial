@@ -350,18 +350,17 @@ class Turpial:
         
     def get_popup_info(self, tweet_id, user):
         if self.api.is_marked_to_fav(tweet_id):
-            return {'busy': 'Marcando favorito...'}
+            return {'marking_fav': True}
         elif self.api.is_marked_to_unfav(tweet_id):
-            return {'busy': 'Desmarcando favorito...'}
+            return {'unmarking_fav': True}
         elif self.api.is_marked_to_del(tweet_id):
-            return {'busy': 'Borrando...'}
+            return {'deleting': True}
             
         rtn = {}
         if self.api.friends_loaded():
             rtn['friend'] = self.api.is_friend(user)
 
         rtn['fav'] = self.api.is_fav(tweet_id)
-        rtn['own'] = (self.profile.username == user)
         
         return rtn
         
@@ -397,6 +396,7 @@ class Turpial:
     def get_groups_url(self):
         return self.api.protocol.groups_url
         
+    # FIXME: Debería pasarse como parámetro el protocolo
     def get_profiles_url(self):
         return self.api.protocol.profiles_url
         

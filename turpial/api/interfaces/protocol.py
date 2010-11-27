@@ -186,9 +186,9 @@ class Protocol:
         else:
             return None
     
-    def get_muted_timeline(self):
+    def get_muted_timeline(self, statuses):
         timeline = []
-        for tweet in self.timeline:
+        for tweet in statuses:
             if not self.is_muted(tweet.username):
                 timeline.append(tweet)
         
@@ -223,12 +223,15 @@ class Protocol:
     
     def mute(self, args):
         arg = args['arg']
+        print arg, type(arg).__name__
         if type(arg).__name__ == 'list':
             self._mute_by_list(arg)
         else:
             self._mute_by_user(arg)
         
-        return Response(self.get_muted_timeline(), 'status')
+        return (Response(self.get_muted_timeline(self.timeline), 'status'), 
+                Response(self.get_muted_timeline(self.replies), 'status'),
+                Response(self.get_muted_timeline(self.favorites), 'status'))
         
     # ------------------------------------------------------------
     # HTTP related methods to be overwritten

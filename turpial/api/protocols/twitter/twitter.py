@@ -193,7 +193,7 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/statuses/home_timeline' % 
                 self.apiurl, {'count': count})
             self.timeline = self.response_to_statuses(rtn)
-            return Response(self.get_muted_timeline(), 'status')
+            return Response(self.get_muted_timeline(self.timeline), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
@@ -348,8 +348,7 @@ class Twitter(Protocol):
                 self._add_status(self.timeline, status)
                 self.profile.last_update = rtn['text']
                 self.profile.last_update_id = rtn['id']
-            timeline = self.get_muted_timeline()
-            return Response(timeline, 'status')
+            return Response(self.get_muted_timeline(self.timeline), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
@@ -362,8 +361,7 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/statuses/destroy' % self.apiurl,
                 {'id': id})
             self._destroy_status(str(rtn['id']))
-            timeline = self.get_muted_timeline()
-            return (Response(timeline, 'status'), 
+            return (Response(self.get_muted_timeline(self.timeline), 'status'), 
                 Response(self.favorites, 'status'))
         except TurpialException, exc:
             return (Response(None, 'error', exc.msg), 
@@ -381,8 +379,7 @@ class Twitter(Protocol):
             status.retweet_by = users
             # FIXME: Modificar también los replies y favoritos
             self._add_status(self.timeline, status)
-            timeline = self.get_muted_timeline()
-            return Response(timeline, 'status')
+            return Response(self.get_muted_timeline(self.timeline), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
@@ -396,8 +393,7 @@ class Twitter(Protocol):
                 {'id': id})
             status = self.__create_status(rtn)
             self._set_status_favorite(status)
-            timeline = self.get_muted_timeline()
-            return (Response(timeline, 'status'), 
+            return (Response(self.get_muted_timeline(self.timeline), 'status'), 
                 Response(self.replies, 'status'),
                 Response(self.favorites, 'status'))
         except TurpialException, exc:
@@ -416,8 +412,7 @@ class Twitter(Protocol):
                 {'id': id})
             status = self.__create_status(rtn)
             self._unset_status_favorite(status)
-            timeline = self.get_muted_timeline()
-            return (Response(timeline, 'status'), 
+            return (Response(self.get_muted_timeline(self.timeline), 'status'), 
                 Response(self.replies, 'status'),
                 Response(self.favorites, 'status'))
         except TurpialException, exc:
@@ -547,7 +542,7 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/%s/lists/%s/statuses' % (self.apiurl, 
                 user, id), {'per_page': count})
             statuses = self.response_to_statuses(rtn)
-            return Response(statuses, 'status')
+            return Response(self.get_muted_timeline(statuses), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
             

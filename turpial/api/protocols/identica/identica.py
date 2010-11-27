@@ -177,7 +177,7 @@ class Identica(Protocol):
             rtn = self.http.request('%s/statuses/home_timeline' % 
                 self.apiurl, {'count': count})
             self.timeline = self.response_to_statuses(rtn)
-            return Response(self.get_muted_timeline(), 'status')
+            return Response(self.get_muted_timeline(self.timeline), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
@@ -330,8 +330,7 @@ class Identica(Protocol):
             rtn = self.http.request('%s/statuses/update' % self.apiurl, args)
             status = self.__create_status(rtn)
             self._add_status(self.timeline, status)
-            timeline = self.get_muted_timeline()
-            return Response(timeline, 'status')
+            return Response(self.get_muted_timeline(self.timeline), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
@@ -346,8 +345,7 @@ class Identica(Protocol):
                 {'id': id})
             
             self._destroy_status(str(rtn['id']))
-            timeline = self.get_muted_timeline()
-            return (Response(timeline, 'status'), 
+            return (Response(self.get_muted_timeline(self.timeline), 'status'), 
                 Response(self.favorites, 'status'))
         except TurpialException, exc:
             return (Response(None, 'error', exc.msg), 
@@ -365,8 +363,7 @@ class Identica(Protocol):
             #status.retweet_by = users
             # FIXME: Modificar también los replies y favoritos
             self._add_status(self.timeline, status)
-            timeline = self.get_muted_timeline()
-            return Response(timeline, 'status')
+            return Response(self.get_muted_timeline(self.timeline), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
@@ -380,8 +377,7 @@ class Identica(Protocol):
                 {'id': id})
             status = self.__create_status(rtn)
             self._set_status_favorite(status)
-            timeline = self.get_muted_timeline()
-            return (Response(timeline, 'status'), 
+            return (Response(self.get_muted_timeline(self.timeline), 'status'), 
                 Response(self.replies, 'status'),
                 Response(self.favorites, 'status'))
         except TurpialException, exc:
@@ -400,8 +396,7 @@ class Identica(Protocol):
                 {'id': id})
             status = self.__create_status(rtn)
             self._unset_status_favorite(status)
-            timeline = self.get_muted_timeline()
-            return (Response(timeline, 'status'), 
+            return (Response(self.get_muted_timeline(self.timeline), 'status'), 
                 Response(self.replies, 'status'),
                 Response(self.favorites, 'status'))
         except TurpialException, exc:

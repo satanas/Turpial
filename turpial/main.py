@@ -194,7 +194,7 @@ class Turpial:
             self.lists[self.config.read('Columns', 'column3')]
         ]
         
-        self.api.muted_users = self.config.load_muted_list()
+        self.api.protocol.muted_users = self.config.load_muted_list()
         self.ui.set_lists(self.lists, self.viewed_cols)
         self.ui.show_main(self.config, self.global_cfg, resp_profile)
         
@@ -330,8 +330,7 @@ class Turpial:
         self.api.get_conversation(id, self.ui.update_conversation)
         
     def mute(self, user):
-        self.ui.start_updating_timeline()
-        self.api.mute(user, self.ui.update_timeline)
+        self.api.mute(user, self.ui.tweet_changed)
         
     def short_url(self, text, callback):
         service = self.config.read('Services', 'shorten-url')
@@ -374,7 +373,7 @@ class Turpial:
         
     def save_muted_list(self):
         if self.config:
-            self.config.save_muted_list(self.api.muted_users)
+            self.config.save_muted_list(self.api.protocol.muted_users)
         
     def get_muted_list(self):
         return self.api.get_muted_list()

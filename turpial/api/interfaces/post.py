@@ -18,6 +18,8 @@ class Status:
         self.is_favorite = False
         self.retweeted_by = None
         self.datetime = None
+        self.type = None
+        self.protocol = None
 
 class Response:
     def __init__(self, items=[], type='status', errmsg=''):

@@ -4,7 +4,7 @@ Turpial
 **Sumario:** Cliente Twitter escrito en Python. Ligero, funcional e integrado
 al escritorio del usuario
 
-*Turpial* es un cliente alternativo para la red *Twitter* con multiples
+*Turpial* es un cliente alternativo para microblogging con multiples
 interfaces. Esta escrito en *Python* y tiene como meta ser una aplicacion con
 bajo consumo de recursos y que se integre al escritorio del usuario pero sin
 renunciar a ninguna funcionalidad.

@@ -328,6 +328,11 @@ class BaseGui:
         
     def download_favorites(self):
         self.__controller._update_favorites()
+        return True
+        
+    def download_friends(self):
+        self.__controller._update_friends()
+        return True
         
     # ------------------------------------------------------------
     # Methods to be overwritten
@@ -342,7 +347,7 @@ class BaseGui:
     def show_login(self):
         raise NotImplementedError
         
-    def show_main(self, config, profile):
+    def show_main(self, config, global_config, profile):
         raise NotImplementedError
         
     def set_lists(self, lists, viewed):

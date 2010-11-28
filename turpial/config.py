@@ -17,9 +17,14 @@ except:
 
 PROTOCOLS = ['twitter', 'identica']
 
+# Tipos de actualizaciones (tweets/dents)
+UPDATE_TYPE_DM = 'dm'
+UPDATE_TYPE_STD = 'std'
+UPDATE_TYPE_PROFILE = 'profile'
+
 GLOBAL_CFG = {
     'App':{
-        'version': '1.4.9-a6',
+        'version': '1.4.9-a10',
     },
     'Proxy':{
         'username': '',

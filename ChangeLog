@@ -1,3 +1,14 @@
+v1.4.9-a10 (Nov 27, 2010):
+    + Agregado timer para actualizar favoritos y amigos cada 12 y 15 min respectivamente
+    
+v1.4.9-a9 (Nov 27, 2010):
+    + Corregida la inconsistencia del menú contextual (issue #177)
+    + Optimizada la generación del menú para consumir menos recursos
+    
+v1.4.9-a8 (Nov 26, 2010):
+    + Implementada base para la interfaz cmd (actualización de estados mediante un comando)
+    + Actualizadas plantillas de idiomas
+    
 v1.4.9-a6 (Nov 01, 2010):
     + Establecido color para los tweets propios
     + Mejorada la expresión regular para detectar URLs (gracias e Encels por el aporte)
@@ -5,6 +16,26 @@ v1.4.9-a6 (Nov 01, 2010):
     + Corregida la modalidad de las ventanas secundarias
     + Removido el servicio acortador de URLs u.nu (descontinuado)
     + Mejoradas validaciones al momento de subir imágenes
+    
+v1.4.9-a1 (Sep 28, 2010):
+    + Creado asistente para subir imágenes (con previsualización y mensaje)
+    + Cambiado tema de iconos (gracias a @gabriela2400 por la colaboración)
+    
+v1.4.8-a1 (Ago 19, 2010):
+    + 
+    
+v1.4.7-a1 (Ago 19, 2010):
+    + 
+    
+v1.3.4 (Ago 19, 2010):
+    + Sustituido OAUth por xAuth como método de autenticación 
+    + Corregido bug de los tweets en NULL (json)
+    
+v1.3.3 (Jul 21, 2010):
+    + Versión Final
+    
+v1.3.3-rc1 (Jul 15, 2010):
+    + Primera versión candidata de la 1.3.3
     
 v1.3.3-b4 (Jul 10, 2010):
     + Corregida dependencia de traceback en el módulo de sonido

@@ -16,6 +16,7 @@ from optparse import OptionParser
 from turpial.api.servicesapi import HTTPServices
 from turpial.api.turpialapi import TurpialAPI
 from turpial.config import ConfigHandler, ConfigApp, ConfigProtocol, PROTOCOLS
+from turpial.ui.cmd.main import Main as _CMD
 
 try:
     import ctypes
@@ -24,13 +25,13 @@ try:
 except ImportError:
     pass
 
-INTERFACES = []
+INTERFACES = ['cmd']
 try:
     from turpial.ui.gtk.main import Main as _GTK
     UI_GTK = True
     INTERFACES.append('gtk')
     INTERFACES.append('gtk+')
-except:
+except ImportError:
     UI_GTK = False
 
 class Turpial:
@@ -40,7 +41,7 @@ class Turpial:
         for ui in INTERFACES:
             ui_avail += ui + '|'
         ui_avail = ui_avail[:-1] + ')'
-        default_ui = INTERFACES[0] if len(INTERFACES) > 0 else ''
+        default_ui = INTERFACES[1] if len(INTERFACES) > 1 else ''
         
         parser = OptionParser()
         parser.add_option('-d', '--debug', dest='debug', action='store_true',
@@ -53,6 +54,12 @@ class Turpial:
             help='show the version of Turpial and exit', default=False)
         parser.add_option('--test', dest='test', action='store_true',
             help='only load timeline and friends', default=False)
+        parser.add_option('--user', dest='user', 
+            help='user account')
+        parser.add_option('--passwd', dest='passwd', 
+            help='user password')
+        parser.add_option('--message', dest='message', 
+            help='message to be post')
         
         (options, _) = parser.parse_args()
         
@@ -85,10 +92,12 @@ class Turpial:
         self.interface = options.interface
         #if options.interface == 'gtk2':
         #    self.ui = gtk2_ui_main.Main(self)
-        if options.interface == 'gtk+' and UI_GTK:
+        if options.interface == 'gtk+' and ('gtk+' in INTERFACES):
             self.ui = _GTK(self, extend=True)
-        elif options.interface == 'gtk' and UI_GTK:
+        elif options.interface == 'gtk' and ('gtk' in INTERFACES):
             self.ui = _GTK(self)
+        elif options.interface == 'cmd' and ('cmd' in INTERFACES):
+            self.ui = _CMD(self, options)
         else:
             print 'No existe una interfaz válida. Las interfaces válidas son: %s' % INTERFACES
             print 'Saliendo...'
@@ -185,7 +194,7 @@ class Turpial:
             self.lists[self.config.read('Columns', 'column3')]
         ]
         
-        self.api.muted_users = self.config.load_muted_list()
+        self.api.protocol.muted_users = self.config.load_muted_list()
         self.ui.set_lists(self.lists, self.viewed_cols)
         self.ui.show_main(self.config, self.global_cfg, resp_profile)
         
@@ -321,8 +330,7 @@ class Turpial:
         self.api.get_conversation(id, self.ui.update_conversation)
         
     def mute(self, user):
-        self.ui.start_updating_timeline()
-        self.api.mute(user, self.ui.update_timeline)
+        self.api.mute(user, self.ui.tweet_changed)
         
     def short_url(self, text, callback):
         service = self.config.read('Services', 'shorten-url')
@@ -341,18 +349,17 @@ class Turpial:
         
     def get_popup_info(self, tweet_id, user):
         if self.api.is_marked_to_fav(tweet_id):
-            return {'busy': 'Marcando favorito...'}
+            return {'marking_fav': True}
         elif self.api.is_marked_to_unfav(tweet_id):
-            return {'busy': 'Desmarcando favorito...'}
+            return {'unmarking_fav': True}
         elif self.api.is_marked_to_del(tweet_id):
-            return {'busy': 'Borrando...'}
+            return {'deleting': True}
             
         rtn = {}
         if self.api.friends_loaded():
             rtn['friend'] = self.api.is_friend(user)
 
         rtn['fav'] = self.api.is_fav(tweet_id)
-        rtn['own'] = (self.profile.username == user)
         
         return rtn
         
@@ -366,7 +373,7 @@ class Turpial:
         
     def save_muted_list(self):
         if self.config:
-            self.config.save_muted_list(self.api.muted_users)
+            self.config.save_muted_list(self.api.protocol.muted_users)
         
     def get_muted_list(self):
         return self.api.get_muted_list()
@@ -388,6 +395,7 @@ class Turpial:
     def get_groups_url(self):
         return self.api.protocol.groups_url
         
+    # FIXME: Debería pasarse como parámetro el protocolo
     def get_profiles_url(self):
         return self.api.protocol.profiles_url
         

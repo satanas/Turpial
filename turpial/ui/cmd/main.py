@@ -15,7 +15,7 @@ from turpial.ui import util as util
 from turpial.sound import Sound
 from turpial.config import PROTOCOLS
 
-log = logging.getLogger('console')
+log = logging.getLogger('Cmd')
 
 
 class Main(BaseGui):
@@ -44,7 +44,10 @@ class Main(BaseGui):
         pass
 
     def tweet_done(self, tweets):
-        log.debug(u'Actualizando nuevo tweet')
+        if tweets.type == 'status':
+            print "Mensaje enviado con éxito"
+        else:
+            print tweets.errmsg
         self.quit()
         
     def resize_avatar(self, pic):

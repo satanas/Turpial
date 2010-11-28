@@ -68,6 +68,7 @@ class Turpial:
         self.protocol_cfg = {}
         self.profile = None
         self.testmode = options.test
+        self.interface = options.interface
         self.httpserv = None
         self.api = None
         self.version = self.global_cfg.read('App', 'version')
@@ -107,7 +108,8 @@ class Turpial:
         self.api = TurpialAPI()
         
         self.log.debug('Iniciando Turpial v%s' % self.version)
-        self.httpserv.start()
+        if self.interface  != 'cmd':
+            self.httpserv.start()
         self.api.start()
         self.api.change_api_url(self.global_cfg.read('Proxy', 'url'))
         
@@ -183,10 +185,12 @@ class Turpial:
             'sent': MicroBloggingList('sent', '', _('My Tweets'), 
                 _('tweet'), _('tweets')),
         }
-        plists = self.api.get_lists()
-        for ls in plists:
-            self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, 
-                ls.name, _('tweet'), _('tweets'))
+        
+        if self.interface  != 'cmd':
+            plists = self.api.get_lists()
+            for ls in plists:
+                self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, 
+                    ls.name, _('tweet'), _('tweets'))
         
         self.viewed_cols = [
             self.lists[self.config.read('Columns', 'column1')],
@@ -197,6 +201,9 @@ class Turpial:
         self.api.protocol.muted_users = self.config.load_muted_list()
         self.ui.set_lists(self.lists, self.viewed_cols)
         self.ui.show_main(self.config, self.global_cfg, resp_profile)
+        
+        if self.interface  == 'cmd':
+            return
         
         self._update_column1()
         if self.testmode:
@@ -287,12 +294,13 @@ class Turpial:
         '''Finalizar sesion'''
         self.save_muted_list()
         self.log.debug('Desconectando')
-        if self.httpserv:
+        if self.httpserv and self.interface  != 'cmd':
             self.httpserv.quit()
             self.httpserv.join(0)
         if self.api: 
             self.api.quit()
-            self.api.join(0)
+            if self.interface  != 'cmd':
+                self.api.join(0)
         sys.exit(0)
     
     def update_status(self, text, reply_id=None):

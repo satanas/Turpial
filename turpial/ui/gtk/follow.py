@@ -34,7 +34,7 @@ class Follow(gtk.Window):
         box_button = gtk.HButtonBox()
         box_button.set_spacing(6)
         box_button.set_layout(gtk.BUTTONBOX_END)
-        box_button.pack_start(btn_ok)
+        box_button.pack_start(self.btn_ok)
         box_button.pack_start(btn_cancel)
         
         vbox = gtk.VBox(True)

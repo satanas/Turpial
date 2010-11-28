@@ -1,3 +1,8 @@
+v1.4.9-a13 (Nov 28, 2010):
+    + Optimizado el envío de tweets desde la interfaz 'cmd' y eliminados los errores al cerrar
+    + Aplicado patch para mostrar el diálogo de seguir amigos (Gracias a Jorge Pizarro por el aporte)
+    + Actualizada expresión regular para detectar URLs que comienzan con www
+    
 v1.4.9-a10 (Nov 27, 2010):
     + Agregado timer para actualizar favoritos y amigos cada 12 y 15 min respectivamente
     

@@ -9,7 +9,8 @@ from turpial.api.interfaces.protocol import Protocol
 from turpial.api.interfaces.http import TurpialException
 from turpial.api.protocols.twitter.http import TwitterHTTP
 from turpial.api.interfaces.post import Status, Response, Profile, List, RateLimit
-
+from turpial.config import PROTOCOLS
+from turpial.config import UPDATE_TYPE_DM, UPDATE_TYPE_STD, UPDATE_TYPE_PROFILE
 
 class Twitter(Protocol):
     def __init__(self):
@@ -31,13 +32,13 @@ class Twitter(Protocol):
         return tweet, retweet_by
         
     def __print_you(self, username):
-        ''' Print "you" is username is the name of the user'''
+        ''' Print "you" if username is the name of the user'''
         if username == self.profile.username:
             return 'you'
         else:
             return username
     
-    def __create_status(self, resp):
+    def __create_status(self, resp, type=UPDATE_TYPE_STD):
         tweet, retweet_by = self.__get_real_tweet(resp)
         
         if tweet.has_key('user'):
@@ -75,6 +76,8 @@ class Twitter(Protocol):
         status.is_favorite = fav
         status.retweet_by = retweet_by
         status.datetime = tweet['created_at']
+        status.type = type
+        status.protocol = PROTOCOLS[0]
         return status
         
     def __create_profile(self, pf):
@@ -141,12 +144,12 @@ class Twitter(Protocol):
         
         return users
         
-    def response_to_statuses(self, response, mute=False):
+    def response_to_statuses(self, response, mute=False, type=UPDATE_TYPE_STD):
         statuses = []
         for resp in response:
             if not resp:
                 continue
-            status = self.__create_status(resp)
+            status = self.__create_status(resp, type)
             if status.retweet_by and self.oauth_support:
                 users = self.__get_retweet_users(status.id)
                 status.retweet_by = users
@@ -190,7 +193,7 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/statuses/home_timeline' % 
                 self.apiurl, {'count': count})
             self.timeline = self.response_to_statuses(rtn)
-            return Response(self.get_muted_timeline(), 'status')
+            return Response(self.get_muted_timeline(self.timeline), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
@@ -215,7 +218,7 @@ class Twitter(Protocol):
         try:
             rtn = self.http.request('%s/direct_messages' % self.apiurl, 
                 {'count': count})
-            self.directs = self.response_to_statuses(rtn)
+            self.directs = self.response_to_statuses(rtn, type=UPDATE_TYPE_DM)
             return Response(self.directs, 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
@@ -345,8 +348,7 @@ class Twitter(Protocol):
                 self._add_status(self.timeline, status)
                 self.profile.last_update = rtn['text']
                 self.profile.last_update_id = rtn['id']
-            timeline = self.get_muted_timeline()
-            return Response(timeline, 'status')
+            return Response(self.get_muted_timeline(self.timeline), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
@@ -359,8 +361,7 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/statuses/destroy' % self.apiurl,
                 {'id': id})
             self._destroy_status(str(rtn['id']))
-            timeline = self.get_muted_timeline()
-            return (Response(timeline, 'status'), 
+            return (Response(self.get_muted_timeline(self.timeline), 'status'), 
                 Response(self.favorites, 'status'))
         except TurpialException, exc:
             return (Response(None, 'error', exc.msg), 
@@ -378,8 +379,7 @@ class Twitter(Protocol):
             status.retweet_by = users
             # FIXME: Modificar también los replies y favoritos
             self._add_status(self.timeline, status)
-            timeline = self.get_muted_timeline()
-            return Response(timeline, 'status')
+            return Response(self.get_muted_timeline(self.timeline), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
         
@@ -393,8 +393,7 @@ class Twitter(Protocol):
                 {'id': id})
             status = self.__create_status(rtn)
             self._set_status_favorite(status)
-            timeline = self.get_muted_timeline()
-            return (Response(timeline, 'status'), 
+            return (Response(self.get_muted_timeline(self.timeline), 'status'), 
                 Response(self.replies, 'status'),
                 Response(self.favorites, 'status'))
         except TurpialException, exc:
@@ -413,8 +412,7 @@ class Twitter(Protocol):
                 {'id': id})
             status = self.__create_status(rtn)
             self._unset_status_favorite(status)
-            timeline = self.get_muted_timeline()
-            return (Response(timeline, 'status'), 
+            return (Response(self.get_muted_timeline(self.timeline), 'status'), 
                 Response(self.replies, 'status'),
                 Response(self.favorites, 'status'))
         except TurpialException, exc:
@@ -544,7 +542,7 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/%s/lists/%s/statuses' % (self.apiurl, 
                 user, id), {'per_page': count})
             statuses = self.response_to_statuses(rtn)
-            return Response(statuses, 'status')
+            return Response(self.get_muted_timeline(statuses), 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
             

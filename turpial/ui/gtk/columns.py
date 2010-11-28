@@ -22,7 +22,7 @@ class GenericColumn(gtk.VBox):
         self.last = None    # Last tweets updated
         self.mainwin = mainwin
         
-        self.tweetlist = StatusList(mainwin, menu, marknew)
+        self.tweetlist = StatusList(mainwin, marknew)
         
         self.waiting = CairoWaiting(mainwin)
         self.walign = gtk.Alignment(xalign=1, yalign=0.5)

@@ -316,6 +316,8 @@ class Main(BaseGui, gtk.Window):
                 self.sound.login()
         
         gobject.timeout_add(6 * 60 * 1000, self.download_rates)
+        gobject.timeout_add(12 * 60 * 1000, self.download_favorites)
+        gobject.timeout_add(15 * 60 * 1000, self.download_friends)
         
     def set_lists(self, lists, viewed):
         self.columns_lists = lists

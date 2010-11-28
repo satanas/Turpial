@@ -194,7 +194,7 @@ class Turpial:
             self.lists[self.config.read('Columns', 'column3')]
         ]
         
-        self.api.muted_users = self.config.load_muted_list()
+        self.api.protocol.muted_users = self.config.load_muted_list()
         self.ui.set_lists(self.lists, self.viewed_cols)
         self.ui.show_main(self.config, self.global_cfg, resp_profile)
         
@@ -330,8 +330,7 @@ class Turpial:
         self.api.get_conversation(id, self.ui.update_conversation)
         
     def mute(self, user):
-        self.ui.start_updating_timeline()
-        self.api.mute(user, self.ui.update_timeline)
+        self.api.mute(user, self.ui.tweet_changed)
         
     def short_url(self, text, callback):
         service = self.config.read('Services', 'shorten-url')
@@ -350,18 +349,17 @@ class Turpial:
         
     def get_popup_info(self, tweet_id, user):
         if self.api.is_marked_to_fav(tweet_id):
-            return {'busy': 'Marcando favorito...'}
+            return {'marking_fav': True}
         elif self.api.is_marked_to_unfav(tweet_id):
-            return {'busy': 'Desmarcando favorito...'}
+            return {'unmarking_fav': True}
         elif self.api.is_marked_to_del(tweet_id):
-            return {'busy': 'Borrando...'}
+            return {'deleting': True}
             
         rtn = {}
         if self.api.friends_loaded():
             rtn['friend'] = self.api.is_friend(user)
 
         rtn['fav'] = self.api.is_fav(tweet_id)
-        rtn['own'] = (self.profile.username == user)
         
         return rtn
         
@@ -375,7 +373,7 @@ class Turpial:
         
     def save_muted_list(self):
         if self.config:
-            self.config.save_muted_list(self.api.muted_users)
+            self.config.save_muted_list(self.api.protocol.muted_users)
         
     def get_muted_list(self):
         return self.api.get_muted_list()
@@ -397,6 +395,7 @@ class Turpial:
     def get_groups_url(self):
         return self.api.protocol.groups_url
         
+    # FIXME: Debería pasarse como parámetro el protocolo
     def get_profiles_url(self):
         return self.api.protocol.profiles_url
         

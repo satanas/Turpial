@@ -193,6 +193,7 @@ class TurpialAPI(threading.Thread):
     def mute(self, arg, callback):
         '''Actualizando usuarios silenciados'''
         self.log.debug('Solicitando silenciar')
+        print 'callback', callback, arg
         self.__register(self.protocol.mute, {'arg': arg}, callback)
         
     def get_conversation(self, id, callback):

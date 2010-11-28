@@ -223,7 +223,7 @@ class Protocol:
     
     def mute(self, args):
         arg = args['arg']
-        print arg, type(arg).__name__
+        print "protocols.py: ", arg, type(arg).__name__
         if type(arg).__name__ == 'list':
             self._mute_by_list(arg)
         else:

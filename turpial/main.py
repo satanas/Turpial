@@ -11,6 +11,7 @@ import os
 import sys
 import base64
 import logging
+import getpass
 from optparse import OptionParser
 
 from turpial.api.servicesapi import HTTPServices
@@ -50,18 +51,14 @@ class Turpial:
             help='select interface to use %s' % ui_avail, default=default_ui)
         parser.add_option('-c', '--clean', dest='clean', action='store_true',
             help='clean all bytecodes', default=False)
+        parser.add_option('-s', '--save-credentials', dest='save', action='store_true',
+            help='save user credentials', default=False)
         parser.add_option('--version', dest='version', action='store_true',
             help='show the version of Turpial and exit', default=False)
         parser.add_option('--test', dest='test', action='store_true',
             help='only load timeline and friends', default=False)
-        parser.add_option('--user', dest='user', 
-            help='user account')
-        parser.add_option('--passwd', dest='passwd', 
-            help='user password')
-        parser.add_option('--message', dest='message', 
-            help='message to be post')
         
-        (options, _) = parser.parse_args()
+        (options, args) = parser.parse_args()
         
         self.config = None
         self.global_cfg = ConfigApp()
@@ -90,15 +87,20 @@ class Turpial:
             print "Turpial v%s" % self.version
             sys.exit(0)
             
+        if options.save:
+            try:
+                self.__save_credentials()
+            except KeyboardInterrupt:
+                self.log.debug('Interceptado Keyboard Interrupt')
+            sys.exit(0)
+            
         self.interface = options.interface
-        #if options.interface == 'gtk2':
-        #    self.ui = gtk2_ui_main.Main(self)
         if options.interface == 'gtk+' and ('gtk+' in INTERFACES):
             self.ui = _GTK(self, extend=True)
         elif options.interface == 'gtk' and ('gtk' in INTERFACES):
             self.ui = _GTK(self)
         elif options.interface == 'cmd' and ('cmd' in INTERFACES):
-            self.ui = _CMD(self, options)
+            self.ui = _CMD(self, args)
         else:
             print 'No existe una interfaz válida. Las interfaces válidas son: %s' % INTERFACES
             print 'Saliendo...'
@@ -135,6 +137,42 @@ class Turpial:
                     self.log.debug("Borrado %s" % path)
                     os.remove(path)
             
+    def __save_credentials(self):
+        print "This assistant will allow you store your credentials"
+        print "Available protocols"
+        print "==================="
+        for i in range(len(PROTOCOLS)):
+            print "%d - %s" % (i, PROTOCOLS[i])
+        
+        while 1:
+            protocol = int(raw_input("Select protocol: "))
+            if protocol <= len(PROTOCOLS):
+                break
+            else:
+                print "Invalid protocol, please try again"
+        
+        user, passwd, rem = self.get_remembered(protocol)
+        if user != '' and passwd != '':
+            delete = raw_input("Delete your current credentials (%s)? [Y/n/q]: " %
+                user)
+            if delete == '' or delete.lower() == 'y':
+                self.remember(pro=protocol, rem=False)
+                return
+            elif delete.lower() == 'q':
+                return
+        
+        user = raw_input("User: ")
+        while 1:
+            passwd = getpass.getpass("Password: ")
+            confirm = getpass.getpass("Retype password: ")
+            if passwd == confirm:
+                break
+            else:
+                print
+                print "Password mismatch, please try again"
+        self.remember(user, passwd, protocol, True)
+        print "Credentials saved successfully"
+        
     def __validate_credentials(self, val, key, secret, protocol):
         '''Chequeo de credenciales'''
         if val.type == 'error':
@@ -248,7 +286,8 @@ class Turpial:
         '''Actualizar amigos'''
         self.api.get_friends()
     
-    def get_remembered(self, protocol):
+    def get_remembered(self, index):
+        protocol = PROTOCOLS[index]
         us = self.protocol_cfg[protocol].read('Login', 'username')
         pw = self.protocol_cfg[protocol].read('Login', 'password')
         try:
@@ -267,7 +306,13 @@ class Turpial:
             self.protocol_cfg[protocol].write('Login', 'password','')
             return '', '', False
         
-    def remember(self, us, pw, pro, rem=False):
+    def remember(self, us='', pw='', pro=0, rem=False):
+        protocol = PROTOCOLS[pro]
+        if not rem:
+            self.protocol_cfg[protocol].write('Login', 'username', '')
+            self.protocol_cfg[protocol].write('Login', 'password', '')
+            return
+            
         a = base64.b16encode(pw)
         b = us[0] + a + ('%s' % us[-1])
         c = base64.b32encode(b)
@@ -275,13 +320,8 @@ class Turpial:
         e = base64.b64encode(d)
         pwd = e[0:len(us)]+ e[len(us):]
         
-        protocol = PROTOCOLS[pro]
-        if rem:
-            self.protocol_cfg[protocol].write('Login', 'username', us)
-            self.protocol_cfg[protocol].write('Login', 'password', pwd)
-        else:
-            self.protocol_cfg[protocol].write('Login', 'username', '')
-            self.protocol_cfg[protocol].write('Login', 'password', '')
+        self.protocol_cfg[protocol].write('Login', 'username', us)
+        self.protocol_cfg[protocol].write('Login', 'password', pwd)
     
     def signin(self, username, password, protocol):
         config = ConfigHandler(username, protocol)

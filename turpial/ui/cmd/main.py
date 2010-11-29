@@ -15,38 +15,108 @@ from turpial.ui import util as util
 from turpial.sound import Sound
 from turpial.config import PROTOCOLS
 
-log = logging.getLogger('console')
+log = logging.getLogger('Cmd')
 
 
 class Main(BaseGui):
-    def __init__(self, controller,options,extend=False):
+    def __init__(self, controller, cmdline):
         BaseGui.__init__(self, controller)
-        self.options=options
-        self.controller=controller
+        self.cmdline = cmdline
+        self.controller = controller
+    
+    def __usage(self):
+        print "Usage: turpial -i cmd <COMMAND> <PROTOCOL> [ARGS]"
+        print "    COMMAND: desired command"
+        print "    PROTOCOL: number of desired protocol to perform action"
+        print "    ARGS: arguments needed for each command"
+        print
+        
+    def __print_try_ls(self):
+        print "Try 'turpial -i cmd ls' for a list of available commands"
+        
+    def __print_try_lsp(self):
+        print "Try 'turpial -i cmd lsp' for a list of available protocols"
+        
+    def __command_list(self):
+        print "COMMANDS:"
+        print "  ls"
+        print "    Show this list"
+        print "  lsp"
+        print "    List all available protocols"
+        print "  update [MESSAGE]"
+        print "    Post an update on the current account/protocol"
+        
+    def __protocol_list(self):
+        print "PROTOCOLS:"
+        for i in range(len(PROTOCOLS)):
+            print "[%d] - %s" % (i, PROTOCOLS[i])
     
     def quit(self, arg=None):
         self.request_signout()
         
     def main_loop(self):
-        if not self.options.user:
-            print "Debe ingresar el nombre de usuario"
+        if len(self.cmdline) < 1:
+            print "Missing operands"
+            self.__usage()
+            self.__print_try_ls()
             self.quit()
-        if not self.options.passwd:
-            print "Debe ingresar la contraseña de la cuenta"
-            self.quit()
-        if not self.options.message:
-            print "Debe colocar un mensaje a postear"
-            self.quit()
-        self.controller.signin(self.options.user, self.options.passwd, PROTOCOLS[0])
-        self.controller.update_status(self.options.message)
+            return
         
-    def show_login(self):
-        pass
+        cmd = self.cmdline[0]
+        
+        if len(self.cmdline) == 1:
+            self.__process_without_args(cmd)
+        elif len(self.cmdline) > 1:
+            try:
+                protocol = int(self.cmdline[1])
+            except ValueError:
+                print "ERROR: Specify a valid protocol"
+                self.__usage()
+                self.__print_try_lsp()
+                self.quit()
+                return
+            args = self.cmdline[2:]
+            self.__process_with_args(cmd, protocol, args)
+    
+    def __process_without_args(self, cmd):
+        self.__usage()
+        if cmd == 'help':
+            self.__print_try_ls()
+        elif cmd == 'ls':
+            self.__command_list()
+        elif cmd == 'lsp':
+            self.__protocol_list()
+        self.quit()
+    
+    def __process_with_args(self, cmd, protocol, args):
+        user, passwd, rem = self.controller.get_remembered(protocol)
+        info_str = "in %s as %s" % (PROTOCOLS[protocol], user)
+        
+        if user == '' or passwd == '':
+            print "You need to configurate an account in order to use this interface."
+            print "Execute 'turpial --save-credentials' to configurate an account"
+            self.quit()
+            return
+        
+        if cmd == 'update':
+            if len(args) < 1:
+                print "ERROR: You need to specify a message to post"
+                return
+            message = args[0]
+            print "Posting message", info_str
+            self.controller.signin(user, passwd, PROTOCOLS[protocol])
+            self.controller.update_status(message)
 
     def tweet_done(self, tweets):
-        log.debug(u'Actualizando nuevo tweet')
+        if tweets.type == 'status':
+            print "Mensaje enviado con éxito"
+        else:
+            print tweets.errmsg
         self.quit()
-        
+    
+    def show_login(self):
+        pass
+    
     def resize_avatar(self, pic):
         pass
         

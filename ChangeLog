@@ -1,3 +1,13 @@
+v1.4.9-a16 (Nov 28, 2010):
+    + Implementada opción -s/--save-credentials para guardar las credenciales vía consola
+    + Habilitado el soporte de comandos en la interfaz cmd
+    + Solucionado el problema con los encoding UTF-8 de algunos caracteres reemplazandolos por '?'
+    
+v1.4.9-a13 (Nov 28, 2010):
+    + Optimizado el envío de tweets desde la interfaz 'cmd' y eliminados los errores al cerrar
+    + Aplicado patch para mostrar el diálogo de seguir amigos (Gracias a Jorge Pizarro por el aporte)
+    + Actualizada expresión regular para detectar URLs que comienzan con www
+    
 v1.4.9-a10 (Nov 27, 2010):
     + Agregado timer para actualizar favoritos y amigos cada 12 y 15 min respectivamente
     

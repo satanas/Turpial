@@ -187,8 +187,16 @@ class StatusList(gtk.ScrolledWindow):
         try:
             pango_twt = user + pango_twt
         except UnicodeDecodeError:
-            print pango_twt
-            print user            
+            clear_txt = ''
+            invalid_chars = []
+            for c in pango_twt:
+                try:
+                    clear_txt += c.encode('ascii')
+                except UnicodeDecodeError:
+                    invalid_chars.append(c)
+                    clear_txt += '?'
+            log.debug('Problema con caracteres inválidos en un tweet: %s' % invalid_chars)
+            pango_twt = clear_txt
         
         footer = '<span size="small" foreground="#999">%s' % p.timestamp
         if p.source: 

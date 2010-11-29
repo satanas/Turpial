@@ -13,7 +13,7 @@ Actualmente *Turpial* se encuentra en estado de desarrollo, por lo que
 pueden presentarse errores y fallos inesperados. Es por esto que se invita a
 los usuarios que detecten algun fallo lo reporten en la siguiente direccion: 
 
-http://code.google.com/p/turpial/issues/list
+http://dev.turpial.org.ve/projects/turpial/issues
 
 *Turpial*, las imagenes y los sonidos han sido publicados bajo una licencia 
 *GPL v3*. Vea el archivo ``COPYING`` para mas detalles o visite 
@@ -96,7 +96,7 @@ pasos desde el directorio ``Turpial``::
 
 Para mas informacion visita la pagina de Preguntas y Respuestas Frecuentes:
 
-http://code.google.com/p/turpial/wiki/FAQ
+http://turpial.org.ve/faqs/
 
 Contacto
 --------
@@ -105,16 +105,16 @@ Puedes ponerte en contacto con el equipo de Turpial a través de cualquiera de
 las siguientes direcciones (todas @gmail.com):
 
  * wil.alejandro
- * meza.eleazar
  * milmazz
  * kstnshadows
+ * petrizzo
 
 A través de Twitter:
 
  * [@satanas82](http://twitter.com/satanas82)
- * [@elshaka](http://twitter.com/elshaka)
  * [@milmazz](http://twitter.com/milmazz)
  * [@Azrael37](http://twitter.com/Azrael37)
+ * [@petrizzo](http://twitter.com/petrizzo)
 
 O a través de [@turpialve](http://twitter.com/turpialve) en Twitter para hacer recomendaciones, reportar bugs o 
 simplemente para mantenerte al día en el desarrollo y los cambios de Turpial

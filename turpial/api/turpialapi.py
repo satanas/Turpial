@@ -139,6 +139,7 @@ class TurpialAPI(threading.Thread):
         '''Estableciendo status como favorito'''
         self.log.debug('Solicitando status como favorito: %s' % id)
         self.protocol.to_fav.append(id)
+        print 'callback', callback, arg 
         self.__register(self.protocol.mark_favorite, {'id': id}, callback)
         
     def unset_favorite(self, id, callback):

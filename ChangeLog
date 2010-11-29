@@ -1,4 +1,7 @@
 v1.4.9-a16 (Nov 28, 2010):
+    + Mejoradas las notificaciones para que no muestren actualizaciones propias
+    
+v1.4.9-a16 (Nov 28, 2010):
     + Implementada opción -s/--save-credentials para guardar las credenciales vía consola
     + Habilitado el soporte de comandos en la interfaz cmd
     + Solucionado el problema con los encoding UTF-8 de algunos caracteres reemplazandolos por '?'

@@ -16,7 +16,7 @@ from turpial.ui.gtk.waiting import CairoWaiting
 log = logging.getLogger('Gtk:Column')
 
 class GenericColumn(gtk.VBox):
-    def __init__(self, mainwin, label='', menu='normal', marknew=False):
+    def __init__(self, mainwin, label='', marknew=False):
         gtk.VBox.__init__(self, False)
         
         self.last = None    # Last tweets updated
@@ -93,8 +93,8 @@ class GenericColumn(gtk.VBox):
         pass
         
 class StandardColumn(GenericColumn):
-    def __init__(self, mainwin, label='', menu='normal', pos=None, viewed=None, marknew=True):
-        GenericColumn.__init__(self, mainwin, label, menu, marknew)
+    def __init__(self, mainwin, label='', pos=None, viewed=None, marknew=True):
+        GenericColumn.__init__(self, mainwin, label, marknew)
         
         self.pos = pos
         self.handler = None
@@ -213,8 +213,8 @@ class StandardColumn(GenericColumn):
         self.tweetlist.unset_bg_color()
         
 class SingleColumn(GenericColumn):
-    def __init__(self, mainwin, label='', menu='normal'):
-        GenericColumn.__init__(self, mainwin, label, menu)
+    def __init__(self, mainwin, label=''):
+        GenericColumn.__init__(self, mainwin, label)
         
         #self.errorbox = gtk.HBox(False)
         #self.errorbox.pack_start(self.lblerror, False, False, 2)

@@ -182,6 +182,7 @@ class Turpial:
             self.config = ConfigHandler(self.profile.username, protocol)
             self.config.initialize()
             
+            self.current_protocol = protocol
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.profile.username, 
                 self.profile.password, self.api.protocol.http)

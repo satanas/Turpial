@@ -15,11 +15,6 @@ from turpial.ui.gtk.menu import Menu
 
 log = logging.getLogger('Gtk:Statuslist')
 
-OFFENSE_CHARS = {
-    'ü': 'u',
-    'Ü': 'U',
-}
-
 class StatusList(gtk.ScrolledWindow):
     def __init__(self, mainwin, mark_new=False):
         gtk.ScrolledWindow.__init__(self)
@@ -29,7 +24,7 @@ class StatusList(gtk.ScrolledWindow):
         self.last = None    # Last tweets updated
         self.mainwin = mainwin
         self.mark_new = mark_new
-        self.autoscroll = True
+        #self.autoscroll = True
         self.popup_menu = Menu(mainwin)
         
         self.list = gtk.TreeView()
@@ -54,7 +49,9 @@ class StatusList(gtk.ScrolledWindow):
             gtk.gdk.Color, # color
             str, # update type
             str, # protocol
-            bool, # own tweet?
+            bool, # own status?
+            bool, # new status?
+            str, #timestamp original
         )
         self.list.set_model(self.model)
         cell_avatar = gtk.CellRendererPixbuf()
@@ -75,6 +72,7 @@ class StatusList(gtk.ScrolledWindow):
         self.list.connect("button-release-event", self.__popup_menu)
             
         self.add(self.list)
+        self.cursor = Cursor(self.list, self.model)
         
     def __highlight_hashtags(self, text):
         hashtags = util.detect_hashtags(text)
@@ -149,41 +147,54 @@ class StatusList(gtk.ScrolledWindow):
             menu.show_all()
             menu.popup(None, None, None, event.button , event.time)
     
-    def clear(self):
-        self.model.clear()
+    def __get_background_color(self, fav, own, msg, new):
+        ''' Returns the bg color for an update according it status '''
+        #naranja = gtk.gdk.Color(250 * 257, 241 * 257, 205 * 257)
+        #amarillo = gtk.gdk.Color(255 * 257, 251 * 257, 230 * 257)
+        #verde = gtk.gdk.Color(233 * 257, 247 * 257, 233 * 257)
+        #azul = gtk.gdk.Color(235 * 257, 242 * 257, 255 * 257)
         
-    def update_wrap(self, val):
-        self.cell_tweet.set_property('wrap-width', val - 85)
-        iter = self.model.get_iter_first()
+        azul = gtk.gdk.Color(229 * 257, 236 * 257, 255 * 257)
+        rojo = gtk.gdk.Color(255 * 257, 229 * 257, 229 * 257)
+        morado = gtk.gdk.Color(238 * 257, 229 * 257, 255 * 257)
+        cyan = gtk.gdk.Color(229 * 257, 255 * 257, 253 * 257)
+        verde = gtk.gdk.Color(229 * 257, 255 * 257, 230 * 257)
+        amarillo = gtk.gdk.Color(253 * 257, 255 * 257, 229 * 257)
+        naranja = gtk.gdk.Color(255 * 257, 240 * 257, 229 * 257)
         
-        while iter:
-            path = self.model.get_path(iter)
-            self.model.row_changed(path, iter)
-            iter = self.model.iter_next(iter)
+        me = '@'+self.mainwin.me.lower()
+        mention = True if msg.lower().find(me) >= 0 else False
         
-    def add_tweet(self, tweet, insert=True):
-        p = self.mainwin.parse_tweet(tweet)
-        pix = self.mainwin.get_user_avatar(p.username, p.avatar)
-        
-        # Detect invalid chars that offend pango
-        for inv_chr in OFFENSE_CHARS:
-            if p.text.find(inv_chr) >= 0:
-                p.text = p.text.replace(inv_chr, OFFENSE_CHARS[inv_chr])
-        
+        if new:
+            color = azul
+        elif fav:
+            color = naranja
+        elif own:
+            color = rojo
+        elif mention:
+            color = verde
+        else:
+            color = None
+            
+        return color
+    
+    def __build_pango_text(self, status):
+        ''' Transform the regular text into pango markup '''
         urls = [gobject.markup_escape_text(u) \
-                for u in util.detect_urls(p.text)]
+                for u in util.detect_urls(status.text)]
         
-        pango_twt = util.unescape_text(p.text)
+        pango_twt = util.unescape_text(status.text)
         pango_twt = gobject.markup_escape_text(pango_twt)
         
         user = '<span size="9000" foreground="%s"><b>%s</b></span> ' % \
-            (self.mainwin.link_color, p.username)
+            (self.mainwin.link_color, status.username)
         pango_twt = '<span size="9000">%s</span>' % pango_twt
         pango_twt = self.__highlight_hashtags(pango_twt)
         pango_twt = self.__highlight_groups(pango_twt)
         pango_twt = self.__highlight_mentions(pango_twt)
         pango_twt = self.__highlight_urls(urls, pango_twt)
         pango_twt += '<span size="2000">\n\n</span>'
+        
         try:
             pango_twt = user + pango_twt
         except UnicodeDecodeError:
@@ -198,81 +209,143 @@ class StatusList(gtk.ScrolledWindow):
             log.debug('Problema con caracteres inválidos en un tweet: %s' % invalid_chars)
             pango_twt = clear_txt
         
-        footer = '<span size="small" foreground="#999">%s' % p.timestamp
-        if p.source: 
-            footer += ' %s %s' % (_('from'), p.source)
-        if p.in_reply_to_user:
-            footer += ' %s %s' % (_('in reply to'), p.in_reply_to_user)
-        if p.retweet_by:
-            footer += '\n%s %s' % (_('Retweeted by'), p.retweet_by)
+        footer = '<span size="small" foreground="#999">%s' % status.datetime
+        if status.source: 
+            footer += ' %s %s' % (_('from'), status.source)
+        if status.in_reply_to_user:
+            footer += ' %s %s' % (_('in reply to'), status.in_reply_to_user)
+        if status.retweet_by:
+            footer += '\n%s %s' % (_('Retweeted by'), status.retweet_by)
         footer += '</span>'
-        
         pango_twt += footer
         
-        #naranja = gtk.gdk.Color(250 * 257, 241 * 257, 205 * 257)
-        #amarillo = gtk.gdk.Color(255 * 257, 251 * 257, 230 * 257)
-        #verde = gtk.gdk.Color(233 * 257, 247 * 257, 233 * 257)
-        #azul = gtk.gdk.Color(235 * 257, 242 * 257, 255 * 257)
+        return pango_twt
         
-        msg = p.text.lower()
-        me = '@'+self.mainwin.me
-        mention = True if msg.find(me.lower()) >= 0 else False
-        own = True if p.username.lower() == self.mainwin.me.lower() else False
+    def __update_pic(self, model, path, iter, args):
+        user, pic = args
+        username = model.get_value(iter, 1)
+        if username == user:
+            model.set_value(iter, 0, pic)
+            return True
+        return False
         
-        if p.is_favorite:
-            color = gtk.gdk.Color(250 * 257, 241 * 257, 205 * 257)
-        elif own:
-            color = gtk.gdk.Color(255 * 257, 229 * 257, 229 * 257)
-        elif mention:
-            color = gtk.gdk.Color(233 * 257, 247 * 257, 233 * 257)
-        #elif self.mark_new:
-        #    color = gtk.gdk.Color(235 * 257, 242 * 257, 255 * 257)
-        else:
-            color = None
-            
-        row = [pix, p.username, p.datetime, p.source, pango_twt, p.text, p.id, 
+    def __build_iter_status(self, status, new=False):
+        p = self.mainwin.parse_tweet(status)
+        
+        pix = self.mainwin.get_user_avatar(p.username, p.avatar)
+        pango_text = self.__build_pango_text(p)
+        color = self.__get_background_color(p.is_favorite, p.is_own, p.text, new)
+        
+        row = [pix, p.username, p.datetime, p.source, pango_text, p.text, p.id, 
             p.is_favorite, p.in_reply_to_id, p.in_reply_to_user, p.retweet_by, 
-            color, p.type, p.protocol, own]
-        
-        if insert:
-            self.model.insert(0, row)
-        else:
-            self.model.append(row)
-        
-        if not self.autoscroll:
-            model, row = self.list.get_selection().get_selected()
-            if row:
-                path = self.model.get_path(row)
-                if path[0] <= 1:
-                    self.list.get_selection().select_path((0,))
-                    self.list.set_cursor((0,))
-            else:
-                self.list.get_selection().select_path((0,))
-                self.list.set_cursor((0,))
+            color, p.type, p.protocol, p.is_own, new, p.timestamp]
         
         del pix
+        return row
+            
+    def clear(self):
+        self.model.clear()
         
-    def del_last(self):
-        last = self.model.iter_n_children(None)
-        print 'Last:', last
-        iter = self.model.get_iter_from_string(str(last - 1))
-        #iter = self.model.get_iter_from_string('0')
-        print 'Borrando último tweet:', self.model.get_value(iter, 5)
-        self.model.remove(iter)
-        
-    def update_user_pic(self, user, pic):
-        # Evaluar si es más eficiente esto o cargar toda la lista cada vez
-        pix = self.mainwin.load_avatar(self.mainwin.imgdir, pic)
+    def update_wrap(self, val):
+        self.cell_tweet.set_property('wrap-width', val - 85)
         iter = self.model.get_iter_first()
         while iter:
-            u = self.model.get_value(iter, 1)
-            if u == user:
-                self.model.set_value(iter, 0, pix)
+            path = self.model.get_path(iter)
+            self.model.row_changed(path, iter)
             iter = self.model.iter_next(iter)
-        del pix
+    
+    def __add_status(self, model, path, iter, statuses):
+        ''' Append status '''
+        index = path[0]
+        stored_id = model.get_value(iter, 6)
+        print statuses[index].id, stored_id
+        if statuses[index].id != stored_id:
+            row = self.__build_iter_status(statuses[index], new=True)
+            for i in range(16):
+                model.set_value(iter, i, row[i])
+        return False
+    
+    def __add_statuses(self, statuses):
+        ''' Append statuses to list'''
+        for status in statuses:
+            row = self.__build_iter_status(status)
+            self.model.append(row)
+    
+    def __modify_statuses(self, statuses):
+        index = 0
+        to_del = []
+        new_count = 0
+        iter = self.model.get_iter_first()
         
-    def set_autoscroll(self, value):
-        self.autoscroll = value
+        while iter:
+            stored_id = self.model.get_value(iter, 6)
+            try:
+                if statuses[index].id != stored_id:
+                    # Setting as new status
+                    new = False
+                    if self.__is_new(statuses[index]):
+                        new_count += 1
+                        new = True
+                    row = self.__build_iter_status(statuses[index], new)
+                    for i in range(16):
+                        self.model.set_value(iter, i, row[i])
+            except IndexError:
+                to_del.append(iter)
+            iter = self.model.iter_next(iter)
+            index += 1
+        
+        if len(statuses) > index:
+            self.__add_statuses(statuses[index + 1:])
+        elif len(statuses) < index:
+            for iter in to_del:
+                self.model.remove(iter)
+        
+        return new_count
+        
+    def __update_cursor(self, model, path, iter):
+        if self.cursor.path == (0, ):
+            return True
+        
+        stored_id = model.get_value(iter, 6)
+        if stored_id == self.cursor.cid:
+            self.cursor.update(iter)
+            return True
+        return False
+        
+    def __set_last_time(self):
+        self.last_time = None
+        if not self.last:
+            return
+        
+        for status in self.last:
+            if status.username != self.mainwin.me:
+                self.last_time = status.timestamp
+                break
+        
+    def __is_new(self, status):
+        if status.username != self.mainwin.me:
+            if status.timestamp > self.last_time:
+                return True
+        return False
+    
+    def update(self, statuses):
+        self.cursor.mark()
+        self.__set_last_time()
+        
+        new_count = 0
+        if len(self.model) == 0:
+            self.__add_statuses(statuses)
+        else:
+            new_count = self.__modify_statuses(statuses)
+        
+        self.model.foreach(self.__update_cursor)
+        self.last = statuses
+        return new_count
+    
+    def update_user_pic(self, user, pic):
+        pix = self.mainwin.load_avatar(self.mainwin.imgdir, pic)
+        self.model.foreach(self.__update_pic, (user, pix))
+        del pix
         
     '''
     def unset_bg_color(self):
@@ -286,3 +359,23 @@ class StatusList(gtk.ScrolledWindow):
                     self.model.set_value(iter, 11, None)
             iter = self.model.iter_next(iter)
     '''
+
+class Cursor:
+    def __init__(self, list, model):
+        self.__list = list
+        self.__model = model
+        self.path = None
+        self.cid = None
+        
+    def mark(self):
+        self.path, col = self.__list.get_cursor()
+        if self.path:
+            iter = self.__model.get_iter(self.path)
+            self.cid = self.__model.get_value(iter, 6)
+        print 'mark', self.path, self.cid
+        
+    def update(self, iter):
+        self.path = self.__model.get_path(iter)
+        print 'update: ', self.path
+        self.__list.set_cursor(self.path)
+        

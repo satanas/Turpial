@@ -7,7 +7,6 @@
 
 import re
 import time
-import datetime
 import htmlentitydefs
 import xml.sax.saxutils as saxutils
 
@@ -63,57 +62,21 @@ def get_rates(resp):
         hits = val.remaining_hits
         limit = val.hourly_limit
         return "%s %s %s %s: %s" % (hits, _('of'), limit, _('API calls. Reset'), t)
-
-def get_timestamp(tweet):
-    '''Returns the timestamp for a tweet'''
-    # Tue Mar 13 00:12:41 +0000 2007 -> Tweets normales
-    # Wed, 08 Apr 2009 19:22:10 +0000 -> Busquedas
-    month_names = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-        'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     
-    date_info = tweet.datetime.split()
-    
-    if date_info[1] in month_names:
-        month = month_names.index(date_info[1])
-        day = int(date_info[2])
-        year = int(date_info[5])
-        time_info = date_info[3].split(':')
-    else:
-        month = month_names.index(date_info[2])
-        day = int(date_info[1])
-        year = int(date_info[3])
-        time_info = date_info[4].split(':')
-        
-    hour = int(time_info[0])
-    minute = int(time_info[1])
-    second = int(time_info[2])
-    
-    d = datetime.datetime(year, month, day, hour, minute, second)
-    
-    i_hate_timezones = time.timezone
-    if (time.daylight):
-        i_hate_timezones = time.altzone
-    
-    dt = datetime.datetime(*d.timetuple()[:-3]) - \
-         datetime.timedelta(seconds=i_hate_timezones)
-    t = dt.timetuple()
-    
-    return time.strftime('%b %d, %I:%M %p', t)
-
-def count_new_tweets(tweets, last):
-    '''Returns the number of new tweets in tweets'''
+def count_new_tweets(statuses, last):
+    '''Returns the number of new statuses in statuses'''
     if not last:
         return 0
-    if (tweets is None) or (len(tweets) <= 0):
+    if (statuses is None) or (len(statuses) <= 0):
         return 0
     
     index = 0
-    for twt in tweets:
+    for n_sta in statuses:
         found = False
-        for t in last:
-            if not twt or not t:
+        for o_sta in last:
+            if not n_sta or not o_sta:
                 continue
-            if twt.id == t.id:
+            if n_sta.id == o_sta.id:
                 found = True
                 break
         if not found:

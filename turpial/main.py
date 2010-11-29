@@ -463,6 +463,9 @@ class Turpial:
         else:
             self.ui.set_column_item(index, reset=True)
             self.log.debug('Error: la columna %s no existe' % new_id)
+            
+    def is_friend(self, user):
+        return self.api.is_friend(user)
         
 class MicroBloggingList:
     ''' Lista de los diferentes protocolos '''

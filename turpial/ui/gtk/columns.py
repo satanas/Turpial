@@ -19,17 +19,12 @@ class GenericColumn(gtk.VBox):
     def __init__(self, mainwin, label='', marknew=False):
         gtk.VBox.__init__(self, False)
         
-        self.last = None    # Last tweets updated
         self.mainwin = mainwin
-        
         self.tweetlist = StatusList(mainwin, marknew)
-        
         self.waiting = CairoWaiting(mainwin)
         self.walign = gtk.Alignment(xalign=1, yalign=0.5)
         self.walign.add(self.waiting)
-        
         self.errorbox = ErrorBox()
-        
         self.label = gtk.Label(label)
         self.caption = label
         
@@ -43,32 +38,13 @@ class GenericColumn(gtk.VBox):
         if response.type == 'error':
             self.stop_update(True, response.errmsg)
         else:
-            arr_tweets = response.items
-            if len(arr_tweets) == 0:
+            statuses = response.items
+            if len(statuses) == 0:
                 self.tweetlist.clear()
                 self.stop_update(True, _('No tweets available'))
             else:
-                count = util.count_new_tweets(arr_tweets, self.last)
+                count = self.tweetlist.update(statuses)
                 self.stop_update()
-                
-                if self.tweetlist.autoscroll:
-                    self.tweetlist.clear()
-                    for tweet in arr_tweets:
-                        if not tweet:
-                            continue
-                        self.tweetlist.add_tweet(tweet, False)
-                else:
-                    for tweet in arr_tweets:
-                        if not tweet:
-                            continue
-                        if self.last is None:
-                            self.tweetlist.add_tweet(tweet, False)
-                        elif not util.has_tweet(self.last, tweet):
-                            self.tweetlist.add_tweet(tweet)
-                            self.tweetlist.del_last()
-                
-                self.last = arr_tweets
-            
         self.on_update()
         return count
             
@@ -116,10 +92,10 @@ class StandardColumn(GenericColumn):
         self.autoscroll.set_image(self.mainwin.load_image('action-autoscroll.png'))
         self.autoscroll.set_tooltip_text(_('Autoscrolling'))
         self.autoscroll.set_active(True)
-        self.tweetlist.set_autoscroll(True)
+        #self.tweetlist.set_autoscroll(True)
         
         listsbox = gtk.HBox(False)
-        listsbox.pack_start(self.autoscroll, False, False)
+        #listsbox.pack_start(self.autoscroll, False, False)
         listsbox.pack_start(self.listcombo, True, True)
         listsbox.pack_start(self.refresh, False, False)
         listsbox.pack_start(self.walign, False, False, 2)
@@ -129,14 +105,14 @@ class StandardColumn(GenericColumn):
         self.pack_start(self.tweetlist, True, True)
         
         self.refresh.connect('clicked', self.__manual_update)
-        self.autoscroll.connect('toggled', self.__toggle_autoscroll)
+        #self.autoscroll.connect('toggled', self.__toggle_autoscroll)
         
     def __manual_update(self, widget):
         self.mainwin.manual_update(self.pos)
         
     def __toggle_autoscroll(self, widget):
         value = self.autoscroll.get_active()
-        self.tweetlist.set_autoscroll(value)
+        #self.tweetlist.set_autoscroll(value)
         
     def __change_list(self, widget):
         model = self.listcombo.get_model()

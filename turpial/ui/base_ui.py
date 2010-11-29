@@ -95,10 +95,8 @@ class BaseGui:
     
     def parse_tweet(self, xtweet):
         '''Decompose tweet in basic parts'''
-        
         xtweet.text = util.unescape_text(xtweet.text)
         xtweet.source = util.detect_client(xtweet)
-        xtweet.timestamp = util.get_timestamp(xtweet)
         return xtweet
         
     def after_destroy_status(self, timeline, favs):
@@ -271,6 +269,10 @@ class BaseGui:
     def request_change_column(self, index, new_id):
         ''' Change the column at index for the indicated by new_id '''
         self.__controller.change_column(index, new_id)
+        
+    def request_is_friend(self, user):
+        ''' Ask if a user is friend or not '''
+        self.__controller.is_friend(user)
         
     def manual_update(self, id):
         if id == 0:

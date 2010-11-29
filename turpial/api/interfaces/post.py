@@ -12,14 +12,15 @@ class Status:
         self.username = None
         self.avatar = None
         self.source = None
-        self.timestamp = None
+        self.timestamp = None   # Store the timestamp in Unix time
         self.in_reply_to_id = None
         self.in_reply_to_user = None
         self.is_favorite = False
         self.retweeted_by = None
-        self.datetime = None
+        self.datetime = None    # Store the date/time showed for the view
         self.type = None
         self.protocol = None
+        self.is_own = False
 
 class Response:
     def __init__(self, items=[], type='status', errmsg=''):

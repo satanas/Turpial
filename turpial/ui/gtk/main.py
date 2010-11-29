@@ -371,7 +371,7 @@ class Main(BaseGui, gtk.Window):
     def update_column1(self, tweets):
         gtk.gdk.threads_enter()
         
-        last = self.home.timeline.last
+        last = self.home.timeline.tweetlist.last
         count = self.home.timeline.update_tweets(tweets)
         column = self.request_viewed_columns()[0]
         show_notif = self.read_config_value('Notifications', 'home')
@@ -386,7 +386,7 @@ class Main(BaseGui, gtk.Window):
     def update_column2(self, tweets):
         gtk.gdk.threads_enter()
         
-        last = self.home.replies.last
+        last = self.home.replies.tweetlist.last
         count = self.home.replies.update_tweets(tweets)
         column = self.request_viewed_columns()[1]
         show_notif = self.read_config_value('Notifications', 'replies')
@@ -401,7 +401,7 @@ class Main(BaseGui, gtk.Window):
     def update_column3(self, tweets):
         gtk.gdk.threads_enter()
         
-        last = self.home.direct.last
+        last = self.home.direct.tweetlist.last
         count = self.home.direct.update_tweets(tweets)
         column = self.request_viewed_columns()[2]
         show_notif = self.read_config_value('Notifications', 'directs')

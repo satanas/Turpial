@@ -20,7 +20,7 @@ class GenericColumn(gtk.VBox):
         gtk.VBox.__init__(self, False)
         
         self.mainwin = mainwin
-        self.tweetlist = StatusList(mainwin, marknew)
+        self.statuslist = StatusList(mainwin, marknew)
         self.waiting = CairoWaiting(mainwin)
         self.walign = gtk.Alignment(xalign=1, yalign=0.5)
         self.walign.add(self.waiting)
@@ -40,19 +40,19 @@ class GenericColumn(gtk.VBox):
         else:
             statuses = response.items
             if len(statuses) == 0:
-                self.tweetlist.clear()
+                self.statuslist.clear()
                 self.stop_update(True, _('No tweets available'))
             else:
-                count = self.tweetlist.update(statuses)
+                count = self.statuslist.update(statuses)
                 self.stop_update()
         self.on_update()
         return count
             
     def update_user_pic(self, user, pic):
-        self.tweetlist.update_user_pic(user, pic)
+        self.statuslist.update_user_pic(user, pic)
         
     def update_wrap(self, width):
-        self.tweetlist.update_wrap(width)
+        self.statuslist.update_wrap(width)
     
     def start_update(self):
         self.waiting.start()
@@ -63,7 +63,7 @@ class GenericColumn(gtk.VBox):
         self.errorbox.show_error(msg, error)
     
     def clear(self):
-        self.tweetlist.clear()
+        self.statuslist.clear()
     
     def on_update(self, data=None):
         pass
@@ -86,33 +86,29 @@ class StandardColumn(GenericColumn):
         self.refresh = gtk.Button()
         self.refresh.set_image(self.mainwin.load_image('action-refresh.png'))
         self.refresh.set_tooltip_text(_('Manual Update'))
-        #self.refresh.set_relief(gtk.RELIEF_NONE)
         
-        self.autoscroll = gtk.ToggleButton()
-        self.autoscroll.set_image(self.mainwin.load_image('action-autoscroll.png'))
-        self.autoscroll.set_tooltip_text(_('Autoscrolling'))
-        self.autoscroll.set_active(True)
-        #self.tweetlist.set_autoscroll(True)
+        self.mark_all = gtk.Button()
+        self.mark_all.set_image(self.mainwin.load_image('action-mark-all.png'))
+        self.mark_all.set_tooltip_text(_('Mark all as read'))
         
         listsbox = gtk.HBox(False)
-        #listsbox.pack_start(self.autoscroll, False, False)
+        listsbox.pack_start(self.mark_all, False, False)
         listsbox.pack_start(self.listcombo, True, True)
         listsbox.pack_start(self.refresh, False, False)
         listsbox.pack_start(self.walign, False, False, 2)
         
         self.pack_start(listsbox, False, False)
         self.pack_start(self.errorbox, False, False)
-        self.pack_start(self.tweetlist, True, True)
+        self.pack_start(self.statuslist, True, True)
         
         self.refresh.connect('clicked', self.__manual_update)
-        #self.autoscroll.connect('toggled', self.__toggle_autoscroll)
+        self.mark_all.connect('clicked', self.__mark_all_as_read)
         
     def __manual_update(self, widget):
         self.mainwin.manual_update(self.pos)
         
-    def __toggle_autoscroll(self, widget):
-        value = self.autoscroll.get_active()
-        #self.tweetlist.set_autoscroll(value)
+    def __mark_all_as_read(self, widget):
+        self.statuslist.mark_all_as_read()
         
     def __change_list(self, widget):
         model = self.listcombo.get_model()
@@ -172,7 +168,7 @@ class StandardColumn(GenericColumn):
         self.errorbox.hide()
         self.refresh.set_sensitive(False)
         self.listcombo.set_sensitive(False)
-        self.autoscroll.set_sensitive(False)
+        self.mark_all.set_sensitive(False)
         
     def stop_update(self, error=False, msg=''):
         if error:
@@ -183,10 +179,7 @@ class StandardColumn(GenericColumn):
         self.errorbox.show_error(msg, error)
         self.refresh.set_sensitive(True)
         self.listcombo.set_sensitive(True)
-        self.autoscroll.set_sensitive(True)
-        
-    def clear_bg_color(self):
-        self.tweetlist.unset_bg_color()
+        self.mark_all.set_sensitive(True)
         
 class SingleColumn(GenericColumn):
     def __init__(self, mainwin, label=''):
@@ -197,7 +190,7 @@ class SingleColumn(GenericColumn):
         #self.errorbox.pack_start(self.walign, False, False, 2)
         
         self.pack_start(self.errorbox, False, False)
-        self.pack_start(self.tweetlist, True, True)
+        self.pack_start(self.statuslist, True, True)
         
 class SearchColumn(GenericColumn):
     def __init__(self, mainwin, label=''):
@@ -224,7 +217,7 @@ class SearchColumn(GenericColumn):
         
         self.pack_start(inputbox, False, False)
         self.pack_start(self.errorbox, False, False)
-        self.pack_start(self.tweetlist, True, True)
+        self.pack_start(self.statuslist, True, True)
         
         self.clearbtn.connect('clicked', self.__clear)
         self.input_topics.connect('activate', self.__search_topic)
@@ -238,7 +231,7 @@ class SearchColumn(GenericColumn):
             self.__search_topic(widget)
             
     def __clear(self, widget):
-        self.tweetlist.clear()
+        self.statuslist.clear()
         self.input_topics.grab_focus()
         
     def __search_topic(self, widget):

@@ -15,6 +15,8 @@ from turpial.ui.gtk.menu import Menu
 
 log = logging.getLogger('Gtk:Statuslist')
 
+FIELDS = 16
+
 class StatusList(gtk.ScrolledWindow):
     def __init__(self, mainwin, mark_new=False):
         gtk.ScrolledWindow.__init__(self)
@@ -52,7 +54,8 @@ class StatusList(gtk.ScrolledWindow):
             bool, # own status?
             bool, # new status?
             str, #timestamp original
-        )
+        ) # Editar FIELDS
+        
         self.list.set_model(self.model)
         cell_avatar = gtk.CellRendererPixbuf()
         cell_avatar.set_property('yalign', 0)
@@ -69,7 +72,7 @@ class StatusList(gtk.ScrolledWindow):
         column.set_attributes(self.cell_tweet, markup=4, cell_background_gdk=11)
         column.set_attributes(cell_avatar, pixbuf=0, cell_background_gdk=11)
         self.list.append_column(column)
-        self.list.connect("button-release-event", self.__popup_menu)
+        self.list.connect("button-release-event", self.__on_click)
             
         self.add(self.list)
         self.cursor = Cursor(self.list, self.model)
@@ -128,24 +131,32 @@ class StatusList(gtk.ScrolledWindow):
             text = text.replace(u, cad)
         return text
         
-    def __popup_menu(self, widget, event):
+    def __on_click(self, widget, event):
         model, row = widget.get_selection().get_selected()
         if (row is None):
             return False
         
         if (event.button == 3):
-            user = model.get_value(row, 1)
-            msg = model.get_value(row, 5)
-            uid = model.get_value(row, 6)
-            in_reply_to_id = model.get_value(row, 8)
-            utype = model.get_value(row, 12)
-            protocol = model.get_value(row, 13)
-            own = model.get_value(row, 14)
-                
-            menu = self.popup_menu.build(uid, user, msg, in_reply_to_id, utype, 
-                protocol, own)
-            menu.show_all()
-            menu.popup(None, None, None, event.button , event.time)
+            self.__popup_menu(model, row, event)
+        elif (event.button == 1):
+            if not model.get_value(row, 15):
+                return
+            path = model.get_path(row)
+            self.__mark_as_read(model, path, row)
+            
+    def __popup_menu(self, model, row, event):
+        user = model.get_value(row, 1)
+        msg = model.get_value(row, 5)
+        uid = model.get_value(row, 6)
+        in_reply_to_id = model.get_value(row, 8)
+        utype = model.get_value(row, 12)
+        protocol = model.get_value(row, 13)
+        own = model.get_value(row, 14)
+            
+        menu = self.popup_menu.build(uid, user, msg, in_reply_to_id, utype, 
+            protocol, own)
+        menu.show_all()
+        menu.popup(None, None, None, event.button , event.time)
     
     def __get_background_color(self, fav, own, msg, new):
         ''' Returns the bg color for an update according it status '''
@@ -177,7 +188,13 @@ class StatusList(gtk.ScrolledWindow):
             color = None
             
         return color
-    
+
+#~ ****************************************************************************************
+#~ ***************                                                          ***************
+#~ *************** ESTADO NEW DEBE PERDURAR A TRAVÉS DE LAS ACTUALIZACIONES ***************
+#~ ***************                                                          ***************
+#~ ****************************************************************************************
+
     def __build_pango_text(self, status):
         ''' Transform the regular text into pango markup '''
         urls = [gobject.markup_escape_text(u) \
@@ -242,26 +259,14 @@ class StatusList(gtk.ScrolledWindow):
         
         del pix
         return row
-            
-    def clear(self):
-        self.model.clear()
         
-    def update_wrap(self, val):
-        self.cell_tweet.set_property('wrap-width', val - 85)
-        iter = self.model.get_iter_first()
-        while iter:
-            path = self.model.get_path(iter)
-            self.model.row_changed(path, iter)
-            iter = self.model.iter_next(iter)
-    
     def __add_status(self, model, path, iter, statuses):
         ''' Append status '''
         index = path[0]
         stored_id = model.get_value(iter, 6)
-        print statuses[index].id, stored_id
         if statuses[index].id != stored_id:
             row = self.__build_iter_status(statuses[index], new=True)
-            for i in range(16):
+            for i in range(FIELDS + 1):
                 model.set_value(iter, i, row[i])
         return False
     
@@ -274,6 +279,7 @@ class StatusList(gtk.ScrolledWindow):
     def __modify_statuses(self, statuses):
         index = 0
         to_del = []
+        prev_new = []
         new_count = 0
         iter = self.model.get_iter_first()
         
@@ -281,13 +287,18 @@ class StatusList(gtk.ScrolledWindow):
             stored_id = self.model.get_value(iter, 6)
             try:
                 if statuses[index].id != stored_id:
-                    # Setting as new status
+                    # Setting as new
+                    if self.model.get_value(iter, 15):
+                        prev_new.append(stored_id)
                     new = False
                     if self.__is_new(statuses[index]):
                         new_count += 1
                         new = True
-                    row = self.__build_iter_status(statuses[index], new)
-                    for i in range(16):
+                    if statuses[index].id in prev_new:
+                        new = True
+                    row = self.__build_iter_status(statuses[index], new=new)
+                    
+                    for i in range(FIELDS + 1):
                         self.model.set_value(iter, i, row[i])
             except IndexError:
                 to_del.append(iter)
@@ -327,6 +338,24 @@ class StatusList(gtk.ScrolledWindow):
             if status.timestamp > self.last_time:
                 return True
         return False
+        
+    def __mark_as_read(self, model, path, iter):
+        msg = self.model.get_value(iter, 5)
+        fav = self.model.get_value(iter, 7)
+        own = self.model.get_value(iter, 14)
+        color = self.__get_background_color(fav, own, msg, False)
+        self.model.set_value(iter, 11, color)
+        
+    def clear(self):
+        self.model.clear()
+        
+    def update_wrap(self, val):
+        self.cell_tweet.set_property('wrap-width', val - 85)
+        iter = self.model.get_iter_first()
+        while iter:
+            path = self.model.get_path(iter)
+            self.model.row_changed(path, iter)
+            iter = self.model.iter_next(iter)
     
     def update(self, statuses):
         self.cursor.mark()
@@ -347,18 +376,8 @@ class StatusList(gtk.ScrolledWindow):
         self.model.foreach(self.__update_pic, (user, pix))
         del pix
         
-    '''
-    def unset_bg_color(self):
-        print "unset_bg_color"
-        iter = self.model.get_iter_first()
-        while iter:
-            color = self.model.get_value(iter, 11)
-            fav = self.model.get_value(iter, 7)
-            if not fav: 
-                if color:
-                    self.model.set_value(iter, 11, None)
-            iter = self.model.iter_next(iter)
-    '''
+    def mark_all_as_read(self):
+        self.model.foreach(self.__mark_as_read)
 
 class Cursor:
     def __init__(self, list, model):
@@ -372,10 +391,8 @@ class Cursor:
         if self.path:
             iter = self.__model.get_iter(self.path)
             self.cid = self.__model.get_value(iter, 6)
-        print 'mark', self.path, self.cid
         
     def update(self, iter):
         self.path = self.__model.get_path(iter)
-        print 'update: ', self.path
         self.__list.set_cursor(self.path)
         

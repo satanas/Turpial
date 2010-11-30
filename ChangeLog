@@ -1,3 +1,6 @@
+v1.4.9-a26 (Nov 29, 2010):
+    + Se valida la existencia de las listas o se carga el TL por defecto para evitar que la app se rompa
+    
 v1.4.9-a25 (Nov 29, 2010):
     + Mejoradas las notificaciones para que no muestren actualizaciones propias
     + Optimizados los recorridos de filas en los ListStore de statuslist

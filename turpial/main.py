@@ -231,11 +231,29 @@ class Turpial:
                 self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, 
                     ls.name, _('tweet'), _('tweets'))
         
-        self.viewed_cols = [
-            self.lists[self.config.read('Columns', 'column1')],
-            self.lists[self.config.read('Columns', 'column2')],
-            self.lists[self.config.read('Columns', 'column3')]
-        ]
+        # Evita que la aplicación reviente su se borra una lista por fuera
+        try:
+            column1 = self.lists[self.config.read('Columns', 'column1')]
+        except KeyError:
+            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
+                self.config.read('Columns', 'column1'))
+            column1 = self.lists['timeline']
+        
+        try:
+            column2 = self.lists[self.config.read('Columns', 'column2')]
+        except KeyError:
+            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
+                self.config.read('Columns', 'column2'))
+            column2 = self.lists['timeline']
+            
+        try:
+            column3 = self.lists[self.config.read('Columns', 'column3')]
+        except KeyError:
+            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
+                self.config.read('Columns', 'column3'))
+            column3 = self.lists['timeline']
+            
+        self.viewed_cols = [column1, column2, column3]
         
         self.api.protocol.muted_users = self.config.load_muted_list()
         self.ui.set_lists(self.lists, self.viewed_cols)

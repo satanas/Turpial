@@ -24,7 +24,7 @@ UPDATE_TYPE_PROFILE = 'profile'
 
 GLOBAL_CFG = {
     'App':{
-        'version': '1.4.9-a16',
+        'version': '1.4.9-a26',
     },
     'Proxy':{
         'username': '',
@@ -101,7 +101,7 @@ class ConfigBase:
         
     def load(self):
         """Carga de fichero de configuracion"""
-        self.log.debug('Cargando archivo')
+        self.log.debug('Cargando configuración')
         self.cfg.read(self.filepath)
         
         for section, _v in self.default.iteritems():
@@ -117,6 +117,7 @@ class ConfigBase:
                     self.write(section, option, value)
                 
     def load_failsafe(self):
+        self.log.debug('Cargada configuración failsafe')
         self.__config = self.default
         
     def save(self, config):
@@ -187,10 +188,6 @@ class ConfigHandler(ConfigBase):
             self.imgdir = os.path.join(self.dir, 'images')
         self.filepath = os.path.join(self.dir, 'config')
         self.mutedpath = os.path.join(self.dir, 'muted')
-        
-        self.log.debug('CACHEDIR: %s' % self.imgdir)
-        self.log.debug('CONFIGFILE: %s' % self.filepath)
-        self.log.debug('MUTEDFILE: %s' % self.mutedpath)
     
     def initialize_failsafe(self):
         if not os.path.isdir(self.dir): 
@@ -199,6 +196,10 @@ class ConfigHandler(ConfigBase):
             self.initialize()
             
     def initialize(self):
+        self.log.debug('CACHEDIR: %s' % self.imgdir)
+        self.log.debug('CONFIGFILE: %s' % self.filepath)
+        self.log.debug('MUTEDFILE: %s' % self.mutedpath)
+        
         if not os.path.isdir(self.dir): 
             os.makedirs(self.dir)
         if not os.path.isdir(self.imgdir): 

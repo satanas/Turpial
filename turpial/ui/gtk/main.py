@@ -162,17 +162,18 @@ class Main(BaseGui, gtk.Window):
             update=False)
         
     def _notify_new_tweets(self, column, tweets, last, count):
+        if count <= 0:
+            return
+        
         tweet = None
-        i = 0
-        while 1:
-            if tweets.items[i].username == self.me:
-                if not util.has_tweet(last, tweets.items[i]):
-                    tweet = tweets.items[i]
+        for twt in tweets.items:
+            if twt.username != self.me:
+                if not util.has_tweet(last, twt):
+                    tweet = twt
                     break
-            else:
-                tweet = tweets.items[i]
-                break
-            i += 1
+        
+        if not tweet:
+            return
         
         if count == 1:
             tobject = column.single_unit
@@ -370,13 +371,13 @@ class Main(BaseGui, gtk.Window):
     def update_column1(self, tweets):
         gtk.gdk.threads_enter()
         
-        last = self.home.timeline.last
+        last = self.home.timeline.statuslist.last
         count = self.home.timeline.update_tweets(tweets)
         column = self.request_viewed_columns()[0]
         show_notif = self.read_config_value('Notifications', 'home')
         
         log.debug(u'Actualizando %s' % column.title)
-        if count > 0 and self.updating[0] and show_notif == 'on':
+        if self.updating[0] and show_notif == 'on':
             self._notify_new_tweets(column, tweets, last, count)
             
         gtk.gdk.threads_leave()
@@ -385,13 +386,13 @@ class Main(BaseGui, gtk.Window):
     def update_column2(self, tweets):
         gtk.gdk.threads_enter()
         
-        last = self.home.replies.last
+        last = self.home.replies.statuslist.last
         count = self.home.replies.update_tweets(tweets)
         column = self.request_viewed_columns()[1]
         show_notif = self.read_config_value('Notifications', 'replies')
         
         log.debug(u'Actualizando %s' % column.title)
-        if count > 0 and self.updating[1] and show_notif == 'on':
+        if self.updating[1] and show_notif == 'on':
             self._notify_new_tweets(column, tweets, last, count)
         
         gtk.gdk.threads_leave()
@@ -400,13 +401,13 @@ class Main(BaseGui, gtk.Window):
     def update_column3(self, tweets):
         gtk.gdk.threads_enter()
         
-        last = self.home.direct.last
+        last = self.home.direct.statuslist.last
         count = self.home.direct.update_tweets(tweets)
         column = self.request_viewed_columns()[2]
         show_notif = self.read_config_value('Notifications', 'directs')
         
         log.debug(u'Actualizando %s' % column.title)
-        if count > 0 and self.updating[2] and show_notif == 'on':
+        if self.updating[2] and show_notif == 'on':
             self._notify_new_tweets(column, tweets, last, count)
             
         gtk.gdk.threads_leave()

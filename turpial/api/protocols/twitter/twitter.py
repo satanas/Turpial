@@ -65,6 +65,11 @@ class Twitter(Protocol):
         if tweet.has_key('source'):
             source = tweet['source']
         
+        if username.lower() == self.profile.username.lower():
+            own = True
+        else:
+            own = False
+        
         status = Status()
         status.id = str(tweet['id'])
         status.username = username
@@ -75,9 +80,11 @@ class Twitter(Protocol):
         status.in_reply_to_user = in_reply_to_user
         status.is_favorite = fav
         status.retweet_by = retweet_by
-        status.datetime = tweet['created_at']
+        status.datetime = self.get_str_time(tweet['created_at'])
+        status.timestamp = self.get_int_time(tweet['created_at'])
         status.type = type
         status.protocol = PROTOCOLS[0]
+        status.is_own = own
         return status
         
     def __create_profile(self, pf):

@@ -1,3 +1,17 @@
+v1.4.9-a26 (Nov 29, 2010):
+    + Se valida la existencia de las listas o se carga el TL por defecto para evitar que la app se rompa
+    + Corregido el wrapping para que el texto de los tweets se ajuste a la ventana
+    
+v1.4.9-a25 (Nov 29, 2010):
+    + Mejoradas las notificaciones para que no muestren actualizaciones propias
+    + Optimizados los recorridos de filas en los ListStore de statuslist
+    + Corregido el problema del autoscrolling
+    + Corregido el problema con la actualización del treeview, ahora no se pierde el foco
+    + Implementado resaltado de los tweets nuevos
+    + Agregado botón para marcar todos los tweets como leídos
+    + Implementado clic para marcar un tweet como leído
+    + Implementada la persistencia de los tweets no leídos hasta que se 'desmarquen'
+    
 v1.4.9-a16 (Nov 28, 2010):
     + Implementada opción -s/--save-credentials para guardar las credenciales vía consola
     + Habilitado el soporte de comandos en la interfaz cmd

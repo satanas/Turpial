@@ -182,6 +182,7 @@ class Turpial:
             self.config = ConfigHandler(self.profile.username, protocol)
             self.config.initialize()
             
+            self.current_protocol = protocol
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.profile.username, 
                 self.profile.password, self.api.protocol.http)
@@ -230,11 +231,29 @@ class Turpial:
                 self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, 
                     ls.name, _('tweet'), _('tweets'))
         
-        self.viewed_cols = [
-            self.lists[self.config.read('Columns', 'column1')],
-            self.lists[self.config.read('Columns', 'column2')],
-            self.lists[self.config.read('Columns', 'column3')]
-        ]
+        # Evita que la aplicación reviente su se borra una lista por fuera
+        try:
+            column1 = self.lists[self.config.read('Columns', 'column1')]
+        except KeyError:
+            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
+                self.config.read('Columns', 'column1'))
+            column1 = self.lists['timeline']
+        
+        try:
+            column2 = self.lists[self.config.read('Columns', 'column2')]
+        except KeyError:
+            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
+                self.config.read('Columns', 'column2'))
+            column2 = self.lists['timeline']
+            
+        try:
+            column3 = self.lists[self.config.read('Columns', 'column3')]
+        except KeyError:
+            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
+                self.config.read('Columns', 'column3'))
+            column3 = self.lists['timeline']
+            
+        self.viewed_cols = [column1, column2, column3]
         
         self.api.protocol.muted_users = self.config.load_muted_list()
         self.ui.set_lists(self.lists, self.viewed_cols)
@@ -462,6 +481,9 @@ class Turpial:
         else:
             self.ui.set_column_item(index, reset=True)
             self.log.debug('Error: la columna %s no existe' % new_id)
+            
+    def is_friend(self, user):
+        return self.api.is_friend(user)
         
 class MicroBloggingList:
     ''' Lista de los diferentes protocolos '''

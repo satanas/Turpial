@@ -136,14 +136,13 @@ class StatusList(gtk.ScrolledWindow):
         if (row is None):
             return False
         
-        if (event.button == 3):
-            self.__popup_menu(model, row, event)
-        elif (event.button == 1):
-            if not model.get_value(row, 15):
-                return
+        if model.get_value(row, 15):
             path = model.get_path(row)
             self.__mark_as_read(model, path, row)
-            
+        
+        if (event.button == 3):
+            self.__popup_menu(model, row, event)
+        
     def __popup_menu(self, model, row, event):
         user = model.get_value(row, 1)
         msg = model.get_value(row, 5)

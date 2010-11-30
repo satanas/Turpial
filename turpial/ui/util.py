@@ -63,27 +63,6 @@ def get_rates(resp):
         limit = val.hourly_limit
         return "%s %s %s %s: %s" % (hits, _('of'), limit, _('API calls. Reset'), t)
     
-def count_new_tweets(statuses, last):
-    '''Returns the number of new statuses in statuses'''
-    if not last:
-        return 0
-    if (statuses is None) or (len(statuses) <= 0):
-        return 0
-    
-    index = 0
-    for n_sta in statuses:
-        found = False
-        for o_sta in last:
-            if not n_sta or not o_sta:
-                continue
-            if n_sta.id == o_sta.id:
-                found = True
-                break
-        if not found:
-            index += 1
-    
-    return index
-    
 def has_tweet(src, tweet):
     '''Returns True if tweet is in src. False otherwise'''
     for t in src:
@@ -122,6 +101,8 @@ def unescape_text(text):
     return re.sub("&#?\w+;", fixup, text)
     '''
     text = text.replace('&quot;', '"')
+    text = text.replace('\r\n', ' ')
+    text = text.replace('\n', ' ')
     return text
 
 def get_reply_all(user, me, text):

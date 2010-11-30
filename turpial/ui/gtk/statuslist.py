@@ -60,7 +60,7 @@ class StatusList(gtk.ScrolledWindow):
         cell_avatar = gtk.CellRendererPixbuf()
         cell_avatar.set_property('yalign', 0)
         self.cell_tweet = gtk.CellRendererText()
-        self.cell_tweet.set_property('wrap-mode', pango.WRAP_WORD)
+        self.cell_tweet.set_property('wrap-mode', pango.WRAP_WORD_CHAR)
         self.cell_tweet.set_property('wrap-width', 260)
         self.cell_tweet.set_property('yalign', 0)
         self.cell_tweet.set_property('xalign', 0)

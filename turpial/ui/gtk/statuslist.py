@@ -188,12 +188,6 @@ class StatusList(gtk.ScrolledWindow):
             
         return color
 
-#~ ****************************************************************************************
-#~ ***************                                                          ***************
-#~ *************** ESTADO NEW DEBE PERDURAR A TRAVÉS DE LAS ACTUALIZACIONES ***************
-#~ ***************                                                          ***************
-#~ ****************************************************************************************
-
     def __build_pango_text(self, status):
         ''' Transform the regular text into pango markup '''
         urls = [gobject.markup_escape_text(u) \
@@ -344,6 +338,7 @@ class StatusList(gtk.ScrolledWindow):
         own = self.model.get_value(iter, 14)
         color = self.__get_background_color(fav, own, msg, False)
         self.model.set_value(iter, 11, color)
+        self.model.set_value(iter, 15, False)
         
     def clear(self):
         self.model.clear()

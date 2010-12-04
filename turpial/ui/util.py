@@ -16,7 +16,7 @@ HASHTAG_PATTERN = re.compile('(?<![\w])#[\wáéíóúÁÉÍÓÚñÑçÇ]+')
 GROUP_PATTERN = re.compile('(?<![\w])![\wáéíóúÁÉÍÓÚñÑçÇ]+')
 MENTION_PATTERN = re.compile('(?<![\w])@[\w]+')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
-URL_PATTERN = re.compile('((((http|ftp|https)://)|(www))[-\w+&@#/%!?=~_:.\[\]()]*)') 
+URL_PATTERN = re.compile('((((http|ftp|https)://)|(\swww.))[-\w+&@#/%!?=~_:.\[\]()]*)') 
 
 def detect_client(tweet):
     '''Parse the source of a tweet'''

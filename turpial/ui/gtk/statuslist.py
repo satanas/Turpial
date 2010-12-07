@@ -309,11 +309,12 @@ class StatusList(gtk.ScrolledWindow):
     def __update_cursor(self, model, path, iter):
         if self.cursor.path == (0, ):
             return True
-        
+        '''
         stored_id = model.get_value(iter, 6)
         if stored_id == self.cursor.cid:
             self.cursor.update(iter)
             return True
+        '''
         return False
         
     def __set_last_time(self):

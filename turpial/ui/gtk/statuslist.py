@@ -56,6 +56,7 @@ class StatusList(gtk.ScrolledWindow):
             str, #timestamp original
         ) # Editar FIELDS
         
+        self.model.set_sort_column_id(16, gtk.SORT_DESCENDING)
         self.list.set_model(self.model)
         cell_avatar = gtk.CellRendererPixbuf()
         cell_avatar.set_property('yalign', 0)
@@ -72,7 +73,7 @@ class StatusList(gtk.ScrolledWindow):
         column.set_attributes(self.cell_tweet, markup=4, cell_background_gdk=11)
         column.set_attributes(cell_avatar, pixbuf=0, cell_background_gdk=11)
         self.list.append_column(column)
-        self.list.connect("button-release-event", self.__on_click)
+        self.click_handler = self.list.connect("button-release-event", self.__on_click)
             
         self.add(self.list)
         self.cursor = Cursor(self.list, self.model)
@@ -253,21 +254,80 @@ class StatusList(gtk.ScrolledWindow):
         del pix
         return row
         
-    def __add_status(self, model, path, iter, statuses):
+    def __insert_status(self, status):
         ''' Append status '''
-        index = path[0]
-        stored_id = model.get_value(iter, 6)
-        if statuses[index].id != stored_id:
-            row = self.__build_iter_status(statuses[index], new=True)
-            for i in range(FIELDS + 1):
-                model.set_value(iter, i, row[i])
-        return False
+        row = self.__build_iter_status(status)
+        self.model.insert(0, row)
+    
+    def __remove_statuses(self, value):
+        for i in range(value):
+            last = self.model.iter_n_children(None)
+            iter = self.model.get_iter_from_string(str(last - 1))
+            print 'Borrando último tweet:', self.model.get_value(iter, 5)
+            self.model.remove(iter)
+        print 'Quedan %d registros' % len(self.model)
     
     def __add_statuses(self, statuses):
         ''' Append statuses to list'''
         for status in statuses:
             row = self.__build_iter_status(status)
             self.model.append(row)
+            
+    def __modify_statuses(self, statuses):
+        inserted = 0
+        new_count = 0
+        current = []
+        received = []
+        to_del = []
+        
+        iter = self.model.get_iter_first()
+        while iter:
+            current.append(self.model.get_value(iter, 6))
+            iter = self.model.iter_next(iter)
+        
+        for status in statuses:
+            received.append(status.id)
+            if status.id not in current:
+                new = False
+                inserted += 1
+                if status.timestamp > self.last_time and status.username != self.mainwin.me:
+                    new = True
+                    new_count += 1
+                row = self.__build_iter_status(status, new=new)
+                self.model.append(row)
+        
+        #print 'current', current
+        #print 'received', received
+        
+        if len(current) > len(received):
+            iter = self.model.get_iter_first()
+            while iter:
+                if self.model.get_value(iter, 6) not in received:
+                    to_del.append(iter)
+                iter = self.model.iter_next(iter)
+            
+            for iter in to_del:
+                self.model.remove(iter)
+        elif len(current) == len(received):
+            self.__remove_statuses(inserted)
+        
+        return new_count
+            
+    """
+        news = self.__get_new_statuses(statuses)
+        news.reverse()
+        curr_count = len(statuses)
+        old_count = len(self.model)
+        new_count = len(news)
+        for status in news:
+            self.__insert_status(status)
+        
+        if curr_count < old_count:
+            self.__remove_statuses(old_count - curr_count)
+        else:
+            self.__remove_statuses(new_count)
+        return new_count
+        
     
     def __modify_statuses(self, statuses):
         index = 0
@@ -305,7 +365,23 @@ class StatusList(gtk.ScrolledWindow):
                 self.model.remove(iter)
         
         return new_count
+    
+    def __is_new(self, status):
+        if status.username != self.mainwin.me:
+            if status.timestamp > self.last_time:
+                return True
+        return False
         
+    def __get_new_statuses(self, statuses):
+        news = []
+        for status in statuses:
+            if status.username != self.mainwin.me:
+                if status.timestamp > self.last_time:
+                    news.append(status)
+                else:
+                    break
+        return news
+    """
     def __update_cursor(self, model, path, iter):
         if self.cursor.path == (0, ):
             return True
@@ -326,20 +402,14 @@ class StatusList(gtk.ScrolledWindow):
             if status.username != self.mainwin.me:
                 self.last_time = status.timestamp
                 break
-        
-    def __is_new(self, status):
-        if status.username != self.mainwin.me:
-            if status.timestamp > self.last_time:
-                return True
-        return False
-        
+    
     def __mark_as_read(self, model, path, iter):
-        msg = self.model.get_value(iter, 5)
-        fav = self.model.get_value(iter, 7)
-        own = self.model.get_value(iter, 14)
+        msg = model.get_value(iter, 5)
+        fav = model.get_value(iter, 7)
+        own = model.get_value(iter, 14)
         color = self.__get_background_color(fav, own, msg, False)
-        self.model.set_value(iter, 11, color)
-        self.model.set_value(iter, 15, False)
+        model.set_value(iter, 11, color)
+        model.set_value(iter, 15, False)
         
     def clear(self):
         self.model.clear()
@@ -353,6 +423,8 @@ class StatusList(gtk.ScrolledWindow):
             iter = self.model.iter_next(iter)
     
     def update(self, statuses):
+        self.list.disconnect(self.click_handler)
+        
         self.cursor.mark()
         self.__set_last_time()
         
@@ -364,6 +436,7 @@ class StatusList(gtk.ScrolledWindow):
         
         self.model.foreach(self.__update_cursor)
         self.last = statuses
+        self.click_handler = self.list.connect("button-release-event", self.__on_click)
         return new_count
     
     def update_user_pic(self, user, pic):

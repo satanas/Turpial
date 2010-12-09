@@ -127,17 +127,21 @@ class Protocol:
         self._add_status(self.favorites, status)
         self._fav_status(self.timeline, status, True)
         self._fav_status(self.replies, status, True)
-        self.to_fav.remove(status.id)
-        
-        self.log.debug('Marcado status %s como favorito' % status.id)
+        try:
+            self.to_fav.remove(status.id)
+            self.log.debug('Marcado status %s como favorito' % status.id)
+        except:
+            self.log.debug('El status %s ha desaparecido' % status.id)
         
     def _unset_status_favorite(self, status):
         self._del_status(self.favorites, status.id)
         self._fav_status(self.timeline, status, False)
         self._fav_status(self.replies, status, False)
-        self.to_unfav.remove(status.id)
-        
-        self.log.debug('Desmarcado status %s como favorito' % status.id)
+        try:
+            self.to_unfav.remove(status.id)
+            self.log.debug('Desmarcado status %s como favorito' % status.id)
+        except:
+            self.log.debug('El status %s ha desaparecido' % status.id)
         
     def _destroy_status(self, id):
         self._del_status(self.timeline, id)

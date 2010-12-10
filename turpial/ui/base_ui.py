@@ -238,10 +238,6 @@ class BaseGui:
         '''Get the muted list'''
         return self.__controller.get_muted_list()
         
-    def request_update_muted(self, muted_users):
-        '''Update the muted list'''
-        self.__controller.update_muted(muted_users)
-        
     def request_destroy_direct(self, id):
         '''Destroy a direct message'''
         self.__controller.destroy_direct(id)

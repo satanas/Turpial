@@ -395,10 +395,10 @@ class Turpial:
         
     def get_conversation(self, id):
         self.api.get_conversation(id, self.ui.update_conversation)
-        
-    def mute(self, user):
-        self.api.mute(user, self.ui.tweet_changed)
-        
+    
+    def mute(self, users):
+        self.api.mute(users, self.ui.tweet_changed)
+    
     def short_url(self, text, callback):
         service = self.config.read('Services', 'shorten-url')
         self.httpserv.short_url(service, text, callback)
@@ -444,11 +444,6 @@ class Turpial:
         
     def get_muted_list(self):
         return self.api.get_muted_list()
-            
-    def update_muted(self, muted_users):
-        #self.ui.start_updating_timeline()
-        #timeline = self.api.mute(muted_users, self.ui.update_timeline)
-        self.api.mute(muted_users, None)
         
     def destroy_direct(self, id):
         self.api.destroy_direct(id, self.ui.after_destroy_direct)

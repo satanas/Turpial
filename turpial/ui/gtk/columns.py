@@ -16,11 +16,11 @@ from turpial.ui.gtk.waiting import CairoWaiting
 log = logging.getLogger('Gtk:Column')
 
 class GenericColumn(gtk.VBox):
-    def __init__(self, mainwin, label='', marknew=False):
+    def __init__(self, mainwin, label=''):
         gtk.VBox.__init__(self, False)
         
         self.mainwin = mainwin
-        self.statuslist = StatusList(mainwin, marknew)
+        self.statuslist = StatusList(mainwin)
         self.waiting = CairoWaiting(mainwin)
         self.walign = gtk.Alignment(xalign=1, yalign=0.5)
         self.walign.add(self.waiting)
@@ -69,8 +69,8 @@ class GenericColumn(gtk.VBox):
         pass
         
 class StandardColumn(GenericColumn):
-    def __init__(self, mainwin, label='', pos=None, viewed=None, marknew=True):
-        GenericColumn.__init__(self, mainwin, label, marknew)
+    def __init__(self, mainwin, label='', pos=None, viewed=None):
+        GenericColumn.__init__(self, mainwin, label)
         
         self.pos = pos
         self.handler = None

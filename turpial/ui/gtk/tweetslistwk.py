@@ -132,7 +132,7 @@ class TweetListWebkit(gtk.VBox):
         self.mainwin.request_conversation(in_reply_to_id, user)
         
     def __mute(self, widget, user):
-        self.mainwin.request_update_muted(user)
+        self.mainwin.request_mute(user)
         
     def clear(self):
         self.page = self.header

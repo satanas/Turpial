@@ -52,11 +52,13 @@ class Main(BaseGui, gtk.Window):
         self.current_height = 480
         self.set_icon(self.load_image('turpial.png', True))
         self.set_position(gtk.WIN_POS_CENTER)
+        self.set_gravity(gtk.gdk.GRAVITY_STATIC)
         self.connect('delete-event', self.__close)
         self.connect('size-request', self.size_request)
         self.connect('configure-event', self.move_event)
         self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
+        self.hnd_state = None
         
         self.mode = 0
         self.vbox = None
@@ -64,6 +66,7 @@ class Main(BaseGui, gtk.Window):
         
         # Valores de config. por defecto
         self.showed = True
+        self.win_state = 'windowed'
         self.minimize = 'on'
         self.workspace = 'single'
         self.link_color = '#ff6633'
@@ -112,9 +115,31 @@ class Main(BaseGui, gtk.Window):
         else:
             self.showed = True
             self.show()
+            if self.workspace == 'wide':
+                self.move(self.win_wide_pos[0], self.win_wide_pos[1])
+            else:
+                self.move(self.win_single_pos[0], self.win_single_pos[1])
             
     def __on_focus(self, widget, event):
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
+    
+    def __on_key_press(self, widget, event):
+        keyname = gtk.gdk.keyval_name(event.keyval)
+        if (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'n':
+            self.show_update_box()
+            return True
+        return False
+    
+    def __on_change_state(self, widget, event, data=None):
+        if event.type != gtk.gdk.WINDOW_STATE:
+            return False
+        
+        if event.new_window_state == gtk.gdk.WINDOW_STATE_ICONIFIED:
+            self.win_state = 'minimized'
+        elif event.new_window_state == gtk.gdk.WINDOW_STATE_MAXIMIZED:
+            self.win_state = 'maximized'
+        elif event.new_window_state == 0:
+            self.win_state = 'windowed'
         
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
@@ -150,16 +175,26 @@ class Main(BaseGui, gtk.Window):
         
     def __save_size(self):
         if self.mode < 2: return
+        
         wide_value = "%i, %i" % (self.wide_win_size[0], self.wide_win_size[1])
         single_value = "%i, %i" % (self.single_win_size[0], self.single_win_size[1])
-        pos_value = "%i, %i" % (self.win_pos[0], self.win_pos[1])
-        log.debug('Guardando tamaño de la ventana')
+        single_pos = "%i, %i" % (self.win_single_pos[0], self.win_single_pos[1])
+        wide_pos = "%i, %i" % (self.win_wide_pos[0], self.win_wide_pos[1])
+        visibility = 'show' if self.showed else 'hide'
+        log.debug('Guardando configuración de la ventana')
         log.debug('--Single: %s' % single_value)
         log.debug('--Wide: %s' % wide_value)
-        log.debug('--Position: %s' % pos_value)
-        self.save_config({'General': {'single-win-size': single_value,
-            'wide-win-size': wide_value, 'window-position': pos_value}},
-            update=False)
+        log.debug('--Single Position: %s' % single_pos)
+        log.debug('--Wide Position: %s' % wide_pos)
+        log.debug('--State: %s' % self.win_state)
+        self.save_config({'Window': {
+            'single-win-size': single_value,
+            'wide-win-size': wide_value, 
+            'window-single-position': single_pos,
+            'window-wide-position': wide_pos,
+            'window-state': self.win_state,
+            'window-visibility': visibility,
+            }}, update=False)
         
     def _notify_new_tweets(self, column, tweets, last, count):
         if count <= 0:
@@ -307,8 +342,18 @@ class Main(BaseGui, gtk.Window):
         
         self.add(self.vbox)
         self.show_all()
-        if (self.win_pos[0] > 0 and self.win_pos[1] > 0):
-            self.move(self.win_pos[0], self.win_pos[1])
+        
+        if self.win_state == 'minimized':
+            self.iconify()
+        elif self.win_state == 'maximized':
+            self.maximize()
+        if self.win_visibility == 'hide':
+            self.hide()
+        
+        self.hnd_state = self.connect('window-state-event', self.__on_change_state)
+        
+        #if (self.win_pos[0] > 0 and self.win_pos[1] > 0):
+        #    self.move(self.win_pos[0], self.win_pos[1])
         gtk.gdk.threads_leave()
         
         if config.read('Notifications', 'login') == 'on':
@@ -491,6 +536,9 @@ class Main(BaseGui, gtk.Window):
         self.update_timeline(tweets)
         
     def set_mode(self):
+        # Necesario para que se calculen bien los valores
+        self.show_all()
+        
         cur_x, cur_y = self.get_position()
         cur_w, cur_h = self.get_size()
         
@@ -498,21 +546,26 @@ class Main(BaseGui, gtk.Window):
             size = self.wide_win_size
             self.resize(size[0], size[1])
             self.set_default_size(size[0], size[1])
-            x = (size[0] - cur_w) / 2
-            self.move(cur_x - x, cur_y)
+            if self.win_wide_pos[0] == -1 and self.win_wide_pos[1] == -1:
+                x = (size[0] - cur_w) / 2
+                self.move(cur_x - x, cur_y)
+            else:
+                self.move(self.win_wide_pos[0], self.win_wide_pos[1])
         else:
             size = self.single_win_size
             self.resize(size[0], size[1])
             self.set_default_size(size[0], size[1])
-            x = (cur_w - size[0]) / 2
-            self.move(cur_x + x, cur_y)
+            if self.win_single_pos[0] == -1 and self.win_single_pos[1] == -1:
+                x = (cur_w - size[0]) / 2
+                self.move(cur_x + x, cur_y)
+            else:
+                self.move(self.win_single_pos[0], self.win_single_pos[1])
         
-        log.debug('Cambiando a modo %s (%s)' % (self.workspace, size))
+        log.debug('Cambiando a modo %s %s' % (self.workspace, size))
         self.dock.change_mode(self.workspace)
         self.home.change_mode(self.workspace)
         self.home.update_wrap(cur_w, self.workspace)
         self.profile.change_mode(self.workspace)
-        self.show_all()
         
     def update_config(self, config, global_cfg=None, thread=False):
         log.debug('Actualizando configuracion')
@@ -524,20 +577,22 @@ class Main(BaseGui, gtk.Window):
         if thread: 
             self.version = global_cfg.read('App', 'version')
             self.imgdir = config.imgdir
-            single_size = config.read('General', 'single-win-size').split(',')
-            wide_size = config.read('General', 'wide-win-size').split(',')
-            win_pos = config.read('General', 'window-position').split(',')
+            single_size = config.read('Window', 'single-win-size').split(',')
+            wide_size = config.read('Window', 'wide-win-size').split(',')
+            s_pos = config.read('Window', 'window-single-position').split(',')
+            w_pos = config.read('Window', 'window-wide-position').split(',')
+            self.win_state = config.read('Window', 'window-state')
+            self.win_visibility = config.read('Window', 'window-visibility')
             self.single_win_size = (int(single_size[0]), int(single_size[1]))
             self.wide_win_size = (int(wide_size[0]), int(wide_size[1]))
-            self.win_pos = (int(win_pos[0]), int(win_pos[1]))
+            self.win_single_pos = (int(s_pos[0]), int(s_pos[1]))
+            self.win_wide_pos = (int(w_pos[0]), int(w_pos[1]))
             gtk.gdk.threads_enter()
         
         if self.workspace <> config.read('General', 'workspace'):
             self.workspace = config.read('General', 'workspace')
-            self.set_mode()
-        elif thread:
-            #This is needed to show the correct tab caption at startup
-            self.set_mode()
+        
+        self.set_mode()
         
         if (self.home_interval != home_interval):
             if self.home_timer: gobject.source_remove(self.home_timer)
@@ -567,29 +622,24 @@ class Main(BaseGui, gtk.Window):
         
         w, h = self.get_size()
         
-        if self.workspace == 'single':
-            if (w, h) == self.single_win_size: return
-            self.single_win_size = (w, h)
-        else:
+        if self.workspace == 'wide':
             if (w, h) == self.wide_win_size: return
             self.wide_win_size = (w, h)
-        
-        self.win_pos = self.get_position()
+            self.win_wide_pos = self.get_position()
+        else:
+            if (w, h) == self.single_win_size: return
+            self.single_win_size = (w, h)
+            self.win_single_pos = self.get_position()
         
         self.contenido.update_wrap(w, self.workspace)
-        
         return
     
     def move_event(self, widget, event):
-        self.win_pos = self.get_position()
+        if self.workspace == 'wide':
+            self.win_wide_pos = self.get_position()
+        else:
+            self.win_single_pos = self.get_position()
         
     def following_error(self, message, follow):
         self.notify.following_error(message, follow)
-        
-    def __on_key_press(self, widget, event):
-        keyname = gtk.gdk.keyval_name(event.keyval)
-        if (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'n':
-            self.show_update_box()
-            return True
-        return False
 

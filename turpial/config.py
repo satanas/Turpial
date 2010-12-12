@@ -24,7 +24,7 @@ UPDATE_TYPE_PROFILE = 'profile'
 
 GLOBAL_CFG = {
     'App':{
-        'version': '1.4.9-a35',
+        'version': '1.4.9-a95',
     },
     'Proxy':{
         'username': '',
@@ -49,10 +49,15 @@ DEFAULT_CFG = {
         'profile-color': 'on',
         'remember-login-info': 'off',
         'minimize-on-close': 'on',
+        'num-tweets': '60',
+    },
+    'Window': {
         'single-win-size': '320,480',
         'wide-win-size': '960,480',
-        'window-position': '-1,-1',
-        'num-tweets': '60',
+        'window-single-position': '-1,-1',
+        'window-wide-position': '-1,-1',
+        'window-state': 'windowed',
+        'window-visibility': 'show',
     },
     'Columns':{
         'column1': 'timeline',

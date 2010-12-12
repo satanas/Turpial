@@ -24,7 +24,7 @@ UPDATE_TYPE_PROFILE = 'profile'
 
 GLOBAL_CFG = {
     'App':{
-        'version': '1.4.9-a95',
+        'version': '1.4.9-a85',
     },
     'Proxy':{
         'username': '',

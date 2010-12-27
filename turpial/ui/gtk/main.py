@@ -109,7 +109,7 @@ class Main(BaseGui, gtk.Window):
         self.tray.connect("popup-menu", self.__show_tray_menu)
         
     def __on_trayicon_click(self, widget):
-        if(self.showed is True):
+        if self.showed:
             self.showed = False
             self.hide()
         else:
@@ -342,13 +342,14 @@ class Main(BaseGui, gtk.Window):
         
         self.add(self.vbox)
         self.show_all()
+        self.set_mode()
         
         if self.win_state == 'minimized':
             self.iconify()
         elif self.win_state == 'maximized':
             self.maximize()
-        if self.win_visibility == 'hide':
-            self.hide()
+        #elif self.win_visibility == 'hide':
+        #    self.hide()
         
         self.hnd_state = self.connect('window-state-event', self.__on_change_state)
         

@@ -51,16 +51,7 @@ class BaseGui:
         self.__user_pics[user] = pic
         self.__queued_pics.remove(pic)
         self.update_user_avatar(user, pic)
-        
-    def __get_real_tweet(self, tweet):
-        '''Get the tweet retweeted'''
-        retweet_by = None
-        if tweet.has_key('retweeted_status'):
-            retweet_by = tweet['user']['screen_name']
-            tweet = tweet['retweeted_status']
-        
-        return tweet, retweet_by
-        
+    
     # ------------------------------------------------------------
     # Common methods to all interfaces
     # ------------------------------------------------------------

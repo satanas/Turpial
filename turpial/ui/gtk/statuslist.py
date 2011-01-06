@@ -71,7 +71,8 @@ class StatusList(gtk.ScrolledWindow):
         column.set_attributes(self.cell_tweet, markup=4, cell_background_gdk=11)
         column.set_attributes(cell_avatar, pixbuf=0, cell_background_gdk=11)
         self.list.append_column(column)
-        self.click_handler = self.list.connect("button-release-event", self.__on_click)
+        #self.click_handler = self.list.connect("button-release-event", self.__on_click)
+        self.click_handler = self.list.connect("cursor-changed", self.__on_select)
             
         self.add(self.list)
         
@@ -129,6 +130,15 @@ class StatusList(gtk.ScrolledWindow):
             text = text.replace(u, cad)
         return text
         
+    def __on_select(self, widget):
+        model, row = widget.get_selection().get_selected()
+        if (row is None):
+            return False
+        
+        if model.get_value(row, 15):
+            path = model.get_path(row)
+            self.__mark_as_read(model, path, row)
+    
     def __on_click(self, widget, event):
         model, row = widget.get_selection().get_selected()
         if (row is None):
@@ -344,7 +354,8 @@ class StatusList(gtk.ScrolledWindow):
             self.list.scroll_to_cell((0,))
         
         self.last = statuses
-        self.click_handler = self.list.connect("button-release-event", self.__on_click)
+        #self.click_handler = self.list.connect("button-release-event", self.__on_click)
+        self.click_handler = self.list.connect("cursor-changed", self.__on_select)
         return new_count
     
     def update_user_pic(self, user, pic):

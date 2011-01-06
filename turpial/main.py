@@ -231,7 +231,7 @@ class Turpial:
                 self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, 
                     ls.name, _('tweet'), _('tweets'))
         
-        # Evita que la aplicación reviente su se borra una lista por fuera
+        # Evita que la aplicación reviente si se borra una lista por fuera
         try:
             column1 = self.lists[self.config.read('Columns', 'column1')]
         except KeyError:

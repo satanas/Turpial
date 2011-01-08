@@ -13,9 +13,14 @@ from pygame import mixer as pygamemixer
 from pygame import error as pygameerror
 
 class Sound:
-    def __init__(self):
+    def __init__(self, disable):
         self.sound = False
         self.log = logging.getLogger('Sound')
+        self.disable = disable
+        if self.disable:
+            self.log.debug('Módulo deshabilitado')
+            return
+        
         try:
             pygamemixer.init()
             self.log.debug('Iniciado')
@@ -25,6 +30,9 @@ class Sound:
             self.sound = False
         
     def __play(self, filename):
+        if self.disable:
+            self.log.debug('Módulo deshabilitado. No hay sonidos')
+            return
         path = os.path.realpath(os.path.join(os.path.dirname(__file__),
             'data', 'sounds', filename))
         

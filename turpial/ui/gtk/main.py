@@ -80,8 +80,8 @@ class Main(BaseGui, gtk.Window):
         self.replies_timer = None
         self.directs_timer = None
         
-        self.sound = Sound()
-        self.notify = Notification()
+        self.sound = Sound(controller.no_sound)
+        self.notify = Notification(controller.no_notif)
         
         self.home = Home(self, self.workspace)
         self.profile = Profile(self)
@@ -342,14 +342,15 @@ class Main(BaseGui, gtk.Window):
         
         self.add(self.vbox)
         self.show_all()
-        self.set_mode()
         
+        '''
         if self.win_state == 'minimized':
             self.iconify()
         elif self.win_state == 'maximized':
             self.maximize()
-        #elif self.win_visibility == 'hide':
-        #    self.hide()
+        elif self.win_visibility == 'hide':
+            self.hide()
+        '''
         
         self.hnd_state = self.connect('window-state-event', self.__on_change_state)
         
@@ -538,6 +539,7 @@ class Main(BaseGui, gtk.Window):
         
     def set_mode(self):
         # Necesario para que se calculen bien los valores
+        # Solo debe llamarse UNA vez
         self.show_all()
         
         cur_x, cur_y = self.get_position()

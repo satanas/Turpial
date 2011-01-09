@@ -57,6 +57,10 @@ class Turpial:
             help='show the version of Turpial and exit', default=False)
         parser.add_option('--test', dest='test', action='store_true',
             help='only load timeline and friends', default=False)
+        parser.add_option('--no-sound', dest='no_sound', action='store_true',
+            help='disable the sounds module', default=False)
+        parser.add_option('--no-notif', dest='no_notif', action='store_true',
+            help='disable the notifications module', default=False)
         
         (options, args) = parser.parse_args()
         
@@ -66,6 +70,8 @@ class Turpial:
         self.profile = None
         self.testmode = options.test
         self.interface = options.interface
+        self.no_sound = options.no_sound
+        self.no_notif = options.no_notif
         self.httpserv = None
         self.api = None
         self.version = self.global_cfg.read('App', 'version')
@@ -231,7 +237,7 @@ class Turpial:
                 self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, 
                     ls.name, _('tweet'), _('tweets'))
         
-        # Evita que la aplicación reviente su se borra una lista por fuera
+        # Evita que la aplicación reviente si se borra una lista por fuera
         try:
             column1 = self.lists[self.config.read('Columns', 'column1')]
         except KeyError:

@@ -129,8 +129,17 @@ class StandardColumn(GenericColumn):
         i = 0
         default = -1
         model = self.listcombo.get_model()
-        for key, obj in columns.iteritems():
-            model.append([key, obj.title])
+        fixed = ['timeline', 'replies', 'directs','sent']
+        for key in fixed:
+            model.append([key, columns[key].title])
+            if key == self.viewed.id:
+                default = i
+            i += 1
+            
+        for key in sorted(columns.iterkeys()):
+            if key in fixed:
+                continue
+            model.append([key, columns[key].title])
             if key == self.viewed.id:
                 default = i
             i += 1

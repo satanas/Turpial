@@ -16,7 +16,8 @@ HASHTAG_PATTERN = re.compile('(?<![\w])#[\wáéíóúÁÉÍÓÚñÑçÇ]+')
 GROUP_PATTERN = re.compile('(?<![\w])![\wáéíóúÁÉÍÓÚñÑçÇ]+')
 MENTION_PATTERN = re.compile('(?<![\w])@[\w]+')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
-URL_PATTERN = re.compile('((((http|ftp|https)://)|(\swww.))[-\w+&@#/%!?=~_:.\[\]()]*)') 
+# According to RFC 3986 - http://www.ietf.org/rfc/rfc3986.txt
+URL_PATTERN = re.compile('((http://|ftp://|https://|www.)[-\w._~:/?#\[\]@!$&\'()*+,;=]*)')
 
 def detect_client(tweet):
     '''Parse the source of a tweet'''
@@ -46,9 +47,13 @@ def detect_mentions(text):
 def detect_urls(text):
     '''Returns an array with all URLs in a tweet'''
     urls = []
-    temp = URL_PATTERN.findall(text)
-    for u in temp:
-        urls.append(u[0])
+    match_urls = URL_PATTERN.findall(text)
+    for item in match_urls:
+        url = item[0]
+        # Elimina el último paréntesis en las expresiones regulares
+        if url[-1] == ')':
+            url = url[:-1]
+        urls.append(url)
     return urls
     
 def get_rates(resp):

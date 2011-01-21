@@ -290,6 +290,14 @@ class Main(BaseGui, gtk.Window):
         else:
             return self.load_image('unknown.png', pixbuf=True)
     
+    def get_gdk_color_from_base(self, key):
+        base_color = self.update_color[key]
+        r = int(base_color[1:3], 16)
+        g = int(base_color[3:5], 16)
+        b = int(base_color[5:7], 16)
+        #return r, g, b
+        return gtk.gdk.Color(r * 257, g * 257, b * 257)
+
     def quit(self, widget):
         self.__save_size()
         self.destroy()

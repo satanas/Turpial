@@ -1,3 +1,24 @@
+v1.5.0 (Feb 04, 2011):
+    + Mejoradas las notificaciones
+    + Optimizado el manejo de los estados y la generación de los menús (consume menos recursos)
+    + Implementado autoscrolling
+    + Mejorada la estructura y organizacion de los archivos de configuracion
+    + Implementada opción -s/--save-credentials para guardar las credenciales vía consola
+    + Habilitada la interfaz cmd con soporte para un conjunto reducido de comandos
+    + Mejoradas la expresiones regulares para la deteccion de menciones y URLs
+    + Favoritos y amigos se actualizan cada 12 y 15 min respectivamente
+    + Actualizadas plantillas de idiomas
+    + Asistente para subir imágenes (con previsualización y soporte para mensaje)
+    + Cambiado tema de iconos (gracias a @gabriela2400 por la colaboración)
+    + Soporte para listas y columnas personalizables
+    + Mejorado el soporte para caracteres UTF-8
+    + Corregidos errores al silenciar cuentas
+    + Visualización de mensajes directos enviados
+    + Coloreado de los tweets según su estado
+    + Diálogo para seguir usuarios
+    + Soporte para proxy e internacionalización
+    + Optimizado el cierre de hilos (mejora la respuesta de la aplicación)
+    
 v1.3.4 (Ago 19, 2010):
     + Sustituido OAUth por xAuth como método de autenticación 
     + Corregido bug de los tweets en NULL (json)

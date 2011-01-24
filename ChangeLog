@@ -1,100 +1,19 @@
-v1.4.9-a26 (Nov 29, 2010):
-    + Se valida la existencia de las listas o se carga el TL por defecto para evitar que la app se rompa
-    + Corregido el wrapping para que el texto de los tweets se ajuste a la ventana
-    
-v1.4.9-a25 (Nov 29, 2010):
-    + Mejoradas las notificaciones para que no muestren actualizaciones propias
-    + Optimizados los recorridos de filas en los ListStore de statuslist
-    + Corregido el problema del autoscrolling
-    + Corregido el problema con la actualización del treeview, ahora no se pierde el foco
-    + Implementado resaltado de los tweets nuevos
-    + Agregado botón para marcar todos los tweets como leídos
-    + Implementado clic para marcar un tweet como leído
-    + Implementada la persistencia de los tweets no leídos hasta que se 'desmarquen'
-    
-v1.4.9-a16 (Nov 28, 2010):
-    + Implementada opción -s/--save-credentials para guardar las credenciales vía consola
-    + Habilitado el soporte de comandos en la interfaz cmd
-    + Solucionado el problema con los encoding UTF-8 de algunos caracteres reemplazandolos por '?'
-    
-v1.4.9-a13 (Nov 28, 2010):
-    + Optimizado el envío de tweets desde la interfaz 'cmd' y eliminados los errores al cerrar
-    + Aplicado patch para mostrar el diálogo de seguir amigos (Gracias a Jorge Pizarro por el aporte)
-    + Actualizada expresión regular para detectar URLs que comienzan con www
-    
-v1.4.9-a10 (Nov 27, 2010):
-    + Agregado timer para actualizar favoritos y amigos cada 12 y 15 min respectivamente
-    
-v1.4.9-a9 (Nov 27, 2010):
-    + Corregida la inconsistencia del menú contextual (issue #177)
-    + Optimizada la generación del menú para consumir menos recursos
-    
-v1.4.9-a8 (Nov 26, 2010):
-    + Implementada base para la interfaz cmd (actualización de estados mediante un comando)
-    + Actualizadas plantillas de idiomas
-    
-v1.4.9-a6 (Nov 01, 2010):
-    + Establecido color para los tweets propios
-    + Mejorada la expresión regular para detectar URLs (gracias e Encels por el aporte)
-    + Corregido error que impedía visualizar los mensajes enviados (issue 233)
-    + Corregida la modalidad de las ventanas secundarias
-    + Removido el servicio acortador de URLs u.nu (descontinuado)
-    + Mejoradas validaciones al momento de subir imágenes
-    
-v1.4.9-a1 (Sep 28, 2010):
-    + Creado asistente para subir imágenes (con previsualización y mensaje)
-    + Cambiado tema de iconos (gracias a @gabriela2400 por la colaboración)
-    
-v1.4.8-a1 (Ago 19, 2010):
-    + 
-    
-v1.4.7-a1 (Ago 19, 2010):
-    + 
-    
 v1.3.4 (Ago 19, 2010):
     + Sustituido OAUth por xAuth como método de autenticación 
     + Corregido bug de los tweets en NULL (json)
-    
-v1.3.3 (Jul 21, 2010):
-    + Versión Final
-    
-v1.3.3-rc1 (Jul 15, 2010):
-    + Primera versión candidata de la 1.3.3
-    
-v1.3.3-b4 (Jul 10, 2010):
     + Corregida dependencia de traceback en el módulo de sonido
-    
-v1.3.3-b3 (Jun 27, 2010):
     + Agregado timeout a las conexiones en la API
     + Eliminados módulos obsoletos
     + Corregido error crítico en la detección de hashtags con caracteres especiales
     + Corregidos errores menores de usabilidad
     + Mejorada la detección de caracteres especiales
-    
-v1.3.3-b2 (Jun 21, 2010):
     + Corregida ruta de los archivos de traducción
-    
-v1.3.3-b1 (Jun 18, 2010):
     + Corregido error con los archivos de traducción
     + Corregida dependencia de webkit (ahora es opcional)
-    
-v1.3.2 (Jun 17, 2010):
-    + Versión Estable
-    
-v1.3.2-b3 (Jun 05, 2010):
     + Corregido error que cerraba Turpial si no existe tarjeta de sonido
-    
-v1.3.2-b2 (Jun 04, 2010):
     + Corregido error que impedía cerrar Turpial desde la bandeja de sistema
-    
-v1.3.2-b1 (Jun 03, 2010):
-    + Publicada versión beta sin cambios respecto a la anterior
-    
-v1.3.2-a2 (May 11, 2010):
     + Corregido error crítico con los diccionarios de ortografía y los locales
     + Corregido error con el servicio de SigueMiLink
-    
-v1.3.2-a1 (May 11, 2010):
     + Creado asistente para gestionar la autenticación segura desde Turpial (requiere python-webkit)
     + Soporte para español, inglés, portugués, chino tradicional y taiwanés, francés, 
     + Agregada opción 'Responder a Todos' al menú contextual de los tweets

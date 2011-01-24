@@ -167,7 +167,7 @@ class StatusList(gtk.ScrolledWindow):
         #amarillo = gtk.gdk.Color(255 * 257, 251 * 257, 230 * 257)
         #verde = gtk.gdk.Color(233 * 257, 247 * 257, 233 * 257)
         #azul = gtk.gdk.Color(235 * 257, 242 * 257, 255 * 257)
-        
+        '''
         azul = gtk.gdk.Color(229 * 257, 236 * 257, 255 * 257)
         rojo = gtk.gdk.Color(255 * 257, 229 * 257, 229 * 257)
         morado = gtk.gdk.Color(238 * 257, 229 * 257, 255 * 257)
@@ -175,18 +175,18 @@ class StatusList(gtk.ScrolledWindow):
         verde = gtk.gdk.Color(229 * 257, 255 * 257, 230 * 257)
         amarillo = gtk.gdk.Color(253 * 257, 255 * 257, 229 * 257)
         naranja = gtk.gdk.Color(255 * 257, 240 * 257, 229 * 257)
-        
+        '''
         me = '@'+self.mainwin.me.lower()
         mention = True if msg.lower().find(me) >= 0 else False
         
         if new:
-            color = azul
+            color = self.mainwin.get_gdk_color_from_base('unread')
         elif fav:
-            color = naranja
+            color = self.mainwin.get_gdk_color_from_base('favorite')
         elif own:
-            color = rojo
+            color =  self.mainwin.get_gdk_color_from_base('own')
         elif mention:
-            color = verde
+            color = self.mainwin.get_gdk_color_from_base('mention')
         else:
             color = None
             

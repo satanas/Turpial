@@ -26,6 +26,12 @@ class BaseGui:
         
         self.columns_lists = {}
         self.columns_viewed = []
+        self.update_color = {
+            'unread' : '#D2E2FF',
+            'own' : '#FFFFCC',
+            'mention' : '#E2FFD2',
+            'favorite' : '#FFECD2',
+        }
         
         # Reescritos en la clase hija
         self.imgdir = ''

@@ -69,6 +69,8 @@ class BaseGui:
             log.debug('Abriendo URL %s con %s' % (url, browser))
             subprocess.Popen([browser, url])
         else:
+            if not url.startswith('http://'):
+                url = 'http://' + url
             log.debug('Abriendo URL %s con navegador predeterminado' % url)
             webbrowser.open(url)
         

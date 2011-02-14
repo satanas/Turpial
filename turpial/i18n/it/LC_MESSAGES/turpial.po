@@ -1,20 +1,21 @@
-# Italian translations for turpial.
-# Copyright (C) 2010 ORGANIZATION
-# This file is distributed under the same license as the turpial project.
-# Milton Mazzarri <milmazz@gmail.com>, 2010.
-#
+# English translations for Turpial package
+# Copyright (C) 2010 Wil Alvarez
+# This file is distributed under the same license as the Turpial package.
+# Satanas <wil.alejandro@gmail.com>, 2010.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: turpial 1.0-b1\n"
-"Report-Msgid-Bugs-To: milmazz@gmail.com\n"
-"POT-Creation-Date: 2010-04-04 11:29+0530\n"
-"PO-Revision-Date: 2010-11-26 19:20-0530\n"
-"Last-Translator: Milton Mazzarri <milmazz@gmail.com>\n"
-"Language-Team: it <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Project-Id-Version: Turpial\n"
+"Report-Msgid-Bugs-To: http://github.com/satanas/Turpial/issues\n"
+"POT-Creation-Date: 2010-11-26 19:20-0530\n"
+"PO-Revision-Date: 2011-02-14 02:49+0000\n"
+"Last-Translator: satanas <wil.alejandro@gmail.com>\n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: turpial/main.py:177 turpial/ui/gtk/home.py:25
@@ -22,47 +23,40 @@ msgid "Timeline"
 msgstr "Timeline"
 
 #: turpial/main.py:178 turpial/main.py:184 turpial/main.py:189
-#, fuzzy
 msgid "tweet"
-msgstr "Tweet"
+msgstr ""
 
 #: turpial/main.py:178 turpial/main.py:184 turpial/main.py:189
-#, fuzzy
 msgid "tweets"
-msgstr "Tweets"
+msgstr ""
 
 #: turpial/main.py:179
 msgid "Replies"
 msgstr ""
 
 #: turpial/main.py:180
-#, fuzzy
 msgid "mention"
-msgstr "Che menzionano"
+msgstr ""
 
 #: turpial/main.py:180
-#, fuzzy
 msgid "mentions"
-msgstr "Che menzionano"
+msgstr ""
 
 #: turpial/main.py:181 turpial/ui/gtk/home.py:29
 msgid "Directs"
 msgstr "Messaggi diretti"
 
 #: turpial/main.py:182
-#, fuzzy
 msgid "direct"
-msgstr "Messaggi diretti"
+msgstr ""
 
 #: turpial/main.py:182
-#, fuzzy
 msgid "directs"
-msgstr "Messaggi diretti"
+msgstr ""
 
 #: turpial/main.py:183
-#, fuzzy
 msgid "My Tweets"
-msgstr "nuovi tweet"
+msgstr ""
 
 #: turpial/notification.py:54
 msgid "Tweets"
@@ -81,18 +75,18 @@ msgid "Turpial (Follow)"
 msgstr ""
 
 #: turpial/notification.py:61
-#, fuzzy, python-format
+#, python-format
 msgid "You are now following @%s"
-msgstr "Hai smesso di seguire @%s"
+msgstr ""
 
 #: turpial/notification.py:63 turpial/notification.py:69
 msgid "Turpial (Unfollow)"
 msgstr ""
 
 #: turpial/notification.py:63
-#, fuzzy, python-format
+#, python-format
 msgid "You are no longer following @%s"
-msgstr "Adesso segui @%s"
+msgstr ""
 
 #: turpial/api/servicesapi.py:146
 msgid "Select a service for upload pics"
@@ -166,9 +160,8 @@ msgstr ""
 #: turpial/api/protocols/identica/identica.py:165
 #: turpial/api/protocols/twitter/http.py:66
 #: turpial/api/protocols/twitter/twitter.py:182
-#, fuzzy
 msgid "Authentication Error"
-msgstr "Autenticazione Sicura"
+msgstr ""
 
 #: turpial/api/protocols/twitter/http.py:91
 #, python-format
@@ -294,7 +287,6 @@ msgid "Cancel"
 msgstr ""
 
 #: turpial/ui/gtk/friendwin.py:15
-#, fuzzy
 msgid "Add friend"
 msgstr ""
 
@@ -360,14 +352,12 @@ msgid "Services"
 msgstr "Servizi"
 
 #: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/statuslist.py:276
-#, fuzzy
 msgid "Mute"
-msgstr "Muto"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:56
-#, fuzzy
 msgid "Web Browser"
-msgstr "Browser Web"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:59
 msgid "API Proxy"
@@ -375,9 +365,7 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:159
 msgid "Adjust update frequency for timeline, mentions and direct messages"
-msgstr ""
-"Sistema la frequenza di aggiornamenti per la timeline, menzioni e "
-"messaggi diretti"
+msgstr "Sistema la frequenza di aggiornamenti per la timeline, menzioni e messaggi diretti"
 
 #: turpial/ui/gtk/preferences.py:170 turpial/ui/gtk/preferences.py:255
 msgid "Column 1 (Left)"
@@ -400,14 +388,12 @@ msgid "You will use 0 calls to API per hour"
 msgstr "Userai 0 chiamate dell'API/h"
 
 #: turpial/ui/gtk/preferences.py:185
-#, fuzzy
 msgid "Wide Mode"
-msgstr "Wide Mode"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:189
-#, fuzzy
 msgid "Show a workspace of 3 columns"
-msgstr "Mostra uno spazio di lavoro di 3 colonne"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:193
 msgid "Load profile color (Needs restart Turpial)"
@@ -415,9 +401,7 @@ msgstr "Carica il colore del profilo (Richiede il riavvio dell'applicazione)"
 
 #: turpial/ui/gtk/preferences.py:198
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr ""
-"Usa il colore del profilo utente per evidenziare le menzioni, hashtags e "
-"URL"
+msgstr "Usa il colore del profilo utente per evidenziare le menzioni, hashtags e URL"
 
 #: turpial/ui/gtk/preferences.py:203
 msgid "Minimize to tray"
@@ -437,9 +421,8 @@ msgid "Select what notifications you want to receive from Turpial"
 msgstr "Seleziona che notifiche vuoi ricevere da Turpial"
 
 #: turpial/ui/gtk/preferences.py:288
-#, fuzzy
 msgid "Login"
-msgstr "Accesso"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:292
 msgid "Show a notification at login with your user info"
@@ -543,7 +526,6 @@ msgid "Delete"
 msgstr ""
 
 #: turpial/ui/gtk/statuslist.py:263
-#, fuzzy
 msgid "Reply All"
 msgstr ""
 
@@ -584,12 +566,10 @@ msgid "from"
 msgstr ""
 
 #: turpial/ui/gtk/statuslist.py:418 turpial/ui/gtk/tweetslistwk.py:159
-#, fuzzy
 msgid "in reply to"
 msgstr ""
 
 #: turpial/ui/gtk/statuslist.py:420 turpial/ui/gtk/tweetslistwk.py:161
-#, fuzzy
 msgid "Retweeted by"
 msgstr ""
 
@@ -646,9 +626,8 @@ msgid "Upload"
 msgstr ""
 
 #: turpial/ui/gtk/uploadpicbox.py:190
-#, fuzzy
 msgid "Oh oh... I couldn't upload the pic"
-msgstr "Oops... Il caricamento dell'immagine è fallito"
+msgstr ""
 
 #: turpial/ui/gtk/uploadpicbox.py:256
 msgid "Select image to upload"
@@ -659,53 +638,17 @@ msgid "Name"
 msgstr "Nome"
 
 #: turpial/ui/gtk/userform.py:59
-#, fuzzy
 msgid "Location"
-msgstr "Posizione"
+msgstr ""
 
 #: turpial/ui/gtk/userform.py:67
 msgid "URL"
 msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:80
-#, fuzzy
 msgid "Bio"
-msgstr "Bio"
+msgstr ""
 
 #: turpial/ui/gtk/userform.py:176
 msgid "Saving..."
 msgstr "Salvataggio in corso...."
-
-#~ msgid "new tweet"
-#~ msgstr "nuovo tweet"
-
-#~ msgid "new tweets"
-#~ msgstr "nuovi tweet"
-
-#~ msgid "new mention"
-#~ msgstr "Nuova Menzione"
-
-#~ msgid "new mentions"
-#~ msgstr "Nuove Menzioni"
-
-#~ msgid "new DM"
-#~ msgstr "nuovo DM"
-
-#~ msgid "new DMs"
-#~ msgstr "nuovos DM"
-
-#~ msgid "Proxy"
-#~ msgstr "Proxy"
-
-#~ msgid "Show a notification when Timeline is updated"
-#~ msgstr "Mostra una notifica quando la Timeline è stata aggiornata"
-
-#~ msgid "Show a notification when you get mentions from other users"
-#~ msgstr "Mostra una notifica quando si ottiene una menzione da altri utenti"
-
-#~ msgid "Directs Messages"
-#~ msgstr "Messaggi Diretti"
-
-#~ msgid "Show a notification when you get direct messages"
-#~ msgstr "Mostra una notifica quando ricevi messaggi diretti"
-

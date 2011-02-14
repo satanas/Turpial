@@ -1,21 +1,21 @@
-# Galician translations for Turpial package
-# Traducions ao galego para o paquete Turpial.
-# Copyright (C) 2010 Miguel Anxo Bouzada
+# English translations for Turpial package
+# Copyright (C) 2010 Wil Alvarez
 # This file is distributed under the same license as the Turpial package.
-# Miguel Anxo Bouzada <mbouzada@gmail.com>, 2010.
-#
+# Satanas <wil.alejandro@gmail.com>, 2010.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: Turpial 1.1.2-a1\n"
-"Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
-"POT-Creation-Date: 2010-09-12 23:22+0530\n"
-"PO-Revision-Date: 2010-11-26 19:20-0530\n"
-"Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
-"Language-Team: Galician <proxecto@trasno.net>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Project-Id-Version: Turpial\n"
+"Report-Msgid-Bugs-To: http://github.com/satanas/Turpial/issues\n"
+"POT-Creation-Date: 2010-11-26 19:20-0530\n"
+"PO-Revision-Date: 2011-02-14 02:49+0000\n"
+"Last-Translator: satanas <wil.alejandro@gmail.com>\n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: gl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: turpial/main.py:177 turpial/ui/gtk/home.py:25
@@ -23,42 +23,36 @@ msgid "Timeline"
 msgstr "Liña de tempo"
 
 #: turpial/main.py:178 turpial/main.py:184 turpial/main.py:189
-#, fuzzy
 msgid "tweet"
-msgstr "Reenviar chío"
+msgstr "chío"
 
 #: turpial/main.py:178 turpial/main.py:184 turpial/main.py:189
-#, fuzzy
 msgid "tweets"
-msgstr "Chíos"
+msgstr "chíos"
 
 #: turpial/main.py:179
 msgid "Replies"
 msgstr "Respostas"
 
 #: turpial/main.py:180
-#, fuzzy
 msgid "mention"
-msgstr "Nomeamentos"
+msgstr "mención"
 
 #: turpial/main.py:180
-#, fuzzy
 msgid "mentions"
-msgstr "Nomeamentos"
+msgstr "mencións"
 
 #: turpial/main.py:181 turpial/ui/gtk/home.py:29
 msgid "Directs"
 msgstr "Directas"
 
 #: turpial/main.py:182
-#, fuzzy
 msgid "direct"
-msgstr "Directas"
+msgstr "directo"
 
 #: turpial/main.py:182
-#, fuzzy
 msgid "directs"
-msgstr "Directas"
+msgstr "directos"
 
 #: turpial/main.py:183
 msgid "My Tweets"
@@ -95,14 +89,12 @@ msgid "You are no longer following @%s"
 msgstr "Deixou de seguir a @%s"
 
 #: turpial/api/servicesapi.py:146
-#, fuzzy
 msgid "Select a service for upload pics"
-msgstr "Seleccione unha imaxe para enviar"
+msgstr "Escolla o servizo para enviar fotos"
 
 #: turpial/api/interfaces/service.py:113
-#, fuzzy
 msgid "Select something to uploading"
-msgstr "Seleccione unha imaxe para enviar"
+msgstr "Seleccione algo para enviar"
 
 #: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:79
@@ -258,7 +250,7 @@ msgstr "Perfil, preferidos, buscas"
 
 #: turpial/ui/gtk/dock.py:28
 msgid "Follow People"
-msgstr ""
+msgstr "SEguir xente"
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/updatebox.py:29
 msgid "Update status"
@@ -304,9 +296,7 @@ msgstr "Que foi? Non ten amigos?. Tente saír e coñecer xente agradábel"
 
 #: turpial/ui/gtk/friendwin.py:83 turpial/ui/gtk/preferences.py:437
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr ""
-"Aínda se está a cargar a todos os seus amigos. Tenteo de novo nuns "
-"segundos"
+msgstr "Aínda se está a cargar a todos os seus amigos. Tenteo de novo nuns segundos"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 msgid "Mentions"
@@ -370,15 +360,12 @@ msgid "Web Browser"
 msgstr "Navegador web"
 
 #: turpial/ui/gtk/preferences.py:59
-#, fuzzy
 msgid "API Proxy"
-msgstr "Sen proxy"
+msgstr "API Proxy"
 
 #: turpial/ui/gtk/preferences.py:159
 msgid "Adjust update frequency for timeline, mentions and direct messages"
-msgstr ""
-"Axustar a frecuencia de actualización para a liña de tempo, nomeamentos e"
-" mensaxes directas"
+msgstr "Axustar a frecuencia de actualización para a liña de tempo, nomeamentos e mensaxes directas"
 
 #: turpial/ui/gtk/preferences.py:170 turpial/ui/gtk/preferences.py:255
 msgid "Column 1 (Left)"
@@ -439,9 +426,7 @@ msgstr "Inicio de sesión"
 
 #: turpial/ui/gtk/preferences.py:292
 msgid "Show a notification at login with your user info"
-msgstr ""
-"Mostra unha notificación no inicio de sesión coa información do seu "
-"usuario"
+msgstr "Mostra unha notificación no inicio de sesión coa información do seu usuario"
 
 #: turpial/ui/gtk/preferences.py:297
 msgid "Activate sounds"
@@ -466,9 +451,7 @@ msgstr "Enviar imaxes"
 
 #: turpial/ui/gtk/preferences.py:377
 msgid "Select all those users that are bothering you and shut them up temporarily"
-msgstr ""
-"Seleccione todos os usuarios que lle estean a molestar e calalos "
-"temporalmente"
+msgstr "Seleccione todos os usuarios que lle estean a molestar e calalos temporalmente"
 
 #: turpial/ui/gtk/preferences.py:461
 msgid "Setup your favorite web browser to open all links"
@@ -631,22 +614,20 @@ msgid "Oops... I couldn't shrink that URL"
 msgstr "Vaites... Non foi posíbel acurtar o URL"
 
 #: turpial/ui/gtk/uploadpicbox.py:31
-#, fuzzy
 msgid "Upload picture"
-msgstr "Enviar imaxe"
+msgstr "Enviar foto"
 
 #: turpial/ui/gtk/uploadpicbox.py:48
 msgid "Message"
-msgstr ""
+msgstr "Mensaxe"
 
 #: turpial/ui/gtk/uploadpicbox.py:80
 msgid "Upload"
-msgstr ""
+msgstr "Envio"
 
 #: turpial/ui/gtk/uploadpicbox.py:190
-#, fuzzy
 msgid "Oh oh... I couldn't upload the pic"
-msgstr "Vaites... Non foi posíbel enviar a imaxe"
+msgstr "Vaites... non é posíbel enviar a foto"
 
 #: turpial/ui/gtk/uploadpicbox.py:256
 msgid "Select image to upload"
@@ -671,37 +652,3 @@ msgstr "Bio"
 #: turpial/ui/gtk/userform.py:176
 msgid "Saving..."
 msgstr "Gardando..."
-
-#~ msgid "new tweet"
-#~ msgstr "novo chío"
-
-#~ msgid "new tweets"
-#~ msgstr "novos chíos"
-
-#~ msgid "new mention"
-#~ msgstr "novo nomeamento"
-
-#~ msgid "new mentions"
-#~ msgstr "novos nomeamentos"
-
-#~ msgid "new DM"
-#~ msgstr "nova MD"
-
-#~ msgid "new DMs"
-#~ msgstr "novas MD"
-
-#~ msgid "Proxy"
-#~ msgstr "Proxy"
-
-#~ msgid "Show a notification when Timeline is updated"
-#~ msgstr "Mostra unha notificación cando se actualiza a liña de tempo"
-
-#~ msgid "Show a notification when you get mentions from other users"
-#~ msgstr "Mostra unha notificación cando é nomeado por outros usuarios"
-
-#~ msgid "Directs Messages"
-#~ msgstr "Mensaxes directas"
-
-#~ msgid "Show a notification when you get direct messages"
-#~ msgstr "Mostra unha notificación cando ten mensaxes directas"
-

@@ -1,21 +1,21 @@
-# Spanish translations for Turpial package
-# Traducciones al español para el paquete Turpial.
+# English translations for Turpial package
 # Copyright (C) 2010 Wil Alvarez
 # This file is distributed under the same license as the Turpial package.
 # Satanas <wil.alejandro@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: Turpial 1.1.2-a1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-23 18:52+0430\n"
-"PO-Revision-Date: 2010-11-26 19:20-0530\n"
-"Last-Translator: Satanas <wil.alejandro@gmail.com>\n"
+"Project-Id-Version: Turpial\n"
+"Report-Msgid-Bugs-To: http://github.com/satanas/Turpial/issues\n"
+"POT-Creation-Date: 2010-11-26 19:20-0530\n"
+"PO-Revision-Date: 2011-02-14 02:49+0000\n"
+"Last-Translator: satanas <wil.alejandro@gmail.com>\n"
 "Language-Team: Spanish\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: turpial/main.py:177 turpial/ui/gtk/home.py:25
@@ -23,42 +23,36 @@ msgid "Timeline"
 msgstr "Línea de tiempo"
 
 #: turpial/main.py:178 turpial/main.py:184 turpial/main.py:189
-#, fuzzy
 msgid "tweet"
-msgstr "Retwittear"
+msgstr "tweet"
 
 #: turpial/main.py:178 turpial/main.py:184 turpial/main.py:189
-#, fuzzy
 msgid "tweets"
-msgstr "Tweets"
+msgstr "tweets"
 
 #: turpial/main.py:179
 msgid "Replies"
 msgstr "Menciones"
 
 #: turpial/main.py:180
-#, fuzzy
 msgid "mention"
-msgstr "Menciones"
+msgstr "mención"
 
 #: turpial/main.py:180
-#, fuzzy
 msgid "mentions"
-msgstr "Menciones"
+msgstr "menciones"
 
 #: turpial/main.py:181 turpial/ui/gtk/home.py:29
 msgid "Directs"
 msgstr "Directos"
 
 #: turpial/main.py:182
-#, fuzzy
 msgid "direct"
-msgstr "Directos"
+msgstr "directo"
 
 #: turpial/main.py:182
-#, fuzzy
 msgid "directs"
-msgstr "Directos"
+msgstr "directos"
 
 #: turpial/main.py:183
 msgid "My Tweets"
@@ -95,14 +89,12 @@ msgid "You are no longer following @%s"
 msgstr "Has dejado de seguir a @%s"
 
 #: turpial/api/servicesapi.py:146
-#, fuzzy
 msgid "Select a service for upload pics"
-msgstr "Selecciona una imagen para subir"
+msgstr "Seleccione un servicio para subir fotos"
 
 #: turpial/api/interfaces/service.py:113
-#, fuzzy
 msgid "Select something to uploading"
-msgstr "Selecciona una imagen para subir"
+msgstr "Seleccione esta opción para subir algo"
 
 #: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:79
@@ -258,7 +250,7 @@ msgstr "Perfil, favoritos, búsquedas"
 
 #: turpial/ui/gtk/dock.py:28
 msgid "Follow People"
-msgstr ""
+msgstr "Siga a la Gente"
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/updatebox.py:29
 msgid "Update status"
@@ -368,15 +360,12 @@ msgid "Web Browser"
 msgstr "Navegador Web"
 
 #: turpial/ui/gtk/preferences.py:59
-#, fuzzy
 msgid "API Proxy"
-msgstr "Sin proxy"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:159
 msgid "Adjust update frequency for timeline, mentions and direct messages"
-msgstr ""
-"Ajusta la frecuencia de actualización para el timeline, menciones y "
-"mensajes directos"
+msgstr "Ajusta la frecuencia de actualización para el timeline, menciones y mensajes directos"
 
 #: turpial/ui/gtk/preferences.py:170 turpial/ui/gtk/preferences.py:255
 msgid "Column 1 (Left)"
@@ -412,9 +401,7 @@ msgstr "Carga color de perfil (Requiere reiniciar Turpial)"
 
 #: turpial/ui/gtk/preferences.py:198
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr ""
-"Usa el color de perfil del usuario para resaltar menciones, hashtags y "
-"URLs"
+msgstr "Usa el color de perfil del usuario para resaltar menciones, hashtags y URLs"
 
 #: turpial/ui/gtk/preferences.py:203
 msgid "Minimize to tray"
@@ -464,9 +451,7 @@ msgstr "Subir imágenes"
 
 #: turpial/ui/gtk/preferences.py:377
 msgid "Select all those users that are bothering you and shut them up temporarily"
-msgstr ""
-"Selecciona todos los usuarios que te están fastidiando y cállalos "
-"temporalmente"
+msgstr "Selecciona todos los usuarios que te están fastidiando y cállalos temporalmente"
 
 #: turpial/ui/gtk/preferences.py:461
 msgid "Setup your favorite web browser to open all links"
@@ -629,22 +614,20 @@ msgid "Oops... I couldn't shrink that URL"
 msgstr "Oops... No pude cortar la URL"
 
 #: turpial/ui/gtk/uploadpicbox.py:31
-#, fuzzy
 msgid "Upload picture"
-msgstr "Subir imagen"
+msgstr "Subir foto"
 
 #: turpial/ui/gtk/uploadpicbox.py:48
 msgid "Message"
-msgstr ""
+msgstr "Mensaje"
 
 #: turpial/ui/gtk/uploadpicbox.py:80
 msgid "Upload"
-msgstr ""
+msgstr "Subir"
 
 #: turpial/ui/gtk/uploadpicbox.py:190
-#, fuzzy
 msgid "Oh oh... I couldn't upload the pic"
-msgstr "Oops... No pude subir la imagen"
+msgstr ""
 
 #: turpial/ui/gtk/uploadpicbox.py:256
 msgid "Select image to upload"
@@ -669,37 +652,3 @@ msgstr "Bio"
 #: turpial/ui/gtk/userform.py:176
 msgid "Saving..."
 msgstr "Guardando..."
-
-#~ msgid "new tweet"
-#~ msgstr "nuevo tweet"
-
-#~ msgid "new tweets"
-#~ msgstr "nuevos tweets"
-
-#~ msgid "new mention"
-#~ msgstr "nueva mención"
-
-#~ msgid "new mentions"
-#~ msgstr "nuevas menciones"
-
-#~ msgid "new DM"
-#~ msgstr "nuevo DM"
-
-#~ msgid "new DMs"
-#~ msgstr "nuevos DMs"
-
-#~ msgid "Proxy"
-#~ msgstr "Proxy"
-
-#~ msgid "Show a notification when Timeline is updated"
-#~ msgstr "Muestra una notificación cuando se actualiza el Timeline"
-
-#~ msgid "Show a notification when you get mentions from other users"
-#~ msgstr "Muestra una notificación cuando tienes menciones de otros usuarios"
-
-#~ msgid "Directs Messages"
-#~ msgstr "Mensajes Directos"
-
-#~ msgid "Show a notification when you get direct messages"
-#~ msgstr "Muestra una notificación cuando tienes mensajes directos"
-

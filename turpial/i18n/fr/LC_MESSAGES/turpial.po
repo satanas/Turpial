@@ -1,20 +1,21 @@
-# French translations for turpial.
-# Copyright (C) 2010 Turpial
-# This file is distributed under the same license as the turpial project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
-#
+# English translations for Turpial package
+# Copyright (C) 2010 Wil Alvarez
+# This file is distributed under the same license as the Turpial package.
+# Satanas <wil.alejandro@gmail.com>, 2010.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version:  1.0-b1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-23 18:52+0430\n"
-"PO-Revision-Date: 2010-11-26 19:20-0530\n"
-"Last-Translator: Jinwen Chan <jinwen.cen@gmail.com>\n"
-"Language-Team: French <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Project-Id-Version: Turpial\n"
+"Report-Msgid-Bugs-To: http://github.com/satanas/Turpial/issues\n"
+"POT-Creation-Date: 2010-11-26 19:20-0530\n"
+"PO-Revision-Date: 2011-02-14 02:48+0000\n"
+"Last-Translator: aylham <aylham@gmail.com>\n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: turpial/main.py:177 turpial/ui/gtk/home.py:25
@@ -22,47 +23,40 @@ msgid "Timeline"
 msgstr "Chronologie"
 
 #: turpial/main.py:178 turpial/main.py:184 turpial/main.py:189
-#, fuzzy
 msgid "tweet"
-msgstr "Retweeter"
+msgstr ""
 
 #: turpial/main.py:178 turpial/main.py:184 turpial/main.py:189
-#, fuzzy
 msgid "tweets"
-msgstr "Tweets"
+msgstr ""
 
 #: turpial/main.py:179
 msgid "Replies"
+msgstr "Réponses"
+
+#: turpial/main.py:180
+msgid "mention"
 msgstr ""
 
 #: turpial/main.py:180
-#, fuzzy
-msgid "mention"
-msgstr "Réponses"
-
-#: turpial/main.py:180
-#, fuzzy
 msgid "mentions"
-msgstr "Réponses"
+msgstr ""
 
 #: turpial/main.py:181 turpial/ui/gtk/home.py:29
 msgid "Directs"
 msgstr "Messages Privés"
 
 #: turpial/main.py:182
-#, fuzzy
 msgid "direct"
-msgstr "Messages Privés"
+msgstr ""
 
 #: turpial/main.py:182
-#, fuzzy
 msgid "directs"
-msgstr "Messages Privés"
+msgstr ""
 
 #: turpial/main.py:183
-#, fuzzy
 msgid "My Tweets"
-msgstr "nouveaux tweets"
+msgstr ""
 
 #: turpial/notification.py:54
 msgid "Tweets"
@@ -81,33 +75,31 @@ msgid "Turpial (Follow)"
 msgstr ""
 
 #: turpial/notification.py:61
-#, fuzzy, python-format
+#, python-format
 msgid "You are now following @%s"
-msgstr "Vous ne suivez plus @%s"
+msgstr "Vous suivez dorénavant @%s"
 
 #: turpial/notification.py:63 turpial/notification.py:69
 msgid "Turpial (Unfollow)"
 msgstr ""
 
 #: turpial/notification.py:63
-#, fuzzy, python-format
+#, python-format
 msgid "You are no longer following @%s"
-msgstr "Vous suivez @%s maintenant"
+msgstr "Vous avez cessez de suivre @%s"
 
 #: turpial/api/servicesapi.py:146
-#, fuzzy
 msgid "Select a service for upload pics"
-msgstr "Sélectionner l'image à télécharger"
+msgstr "Sélectionnez le service pour uploader les images"
 
 #: turpial/api/interfaces/service.py:113
-#, fuzzy
 msgid "Select something to uploading"
-msgstr "Sélectionner l'image à télécharger"
+msgstr "Sélectionnez quelque chose à uploader"
 
 #: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:79
 msgid "Sorry, you don't have more API calls"
-msgstr ""
+msgstr "Désolé, vos appels à l'API sont épuisés"
 
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:82
@@ -123,22 +115,22 @@ msgstr ""
 #: turpial/api/protocols/twitter/http.py:89
 #, python-format
 msgid "%s already is a friend"
-msgstr ""
+msgstr "Vous êtes déjà abonné à %s"
 
 #: turpial/api/protocols/identica/http.py:43
 #: turpial/api/protocols/twitter/http.py:93
 msgid "Hey! You are over the limit of API calls"
-msgstr ""
+msgstr "Hé! Vous êtes au dessus de la limite d'appel à l'API"
 
 #: turpial/api/protocols/identica/http.py:46
 #: turpial/api/protocols/twitter/http.py:96
 msgid "Err... invalid request"
-msgstr ""
+msgstr "Cette requête est invalide"
 
 #: turpial/api/protocols/identica/http.py:48
 #: turpial/api/protocols/twitter/http.py:98
 msgid "You are searching a very weird thing"
-msgstr ""
+msgstr "Vous cherchez quelque-chose de très étrange"
 
 #: turpial/api/protocols/identica/http.py:50
 #: turpial/api/protocols/twitter/http.py:100
@@ -147,14 +139,13 @@ msgstr ""
 
 #: turpial/api/protocols/identica/http.py:52
 #: turpial/api/protocols/twitter/http.py:102
-#, fuzzy
 msgid "Oops! Something went wrong"
-msgstr "Oups... quelque chose s'est mal"
+msgstr "Oops! "
 
 #: turpial/api/protocols/identica/http.py:54
 #: turpial/api/protocols/twitter/http.py:104
 msgid "Twitter is down. Try again later"
-msgstr ""
+msgstr "Le site de Twitter ne répond pas. Réessayer plus tard."
 
 #: turpial/api/protocols/identica/http.py:56
 #: turpial/api/protocols/twitter/http.py:106
@@ -164,19 +155,18 @@ msgstr ""
 #: turpial/api/protocols/identica/http.py:60
 #: turpial/api/protocols/twitter/http.py:110
 msgid "Can't connect to Twitter"
-msgstr ""
+msgstr "Connexion à Twitter impossible"
 
 #: turpial/api/protocols/identica/identica.py:165
 #: turpial/api/protocols/twitter/http.py:66
 #: turpial/api/protocols/twitter/twitter.py:182
-#, fuzzy
 msgid "Authentication Error"
-msgstr "Authentification sécurisée"
+msgstr "Erreur d'authentication"
 
 #: turpial/api/protocols/twitter/http.py:91
 #, python-format
 msgid "You've already requested to follow %s"
-msgstr ""
+msgstr "Vous avez déjà demander à suivre %s"
 
 #: turpial/api/services/shorturl/bitly.py:31
 #: turpial/api/services/shorturl/cligs.py:26
@@ -189,7 +179,7 @@ msgstr ""
 #: turpial/api/services/shorturl/ur1ca.py:35
 #: turpial/api/services/shorturl/zima.py:26
 msgid "Problem shorting URL"
-msgstr ""
+msgstr "Problème pendant le raccourcissement de l'URL"
 
 #: turpial/api/services/uploadpic/imgly.py:40
 #: turpial/api/services/uploadpic/mobypicture.py:42
@@ -199,7 +189,7 @@ msgstr ""
 #: turpial/api/services/uploadpic/twitpic.py:43
 #: turpial/api/services/uploadpic/yfrog.py:43
 msgid "Problem uploading pic"
-msgstr ""
+msgstr "Problème lors de l'upload"
 
 #: turpial/ui/util.py:66
 msgid "of"
@@ -207,7 +197,7 @@ msgstr "sur"
 
 #: turpial/ui/util.py:66
 msgid "API calls. Reset"
-msgstr "API appels. Remise"
+msgstr "Remise à zéro des appels à l'API "
 
 #: turpial/ui/gtk/about.py:19
 msgid "Twitter client multi-interface written in Python"
@@ -223,11 +213,11 @@ msgstr ""
 
 #: turpial/ui/gtk/columns.py:49 turpial/ui/gtk/tweetslistwk.py:197
 msgid "No tweets available"
-msgstr "No tweets disponibles"
+msgstr "Pas de tweets disponibles"
 
 #: turpial/ui/gtk/columns.py:112
 msgid "Manual Update"
-msgstr ""
+msgstr "Mise à jour manuelle"
 
 #: turpial/ui/gtk/columns.py:117
 msgid "Autoscrolling"
@@ -235,7 +225,7 @@ msgstr ""
 
 #: turpial/ui/gtk/columns.py:233
 msgid "Clear results"
-msgstr "Vider des résultats"
+msgstr "Vider les résultats"
 
 #: turpial/ui/gtk/columns.py:275
 msgid "You must write something to search"
@@ -252,11 +242,11 @@ msgstr "En réponse à %s"
 
 #: turpial/ui/gtk/dock.py:20
 msgid "Timeline, replies and others"
-msgstr ""
+msgstr "Chronologie, mentions et autres…"
 
 #: turpial/ui/gtk/dock.py:24
 msgid "Profile, favorites, search"
-msgstr ""
+msgstr "Profil, favoris et recherche"
 
 #: turpial/ui/gtk/dock.py:28
 msgid "Follow People"
@@ -264,7 +254,7 @@ msgstr ""
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/updatebox.py:29
 msgid "Update status"
-msgstr "Mise à jour le statut"
+msgstr "Mise à jour du statut"
 
 #: turpial/ui/gtk/dock.py:36
 msgid "Upload image"
@@ -277,7 +267,7 @@ msgstr "Paramètres"
 
 #: turpial/ui/gtk/dock.py:44
 msgid "About Turpial"
-msgstr ""
+msgstr "A propos de Turpial"
 
 #: turpial/ui/gtk/follow.py:15 turpial/ui/gtk/main.py:122
 #: turpial/ui/gtk/statuslist.py:270
@@ -286,7 +276,7 @@ msgstr "Suivre"
 
 #: turpial/ui/gtk/follow.py:23
 msgid "User"
-msgstr ""
+msgstr "Utilisateur"
 
 #: turpial/ui/gtk/follow.py:26
 msgid "Ok"
@@ -294,22 +284,19 @@ msgstr ""
 
 #: turpial/ui/gtk/follow.py:28
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: turpial/ui/gtk/friendwin.py:15
-#, fuzzy
 msgid "Add friend"
-msgstr "Chargement en cours des amis..."
+msgstr "Ajouter un ami"
 
 #: turpial/ui/gtk/friendwin.py:77 turpial/ui/gtk/preferences.py:432
 msgid "What? You don't have any friends. Try to go out and know some nice people"
-msgstr ""
+msgstr "Quoi? Vous n'avez aucun abonnements. Sortez et"
 
 #: turpial/ui/gtk/friendwin.py:83 turpial/ui/gtk/preferences.py:437
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr ""
-"Je suis toujours en train de charger tous vos amis. Essayez-vous à "
-"nouveau dans quelques secondes"
+msgstr "Je suis toujours en train de charger tous vos amis. Essayez-vous à nouveau dans quelques secondes"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 msgid "Mentions"
@@ -329,11 +316,11 @@ msgstr "Connexion"
 
 #: turpial/ui/gtk/login.py:101
 msgid "Fields can't be empty"
-msgstr ""
+msgstr "Ces champs ne peuvent être vide"
 
 #: turpial/ui/gtk/main.py:121 turpial/ui/gtk/updatebox.py:86
 msgid "Tweet"
-msgstr "Actualiser"
+msgstr "Actualiser\" #Hésite avec Poste"
 
 #: turpial/ui/gtk/main.py:123
 msgid "Exit"
@@ -341,7 +328,7 @@ msgstr "Quitter"
 
 #: turpial/ui/gtk/main.py:290
 msgid "Wait a few seconds while I load everything..."
-msgstr "Attendez-vous quelques secondes pour charger tous..."
+msgstr "Attendez-vous quelques secondes, chargement en cours..."
 
 #: turpial/ui/gtk/preferences.py:30 turpial/ui/gtk/userform.py:92
 #: turpial/ui/gtk/userform.py:185
@@ -350,7 +337,7 @@ msgstr "Enregistrer"
 
 #: turpial/ui/gtk/preferences.py:31
 msgid "Close"
-msgstr ""
+msgstr "Fermer"
 
 #: turpial/ui/gtk/preferences.py:52
 msgid "General"
@@ -378,25 +365,23 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:159
 msgid "Adjust update frequency for timeline, mentions and direct messages"
-msgstr ""
-"Réglez la fréquence pour mise à jour la chronologie, les réponses et les "
-"messages privés"
+msgstr "Réglez la fréquence pour mise à jour la chronologie, les réponses et les messages privés"
 
 #: turpial/ui/gtk/preferences.py:170 turpial/ui/gtk/preferences.py:255
 msgid "Column 1 (Left)"
-msgstr ""
+msgstr "Colonne 1 (Gauche)"
 
 #: turpial/ui/gtk/preferences.py:172 turpial/ui/gtk/preferences.py:266
 msgid "Column 2 (Middle)"
-msgstr ""
+msgstr "Colonne 2 (Milieu)"
 
 #: turpial/ui/gtk/preferences.py:174 turpial/ui/gtk/preferences.py:277
 msgid "Column 3 (Right)"
-msgstr ""
+msgstr "Colonne 3 (Droite)"
 
 #: turpial/ui/gtk/preferences.py:177
 msgid "Tweets shown"
-msgstr "Tweets montré"
+msgstr "Tweets montrés"
 
 #: turpial/ui/gtk/preferences.py:180
 msgid "You will use 0 calls to API per hour"
@@ -412,13 +397,11 @@ msgstr "Montrer un espace de travail en 3 colonnes"
 
 #: turpial/ui/gtk/preferences.py:193
 msgid "Load profile color (Needs restart Turpial)"
-msgstr "Charger le couleur du profil (besoins redémarrer Turpial)"
+msgstr "Charger le couleur du profil (redémarrage de Turpial nécessaire)"
 
 #: turpial/ui/gtk/preferences.py:198
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr ""
-"Utilisez la couleur de profil d'utilisateur pour mettre en évidence les "
-"réponses, les hashtags et les URL"
+msgstr "Utilisez la couleur de profil d'utilisateur pour mettre en évidence les réponses, les hashtags et les URL"
 
 #: turpial/ui/gtk/preferences.py:203
 msgid "Minimize to tray"
@@ -435,17 +418,15 @@ msgstr "Vous utiliserez approximativement %i des appels à l'API par heure"
 
 #: turpial/ui/gtk/preferences.py:246
 msgid "Select what notifications you want to receive from Turpial"
-msgstr "Sélectionnez les notifications de Turpial que vous voulez recevoire"
+msgstr "Sélectionnez les notifications de Turpial que vous voulez recevoir"
 
 #: turpial/ui/gtk/preferences.py:288
 msgid "Login"
-msgstr "Login"
+msgstr "Démarrage"
 
 #: turpial/ui/gtk/preferences.py:292
 msgid "Show a notification at login with your user info"
-msgstr ""
-"Afficher une notification lors de la connexion avec votre infomation "
-"d'utilisateur"
+msgstr "Afficher une notification lors de la connexion avec vos informations d'utilisateur"
 
 #: turpial/ui/gtk/preferences.py:297
 msgid "Activate sounds"
@@ -453,18 +434,16 @@ msgstr "Activer les sons"
 
 #: turpial/ui/gtk/preferences.py:301
 msgid "Activate sounds for each notification"
-msgstr "Activer sons pour chaque notification"
+msgstr "Activer les sons pour chaque notification"
 
 #: turpial/ui/gtk/preferences.py:330
 msgid "Select your preferred services for shorten URLs and upload images"
-msgstr ""
-"Sélectionnez vos services préférés pour raccourcir les URL et télécharger"
-" des images"
+msgstr "Sélectionnez vos services préférés pour raccourcir les URL et télécharger des images"
 
 #: turpial/ui/gtk/preferences.py:336 turpial/ui/gtk/updatebox.py:64
 #: turpial/ui/gtk/updatebox.py:65
 msgid "Shorten URL"
-msgstr "Raccourcir d'URL"
+msgstr "Raccourcir l'URL"
 
 #: turpial/ui/gtk/preferences.py:350
 msgid "Upload images"
@@ -472,9 +451,7 @@ msgstr "Télécharger des images"
 
 #: turpial/ui/gtk/preferences.py:377
 msgid "Select all those users that are bothering you and shut them up temporarily"
-msgstr ""
-"Sélectionnez tous les utilisateurs qui vous gênent et de les enfermer "
-"temporairement"
+msgstr "Sélectionnez tous les utilisateurs qui vous gênent et les rendre muets temporairement"
 
 #: turpial/ui/gtk/preferences.py:461
 msgid "Setup your favorite web browser to open all links"
@@ -482,7 +459,7 @@ msgstr "Configurez votre navigateur préféré pour ouvrir tous les liens"
 
 #: turpial/ui/gtk/preferences.py:467
 msgid "Default web browser"
-msgstr "navigateur par défaut"
+msgstr "Navigateur par défaut"
 
 #: turpial/ui/gtk/preferences.py:469
 msgid "Choose another web browser"
@@ -510,7 +487,7 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:542
 msgid "No proxy"
-msgstr ""
+msgstr "Pas de proxy"
 
 #: turpial/ui/gtk/preferences.py:543
 msgid "Twitter API proxy"
@@ -549,9 +526,8 @@ msgid "Delete"
 msgstr "Supprimer"
 
 #: turpial/ui/gtk/statuslist.py:263
-#, fuzzy
 msgid "Reply All"
-msgstr "En réponse à"
+msgstr "Répondre à tous"
 
 #: turpial/ui/gtk/statuslist.py:264
 msgid "Retweet (Old)"
@@ -579,7 +555,7 @@ msgstr "Désabonner"
 
 #: turpial/ui/gtk/statuslist.py:272
 msgid "Loading friends..."
-msgstr ""
+msgstr "Chargement des flux..."
 
 #: turpial/ui/gtk/statuslist.py:275 turpial/ui/gtk/updatebox.py:203
 msgid "In reply to"
@@ -587,17 +563,15 @@ msgstr "En réponse à"
 
 #: turpial/ui/gtk/statuslist.py:416 turpial/ui/gtk/tweetslistwk.py:157
 msgid "from"
-msgstr ""
+msgstr "depuis"
 
 #: turpial/ui/gtk/statuslist.py:418 turpial/ui/gtk/tweetslistwk.py:159
-#, fuzzy
 msgid "in reply to"
 msgstr "En réponse à"
 
 #: turpial/ui/gtk/statuslist.py:420 turpial/ui/gtk/tweetslistwk.py:161
-#, fuzzy
 msgid "Retweeted by"
-msgstr "Retweeter"
+msgstr "Retweeté par"
 
 #: turpial/ui/gtk/updatebox.py:25
 msgid "What is happening?"
@@ -613,12 +587,11 @@ msgstr "Vider tous"
 
 #: turpial/ui/gtk/updatebox.py:83 turpial/ui/gtk/uploadpicbox.py:77
 msgid "Add friends"
-msgstr ""
+msgstr "Ajouter des abonnements"
 
 #: turpial/ui/gtk/updatebox.py:87 turpial/ui/gtk/uploadpicbox.py:81
-#, fuzzy
 msgid "Update your status"
-msgstr "Mise à jour le statut"
+msgstr "Mettre à jour votre statut"
 
 #: turpial/ui/gtk/updatebox.py:88
 msgid "Autoshort URLs"
@@ -626,12 +599,11 @@ msgstr "Raccourcir des URLs automatiquement"
 
 #: turpial/ui/gtk/updatebox.py:193
 msgid "Oh oh... I couldn't send the tweet"
-msgstr "Oh non... Je ne pouvais pas envoyer le tweet"
+msgstr "Oh non... Je n'ai pas pu envoyer ce tweet"
 
 #: turpial/ui/gtk/updatebox.py:248
-#, fuzzy
 msgid "Hey!... you must write something"
-msgstr "Bien... vous devez écrire quelque chose"
+msgstr "Hé!... vous devez écrire quelque chose"
 
 #: turpial/ui/gtk/updatebox.py:253 turpial/ui/gtk/uploadpicbox.py:237
 msgid "Hey!... that message looks like a testament"
@@ -642,9 +614,8 @@ msgid "Oops... I couldn't shrink that URL"
 msgstr "Oups... Je ne pouvais pas raccourcir cette URL"
 
 #: turpial/ui/gtk/uploadpicbox.py:31
-#, fuzzy
 msgid "Upload picture"
-msgstr "Télécharger l'image"
+msgstr ""
 
 #: turpial/ui/gtk/uploadpicbox.py:48
 msgid "Message"
@@ -655,9 +626,8 @@ msgid "Upload"
 msgstr ""
 
 #: turpial/ui/gtk/uploadpicbox.py:190
-#, fuzzy
 msgid "Oh oh... I couldn't upload the pic"
-msgstr "Oups... Je ne pouvais pas télécharger cette image"
+msgstr "Oh oh... I couldn't upload the pic"
 
 #: turpial/ui/gtk/uploadpicbox.py:256
 msgid "Select image to upload"
@@ -677,44 +647,8 @@ msgstr "URL"
 
 #: turpial/ui/gtk/userform.py:80
 msgid "Bio"
-msgstr "Bio"
+msgstr "Biographie"
 
 #: turpial/ui/gtk/userform.py:176
 msgid "Saving..."
 msgstr "En train d'enregistrer..."
-
-#~ msgid "new tweet"
-#~ msgstr "nouveau tweet"
-
-#~ msgid "new tweets"
-#~ msgstr "nouveaux tweets"
-
-#~ msgid "new mention"
-#~ msgstr "nouvelle réponse"
-
-#~ msgid "new mentions"
-#~ msgstr "nouvelles réponses"
-
-#~ msgid "new DM"
-#~ msgstr "nouveau message privé"
-
-#~ msgid "new DMs"
-#~ msgstr "nouveaux messages privés"
-
-#~ msgid "Proxy"
-#~ msgstr ""
-
-#~ msgid "Show a notification when Timeline is updated"
-#~ msgstr "Afficher une notification lorsque la chronologie est mis à jour"
-
-#~ msgid "Show a notification when you get mentions from other users"
-#~ msgstr ""
-#~ "Afficher une notification lorsque vous "
-#~ "recevez les réponses d'autres utilisateurs"
-
-#~ msgid "Directs Messages"
-#~ msgstr "Messages Privés"
-
-#~ msgid "Show a notification when you get direct messages"
-#~ msgstr "Afficher une notification lorsque vous recevez un message privé"
-

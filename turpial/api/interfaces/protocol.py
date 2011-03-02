@@ -210,10 +210,9 @@ class Protocol:
     def is_muted(self, user):
         return user in self.muted_users
 
-    # TODO: use regexs
     def is_filtered(self, tweet):
         for term in self.filtered_terms:
-             if tweet.text.find(term) != -1:
+             if tweet.text.lower().find(term.lower()) != -1:
                  self.log.debug(u"Filtrando '%s' por '%s" % (tweet.text, term))
                  return True
         return False

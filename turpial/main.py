@@ -406,6 +406,9 @@ class Turpial:
     
     def mute(self, users):
         self.api.mute(users, self.ui.tweet_changed)
+
+    def filter_term(self, term):
+        self.api.filter_term(term, self.ui.tweet_changed)
     
     def short_url(self, text, callback):
         service = self.config.read('Services', 'shorten-url')

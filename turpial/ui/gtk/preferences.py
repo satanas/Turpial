@@ -91,6 +91,7 @@ class Preferences(gtk.Window):
             
             self.mainwin.save_config(new_config)
             self.mainwin.request_mute(self.muted.get_muted())
+            self.mainwin.request_filter(self.filtered.get_filtered())
         
         proxy = self.proxy.get_config()
         new_global = {
@@ -463,9 +464,19 @@ class FilterTab(PreferencesTab):
         PreferencesTab.__init__(self, _('Filter out words you do not want to see'))
 
         self.mainwin = parent
-        self.filtered = self.mainwin.request_filtered_list()
-        self.model = gtk.ListStore(str)
 
+        self.filtered = self.mainwin.request_filtered_list()
+
+        input_box = gtk.HBox()
+        input_box.pack_start(gtk.Label("New Filter"), False, False, 0)
+        self.term_input = gtk.Entry()
+        input_box.pack_start(self.term_input, True, True, 2)
+        button = gtk.Button("+")
+        button.connect("clicked", self.add_filter, "add_filter_button")
+        input_box.pack_start(button, False, False, 0)
+        self.pack_start(input_box, False, False, 2)
+
+        self.model = gtk.ListStore(str)
         self.list = gtk.TreeView()
         self.list.set_headers_visible(False)
         self.list.set_events(gtk.gdk.POINTER_MOTION_MASK)
@@ -489,22 +500,15 @@ class FilterTab(PreferencesTab):
         scroll.set_shadow_type(gtk.SHADOW_IN)
         scroll.add(self.list)
 
-        label = gtk.Label()
-        label.set_line_wrap(True)
-        label.set_use_markup(True)
-        label.set_justify(gtk.JUSTIFY_FILL)
-
-        align = gtk.Alignment(xalign=0.0, yalign=0.0)
-        align.set_padding(0, 5, 10, 10)
-        align.add(label)
         for filtered_item in self.filtered:
             self.model.append([filtered_item])
+
         self.pack_start(scroll, True, True, 2)
         self.show_all()
 
     def __process(self, model, path, iter):
-        print "Processing"
         filtered_item = model.get_value(iter, 0)
+        print "Processing: %s" % filtered_item
         self.filtered.append(filtered_item)
 
     def get_filtered(self):
@@ -512,6 +516,11 @@ class FilterTab(PreferencesTab):
         self.filtered = []
         self.model.foreach(self.__process)
         return self.filtered
+
+    def add_filter(self, widget, data=None):
+        new_filter_term = self.term_input.get_text()
+        if new_filter_term:
+            self.model.append([new_filter_term])
 
 class BrowserTab(PreferencesTab):
     def __init__(self, parent, current):

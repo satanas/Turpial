@@ -169,7 +169,12 @@ class Protocol:
         else:
             self.log.debug('Silenciando a %s' % user)
             self.muted_users.append(user)
-        
+
+    def _filter_by_term(self, term):
+      self.log.debug('Agregando filtro por %s' % term)
+      if term not in self.filtered_terms:
+          self.filtered_terms.append(term)
+
     def _unmute_by_user(self, user):
         if not self.is_friend(user):
             self.log.debug('No se revela a %s porque no es tu amigo' % user)
@@ -247,6 +252,18 @@ class Protocol:
                 Response(self.get_muted_timeline(self.replies), 'status'),
                 Response(self.get_muted_timeline(self.favorites), 'status'))
     
+    def filter_term(self, args):
+        arg = args['arg']
+        print "protocols.py: ", arg, type(arg).__name__
+        if type(arg).__name__ == 'list':
+            for term in arg:
+                self._filter_by_term(term)
+        else:
+            self._filter_by_term(arg)
+        
+        return (Response(self.get_muted_timeline(self.timeline), 'status'), 
+                Response(self.get_muted_timeline(self.replies), 'status'),
+                Response(self.get_muted_timeline(self.favorites), 'status'))
 
     def get_filtered_terms_list(self):
         ''' Retorna la lista de terminos que se quieren filtrar'''

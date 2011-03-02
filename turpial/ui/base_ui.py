@@ -181,6 +181,10 @@ class BaseGui:
         '''Mute some user'''
         self.__controller.mute(user)
         
+    def request_filter(self, term):
+        '''Filter some terms'''
+        self.__controller.filter_term(term)
+
     def request_unmute(self, user):
         '''Unmute some user'''
         self.__controller.unmute(user)

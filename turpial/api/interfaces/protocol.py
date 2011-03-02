@@ -23,6 +23,7 @@ class Protocol:
         self.friends = []
         self.lists = [] #Posiblemente se use más adelante
         self.muted_users = []
+        self.filtered_terms = []
         
         self.apiurl = apiurl
         self.apiurl2 = apiurl2
@@ -195,7 +196,7 @@ class Protocol:
     def get_muted_timeline(self, statuses):
         timeline = []
         for tweet in statuses:
-            if not self.is_muted(tweet.username):
+            if not self.is_muted(tweet.username) and not self.is_filtered(tweet):
                 timeline.append(tweet)
         
         return timeline
@@ -208,7 +209,15 @@ class Protocol:
         
     def is_muted(self, user):
         return user in self.muted_users
-        
+
+    # TODO: use regexs
+    def is_filtered(self, tweet):
+        for term in self.filtered_terms:
+             if tweet.text.find(term) != -1:
+                 self.log.debug(u"Filtrando '%s' por '%s" % (tweet.text, term))
+                 return True
+        return False
+
     def is_favorite(self, id):
         for sta in self.timeline:
             if not sta:
@@ -239,6 +248,11 @@ class Protocol:
                 Response(self.get_muted_timeline(self.replies), 'status'),
                 Response(self.get_muted_timeline(self.favorites), 'status'))
     
+
+    def get_filtered_terms_list(self):
+        ''' Retorna la lista de terminos que se quieren filtrar'''
+        return self.filtered_terms
+
     # ------------------------------------------------------------
     # Time related methods. Overwrite if necesary
     # ------------------------------------------------------------

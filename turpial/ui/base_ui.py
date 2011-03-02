@@ -236,6 +236,10 @@ class BaseGui:
     def request_muted_list(self):
         '''Get the muted list'''
         return self.__controller.get_muted_list()
+
+    def request_filtered_list(self):
+        '''Get the filtered list'''
+        return self.__controller.get_filtered_list()
         
     def request_destroy_direct(self, id):
         '''Destroy a direct message'''

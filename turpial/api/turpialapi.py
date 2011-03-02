@@ -167,6 +167,9 @@ class TurpialAPI(threading.Thread):
     def get_muted_list(self):
         return self.protocol.get_muted_friends_list()
         
+    def get_filtered_list(self):
+        return self.protocol.get_filtered_terms_list()
+
     def get_single_friends_list(self):
         '''Returns a single friends list from the original twitter hash'''
         if self.protocol.friendsloaded:

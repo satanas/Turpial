@@ -262,6 +262,7 @@ class Turpial:
         self.viewed_cols = [column1, column2, column3]
         
         self.api.protocol.muted_users = self.config.load_muted_list()
+        self.api.protocol.filtered_terms = self.config.load_filtered_list()
         self.ui.set_lists(self.lists, self.viewed_cols)
         self.ui.show_main(self.config, self.global_cfg, resp_profile)
         
@@ -358,6 +359,7 @@ class Turpial:
     def signout(self):
         '''Finalizar sesion'''
         self.save_muted_list()
+        self.save_filtered_list()
         self.log.debug('Desconectando')
         if self.httpserv and self.interface  != 'cmd':
             self.httpserv.quit()
@@ -451,6 +453,13 @@ class Turpial:
     def get_muted_list(self):
         return self.api.get_muted_list()
         
+    def save_filtered_list(self):
+        if self.config:
+            self.config.save_filtered_list(self.api.protocol.filtered_terms)
+        
+    def get_filtered_list(self):
+        return self.api.get_filtered_list()
+
     def destroy_direct(self, id):
         self.api.destroy_direct(id, self.ui.after_destroy_direct)
         

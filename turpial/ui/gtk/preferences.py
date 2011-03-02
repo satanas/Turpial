@@ -466,13 +466,13 @@ class FilterTab(PreferencesTab):
         self.mainwin = parent
 
         self.filtered = self.mainwin.request_filtered_list()
-
+        self.updated_filtered = set(self.filtered)
         input_box = gtk.HBox()
         input_box.pack_start(gtk.Label("New Filter"), False, False, 0)
         self.term_input = gtk.Entry()
         input_box.pack_start(self.term_input, True, True, 2)
         button = gtk.Button("+")
-        button.connect("clicked", self.add_filter, "add_filter_button")
+        button.connect("clicked", self._add_filter, "add_filter_button")
         input_box.pack_start(button, False, False, 0)
         self.pack_start(input_box, False, False, 2)
 
@@ -508,7 +508,6 @@ class FilterTab(PreferencesTab):
 
     def __process(self, model, path, iter):
         filtered_item = model.get_value(iter, 0)
-        print "Processing: %s" % filtered_item
         self.filtered.append(filtered_item)
 
     def get_filtered(self):
@@ -517,10 +516,12 @@ class FilterTab(PreferencesTab):
         self.model.foreach(self.__process)
         return self.filtered
 
-    def add_filter(self, widget, data=None):
+    def _add_filter(self, widget, data=None):
         new_filter_term = self.term_input.get_text()
-        if new_filter_term:
+        if new_filter_term and new_filter_term not in self.updated_filtered:
             self.model.append([new_filter_term])
+            self.updated_filtered.add(new_filter_term)
+        self.term_input.set_text("")
 
 class BrowserTab(PreferencesTab):
     def __init__(self, parent, current):

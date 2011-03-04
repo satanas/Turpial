@@ -175,6 +175,10 @@ class Protocol:
       if term not in self.filtered_terms:
           self.filtered_terms.append(term)
 
+    def _filter_by_list(self, terms):
+      self.log.debug('Agregando filtro por %s' % terms)
+      self.filtered_terms = terms
+
     def _unmute_by_user(self, user):
         if not self.is_friend(user):
             self.log.debug('No se revela a %s porque no es tu amigo' % user)
@@ -256,8 +260,7 @@ class Protocol:
         arg = args['arg']
         print "protocols.py: ", arg, type(arg).__name__
         if type(arg).__name__ == 'list':
-            for term in arg:
-                self._filter_by_term(term)
+            self._filter_by_list(arg)
         else:
             self._filter_by_term(arg)
         

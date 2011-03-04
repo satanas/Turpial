@@ -471,9 +471,12 @@ class FilterTab(PreferencesTab):
         input_box.pack_start(gtk.Label("New Filter"), False, False, 0)
         self.term_input = gtk.Entry()
         input_box.pack_start(self.term_input, True, True, 2)
-        button = gtk.Button("+")
-        button.connect("clicked", self._add_filter, "add_filter_button")
-        input_box.pack_start(button, False, False, 0)
+        add_button = gtk.Button("+")
+        add_button.connect("clicked", self._add_filter, "add_filter_button")
+        input_box.pack_start(add_button, False, False, 0)
+        remove_button = gtk.Button("-")
+        remove_button.connect("clicked", self._remove_filter, "remove_filter_button")
+        input_box.pack_start(remove_button, False, False, 0)
         self.pack_start(input_box, False, False, 2)
 
         self.model = gtk.ListStore(str)
@@ -485,7 +488,6 @@ class FilterTab(PreferencesTab):
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
         self.list.set_model(self.model)
 
-        
         column = gtk.TreeViewColumn('')
         column.set_alignment(0.0)
         cell_term = gtk.CellRendererText()
@@ -509,7 +511,6 @@ class FilterTab(PreferencesTab):
         self.filtered.append(filtered_item)
 
     def get_filtered(self):
-        print self.model
         self.filtered = []
         self.model.foreach(self.__process)
         return self.filtered
@@ -520,6 +521,13 @@ class FilterTab(PreferencesTab):
             self.model.append([new_filter_term])
             self.updated_filtered.add(new_filter_term)
         self.term_input.set_text("")
+
+    def _remove_filter(self, widget, data=None):
+        model, term = self.list.get_selection().get_selected()
+        if term:
+            str_term = self.model.get_value(term, 0)
+            self.model.remove(term)
+            self.updated_filtered.remove(str_term)
 
 class BrowserTab(PreferencesTab):
     def __init__(self, parent, current):

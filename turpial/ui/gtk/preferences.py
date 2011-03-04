@@ -485,8 +485,6 @@ class FilterTab(PreferencesTab):
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
         self.list.set_model(self.model)
 
-        cell_filterable = gtk.CellRendererText()
-
         cell_term = gtk.CellRendererText()
         
         column = gtk.TreeViewColumn('')

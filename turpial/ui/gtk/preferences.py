@@ -485,10 +485,10 @@ class FilterTab(PreferencesTab):
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
         self.list.set_model(self.model)
 
-        cell_term = gtk.CellRendererText()
         
         column = gtk.TreeViewColumn('')
         column.set_alignment(0.0)
+        cell_term = gtk.CellRendererText()
         column.pack_start(cell_term, True)
         column.set_attributes(cell_term, markup=0)
         self.list.append_column(column)

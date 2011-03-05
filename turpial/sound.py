@@ -6,11 +6,11 @@
 # Ene 08, 2010
 
 import os
+import ao
 import logging
+import platform
 import traceback
-
-from pygame import mixer as pygamemixer
-from pygame import error as pygameerror
+import ogg.vorbis
 
 class Sound:
     def __init__(self, disable):
@@ -20,16 +20,42 @@ class Sound:
         if self.disable:
             self.log.debug('Módulo deshabilitado')
             return
-        
+            
         try:
-            pygamemixer.init()
-            self.log.debug('Iniciado')
+            driver = self.__get_driver()
+            self.device = ao.AudioDevice(ao.driver_id(driver), channels=1)
+            self.log.debug('Iniciado con driver %s' % driver.upper())
             self.sound = True
         except Exception, exc:
             self.log.debug(traceback.print_exc())
             self.sound = False
-        
-    def __play(self, filename):
+    
+    def __test_driver(self, driver):
+        try:
+            dummy = ao.AudioDevice(ao.driver_id(driver), channels=1)
+            return True
+        except:
+            return False
+            
+    def __get_driver(self):
+        #return 'macosx' for macos systems
+        if platform.system() == 'Windows':
+            return 'wmm'
+        elif platform.system() == 'Linux':
+            if self.__test_driver('alsa'):
+                return 'alsa'
+            elif self.__test_driver('pulse'):
+                return 'pulse'
+            elif self.__test_driver('oss'):
+                return 'oss'
+            elif self.__test_driver('esd'):
+                return 'esd'
+            elif self.__test_driver('arts'):
+                return 'arts'
+            else:
+                return 'null'
+                
+    def play(self, filename):
         if self.disable:
             self.log.debug('Módulo deshabilitado. No hay sonidos')
             return
@@ -38,23 +64,24 @@ class Sound:
         
         if not self.sound: 
             return
-            
-        try:
-            sound = pygamemixer.Sound(path)
-            sound.set_volume(0.6)
-            sound.play()
-        except pygameerror, message:
-            self.log.debug('Can\'t load sound: %s\nDetails: %s' % (path, 
-                message))
+        
+        vf = ogg.vorbis.VorbisFile(path)
+        while 1:
+            buff, bytes, _ = vf.read(4096)
+            if bytes != 0:
+                self.device.play(buff, bytes)
+            else:
+                vf.time_seek(0)
+                return
         
     def login(self):
-        self.__play('cambur_pinton.ogg')
+        self.play('cambur_pinton.ogg')
         
     def tweets(self):
-        self.__play('turpial.ogg')
+        self.play('turpial.ogg')
         
     def replies(self):
-        self.__play('mencion3.ogg')
+        self.play('mencion3.ogg')
         
     def directs(self):
-        self.__play('mencion2.ogg')
+        self.play('mencion2.ogg')

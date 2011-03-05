@@ -46,12 +46,12 @@ class Sound:
                 return 'alsa'
             elif self.__test_driver('pulse'):
                 return 'pulse'
+            elif self.__test_driver('arts'):
+                return 'arts'
             elif self.__test_driver('oss'):
                 return 'oss'
             elif self.__test_driver('esd'):
                 return 'esd'
-            elif self.__test_driver('arts'):
-                return 'arts'
             else:
                 return 'null'
                 

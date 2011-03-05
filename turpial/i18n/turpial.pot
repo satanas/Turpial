@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: turpial 1.5.0-b4\n"
 "Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
-"POT-Creation-Date: 2011-03-04 20:24-0530\n"
+"POT-Creation-Date: 2011-03-04 20:47-0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -199,7 +199,7 @@ msgid "API calls. Reset"
 msgstr ""
 
 #: turpial/ui/gtk/about.py:19
-msgid "Multi-interface Twitter client written in Python"
+msgid "Microblogging client written in Python"
 msgstr ""
 
 #: turpial/ui/gtk/about.py:49

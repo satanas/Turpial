@@ -1,89 +1,89 @@
-# English translations for Turpial package
-# Copyright (C) 2010 Wil Alvarez
-# This file is distributed under the same license as the Turpial package.
-# Satanas <wil.alejandro@gmail.com>, 2010.
+# Translations template for turpial.
+# Copyright (C) 2011 Turpial
+# This file is distributed under the same license as the turpial project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Turpial\n"
 "Report-Msgid-Bugs-To: http://github.com/satanas/Turpial/issues\n"
-"POT-Creation-Date: 2010-11-26 19:20-0530\n"
-"PO-Revision-Date: 2011-02-09 05:13+0000\n"
+"POT-Creation-Date: 2011-03-04 20:47-0530\n"
+"PO-Revision-Date: 2011-03-05 01:22+0000\n"
 "Last-Translator: satanas <wil.alejandro@gmail.com>\n"
-"Language-Team: Spanish\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.4\n"
 "Language: ru\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
-"Generated-By: Babel 0.9.4\n"
 
-#: turpial/main.py:177 turpial/ui/gtk/home.py:25
+#: turpial/main.py:224 turpial/ui/gtk/home.py:25
 msgid "Timeline"
 msgstr "Лента"
 
-#: turpial/main.py:178 turpial/main.py:184 turpial/main.py:189
+#: turpial/main.py:225 turpial/main.py:231 turpial/main.py:238
 msgid "tweet"
 msgstr "твит"
 
-#: turpial/main.py:178 turpial/main.py:184 turpial/main.py:189
+#: turpial/main.py:225 turpial/main.py:231 turpial/main.py:238
 msgid "tweets"
 msgstr "твиты"
 
-#: turpial/main.py:179
+#: turpial/main.py:226
 msgid "Replies"
 msgstr "Ответы"
 
-#: turpial/main.py:180
+#: turpial/main.py:227
 msgid "mention"
 msgstr "упоминание"
 
-#: turpial/main.py:180
+#: turpial/main.py:227
 msgid "mentions"
 msgstr "упоминания"
 
-#: turpial/main.py:181 turpial/ui/gtk/home.py:29
+#: turpial/main.py:228 turpial/ui/gtk/home.py:29
 msgid "Directs"
 msgstr "Личные сообщения"
 
-#: turpial/main.py:182
+#: turpial/main.py:229
 msgid "direct"
 msgstr "личное сообщение"
 
-#: turpial/main.py:182
+#: turpial/main.py:229
 msgid "directs"
 msgstr "личные сообщения"
 
-#: turpial/main.py:183
+#: turpial/main.py:230
 msgid "My Tweets"
 msgstr "Мои твиты"
 
-#: turpial/notification.py:54
+#: turpial/notification.py:61
 msgid "Tweets"
 msgstr "Твиты"
 
-#: turpial/notification.py:55
+#: turpial/notification.py:62
 msgid "Following"
 msgstr "Подписка"
 
-#: turpial/notification.py:56
+#: turpial/notification.py:63
 msgid "Followers"
 msgstr "Подписчики"
 
-#: turpial/notification.py:61 turpial/notification.py:67
+#: turpial/notification.py:68 turpial/notification.py:74
 msgid "Turpial (Follow)"
 msgstr "Turpial (Подписаться)"
 
-#: turpial/notification.py:61
+#: turpial/notification.py:68
 #, python-format
 msgid "You are now following @%s"
 msgstr "Вы сейчас подписаны на @%s"
 
-#: turpial/notification.py:63 turpial/notification.py:69
+#: turpial/notification.py:70 turpial/notification.py:76
 msgid "Turpial (Unfollow)"
 msgstr "Turpial (Отписаться)"
 
-#: turpial/notification.py:63
+#: turpial/notification.py:70
 #, python-format
 msgid "You are no longer following @%s"
 msgstr "Вы более не подписаны на @%s"
@@ -157,9 +157,9 @@ msgstr "Твиттер перегружен"
 msgid "Can't connect to Twitter"
 msgstr "Нельзя подключиться к Твиттеру"
 
-#: turpial/api/protocols/identica/identica.py:165
+#: turpial/api/protocols/identica/identica.py:176
 #: turpial/api/protocols/twitter/http.py:66
-#: turpial/api/protocols/twitter/twitter.py:182
+#: turpial/api/protocols/twitter/twitter.py:197
 msgid "Authentication Error"
 msgstr "Ошибка аутентификации"
 
@@ -191,17 +191,17 @@ msgstr "Проблема с сокращением URL"
 msgid "Problem uploading pic"
 msgstr "Проблема с выгрузкой картинки"
 
-#: turpial/ui/util.py:66
+#: turpial/ui/util.py:69
 msgid "of"
 msgstr "из"
 
-#: turpial/ui/util.py:66
+#: turpial/ui/util.py:69
 msgid "API calls. Reset"
 msgstr "вызовов API. Сброс"
 
 #: turpial/ui/gtk/about.py:19
-msgid "Twitter client multi-interface written in Python"
-msgstr "Мульти-интерфейсный Твиттер-клиент, написанный на Python"
+msgid "Microblogging client written in Python"
+msgstr ""
 
 #: turpial/ui/gtk/about.py:49
 msgid "File 'AUTHORS' not found"
@@ -211,23 +211,23 @@ msgstr "Файл 'AUTHORS' не найден"
 msgid "File 'TRANSLATORS' not found"
 msgstr "Файл 'TRANSLATORS' не найден"
 
-#: turpial/ui/gtk/columns.py:49 turpial/ui/gtk/tweetslistwk.py:197
+#: turpial/ui/gtk/columns.py:44 turpial/ui/gtk/tweetslistwk.py:197
 msgid "No tweets available"
 msgstr "Нет доступных твитов"
 
-#: turpial/ui/gtk/columns.py:112
+#: turpial/ui/gtk/columns.py:88
 msgid "Manual Update"
 msgstr "Обновление вручную"
 
-#: turpial/ui/gtk/columns.py:117
-msgid "Autoscrolling"
-msgstr "Автопрокрутка"
+#: turpial/ui/gtk/columns.py:92
+msgid "Mark all as read"
+msgstr ""
 
-#: turpial/ui/gtk/columns.py:233
+#: turpial/ui/gtk/columns.py:211
 msgid "Clear results"
 msgstr "Очистить результаты"
 
-#: turpial/ui/gtk/columns.py:275
+#: turpial/ui/gtk/columns.py:253
 msgid "You must write something to search"
 msgstr "Введите что-нибудь для поиска"
 
@@ -269,8 +269,8 @@ msgstr "Настройки"
 msgid "About Turpial"
 msgstr "О Turpial"
 
-#: turpial/ui/gtk/follow.py:15 turpial/ui/gtk/main.py:122
-#: turpial/ui/gtk/statuslist.py:270
+#: turpial/ui/gtk/follow.py:15 turpial/ui/gtk/main.py:147
+#: turpial/ui/gtk/menu.py:230
 msgid "Follow"
 msgstr "Подписаться"
 
@@ -291,12 +291,16 @@ msgid "Add friend"
 msgstr "Добавить друга"
 
 #: turpial/ui/gtk/friendwin.py:77 turpial/ui/gtk/preferences.py:432
-msgid "What? You don't have any friends. Try to go out and know some nice people"
-msgstr "Что? У Вас нет друзей. Выйдите и познакомьтесь с несколькими милыми людьми"
+msgid ""
+"What? You don't have any friends. Try to go out and know some nice people"
+msgstr ""
+"Что? У Вас нет друзей. Выйдите и познакомьтесь с несколькими милыми людьми"
 
 #: turpial/ui/gtk/friendwin.py:83 turpial/ui/gtk/preferences.py:437
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr "Я все еще загружаю информацию обо всех Ваших друзьях. Попробуйте вновь через несколько секунд"
+msgstr ""
+"Я все еще загружаю информацию обо всех Ваших друзьях. Попробуйте вновь через"
+" несколько секунд"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 msgid "Mentions"
@@ -318,17 +322,89 @@ msgstr "Соединение"
 msgid "Fields can't be empty"
 msgstr "Поля не могут быть незаполненными"
 
-#: turpial/ui/gtk/main.py:121 turpial/ui/gtk/updatebox.py:86
+#: turpial/ui/gtk/main.py:146 turpial/ui/gtk/updatebox.py:86
 msgid "Tweet"
 msgstr "Твитнуть"
 
-#: turpial/ui/gtk/main.py:123
+#: turpial/ui/gtk/main.py:148
 msgid "Exit"
 msgstr "Выйти"
 
-#: turpial/ui/gtk/main.py:290
+#: turpial/ui/gtk/main.py:334
 msgid "Wait a few seconds while I load everything..."
 msgstr "Подождите несколько секунд, пока я все загружу..."
+
+#: turpial/ui/gtk/menu.py:81 turpial/ui/gtk/menu.py:93
+msgid "Reply"
+msgstr "Ответить"
+
+#: turpial/ui/gtk/menu.py:85
+msgid "Reply All"
+msgstr "Ответить всем"
+
+#: turpial/ui/gtk/menu.py:102
+msgid "Retweet (Old)"
+msgstr "Цитировать (по-старому)"
+
+#: turpial/ui/gtk/menu.py:103
+msgid "Retweet"
+msgstr "Цитировать"
+
+#: turpial/ui/gtk/menu.py:106
+msgid "Redent (Old)"
+msgstr ""
+
+#: turpial/ui/gtk/menu.py:107
+msgid "Redent"
+msgstr ""
+
+#: turpial/ui/gtk/menu.py:118
+msgid "DM"
+msgstr "ЛС"
+
+#: turpial/ui/gtk/menu.py:125 turpial/ui/gtk/menu.py:131
+msgid "Delete"
+msgstr "Удалить"
+
+#: turpial/ui/gtk/menu.py:138
+msgid "- Fav"
+msgstr "- Избр"
+
+#: turpial/ui/gtk/menu.py:142
+msgid "+ Fav"
+msgstr "+ Избр"
+
+#: turpial/ui/gtk/menu.py:148
+msgid "Open"
+msgstr "Открыть"
+
+#: turpial/ui/gtk/menu.py:205 turpial/ui/gtk/updatebox.py:203
+msgid "In reply to"
+msgstr "В ответ на"
+
+#: turpial/ui/gtk/menu.py:219 turpial/ui/gtk/preferences.py:55
+msgid "Mute"
+msgstr "Заткнуть"
+
+#: turpial/ui/gtk/menu.py:227
+msgid "Loading friends..."
+msgstr "Загружаю друзей..."
+
+#: turpial/ui/gtk/menu.py:233
+msgid "Unfollow"
+msgstr "Отписаться"
+
+#: turpial/ui/gtk/menu.py:280
+msgid "Marking favorite..."
+msgstr ""
+
+#: turpial/ui/gtk/menu.py:283
+msgid "Unmarking favorite..."
+msgstr ""
+
+#: turpial/ui/gtk/menu.py:286
+msgid "Deleting..."
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:30 turpial/ui/gtk/userform.py:92
 #: turpial/ui/gtk/userform.py:185
@@ -350,10 +426,6 @@ msgstr "Уведомления"
 #: turpial/ui/gtk/preferences.py:54
 msgid "Services"
 msgstr "Сервисы"
-
-#: turpial/ui/gtk/preferences.py:55 turpial/ui/gtk/statuslist.py:276
-msgid "Mute"
-msgstr "Заткнуть"
 
 #: turpial/ui/gtk/preferences.py:56
 msgid "Web Browser"
@@ -401,7 +473,8 @@ msgstr "Загрузить цвета профиля (Требуется пер�
 
 #: turpial/ui/gtk/preferences.py:198
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr "Использовать профиль пользователя для подсвечивания упоминаний, тегов и URL"
+msgstr ""
+"Использовать профиль пользователя для подсвечивания упоминаний, тегов и URL"
 
 #: turpial/ui/gtk/preferences.py:203
 msgid "Minimize to tray"
@@ -426,7 +499,8 @@ msgstr "Логин"
 
 #: turpial/ui/gtk/preferences.py:292
 msgid "Show a notification at login with your user info"
-msgstr "Показывать уведомления при загрузке с Вашей пользовательской информацией"
+msgstr ""
+"Показывать уведомления при загрузке с Вашей пользовательской информацией"
 
 #: turpial/ui/gtk/preferences.py:297
 msgid "Activate sounds"
@@ -450,8 +524,10 @@ msgid "Upload images"
 msgstr "Выгрузить картинки"
 
 #: turpial/ui/gtk/preferences.py:377
-msgid "Select all those users that are bothering you and shut them up temporarily"
-msgstr "Выбрать всех пользователей, которые утомляют Вас, и временно заткнуть их"
+msgid ""
+"Select all those users that are bothering you and shut them up temporarily"
+msgstr ""
+"Выбрать всех пользователей, которые утомляют Вас, и временно заткнуть их"
 
 #: turpial/ui/gtk/preferences.py:461
 msgid "Setup your favorite web browser to open all links"
@@ -513,63 +589,15 @@ msgstr "Профиль"
 msgid "Search"
 msgstr "Искать"
 
-#: turpial/ui/gtk/statuslist.py:134
-msgid "Open"
-msgstr "Открыть"
-
-#: turpial/ui/gtk/statuslist.py:212 turpial/ui/gtk/statuslist.py:262
-msgid "Reply"
-msgstr "Ответить"
-
-#: turpial/ui/gtk/statuslist.py:213 turpial/ui/gtk/statuslist.py:268
-msgid "Delete"
-msgstr "Удалить"
-
-#: turpial/ui/gtk/statuslist.py:263
-msgid "Reply All"
-msgstr "Ответить всем"
-
-#: turpial/ui/gtk/statuslist.py:264
-msgid "Retweet (Old)"
-msgstr "Цитировать (по-старому)"
-
-#: turpial/ui/gtk/statuslist.py:265
-msgid "Retweet"
-msgstr "Цитировать"
-
-#: turpial/ui/gtk/statuslist.py:266
-msgid "+ Fav"
-msgstr "+ Избр"
-
-#: turpial/ui/gtk/statuslist.py:267
-msgid "- Fav"
-msgstr "- Избр"
-
-#: turpial/ui/gtk/statuslist.py:269
-msgid "DM"
-msgstr "ЛС"
-
-#: turpial/ui/gtk/statuslist.py:271
-msgid "Unfollow"
-msgstr "Отписаться"
-
-#: turpial/ui/gtk/statuslist.py:272
-msgid "Loading friends..."
-msgstr "Загружаю друзей..."
-
-#: turpial/ui/gtk/statuslist.py:275 turpial/ui/gtk/updatebox.py:203
-msgid "In reply to"
-msgstr "В ответ на"
-
-#: turpial/ui/gtk/statuslist.py:416 turpial/ui/gtk/tweetslistwk.py:157
+#: turpial/ui/gtk/statuslist.py:228 turpial/ui/gtk/tweetslistwk.py:157
 msgid "from"
 msgstr "от"
 
-#: turpial/ui/gtk/statuslist.py:418 turpial/ui/gtk/tweetslistwk.py:159
+#: turpial/ui/gtk/statuslist.py:230 turpial/ui/gtk/tweetslistwk.py:159
 msgid "in reply to"
 msgstr "в ответ на"
 
-#: turpial/ui/gtk/statuslist.py:420 turpial/ui/gtk/tweetslistwk.py:161
+#: turpial/ui/gtk/statuslist.py:232 turpial/ui/gtk/tweetslistwk.py:161
 msgid "Retweeted by"
 msgstr "Цитировано"
 
@@ -629,7 +657,7 @@ msgstr "Выгрузка"
 msgid "Oh oh... I couldn't upload the pic"
 msgstr "Ой... Я не могу выгрузить картинку"
 
-#: turpial/ui/gtk/uploadpicbox.py:256
+#: turpial/ui/gtk/uploadpicbox.py:260
 msgid "Select image to upload"
 msgstr "Выбрать изображение для выгрузки"
 

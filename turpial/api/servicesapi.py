@@ -22,6 +22,7 @@ from turpial.api.services.shorturl.supr import SuprURLShorter
 from turpial.api.services.shorturl.unu import UnuURLShorter
 from turpial.api.services.shorturl.zima import ZimaURLShorter
 from turpial.api.services.shorturl.ur1ca import Ur1caURLShorter
+from turpial.api.services.shorturl.googl import GooglURLShorter
 
 from turpial.api.services.uploadpic.imgly import ImglyPicUploader
 from turpial.api.services.uploadpic.tweetphoto import TweetPhotoPicUploader
@@ -41,6 +42,7 @@ URL_SERVICES = {
     "su.pr": SuprURLShorter(),
     "zi.ma": ZimaURLShorter(),
     "ur1.ca": Ur1caURLShorter(),
+    "goo.gl": GooglURLShorter(),
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
 }
 

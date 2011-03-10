@@ -26,7 +26,7 @@ class Home(Wrapper):
                 viewed=viewed)
             self.replies = StandardColumn(mainwin, _('Mentions'), pos=1, 
                 viewed=viewed)
-        self.direct = StandardColumn(mainwin, _('Directs'), 'direct', pos=2, 
+        self.direct = StandardColumn(mainwin, _('Directs'), pos=2, 
             viewed=viewed)
         
         self._append_widget(self.timeline, WrapperAlign.left)

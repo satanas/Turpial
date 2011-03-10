@@ -19,7 +19,7 @@ class LoginBox(gtk.VBox):
         self.mainwin = mainwin
         avatar = self.mainwin.load_image('logo2.png')
         self.message = LoginLabel(self)
-        us, pw, rem = self.mainwin.request_remembered(PROTOCOLS[0])
+        us, pw, rem = self.mainwin.request_remembered(0)
         
         lbl_user = gtk.Label()
         lbl_user.set_use_markup(True)
@@ -112,7 +112,7 @@ class LoginBox(gtk.VBox):
             
     def __change_protocol(self, widget):
         prot = self.combo_protocol.get_active()
-        us, pw, rem = self.mainwin.request_remembered(PROTOCOLS[prot])
+        us, pw, rem = self.mainwin.request_remembered(prot)
         
         self.username.set_text(us)
         self.password.set_text(pw)

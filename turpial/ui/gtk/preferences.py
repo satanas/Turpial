@@ -88,7 +88,7 @@ class Preferences(gtk.Window):
             }
             
             self.mainwin.save_config(new_config)
-            self.mainwin.request_update_muted(self.muted.get_muted())
+            self.mainwin.request_mute(self.muted.get_muted())
         
         proxy = self.proxy.get_config()
         new_global = {

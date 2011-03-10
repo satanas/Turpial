@@ -58,7 +58,7 @@ class Menu:
         self.mainwin.request_conversation(in_reply_to_id, user)
         
     def __mute(self, widget, user):
-        self.mainwin.request_update_muted(user)
+        self.mainwin.request_mute(user)
         
     # ===================================================================
     # Menu items

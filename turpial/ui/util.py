@@ -7,7 +7,6 @@
 
 import re
 import time
-import datetime
 import htmlentitydefs
 import xml.sax.saxutils as saxutils
 
@@ -17,8 +16,8 @@ HASHTAG_PATTERN = re.compile('(?<![\w])#[\wáéíóúÁÉÍÓÚñÑçÇ]+')
 GROUP_PATTERN = re.compile('(?<![\w])![\wáéíóúÁÉÍÓÚñÑçÇ]+')
 MENTION_PATTERN = re.compile('(?<![\w])@[\w]+')
 CLIENT_PATTERN = re.compile('<a href="(.*?)">(.*?)</a>')
-#URL_PATTERN = re.compile('((http|ftp|https)://[-A-Za-z0-9+&@#/%?=~_:.\[\]]*[-A-Za-z0-9+&@#/%?=~_:\[\]()])')
-URL_PATTERN = re.compile('((http|ftp|https)://[-\w.]*(\s|/[-\w+&@#/%!?=~_:.\[\]()]*))') 
+# According to RFC 3986 - http://www.ietf.org/rfc/rfc3986.txt
+URL_PATTERN = re.compile('((?<!\w)(http://|ftp://|https://|www\.)[-\w._~:/?#\[\]@!$&\'()*+,;=]*)')
 
 def detect_client(tweet):
     '''Parse the source of a tweet'''
@@ -48,9 +47,13 @@ def detect_mentions(text):
 def detect_urls(text):
     '''Returns an array with all URLs in a tweet'''
     urls = []
-    temp = URL_PATTERN.findall(text)
-    for u in temp:
-        urls.append(u[0])
+    match_urls = URL_PATTERN.findall(text)
+    for item in match_urls:
+        url = item[0]
+        # Elimina el último paréntesis en las expresiones regulares
+        if url[-1] == ')':
+            url = url[:-1]
+        urls.append(url)
     return urls
     
 def get_rates(resp):
@@ -64,63 +67,6 @@ def get_rates(resp):
         hits = val.remaining_hits
         limit = val.hourly_limit
         return "%s %s %s %s: %s" % (hits, _('of'), limit, _('API calls. Reset'), t)
-
-def get_timestamp(tweet):
-    '''Returns the timestamp for a tweet'''
-    # Tue Mar 13 00:12:41 +0000 2007 -> Tweets normales
-    # Wed, 08 Apr 2009 19:22:10 +0000 -> Busquedas
-    month_names = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-        'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    
-    date_info = tweet.datetime.split()
-    
-    if date_info[1] in month_names:
-        month = month_names.index(date_info[1])
-        day = int(date_info[2])
-        year = int(date_info[5])
-        time_info = date_info[3].split(':')
-    else:
-        month = month_names.index(date_info[2])
-        day = int(date_info[1])
-        year = int(date_info[3])
-        time_info = date_info[4].split(':')
-        
-    hour = int(time_info[0])
-    minute = int(time_info[1])
-    second = int(time_info[2])
-    
-    d = datetime.datetime(year, month, day, hour, minute, second)
-    
-    i_hate_timezones = time.timezone
-    if (time.daylight):
-        i_hate_timezones = time.altzone
-    
-    dt = datetime.datetime(*d.timetuple()[:-3]) - \
-         datetime.timedelta(seconds=i_hate_timezones)
-    t = dt.timetuple()
-    
-    return time.strftime('%b %d, %I:%M %p', t)
-
-def count_new_tweets(tweets, last):
-    '''Returns the number of new tweets in tweets'''
-    if not last:
-        return 0
-    if (tweets is None) or (len(tweets) <= 0):
-        return 0
-    
-    index = 0
-    for twt in tweets:
-        found = False
-        for t in last:
-            if not twt or not t:
-                continue
-            if twt.id == t.id:
-                found = True
-                break
-        if not found:
-            index += 1
-    
-    return index
     
 def has_tweet(src, tweet):
     '''Returns True if tweet is in src. False otherwise'''
@@ -160,6 +106,8 @@ def unescape_text(text):
     return re.sub("&#?\w+;", fixup, text)
     '''
     text = text.replace('&quot;', '"')
+    text = text.replace('\r\n', ' ')
+    text = text.replace('\n', ' ')
     return text
 
 def get_reply_all(user, me, text):

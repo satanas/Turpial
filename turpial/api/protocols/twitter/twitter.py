@@ -25,11 +25,13 @@ class Twitter(Protocol):
     def __get_real_tweet(self, tweet):
         '''Get the tweet retweeted'''
         retweet_by = None
+        real_timestamp = None
         if tweet.has_key('retweeted_status'):
             retweet_by = tweet['user']['screen_name']
+            real_timestamp = tweet['created_at']
             tweet = tweet['retweeted_status']
-        
-        return tweet, retweet_by
+            
+        return tweet, retweet_by, real_timestamp
         
     def __print_you(self, username):
         ''' Print "you" if username is the name of the user'''
@@ -39,7 +41,7 @@ class Twitter(Protocol):
             return username
     
     def __create_status(self, resp, type=UPDATE_TYPE_STD):
-        tweet, retweet_by = self.__get_real_tweet(resp)
+        tweet, retweet_by, real_timestamp = self.__get_real_tweet(resp)
         
         if tweet.has_key('user'):
             username = tweet['user']['screen_name']
@@ -65,6 +67,14 @@ class Twitter(Protocol):
         if tweet.has_key('source'):
             source = tweet['source']
         
+        if username.lower() == self.profile.username.lower():
+            own = True
+        else:
+            own = False
+            
+        if not real_timestamp:
+            real_timestamp = tweet['created_at']
+        
         status = Status()
         status.id = str(tweet['id'])
         status.username = username
@@ -75,9 +85,11 @@ class Twitter(Protocol):
         status.in_reply_to_user = in_reply_to_user
         status.is_favorite = fav
         status.retweet_by = retweet_by
-        status.datetime = tweet['created_at']
+        status.datetime = self.get_str_time(tweet['created_at'])
+        status.timestamp = self.get_int_time(real_timestamp)
         status.type = type
         status.protocol = PROTOCOLS[0]
+        status.is_own = own
         return status
         
     def __create_profile(self, pf):
@@ -219,6 +231,9 @@ class Twitter(Protocol):
             rtn = self.http.request('%s/direct_messages' % self.apiurl, 
                 {'count': count})
             self.directs = self.response_to_statuses(rtn, type=UPDATE_TYPE_DM)
+            rtn = self.http.request('%s/direct_messages/sent' % self.apiurl, 
+                {'count': count})
+            self.directs += self.response_to_statuses(rtn, type=UPDATE_TYPE_DM)
             return Response(self.directs, 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)

@@ -11,6 +11,7 @@ import os
 import sys
 import base64
 import logging
+import getpass
 from optparse import OptionParser
 
 from turpial.api.servicesapi import HTTPServices
@@ -50,24 +51,27 @@ class Turpial:
             help='select interface to use %s' % ui_avail, default=default_ui)
         parser.add_option('-c', '--clean', dest='clean', action='store_true',
             help='clean all bytecodes', default=False)
+        parser.add_option('-s', '--save-credentials', dest='save', action='store_true',
+            help='save user credentials', default=False)
         parser.add_option('--version', dest='version', action='store_true',
             help='show the version of Turpial and exit', default=False)
         parser.add_option('--test', dest='test', action='store_true',
             help='only load timeline and friends', default=False)
-        parser.add_option('--user', dest='user', 
-            help='user account')
-        parser.add_option('--passwd', dest='passwd', 
-            help='user password')
-        parser.add_option('--message', dest='message', 
-            help='message to be post')
+        parser.add_option('--no-sound', dest='no_sound', action='store_true',
+            help='disable the sounds module', default=False)
+        parser.add_option('--no-notif', dest='no_notif', action='store_true',
+            help='disable the notifications module', default=False)
         
-        (options, _) = parser.parse_args()
+        (options, args) = parser.parse_args()
         
         self.config = None
         self.global_cfg = ConfigApp()
         self.protocol_cfg = {}
         self.profile = None
         self.testmode = options.test
+        self.interface = options.interface
+        self.no_sound = options.no_sound
+        self.no_notif = options.no_notif
         self.httpserv = None
         self.api = None
         self.version = self.global_cfg.read('App', 'version')
@@ -89,15 +93,20 @@ class Turpial:
             print "Turpial v%s" % self.version
             sys.exit(0)
             
+        if options.save:
+            try:
+                self.__save_credentials()
+            except KeyboardInterrupt:
+                self.log.debug('Interceptado Keyboard Interrupt')
+            sys.exit(0)
+            
         self.interface = options.interface
-        #if options.interface == 'gtk2':
-        #    self.ui = gtk2_ui_main.Main(self)
         if options.interface == 'gtk+' and ('gtk+' in INTERFACES):
             self.ui = _GTK(self, extend=True)
         elif options.interface == 'gtk' and ('gtk' in INTERFACES):
             self.ui = _GTK(self)
         elif options.interface == 'cmd' and ('cmd' in INTERFACES):
-            self.ui = _CMD(self, options)
+            self.ui = _CMD(self, args)
         else:
             print 'No existe una interfaz válida. Las interfaces válidas son: %s' % INTERFACES
             print 'Saliendo...'
@@ -107,7 +116,8 @@ class Turpial:
         self.api = TurpialAPI()
         
         self.log.debug('Iniciando Turpial v%s' % self.version)
-        self.httpserv.start()
+        if self.interface  != 'cmd':
+            self.httpserv.start()
         self.api.start()
         self.api.change_api_url(self.global_cfg.read('Proxy', 'url'))
         
@@ -133,6 +143,42 @@ class Turpial:
                     self.log.debug("Borrado %s" % path)
                     os.remove(path)
             
+    def __save_credentials(self):
+        print "This assistant will allow you store your credentials"
+        print "Available protocols"
+        print "==================="
+        for i in range(len(PROTOCOLS)):
+            print "%d - %s" % (i, PROTOCOLS[i])
+        
+        while 1:
+            protocol = int(raw_input("Select protocol: "))
+            if protocol <= len(PROTOCOLS):
+                break
+            else:
+                print "Invalid protocol, please try again"
+        
+        user, passwd, rem = self.get_remembered(protocol)
+        if user != '' and passwd != '':
+            delete = raw_input("Delete your current credentials (%s)? [Y/n/q]: " %
+                user)
+            if delete == '' or delete.lower() == 'y':
+                self.remember(pro=protocol, rem=False)
+                return
+            elif delete.lower() == 'q':
+                return
+        
+        user = raw_input("User: ")
+        while 1:
+            passwd = getpass.getpass("Password: ")
+            confirm = getpass.getpass("Retype password: ")
+            if passwd == confirm:
+                break
+            else:
+                print
+                print "Password mismatch, please try again"
+        self.remember(user, passwd, protocol, True)
+        print "Credentials saved successfully"
+        
     def __validate_credentials(self, val, key, secret, protocol):
         '''Chequeo de credenciales'''
         if val.type == 'error':
@@ -142,6 +188,7 @@ class Turpial:
             self.config = ConfigHandler(self.profile.username, protocol)
             self.config.initialize()
             
+            self.current_protocol = protocol
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.profile.username, 
                 self.profile.password, self.api.protocol.http)
@@ -183,20 +230,43 @@ class Turpial:
             'sent': MicroBloggingList('sent', '', _('My Tweets'), 
                 _('tweet'), _('tweets')),
         }
-        plists = self.api.get_lists()
-        for ls in plists:
-            self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, 
-                ls.name, _('tweet'), _('tweets'))
         
-        self.viewed_cols = [
-            self.lists[self.config.read('Columns', 'column1')],
-            self.lists[self.config.read('Columns', 'column2')],
-            self.lists[self.config.read('Columns', 'column3')]
-        ]
+        if self.interface  != 'cmd':
+            plists = self.api.get_lists()
+            for ls in plists:
+                self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, 
+                    ls.name, _('tweet'), _('tweets'))
+        
+        # Evita que la aplicación reviente si se borra una lista por fuera
+        try:
+            column1 = self.lists[self.config.read('Columns', 'column1')]
+        except KeyError:
+            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
+                self.config.read('Columns', 'column1'))
+            column1 = self.lists['timeline']
+        
+        try:
+            column2 = self.lists[self.config.read('Columns', 'column2')]
+        except KeyError:
+            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
+                self.config.read('Columns', 'column2'))
+            column2 = self.lists['timeline']
+            
+        try:
+            column3 = self.lists[self.config.read('Columns', 'column3')]
+        except KeyError:
+            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
+                self.config.read('Columns', 'column3'))
+            column3 = self.lists['timeline']
+            
+        self.viewed_cols = [column1, column2, column3]
         
         self.api.protocol.muted_users = self.config.load_muted_list()
         self.ui.set_lists(self.lists, self.viewed_cols)
         self.ui.show_main(self.config, self.global_cfg, resp_profile)
+        
+        if self.interface  == 'cmd':
+            return
         
         self._update_column1()
         if self.testmode:
@@ -241,7 +311,8 @@ class Turpial:
         '''Actualizar amigos'''
         self.api.get_friends()
     
-    def get_remembered(self, protocol):
+    def get_remembered(self, index):
+        protocol = PROTOCOLS[index]
         us = self.protocol_cfg[protocol].read('Login', 'username')
         pw = self.protocol_cfg[protocol].read('Login', 'password')
         try:
@@ -260,7 +331,13 @@ class Turpial:
             self.protocol_cfg[protocol].write('Login', 'password','')
             return '', '', False
         
-    def remember(self, us, pw, pro, rem=False):
+    def remember(self, us='', pw='', pro=0, rem=False):
+        protocol = PROTOCOLS[pro]
+        if not rem:
+            self.protocol_cfg[protocol].write('Login', 'username', '')
+            self.protocol_cfg[protocol].write('Login', 'password', '')
+            return
+            
         a = base64.b16encode(pw)
         b = us[0] + a + ('%s' % us[-1])
         c = base64.b32encode(b)
@@ -268,13 +345,8 @@ class Turpial:
         e = base64.b64encode(d)
         pwd = e[0:len(us)]+ e[len(us):]
         
-        protocol = PROTOCOLS[pro]
-        if rem:
-            self.protocol_cfg[protocol].write('Login', 'username', us)
-            self.protocol_cfg[protocol].write('Login', 'password', pwd)
-        else:
-            self.protocol_cfg[protocol].write('Login', 'username', '')
-            self.protocol_cfg[protocol].write('Login', 'password', '')
+        self.protocol_cfg[protocol].write('Login', 'username', us)
+        self.protocol_cfg[protocol].write('Login', 'password', pwd)
     
     def signin(self, username, password, protocol):
         config = ConfigHandler(username, protocol)
@@ -287,12 +359,13 @@ class Turpial:
         '''Finalizar sesion'''
         self.save_muted_list()
         self.log.debug('Desconectando')
-        if self.httpserv:
+        if self.httpserv and self.interface  != 'cmd':
             self.httpserv.quit()
             self.httpserv.join(0)
         if self.api: 
             self.api.quit()
-            self.api.join(0)
+            if self.interface  != 'cmd':
+                self.api.join(0)
         sys.exit(0)
     
     def update_status(self, text, reply_id=None):
@@ -328,10 +401,10 @@ class Turpial:
         
     def get_conversation(self, id):
         self.api.get_conversation(id, self.ui.update_conversation)
-        
-    def mute(self, user):
-        self.api.mute(user, self.ui.tweet_changed)
-        
+    
+    def mute(self, users):
+        self.api.mute(users, self.ui.tweet_changed)
+    
     def short_url(self, text, callback):
         service = self.config.read('Services', 'shorten-url')
         self.httpserv.short_url(service, text, callback)
@@ -377,11 +450,6 @@ class Turpial:
         
     def get_muted_list(self):
         return self.api.get_muted_list()
-            
-    def update_muted(self, muted_users):
-        #self.ui.start_updating_timeline()
-        #timeline = self.api.mute(muted_users, self.ui.update_timeline)
-        self.api.mute(muted_users, None)
         
     def destroy_direct(self, id):
         self.api.destroy_direct(id, self.ui.after_destroy_direct)
@@ -414,6 +482,9 @@ class Turpial:
         else:
             self.ui.set_column_item(index, reset=True)
             self.log.debug('Error: la columna %s no existe' % new_id)
+            
+    def is_friend(self, user):
+        return self.api.is_friend(user)
         
 class MicroBloggingList:
     ''' Lista de los diferentes protocolos '''

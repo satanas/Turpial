@@ -5,7 +5,9 @@
 # Author: Wil Alvarez (aka Satanas)
 # May 20, 2010
 
+import time
 import logging
+import datetime
 
 from turpial.api.interfaces.post import Response
 
@@ -125,17 +127,21 @@ class Protocol:
         self._add_status(self.favorites, status)
         self._fav_status(self.timeline, status, True)
         self._fav_status(self.replies, status, True)
-        self.to_fav.remove(status.id)
-        
-        self.log.debug('Marcado status %s como favorito' % status.id)
+        try:
+            self.to_fav.remove(status.id)
+            self.log.debug('Marcado status %s como favorito' % status.id)
+        except:
+            self.log.debug('El status %s ha desaparecido' % status.id)
         
     def _unset_status_favorite(self, status):
         self._del_status(self.favorites, status.id)
         self._fav_status(self.timeline, status, False)
         self._fav_status(self.replies, status, False)
-        self.to_unfav.remove(status.id)
-        
-        self.log.debug('Desmarcado status %s como favorito' % status.id)
+        try:
+            self.to_unfav.remove(status.id)
+            self.log.debug('Desmarcado status %s como favorito' % status.id)
+        except:
+            self.log.debug('El status %s ha desaparecido' % status.id)
         
     def _destroy_status(self, id):
         self._del_status(self.timeline, id)
@@ -223,7 +229,7 @@ class Protocol:
     
     def mute(self, args):
         arg = args['arg']
-        print arg, type(arg).__name__
+        print "protocols.py: ", arg, type(arg).__name__
         if type(arg).__name__ == 'list':
             self._mute_by_list(arg)
         else:
@@ -232,11 +238,55 @@ class Protocol:
         return (Response(self.get_muted_timeline(self.timeline), 'status'), 
                 Response(self.get_muted_timeline(self.replies), 'status'),
                 Response(self.get_muted_timeline(self.favorites), 'status'))
+    
+    # ------------------------------------------------------------
+    # Time related methods. Overwrite if necesary
+    # ------------------------------------------------------------
+    def convert_time(self, str_datetime):
+        ''' Take the date/time and convert it into Unix time'''
+        # Tue Mar 13 00:12:41 +0000 2007 -> Tweets normales
+        # Wed, 08 Apr 2009 19:22:10 +0000 -> Busquedas
+        month_names = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+            'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         
+        date_info = str_datetime.split()
+        
+        if date_info[1] in month_names:
+            month = month_names.index(date_info[1])
+            day = int(date_info[2])
+            year = int(date_info[5])
+            time_info = date_info[3].split(':')
+        else:
+            month = month_names.index(date_info[2])
+            day = int(date_info[1])
+            year = int(date_info[3])
+            time_info = date_info[4].split(':')
+            
+        hour = int(time_info[0])
+        minute = int(time_info[1])
+        second = int(time_info[2])
+        
+        d = datetime.datetime(year, month, day, hour, minute, second)
+        
+        i_hate_timezones = time.timezone
+        if (time.daylight):
+            i_hate_timezones = time.altzone
+        
+        dt = datetime.datetime(*d.timetuple()[:-3]) - \
+             datetime.timedelta(seconds=i_hate_timezones)
+        return dt.timetuple()
+        
+    def get_str_time(self, strdate):
+        t = self.convert_time(strdate)
+        return time.strftime('%b %d, %I:%M %p', t)
+        
+    def get_int_time(self, strdate):
+        t = self.convert_time(strdate)
+        return time.mktime(t)
+    
     # ------------------------------------------------------------
     # HTTP related methods to be overwritten
     # ------------------------------------------------------------
-    
     def response_to_statuses(self, response, mute=False):
         ''' Take the server response and transform into an array of Status 
         objects inside a Response object '''

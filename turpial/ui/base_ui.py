@@ -26,6 +26,12 @@ class BaseGui:
         
         self.columns_lists = {}
         self.columns_viewed = []
+        self.update_color = {
+            'unread' : '#D2E2FF',
+            'own' : '#FFFFCC',
+            'mention' : '#E2FFD2',
+            'favorite' : '#FFECD2',
+        }
         
         # Reescritos en la clase hija
         self.imgdir = ''
@@ -51,16 +57,7 @@ class BaseGui:
         self.__user_pics[user] = pic
         self.__queued_pics.remove(pic)
         self.update_user_avatar(user, pic)
-        
-    def __get_real_tweet(self, tweet):
-        '''Get the tweet retweeted'''
-        retweet_by = None
-        if tweet.has_key('retweeted_status'):
-            retweet_by = tweet['user']['screen_name']
-            tweet = tweet['retweeted_status']
-        
-        return tweet, retweet_by
-        
+    
     # ------------------------------------------------------------
     # Common methods to all interfaces
     # ------------------------------------------------------------
@@ -72,6 +69,8 @@ class BaseGui:
             log.debug('Abriendo URL %s con %s' % (url, browser))
             subprocess.Popen([browser, url])
         else:
+            if not url.startswith('http://'):
+                url = 'http://' + url
             log.debug('Abriendo URL %s con navegador predeterminado' % url)
             webbrowser.open(url)
         
@@ -95,10 +94,8 @@ class BaseGui:
     
     def parse_tweet(self, xtweet):
         '''Decompose tweet in basic parts'''
-        
         xtweet.text = util.unescape_text(xtweet.text)
         xtweet.source = util.detect_client(xtweet)
-        xtweet.timestamp = util.get_timestamp(xtweet)
         return xtweet
         
     def after_destroy_status(self, timeline, favs):
@@ -240,10 +237,6 @@ class BaseGui:
         '''Get the muted list'''
         return self.__controller.get_muted_list()
         
-    def request_update_muted(self, muted_users):
-        '''Update the muted list'''
-        self.__controller.update_muted(muted_users)
-        
     def request_destroy_direct(self, id):
         '''Destroy a direct message'''
         self.__controller.destroy_direct(id)
@@ -271,6 +264,10 @@ class BaseGui:
     def request_change_column(self, index, new_id):
         ''' Change the column at index for the indicated by new_id '''
         self.__controller.change_column(index, new_id)
+        
+    def request_is_friend(self, user):
+        ''' Ask if a user is friend or not '''
+        self.__controller.is_friend(user)
         
     def manual_update(self, id):
         if id == 0:

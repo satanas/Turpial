@@ -16,7 +16,7 @@ from turpial.config import UPDATE_TYPE_DM, UPDATE_TYPE_STD, UPDATE_TYPE_PROFILE
 class Identica(Protocol):
     def __init__(self):
         Protocol.__init__(self, 'Identi.ca', 'http://identi.ca/api', 
-            'http://identi.ca/api', 'http://identi.ca/tag', 
+            'http://identi.ca/api', 'http://identi.ca/tag/', 
             'http://identi.ca/group', 'http://identi.ca')
         
         self.http = IdenticaHTTP()
@@ -64,6 +64,11 @@ class Identica(Protocol):
         source = None
         if tweet.has_key('source'):
             source = tweet['source']
+            
+        if username.lower() == self.profile.username.lower():
+            own = True
+        else:
+            own = False
         
         status = Status()
         status.id = str(tweet['id'])
@@ -75,9 +80,11 @@ class Identica(Protocol):
         status.in_reply_to_user = in_reply_to_user
         status.is_favorite = fav
         status.retweet_by = retweet_by
-        status.datetime = tweet['created_at']
+        status.datetime = self.get_str_time(tweet['created_at'])
+        status.timestamp = self.get_int_time(tweet['created_at'])
         status.type = type
         status.protocol = PROTOCOLS[1]
+        status.is_own = own
         return status
         
     def __create_profile(self, pf):

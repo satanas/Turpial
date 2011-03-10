@@ -19,8 +19,11 @@ except ImportError:
 
 class Notification:
     """Manejo de notificaciones"""
-    def __init__(self):
+    def __init__(self, disable):
         self.activate()
+        self.disable = disable
+        if disable:
+            log.debug('Módulo deshabilitado')
         
     def toggle_activation(self):
         if self.active:
@@ -35,6 +38,10 @@ class Notification:
         self.active = False
         
     def popup(self, title, message, icon=None):
+        if self.disable:
+            log.debug('Módulo deshabilitado. No hay notificaciones')
+            return
+            
         if self.active and NOTIFY:
             if pynotify.init("Turpial"):
                 if not icon:

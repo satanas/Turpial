@@ -205,6 +205,10 @@ class BaseGui:
         '''Short URL'''
         self.__controller.short_url(longurl, callback)
         
+    def request_expanded_url(self, url, callback):
+        '''Expand URL'''
+        self.__controller.expand_url(url, callback)
+
     def request_upload_pic(self, filename, message, callback):
         '''Upload a pic'''
         self.__controller.upload_pic(filename, message, callback)

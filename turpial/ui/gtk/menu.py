@@ -162,6 +162,10 @@ class Menu:
             umenu = gtk.MenuItem(url)
             umenu.connect('button-release-event', self.__open_url_with_event, u)
             open_menu.append(umenu)
+            if self.mainwin.read_config_value('General', 'expand-urls') == 'on':
+                def __update_umenu(text):
+                    umenu.child.set_text( text )
+                self.mainwin.request_expanded_url(u, __update_umenu)
         
         if len(total_urls) > 0 and len(total_tags) > 0: 
             open_menu.append(gtk.SeparatorMenuItem())

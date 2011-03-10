@@ -50,6 +50,7 @@ DEFAULT_CFG = {
         'remember-login-info': 'off',
         'minimize-on-close': 'on',
         'num-tweets': '60',
+        'expand-urls': 'off',
     },
     'Window': {
         'single-win-size': '320,480',

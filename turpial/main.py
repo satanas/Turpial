@@ -408,6 +408,9 @@ class Turpial:
     def short_url(self, text, callback):
         service = self.config.read('Services', 'shorten-url')
         self.httpserv.short_url(service, text, callback)
+
+    def expand_url(self, url, callback):
+        self.httpserv.expand_url(url, callback)
     
     def download_user_pic(self, user, pic_url, callback):
         self.httpserv.download_pic(user, pic_url, callback)

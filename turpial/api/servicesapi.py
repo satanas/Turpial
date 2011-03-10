@@ -86,6 +86,10 @@ class HTTPServices(threading.Thread):
         self.register({'cmd': 'short_url', 'service': service, 'url': url},
                       callback)
     
+    def expand_url(self, url, callback):
+        self.register({'cmd': 'expand_url', 'url': url},
+                      callback)
+
     def upload_pic(self, service, path, message, callback):
         self.register({'cmd': 'upload_pic', 'service': service, 'path': path,
                       'message': message}, callback)
@@ -136,6 +140,14 @@ class HTTPServices(threading.Thread):
                 resp = urlshorter.do_service(args['url'])
                 self.log.debug('URL Cortada: %s' % resp.response)
                 callback(resp)
+            elif args['cmd'] == 'expand_url':
+                self.log.debug('Expand URL: %s' % args['url'])
+                try:
+                    expanded = GenericService._expand_url(args['url'])
+                    callback(expanded)
+                except Exception, error:
+                    self.log.debug("Failed to expand url: %s" % error)
+                    callback(args['url'])
             elif args['cmd'] == 'upload_pic':
                 self.log.debug('Subiendo imagen [%s]: %s' % 
                                (args['service'], args['path']))

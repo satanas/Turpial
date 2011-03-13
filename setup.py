@@ -72,7 +72,7 @@ setup(name="turpial",
       url="http://turpial.org.ve",
       download_url="http://turpial.org.ve/downloads",
       license="GPLv3",
-      keywords='twitter turpial oauth',
+      keywords='twitter identi.ca microblogging turpial',
       classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: X11 Applications :: GTK",

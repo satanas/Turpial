@@ -38,9 +38,17 @@ __version__ = '0.2'
 
 import httplib, mimetypes
 import urllib, urlparse, base64
-import simplejson
 from xml.dom import minidom as xml
 
+def _py26_or_greater():
+    import sys
+    return sys.hexversion > 0x20600f0
+
+if _py26_or_greater():
+    import json
+else:
+    import simplejson as json
+    
 try:
 	import cStringIO as StringIO
 except ImportError:
@@ -219,7 +227,7 @@ class TweetPhotoApi(object):
 		if 'Request Error' in json:
 			raise TweetPhotoError('(403) Invalid Credentials')
 		
-		data  = simplejson.loads(json)
+		data  = json.loads(json)
 		self._CheckForTweetPhotoError(data)
 		return data
 
@@ -325,7 +333,7 @@ class TweetPhotoApi(object):
 		if 'Request Error' in json:
 			raise TweetPhotoError('(403) Invalid photoID')
 		
-		data  = simplejson.loads(json)
+		data  = json.loads(json)
 		self._CheckForTweetPhotoError(data)
 		
 		return data	
@@ -415,7 +423,7 @@ class TweetPhotoApi(object):
 
 		#Request again the URL, now to fetch the current status of the photo (Favorite)
 		json  = self._FetchUrl(url)
-		data  = simplejson.loads(json)
+		data  = json.loads(json)
 		self._CheckForTweetPhotoError(data)
 
 		return data
@@ -500,7 +508,7 @@ class TweetPhotoApi(object):
 		
 		#Request again the URL, now to fetch the current status of the photo (Favorite)
 		json  = self._FetchUrl(url)
-		data  = simplejson.loads(json)
+		data  = json.loads(json)
 		self._CheckForTweetPhotoError(data)
 		
 		return data
@@ -587,7 +595,7 @@ class TweetPhotoApi(object):
 		if 'Request Error' in json:
 			raise TweetPhotoError('(403) Invalid photoID or Invalid comment')
 		
-		data  = simplejson.loads(json)
+		data  = json.loads(json)
 		self._CheckForTweetPhotoError(data)
 		
 		return data
@@ -661,7 +669,7 @@ class TweetPhotoApi(object):
 		#print self._request_headers
 		data  = self._FetchUpload(url,post_data=filedata)
 		#print json
-		#data  = simplejson.loads(json)
+		#data  = json.loads(json)
 		self._CheckForTweetPhotoError(data)
 		return data
 		

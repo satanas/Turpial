@@ -53,7 +53,7 @@ class Identica(Protocol):
         
         in_reply_to_id = None
         in_reply_to_user = None
-        if tweet.has_key('in_reply_to_status_id') and \
+        if tweet.has_key('in_reply_to_status_id') and
            tweet['in_reply_to_status_id']:
             in_reply_to_id = tweet['in_reply_to_status_id']
             in_reply_to_user = tweet['in_reply_to_screen_name']

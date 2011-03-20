@@ -156,8 +156,12 @@ class TimeScroll(gtk.HBox):
         
 class GeneralTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, _('Adjust update frequency for \
-timeline, mentions and direct messages'), current)
+        PreferencesTab.__init__(
+            self,
+            _('Adjust update frequency for'
+              'timeline, mentions and direct messages'),
+            current
+        )
         
         h = int(self.current['home-update-interval'])
         r = int(self.current['replies-update-interval'])
@@ -190,13 +194,16 @@ timeline, mentions and direct messages'), current)
         except:
             pass
         
-        self.profile_colors = gtk.CheckButton(_('Load profile color \
-(Needs restart Turpial)'))
+        self.profile_colors = gtk.CheckButton(_(
+            'Load profile color'
+            '(Needs Turpial to be restarted)'))
         self.profile_colors.set_active(pf)
         try:
             self.profile_colors.set_has_tooltip(True)
-            self.profile_colors.set_tooltip_text(_('Use user profile color \
-to highlight mentions, hashtags and URLs'))
+            self.profile_colors.set_tooltip_text(_(
+                'Use user profile color'
+                'to highlight mentions, hashtags and URLs')
+            )
         except:
             pass
         
@@ -204,11 +211,13 @@ to highlight mentions, hashtags and URLs'))
         self.minimize.set_active(min)
         try:
             self.minimize.set_has_tooltip(True)
-            self.minimize.set_tooltip_text(_('Send Turpial to system tray \
-when close'))
+            self.minimize.set_tooltip_text(_(
+                'Send Turpial to system tray'
+                'when closing main window')
+            )
         except:
             pass
-        
+
         self.pack_start(self.home, False, False, 5)
         self.pack_start(self.replies, False, False, 5)
         self.pack_start(self.directs, False, False, 5)
@@ -221,10 +230,13 @@ when close'))
         self.update_api_calls()
         
     def update_api_calls(self):
-        calls = (60 / self.home.value) + (60 / self.replies.value) + \
+        calls = (
+            (60 / self.home.value) + (60 / self.replies.value) +
             (60 / self.directs.value)
-        self.estimated.set_text(_('You will use aprox. %i calls to API per \
-hour') % calls)
+        )
+        self.estimated.set_text(_(
+            'Turpial will use aprox. %i calls to API per hour') % calls
+        )
         
     def get_config(self):
         ws = 'wide' if self.workspace.get_active() else 'single'
@@ -243,8 +255,11 @@ hour') % calls)
 
 class NotificationsTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, _('Select what notifications you want \
-to receive from Turpial'), current)
+        PreferencesTab.__init__(
+            self,
+            _('Select the notifications you want to receive from Turpial'),
+            current
+        )
         
         home = True if self.current['home'] == 'on' else False
         replies = True if self.current['replies'] == 'on' else False
@@ -257,8 +272,9 @@ to receive from Turpial'), current)
         try:
             self.timeline.set_has_tooltip(True)
             '''
-            self.timeline.set_tooltip_text(_('Show a notification when \
-            Timeline is updated'))
+            self.timeline.set_tooltip_text(
+                _('Show a notification when Timeline is updated')
+            )
             '''
         except:
             pass
@@ -268,8 +284,9 @@ to receive from Turpial'), current)
         try:
             self.replies.set_has_tooltip(True)
             '''
-            self.replies.set_tooltip_text(_('Show a notification when you \
-            get mentions from other users'))
+            self.replies.set_tooltip_text(
+                _('Show a notification when you get mentions from other users')
+            )
             '''
         except:
             pass
@@ -279,8 +296,9 @@ to receive from Turpial'), current)
         try:
             self.directs.set_has_tooltip(True)
             '''
-            self.directs.set_tooltip_text(_('Show a notification when you \
-            get direct messages'))
+            self.directs.set_tooltip_text(
+                _('Show a notification when you get direct messages')
+            )
             '''
         except:
             pass
@@ -289,8 +307,9 @@ to receive from Turpial'), current)
         self.profile.set_active(login)
         try:
             self.profile.set_has_tooltip(True)
-            self.profile.set_tooltip_text(_('Show a notification at login \
-with your user info'))
+            self.profile.set_tooltip_text(
+                _('Show a notification at login with your user info')
+            )
         except:
             pass
         
@@ -298,8 +317,9 @@ with your user info'))
         self.sounds.set_active(sound)
         try:
             self.sounds.set_has_tooltip(True)
-            self.sounds.set_tooltip_text(_('Activate sounds for each \
-notification'))
+            self.sounds.set_tooltip_text(
+                _('Activate sounds for each notification')
+            )
         except:
             pass
             
@@ -327,8 +347,12 @@ notification'))
         
 class ServicesTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, _('Select your preferred services for \
-shorten URLs and upload images'), current)
+        PreferencesTab.__init__(
+            self,
+            _('Select your preferred services '
+              'to shorten URLs and to upload images'),
+            current
+        )
         i = 0
         default = -1
         lbl_size = 120
@@ -374,8 +398,13 @@ shorten URLs and upload images'), current)
         
 class MutedTab(PreferencesTab):
     def __init__(self, parent):
-        PreferencesTab.__init__(self, _('Select all those users that are \
-bothering you and shut them up temporarily'))
+        PreferencesTab.__init__(
+            self,
+            _(
+                'Select all those users that bother'
+                ' you and shut them up temporarily'
+            )
+        )
         
         self.muted = []
         self.mainwin = parent
@@ -428,14 +457,22 @@ bothering you and shut them up temporarily'))
                     
                 self.pack_start(scroll, True, True, 2)
             elif len(self.friends) == 0:
-                label.set_markup('<span foreground="#920d12">%s</span>' % 
-                _('What? You don\'t have any friends. Try to go out and know \
-some nice people' ))
+                label.set_markup(
+                    '<span foreground="#920d12">%s</span>' % 
+                    _(
+                        'What? You don\'t have any friends.'
+                        ' Try to go out and know some nice people'
+                    )
+                )
                 self.pack_start(align, True, True, 2)
         else:
-            label.set_markup('<span foreground="#920d12">%s</span>' % 
-            _('I am still loading all of your friends. Try again in a few \
-seconds' ))
+            label.set_markup(
+                '<span foreground="#920d12">%s</span>' % 
+                _(
+                    'I am still loading all of your friends.'
+                    ' Try again in a few seconds'
+                )
+            )
             self.pack_start(align, True, True, 2)
         
         self.show_all()
@@ -458,8 +495,11 @@ seconds' ))
 
 class BrowserTab(PreferencesTab):
     def __init__(self, parent, current):
-        PreferencesTab.__init__(self, _('Setup your favorite web browser to \
-open all links'), current)
+        PreferencesTab.__init__(
+            self,
+            _('Setup your favorite web browser to open all links'),
+            current
+        )
         
         self.mainwin = parent
         
@@ -510,8 +550,8 @@ open all links'), current)
             subprocess.Popen([cmd, 'http://turpial.org.ve/'])
             
     def __browse(self, widget):
-        dia = gtk.FileChooserDialog(title=_('Select the full path of your \
-web browser'),
+        dia = gtk.FileChooserDialog(
+            title = _('Select the full path of your web browser'),
             parent=self.mainwin,
             action=gtk.FILE_CHOOSER_ACTION_OPEN,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
@@ -536,16 +576,22 @@ web browser'),
         
 class ProxyTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, _('Proxy settings for Turpial (Need \
-Restart)'), current)
+        PreferencesTab.__init__(
+            self,
+            _('Proxy settings for Turpial (Need Restart)'),
+            current
+        )
         
         chk_none = gtk.RadioButton(None, _('No proxy'))
         chk_url = gtk.RadioButton(chk_none, _('Twitter API proxy'))
         
         try:
             chk_url.set_has_tooltip(True)
-            chk_url.set_tooltip_text(_('Use a URL to access Twitter API \
-different of twitter.com'))
+            chk_url.set_tooltip_text(
+                _(
+                    'Use a URL to access Twitter API different of twitter.com'
+                )
+            )
         except:
             pass
         url_lbl = gtk.Label(_('Twitter API URL'))

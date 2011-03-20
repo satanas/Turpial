@@ -138,8 +138,9 @@ class TweetPhotoApi(object):
 		self._request_headers = {}
 	
 	def _InitializeUserAgent(self):
-		user_agent = 'Python-urllib/%s (python-tweetphoto/%s)' % \
-					(self._urllib.__version__, __version__)
+		user_agent = 'Python-urllib/%s (python-tweetphoto/%s)' % (
+                        self._urllib.__version__, __version__
+                )
 
 		self.SetUserAgent(user_agent)
 		

@@ -23,13 +23,13 @@ class IdenticaHTTP(TurpialHTTP):
             rtn = self.do_request(uri, args)
             return rtn
         except urllib2.HTTPError, exc:
-            self.log.debug("HTTPError for URL: %s\nparameters: (%s)\n\
-details: %s" % (uri, args, traceback.print_exc()))
+            self.log.debug(("HTTPError for URL: %s\nparameters: (%s)\n"
+                           "details: %s") % (uri, args, traceback.print_exc()))
             if (exc.code == 304):
                 return []
             elif (exc.code == 400):
-                raise TurpialException(_('Sorry, you don\'t have more API \
-calls'))
+                raise TurpialException(_('Sorry, you don\'t have more API'
+                                         'calls'))
             elif (exc.code == 401):
                 raise TurpialException(_('Invalid credentials'))
             elif (exc.code == 403):
@@ -55,10 +55,16 @@ calls'))
             elif (exc.code == 503):
                 raise TurpialException(_('Twitter is overcapacity'))
         except urllib2.URLError, exc:
-            self.log.debug("URLError for URL: %s\nparameters: (%s)\n\
-details: %s" % (uri, args, traceback.print_exc()))
+            self.log.debug(
+                "URLError for URL: %s\nparameters: (%s)\ndetails: %s" % (
+                                uri, args, traceback.print_exc()
+                )
+            )
             raise TurpialException(_('Can\'t connect to Twitter'))
         except Exception, exc:
-            self.log.debug("Unknown error for URL: %s\nparameters: (%s)\n\
-details: %s" % (uri, args, traceback.print_exc()))
+            self.log.debug(
+                "Unknown error for URL: %s\nparameters: (%s)\ndetails: %s" % (
+                    uri, args, traceback.print_exc()
+                )
+            )
             raise TurpialException(exc)

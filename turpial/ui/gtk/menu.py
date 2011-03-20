@@ -195,7 +195,7 @@ class Menu:
             open_menu.append(mentmenu)
             
         _open.set_submenu(open_menu)
-        if (len(total_urls) > 0) or (len(total_users) > 0) or \
+        if (len(total_urls) > 0) or (len(total_users) > 0) or
            (len(total_tags) > 0) or (len(total_groups) > 0):
             menu.append(_open)
         return menu

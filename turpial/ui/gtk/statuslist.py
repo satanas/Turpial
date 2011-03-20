@@ -83,8 +83,9 @@ class StatusList(gtk.ScrolledWindow):
         for h in hashtags:
             torep = '%s' % h
             try:
-                cad = '<span foreground="%s">%s</span>' % \
-                    (self.mainwin.link_color, h)
+                cad = '<span foreground="%s">%s</span>' % (
+                    self.mainwin.link_color, h
+                )
                 text = text.replace(torep, cad)
             except:
                 log.debug('Problemas para resaltar el hashtag: %s' % h)
@@ -100,8 +101,9 @@ class StatusList(gtk.ScrolledWindow):
         for h in groups:
             torep = '%s' % h
             try:
-                cad = '<span foreground="%s">%s</span>' % \
-                    (self.mainwin.link_color, h)
+                cad = '<span foreground="%s">%s</span>' % (
+                    self.mainwin.link_color, h
+                )
                 text = text.replace(torep, cad)
             except:
                 log.debug('Problemas para resaltar el grupo: %s' % h)
@@ -116,8 +118,9 @@ class StatusList(gtk.ScrolledWindow):
             if len(h) == 1: 
                 continue
             torep = '%s' % h
-            cad = '<span foreground="%s">%s</span>' % \
-                  (self.mainwin.link_color, h)
+            cad = '<span foreground="%s">%s</span>' % (
+                self.mainwin.link_color, h
+            )
             text = text.replace(torep, cad)
         return text
         
@@ -125,8 +128,9 @@ class StatusList(gtk.ScrolledWindow):
         #if len(urls) == 0: return text
         
         for u in urls:
-            cad = '<span foreground="%s">%s</span>' % \
-                  (self.mainwin.link_color, u)
+            cad = '<span foreground="%s">%s</span>' % (
+                self.mainwin.link_color, u
+            )
             text = text.replace(u, cad)
         return text
         
@@ -194,14 +198,17 @@ class StatusList(gtk.ScrolledWindow):
 
     def __build_pango_text(self, status):
         ''' Transform the regular text into pango markup '''
-        urls = [gobject.markup_escape_text(u) \
-                for u in util.detect_urls(status.text)]
+        urls = [
+            gobject.markup_escape_text(u)
+            for u in util.detect_urls(status.text)
+        ]
         
         pango_twt = util.unescape_text(status.text)
         pango_twt = gobject.markup_escape_text(pango_twt)
         
-        user = '<span size="9000" foreground="%s"><b>%s</b></span> ' % \
-            (self.mainwin.link_color, status.username)
+        user = '<span size="9000" foreground="%s"><b>%s</b></span> ' % (
+            self.mainwin.link_color, status.username
+        )
         pango_twt = '<span size="9000">%s</span>' % pango_twt
         pango_twt = self.__highlight_hashtags(pango_twt)
         pango_twt = self.__highlight_groups(pango_twt)

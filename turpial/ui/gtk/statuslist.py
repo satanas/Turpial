@@ -256,10 +256,13 @@ class StatusList(gtk.ScrolledWindow):
         pix = self.mainwin.get_user_avatar(p.username, p.avatar)
         pango_text = self.__build_pango_text(p)
         color = self.__get_background_color(p.is_favorite, p.is_own, p.text, new)
-        
+
+        # The timestamp is casted to str (Yes casted...) because the model
+        # ListStore have its column defined as str. It could be changed in
+        # the model or here.
         row = [pix, p.username, p.datetime, p.source, pango_text, p.text, p.id, 
             p.is_favorite, p.in_reply_to_id, p.in_reply_to_user, p.retweet_by, 
-            color, p.type, p.protocol, p.is_own, new, p.timestamp]
+            color, p.type, p.protocol, p.is_own, new, str(p.timestamp)]
         
         del pix
         return row

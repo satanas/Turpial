@@ -83,8 +83,9 @@ class StatusList(gtk.ScrolledWindow):
         for h in hashtags:
             torep = '%s' % h
             try:
-                cad = '<span foreground="%s">%s</span>' % \
-                    (self.mainwin.link_color, h)
+                cad = '<span foreground="%s">%s</span>' % (
+                    self.mainwin.link_color, h
+                )
                 text = text.replace(torep, cad)
             except:
                 log.debug('Problemas para resaltar el hashtag: %s' % h)
@@ -100,8 +101,9 @@ class StatusList(gtk.ScrolledWindow):
         for h in groups:
             torep = '%s' % h
             try:
-                cad = '<span foreground="%s">%s</span>' % \
-                    (self.mainwin.link_color, h)
+                cad = '<span foreground="%s">%s</span>' % (
+                    self.mainwin.link_color, h
+                )
                 text = text.replace(torep, cad)
             except:
                 log.debug('Problemas para resaltar el grupo: %s' % h)
@@ -116,8 +118,9 @@ class StatusList(gtk.ScrolledWindow):
             if len(h) == 1: 
                 continue
             torep = '%s' % h
-            cad = '<span foreground="%s">%s</span>' % \
-                  (self.mainwin.link_color, h)
+            cad = '<span foreground="%s">%s</span>' % (
+                self.mainwin.link_color, h
+            )
             text = text.replace(torep, cad)
         return text
         
@@ -125,8 +128,9 @@ class StatusList(gtk.ScrolledWindow):
         #if len(urls) == 0: return text
         
         for u in urls:
-            cad = '<span foreground="%s">%s</span>' % \
-                  (self.mainwin.link_color, u)
+            cad = '<span foreground="%s">%s</span>' % (
+                self.mainwin.link_color, u
+            )
             text = text.replace(u, cad)
         return text
         
@@ -194,14 +198,17 @@ class StatusList(gtk.ScrolledWindow):
 
     def __build_pango_text(self, status):
         ''' Transform the regular text into pango markup '''
-        urls = [gobject.markup_escape_text(u) \
-                for u in util.detect_urls(status.text)]
+        urls = [
+            gobject.markup_escape_text(u)
+            for u in util.detect_urls(status.text)
+        ]
         
         pango_twt = util.unescape_text(status.text)
         pango_twt = gobject.markup_escape_text(pango_twt)
         
-        user = '<span size="9000" foreground="%s"><b>%s</b></span> ' % \
-            (self.mainwin.link_color, status.username)
+        user = '<span size="9000" foreground="%s"><b>%s</b></span> ' % (
+            self.mainwin.link_color, status.username
+        )
         pango_twt = '<span size="9000">%s</span>' % pango_twt
         pango_twt = self.__highlight_hashtags(pango_twt)
         pango_twt = self.__highlight_groups(pango_twt)
@@ -249,10 +256,13 @@ class StatusList(gtk.ScrolledWindow):
         pix = self.mainwin.get_user_avatar(p.username, p.avatar)
         pango_text = self.__build_pango_text(p)
         color = self.__get_background_color(p.is_favorite, p.is_own, p.text, new)
-        
+
+        # The timestamp is casted to str (Yes casted...) because the model
+        # ListStore have its column defined as str. It could be changed in
+        # the model or here.
         row = [pix, p.username, p.datetime, p.source, pango_text, p.text, p.id, 
             p.is_favorite, p.in_reply_to_id, p.in_reply_to_user, p.retweet_by, 
-            color, p.type, p.protocol, p.is_own, new, p.timestamp]
+            color, p.type, p.protocol, p.is_own, new, str(p.timestamp)]
         
         del pix
         return row

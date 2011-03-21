@@ -272,8 +272,10 @@ class Protocol:
         if (time.daylight):
             i_hate_timezones = time.altzone
         
-        dt = datetime.datetime(*d.timetuple()[:-3]) - \
-             datetime.timedelta(seconds=i_hate_timezones)
+        dt = (
+            datetime.datetime(*d.timetuple()[:-3]) - 
+            datetime.timedelta(seconds=i_hate_timezones)
+        )
         return dt.timetuple()
         
     def get_str_time(self, strdate):

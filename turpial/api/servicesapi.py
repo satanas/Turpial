@@ -122,9 +122,6 @@ class HTTPServices(threading.Thread):
                     #FIXME
                     #self.register(args, callback)
                 except Exception, error:
-                    print error
-                    rtn = error.read()
-                    print 'Message:', rtn
                     self.log.debug("Error: %s\n%s" % (error, 
                         traceback.print_exc()))
                     #self.register(args, callback)

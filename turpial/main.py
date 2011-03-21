@@ -91,6 +91,7 @@ class Turpial:
             
         if options.version:
             print "Turpial v%s" % self.version
+            print "Python v%X" % sys.hexversion
             sys.exit(0)
             
         if options.save:

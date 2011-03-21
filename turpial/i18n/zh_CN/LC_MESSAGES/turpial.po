@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Turpial\n"
-"Report-Msgid-Bugs-To: http://github.com/satanas/Turpial/issues\n"
+"Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
 "POT-Creation-Date: 2011-03-04 20:47-0530\n"
-"PO-Revision-Date: 2011-03-05 01:22+0000\n"
-"Last-Translator: satanas <wil.alejandro@gmail.com>\n"
+"PO-Revision-Date: 2011-03-14 15:11+0000\n"
+"Last-Translator: doublechou <admin@doublechou.pp.ru>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,23 +24,23 @@ msgstr "时间线"
 
 #: turpial/main.py:225 turpial/main.py:231 turpial/main.py:238
 msgid "tweet"
-msgstr ""
+msgstr "消息"
 
 #: turpial/main.py:225 turpial/main.py:231 turpial/main.py:238
 msgid "tweets"
-msgstr ""
+msgstr "消息"
 
 #: turpial/main.py:226
 msgid "Replies"
-msgstr ""
+msgstr "回复"
 
 #: turpial/main.py:227
 msgid "mention"
-msgstr ""
+msgstr "回复"
 
 #: turpial/main.py:227
 msgid "mentions"
-msgstr ""
+msgstr "回复"
 
 #: turpial/main.py:228 turpial/ui/gtk/home.py:29
 msgid "Directs"
@@ -48,19 +48,19 @@ msgstr "私信"
 
 #: turpial/main.py:229
 msgid "direct"
-msgstr ""
+msgstr "私"
 
 #: turpial/main.py:229
 msgid "directs"
-msgstr ""
+msgstr "私信"
 
 #: turpial/main.py:230
 msgid "My Tweets"
-msgstr ""
+msgstr "我的推"
 
 #: turpial/notification.py:61
 msgid "Tweets"
-msgstr "条消息"
+msgstr "条"
 
 #: turpial/notification.py:62
 msgid "Following"
@@ -68,105 +68,105 @@ msgstr "好友"
 
 #: turpial/notification.py:63
 msgid "Followers"
-msgstr "关注者"
+msgstr "关注"
 
 #: turpial/notification.py:68 turpial/notification.py:74
 msgid "Turpial (Follow)"
-msgstr ""
+msgstr "Turpial(关注)"
 
 #: turpial/notification.py:68
 #, python-format
 msgid "You are now following @%s"
-msgstr ""
+msgstr "你正关注着 @%s"
 
 #: turpial/notification.py:70 turpial/notification.py:76
 msgid "Turpial (Unfollow)"
-msgstr ""
+msgstr "Turpial(取消关注)"
 
 #: turpial/notification.py:70
 #, python-format
 msgid "You are no longer following @%s"
-msgstr ""
+msgstr "你已不再关注 @%s"
 
 #: turpial/api/servicesapi.py:146
 msgid "Select a service for upload pics"
-msgstr ""
+msgstr "选择图片上传"
 
 #: turpial/api/interfaces/service.py:113
 msgid "Select something to uploading"
-msgstr ""
+msgstr "传点什么吧"
 
 #: turpial/api/protocols/identica/http.py:31
 #: turpial/api/protocols/twitter/http.py:79
 msgid "Sorry, you don't have more API calls"
-msgstr ""
+msgstr "唔, 你的API耗尽了"
 
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:82
 msgid "Invalid credentials"
-msgstr ""
+msgstr "无效信息"
 
 #: turpial/api/protocols/identica/http.py:39
 #: turpial/api/protocols/twitter/http.py:87
 msgid "Your status was sent. Don't try again"
-msgstr ""
+msgstr "推已发出,请勿刷屏"
 
 #: turpial/api/protocols/identica/http.py:41
 #: turpial/api/protocols/twitter/http.py:89
 #, python-format
 msgid "%s already is a friend"
-msgstr ""
+msgstr "%s 已是你的好友"
 
 #: turpial/api/protocols/identica/http.py:43
 #: turpial/api/protocols/twitter/http.py:93
 msgid "Hey! You are over the limit of API calls"
-msgstr ""
+msgstr "喂! 你超出API上"
 
 #: turpial/api/protocols/identica/http.py:46
 #: turpial/api/protocols/twitter/http.py:96
 msgid "Err... invalid request"
-msgstr ""
+msgstr "呃...无效请求"
 
 #: turpial/api/protocols/identica/http.py:48
 #: turpial/api/protocols/twitter/http.py:98
 msgid "You are searching a very weird thing"
-msgstr ""
+msgstr "你搜索的东西好羞耻"
 
 #: turpial/api/protocols/identica/http.py:50
 #: turpial/api/protocols/twitter/http.py:100
 msgid "You are searching too much!"
-msgstr ""
+msgstr "你搜索的太多了!"
 
 #: turpial/api/protocols/identica/http.py:52
 #: turpial/api/protocols/twitter/http.py:102
 msgid "Oops! Something went wrong"
-msgstr ""
+msgstr "不知道哪里错了"
 
 #: turpial/api/protocols/identica/http.py:54
 #: turpial/api/protocols/twitter/http.py:104
 msgid "Twitter is down. Try again later"
-msgstr ""
+msgstr "推特鲸鱼中,请稍后再试"
 
 #: turpial/api/protocols/identica/http.py:56
 #: turpial/api/protocols/twitter/http.py:106
 msgid "Twitter is overcapacity"
-msgstr ""
+msgstr "推特超载"
 
 #: turpial/api/protocols/identica/http.py:60
 #: turpial/api/protocols/twitter/http.py:110
 msgid "Can't connect to Twitter"
-msgstr ""
+msgstr "不能连接到推特"
 
 #: turpial/api/protocols/identica/identica.py:176
 #: turpial/api/protocols/twitter/http.py:66
 #: turpial/api/protocols/twitter/twitter.py:197
 msgid "Authentication Error"
-msgstr ""
+msgstr "验证失败"
 
 #: turpial/api/protocols/twitter/http.py:91
 #, python-format
 msgid "You've already requested to follow %s"
-msgstr ""
+msgstr "你已经请求关注%s了"
 
 #: turpial/api/services/shorturl/bitly.py:31
 #: turpial/api/services/shorturl/cligs.py:26
@@ -179,7 +179,7 @@ msgstr ""
 #: turpial/api/services/shorturl/ur1ca.py:35
 #: turpial/api/services/shorturl/zima.py:26
 msgid "Problem shorting URL"
-msgstr ""
+msgstr "缩短网址"
 
 #: turpial/api/services/uploadpic/imgly.py:40
 #: turpial/api/services/uploadpic/mobypicture.py:42
@@ -189,39 +189,39 @@ msgstr ""
 #: turpial/api/services/uploadpic/twitpic.py:43
 #: turpial/api/services/uploadpic/yfrog.py:43
 msgid "Problem uploading pic"
-msgstr ""
+msgstr "上传图片失败"
 
 #: turpial/ui/util.py:69
 msgid "of"
-msgstr "条API请求剩余，总"
+msgstr "已"
 
 #: turpial/ui/util.py:69
 msgid "API calls. Reset"
-msgstr "条。下次更新时间："
+msgstr "API请求. 重置"
 
 #: turpial/ui/gtk/about.py:19
 msgid "Microblogging client written in Python"
-msgstr ""
+msgstr "用Python写的"
 
 #: turpial/ui/gtk/about.py:49
 msgid "File 'AUTHORS' not found"
-msgstr ""
+msgstr "找不到'AUTHORS"
 
 #: turpial/ui/gtk/about.py:60
 msgid "File 'TRANSLATORS' not found"
-msgstr ""
+msgstr "找不到'TRANSLATORS'"
 
 #: turpial/ui/gtk/columns.py:44 turpial/ui/gtk/tweetslistwk.py:197
 msgid "No tweets available"
-msgstr "没有消息呢"
+msgstr "不能获取"
 
 #: turpial/ui/gtk/columns.py:88
 msgid "Manual Update"
-msgstr ""
+msgstr "手动"
 
 #: turpial/ui/gtk/columns.py:92
 msgid "Mark all as read"
-msgstr ""
+msgstr "标记全部"
 
 #: turpial/ui/gtk/columns.py:211
 msgid "Clear results"
@@ -229,7 +229,7 @@ msgstr "清空结果"
 
 #: turpial/ui/gtk/columns.py:253
 msgid "You must write something to search"
-msgstr "总得告诉我你在找什么吧"
+msgstr "搜索栏"
 
 #: turpial/ui/gtk/conversation.py:19 turpial/ui/gtk/conversation.py:25
 msgid "In reply to..."
@@ -238,19 +238,19 @@ msgstr "回复给"
 #: turpial/ui/gtk/conversation.py:47
 #, python-format
 msgid "In reply to %s"
-msgstr "对%s说"
+msgstr "回复%s"
 
 #: turpial/ui/gtk/dock.py:20
 msgid "Timeline, replies and others"
-msgstr ""
+msgstr "时间线, 回复和其他"
 
 #: turpial/ui/gtk/dock.py:24
 msgid "Profile, favorites, search"
-msgstr ""
+msgstr "个人主页, 收藏和搜索"
 
 #: turpial/ui/gtk/dock.py:28
 msgid "Follow People"
-msgstr ""
+msgstr "关注推友"
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/updatebox.py:29
 msgid "Update status"
@@ -267,7 +267,7 @@ msgstr "偏好设置"
 
 #: turpial/ui/gtk/dock.py:44
 msgid "About Turpial"
-msgstr ""
+msgstr "关于Turpial"
 
 #: turpial/ui/gtk/follow.py:15 turpial/ui/gtk/main.py:147
 #: turpial/ui/gtk/menu.py:230
@@ -276,28 +276,28 @@ msgstr "关注"
 
 #: turpial/ui/gtk/follow.py:23
 msgid "User"
-msgstr ""
+msgstr "用户"
 
 #: turpial/ui/gtk/follow.py:26
 msgid "Ok"
-msgstr ""
+msgstr "确定"
 
 #: turpial/ui/gtk/follow.py:28
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: turpial/ui/gtk/friendwin.py:15
 msgid "Add friend"
-msgstr ""
+msgstr "添加好友"
 
 #: turpial/ui/gtk/friendwin.py:77 turpial/ui/gtk/preferences.py:432
 msgid ""
 "What? You don't have any friends. Try to go out and know some nice people"
-msgstr ""
+msgstr "什么? 你没有好友. 试着去认识些人吧."
 
 #: turpial/ui/gtk/friendwin.py:83 turpial/ui/gtk/preferences.py:437
 msgid "I am still loading all of your friends. Try again in a few seconds"
-msgstr "我还在加载您的好友呢，过会儿再来试试吧"
+msgstr "加载全部好友中, 过几秒再试"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 msgid "Mentions"
@@ -309,19 +309,19 @@ msgstr "用户名和密码"
 
 #: turpial/ui/gtk/login.py:35
 msgid "Remember my credentials"
-msgstr "下次自动登陆"
+msgstr "记住登陆信息"
 
 #: turpial/ui/gtk/login.py:37
 msgid "Connect"
-msgstr "上线"
+msgstr "连接"
 
 #: turpial/ui/gtk/login.py:101
 msgid "Fields can't be empty"
-msgstr ""
+msgstr "这里不能为空"
 
 #: turpial/ui/gtk/main.py:146 turpial/ui/gtk/updatebox.py:86
 msgid "Tweet"
-msgstr "发布状态"
+msgstr "发推"
 
 #: turpial/ui/gtk/main.py:148
 msgid "Exit"
@@ -337,7 +337,7 @@ msgstr "回复"
 
 #: turpial/ui/gtk/menu.py:85
 msgid "Reply All"
-msgstr ""
+msgstr "回复所有人"
 
 #: turpial/ui/gtk/menu.py:102
 msgid "Retweet (Old)"
@@ -349,11 +349,11 @@ msgstr "转发"
 
 #: turpial/ui/gtk/menu.py:106
 msgid "Redent (Old)"
-msgstr ""
+msgstr "锐推(旧式)"
 
 #: turpial/ui/gtk/menu.py:107
 msgid "Redent"
-msgstr ""
+msgstr "锐推"
 
 #: turpial/ui/gtk/menu.py:118
 msgid "DM"
@@ -377,15 +377,15 @@ msgstr "打开"
 
 #: turpial/ui/gtk/menu.py:205 turpial/ui/gtk/updatebox.py:203
 msgid "In reply to"
-msgstr "链式查看回复"
+msgstr "查看回复"
 
 #: turpial/ui/gtk/menu.py:219 turpial/ui/gtk/preferences.py:55
 msgid "Mute"
-msgstr ""
+msgstr "静音"
 
 #: turpial/ui/gtk/menu.py:227
 msgid "Loading friends..."
-msgstr ""
+msgstr "加载好友..."
 
 #: turpial/ui/gtk/menu.py:233
 msgid "Unfollow"
@@ -393,15 +393,15 @@ msgstr "取消关注"
 
 #: turpial/ui/gtk/menu.py:280
 msgid "Marking favorite..."
-msgstr ""
+msgstr "添加"
 
 #: turpial/ui/gtk/menu.py:283
 msgid "Unmarking favorite..."
-msgstr ""
+msgstr "移除收藏"
 
 #: turpial/ui/gtk/menu.py:286
 msgid "Deleting..."
-msgstr ""
+msgstr "正在删除..."
 
 #: turpial/ui/gtk/preferences.py:30 turpial/ui/gtk/userform.py:92
 #: turpial/ui/gtk/userform.py:185
@@ -410,7 +410,7 @@ msgstr "保存"
 
 #: turpial/ui/gtk/preferences.py:31
 msgid "Close"
-msgstr ""
+msgstr "关闭"
 
 #: turpial/ui/gtk/preferences.py:52
 msgid "General"
@@ -422,15 +422,15 @@ msgstr "通知"
 
 #: turpial/ui/gtk/preferences.py:54
 msgid "Services"
-msgstr "短链和图片服务"
+msgstr "服务"
 
 #: turpial/ui/gtk/preferences.py:56
 msgid "Web Browser"
-msgstr ""
+msgstr "浏览器"
 
 #: turpial/ui/gtk/preferences.py:59
 msgid "API Proxy"
-msgstr ""
+msgstr "API代理"
 
 #: turpial/ui/gtk/preferences.py:159
 msgid "Adjust update frequency for timeline, mentions and direct messages"
@@ -438,15 +438,15 @@ msgstr "调整时间线,回复和私信的刷新频率"
 
 #: turpial/ui/gtk/preferences.py:170 turpial/ui/gtk/preferences.py:255
 msgid "Column 1 (Left)"
-msgstr ""
+msgstr "第1栏(左侧)"
 
 #: turpial/ui/gtk/preferences.py:172 turpial/ui/gtk/preferences.py:266
 msgid "Column 2 (Middle)"
-msgstr ""
+msgstr "第2栏(中间)"
 
 #: turpial/ui/gtk/preferences.py:174 turpial/ui/gtk/preferences.py:277
 msgid "Column 3 (Right)"
-msgstr ""
+msgstr "第栏(右侧)"
 
 #: turpial/ui/gtk/preferences.py:177
 msgid "Tweets shown"
@@ -458,11 +458,11 @@ msgstr "您每小时将用掉0条API请求"
 
 #: turpial/ui/gtk/preferences.py:185
 msgid "Wide Mode"
-msgstr ""
+msgstr "宽屏模式"
 
 #: turpial/ui/gtk/preferences.py:189
 msgid "Show a workspace of 3 columns"
-msgstr ""
+msgstr "显示3栏"
 
 #: turpial/ui/gtk/preferences.py:193
 msgid "Load profile color (Needs restart Turpial)"
@@ -470,7 +470,7 @@ msgstr "加载您在官网自定义的链接颜色（需要重启Turpial）"
 
 #: turpial/ui/gtk/preferences.py:198
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr "用您在官网自定义的链接颜色高亮回复,#号标签和链接"
+msgstr "用您在官网自定义的链接颜色高亮回复,标签和链接"
 
 #: turpial/ui/gtk/preferences.py:203
 msgid "Minimize to tray"
@@ -491,11 +491,11 @@ msgstr "选择Turpial通知的种类"
 
 #: turpial/ui/gtk/preferences.py:288
 msgid "Login"
-msgstr ""
+msgstr "登陆"
 
 #: turpial/ui/gtk/preferences.py:292
 msgid "Show a notification at login with your user info"
-msgstr "登陆时显示一条用户账户信息的提示"
+msgstr "登陆时显示账户信息"
 
 #: turpial/ui/gtk/preferences.py:297
 msgid "Activate sounds"
@@ -521,7 +521,7 @@ msgstr "上传图片"
 #: turpial/ui/gtk/preferences.py:377
 msgid ""
 "Select all those users that are bothering you and shut them up temporarily"
-msgstr "勾选打扰到你的好友，让他们安静一会儿吧"
+msgstr "勾选打扰你的好友，让他们安静一会儿吧"
 
 #: turpial/ui/gtk/preferences.py:461
 msgid "Setup your favorite web browser to open all links"
@@ -549,27 +549,27 @@ msgstr "浏览"
 
 #: turpial/ui/gtk/preferences.py:513
 msgid "Select the full path of your web browser"
-msgstr "请输入浏览器的完整路径"
+msgstr "浏览器的完整路径"
 
 #: turpial/ui/gtk/preferences.py:539
 msgid "Proxy settings for Turpial (Need Restart)"
-msgstr ""
+msgstr "代理设置(需要重启)"
 
 #: turpial/ui/gtk/preferences.py:542
 msgid "No proxy"
-msgstr ""
+msgstr "无代理"
 
 #: turpial/ui/gtk/preferences.py:543
 msgid "Twitter API proxy"
-msgstr ""
+msgstr "API"
 
 #: turpial/ui/gtk/preferences.py:547
 msgid "Use a URL to access Twitter API different of twitter.com"
-msgstr ""
+msgstr "使用API访问推特"
 
 #: turpial/ui/gtk/preferences.py:551
 msgid "Twitter API URL"
-msgstr ""
+msgstr "API"
 
 #: turpial/ui/gtk/profile.py:16
 msgid "Favorites"
@@ -577,7 +577,7 @@ msgstr "收藏"
 
 #: turpial/ui/gtk/profile.py:17
 msgid "Profile"
-msgstr "个人账户"
+msgstr "个人"
 
 #: turpial/ui/gtk/profile.py:18
 msgid "Search"
@@ -585,19 +585,19 @@ msgstr "搜索"
 
 #: turpial/ui/gtk/statuslist.py:228 turpial/ui/gtk/tweetslistwk.py:157
 msgid "from"
-msgstr ""
+msgstr "自"
 
 #: turpial/ui/gtk/statuslist.py:230 turpial/ui/gtk/tweetslistwk.py:159
 msgid "in reply to"
-msgstr ""
+msgstr "回复给"
 
 #: turpial/ui/gtk/statuslist.py:232 turpial/ui/gtk/tweetslistwk.py:161
 msgid "Retweeted by"
-msgstr ""
+msgstr "转发自"
 
 #: turpial/ui/gtk/updatebox.py:25
 msgid "What is happening?"
-msgstr ""
+msgstr "发生什么了?"
 
 #: turpial/ui/gtk/updatebox.py:72
 msgid "Options"
@@ -609,11 +609,11 @@ msgstr "清空"
 
 #: turpial/ui/gtk/updatebox.py:83 turpial/ui/gtk/uploadpicbox.py:77
 msgid "Add friends"
-msgstr ""
+msgstr "添加好友"
 
 #: turpial/ui/gtk/updatebox.py:87 turpial/ui/gtk/uploadpicbox.py:81
 msgid "Update your status"
-msgstr ""
+msgstr "更新"
 
 #: turpial/ui/gtk/updatebox.py:88
 msgid "Autoshort URLs"
@@ -621,35 +621,35 @@ msgstr "自动缩短链接"
 
 #: turpial/ui/gtk/updatebox.py:193
 msgid "Oh oh... I couldn't send the tweet"
-msgstr "呃...发推不能"
+msgstr "呃...发"
 
 #: turpial/ui/gtk/updatebox.py:248
 msgid "Hey!... you must write something"
-msgstr ""
+msgstr "喂! 空消息是不能"
 
 #: turpial/ui/gtk/updatebox.py:253 turpial/ui/gtk/uploadpicbox.py:237
 msgid "Hey!... that message looks like a testament"
-msgstr ""
+msgstr "别! 你戳到GFW"
 
 #: turpial/ui/gtk/updatebox.py:268
 msgid "Oops... I couldn't shrink that URL"
-msgstr "呃，链接缩短不能"
+msgstr "呃，链接"
 
 #: turpial/ui/gtk/uploadpicbox.py:31
 msgid "Upload picture"
-msgstr ""
+msgstr "上传"
 
 #: turpial/ui/gtk/uploadpicbox.py:48
 msgid "Message"
-msgstr ""
+msgstr "消息"
 
 #: turpial/ui/gtk/uploadpicbox.py:80
 msgid "Upload"
-msgstr ""
+msgstr "上传"
 
 #: turpial/ui/gtk/uploadpicbox.py:190
 msgid "Oh oh... I couldn't upload the pic"
-msgstr ""
+msgstr "呃...拟椋娘拒绝上传工口图"
 
 #: turpial/ui/gtk/uploadpicbox.py:260
 msgid "Select image to upload"
@@ -661,7 +661,7 @@ msgstr "昵称"
 
 #: turpial/ui/gtk/userform.py:59
 msgid "Location"
-msgstr ""
+msgstr "所"
 
 #: turpial/ui/gtk/userform.py:67
 msgid "URL"
@@ -669,7 +669,7 @@ msgstr "个人主页"
 
 #: turpial/ui/gtk/userform.py:80
 msgid "Bio"
-msgstr ""
+msgstr "自述"
 
 #: turpial/ui/gtk/userform.py:176
 msgid "Saving..."

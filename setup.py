@@ -17,21 +17,10 @@ from babel.messages import frontend as babel
 from turpial.config import GLOBAL_CFG
 
 LONG_DESCRIPTION = """
-Este proyecto intenta ser un cliente alternativo para la red Twitter
-con múltiples interfaces. Está escrito en Python y tiene como meta ser
-una aplicación con bajo consumo de recursos y que se integre al
-escritorio del usuario pero sin renunciar a ninguna funcionalidad.
-
-No son solo ganas de reinventar la rueda (considerando que
-DestroyTwitter, TweetDeck et al. están disponibles para Linux), sino
-que se quiere lograr un cliente que se integre mejor con el escritorio
-Linux y que corra en entornos de escritorio ligeros como Fluxbox,
-OpenBox, etc (pensando en las netbooks), ya que Adobe Air, por ejemplo,
-solo corre en KDE/GNOME y la mayoría de los clientes GTK carecen de una
-gran cantidad de funciones.
-
-Está inspirado por la interfaz y funcionalidad de DestroyTwitter pero
-emplea diferentes recursos y tecnologías como Cairo y Webkit.
+Turpial es un cliente alternativo para microblogging con multiples
+interfaces. Esta escrito en Python y tiene como meta ser una aplicacion con
+bajo consumo de recursos y que se integre al escritorio del usuario pero sin
+renunciar a ninguna funcionalidad
 """
 
 class build(_build):
@@ -72,7 +61,7 @@ setup(name="turpial",
       url="http://turpial.org.ve",
       download_url="http://turpial.org.ve/downloads",
       license="GPLv3",
-      keywords='twitter turpial oauth',
+      keywords='twitter identi.ca microblogging turpial',
       classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: X11 Applications :: GTK",

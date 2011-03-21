@@ -135,12 +135,15 @@ class UserForm(gtk.VBox):
         self.user_pic.set_image(avatar)
         del pix
         self.screen_name.set_markup('<b>@%s</b>' % profile.username)
-        self.tweets_count.set_markup('<span size="9000">%i Tweets</span>' % \
-                                     profile.statuses_count)
-        self.following_count.set_markup('<span size="9000">%i Following</span>' % \
-                                        profile.friends_count)
-        self.followers_count.set_markup('<span size="9000">%i Followers</span>' % \
-                                        profile.followers_count)
+        self.tweets_count.set_markup(
+            '<span size="9000">%i Tweets</span>' % profile.statuses_count
+        )
+        self.following_count.set_markup(
+            '<span size="9000">%i Following</span>' % profile.friends_count
+        )
+        self.followers_count.set_markup(
+            '<span size="9000">%i Followers</span>' % profile.followers_count
+        )
         self.real_name.set_text(profile.fullname)
         if profile.location:
             self.location.set_text(profile.location)

@@ -28,8 +28,7 @@ Turpial necesita los siguientes paquetes para funcionar correctamente:
  * ``python-simplejson >= 1.9.2``
  * ``python-gtk2 >= 2.12``
  * ``python-notify >= 0.1.1``
- * ``python-pyao >= 0.82``
- * ``python-ogg >= 1.3``
+ * ``python-gst0.10``
  * ``python-pybabel >= 0.9.1``
  * ``python-gtkspell >= 2.25.3``
  * ``python-webkit``
@@ -44,8 +43,8 @@ comando (como superusuario)::
     # aptitude install python-simplejson \
                        python-gtk2 \
                        python-notify \
-                       python-pyao \
-                       python-ogg \
+		       python-gst0.10 \
+		       gstreamer0.10-plugins-base \
                        python-pybabel \
                        python-gtkspell \
                        python-webkit \
@@ -57,8 +56,8 @@ o si dispone de ``sudo``::
     $ sudo aptitude install python-simplejson \
                             python-gtk2 \
                             python-notify \
-                            python-pyao \
-                            python-ogg \
+			    python-gst0.10 \
+		       	    gstreamer0.10-plugins-base \
                             python-pybabel \
                             python-gtkspell \
                             python-webkit \

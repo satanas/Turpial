@@ -32,6 +32,7 @@ try:
 except:
     extend_mode = False
 
+gtk.gdk.set_program_class("Turpial")
 gtk.gdk.threads_init()
 
 log = logging.getLogger('Gtk')

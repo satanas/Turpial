@@ -6,6 +6,7 @@
 # Ene 08, 2010
 
 import os
+import ao
 import logging
 import platform
 import traceback
@@ -69,5 +70,14 @@ class Sound:
     def replies(self):
         self.play('mencion3.ogg')
 
+    def login(self):
+        self.play('cambur_pinton.ogg')
+        
+    def tweets(self):
+        self.play('turpial.ogg')
+        
+    def replies(self):
+        self.play('mencion3.ogg')
+        
     def directs(self):
         self.play('mencion2.ogg')

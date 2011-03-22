@@ -6,7 +6,6 @@
 # Ene 08, 2010
 
 import os
-import ao
 import logging
 import platform
 import traceback

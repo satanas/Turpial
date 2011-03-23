@@ -6,73 +6,61 @@
 # Ene 08, 2010
 
 import os
-import ao
 import logging
 import platform
 import traceback
-import ogg.vorbis
+
+DRIVER = None
+if platform.system() == 'Windows':
+    import winsound
+    DRIVER = 'Windows'
+elif platform.system() == 'Linux':
+    import gst
+    DRIVER = 'Linux'
 
 class Sound:
-    def __init__(self, disable):
-        self.sound = False
+    def __init__(self, disable=False):
+        logging.basicConfig(level=logging.DEBUG)
         self.log = logging.getLogger('Sound')
         self.disable = disable
         if self.disable:
-            self.log.debug('Módulo deshabilitado')
+            self.log.debug('Disabled. No sounds')
             return
             
-        try:
-            driver = self.__get_driver()
-            self.device = ao.AudioDevice(ao.driver_id(driver), channels=1)
-            self.log.debug('Iniciado con driver %s' % driver.upper())
-            self.sound = True
-        except Exception, exc:
-            self.log.debug(traceback.print_exc())
-            self.sound = False
+        global DRIVER
+        if DRIVER == 'Windows':
+            pass
+        elif DRIVER == 'Linux':
+            self.player = gst.element_factory_make("playbin2", "player")
+            bus = self.player.get_bus()
+            bus.add_signal_watch()
+            bus.connect("message", self.__on_gst_message)
+        self.log.debug('Started with driver %s' % DRIVER)
     
-    def __test_driver(self, driver):
-        try:
-            dummy = ao.AudioDevice(ao.driver_id(driver), channels=1)
-            return True
-        except:
-            return False
-            
-    def __get_driver(self):
-        #return 'macosx' for macos systems
-        if platform.system() == 'Windows':
-            return 'wmm'
-        elif platform.system() == 'Linux':
-            if self.__test_driver('alsa'):
-                return 'alsa'
-            elif self.__test_driver('pulse'):
-                return 'pulse'
-            elif self.__test_driver('arts'):
-                return 'arts'
-            elif self.__test_driver('oss'):
-                return 'oss'
-            elif self.__test_driver('esd'):
-                return 'esd'
-            else:
-                return 'null'
-                
+    def __on_gst_message(self, bus, message):
+        t = message.type
+        if t == gst.MESSAGE_EOS:
+            self.player.set_state(gst.STATE_NULL)
+        elif t == gst.MESSAGE_ERROR:
+            self.player.set_state(gst.STATE_NULL)
+            err, debug = message.parse_error()
+            self.log.debug('%s. %s' % (err, debug))
+        
+    def disable(self, value):
+        self.disable = value
+        
     def play(self, filename):
         if self.disable:
-            self.log.debug('Módulo deshabilitado. No hay sonidos')
             return
-        path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+        
+        filepath = os.path.realpath(os.path.join(os.path.dirname(__file__),
             'data', 'sounds', filename))
-        
-        if not self.sound: 
-            return
-        
-        vf = ogg.vorbis.VorbisFile(path)
-        while 1:
-            buff, bytes, _ = vf.read(4096)
-            if bytes != 0:
-                self.device.play(buff, bytes)
-            else:
-                vf.time_seek(0)
-                return
+        global DRIVER
+        if DRIVER == 'Windows':
+            pass
+        elif DRIVER == 'Linux':
+            self.player.set_property("uri", "file://" + filepath)
+            self.player.set_state(gst.STATE_PLAYING)
         
     def login(self):
         self.play('cambur_pinton.ogg')

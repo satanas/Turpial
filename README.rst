@@ -28,7 +28,7 @@ Turpial necesita los siguientes paquetes para funcionar correctamente:
  * ``python-simplejson >= 1.9.2``
  * ``python-gtk2 >= 2.12``
  * ``python-notify >= 0.1.1``
- * ``python-pygame >= 1.7``
+ * ``python-gst0.10``
  * ``python-pybabel >= 0.9.1``
  * ``python-gtkspell >= 2.25.3``
  * ``python-webkit``
@@ -38,12 +38,12 @@ Turpial necesita los siguientes paquetes para funcionar correctamente:
 Una instalacion estandar de *Python* (como la que viene en la mayoria de las
 distribuciones GNU/Linux) es mas que suficiente. El resto de los modulos se 
 pueden instalar en las distribuciones basadas en Debian con el siguiente 
-comando (como superusuario)::
+comando (como superusuario):
 
     # aptitude install python-simplejson \
                        python-gtk2 \
                        python-notify \
-                       python-pygame \
+                       python-gst0.10 \
                        python-pybabel \
                        python-gtkspell \
                        python-webkit \
@@ -55,12 +55,16 @@ o si dispone de ``sudo``::
     $ sudo aptitude install python-simplejson \
                             python-gtk2 \
                             python-notify \
-                            python-pygame \
+                            python-gst0.10 \
                             python-pybabel \
                             python-gtkspell \
                             python-webkit \
                             python-setuptools \
                             python-pkg-resources
+
+También debe disponer de los módulos de gstreamer necesarios para su motor de
+sonidos (alsa, pulseaudio, sdl, etc). Puede ubicarlos (en Debian) con los 
+paquetes gstreamer0.10-alsa, gstreamer0.10-pulseaudio, gstreamer0.10-sdl
 
 Instalacion
 -----------

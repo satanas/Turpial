@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Turpial\n"
-"Report-Msgid-Bugs-To: http://github.com/satanas/Turpial/issues\n"
+"Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
 "POT-Creation-Date: 2011-03-04 20:47-0530\n"
-"PO-Revision-Date: 2011-03-05 01:22+0000\n"
-"Last-Translator: satanas <wil.alejandro@gmail.com>\n"
+"PO-Revision-Date: 2011-03-22 15:12+0000\n"
+"Last-Translator: norbux <manelsales@ono.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -201,7 +201,7 @@ msgstr "Crides a la API. Reiniciar"
 
 #: turpial/ui/gtk/about.py:19
 msgid "Microblogging client written in Python"
-msgstr ""
+msgstr "Client de Microblogging escrit en Python"
 
 #: turpial/ui/gtk/about.py:49
 msgid "File 'AUTHORS' not found"
@@ -221,7 +221,7 @@ msgstr "Actualització Manual"
 
 #: turpial/ui/gtk/columns.py:92
 msgid "Mark all as read"
-msgstr ""
+msgstr "Marca-ho tot com llegit"
 
 #: turpial/ui/gtk/columns.py:211
 msgid "Clear results"
@@ -350,11 +350,11 @@ msgstr "Re-enviar piulet"
 
 #: turpial/ui/gtk/menu.py:106
 msgid "Redent (Old)"
-msgstr ""
+msgstr "Redentejar (Vell)"
 
 #: turpial/ui/gtk/menu.py:107
 msgid "Redent"
-msgstr ""
+msgstr "Redentejar"
 
 #: turpial/ui/gtk/menu.py:118
 msgid "DM"
@@ -394,15 +394,15 @@ msgstr "Deixar de seguir"
 
 #: turpial/ui/gtk/menu.py:280
 msgid "Marking favorite..."
-msgstr ""
+msgstr "Marcant preferit"
 
 #: turpial/ui/gtk/menu.py:283
 msgid "Unmarking favorite..."
-msgstr ""
+msgstr "Desmarcant preferit..."
 
 #: turpial/ui/gtk/menu.py:286
 msgid "Deleting..."
-msgstr ""
+msgstr "Esborrant..."
 
 #: turpial/ui/gtk/preferences.py:30 turpial/ui/gtk/userform.py:92
 #: turpial/ui/gtk/userform.py:185

@@ -130,7 +130,7 @@ class Turpial:
             self.ui.main_loop()
         except KeyboardInterrupt:
             self.log.debug('Interceptado Keyboard Interrupt')
-            self.signout()
+            self.ui.main_quit()
         
     def __clean(self):
         '''Limpieza de ficheros .pyc y .pyo'''
@@ -472,6 +472,7 @@ class Turpial:
         return self.viewed_cols
         
     def change_column(self, index, new_id):
+        print 'change_column', self.lists.keys(), index, new_id
         if self.lists.has_key(new_id):
             self.viewed_cols[index] = self.lists[new_id]
             if index == 0:

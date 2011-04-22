@@ -74,7 +74,7 @@ class StandardColumn(GenericColumn):
         
         self.pos = pos
         self.handler = None
-        self.changing_col = False
+        #self.changing_col = False
         
         model = gtk.ListStore(str, str)
         cell = gtk.CellRendererText()
@@ -115,7 +115,6 @@ class StandardColumn(GenericColumn):
         iter = self.listcombo.get_active_iter()
         new_id = model.get_value(iter, 0)
         self.caption = model.get_value(iter, 1)
-        self.changing_col = True
         self.label.set_label(self.caption)
         try:
             self.get_parent().set_tab_label(self, self.label)
@@ -159,18 +158,12 @@ class StandardColumn(GenericColumn):
         else:
             self.last_index = self.listcombo.get_active()
             
-            if self.changing_col:
-                model = self.listcombo.get_model()
-                iter = self.listcombo.get_active_iter()
-                new_id = model.get_value(iter, 0)
-                
-                new_config = {'Columns': {}}
-                column = 'column%i' % (self.pos + 1)
-                new_config['Columns'][column] = new_id
-                self.mainwin.save_config(new_config)
-        
-        self.changing_col = False
         self.handler = self.listcombo.connect('changed', self.__change_list)
+        
+    def get_combo_item(self):
+        model = self.listcombo.get_model()
+        iter = self.listcombo.get_active_iter()
+        return model.get_value(iter, 0)
         
     def start_update(self):
         self.waiting.start()

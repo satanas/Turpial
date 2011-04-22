@@ -341,6 +341,9 @@ class BaseGui:
     def main_loop(self):
         raise NotImplementedError
         
+    def main_quit(self, arg=None):
+        self.request_signout()
+    
     def show_login(self):
         raise NotImplementedError
         
@@ -414,8 +417,5 @@ class BaseGui:
         raise NotImplementedError
     
     def set_column_item(self, index, reset=False):
-        raise NotImplementedError
-            
-    def quit(self, arg):
         raise NotImplementedError
         

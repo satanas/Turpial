@@ -153,7 +153,7 @@ class Main(BaseGui, gtk.Window):
             menu.append(gtk.SeparatorMenuItem())
         menu.append(exit)
         
-        exit.connect('activate', self.quit)
+        exit.connect('activate', self.main_quit)
         tweet.connect('activate', self.__show_update_box_from_menu)
         follow.connect('activate', self.__show_follow_box_from_menu)
             
@@ -174,7 +174,7 @@ class Main(BaseGui, gtk.Window):
             self.quit(widget)
         return True
         
-    def __save_size(self):
+    def __save_config(self):
         if self.mode < 2: return
         
         wide_value = "%i, %i" % (self.wide_win_size[0], self.wide_win_size[1])
@@ -188,14 +188,22 @@ class Main(BaseGui, gtk.Window):
         log.debug('--Single Position: %s' % single_pos)
         log.debug('--Wide Position: %s' % wide_pos)
         log.debug('--State: %s' % self.win_state)
-        self.save_config({'Window': {
-            'single-win-size': single_value,
-            'wide-win-size': wide_value, 
-            'window-single-position': single_pos,
-            'window-wide-position': wide_pos,
-            'window-state': self.win_state,
-            'window-visibility': visibility,
-            }}, update=False)
+        
+        self.save_config({
+            'Window': {
+                'single-win-size': single_value,
+                'wide-win-size': wide_value, 
+                'window-single-position': single_pos,
+                'window-wide-position': wide_pos,
+                'window-state': self.win_state,
+                'window-visibility': visibility,
+            },
+            'Columns': {
+                'column1': self.home.timeline.get_combo_item(),
+                'column2': self.home.replies.get_combo_item(),
+                'column3': self.home.direct.get_combo_item(),
+            },
+        }, update=False)
         
     def _notify_new_tweets(self, column, tweets, last, count):
         if count <= 0:
@@ -299,11 +307,12 @@ class Main(BaseGui, gtk.Window):
         #return r, g, b
         return gtk.gdk.Color(r * 257, g * 257, b * 257)
 
-    def quit(self, widget):
-        self.__save_size()
+    def main_quit(self, widget=None):
+        self.__save_config()
         self.destroy()
         self.tray = None
-        gtk.main_quit()
+        if widget:
+            gtk.main_quit()
         self.request_signout()
         
     def main_loop(self):

@@ -1,21 +1,22 @@
-v1.5.0 (Feb 04, 2011):
+v1.5.0 (May 14, 2011):
+	+ Visualización de mensajes directos enviados
+	+ Soporte para listas y columnas personalizables
+	+ Coloreado de los tweets según su estado
+	+ Agregado diálogo para seguir usuarios
+	+ Agregado soporte para Identi.ca
+	+ Mejorada la estructura y organizacion de los archivos de configuracion
     + Mejoradas las notificaciones
     + Optimizado el manejo de los estados y la generación de los menús (consume menos recursos)
     + Implementado autoscrolling
-    + Mejorada la estructura y organizacion de los archivos de configuracion
+    + Mejorado el soporte para caracteres UTF-8
     + Implementada opción -s/--save-credentials para guardar las credenciales vía consola
     + Habilitada la interfaz cmd con soporte para un conjunto reducido de comandos
     + Mejoradas la expresiones regulares para la deteccion de menciones y URLs
-    + Favoritos y amigos se actualizan cada 12 y 15 min respectivamente
     + Actualizadas plantillas de idiomas
+    + Agregado soporte para Catalán, Ruso y Gallego
     + Asistente para subir imágenes (con previsualización y soporte para mensaje)
-    + Cambiado tema de iconos (gracias a @gabriela2400 por la colaboración)
-    + Soporte para listas y columnas personalizables
-    + Mejorado el soporte para caracteres UTF-8
-    + Corregidos errores al silenciar cuentas
-    + Visualización de mensajes directos enviados
-    + Coloreado de los tweets según su estado
-    + Diálogo para seguir usuarios
+    + Nuevo tema de iconos (gracias a @gabriela2400 por la colaboración)
+    + Corregidos errores menores
     + Soporte para proxy e internacionalización
     + Optimizado el cierre de hilos (mejora la respuesta de la aplicación)
     

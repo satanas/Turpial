@@ -245,11 +245,7 @@ class UpdateBox(gtk.Window):
         if tweet == '': 
             self.waiting.stop(error=True)
             self.lblerror.set_markup("<span size='small'>%s</span>" % 
-<<<<<<< HEAD
-                _('Hey... you must write something'))
-=======
                 _('Hey!... you must write something'))
->>>>>>> origin/development
             return
         elif buffer.get_char_count() > 140:
             self.waiting.stop(error=True)
@@ -288,53 +284,6 @@ class UpdateBox(gtk.Window):
         self.toolbox.set_expanded(False)
         self.set_focus(self.update_text)
         
-<<<<<<< HEAD
-    def upload_pic(self, widget):
-        filtro = gtk.FileFilter()
-        filtro.set_name('PNG, JPEG & GIF Images')
-        filtro.add_pattern('*.png')
-        filtro.add_pattern('*.gif')
-        filtro.add_pattern('*.jpg')
-        filtro.add_pattern('*.jpeg')
-        
-        dia = gtk.FileChooserDialog(title=_('Select image to upload'),
-            parent=self, action=gtk.FILE_CHOOSER_ACTION_OPEN,
-            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                gtk.STOCK_OK, gtk.RESPONSE_OK))
-        dia.add_filter(filtro)
-        resp = dia.run()
-        
-        if resp == gtk.RESPONSE_OK:
-            self.waiting.start()
-            self.mainwin.request_upload_pic(dia.get_filename(),
-                                            self.update_uploaded_pic)
-        dia.destroy()
-        
-    def update_uploaded_pic(self, pic_url):
-        if pic_url.err or not pic_url.response:
-            self.waiting.stop(error=True)
-            self.lblerror.set_markup("<span size='small'>%s</span>" % 
-                _('Oops... I couldn\'t upload that image'))
-            return
-        buffer = self.update_text.get_buffer()
-        end_offset = buffer.get_property('cursor-position')
-        start_offset = end_offset - 1
-        
-        end = buffer.get_iter_at_offset(end_offset)
-        start = buffer.get_iter_at_offset(start_offset)
-        text = buffer.get_text(start, end)
-        
-        if (text != ' ') and (start_offset > 0):
-            pic_url.response = ' ' + pic_url.response
-        
-        buffer.insert_at_cursor(pic_url.response)
-        self.waiting.stop()
-        self.lblerror.set_markup("")
-        self.toolbox.set_expanded(False)
-        self.set_focus(self.update_text)
-        
-=======
->>>>>>> origin/development
     def show_options(self, widget, event=None):
         self.url.set_text('')
         self.url.grab_focus()

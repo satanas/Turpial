@@ -12,13 +12,14 @@ class About:
     def __init__(self, parent=None):
         about = gtk.AboutDialog()
         about.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
-        about.set_logo(parent.load_image('turpial_icon.png', True))
+        about.set_logo(parent.load_image('turpial.png', True))
         about.set_name('Turpial')
         about.set_version(parent.version)
         about.set_copyright('Copyright (C) 2009 - 2010 Wil Alvarez')
-        about.set_comments(_('Twitter client multi-interface written in Python'))
+        about.set_comments(_('Microblogging client written in Python'))
         about.set_transient_for(parent)
         about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        about.set_website('http://turpial.org.ve')
         
         try:
             path = os.path.realpath(os.path.join(os.path.dirname(__file__), 
@@ -45,9 +46,19 @@ class About:
                 authors.append(line.strip('\n'))
             f.close()
         except Exception, msg:
-            pass
-            
+            authors = [_("File 'AUTHORS' not found")]
         about.set_authors(authors)
+        
+        translators = ''
+        try:
+            path = os.path.realpath(os.path.join(os.path.dirname(__file__), 
+                '..', '..', '..', 'TRANSLATORS'))
+            f = file(path, 'r')
+            translators = f.read()
+            f.close()
+        except Exception, msg:
+            translators = _("File 'TRANSLATORS' not found")
+        about.set_translator_credits(translators)
         
         about.connect("response", self.__response)
         about.connect("close", self.__close)

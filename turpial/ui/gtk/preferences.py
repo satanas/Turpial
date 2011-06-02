@@ -8,7 +8,7 @@
 import gtk
 import subprocess
 
-from turpial.api.services import URL_SERVICES, PHOTO_SERVICES
+from turpial.api.servicesapi import URL_SERVICES, PHOTO_SERVICES
 
 class Preferences(gtk.Window):
     """Ventana de preferencias de Turpial"""
@@ -24,6 +24,7 @@ class Preferences(gtk.Window):
         self.set_title(_('Preferences'))
         self.set_border_width(6)
         self.set_transient_for(parent)
+        self.set_modal(True)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         
         btn_save = gtk.Button(_('Save'))
@@ -35,6 +36,11 @@ class Preferences(gtk.Window):
         box_button.pack_start(btn_save)
         box_button.pack_start(btn_close)
         
+        notebook = gtk.Notebook()
+        notebook.set_scrollable(True)
+        notebook.set_border_width(3)
+        notebook.set_properties('tab-pos', gtk.POS_LEFT)
+        
         # Tabs
         if self.mode == 'user':
             self.general = GeneralTab(self.current['General'])
@@ -42,19 +48,15 @@ class Preferences(gtk.Window):
             self.services = ServicesTab(self.current['Services'])
             self.muted = MutedTab(self.mainwin)
             self.browser = BrowserTab(self.mainwin, self.current['Browser'])
-        self.proxy = ProxyTab(self.global_cfg['Proxy'])
-        
-        notebook = gtk.Notebook()
-        notebook.set_scrollable(True)
-        notebook.set_border_width(3)
-        notebook.set_properties('tab-pos', gtk.POS_LEFT)
-        if self.mode == 'user':
+            
             notebook.append_page(self.general, gtk.Label(_('General')))
             notebook.append_page(self.notif, gtk.Label(_('Notifications')))
             notebook.append_page(self.services, gtk.Label(_('Services')))
             notebook.append_page(self.muted, gtk.Label(_('Mute')))
             notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
-        notebook.append_page(self.proxy, gtk.Label(_('Proxy')))
+            
+        self.proxy = ProxyTab(self.global_cfg['Proxy'])
+        notebook.append_page(self.proxy, gtk.Label(_('API Proxy')))
         
         vbox = gtk.VBox()
         #vbox.set_spacing(4)
@@ -86,7 +88,7 @@ class Preferences(gtk.Window):
             }
             
             self.mainwin.save_config(new_config)
-            self.mainwin.request_update_muted(self.muted.get_muted())
+            self.mainwin.request_mute(self.muted.get_muted())
         
         proxy = self.proxy.get_config()
         new_global = {
@@ -96,7 +98,6 @@ class Preferences(gtk.Window):
         self.destroy()
         
         self.mainwin.save_global_config(new_global)
-        
         
 class PreferencesTab(gtk.VBox):
     def __init__(self, desc, current=None):
@@ -122,7 +123,7 @@ class PreferencesTab(gtk.VBox):
         
 class TimeScroll(gtk.HBox):
     def __init__(self, label='', val=5, min=1, max=60, step=3, page=6, size=0,
-        callback=None, lbl_size=70, unit='min'):
+        callback=None, lbl_size=120, unit='min'):
         gtk.HBox.__init__(self, False)
         
         self.callback = callback
@@ -130,13 +131,14 @@ class TimeScroll(gtk.HBox):
         self.unit = unit
         lbl = gtk.Label(label)
         lbl.set_size_request(lbl_size, -1)
+        lbl.set_justify(gtk.JUSTIFY_LEFT)
         adj = gtk.Adjustment(val, min, max, step, page, size)
         scale = gtk.HScale()
         scale.set_digits(0)
         scale.set_adjustment(adj)
         scale.set_property('value-pos', gtk.POS_RIGHT)
         
-        self.pack_start(lbl, False, False, 3)
+        self.pack_start(lbl, False, True, 3)
         self.pack_start(scale, True, True, 3)
         
         self.show_all()
@@ -154,8 +156,12 @@ class TimeScroll(gtk.HBox):
         
 class GeneralTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, _('Adjust update frequency for \
-timeline, mentions and direct messages'), current)
+        PreferencesTab.__init__(
+            self,
+            _('Adjust update frequency for'
+              'timeline, mentions and direct messages'),
+            current
+        )
         
         h = int(self.current['home-update-interval'])
         r = int(self.current['replies-update-interval'])
@@ -165,11 +171,11 @@ timeline, mentions and direct messages'), current)
         ws = True if self.current['workspace'] == 'wide' else False
         min = True if self.current['minimize-on-close'] == 'on' else False
         
-        self.home = TimeScroll(_('Timeline'), h,
+        self.home = TimeScroll(_('Column 1 (Left)'), h,
             callback=self.update_api_calls)
-        self.replies = TimeScroll(_('Mentions'), r, min=2,
+        self.replies = TimeScroll(_('Column 2 (Middle)'), r,
             callback=self.update_api_calls)
-        self.directs = TimeScroll(_('Directs'), d, min=5,
+        self.directs = TimeScroll(_('Column 3 (Right)'), d, 
             callback=self.update_api_calls)
         
         self.tweets = TimeScroll(_('Tweets shown'), t, min=20, max=200,
@@ -188,13 +194,16 @@ timeline, mentions and direct messages'), current)
         except:
             pass
         
-        self.profile_colors = gtk.CheckButton(_('Load profile color \
-(Needs restart Turpial)'))
+        self.profile_colors = gtk.CheckButton(_(
+            'Load profile color'
+            '(Needs Turpial to be restarted)'))
         self.profile_colors.set_active(pf)
         try:
             self.profile_colors.set_has_tooltip(True)
-            self.profile_colors.set_tooltip_text(_('Use user profile color \
-to highlight mentions, hashtags and URLs'))
+            self.profile_colors.set_tooltip_text(_(
+                'Use user profile color'
+                'to highlight mentions, hashtags and URLs')
+            )
         except:
             pass
         
@@ -202,11 +211,13 @@ to highlight mentions, hashtags and URLs'))
         self.minimize.set_active(min)
         try:
             self.minimize.set_has_tooltip(True)
-            self.minimize.set_tooltip_text(_('Send Turpial to system tray \
-when close'))
+            self.minimize.set_tooltip_text(_(
+                'Send Turpial to system tray'
+                'when closing main window')
+            )
         except:
             pass
-        
+
         self.pack_start(self.home, False, False, 5)
         self.pack_start(self.replies, False, False, 5)
         self.pack_start(self.directs, False, False, 5)
@@ -219,10 +230,13 @@ when close'))
         self.update_api_calls()
         
     def update_api_calls(self):
-        calls = (60 / self.home.value) + (60 / self.replies.value) + \
+        calls = (
+            (60 / self.home.value) + (60 / self.replies.value) +
             (60 / self.directs.value)
-        self.estimated.set_text(_('You will use aprox. %i calls to API per \
-hour') % calls)
+        )
+        self.estimated.set_text(_(
+            'Turpial will use aprox. %i calls to API per hour') % calls
+        )
         
     def get_config(self):
         ws = 'wide' if self.workspace.get_active() else 'single'
@@ -241,8 +255,11 @@ hour') % calls)
 
 class NotificationsTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, _('Select what notifications you want \
-to receive from Turpial'), current)
+        PreferencesTab.__init__(
+            self,
+            _('Select the notifications you want to receive from Turpial'),
+            current
+        )
         
         home = True if self.current['home'] == 'on' else False
         replies = True if self.current['replies'] == 'on' else False
@@ -250,30 +267,39 @@ to receive from Turpial'), current)
         login = True if self.current['login'] == 'on' else False
         sound = True if self.current['sound'] == 'on' else False
         
-        self.timeline = gtk.CheckButton(_('Timeline'))
+        self.timeline = gtk.CheckButton(_('Column 1 (Left)'))
         self.timeline.set_active(home)
         try:
             self.timeline.set_has_tooltip(True)
-            self.timeline.set_tooltip_text(_('Show a notification when \
-Timeline is updated'))
+            '''
+            self.timeline.set_tooltip_text(
+                _('Show a notification when Timeline is updated')
+            )
+            '''
         except:
             pass
             
-        self.replies = gtk.CheckButton(_('Mentions'))
+        self.replies = gtk.CheckButton(_('Column 2 (Middle)'))
         self.replies.set_active(replies)
         try:
             self.replies.set_has_tooltip(True)
-            self.replies.set_tooltip_text(_('Show a notification when you \
-get mentions from other users'))
+            '''
+            self.replies.set_tooltip_text(
+                _('Show a notification when you get mentions from other users')
+            )
+            '''
         except:
             pass
             
-        self.directs = gtk.CheckButton(_('Directs Messages'))
+        self.directs = gtk.CheckButton(_('Column 3 (Right)'))
         self.directs.set_active(directs)
         try:
             self.directs.set_has_tooltip(True)
-            self.directs.set_tooltip_text(_('Show a notification when you \
-get direct messages'))
+            '''
+            self.directs.set_tooltip_text(
+                _('Show a notification when you get direct messages')
+            )
+            '''
         except:
             pass
             
@@ -281,8 +307,9 @@ get direct messages'))
         self.profile.set_active(login)
         try:
             self.profile.set_has_tooltip(True)
-            self.profile.set_tooltip_text(_('Show a notification at login \
-with your user info'))
+            self.profile.set_tooltip_text(
+                _('Show a notification at login with your user info')
+            )
         except:
             pass
         
@@ -290,8 +317,9 @@ with your user info'))
         self.sounds.set_active(sound)
         try:
             self.sounds.set_has_tooltip(True)
-            self.sounds.set_tooltip_text(_('Activate sounds for each \
-notification'))
+            self.sounds.set_tooltip_text(
+                _('Activate sounds for each notification')
+            )
         except:
             pass
             
@@ -319,11 +347,18 @@ notification'))
         
 class ServicesTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, _('Select your preferred services for \
-shorten URLs and upload images'), current)
+        PreferencesTab.__init__(
+            self,
+            _('Select your preferred services '
+              'to shorten URLs and to upload images'),
+            current
+        )
         i = 0
         default = -1
+        lbl_size = 120
+        
         url_lbl = gtk.Label(_('Shorten URL'))
+        url_lbl.set_size_request(lbl_size, -1)
         self.shorten = gtk.combo_box_new_text()
         for key, v in URL_SERVICES.iteritems():
             self.shorten.append_text(key)
@@ -337,6 +372,7 @@ shorten URLs and upload images'), current)
         url_box.pack_start(self.shorten, False, False, 3)
         
         pic_lbl = gtk.Label(_('Upload images'))
+        pic_lbl.set_size_request(lbl_size, -1)
         self.upload = gtk.combo_box_new_text()
         i = 0
         for key in PHOTO_SERVICES:
@@ -362,12 +398,18 @@ shorten URLs and upload images'), current)
         
 class MutedTab(PreferencesTab):
     def __init__(self, parent):
-        PreferencesTab.__init__(self, _('Select all those users that are \
-bothering you and shut them up temporarily'))
+        PreferencesTab.__init__(
+            self,
+            _(
+                'Select all those users that bother'
+                ' you and shut them up temporarily'
+            )
+        )
         
         self.muted = []
         self.mainwin = parent
-        self.friends, self.muted = self.mainwin.request_muted_list()
+        self.muted = self.mainwin.request_muted_list()
+        self.friends = self.mainwin.request_friends_list()
         
         self.model = gtk.ListStore(str, bool)
         
@@ -401,22 +443,36 @@ bothering you and shut them up temporarily'))
         label = gtk.Label()
         label.set_line_wrap(True)
         label.set_use_markup(True)
-        label.set_markup('<span foreground="#920d12">%s</span>' % 
-            _('I am still loading all of your friends. Try again in a few \
-seconds' ))
         label.set_justify(gtk.JUSTIFY_FILL)
         
         align = gtk.Alignment(xalign=0.0, yalign=0.0)
         align.set_padding(0, 5, 10, 10)
         align.add(label)
         
-        if self.friends:
-            for f in self.friends:
-                mark = True if (f in self.muted) else False
-                self.model.append([f, mark])
-                
-            self.pack_start(scroll, True, True, 2)
+        if self.friends is not None:
+            if len(self.friends) > 0:
+                for f in self.friends:
+                    mark = True if (f in self.muted) else False
+                    self.model.append([f, mark])
+                    
+                self.pack_start(scroll, True, True, 2)
+            elif len(self.friends) == 0:
+                label.set_markup(
+                    '<span foreground="#920d12">%s</span>' % 
+                    _(
+                        'What? You don\'t have any friends.'
+                        ' Try to go out and know some nice people'
+                    )
+                )
+                self.pack_start(align, True, True, 2)
         else:
+            label.set_markup(
+                '<span foreground="#920d12">%s</span>' % 
+                _(
+                    'I am still loading all of your friends.'
+                    ' Try again in a few seconds'
+                )
+            )
             self.pack_start(align, True, True, 2)
         
         self.show_all()
@@ -439,8 +495,11 @@ seconds' ))
 
 class BrowserTab(PreferencesTab):
     def __init__(self, parent, current):
-        PreferencesTab.__init__(self, _('Setup your favorite web browser to \
-open all links'), current)
+        PreferencesTab.__init__(
+            self,
+            _('Setup your favorite web browser to open all links'),
+            current
+        )
         
         self.mainwin = parent
         
@@ -491,8 +550,8 @@ open all links'), current)
             subprocess.Popen([cmd, 'http://turpial.org.ve/'])
             
     def __browse(self, widget):
-        dia = gtk.FileChooserDialog(title=_('Select the full path of your \
-web browser'),
+        dia = gtk.FileChooserDialog(
+            title = _('Select the full path of your web browser'),
             parent=self.mainwin,
             action=gtk.FILE_CHOOSER_ACTION_OPEN,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
@@ -517,16 +576,22 @@ web browser'),
         
 class ProxyTab(PreferencesTab):
     def __init__(self, current):
-        PreferencesTab.__init__(self, _('Proxy settings for Turpial (Need \
-Restart)'), current)
+        PreferencesTab.__init__(
+            self,
+            _('Proxy settings for Turpial (Need Restart)'),
+            current
+        )
         
         chk_none = gtk.RadioButton(None, _('No proxy'))
         chk_url = gtk.RadioButton(chk_none, _('Twitter API proxy'))
         
         try:
             chk_url.set_has_tooltip(True)
-            chk_url.set_tooltip_text(_('Use a URL to access Twitter API \
-different of twitter.com'))
+            chk_url.set_tooltip_text(
+                _(
+                    'Use a URL to access Twitter API different of twitter.com'
+                )
+            )
         except:
             pass
         url_lbl = gtk.Label(_('Twitter API URL'))
@@ -568,3 +633,4 @@ different of twitter.com'))
             'port': '',
             'url': self.url.get_text()
         }
+        

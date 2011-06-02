@@ -1,43 +1,41 @@
-v1.3.3 (Jul 21, 2010):
-    + Versión Final
+v1.5.0 (May 14, 2011):
+    + Visualización de mensajes directos enviados
+    + Soporte para listas y columnas personalizables
+    + Coloreado de los tweets según su estado
+    + Agregado diálogo para seguir usuarios
+    + Agregado soporte para Identi.ca
+    + Mejorada la estructura y organizacion de los archivos de configuracion
+    + Mejoradas las notificaciones
+    + Optimizado el manejo de los estados y la generación de los menús (consume menos recursos)
+    + Implementado autoscrolling
+    + Mejorado el soporte para caracteres UTF-8
+    + Implementada opción -s/--save-credentials para guardar las credenciales vía consola
+    + Habilitada la interfaz cmd con soporte para un conjunto reducido de comandos
+    + Mejoradas la expresiones regulares para la deteccion de menciones y URLs
+    + Actualizadas plantillas de idiomas
+    + Agregado soporte para Catalán, Ruso y Gallego
+    + Asistente para subir imágenes (con previsualización y soporte para mensaje)
+    + Nuevo tema de iconos (gracias a @gabriela2400 por la colaboración)
+    + Corregidos errores menores
+    + Soporte para proxy e internacionalización
+    + Optimizado el cierre de hilos (mejora la respuesta de la aplicación)
     
-v1.3.3-rc1 (Jul 15, 2010):
-    + Primera versión candidata de la 1.3.3
-    
-v1.3.3-b4 (Jul 10, 2010):
+v1.3.4 (Ago 19, 2010):
+    + Sustituido OAUth por xAuth como método de autenticación 
+    + Corregido bug de los tweets en NULL (json)
     + Corregida dependencia de traceback en el módulo de sonido
-    
-v1.3.3-b3 (Jun 27, 2010):
     + Agregado timeout a las conexiones en la API
     + Eliminados módulos obsoletos
     + Corregido error crítico en la detección de hashtags con caracteres especiales
     + Corregidos errores menores de usabilidad
     + Mejorada la detección de caracteres especiales
-    
-v1.3.3-b2 (Jun 21, 2010):
     + Corregida ruta de los archivos de traducción
-    
-v1.3.3-b1 (Jun 18, 2010):
     + Corregido error con los archivos de traducción
     + Corregida dependencia de webkit (ahora es opcional)
-    
-v1.3.2 (Jun 17, 2010):
-    + Versión Estable
-    
-v1.3.2-b3 (Jun 05, 2010):
     + Corregido error que cerraba Turpial si no existe tarjeta de sonido
-    
-v1.3.2-b2 (Jun 04, 2010):
     + Corregido error que impedía cerrar Turpial desde la bandeja de sistema
-    
-v1.3.2-b1 (Jun 03, 2010):
-    + Publicada versión beta sin cambios respecto a la anterior
-    
-v1.3.2-a2 (May 11, 2010):
     + Corregido error crítico con los diccionarios de ortografía y los locales
     + Corregido error con el servicio de SigueMiLink
-    
-v1.3.2-a1 (May 11, 2010):
     + Creado asistente para gestionar la autenticación segura desde Turpial (requiere python-webkit)
     + Soporte para español, inglés, portugués, chino tradicional y taiwanés, francés, 
     + Agregada opción 'Responder a Todos' al menú contextual de los tweets

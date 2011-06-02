@@ -7,6 +7,8 @@
 
 import gtk
 
+from turpial.ui.gtk.waiting import CairoWaiting
+
 class UserForm(gtk.VBox):
     def __init__(self, mainwin, label='', profile=None):
         gtk.VBox.__init__(self, False)
@@ -92,36 +94,65 @@ class UserForm(gtk.VBox):
         submit_box.set_property('right-padding', 5)
         submit_box.add(self.submit)
         
+        self.lblerror = gtk.Label()
+        self.lblerror.set_use_markup(True)
+        self.waiting = CairoWaiting(mainwin)
+        
+        self.lblerror.set_markup("Hola mundo")
+        self.waiting.stop(True)
+        
+        align = gtk.Alignment(xalign=1, yalign=0.5)
+        align.add(self.waiting)
+        
+        bottombox = gtk.HBox(False)
+        bottombox.pack_start(self.lblerror, False, False, 2)
+        bottombox.pack_start(align, True, True, 2)
+        
+        spacebox = gtk.VBox(False)
+        
         self.pack_start(top, False, False)
         self.pack_start(form, False, False)
         self.pack_start(submit_box, False, False)
+        self.pack_start(spacebox, True, True)
+        self.pack_start(bottombox, False, False)
         
         self.submit.connect('clicked', self.save_user_profile)
         
-    def update(self, profile):
-        self.user = profile['screen_name']
-        pix = self.mainwin.get_user_avatar(self.user,
-                                           profile['profile_image_url'])
+    def update(self, response):
+        # FIXME: Mejorar esta validación
+        try:
+            if response.type == 'error':
+                self.stop_update(True, response.errmsg)
+                return
+            profile = response.items
+        except:
+            profile = response
+        
+        self.user = profile.username
+        pix = self.mainwin.get_user_avatar(self.user, profile.avatar)
         avatar = gtk.Image()
         avatar.set_from_pixbuf(pix)
         self.user_pic.set_image(avatar)
         del pix
-        self.screen_name.set_markup('<b>@%s</b>' % profile['screen_name'])
-        self.tweets_count.set_markup('<span size="9000">%i Tweets</span>' % \
-                                     profile['statuses_count'])
-        self.following_count.set_markup('<span size="9000">%i Following</span>' % \
-                                        profile['friends_count'])
-        self.followers_count.set_markup('<span size="9000">%i Followers</span>' % \
-                                        profile['followers_count'])
-        self.real_name.set_text(profile['name'])
-        if profile['location']:
-            self.location.set_text(profile['location'])
-        if profile['url']:
-            self.url.set_text(profile['url'])
+        self.screen_name.set_markup('<b>@%s</b>' % profile.username)
+        self.tweets_count.set_markup(
+            '<span size="9000">%i Tweets</span>' % profile.statuses_count
+        )
+        self.following_count.set_markup(
+            '<span size="9000">%i Following</span>' % profile.friends_count
+        )
+        self.followers_count.set_markup(
+            '<span size="9000">%i Followers</span>' % profile.followers_count
+        )
+        self.real_name.set_text(profile.fullname)
+        if profile.location:
+            self.location.set_text(profile.location)
+        if profile.url:
+            self.url.set_text(profile.url)
         buffer = self.bio.get_buffer()
-        if profile['description']:
-            buffer.set_text(profile['description'])
-        self.unlock()
+        if profile.bio:
+            buffer.set_text(profile.bio)
+        self.stop_update()
         
     def update_user_pic(self, user, pic):
         if self.user != user:
@@ -130,7 +161,7 @@ class UserForm(gtk.VBox):
         self.user_pic.set_image(pix)
         
     def save_user_profile(self, widget):
-        self.lock()
+        self.start_update()
         name = self.real_name.get_text()
         location = self.location.get_text()
         url = self.url.get_text()
@@ -140,6 +171,7 @@ class UserForm(gtk.VBox):
         self.mainwin.request_update_profile(name, url, bio, location)
         
     def lock(self):
+        self.user_pic.set_sensitive(False)
         self.real_name.set_sensitive(False)
         self.location.set_sensitive(False)
         self.url.set_sensitive(False)
@@ -148,6 +180,7 @@ class UserForm(gtk.VBox):
         self.submit.set_sensitive(False)
     
     def unlock(self):
+        self.user_pic.set_sensitive(True)
         self.real_name.set_sensitive(True)
         self.location.set_sensitive(True)
         self.url.set_sensitive(True)
@@ -157,3 +190,13 @@ class UserForm(gtk.VBox):
         
     def update_wrap(self, w):
         pass
+        
+    def start_update(self):
+        self.lock()
+        self.waiting.start()
+        self.lblerror.set_markup("")
+        
+    def stop_update(self, error=False, msg=''):
+        self.unlock()
+        self.waiting.stop(error)
+        self.lblerror.set_markup(u"<span size='small'>%s</span>" % msg)

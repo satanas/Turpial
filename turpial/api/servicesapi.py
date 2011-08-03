@@ -37,6 +37,7 @@ URL_SERVICES = {
     "tinyurl.com": TinyurlURLShorter(),
     "tr.im": TrimURLShorter(),
     "bit.ly": BitlyURLShorter(),
+    "j.mp": BitlyURLShorter(domain='j.mp'),
     "smlk.es": SmlkesURLShorter(),
     "su.pr": SuprURLShorter(),
     "zi.ma": ZimaURLShorter(),

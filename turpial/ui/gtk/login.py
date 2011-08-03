@@ -80,6 +80,7 @@ class LoginBox(gtk.VBox):
         
         self.pack_start(table, False, False, 2)
         
+        self.btn_oauth.grab_focus()
         self.btn_oauth.connect('clicked', self.signin)
         self.password.connect('activate', self.signin)
         self.rhandler = self.remember.connect("toggled", self.__toogle_remember)

@@ -91,6 +91,9 @@ class BaseGui:
             return path
         else:
             return default
+            
+    def get_current_protocol(self):
+        return self.__controller.current_protocol
     
     def parse_tweet(self, xtweet):
         '''Decompose tweet in basic parts'''

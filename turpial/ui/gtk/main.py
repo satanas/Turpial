@@ -351,7 +351,7 @@ class Main(BaseGui, gtk.Window):
         
         self.profile.set_user_profile(p)
         self.me = p.items.username
-        title = 'Turpial - %s' % self.me
+        title = 'Turpial - %s (%s)' % (self.me, self.get_current_protocol())
         self.set_title(title)
         self.tray.set_tooltip(title)
         
@@ -498,7 +498,10 @@ class Main(BaseGui, gtk.Window):
     def update_rate_limits(self, val):
         if val is None or val == []: return
         gtk.gdk.threads_enter()
-        self.statusbar.push(0, util.get_rates(val))
+        try:
+            self.statusbar.push(0, util.get_rates(val))
+        except TypeError:
+            log.debug(u'Error imprimiendo el mensaje en la barra de estado')
         gtk.gdk.threads_leave()
         
     def update_search(self, val):

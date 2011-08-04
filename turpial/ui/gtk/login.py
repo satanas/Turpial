@@ -87,6 +87,10 @@ class LoginBox(gtk.VBox):
         self.btn_settings.connect('clicked', self.mainwin.show_preferences, 'global')
         self.combo_protocol.connect('changed', self.__change_protocol)
         self.remember.set_active(rem)
+        if rem:
+            self.btn_oauth.grab_focus()
+        else:
+            self.username.grab_focus()
         
     def __toogle_remember(self, widget):
         user = self.username.get_text()
@@ -105,9 +109,11 @@ class LoginBox(gtk.VBox):
         if rem:
             self.username.set_sensitive(False)
             self.password.set_sensitive(False)
+            self.btn_oauth.grab_focus()
         else:
             self.username.set_sensitive(True)
             self.password.set_sensitive(True)
+            self.username.grab_focus()
         
         self.mainwin.request_remember(user, pwd, prot, rem)
             

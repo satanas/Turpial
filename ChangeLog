@@ -1,10 +1,17 @@
+v1.6.0 (Aug 03, 2011):
+    + Implementado filtrado de tweets por frases/palabras
+    + Restarurado el acceso a los DMs
+    + Implementado soporte para la APIv2 de bit.ly
+    + Corregido error en la detección del sistema de notificaciones
+    + Corregidos otros errores menores
+    
 v1.5.0 (May 14, 2011):
-	+ Visualización de mensajes directos enviados
-	+ Soporte para listas y columnas personalizables
-	+ Coloreado de los tweets según su estado
-	+ Agregado diálogo para seguir usuarios
-	+ Agregado soporte para Identi.ca
-	+ Mejorada la estructura y organizacion de los archivos de configuracion
+    + Visualización de mensajes directos enviados
+    + Soporte para listas y columnas personalizables
+    + Coloreado de los tweets según su estado
+    + Agregado diálogo para seguir usuarios
+    + Agregado soporte para Identi.ca
+    + Mejorada la estructura y organizacion de los archivos de configuracion
     + Mejoradas las notificaciones
     + Optimizado el manejo de los estados y la generación de los menús (consume menos recursos)
     + Implementado autoscrolling

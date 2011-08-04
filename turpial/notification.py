@@ -42,7 +42,7 @@ class Notification:
         if self.disable:
             log.debug('Módulo deshabilitado. No hay notificaciones')
             return
-            
+        global NOTIFY
         if self.active and NOTIFY:
             if pynotify.init("Turpial"):
                 if not icon:
@@ -55,7 +55,6 @@ class Notification:
                     notification.show()
                 except GError:
                     log.debug('Notification service not running')
-                    global NOTIFY
                     NOTIFY = False
     
     def new_tweets(self, title, count, tobject, tweet, icon):

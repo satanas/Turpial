@@ -181,6 +181,10 @@ class BaseGui:
         '''Mute some user'''
         self.__controller.mute(user)
         
+    def request_filter(self, term):
+        '''Filter some terms'''
+        self.__controller.filter_term(term)
+
     def request_unmute(self, user):
         '''Unmute some user'''
         self.__controller.unmute(user)
@@ -236,6 +240,10 @@ class BaseGui:
     def request_muted_list(self):
         '''Get the muted list'''
         return self.__controller.get_muted_list()
+
+    def request_filtered_list(self):
+        '''Get the filtered list'''
+        return self.__controller.get_filtered_list()
         
     def request_destroy_direct(self, id):
         '''Destroy a direct message'''

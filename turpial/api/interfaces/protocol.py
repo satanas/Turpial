@@ -23,6 +23,7 @@ class Protocol:
         self.friends = []
         self.lists = [] #Posiblemente se use más adelante
         self.muted_users = []
+        self.filtered_terms = []
         
         self.apiurl = apiurl
         self.apiurl2 = apiurl2
@@ -168,7 +169,16 @@ class Protocol:
         else:
             self.log.debug('Silenciando a %s' % user)
             self.muted_users.append(user)
-        
+
+    def _filter_by_term(self, term):
+      self.log.debug('Agregando filtro por %s' % term)
+      if term not in self.filtered_terms:
+          self.filtered_terms.append(term)
+
+    def _filter_by_list(self, terms):
+      self.log.debug('Agregando filtro por %s' % terms)
+      self.filtered_terms = terms
+
     def _unmute_by_user(self, user):
         if not self.is_friend(user):
             self.log.debug('No se revela a %s porque no es tu amigo' % user)
@@ -195,7 +205,7 @@ class Protocol:
     def get_muted_timeline(self, statuses):
         timeline = []
         for tweet in statuses:
-            if not self.is_muted(tweet.username):
+            if not self.is_muted(tweet.username) and not self.is_filtered(tweet):
                 timeline.append(tweet)
         
         return timeline
@@ -208,7 +218,14 @@ class Protocol:
         
     def is_muted(self, user):
         return user in self.muted_users
-        
+
+    def is_filtered(self, tweet):
+        for term in self.filtered_terms:
+             if tweet.text.lower().find(term.lower()) != -1:
+                 self.log.debug(u"Filtrando '%s' por '%s" % (tweet.text, term))
+                 return True
+        return False
+
     def is_favorite(self, id):
         for sta in self.timeline:
             if not sta:
@@ -239,6 +256,22 @@ class Protocol:
                 Response(self.get_muted_timeline(self.replies), 'status'),
                 Response(self.get_muted_timeline(self.favorites), 'status'))
     
+    def filter_term(self, args):
+        arg = args['arg']
+        print "protocols.py: ", arg, type(arg).__name__
+        if type(arg).__name__ == 'list':
+            self._filter_by_list(arg)
+        else:
+            self._filter_by_term(arg)
+        
+        return (Response(self.get_muted_timeline(self.timeline), 'status'), 
+                Response(self.get_muted_timeline(self.replies), 'status'),
+                Response(self.get_muted_timeline(self.favorites), 'status'))
+
+    def get_filtered_terms_list(self):
+        ''' Retorna la lista de terminos que se quieren filtrar'''
+        return self.filtered_terms
+
     # ------------------------------------------------------------
     # Time related methods. Overwrite if necesary
     # ------------------------------------------------------------

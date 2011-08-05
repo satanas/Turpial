@@ -16,7 +16,7 @@ class Dock(gtk.Alignment):
         self.mainwin = parent
         
         self.btn_home = gtk.Button()
-        self.btn_home.set_relief(gtk.RELIEF_NONE)
+        self.btn_home.set_relief(gtk.RELIEF_NORMAL)
         self.btn_home.set_tooltip_text(_('Timeline, replies and others'))
         
         self.btn_profile = gtk.Button()
@@ -43,12 +43,12 @@ class Dock(gtk.Alignment):
         self.btn_about.set_relief(gtk.RELIEF_NONE)
         self.btn_about.set_tooltip_text(_('About Turpial'))
         
-        self.btn_home.connect('clicked', self.mainwin.show_home)
+        self.btn_home.connect('clicked', self.show_home)
         self.btn_follow.connect('clicked', self.show_follow)
         self.btn_update.connect('clicked', self.show_update)
         self.btn_upload.connect('clicked', self.show_upload)
-        self.btn_profile.connect('clicked', self.mainwin.show_profile)
-        self.btn_settings.connect('clicked', self.mainwin.show_preferences)
+        self.btn_profile.connect('clicked', self.show_profile)
+        self.btn_settings.connect('clicked', self.show_preferences)
         self.btn_about.connect('clicked', self.__show_about)
         
         box = gtk.HBox()
@@ -63,18 +63,47 @@ class Dock(gtk.Alignment):
         self.change_mode(mode)
         self.add(box)
         self.show_all()
+
+    def __clean_background(self):
+        self.btn_home.set_relief(gtk.RELIEF_NONE)
+        self.btn_profile.set_relief(gtk.RELIEF_NONE)
+        self.btn_follow.set_relief(gtk.RELIEF_NONE)
+        self.btn_update.set_relief(gtk.RELIEF_NONE)
+        self.btn_upload.set_relief(gtk.RELIEF_NONE)
+        self.btn_settings.set_relief(gtk.RELIEF_NONE)
+        self.btn_about.set_relief(gtk.RELIEF_NONE)
+
+    def __update_buttons(self, widget):
+        self.__clean_background()
+        widget.set_relief(gtk.RELIEF_NORMAL)
         
     def __show_about(self, widget):
+        self.__update_buttons(widget)
         about = About(self.mainwin)
+
+    def show_home(self, widget):
+        self.__update_buttons(widget)
+        self.mainwin.show_home(widget)
         
     def show_follow(self, widget):
+        self.__update_buttons(widget)
         self.mainwin.show_follow_box()
         
     def show_update(self, widget):
+        self.__update_buttons(widget)
         self.mainwin.show_update_box()
         
     def show_upload(self, widget):
+        self.__update_buttons(widget)
         self.mainwin.show_uploadpic_box()
+
+    def show_profile(self, widget):
+        self.__update_buttons(widget)
+        self.mainwin.show_profile(widget)
+
+    def show_preferences(self, widget):
+        self.__update_buttons(widget)
+        self.mainwin.show_preferences(widget)
         
     def change_mode(self, mode):
         self.btn_home.set_image(self.mainwin.load_image('dock-home.png'))

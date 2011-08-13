@@ -78,7 +78,6 @@ class Dock(gtk.Alignment):
         widget.set_relief(gtk.RELIEF_NORMAL)
         
     def __show_about(self, widget):
-        self.__update_buttons(widget)
         about = About(self.mainwin)
 
     def show_home(self, widget):
@@ -86,15 +85,12 @@ class Dock(gtk.Alignment):
         self.mainwin.show_home(widget)
         
     def show_follow(self, widget):
-        self.__update_buttons(widget)
         self.mainwin.show_follow_box()
         
     def show_update(self, widget):
-        self.__update_buttons(widget)
         self.mainwin.show_update_box()
         
     def show_upload(self, widget):
-        self.__update_buttons(widget)
         self.mainwin.show_uploadpic_box()
 
     def show_profile(self, widget):
@@ -102,7 +98,6 @@ class Dock(gtk.Alignment):
         self.mainwin.show_profile(widget)
 
     def show_preferences(self, widget):
-        self.__update_buttons(widget)
         self.mainwin.show_preferences(widget)
         
     def change_mode(self, mode):

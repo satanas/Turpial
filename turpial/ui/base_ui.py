@@ -91,6 +91,9 @@ class BaseGui:
             return path
         else:
             return default
+            
+    def get_current_protocol(self):
+        return self.__controller.current_protocol
     
     def parse_tweet(self, xtweet):
         '''Decompose tweet in basic parts'''
@@ -181,6 +184,10 @@ class BaseGui:
         '''Mute some user'''
         self.__controller.mute(user)
         
+    def request_filter(self, term):
+        '''Filter some terms'''
+        self.__controller.filter_term(term)
+
     def request_unmute(self, user):
         '''Unmute some user'''
         self.__controller.unmute(user)
@@ -236,6 +243,10 @@ class BaseGui:
     def request_muted_list(self):
         '''Get the muted list'''
         return self.__controller.get_muted_list()
+
+    def request_filtered_list(self):
+        '''Get the filtered list'''
+        return self.__controller.get_filtered_list()
         
     def request_destroy_direct(self, id):
         '''Destroy a direct message'''
@@ -341,6 +352,9 @@ class BaseGui:
     def main_loop(self):
         raise NotImplementedError
         
+    def main_quit(self, arg=None):
+        self.request_signout()
+    
     def show_login(self):
         raise NotImplementedError
         
@@ -414,8 +428,5 @@ class BaseGui:
         raise NotImplementedError
     
     def set_column_item(self, index, reset=False):
-        raise NotImplementedError
-            
-    def quit(self, arg):
         raise NotImplementedError
         

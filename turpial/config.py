@@ -24,7 +24,7 @@ UPDATE_TYPE_PROFILE = 'profile'
 
 GLOBAL_CFG = {
     'App':{
-        'version': '1.5.0-b10',
+        'version': '1.6.1-b2',
     },
     'Proxy':{
         'username': '',
@@ -193,6 +193,7 @@ class ConfigHandler(ConfigBase):
             self.imgdir = os.path.join(self.dir, 'images')
         self.filepath = os.path.join(self.dir, 'config')
         self.mutedpath = os.path.join(self.dir, 'muted')
+        self.filteredpath = os.path.join(self.dir, 'filtered')
     
     def initialize_failsafe(self):
         if not os.path.isdir(self.dir): 
@@ -204,6 +205,7 @@ class ConfigHandler(ConfigBase):
         self.log.debug('CACHEDIR: %s' % self.imgdir)
         self.log.debug('CONFIGFILE: %s' % self.filepath)
         self.log.debug('MUTEDFILE: %s' % self.mutedpath)
+        self.log.debug('FILTEREDFILE: %s' % self.filteredpath)
         
         if not os.path.isdir(self.dir): 
             os.makedirs(self.dir)
@@ -213,6 +215,8 @@ class ConfigHandler(ConfigBase):
             self.create()
         if not os.path.isfile(self.mutedpath): 
             self.create_muted_list()
+        if not os.path.isfile(self.filteredpath):
+            self.create_filtered_list()
         
         self.load()
         
@@ -236,6 +240,25 @@ class ConfigHandler(ConfigBase):
             _fd.write(user + '\n')
         _fd.close()
 
+    def create_filtered_list(self):
+        _fd = open(self.filteredpath, 'w')
+        _fd.close()
+        
+    def load_filtered_list(self):
+        filtered = []
+        _fd = open(self.filteredpath, 'r')
+        for line in _fd:
+            if line == '\n':
+                continue
+            filtered.append(line.strip('\n'))
+        _fd.close()
+        return filtered
+        
+    def save_filtered_list(self, lst):
+        _fd = open(self.filteredpath, 'w')
+        for item in lst:
+            _fd.write(item + '\n')
+        _fd.close()
 
 class ConfigApp(ConfigBase):
     """Configuracion de la aplicacion"""

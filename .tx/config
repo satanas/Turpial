@@ -1,8 +1,7 @@
-[turpial.i18n-Turpial]
-file_filter = turpial/i18n/<lang>/LC_MESSAGES/turpial.po
-source_file = turpial/i18n/turpial.pot
-source_lang = en
-
 [main]
 host = http://www.transifex.net
 
+[turpial.i18n-Turpial]
+file_filter = translations/turpial.i18n-Turpial/<lang>.po
+host = https://www.transifex.net
+source_lang = en

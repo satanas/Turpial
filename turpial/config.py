@@ -24,7 +24,7 @@ UPDATE_TYPE_PROFILE = 'profile'
 
 GLOBAL_CFG = {
     'App':{
-        'version': '1.6.1-b2',
+        'version': '1.6.3-b1',
     },
     'Proxy':{
         'username': '',
@@ -41,6 +41,11 @@ PROTOCOL_CFG = {
     }
 }
 DEFAULT_CFG = {
+    'Auth':{
+        'oauth-key': '',
+        'oauth-secret': '',
+        'oauth-verifier': '',
+    },
     'General':{
         'home-update-interval': '3',
         'replies-update-interval': '10',

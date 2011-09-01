@@ -142,6 +142,10 @@ class BaseGui:
         '''Request simple signin'''
         self.__controller.signin(username, password, protocol)
         
+    def request_auth_token(self, pin):
+        '''Request OAuth token authorization'''
+        self.__controller.auth_token(pin)
+        
     def request_signout(self):
         '''Request signout'''
         self.__controller.signout()

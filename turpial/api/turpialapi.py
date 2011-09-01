@@ -54,17 +54,28 @@ class TurpialAPI(threading.Thread):
     def is_fav(self, id):
         return self.protocol.is_favorite(id)
     
-    def auth(self, username, password, auth_info, protocol, callback):
+    def auth(self, username, password, auth_info, callback):
         '''Inicio de autenticacion'''
-        args = {'username': username, 'password': password, 'auth': auth_info,
-            'protocol': protocol}
+        args = {'username': username, 'password': password, 'auth': auth_info}
         self.log.debug('Solicitando autenticacion')
+        self.__register(self.protocol.auth, args, callback)
+        
+    def start_oauth(self, auth_info, protocol, callback):
+        '''Inicio de autenticacion'''
+        args = {'auth': auth_info}
         if protocol == PROTOCOLS[0]:
             self.protocol = twitter.Twitter()
         elif protocol == PROTOCOLS[1]:
             self.protocol = identica.Identica()
-        self.__register(self.protocol.auth, args, callback)
-            
+        self.log.debug('Iniciando autenticacion segura')
+        self.__register(self.protocol.start_oauth, args, callback)
+    
+    def authorize_oauth_token(self, pin, callback):
+        '''Solicitud de autenticacion del token'''
+        args = {'pin': pin}
+        self.log.debug('Solicitando autenticacion del token')
+        self.__register(self.protocol.authorize_oauth_token, args, callback)
+        
     def update_column(self, callback, count, column):
         if column.id == 'timeline':
             self.update_timeline(callback, count)

@@ -10,30 +10,27 @@ import gtk
 import base64
 import logging
 import gobject
-import webbrowser
+import thread
 
+from turpial.sound import Sound
+from turpial.ui import util as util
+from turpial.ui.gtk.home import Home
+from turpial.ui.gtk.dock import Dock
+from turpial.ui.base_ui import BaseGui
+from turpial.ui.gtk.follow import Follow
+from turpial.ui.gtk.login import LoginBox
+from turpial.ui.gtk.profile import Profile
+from turpial.ui.gtk.inputpin import InputPin
+from turpial.notification import Notification
 from turpial.ui.gtk.updatebox import UpdateBox
+from turpial.ui.gtk.oauthwin import OAuthWindow
+from turpial.ui.gtk.preferences import Preferences
 from turpial.ui.gtk.uploadpicbox import UploadPicBox
 from turpial.ui.gtk.conversation import ConversationBox
-from turpial.ui.gtk.login import LoginBox
-from turpial.ui.gtk.preferences import Preferences
-from turpial.ui.gtk.home import Home
-from turpial.ui.gtk.profile import Profile
-from turpial.ui.gtk.dock import Dock
-from turpial.ui.gtk.follow import Follow
-from turpial.ui.base_ui import BaseGui
-from turpial.notification import Notification
-from turpial.ui import util as util
-from turpial.sound import Sound
-
-try:
-    import webkit
-    extend_mode = True
-except:
-    extend_mode = False
 
 gtk.gdk.set_program_class("Turpial")
 gtk.gdk.threads_init()
+gobject.threads_init()
 
 log = logging.getLogger('Gtk')
 
@@ -90,6 +87,7 @@ class Main(BaseGui, gtk.Window):
         self.updatebox = UpdateBox(self)
         self.uploadpic = UploadPicBox(self)
         self.replybox = ConversationBox(self)
+        self.oauthwin = OAuthWindow(self)
         
         if self.extend:
             log.debug('Cargado modo GTK Extendido')
@@ -331,6 +329,9 @@ class Main(BaseGui, gtk.Window):
     def cancel_login(self, error):
         self.vbox.cancel_login(error)
         
+    def show_oauth_pin_request(self, url):
+        gobject.idle_add(self.oauthwin.open, url)
+        
     def show_main(self, config, global_cfg, p):
         log.debug('Cargando ventana principal')
         self.mode = 2
@@ -350,13 +351,13 @@ class Main(BaseGui, gtk.Window):
         self.vbox.pack_start(self.statusbar, False, False, 0)
         
         self.profile.set_user_profile(p)
-        self.me = p.items.username
+        self.me = p.username
         title = 'Turpial - %s (%s)' % (self.me, self.get_current_protocol())
         self.set_title(title)
         self.tray.set_tooltip(title)
         
         if config.read('General', 'profile-color') == 'on':
-            self.link_color = p.items.profile_link_color
+            self.link_color = p.profile_link_color
         
         self.add(self.vbox)
         self.show_all()
@@ -377,7 +378,7 @@ class Main(BaseGui, gtk.Window):
         gtk.gdk.threads_leave()
         
         if config.read('Notifications', 'login') == 'on':
-            self.notify.login(p.items)
+            self.notify.login(p)
             if config.read('Notifications', 'sound') == 'on':
                 self.sound.login()
         
@@ -666,4 +667,3 @@ class Main(BaseGui, gtk.Window):
         
     def following_error(self, message, follow):
         self.notify.following_error(message, follow)
-

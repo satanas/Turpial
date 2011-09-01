@@ -180,21 +180,41 @@ class Turpial:
         self.remember(user, passwd, protocol, True)
         print "Credentials saved successfully"
         
-    def __validate_credentials(self, val, key, secret, protocol):
+    def __validate_credentials(self, val): #, protocol):
         '''Chequeo de credenciales'''
         if val.type == 'error':
             self.ui.cancel_login(val.errmsg)
         elif val.type == 'profile':
             self.profile = val.items
-            self.config = ConfigHandler(self.profile.username, protocol)
+            self.config = ConfigHandler(self.profile.username, self.current_protocol)
             self.config.initialize()
             
-            self.current_protocol = protocol
+            #self.current_protocol = protocol
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.profile.username, 
                 self.profile.password, self.api.protocol.http)
             
-            self.__signin_done(key, secret, val)
+            #auth = self.config.read_section('Auth')
+            #self.api.start_oauth(auth, self.__validate_token)
+            self.__signin_done()
+            
+    def __validate_token(self, val):
+        if val.type == 'auth-done':
+            token = val.items
+            self.__save_oauth_token(token.key, token.secret, token.verifier)
+        elif val.type == 'auth-token':
+            self.ui.show_oauth_pin_request(val.items)
+            
+    def __save_oauth_token(self, key, secret, verifier):
+        if key is not None:
+            self.config.write('Auth', 'oauth-key', key)
+        if secret is not None:
+            self.config.write('Auth', 'oauth-secret', secret)
+        if verifier is not None:
+            self.config.write('Auth', 'oauth-verifier', verifier)
+        auth = self.config.read_section('Auth')
+        self.api.auth(self.tmp_username, self.tmp_passwd, auth, 
+            self.__validate_credentials)
     
     def __done_follow(self, response):
         user = response.items[1]
@@ -217,9 +237,10 @@ class Turpial:
             self.ui.update_user_profile(self.profile)
         self.ui.tweet_done(status)
         
-    def __signin_done(self, key, secret, resp_profile):
+    def __signin_done(self):
         '''Inicio de sesion finalizado'''
-        
+        resp_profile = self.profile
+            
         # TODO: Llenar con el resto de listas
         self.lists = {
             'timeline': MicroBloggingList('timeline', '', _('Timeline'),
@@ -351,11 +372,17 @@ class Turpial:
         self.protocol_cfg[protocol].write('Login', 'password', pwd)
     
     def signin(self, username, password, protocol):
-        config = ConfigHandler(username, protocol)
-        config.initialize_failsafe()
-        auth = config.read_section('Auth')
-        self.api.auth(username, password, auth, protocol,
-            self.__validate_credentials)
+        self.config = ConfigHandler(username, protocol)
+        self.config.initialize_failsafe()
+        auth = self.config.read_section('Auth')
+        self.tmp_username = username
+        self.tmp_passwd = password
+        self.current_protocol = protocol
+        self.api.start_oauth(auth, protocol, self.__validate_token)
+    
+    def auth_token(self, pin):
+        print 'PIN', pin
+        self.api.authorize_oauth_token(pin, self.__save_oauth_token)
         
     def signout(self):
         '''Finalizar sesion'''

@@ -173,6 +173,7 @@ class GeneralTab(PreferencesTab):
         pf = True if self.current['profile-color'] == 'on' else False
         ws = True if self.current['workspace'] == 'wide' else False
         min = True if self.current['minimize-on-close'] == 'on' else False
+        exp_urls = True if self.current['expand-urls'] == 'on' else False
         
         self.home = TimeScroll(_('Column 1 (Left)'), h,
             callback=self.update_api_calls)
@@ -220,6 +221,14 @@ class GeneralTab(PreferencesTab):
             )
         except:
             pass
+            
+        self.expand_urls = gtk.CheckButton(_('Expand URLs'))
+        self.expand_urls.set_active(exp_urls)
+        try:
+            self.expand_urls.set_has_tooltip(True)
+            self.expand_urls.set_tooltip_text(_('Expand URLS in Open menu'))
+        except:
+            pass
 
         self.pack_start(self.home, False, False, 5)
         self.pack_start(self.replies, False, False, 5)
@@ -229,6 +238,7 @@ class GeneralTab(PreferencesTab):
         self.pack_start(self.workspace, False, False, 2)
         self.pack_start(self.profile_colors, False, False, 2)
         self.pack_start(self.minimize, False, False, 2)
+        self.pack_start(self.expand_urls, False, False, 2)
         self.show_all()
         self.update_api_calls()
         
@@ -245,6 +255,7 @@ class GeneralTab(PreferencesTab):
         ws = 'wide' if self.workspace.get_active() else 'single'
         min = 'on' if self.minimize.get_active() else 'off'
         pf = 'on' if self.profile_colors.get_active() else 'off'
+        exp_url = 'on' if self.expand_urls.get_active() else 'off'
         
         return {
             'home-update-interval': int(self.home.value),
@@ -254,6 +265,7 @@ class GeneralTab(PreferencesTab):
             'profile-color': pf,
             'minimize-on-close': min,
             'num-tweets': int(self.tweets.value),
+            'expand-urls': exp_url,
         }
 
 class NotificationsTab(PreferencesTab):

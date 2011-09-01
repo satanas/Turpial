@@ -104,6 +104,14 @@ class StandardColumn(GenericColumn):
         self.refresh.connect('clicked', self.__manual_update)
         self.mark_all.connect('clicked', self.__mark_all_as_read)
         
+    def __update_widgets(self):
+        if self.listcombo.get_sensitive():
+            self.refresh.show()
+            self.walign.hide()
+        else:
+            self.refresh.hide()
+            self.walign.show()
+            
     def __manual_update(self, widget):
         self.mainwin.manual_update(self.pos)
         
@@ -168,6 +176,8 @@ class StandardColumn(GenericColumn):
     def start_update(self):
         self.waiting.start()
         self.errorbox.hide()
+        self.refresh.hide()
+        self.walign.show()
         self.refresh.set_sensitive(False)
         self.listcombo.set_sensitive(False)
         self.mark_all.set_sensitive(False)
@@ -179,9 +189,15 @@ class StandardColumn(GenericColumn):
             self.set_combo_item()
         self.waiting.stop(error)
         self.errorbox.show_error(msg, error)
+        self.refresh.show()
+        self.walign.hide()
         self.refresh.set_sensitive(True)
         self.listcombo.set_sensitive(True)
         self.mark_all.set_sensitive(True)
+    
+    def update_wrap(self, width):
+        self.statuslist.update_wrap(width)
+        self.__update_widgets()
         
 class SingleColumn(GenericColumn):
     def __init__(self, mainwin, label=''):

@@ -1,10 +1,9 @@
-v1.6.2 (Sep 01, 2011):
-    + Mejoras menores en la interfaz gráfica
-    + Implementada opción para expandir URLs en el menú contextual
-    + Implementado diálogo para la autorización de la aplicación contra Twitter
+v1.6.4 (Sep 01, 2011):
     + Agregado soporte para acortador goo.gl
-    
-v1.6.0 (Aug 03, 2011):
+    + Implementada opción para expandir URLs en el menú contextual
+    + Solo se resaltan los tweets nuevos en cada actualización
+    + Mejoras menores en la interfaz gráfica
+    + Implementado diálogo para la autorización de la aplicación contra Twitter
     + Implementado filtrado de tweets por frases/palabras
     + Restarurado el acceso a los DMs
     + Implementado soporte para la APIv2 de bit.ly

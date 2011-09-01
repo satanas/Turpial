@@ -347,7 +347,7 @@ class StatusList(gtk.ScrolledWindow):
     
     def update(self, statuses):
         self.list.disconnect(self.click_handler)
-        
+        self.mark_all_as_read()
         self.__set_last_time()
         
         new_count = 0
@@ -360,7 +360,6 @@ class StatusList(gtk.ScrolledWindow):
             self.list.scroll_to_cell((0,))
         
         self.last = statuses
-        #self.click_handler = self.list.connect("button-release-event", self.__on_click)
         self.click_handler = self.list.connect("cursor-changed", self.__on_select)
         return new_count
     

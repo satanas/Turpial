@@ -189,13 +189,17 @@ class Turpial:
             self.config = ConfigHandler(self.profile.username, self.current_protocol)
             self.config.initialize()
             
-            #self.current_protocol = protocol
+            if self.tmp_key is not None:
+                self.config.write('Auth', 'oauth-key', self.tmp_key)
+            if self.tmp_secret is not None:
+                self.config.write('Auth', 'oauth-secret', self.tmp_secret)
+            if self.tmp_verifier is not None:
+                self.config.write('Auth', 'oauth-verifier', self.tmp_verifier)
+            
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.profile.username, 
                 self.profile.password, self.api.protocol.http)
             
-            #auth = self.config.read_section('Auth')
-            #self.api.start_oauth(auth, self.__validate_token)
             self.__signin_done()
             
     def __validate_token(self, val):
@@ -206,12 +210,9 @@ class Turpial:
             self.ui.show_oauth_pin_request(val.items)
             
     def __save_oauth_token(self, key, secret, verifier):
-        if key is not None:
-            self.config.write('Auth', 'oauth-key', key)
-        if secret is not None:
-            self.config.write('Auth', 'oauth-secret', secret)
-        if verifier is not None:
-            self.config.write('Auth', 'oauth-verifier', verifier)
+        self.tmp_key = key
+        self.tmp_secret = secret
+        self.tmp_verifier = verifier
         auth = self.config.read_section('Auth')
         self.api.auth(self.tmp_username, self.tmp_passwd, auth, 
             self.__validate_credentials)

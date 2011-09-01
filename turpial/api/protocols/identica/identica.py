@@ -158,8 +158,6 @@ class Identica(Protocol):
         self.log.debug('Iniciando autenticacion segura')
         username = args['username']
         password = args['password']
-        auth = args['auth']
-        protocol = args['protocol']
         
         try:
             self.http.auth(username, password, None)
@@ -167,13 +165,17 @@ class Identica(Protocol):
                 self.apiurl)
             self.profile = self.__create_profile(rtn)
             self.profile.password = password
-            
-            return Response(self.profile, 'profile'), None, None, protocol
+            return Response(self.profile, 'profile')
         except TurpialException, exc:
-            return Response(None, 'error', exc.msg), None, None, None
+            return Response(None, 'error', exc.msg)
         except Exception, exc:
             self.log.debug('Authentication Error: %s' % exc)
-            return Response(None, 'error', _('Authentication Error')), None, None, None
+            return Response(None, 'error', _('Authentication Error'))
+    
+    def start_oauth(self, args):
+        auth = args['auth']
+        token = self.http.build_token(auth)
+        return Response(token, 'auth-done')
         
     def get_timeline(self, args):
         '''Actualizando linea de tiempo'''

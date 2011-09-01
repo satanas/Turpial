@@ -5,4 +5,3 @@ host = http://www.transifex.net
 file_filter = translations/turpial.i18n-Turpial/<lang>.po
 host = https://www.transifex.net
 source_lang = en
-

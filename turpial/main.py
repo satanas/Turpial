@@ -516,10 +516,13 @@ class Turpial:
         if self.lists.has_key(new_id):
             self.viewed_cols[index] = self.lists[new_id]
             if index == 0:
+                self.ui.home.timeline.clear()
                 self._update_column1()
             elif index == 1:
+                self.ui.home.replies.clear()
                 self._update_column2()
             elif index == 2:
+                self.ui.home.direct.clear()
                 self._update_column3()
         else:
             self.ui.set_column_item(index, reset=True)

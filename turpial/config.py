@@ -32,6 +32,9 @@ GLOBAL_CFG = {
         'server': '',
         'port': '',
         'url': '',
+    },
+    'Startup':{
+        'autologin': 'off',
     }
 }
 PROTOCOL_CFG = {
@@ -191,10 +194,10 @@ class ConfigHandler(ConfigBase):
         ConfigBase.__init__(self)
         
         self.dir = os.path.join(os.path.expanduser('~'), '.config',
-            'turpial', protocol, user)
+            'turpial', protocol, user.lower())
         if XDG_CACHE:
             self.imgdir = os.path.join(BaseDirectory.xdg_cache_home, 
-                'turpial', protocol, user, 'images')
+                'turpial', protocol, user.lower(), 'images')
         else:
             self.imgdir = os.path.join(self.dir, 'images')
         self.filepath = os.path.join(self.dir, 'config')
@@ -202,10 +205,18 @@ class ConfigHandler(ConfigBase):
         self.filteredpath = os.path.join(self.dir, 'filtered')
     
     def initialize_failsafe(self):
+        '''
         if not os.path.isdir(self.dir): 
             self.load_failsafe()
         else:
             self.initialize()
+        '''
+        try:
+            self.initialize()
+            self.log.debug('Loaded user configuration')
+        except Except, exc:
+            self.load_failsafe()
+            self.log.debug('Loaded failsafe configuration')
             
     def initialize(self):
         self.log.debug('CACHEDIR: %s' % self.imgdir)

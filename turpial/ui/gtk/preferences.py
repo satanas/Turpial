@@ -49,8 +49,10 @@ class Preferences(gtk.Window):
             self.muted = MutedTab(self.mainwin)
             self.filtered = FilterTab(self.mainwin)
             self.browser = BrowserTab(self.mainwin, self.current['Browser'])
+            self.startup = StartupTab(self.global_cfg['Startup'])
             
             notebook.append_page(self.general, gtk.Label(_('General')))
+            notebook.append_page(self.startup, gtk.Label(_('Startup')))
             notebook.append_page(self.notif, gtk.Label(_('Notifications')))
             notebook.append_page(self.services, gtk.Label(_('Services')))
             notebook.append_page(self.muted, gtk.Label(_('Mute')))
@@ -81,6 +83,7 @@ class Preferences(gtk.Window):
             notif = self.notif.get_config()
             services = self.services.get_config()
             browser = self.browser.get_config()
+            startup = self.startup.get_config()
             
             new_config = {
                 'General': general,
@@ -96,6 +99,7 @@ class Preferences(gtk.Window):
         proxy = self.proxy.get_config()
         new_global = {
             'Proxy': proxy,
+            'Startup': startup,
         }
         
         self.destroy()
@@ -719,3 +723,30 @@ class ProxyTab(PreferencesTab):
             'url': self.url.get_text()
         }
         
+class StartupTab(PreferencesTab):
+    def __init__(self, current):
+        PreferencesTab.__init__(
+            self,
+            _('Configure Turpial behavior at startup'),
+            current
+        )
+        
+        auto = True if self.current['autologin'] == 'on' else False
+        
+        self.autologin = gtk.CheckButton(_('Automatic login'))
+        self.autologin.set_active(auto)
+        try:
+            self.autologin.set_has_tooltip(True)
+            self.autologin.set_tooltip_text(_('Login automatically at Turpial startup'))
+        except:
+            pass
+
+        self.pack_start(self.autologin, False, False, 5)
+        self.show_all()
+        
+    def get_config(self):
+        autologin = 'on' if self.autologin.get_active() else 'off'
+        
+        return {
+            'autologin': autologin,
+        }

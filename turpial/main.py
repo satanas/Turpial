@@ -180,7 +180,7 @@ class Turpial:
         self.remember(user, passwd, protocol, True)
         print "Credentials saved successfully"
         
-    def __validate_credentials(self, val): #, protocol):
+    def __validate_credentials(self, val):
         '''Chequeo de credenciales'''
         if val.type == 'error':
             self.ui.cancel_login(val.errmsg)
@@ -201,14 +201,14 @@ class Turpial:
                 self.profile.password, self.api.protocol.http)
             
             self.__signin_done()
-            
+        
     def __validate_token(self, val):
         if val.type == 'auth-done':
             token = val.items
             self.__save_oauth_token(token.key, token.secret, token.verifier)
         elif val.type == 'auth-token':
             self.ui.show_oauth_pin_request(val.items)
-            
+        
     def __save_oauth_token(self, key, secret, verifier):
         self.tmp_key = key
         self.tmp_secret = secret
@@ -216,7 +216,7 @@ class Turpial:
         auth = self.config.read_section('Auth')
         self.api.auth(self.tmp_username, self.tmp_passwd, auth, 
             self.__validate_credentials)
-    
+        
     def __done_follow(self, response):
         user = response.items[1]
         follow = response.items[2]
@@ -339,7 +339,12 @@ class Turpial:
         protocol = PROTOCOLS[index]
         us = self.protocol_cfg[protocol].read('Login', 'username')
         pw = self.protocol_cfg[protocol].read('Login', 'password')
+        au = self.global_cfg.read('Startup', 'autologin')
         try:
+            if au == 'on':
+                auto = True
+            else:
+                auto = False
             if us != '' and pw != '':
                 a = base64.b64decode(pw)
                 b = a[1:-1]
@@ -347,15 +352,16 @@ class Turpial:
                 d = c[1:-1]
                 e = base64.b16decode(d)
                 pwd = e[0:len(us)]+ e[len(us):]
-                return us, pwd, True
+                return us, pwd, True, auto
             else:
-                return us, pw, False
+                return us, pw, False, False
         except TypeError:
             self.protocol_cfg[protocol].write('Login', 'username','')
             self.protocol_cfg[protocol].write('Login', 'password','')
-            return '', '', False
+            self.global_cfg.write('Startup', 'autologin', 'off')
+            return '', '', False, False
         
-    def remember(self, us='', pw='', pro=0, rem=False):
+    def remember(self, us='', pw='', pro=0, rem=False, auto=False):
         protocol = PROTOCOLS[pro]
         if not rem:
             self.protocol_cfg[protocol].write('Login', 'username', '')
@@ -371,7 +377,11 @@ class Turpial:
         
         self.protocol_cfg[protocol].write('Login', 'username', us)
         self.protocol_cfg[protocol].write('Login', 'password', pwd)
-    
+        if auto:
+            self.global_cfg.write('Startup', 'autologin', 'on')
+        else:
+            self.global_cfg.write('Startup', 'autologin', 'off')
+            
     def signin(self, username, password, protocol):
         self.config = ConfigHandler(username, protocol)
         self.config.initialize_failsafe()

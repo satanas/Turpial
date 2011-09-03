@@ -1,21 +1,23 @@
-# Catalan translations for turpial.
+# Translations template for turpial.
 # Copyright (C) 2011 Turpial
 # This file is distributed under the same license as the turpial project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
-#
+# 
+# dadava <david.vallespi@gmail.com>, 2011.
+# norbux <manelsales@ono.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version:  Turpial\n"
+"Project-Id-Version: Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
 "POT-Creation-Date: 2011-09-03 11:20-0300\n"
-"PO-Revision-Date: 2011-03-22 15:12+0000\n"
-"Last-Translator: norbux <manelsales@ono.com>\n"
-"Language-Team: ca <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"PO-Revision-Date: 2011-09-03 14:40+0000\n"
+"Last-Translator: satanas <wil.alejandro@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+"Language: ca\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: turpial/main.py:247 turpial/ui/gtk/home.py:25
 msgid "Timeline"
@@ -97,9 +99,8 @@ msgstr "Sel·leccioneu alguna cosa per pujar"
 
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:139
-#, fuzzy
 msgid "Sorry, you don't have more APIcalls"
-msgstr "Disculpa, no tens mes crides a la API "
+msgstr ""
 
 #: turpial/api/protocols/identica/http.py:37
 #: turpial/api/protocols/twitter/http.py:142
@@ -292,14 +293,14 @@ msgid "Add friend"
 msgstr "Afegir amic"
 
 #: turpial/ui/gtk/friendwin.py:78 turpial/ui/gtk/preferences.py:481
-msgid "What? You don't have any friends. Try to go out and know some nice people"
+msgid ""
+"What? You don't have any friends. Try to go out and know some nice people"
 msgstr "Què? No tens amics. Intenta sortir i conèixer gent agradable"
 
 #: turpial/ui/gtk/friendwin.py:88 turpial/ui/gtk/preferences.py:490
 msgid "I am still loading all of your friends. Try again in a few seconds"
 msgstr ""
-"Encara estic carregant tots els teus amics. Torna a provar-ho en uns "
-"segons"
+"Encara estic carregant tots els teus amics. Torna a provar-ho en uns segons"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 msgid "Mentions"
@@ -399,7 +400,7 @@ msgstr "Deixar de seguir"
 
 #: turpial/ui/gtk/menu.py:287
 msgid "Marking favorite..."
-msgstr "Marcant preferit"
+msgstr "Marcant preferit..."
 
 #: turpial/ui/gtk/menu.py:290
 msgid "Unmarking favorite..."
@@ -410,12 +411,12 @@ msgid "Deleting..."
 msgstr "Esborrant..."
 
 #: turpial/ui/gtk/oauthwin.py:19
-#, fuzzy
 msgid "Secure Authentication"
-msgstr "Error d'autenticació"
+msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:46
-msgid "Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
+msgid ""
+"Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:86
@@ -423,9 +424,8 @@ msgid "You must write a valid PIN"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:93
-#, fuzzy
 msgid "Loading..."
-msgstr "Guardant..."
+msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:107
 msgid "Login cancelled by user"
@@ -457,9 +457,8 @@ msgid "Services"
 msgstr "Serveis"
 
 #: turpial/ui/gtk/preferences.py:59
-#, fuzzy
 msgid "Filters"
-msgstr "Perfil"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:60
 msgid "Web Browser"
@@ -470,11 +469,10 @@ msgid "API Proxy"
 msgstr "API Proxy"
 
 #: turpial/ui/gtk/preferences.py:168
-#, fuzzy
 msgid "Adjust update frequency for timeline, mentions and direct messages"
 msgstr ""
-"Ajusta la freqüència d'actualització de la línia de temps, les mencions i"
-" els missatges directes"
+"Ajusta la freqüència d'actualització de la línia de temps, les mencions i "
+"els missatges directes"
 
 #: turpial/ui/gtk/preferences.py:182 turpial/ui/gtk/preferences.py:289
 msgid "Column 1 (Left)"
@@ -505,25 +503,22 @@ msgid "Show a workspace of 3 columns"
 msgstr "Mostra una espai de treball de 3 columnes"
 
 #: turpial/ui/gtk/preferences.py:205
-#, fuzzy
 msgid "Load profile color (Needs Turpial to be restarted)"
-msgstr "Carrega el color del perfil (Necessites reiniciar Turpial)"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:211
-#, fuzzy
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
 msgstr ""
-"Utilitzeu el color del perfil d'usuari per ressaltar les mencions, "
-"hashtags i URLs"
+"Utilitzeu el color del perfil d'usuari per ressaltar les mencions, hashtags "
+"i URLs"
 
 #: turpial/ui/gtk/preferences.py:218
 msgid "Minimize to tray"
 msgstr "Minimitzar a la safata"
 
 #: turpial/ui/gtk/preferences.py:222
-#, fuzzy
 msgid "Send Turpial to system tray when closing main window"
-msgstr "Enviar Turpial a la safata del sistema en comptes de tancar-ho"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:229
 msgid "Expand URLs"
@@ -534,14 +529,13 @@ msgid "Expand URLS in Open menu"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:254
-#, fuzzy, python-format
+#, python-format
 msgid "Turpial will use aprox. %i calls to API per hour"
-msgstr "Fareu servir aprox. %i crides a la API per hora"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:279
-#, fuzzy
 msgid "Select the notifications you want to receive from Turpial"
-msgstr "Selecciona les notificacions que desitgis rebre del Turpial"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:325
 msgid "Login"
@@ -550,8 +544,7 @@ msgstr "Inici de sessió"
 #: turpial/ui/gtk/preferences.py:330
 msgid "Show a notification at login with your user info"
 msgstr ""
-"Mostra una notificació en iniciar la sessió amb la teva informació "
-"d'usuari"
+"Mostra una notificació en iniciar la sessió amb la teva informació d'usuari"
 
 #: turpial/ui/gtk/preferences.py:335
 msgid "Activate sounds"
@@ -562,11 +555,8 @@ msgid "Activate sounds for each notification"
 msgstr "Activar els sons per a cada notificació"
 
 #: turpial/ui/gtk/preferences.py:371
-#, fuzzy
 msgid "Select your preferred services to shorten URLs and to upload images"
 msgstr ""
-"Selecciona el teu servei preferit per escurçar adreces URL i carregar "
-"imatges"
 
 #: turpial/ui/gtk/preferences.py:379 turpial/ui/gtk/updatebox.py:65
 #: turpial/ui/gtk/updatebox.py:66
@@ -578,20 +568,16 @@ msgid "Upload images"
 msgstr "Carregar imatges"
 
 #: turpial/ui/gtk/preferences.py:422
-#, fuzzy
 msgid "Select all those users that bother you and shut them up temporarily"
 msgstr ""
-"Selecciona tots aquells usuaris que estan molestant i silencia'ls "
-"temporalment"
 
 #: turpial/ui/gtk/preferences.py:517
 msgid "Filter out words you don't want to see"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:524
-#, fuzzy
 msgid "New Filter"
-msgstr "Perfil"
+msgstr ""
 
 #: turpial/ui/gtk/preferences.py:589
 msgid "Setup your favorite web browser to open all links"
@@ -752,4 +738,5 @@ msgstr "Bio"
 #: turpial/ui/gtk/userform.py:179
 msgid "Saving..."
 msgstr "Guardant..."
+
 

@@ -1,4 +1,4 @@
-v1.6.4 (Sep 01, 2011):
+v1.6.5 (Sep 01, 2011):
     + Agregado soporte para acortador goo.gl
     + Implementada opción para expandir URLs en el menú contextual
     + Solo se resaltan los tweets nuevos en cada actualización

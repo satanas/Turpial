@@ -56,7 +56,7 @@ class Preferences(gtk.Window):
             notebook.append_page(self.notif, gtk.Label(_('Notifications')))
             notebook.append_page(self.services, gtk.Label(_('Services')))
             notebook.append_page(self.muted, gtk.Label(_('Mute')))
-            notebook.append_page(self.filtered, gtk.Label(_('Filter')))
+            notebook.append_page(self.filtered, gtk.Label(_('Filters')))
             notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
             
         self.proxy = ProxyTab(self.global_cfg['Proxy'])
@@ -165,7 +165,7 @@ class GeneralTab(PreferencesTab):
     def __init__(self, current):
         PreferencesTab.__init__(
             self,
-            _('Adjust update frequency for'
+            _('Adjust update frequency for '
               'timeline, mentions and direct messages'),
             current
         )
@@ -203,13 +203,13 @@ class GeneralTab(PreferencesTab):
             pass
         
         self.profile_colors = gtk.CheckButton(_(
-            'Load profile color'
+            'Load profile color '
             '(Needs Turpial to be restarted)'))
         self.profile_colors.set_active(pf)
         try:
             self.profile_colors.set_has_tooltip(True)
             self.profile_colors.set_tooltip_text(_(
-                'Use user profile color'
+                'Use user profile color '
                 'to highlight mentions, hashtags and URLs')
             )
         except:
@@ -220,7 +220,7 @@ class GeneralTab(PreferencesTab):
         try:
             self.minimize.set_has_tooltip(True)
             self.minimize.set_tooltip_text(_(
-                'Send Turpial to system tray'
+                'Send Turpial to system tray '
                 'when closing main window')
             )
         except:
@@ -514,14 +514,14 @@ class MutedTab(PreferencesTab):
 
 class FilterTab(PreferencesTab):
     def __init__(self, parent):
-        PreferencesTab.__init__(self, _('Filter out words you do not want to see'))
+        PreferencesTab.__init__(self, _("Filter out words you don't want to see"))
 
         self.mainwin = parent
 
         self.filtered = self.mainwin.request_filtered_list()
         self.updated_filtered = set(self.filtered)
         input_box = gtk.HBox()
-        input_box.pack_start(gtk.Label("New Filter"), False, False, 0)
+        input_box.pack_start(gtk.Label(_("New Filter")), False, False, 0)
         self.term_input = gtk.Entry()
         input_box.pack_start(self.term_input, True, True, 2)
         add_button = gtk.Button("+")
@@ -737,7 +737,7 @@ class StartupTab(PreferencesTab):
         self.autologin.set_active(auto)
         try:
             self.autologin.set_has_tooltip(True)
-            self.autologin.set_tooltip_text(_('Login automatically at Turpial startup'))
+            self.autologin.set_tooltip_text(_('Login automatically at startup'))
         except:
             pass
 

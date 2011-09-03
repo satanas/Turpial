@@ -1,22 +1,22 @@
-# Translations template for turpial.
+# Russian (Russia) translations for turpial.
 # Copyright (C) 2011 Turpial
 # This file is distributed under the same license as the turpial project.
-# 
+#
 # Анатолий Щербина <nobus1967@yandex.ru>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: Turpial\n"
+"Project-Id-Version:  Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
-"POT-Creation-Date: 2011-09-03 11:20-0300\n"
+"POT-Creation-Date: 2011-09-03 14:08-0300\n"
 "PO-Revision-Date: 2011-09-03 14:40+0000\n"
 "Last-Translator: satanas <wil.alejandro@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: ru_RU <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"Language: ru_RU\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: turpial/main.py:247 turpial/ui/gtk/home.py:25
 msgid "Timeline"
@@ -292,16 +292,14 @@ msgid "Add friend"
 msgstr "Добавить друга"
 
 #: turpial/ui/gtk/friendwin.py:78 turpial/ui/gtk/preferences.py:481
-msgid ""
-"What? You don't have any friends. Try to go out and know some nice people"
-msgstr ""
-"Что? У Вас нет друзей. Выйдите и познакомьтесь с несколькими милыми людьми"
+msgid "What? You don't have any friends. Try to go out and know some nice people"
+msgstr "Что? У Вас нет друзей. Выйдите и познакомьтесь с несколькими милыми людьми"
 
 #: turpial/ui/gtk/friendwin.py:88 turpial/ui/gtk/preferences.py:490
 msgid "I am still loading all of your friends. Try again in a few seconds"
 msgstr ""
-"Я все еще загружаю информацию обо всех Ваших друзьях. Попробуйте вновь через"
-" несколько секунд"
+"Я все еще загружаю информацию обо всех Ваших друзьях. Попробуйте вновь "
+"через несколько секунд"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 msgid "Mentions"
@@ -416,8 +414,7 @@ msgid "Secure Authentication"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:46
-msgid ""
-"Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
+msgid "Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:86
@@ -508,7 +505,8 @@ msgstr ""
 #: turpial/ui/gtk/preferences.py:211
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
 msgstr ""
-"Использовать профиль пользователя для подсвечивания упоминаний, тегов и URL"
+"Использовать профиль пользователя для подсвечивания упоминаний, тегов и "
+"URL"
 
 #: turpial/ui/gtk/preferences.py:218
 msgid "Minimize to tray"
@@ -541,8 +539,7 @@ msgstr "Логин"
 
 #: turpial/ui/gtk/preferences.py:330
 msgid "Show a notification at login with your user info"
-msgstr ""
-"Показывать уведомления при загрузке с Вашей пользовательской информацией"
+msgstr "Показывать уведомления при загрузке с Вашей пользовательской информацией"
 
 #: turpial/ui/gtk/preferences.py:335
 msgid "Activate sounds"
@@ -736,5 +733,4 @@ msgstr "О себе"
 #: turpial/ui/gtk/userform.py:179
 msgid "Saving..."
 msgstr "Сохраняю..."
-
 

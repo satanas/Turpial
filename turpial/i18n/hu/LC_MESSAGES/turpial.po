@@ -1,22 +1,21 @@
-# Translations template for turpial.
+# Hungarian translations for turpial.
 # Copyright (C) 2011 Turpial
 # This file is distributed under the same license as the turpial project.
-# 
+#
 # Peter Borsa <peter.borsa@gmail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: Turpial\n"
+"Project-Id-Version:  Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
-"POT-Creation-Date: 2011-09-03 11:20-0300\n"
+"POT-Creation-Date: 2011-09-03 14:08-0300\n"
 "PO-Revision-Date: 2011-09-03 14:40+0000\n"
 "Last-Translator: satanas <wil.alejandro@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: hu <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"Language: hu\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: turpial/main.py:247 turpial/ui/gtk/home.py:25
 msgid "Timeline"
@@ -292,8 +291,7 @@ msgid "Add friend"
 msgstr "Hozzáadás barátnak"
 
 #: turpial/ui/gtk/friendwin.py:78 turpial/ui/gtk/preferences.py:481
-msgid ""
-"What? You don't have any friends. Try to go out and know some nice people"
+msgid "What? You don't have any friends. Try to go out and know some nice people"
 msgstr ""
 "Mi? Nincs semmilyen barátod. Próbálj meg szórakozni és megismerni néhány "
 "kedves embert"
@@ -415,8 +413,7 @@ msgid "Secure Authentication"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:46
-msgid ""
-"Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
+msgid "Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:86
@@ -508,8 +505,7 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:211
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr ""
-"Profil színek használata említések kiemeléséhez, hash tagekhez és URL-hez"
+msgstr "Profil színek használata említések kiemeléséhez, hash tagekhez és URL-hez"
 
 #: turpial/ui/gtk/preferences.py:218
 msgid "Minimize to tray"
@@ -736,5 +732,4 @@ msgstr "Életrajz"
 #: turpial/ui/gtk/userform.py:179
 msgid "Saving..."
 msgstr "Mentés..."
-
 

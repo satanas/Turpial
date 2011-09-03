@@ -1,23 +1,21 @@
-# Translations template for turpial.
+# German translations for turpial.
 # Copyright (C) 2011 Turpial
 # This file is distributed under the same license as the turpial project.
-# 
-#   <gezuru@gmail.com>, 2011.
-# t6435bm <t6435bm@gmail.com>, 2011.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Turpial\n"
+"Project-Id-Version:  Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
-"POT-Creation-Date: 2011-09-03 11:20-0300\n"
-"PO-Revision-Date: 2011-09-03 14:40+0000\n"
+"POT-Creation-Date: 2011-09-03 14:08-0300\n"
+"PO-Revision-Date: 2011-03-22 15:12+0000\n"
 "Last-Translator: satanas <wil.alejandro@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"Language: de\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: turpial/main.py:247 turpial/ui/gtk/home.py:25
 msgid "Timeline"
@@ -99,8 +97,9 @@ msgstr "Etwas zum Hochladen auswählen"
 
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:139
+#, fuzzy
 msgid "Sorry, you don't have more APIcalls"
-msgstr ""
+msgstr "Entschuldigung, keine verfügbaren API-Aufrufe mehr"
 
 #: turpial/api/protocols/identica/http.py:37
 #: turpial/api/protocols/twitter/http.py:142
@@ -203,7 +202,7 @@ msgstr "API-Aufrufen. Reset"
 
 #: turpial/ui/gtk/about.py:19
 msgid "Microblogging client written in Python"
-msgstr "Mikroblogging-Client geschrieben in Python"
+msgstr ""
 
 #: turpial/ui/gtk/about.py:49
 msgid "File 'AUTHORS' not found"
@@ -223,7 +222,7 @@ msgstr "Manuelle Aktualisierung"
 
 #: turpial/ui/gtk/columns.py:94
 msgid "Mark all as read"
-msgstr "Alle als gelesen markieren"
+msgstr ""
 
 #: turpial/ui/gtk/columns.py:206
 msgid "Clear results"
@@ -256,7 +255,7 @@ msgstr "Leuten folgen"
 
 #: turpial/ui/gtk/dock.py:32 turpial/ui/gtk/updatebox.py:29
 msgid "Update status"
-msgstr "Status aktualisieren"
+msgstr "Aktualisierung-Status"
 
 #: turpial/ui/gtk/dock.py:36
 msgid "Upload image"
@@ -293,8 +292,7 @@ msgid "Add friend"
 msgstr "Freund hinzufügen"
 
 #: turpial/ui/gtk/friendwin.py:78 turpial/ui/gtk/preferences.py:481
-msgid ""
-"What? You don't have any friends. Try to go out and know some nice people"
+msgid "What? You don't have any friends. Try to go out and know some nice people"
 msgstr ""
 "Was? Du hast keine Freunde. Versuch auszugehen und ein paar nette Leute "
 "kennen zu lernen."
@@ -302,7 +300,8 @@ msgstr ""
 #: turpial/ui/gtk/friendwin.py:88 turpial/ui/gtk/preferences.py:490
 msgid "I am still loading all of your friends. Try again in a few seconds"
 msgstr ""
-"Deine Freundesliste wird noch geladen. Versuch es in wenigen Sekunden wieder"
+"Deine Freundesliste wird noch geladen. Versuch es in wenigen Sekunden "
+"wieder"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 msgid "Mentions"
@@ -402,23 +401,23 @@ msgstr "Entfolgen"
 
 #: turpial/ui/gtk/menu.py:287
 msgid "Marking favorite..."
-msgstr "Als Favorit markieren..."
+msgstr ""
 
 #: turpial/ui/gtk/menu.py:290
 msgid "Unmarking favorite..."
-msgstr "Als Favorit entfernen..."
+msgstr ""
 
 #: turpial/ui/gtk/menu.py:293
 msgid "Deleting..."
-msgstr "Löschen..."
-
-#: turpial/ui/gtk/oauthwin.py:19
-msgid "Secure Authentication"
 msgstr ""
 
+#: turpial/ui/gtk/oauthwin.py:19
+#, fuzzy
+msgid "Secure Authentication"
+msgstr "Fehler bei der Authentifizierung"
+
 #: turpial/ui/gtk/oauthwin.py:46
-msgid ""
-"Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
+msgid "Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:86
@@ -426,8 +425,9 @@ msgid "You must write a valid PIN"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:93
+#, fuzzy
 msgid "Loading..."
-msgstr ""
+msgstr "Speichervorgang läuft..."
 
 #: turpial/ui/gtk/oauthwin.py:107
 msgid "Login cancelled by user"
@@ -459,8 +459,9 @@ msgid "Services"
 msgstr "Dienste"
 
 #: turpial/ui/gtk/preferences.py:59
+#, fuzzy
 msgid "Filters"
-msgstr ""
+msgstr "Profil"
 
 #: turpial/ui/gtk/preferences.py:60
 msgid "Web Browser"
@@ -471,10 +472,11 @@ msgid "API Proxy"
 msgstr "API Proxy"
 
 #: turpial/ui/gtk/preferences.py:168
+#, fuzzy
 msgid "Adjust update frequency for timeline, mentions and direct messages"
 msgstr ""
-"Aktualisierungshäufigkeit für Timeline, Erwähnungen und Direktnachrichten "
-"einstellen"
+"Aktualisierungshäufigkeit für Timeline, Erwähnungen und Direktnachrichten"
+" einstellen"
 
 #: turpial/ui/gtk/preferences.py:182 turpial/ui/gtk/preferences.py:289
 msgid "Column 1 (Left)"
@@ -490,7 +492,7 @@ msgstr "Spalte 3 (Rechts)"
 
 #: turpial/ui/gtk/preferences.py:189
 msgid "Tweets shown"
-msgstr "Gezeigte Tweets"
+msgstr "Anzahl gezeigter Tweets"
 
 #: turpial/ui/gtk/preferences.py:192
 msgid "You will use 0 calls to API per hour"
@@ -505,10 +507,12 @@ msgid "Show a workspace of 3 columns"
 msgstr "3-spaltiges Layout verwenden"
 
 #: turpial/ui/gtk/preferences.py:205
+#, fuzzy
 msgid "Load profile color (Needs Turpial to be restarted)"
-msgstr ""
+msgstr "Profilfarbe laden (Turpial-Wiederstart erforderlich)"
 
 #: turpial/ui/gtk/preferences.py:211
+#, fuzzy
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
 msgstr ""
 "Benutzer-Profilfarbe zum Hervorheben von Erwähnungen, Hashtags und URLs "
@@ -519,8 +523,9 @@ msgid "Minimize to tray"
 msgstr "Ins Benachrichtigungsfeld minimieren"
 
 #: turpial/ui/gtk/preferences.py:222
+#, fuzzy
 msgid "Send Turpial to system tray when closing main window"
-msgstr ""
+msgstr "Turpial beim Schließen ins Benachrichtigungsfeld minimieren"
 
 #: turpial/ui/gtk/preferences.py:229
 msgid "Expand URLs"
@@ -531,13 +536,14 @@ msgid "Expand URLS in Open menu"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:254
-#, python-format
+#, fuzzy, python-format
 msgid "Turpial will use aprox. %i calls to API per hour"
-msgstr ""
+msgstr "Du wirst ca. %i API-Aufrufe pro Stunde machen"
 
 #: turpial/ui/gtk/preferences.py:279
+#, fuzzy
 msgid "Select the notifications you want to receive from Turpial"
-msgstr ""
+msgstr "Wähle aus, welche Benachrichtigungen du von Turpial bekommen möchtest"
 
 #: turpial/ui/gtk/preferences.py:325
 msgid "Login"
@@ -556,8 +562,11 @@ msgid "Activate sounds for each notification"
 msgstr "Klänge auf Benachrichtigungen aktivieren"
 
 #: turpial/ui/gtk/preferences.py:371
+#, fuzzy
 msgid "Select your preferred services to shorten URLs and to upload images"
 msgstr ""
+"Wähle den von dir bevorzugten URL-Abkürzungs- und Bilder-Hochladen-Dienst"
+" aus"
 
 #: turpial/ui/gtk/preferences.py:379 turpial/ui/gtk/updatebox.py:65
 #: turpial/ui/gtk/updatebox.py:66
@@ -569,21 +578,24 @@ msgid "Upload images"
 msgstr "Bilder-Hochladen"
 
 #: turpial/ui/gtk/preferences.py:422
+#, fuzzy
 msgid "Select all those users that bother you and shut them up temporarily"
 msgstr ""
+"Wähle all jene Benutzer aus, die dich nerven und schalte sie vorläufig "
+"stumm"
 
 #: turpial/ui/gtk/preferences.py:517
 msgid "Filter out words you don't want to see"
 msgstr ""
 
 #: turpial/ui/gtk/preferences.py:524
+#, fuzzy
 msgid "New Filter"
-msgstr ""
+msgstr "Profil"
 
 #: turpial/ui/gtk/preferences.py:589
 msgid "Setup your favorite web browser to open all links"
-msgstr ""
-"Lege deinen bevorzugten Web-Browser fest, zum Aufrufen aller Verknüpfungen"
+msgstr "Lege deinen bevorzugten Web-Browser fest, zum Aufrufen aller Verknüpfungen"
 
 #: turpial/ui/gtk/preferences.py:596
 msgid "Default web browser"
@@ -624,7 +636,8 @@ msgstr "Twitter-API-Proxy"
 #: turpial/ui/gtk/preferences.py:680
 msgid "Use a URL to access Twitter API different of twitter.com"
 msgstr ""
-"Eine URL anders als twitter.com zur Verbindung mit der Twitter-API verwenden"
+"Eine URL anders als twitter.com zur Verbindung mit der Twitter-API "
+"verwenden"
 
 #: turpial/ui/gtk/preferences.py:686
 msgid "Twitter API URL"
@@ -741,5 +754,4 @@ msgstr "Bio"
 #: turpial/ui/gtk/userform.py:179
 msgid "Saving..."
 msgstr "Speichervorgang läuft..."
-
 

@@ -1,22 +1,21 @@
-# Translations template for turpial.
+# Basque translations for turpial.
 # Copyright (C) 2011 Turpial
 # This file is distributed under the same license as the turpial project.
-# 
+#
 # ulritx <eneko.sarasola@gmail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: Turpial\n"
+"Project-Id-Version:  Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
-"POT-Creation-Date: 2011-09-03 11:20-0300\n"
+"POT-Creation-Date: 2011-09-03 14:08-0300\n"
 "PO-Revision-Date: 2011-09-03 14:40+0000\n"
 "Last-Translator: satanas <wil.alejandro@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: eu <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"Language: eu\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: turpial/main.py:247 turpial/ui/gtk/home.py:25
 msgid "Timeline"
@@ -292,8 +291,7 @@ msgid "Add friend"
 msgstr "Laguna gehitu"
 
 #: turpial/ui/gtk/friendwin.py:78 turpial/ui/gtk/preferences.py:481
-msgid ""
-"What? You don't have any friends. Try to go out and know some nice people"
+msgid "What? You don't have any friends. Try to go out and know some nice people"
 msgstr "Zer? Ez duzu lagunik. Saiatu kanpora joaten eta jende ona ezagutzen"
 
 #: turpial/ui/gtk/friendwin.py:88 turpial/ui/gtk/preferences.py:490
@@ -415,8 +413,7 @@ msgid "Secure Authentication"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:46
-msgid ""
-"Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
+msgid "Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:86
@@ -471,7 +468,8 @@ msgstr "API Proxya"
 #: turpial/ui/gtk/preferences.py:168
 msgid "Adjust update frequency for timeline, mentions and direct messages"
 msgstr ""
-"Ezarri denbora-marraren, aipuen eta mezu pribatuen eguneraketaren maiztasuna"
+"Ezarri denbora-marraren, aipuen eta mezu pribatuen eguneraketaren "
+"maiztasuna"
 
 #: turpial/ui/gtk/preferences.py:182 turpial/ui/gtk/preferences.py:289
 msgid "Column 1 (Left)"
@@ -507,8 +505,7 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:211
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
-msgstr ""
-"Erabili erabiltzailearen kolorea aipuak, hashtagak eta URLak nabarmentzeko"
+msgstr "Erabili erabiltzailearen kolorea aipuak, hashtagak eta URLak nabarmentzeko"
 
 #: turpial/ui/gtk/preferences.py:218
 msgid "Minimize to tray"
@@ -735,5 +732,4 @@ msgstr "Niri buruz"
 #: turpial/ui/gtk/userform.py:179
 msgid "Saving..."
 msgstr "Gordetzen..."
-
 

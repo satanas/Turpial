@@ -1,24 +1,23 @@
-# Translations template for turpial.
+# Spanish (Venezuela) translations for turpial.
 # Copyright (C) 2011 Turpial
 # This file is distributed under the same license as the turpial project.
-# 
+#
 # Javier Troya <javiertroya@gmail.com>, 2011.
 # freddy  sequera <nemecis000@gmail.com>, 2011.
 # Wil Alvarez <wil.alejandro@gmail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: Turpial\n"
+"Project-Id-Version:  Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
-"POT-Creation-Date: 2011-09-03 11:20-0300\n"
+"POT-Creation-Date: 2011-09-03 14:08-0300\n"
 "PO-Revision-Date: 2011-09-03 14:40+0000\n"
 "Last-Translator: satanas <wil.alejandro@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: es_VE <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"Language: es_VE\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: turpial/main.py:247 turpial/ui/gtk/home.py:25
 msgid "Timeline"
@@ -294,14 +293,14 @@ msgid "Add friend"
 msgstr "Agregar amigo"
 
 #: turpial/ui/gtk/friendwin.py:78 turpial/ui/gtk/preferences.py:481
-msgid ""
-"What? You don't have any friends. Try to go out and know some nice people"
+msgid "What? You don't have any friends. Try to go out and know some nice people"
 msgstr "¿Qué? Usted no tiene amigos. Trate de salir y conocer gente agradable"
 
 #: turpial/ui/gtk/friendwin.py:88 turpial/ui/gtk/preferences.py:490
 msgid "I am still loading all of your friends. Try again in a few seconds"
 msgstr ""
-"Todavía estoy cargando todos tus amigos. Inténtalo de nuevo en unos segundos"
+"Todavía estoy cargando todos tus amigos. Inténtalo de nuevo en unos "
+"segundos"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 msgid "Mentions"
@@ -416,8 +415,7 @@ msgid "Secure Authentication"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:46
-msgid ""
-"Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
+msgid "Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:86
@@ -472,8 +470,8 @@ msgstr "Proxy de la API"
 #: turpial/ui/gtk/preferences.py:168
 msgid "Adjust update frequency for timeline, mentions and direct messages"
 msgstr ""
-"Ajustar frecuencia de actualización de línea de tiempo, menciones y mensajes"
-" directos"
+"Ajustar frecuencia de actualización de línea de tiempo, menciones y "
+"mensajes directos"
 
 #: turpial/ui/gtk/preferences.py:182 turpial/ui/gtk/preferences.py:289
 msgid "Column 1 (Left)"
@@ -736,5 +734,4 @@ msgstr "Bio"
 #: turpial/ui/gtk/userform.py:179
 msgid "Saving..."
 msgstr "Guardando..."
-
 

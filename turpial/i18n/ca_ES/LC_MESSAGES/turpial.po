@@ -1,23 +1,22 @@
-# Translations template for turpial.
+# Catalan (Spain) translations for turpial.
 # Copyright (C) 2011 Turpial
 # This file is distributed under the same license as the turpial project.
-# 
+#
 # dadava <david.vallespi@gmail.com>, 2011.
 # norbux <manelsales@ono.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: Turpial\n"
+"Project-Id-Version:  Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
-"POT-Creation-Date: 2011-09-03 11:20-0300\n"
+"POT-Creation-Date: 2011-09-03 14:08-0300\n"
 "PO-Revision-Date: 2011-09-03 14:40+0000\n"
 "Last-Translator: satanas <wil.alejandro@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: ca_ES <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"Language: ca_ES\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: turpial/main.py:247 turpial/ui/gtk/home.py:25
 msgid "Timeline"
@@ -293,14 +292,14 @@ msgid "Add friend"
 msgstr "Afegir amic"
 
 #: turpial/ui/gtk/friendwin.py:78 turpial/ui/gtk/preferences.py:481
-msgid ""
-"What? You don't have any friends. Try to go out and know some nice people"
+msgid "What? You don't have any friends. Try to go out and know some nice people"
 msgstr "Què? No tens amics. Intenta sortir i conèixer gent agradable"
 
 #: turpial/ui/gtk/friendwin.py:88 turpial/ui/gtk/preferences.py:490
 msgid "I am still loading all of your friends. Try again in a few seconds"
 msgstr ""
-"Encara estic carregant tots els teus amics. Torna a provar-ho en uns segons"
+"Encara estic carregant tots els teus amics. Torna a provar-ho en uns "
+"segons"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 msgid "Mentions"
@@ -415,8 +414,7 @@ msgid "Secure Authentication"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:46
-msgid ""
-"Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
+msgid "Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:86
@@ -471,8 +469,8 @@ msgstr "API Proxy"
 #: turpial/ui/gtk/preferences.py:168
 msgid "Adjust update frequency for timeline, mentions and direct messages"
 msgstr ""
-"Ajusta la freqüència d'actualització de la línia de temps, les mencions i "
-"els missatges directes"
+"Ajusta la freqüència d'actualització de la línia de temps, les mencions i"
+" els missatges directes"
 
 #: turpial/ui/gtk/preferences.py:182 turpial/ui/gtk/preferences.py:289
 msgid "Column 1 (Left)"
@@ -509,8 +507,8 @@ msgstr ""
 #: turpial/ui/gtk/preferences.py:211
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
 msgstr ""
-"Utilitzeu el color del perfil d'usuari per ressaltar les mencions, hashtags "
-"i URLs"
+"Utilitzeu el color del perfil d'usuari per ressaltar les mencions, "
+"hashtags i URLs"
 
 #: turpial/ui/gtk/preferences.py:218
 msgid "Minimize to tray"
@@ -544,7 +542,8 @@ msgstr "Inici de sessió"
 #: turpial/ui/gtk/preferences.py:330
 msgid "Show a notification at login with your user info"
 msgstr ""
-"Mostra una notificació en iniciar la sessió amb la teva informació d'usuari"
+"Mostra una notificació en iniciar la sessió amb la teva informació "
+"d'usuari"
 
 #: turpial/ui/gtk/preferences.py:335
 msgid "Activate sounds"
@@ -738,5 +737,4 @@ msgstr "Bio"
 #: turpial/ui/gtk/userform.py:179
 msgid "Saving..."
 msgstr "Guardant..."
-
 

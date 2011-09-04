@@ -20,7 +20,6 @@ from turpial.ui.base_ui import BaseGui
 from turpial.ui.gtk.follow import Follow
 from turpial.ui.gtk.login import LoginBox
 from turpial.ui.gtk.profile import Profile
-from turpial.ui.gtk.inputpin import InputPin
 from turpial.notification import Notification
 from turpial.ui.gtk.updatebox import UpdateBox
 from turpial.ui.gtk.oauthwin import OAuthWindow

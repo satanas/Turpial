@@ -1,23 +1,27 @@
-# Spanish (Venezuela) translations for turpial.
+# Translations template for turpial.
 # Copyright (C) 2011 Turpial
 # This file is distributed under the same license as the turpial project.
-#
-# Javier Troya <javiertroya@gmail.com>, 2011.
+# 
+# Translators:
 # freddy  sequera <nemecis000@gmail.com>, 2011.
+#   <jampgold@gmail.com>, 2011.
+# Jaro Marval <jampgold@gmail.com>, 2011.
+# Javier Troya <javiertroya@gmail.com>, 2011.
 # Wil Alvarez <wil.alejandro@gmail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version:  Turpial\n"
+"Project-Id-Version: Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
 "POT-Creation-Date: 2011-09-03 14:08-0300\n"
-"PO-Revision-Date: 2011-09-03 14:40+0000\n"
-"Last-Translator: satanas <wil.alejandro@gmail.com>\n"
-"Language-Team: es_VE <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"PO-Revision-Date: 2011-09-03 18:46+0000\n"
+"Last-Translator: jamp <jampgold@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+"Language: es_VE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: turpial/main.py:247 turpial/ui/gtk/home.py:25
 msgid "Timeline"
@@ -293,14 +297,14 @@ msgid "Add friend"
 msgstr "Agregar amigo"
 
 #: turpial/ui/gtk/friendwin.py:78 turpial/ui/gtk/preferences.py:481
-msgid "What? You don't have any friends. Try to go out and know some nice people"
+msgid ""
+"What? You don't have any friends. Try to go out and know some nice people"
 msgstr "¿Qué? Usted no tiene amigos. Trate de salir y conocer gente agradable"
 
 #: turpial/ui/gtk/friendwin.py:88 turpial/ui/gtk/preferences.py:490
 msgid "I am still loading all of your friends. Try again in a few seconds"
 msgstr ""
-"Todavía estoy cargando todos tus amigos. Inténtalo de nuevo en unos "
-"segundos"
+"Todavía estoy cargando todos tus amigos. Inténtalo de nuevo en unos segundos"
 
 #: turpial/ui/gtk/home.py:23 turpial/ui/gtk/home.py:27
 msgid "Mentions"
@@ -316,7 +320,7 @@ msgstr "Recordar mis credenciales"
 
 #: turpial/ui/gtk/login.py:36 turpial/ui/gtk/preferences.py:736
 msgid "Automatic login"
-msgstr ""
+msgstr "Inicio de Sesión Automático"
 
 #: turpial/ui/gtk/login.py:39
 msgid "Connect"
@@ -412,23 +416,26 @@ msgstr "Borrando..."
 
 #: turpial/ui/gtk/oauthwin.py:19
 msgid "Secure Authentication"
-msgstr ""
+msgstr "Autenticación Segura"
 
 #: turpial/ui/gtk/oauthwin.py:46
-msgid "Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
+msgid ""
+"Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
 msgstr ""
+"Autorice a Turpial, copie el código PIN en el cuadro de texto de abajo y "
+"haga clic en Aceptar"
 
 #: turpial/ui/gtk/oauthwin.py:86
 msgid "You must write a valid PIN"
-msgstr ""
+msgstr "Debe escribir un PIN válido"
 
 #: turpial/ui/gtk/oauthwin.py:93
 msgid "Loading..."
-msgstr ""
+msgstr "Cargando..."
 
 #: turpial/ui/gtk/oauthwin.py:107
 msgid "Login cancelled by user"
-msgstr ""
+msgstr "Inicio de sesión cancelada por el usuario"
 
 #: turpial/ui/gtk/preferences.py:30 turpial/ui/gtk/userform.py:92
 #: turpial/ui/gtk/userform.py:188
@@ -445,7 +452,7 @@ msgstr "General"
 
 #: turpial/ui/gtk/preferences.py:55
 msgid "Startup"
-msgstr ""
+msgstr "Inicio"
 
 #: turpial/ui/gtk/preferences.py:56
 msgid "Notifications"
@@ -457,7 +464,7 @@ msgstr "Servicios"
 
 #: turpial/ui/gtk/preferences.py:59
 msgid "Filters"
-msgstr ""
+msgstr "Filtros"
 
 #: turpial/ui/gtk/preferences.py:60
 msgid "Web Browser"
@@ -470,8 +477,8 @@ msgstr "Proxy de la API"
 #: turpial/ui/gtk/preferences.py:168
 msgid "Adjust update frequency for timeline, mentions and direct messages"
 msgstr ""
-"Ajustar frecuencia de actualización de línea de tiempo, menciones y "
-"mensajes directos"
+"Ajustar frecuencia de actualización de línea de tiempo, menciones y mensajes"
+" directos"
 
 #: turpial/ui/gtk/preferences.py:182 turpial/ui/gtk/preferences.py:289
 msgid "Column 1 (Left)"
@@ -528,7 +535,7 @@ msgstr ""
 #: turpial/ui/gtk/preferences.py:254
 #, python-format
 msgid "Turpial will use aprox. %i calls to API per hour"
-msgstr ""
+msgstr "Turpial usará aprox. %i llamadas al API por hora"
 
 #: turpial/ui/gtk/preferences.py:279
 msgid "Select the notifications you want to receive from Turpial"
@@ -573,7 +580,7 @@ msgstr ""
 
 #: turpial/ui/gtk/preferences.py:524
 msgid "New Filter"
-msgstr ""
+msgstr "Nuevo Filtro"
 
 #: turpial/ui/gtk/preferences.py:589
 msgid "Setup your favorite web browser to open all links"
@@ -734,4 +741,5 @@ msgstr "Bio"
 #: turpial/ui/gtk/userform.py:179
 msgid "Saving..."
 msgstr "Guardando..."
+
 

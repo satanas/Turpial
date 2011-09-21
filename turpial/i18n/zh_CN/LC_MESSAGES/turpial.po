@@ -1,21 +1,25 @@
-# Chinese (China) translations for turpial.
+# Translations template for turpial.
 # Copyright (C) 2011 Turpial
 # This file is distributed under the same license as the turpial project.
+# 
+# Translators:
+#   <admin@doublechou.pp.ru>, 2011.
+# doublechou <admin@doublechou.pp.ru>, 2011.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version:  Turpial\n"
+"Project-Id-Version: Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
 "POT-Creation-Date: 2011-09-03 14:08-0300\n"
-"PO-Revision-Date: 2011-03-22 15:12+0000\n"
+"PO-Revision-Date: 2011-09-14 06:24+0000\n"
 "Last-Translator: doublechou <admin@doublechou.pp.ru>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0\n"
 
 #: turpial/main.py:247 turpial/ui/gtk/home.py:25
 msgid "Timeline"
@@ -55,7 +59,7 @@ msgstr "私信"
 
 #: turpial/main.py:253
 msgid "My Tweets"
-msgstr "我的推特"
+msgstr "我的"
 
 #: turpial/notification.py:66
 msgid "Tweets"
@@ -97,9 +101,8 @@ msgstr "上传点什么吧"
 
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:139
-#, fuzzy
 msgid "Sorry, you don't have more APIcalls"
-msgstr "唔, 你的API耗尽了"
+msgstr "对不住，你没有API请求数了"
 
 #: turpial/api/protocols/identica/http.py:37
 #: turpial/api/protocols/twitter/http.py:142
@@ -109,7 +112,7 @@ msgstr "无效信息"
 #: turpial/api/protocols/identica/http.py:42
 #: turpial/api/protocols/twitter/http.py:147
 msgid "Your status was sent. Don't try again"
-msgstr "推已发出,请勿刷屏"
+msgstr "推已发出,请勿再试"
 
 #: turpial/api/protocols/identica/http.py:44
 #: turpial/api/protocols/twitter/http.py:149
@@ -130,7 +133,7 @@ msgstr "呃...无效请求"
 #: turpial/api/protocols/identica/http.py:51
 #: turpial/api/protocols/twitter/http.py:158
 msgid "You are searching a very weird thing"
-msgstr "你搜索的东西好羞耻"
+msgstr "你在搜索一个"
 
 #: turpial/api/protocols/identica/http.py:53
 #: turpial/api/protocols/twitter/http.py:160
@@ -140,7 +143,7 @@ msgstr "你搜索的太多了!"
 #: turpial/api/protocols/identica/http.py:55
 #: turpial/api/protocols/twitter/http.py:162
 msgid "Oops! Something went wrong"
-msgstr "不知道哪里错了"
+msgstr "哦！不知道哪里错了"
 
 #: turpial/api/protocols/identica/http.py:57
 #: turpial/api/protocols/twitter/http.py:164
@@ -230,7 +233,7 @@ msgstr "清空结果"
 
 #: turpial/ui/gtk/columns.py:246
 msgid "You must write something to search"
-msgstr "搜索栏不能为空"
+msgstr "搜索不能为空"
 
 #: turpial/ui/gtk/conversation.py:19 turpial/ui/gtk/conversation.py:25
 msgid "In reply to..."
@@ -273,7 +276,7 @@ msgstr "关于Turpial"
 #: turpial/ui/gtk/follow.py:15 turpial/ui/gtk/main.py:146
 #: turpial/ui/gtk/menu.py:237
 msgid "Follow"
-msgstr "关注它"
+msgstr "关注"
 
 #: turpial/ui/gtk/follow.py:23
 msgid "User"
@@ -292,7 +295,8 @@ msgid "Add friend"
 msgstr "抄送给好友"
 
 #: turpial/ui/gtk/friendwin.py:78 turpial/ui/gtk/preferences.py:481
-msgid "What? You don't have any friends. Try to go out and know some nice people"
+msgid ""
+"What? You don't have any friends. Try to go out and know some nice people"
 msgstr "什么? 你没有好友. 试着去认识些人吧."
 
 #: turpial/ui/gtk/friendwin.py:88 turpial/ui/gtk/preferences.py:490
@@ -313,7 +317,7 @@ msgstr "记住登陆信息"
 
 #: turpial/ui/gtk/login.py:36 turpial/ui/gtk/preferences.py:736
 msgid "Automatic login"
-msgstr ""
+msgstr "自动登陆"
 
 #: turpial/ui/gtk/login.py:39
 msgid "Connect"
@@ -377,7 +381,7 @@ msgstr "添加收藏"
 
 #: turpial/ui/gtk/menu.py:148
 msgid "Open"
-msgstr "打开该推网址"
+msgstr "打开网址"
 
 #: turpial/ui/gtk/menu.py:212 turpial/ui/gtk/updatebox.py:213
 msgid "In reply to"
@@ -408,26 +412,25 @@ msgid "Deleting..."
 msgstr "正在删除..."
 
 #: turpial/ui/gtk/oauthwin.py:19
-#, fuzzy
 msgid "Secure Authentication"
-msgstr "验证失败"
+msgstr "安全认证"
 
 #: turpial/ui/gtk/oauthwin.py:46
-msgid "Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
-msgstr ""
+msgid ""
+"Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
+msgstr "验证Turpial，复制下面文本框中的<b>数字验证码</b>并点击确认："
 
 #: turpial/ui/gtk/oauthwin.py:86
 msgid "You must write a valid PIN"
-msgstr ""
+msgstr "请输入有效的数字"
 
 #: turpial/ui/gtk/oauthwin.py:93
-#, fuzzy
 msgid "Loading..."
-msgstr "保存中"
+msgstr "加载中..."
 
 #: turpial/ui/gtk/oauthwin.py:107
 msgid "Login cancelled by user"
-msgstr ""
+msgstr "用户取消登陆"
 
 #: turpial/ui/gtk/preferences.py:30 turpial/ui/gtk/userform.py:92
 #: turpial/ui/gtk/userform.py:188
@@ -444,7 +447,7 @@ msgstr "常规"
 
 #: turpial/ui/gtk/preferences.py:55
 msgid "Startup"
-msgstr ""
+msgstr "启动"
 
 #: turpial/ui/gtk/preferences.py:56
 msgid "Notifications"
@@ -455,9 +458,8 @@ msgid "Services"
 msgstr "服务"
 
 #: turpial/ui/gtk/preferences.py:59
-#, fuzzy
 msgid "Filters"
-msgstr "个人主页"
+msgstr "过滤器"
 
 #: turpial/ui/gtk/preferences.py:60
 msgid "Web Browser"
@@ -468,7 +470,6 @@ msgid "API Proxy"
 msgstr "API代理"
 
 #: turpial/ui/gtk/preferences.py:168
-#, fuzzy
 msgid "Adjust update frequency for timeline, mentions and direct messages"
 msgstr "调整时间线,回复和私信的刷新频率"
 
@@ -501,12 +502,10 @@ msgid "Show a workspace of 3 columns"
 msgstr "显示3栏"
 
 #: turpial/ui/gtk/preferences.py:205
-#, fuzzy
 msgid "Load profile color (Needs Turpial to be restarted)"
-msgstr "加载您在官网自定义的链接颜色（需要重启）"
+msgstr "加载用户个性颜色(需要重启turpial)"
 
 #: turpial/ui/gtk/preferences.py:211
-#, fuzzy
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
 msgstr "用您在官网自定义的链接颜色高亮回复,标签和链接"
 
@@ -515,27 +514,25 @@ msgid "Minimize to tray"
 msgstr "最小化到系统托盘"
 
 #: turpial/ui/gtk/preferences.py:222
-#, fuzzy
 msgid "Send Turpial to system tray when closing main window"
-msgstr "关闭时最小化到系统托盘"
+msgstr "关闭主窗口时最小化到系统托盘"
 
 #: turpial/ui/gtk/preferences.py:229
 msgid "Expand URLs"
-msgstr ""
+msgstr "还原URL"
 
 #: turpial/ui/gtk/preferences.py:233
 msgid "Expand URLS in Open menu"
-msgstr ""
+msgstr "打开还原后的URL"
 
 #: turpial/ui/gtk/preferences.py:254
-#, fuzzy, python-format
+#, python-format
 msgid "Turpial will use aprox. %i calls to API per hour"
-msgstr "您每小时大约会用掉%i次API请求"
+msgstr "Turpial每小时将使用大约 %i 条API"
 
 #: turpial/ui/gtk/preferences.py:279
-#, fuzzy
 msgid "Select the notifications you want to receive from Turpial"
-msgstr "选择Turpial通知范围"
+msgstr "选择你想收到的turpial"
 
 #: turpial/ui/gtk/preferences.py:325
 msgid "Login"
@@ -554,9 +551,8 @@ msgid "Activate sounds for each notification"
 msgstr "对所有通知启用声音"
 
 #: turpial/ui/gtk/preferences.py:371
-#, fuzzy
 msgid "Select your preferred services to shorten URLs and to upload images"
-msgstr "选择您喜欢的短网址和图片上传服务"
+msgstr "选择你喜欢的短网址和图片上传服务"
 
 #: turpial/ui/gtk/preferences.py:379 turpial/ui/gtk/updatebox.py:65
 #: turpial/ui/gtk/updatebox.py:66
@@ -568,18 +564,16 @@ msgid "Upload images"
 msgstr "上传图片"
 
 #: turpial/ui/gtk/preferences.py:422
-#, fuzzy
 msgid "Select all those users that bother you and shut them up temporarily"
-msgstr "勾选打扰了您的好友，让它们安静一会儿吧"
+msgstr "选中打扰你的用户并沉默他们"
 
 #: turpial/ui/gtk/preferences.py:517
 msgid "Filter out words you don't want to see"
-msgstr ""
+msgstr "过滤掉你不想看到的"
 
 #: turpial/ui/gtk/preferences.py:524
-#, fuzzy
 msgid "New Filter"
-msgstr "个人主页"
+msgstr "新过滤器"
 
 #: turpial/ui/gtk/preferences.py:589
 msgid "Setup your favorite web browser to open all links"
@@ -631,11 +625,11 @@ msgstr "API地址"
 
 #: turpial/ui/gtk/preferences.py:730
 msgid "Configure Turpial behavior at startup"
-msgstr ""
+msgstr "配置Turpial的行为"
 
 #: turpial/ui/gtk/preferences.py:740
 msgid "Login automatically at startup"
-msgstr ""
+msgstr "启动时自动登陆"
 
 #: turpial/ui/gtk/profile.py:16
 msgid "Favorites"
@@ -740,4 +734,5 @@ msgstr "自述"
 #: turpial/ui/gtk/userform.py:179
 msgid "Saving..."
 msgstr "保存中"
+
 

@@ -1,21 +1,23 @@
-# Hebrew translations for turpial.
+# Translations template for turpial.
 # Copyright (C) 2011 Turpial
 # This file is distributed under the same license as the turpial project.
+# 
+# Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version:  Turpial\n"
+"Project-Id-Version: Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
 "POT-Creation-Date: 2011-09-03 14:08-0300\n"
-"PO-Revision-Date: 2011-03-28 19:07+0000\n"
+"PO-Revision-Date: 2011-09-21 01:00+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: he <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+"Language: he\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: turpial/main.py:247 turpial/ui/gtk/home.py:25
 msgid "Timeline"
@@ -291,7 +293,8 @@ msgid "Add friend"
 msgstr ""
 
 #: turpial/ui/gtk/friendwin.py:78 turpial/ui/gtk/preferences.py:481
-msgid "What? You don't have any friends. Try to go out and know some nice people"
+msgid ""
+"What? You don't have any friends. Try to go out and know some nice people"
 msgstr ""
 
 #: turpial/ui/gtk/friendwin.py:88 turpial/ui/gtk/preferences.py:490
@@ -411,7 +414,8 @@ msgid "Secure Authentication"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:46
-msgid "Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
+msgid ""
+"Autorize Turpial, copy the <b>PIN</b> in the text box below and click OK:"
 msgstr ""
 
 #: turpial/ui/gtk/oauthwin.py:86
@@ -728,4 +732,5 @@ msgstr ""
 #: turpial/ui/gtk/userform.py:179
 msgid "Saving..."
 msgstr ""
+
 

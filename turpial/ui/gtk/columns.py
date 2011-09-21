@@ -84,9 +84,7 @@ class StandardColumn(GenericColumn):
         self.listcombo.add_attribute(cell, 'text', 1)
         self.listcombo.set_model(model)
         
-        #self.refresh = gtk.Button()
         self.refresh = SpinnerButton(mainwin, 'action-refresh.png')
-        #self.refresh.set_image(self.mainwin.load_image('action-refresh.png'))
         self.refresh.set_tooltip_text(_('Manual Update'))
         
         self.mark_all = gtk.Button()
@@ -97,7 +95,6 @@ class StandardColumn(GenericColumn):
         listsbox.pack_start(self.mark_all, False, False)
         listsbox.pack_start(self.listcombo, True, True)
         listsbox.pack_start(self.refresh, False, False)
-        #listsbox.pack_start(self.walign, False, False, 2)
         
         self.pack_start(listsbox, False, False)
         self.pack_start(self.errorbox, False, False)

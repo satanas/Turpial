@@ -12,8 +12,8 @@ class SpinnerButton(gtk.Button):
     def __init__(self, parent, default_image):
         gtk.Button.__init__(self)
         self.mainwin = parent
-        self.default_image = default_image
-        self.set_image(self.mainwin.load_image(self.default_image))
+        self.default_image = self.mainwin.load_image(default_image)
+        self.set_image(self.default_image)
         self.count = 1
         self.timer = None
         
@@ -33,5 +33,5 @@ class SpinnerButton(gtk.Button):
         if self.timer is not None: 
             gobject.source_remove(self.timer)
         self.set_sensitive(True)
-        self.set_image(self.mainwin.load_image(self.default_image))
+        self.set_image(self.default_image)
     

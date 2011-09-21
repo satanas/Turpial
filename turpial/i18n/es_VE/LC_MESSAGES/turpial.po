@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
 "POT-Creation-Date: 2011-09-03 14:08-0300\n"
-"PO-Revision-Date: 2011-09-03 18:46+0000\n"
-"Last-Translator: jamp <jampgold@gmail.com>\n"
+"PO-Revision-Date: 2011-09-21 03:49+0000\n"
+"Last-Translator: satanas <wil.alejandro@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -104,7 +104,7 @@ msgstr "Seleccione algo para subir"
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:139
 msgid "Sorry, you don't have more APIcalls"
-msgstr ""
+msgstr "Lo siento, no tienes más llamadas a la API"
 
 #: turpial/api/protocols/identica/http.py:37
 #: turpial/api/protocols/twitter/http.py:142
@@ -510,7 +510,7 @@ msgstr "Mostrar un espacio de trabajo de 3 columnas"
 
 #: turpial/ui/gtk/preferences.py:205
 msgid "Load profile color (Needs Turpial to be restarted)"
-msgstr ""
+msgstr "Cargar color de perfil (requiere reiniciar Turpial)"
 
 #: turpial/ui/gtk/preferences.py:211
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
@@ -522,15 +522,15 @@ msgstr "Minimizar a la bandeja"
 
 #: turpial/ui/gtk/preferences.py:222
 msgid "Send Turpial to system tray when closing main window"
-msgstr ""
+msgstr "Minimizar Turpial a la bandeja de sistema al cerrar"
 
 #: turpial/ui/gtk/preferences.py:229
 msgid "Expand URLs"
-msgstr ""
+msgstr "Expandir URL"
 
 #: turpial/ui/gtk/preferences.py:233
 msgid "Expand URLS in Open menu"
-msgstr ""
+msgstr "Expandir URL en el menú abrir"
 
 #: turpial/ui/gtk/preferences.py:254
 #, python-format
@@ -539,7 +539,7 @@ msgstr "Turpial usará aprox. %i llamadas al API por hora"
 
 #: turpial/ui/gtk/preferences.py:279
 msgid "Select the notifications you want to receive from Turpial"
-msgstr ""
+msgstr "Selecciona las notificaciones que deseas recibir de Turpial"
 
 #: turpial/ui/gtk/preferences.py:325
 msgid "Login"
@@ -560,6 +560,7 @@ msgstr "Activar sonidos para cada notificación"
 #: turpial/ui/gtk/preferences.py:371
 msgid "Select your preferred services to shorten URLs and to upload images"
 msgstr ""
+"Selecciona tus servicios preferidos para acortar URLs y subir imágenes"
 
 #: turpial/ui/gtk/preferences.py:379 turpial/ui/gtk/updatebox.py:65
 #: turpial/ui/gtk/updatebox.py:66
@@ -572,11 +573,11 @@ msgstr "Cargar imagenes"
 
 #: turpial/ui/gtk/preferences.py:422
 msgid "Select all those users that bother you and shut them up temporarily"
-msgstr ""
+msgstr "Selecciona todos esos usuarios que te molestan y callalos por un rato"
 
 #: turpial/ui/gtk/preferences.py:517
 msgid "Filter out words you don't want to see"
-msgstr ""
+msgstr "Filtrar las palabras que no quieres ver"
 
 #: turpial/ui/gtk/preferences.py:524
 msgid "New Filter"
@@ -632,11 +633,11 @@ msgstr "Twitter API URL"
 
 #: turpial/ui/gtk/preferences.py:730
 msgid "Configure Turpial behavior at startup"
-msgstr ""
+msgstr "Configura el comportamiento de Turpial al inicio"
 
 #: turpial/ui/gtk/preferences.py:740
 msgid "Login automatically at startup"
-msgstr ""
+msgstr "Inicio de sesión automático"
 
 #: turpial/ui/gtk/profile.py:16
 msgid "Favorites"

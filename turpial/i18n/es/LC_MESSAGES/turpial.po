@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: Turpial\n"
 "Report-Msgid-Bugs-To: http://dev.turpial.org.ve/projects/turpial/issues\n"
 "POT-Creation-Date: 2011-09-03 14:08-0300\n"
-"PO-Revision-Date: 2011-09-03 17:24+0000\n"
+"PO-Revision-Date: 2011-09-21 03:51+0000\n"
 "Last-Translator: satanas <wil.alejandro@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -103,7 +103,7 @@ msgstr "Seleccione esta opción para subir algo"
 #: turpial/api/protocols/identica/http.py:34
 #: turpial/api/protocols/twitter/http.py:139
 msgid "Sorry, you don't have more APIcalls"
-msgstr ""
+msgstr "Lo siento, no tienes más llamadas a la API"
 
 #: turpial/api/protocols/identica/http.py:37
 #: turpial/api/protocols/twitter/http.py:142
@@ -508,7 +508,7 @@ msgstr "Muestra un espacio de trabajo de 3 columnas"
 
 #: turpial/ui/gtk/preferences.py:205
 msgid "Load profile color (Needs Turpial to be restarted)"
-msgstr ""
+msgstr "Cargar color de perfil (Requiere reiniciar Turpial)"
 
 #: turpial/ui/gtk/preferences.py:211
 msgid "Use user profile color to highlight mentions, hashtags and URLs"
@@ -521,7 +521,7 @@ msgstr "Minimizar a la bandeja"
 
 #: turpial/ui/gtk/preferences.py:222
 msgid "Send Turpial to system tray when closing main window"
-msgstr ""
+msgstr "Envía a Turpial a la bandeja de sistema en lugar de cerrarlo"
 
 #: turpial/ui/gtk/preferences.py:229
 msgid "Expand URLs"
@@ -534,7 +534,7 @@ msgstr "Expandir URLs en el menú Abrir"
 #: turpial/ui/gtk/preferences.py:254
 #, python-format
 msgid "Turpial will use aprox. %i calls to API per hour"
-msgstr ""
+msgstr "Turpial usará aprox. %i llamadas a la API por hora"
 
 #: turpial/ui/gtk/preferences.py:279
 msgid "Select the notifications you want to receive from Turpial"
@@ -559,7 +559,7 @@ msgstr "Activar sonidos para cada notificación"
 
 #: turpial/ui/gtk/preferences.py:371
 msgid "Select your preferred services to shorten URLs and to upload images"
-msgstr ""
+msgstr "Selecciona tu servicio favorito para acortar URLs y subir imágenes"
 
 #: turpial/ui/gtk/preferences.py:379 turpial/ui/gtk/updatebox.py:65
 #: turpial/ui/gtk/updatebox.py:66

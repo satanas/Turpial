@@ -1,0 +1,38 @@
+<html>
+<head>
+    <link href="../../themes/default/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div id="login-window">
+        <div id="logo"><img src="../../pixmaps/logo2.png"/></div>
+        <div id="widgets" class="container">
+            <div id="form">
+                <div class="account" onselect="this.blur();">
+                    <input id="selected-acc-1" type="checkbox"/>
+                    <img src="../../pixmaps/twitter.png"/>
+                    <label for="selected-acc-1" onselect="this.bulr();">pedrito</label>
+                </div>
+                <div class="account">
+                    <input id="selected-acc-2" type="checkbox"/>
+                    <img src="../../pixmaps/identica.png"/>
+                    <label for="selected-acc-2">juancito</label>
+                </div>
+                <div class="account">
+                    <input id="selected-acc-3" type="checkbox"/>
+                    <img src="../../pixmaps/twitter.png"/>
+                    <label for="selected-acc-2">maria</label>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <!-- div class="container"><a href="#"><img src="../../pixmaps/login-add.png"/></a></div -->
+        <div id="button" class="container">
+            <input id="login-button" type="button" value="Login"/>
+        </div>
+        <div id="options" class="container">
+            <input id="startup" type="checkbox"/>
+            <label for="startup" ondblclick="this.blur();">Login at startup</label>
+        </div>
+    </div>
+</body>
+</html>

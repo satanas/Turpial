@@ -1,0 +1,111 @@
+a:link, a:visited{
+    color: #006C12;
+    text-decoration:none;
+}
+
+a:hover{
+    color: #006C12;
+    text-decoration:underline;
+}
+
+#login-window {
+    width: 350px;
+    height: 480px;
+    background: #262626 url('<% css_img "landscape.png" %>') bottom left no-repeat;
+}
+
+#login-window #logo {
+    width: 260px;
+    height: 61px;
+    padding-top: 20px;
+    margin: 0 auto;
+}
+
+#login-window .container {
+    width: 260px;
+    margin: 0 auto;
+}
+
+#widgets {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 15px #000;
+}
+
+#title {
+    width: 100%;
+    height: 25px;
+    background: #359130 url('<% css_img "title-background.png" %>') repeat-x;
+    border-radius: 5px 5px 0 0;
+}
+
+#title h1 {
+    color: #fff;
+    font-family: Arial, Helmet, Freesans, sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+    margin: 0px;
+    padding: 6px 0 0 12px;
+}
+
+#login-window #widgets #form {
+    float: left;
+    width: 100%;
+    height: 140px;
+    overflow: auto;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    background-color: #cadce2;
+}
+
+.account {
+    height: 32px;
+    vertical-align: middle;
+    font-weight: bold;
+    margin-bottom: 2px;
+    padding-left: 5px;
+}
+
+.account img {
+    padding-top: 6px;
+}
+
+.account label {
+    padding-left: 6px;
+    cursor: pointer;
+}
+
+.options {
+    padding-left: 5px;
+}
+
+#button {
+    padding-top: 15px;
+}
+
+#login-button {
+    height: 28px;
+    min-width: 130px;
+    float: right;
+    margin-right: 10px;
+}
+
+#extra {
+    height: 26px;
+    margin-top: 15px;
+    border-top: 1px solid #ccc;
+}
+
+#extra ul {
+    height: 100%;
+    list-style-type: none;
+    margin: 10px 10px 0 0;
+    padding: 0;
+    float: right;
+}
+
+#extra li {
+    float: left;
+    padding-left: 15px;
+    font-size: 11px;
+}

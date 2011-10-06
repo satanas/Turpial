@@ -1,0 +1,37 @@
+<html>
+<head>
+    <% stylesheets %>
+    <% javascripts %>
+</head>
+<body>
+    <div id="login-window">
+        <div id="logo"><% img "logo-login.png" %></div>
+        <div id="widgets" class="container">
+            <div id="title"><h1>Accounts</h1></div>
+            <div id="form">
+                <% partial 'accounts' %>
+            </div>
+            <div class="options">
+                <input id="remember" type="checkbox"/>
+                <label for="remember" ondblclick="this.blur();">Remember accounts</label>
+            </div>
+            <div class="options">
+                <input id="startup" type="checkbox"/>
+                <label for="startup" ondblclick="this.blur();">Login at startup</label>
+            </div>
+            <div id="button">
+                <input id="login-button" type="button" value="Login"/>
+                <div class="clearfix"></div>
+            </div>
+            <div id="extra">
+                <ul>
+                    <li><a href="cmd:about">About</a></li>
+                    <li><a href="cmd:about">Preferences</a></li>
+                    <li><a href="cmd:about">Add account</a></li>
+                </ul>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,558 +1,273 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-'''Controlador de Turpial'''
-
+# Vista para Turpial usando Webkit
 #
 # Author: Wil Alvarez (aka Satanas)
-# Nov 8, 2009
+# Sep 03, 2011
 
 import os
+import gtk
 import sys
-import base64
+import Queue
+#import base64
 import logging
-import getpass
-from optparse import OptionParser
+import gobject
+import threading
 
-from turpial.api.servicesapi import HTTPServices
-from turpial.api.turpialapi import TurpialAPI
-from turpial.config import ConfigHandler, ConfigApp, ConfigProtocol, PROTOCOLS
-from turpial.ui.cmd.main import Main as _CMD
+from sound import Sound
+from webcontainer import WebContainer
+#from libturpial.api.core import Core
+from libturpial.common import ColumnType
 
-try:
-    import ctypes
-    libc = ctypes.CDLL('libc.so.6')
-    libc.prctl(15, 'turpial', 0, 0)
-except ImportError:
-    pass
+gtk.gdk.set_program_class("Turpial")
+gtk.gdk.threads_init()
 
-INTERFACES = ['cmd']
-try:
-    from turpial.ui.gtk.main import Main as _GTK
-    UI_GTK = True
-    INTERFACES.append('gtk')
-    INTERFACES.append('gtk+')
-except ImportError, exc:
-    print exc
-    UI_GTK = False
+log = logging.getLogger('Gtk')
 
-class Turpial:
-    '''Inicio de Turpial'''
+class Main(gtk.Window):
     def __init__(self):
-        ui_avail = '('
-        for ui in INTERFACES:
-            ui_avail += ui + '|'
-        ui_avail = ui_avail[:-1] + ')'
-        default_ui = INTERFACES[1] if len(INTERFACES) > 1 else ''
+        gtk.Window.__init__(self)
         
-        parser = OptionParser()
-        parser.add_option('-d', '--debug', dest='debug', action='store_true',
-            help='show debug info in shell during execution', default=False)
-        parser.add_option('-i', '--interface', dest='interface',
-            help='select interface to use %s' % ui_avail, default=default_ui)
-        parser.add_option('-c', '--clean', dest='clean', action='store_true',
-            help='clean all bytecodes', default=False)
-        parser.add_option('-s', '--save-credentials', dest='save', action='store_true',
-            help='save user credentials', default=False)
-        parser.add_option('--version', dest='version', action='store_true',
-            help='show the version of Turpial and exit', default=False)
-        parser.add_option('--test', dest='test', action='store_true',
-            help='only load timeline and friends', default=False)
-        parser.add_option('--no-sound', dest='no_sound', action='store_true',
-            help='disable the sounds module', default=False)
-        parser.add_option('--no-notif', dest='no_notif', action='store_true',
-            help='disable the notifications module', default=False)
+        self.set_title('Turpial')
+        self.set_size_request(280, 350)
+        self.set_default_size(352, 482)
+        self.set_icon(self.load_image('turpial.png', True))
+        self.set_position(gtk.WIN_POS_CENTER)
+        self.set_gravity(gtk.gdk.GRAVITY_STATIC)
+        self.connect('delete-event', self.__close)
+        self.connect('key-press-event', self.__on_key_press)
+        self.connect('focus-in-event', self.__on_focus)
         
-        (options, args) = parser.parse_args()
         
-        self.config = None
-        self.global_cfg = ConfigApp()
-        self.protocol_cfg = {}
-        self.profile = None
-        self.testmode = options.test
-        self.interface = options.interface
-        self.no_sound = options.no_sound
-        self.no_notif = options.no_notif
-        self.httpserv = None
-        self.api = None
-        self.version = self.global_cfg.read('App', 'version')
+        self.container = WebContainer()
+        self.add(self.container)
         
-        for p in PROTOCOLS:
-            self.protocol_cfg[p] = ConfigProtocol(p)
+        self.mode = 0
         
-        if options.debug or options.clean: 
-            logging.basicConfig(level=logging.DEBUG)
-        else:
-            logging.basicConfig(level=logging.INFO)
-        self.log = logging.getLogger('Controller')
+        # Valores de config. por defecto
+        self.showed = True
+        self.win_state = 'windowed'
+        self.minimize = 'on'
+        self.workspace = 'single'
+        self.link_color = '#ff6633'
+        self.home_interval = -1
+        self.replies_interval = -1
+        self.directs_interval = -1
+        self.me = None
+        self.version = None
         
-        if options.clean:
-            self.__clean()
-            sys.exit(0)
-            
-        if options.version:
-            print "Turpial v%s" % self.version
-            print "Python v%X" % sys.hexversion
-            sys.exit(0)
-            
-        if options.save:
-            try:
-                self.__save_credentials()
-            except KeyboardInterrupt:
-                self.log.debug('Interceptado Keyboard Interrupt')
-            sys.exit(0)
-            
-        self.interface = options.interface
-        if options.interface == 'gtk+' and ('gtk+' in INTERFACES):
-            self.ui = _GTK(self, extend=True)
-        elif options.interface == 'gtk' and ('gtk' in INTERFACES):
-            self.ui = _GTK(self)
-        elif options.interface == 'cmd' and ('cmd' in INTERFACES):
-            self.ui = _CMD(self, args)
-        else:
-            print 'No existe una interfaz válida. Las interfaces válidas son: %s' % INTERFACES
-            print 'Saliendo...'
-            sys.exit(-1)
+        self.home_timer = None
+        self.replies_timer = None
+        self.directs_timer = None
         
-        self.httpserv = HTTPServices()
-        self.api = TurpialAPI()
+        self.sound = Sound()
+        #self.notify = Notification(controller.no_notif)
         
-        self.log.debug('Iniciando Turpial v%s' % self.version)
-        if self.interface  != 'cmd':
-            self.httpserv.start()
-        self.api.start()
-        self.api.change_api_url(self.global_cfg.read('Proxy', 'url'))
+        #self.wcore = Worker()
+        #self.wcore.start()
+        ##self.app_cfg = ConfigApp()
+        ##self.version = self.app_cfg.read('App', 'version')
         
-        if self.testmode:
-            self.log.debug('Modo Pruebas Activado')
-            
-        self.ui.show_login()
-        try:
-            self.ui.main_loop()
-        except KeyboardInterrupt:
-            self.log.debug('Interceptado Keyboard Interrupt')
-            self.ui.main_quit()
+        self.__create_trayicon()
+        self.show_all()
+        '''
+        #gobject.idle_add(self.view.load_string, '<img src="data/pixmaps/ajax-loader.gif">', "text/html", "iso-8859-15", os.path.dirname(__file__))
+        filepath = "file://" + os.getcwd() + "/data/pixmaps/ajax-loader.gif"
+        print '<img src= "%s">' % filepath
+        style = "file://" + os.getcwd() + "/data/themes/default/style.css"
+        self.page = '<html><head><link href="' + style + '" rel="stylesheet" type="text/css"></head><body>'
+        #page = self.page
+        #page += '<div class="test"><img src="'+filepath+'"></div></body></html>'
+        fd = open('data/themes/default/login-test2.html', 'r')
+        page = fd.read()
+        fd.close()
+        page = page.replace('../..', "file://" + os.getcwd() + "/data")
+        gobject.idle_add(self.view.load_string, page, "text/html", "iso-8859-15", 'file://')
+        '''
         
-    def __clean(self):
-        '''Limpieza de ficheros .pyc y .pyo'''
-        self.log.debug("Limpiando la casa...")
-        path = os.path.join(os.path.dirname(__file__))
-        i = 0
-        for root, dirs, files in os.walk(path):
-            for f in files:
-                path = os.path.join(root, f)
-                if path.endswith('.pyc') or path.endswith('.pyo'): 
-                    self.log.debug("Borrado %s" % path)
-                    os.remove(path)
-            
-    def __save_credentials(self):
-        print "This assistant will allow you store your credentials"
-        print "Available protocols"
-        print "==================="
-        for i in range(len(PROTOCOLS)):
-            print "%d - %s" % (i, PROTOCOLS[i])
+        self.container.load_layout('login')
+        self.container.render()
         
-        while 1:
-            protocol = int(raw_input("Select protocol: "))
-            if protocol <= len(PROTOCOLS):
-                break
-            else:
-                print "Invalid protocol, please try again"
+        self.tweet_template = '''<table>
+    <tr>
+        <td valign="top" class="tweet"><img src="${avatar}" width="48" height="48"/></td>
+        <td valign="top" class="tweet desc">
+            <span>
+                <span class="mention"><b>@${username}</b></span> 
+                ${text}<br/>
+                <div class="spacer"/>
+                <span class="footer">${date} ${client} ${in_reply_to}<br/>
+                    ${retweeted_by}
+                    <span class="buttons">
+                        <a href="cmd:+fav">+fav</a> &nbsp;
+                        <a href="cmd:retweet">retweet</a> &nbsp;
+                        <a href="cmd:rt">RT </a> &nbsp;
+                        <a href="cmd:reply">responder</a></span>
+                </span>
+            </span></td>
+    </tr>
+</table>'''
         
-        user, passwd, rem = self.get_remembered(protocol)
-        if user != '' and passwd != '':
-            delete = raw_input("Delete your current credentials (%s)? [Y/n/q]: " %
-                user)
-            if delete == '' or delete.lower() == 'y':
-                self.remember(pro=protocol, rem=False)
-                return
-            elif delete.lower() == 'q':
-                return
+    def __popo(self, widget):
+        self.wcore.login()
+        self.wcore.get_public(self.update_column1)
         
-        user = raw_input("User: ")
-        while 1:
-            passwd = getpass.getpass("Password: ")
-            confirm = getpass.getpass("Retype password: ")
-            if passwd == confirm:
-                break
-            else:
-                print
-                print "Password mismatch, please try again"
-        self.remember(user, passwd, protocol, True)
-        print "Credentials saved successfully"
-        
-    def __validate_credentials(self, val):
-        '''Chequeo de credenciales'''
-        if val.type == 'error':
-            self.ui.cancel_login(val.errmsg)
-        elif val.type == 'profile':
-            self.profile = val.items
-            self.config = ConfigHandler(self.profile.username, self.current_protocol)
-            self.config.initialize()
-            
-            if self.tmp_key is not None:
-                self.config.write('Auth', 'oauth-key', self.tmp_key)
-            if self.tmp_secret is not None:
-                self.config.write('Auth', 'oauth-secret', self.tmp_secret)
-            if self.tmp_verifier is not None:
-                self.config.write('Auth', 'oauth-verifier', self.tmp_verifier)
-            
-            self.httpserv.update_img_dir(self.config.imgdir)
-            self.httpserv.set_credentials(self.profile.username, 
-                self.profile.password, self.api.protocol.http)
-            
-            self.__signin_done()
-        
-    def __validate_token(self, val):
-        if val.type == 'auth-done':
-            token = val.items
-            self.__save_oauth_token(token.key, token.secret, token.verifier)
-        elif val.type == 'auth-token':
-            self.ui.show_oauth_pin_request(val.items)
-        
-    def __save_oauth_token(self, key, secret, verifier):
-        self.tmp_key = key
-        self.tmp_secret = secret
-        self.tmp_verifier = verifier
-        auth = self.config.read_section('Auth')
-        self.api.auth(self.tmp_username, self.tmp_passwd, auth, 
-            self.__validate_credentials)
-        
-    def __done_follow(self, response):
-        user = response.items[1]
-        follow = response.items[2]
-        
-        if response.type == 'error':
-            msg = response.errmsg % user
-            self.ui.following_error(msg, follow)
-        elif response.type == 'mixed':
-            self.profile = response.items[0]
-            self.ui.update_user_profile(self.profile)
-            self.ui.update_follow(user, follow)
-        
-    def __direct_done(self, status):
-        self.ui.tweet_done(status)
-        
-    def __tweet_done(self, status):
-        if status:
-            self.profile.statuses_count += 1
-            self.ui.update_user_profile(self.profile)
-        self.ui.tweet_done(status)
-        
-    def __signin_done(self):
-        '''Inicio de sesion finalizado'''
-        resp_profile = self.profile
-            
-        # TODO: Llenar con el resto de listas
-        self.lists = {
-            'timeline': MicroBloggingList('timeline', '', _('Timeline'),
-                _('tweet'), _('tweets')),
-            'replies': MicroBloggingList('replies', '', _('Replies'),
-                _('mention'), _('mentions')),
-            'directs': MicroBloggingList('directs', '', _('Directs'),
-                _('direct'), _('directs')),
-            'sent': MicroBloggingList('sent', '', _('My Tweets'), 
-                _('tweet'), _('tweets')),
-        }
-        
-        if self.interface  != 'cmd':
-            plists = self.api.get_lists()
-            for ls in plists:
-                self.lists[str(ls.id)] = MicroBloggingList(str(ls.id), ls.user, 
-                    ls.name, _('tweet'), _('tweets'))
-        
-        # Evita que la aplicación reviente si se borra una lista por fuera
-        try:
-            column1 = self.lists[self.config.read('Columns', 'column1')]
-        except KeyError:
-            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
-                self.config.read('Columns', 'column1'))
-            column1 = self.lists['timeline']
-        
-        try:
-            column2 = self.lists[self.config.read('Columns', 'column2')]
-        except KeyError:
-            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
-                self.config.read('Columns', 'column2'))
-            column2 = self.lists['timeline']
-            
-        try:
-            column3 = self.lists[self.config.read('Columns', 'column3')]
-        except KeyError:
-            self.log.debug('La lista %s no existe. Se carga el Timeline' % 
-                self.config.read('Columns', 'column3'))
-            column3 = self.lists['timeline']
-            
-        self.viewed_cols = [column1, column2, column3]
-        
-        self.api.protocol.muted_users = self.config.load_muted_list()
-        self.api.protocol.filtered_terms = self.config.load_filtered_list()
-        self.ui.set_lists(self.lists, self.viewed_cols)
-        self.ui.show_main(self.config, self.global_cfg, resp_profile)
-        
-        if self.interface  == 'cmd':
+    def __create_trayicon(self):
+        if gtk.check_version(2, 10, 0) is not None:
+            log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
             return
+        self.tray = gtk.StatusIcon()
+        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
+        self.tray.set_tooltip('Turpial')
+        self.tray.connect("activate", self.__on_trayicon_click)
+        self.tray.connect("popup-menu", self.__show_tray_menu)
         
-        self._update_column1()
-        if self.testmode:
-            self._update_rate_limits()
-            self._update_friends()
-            return
-        self._update_column2()
-        self._update_column3()
-        self._update_rate_limits()
-        self._update_favorites()
-        self._update_friends()
-        
-    def _update_column1(self):
-        '''Actualizar columna 1'''
-        self.ui.start_updating_column1()
-        count = int(self.config.read('General', 'num-tweets'))
-        column = self.viewed_cols[0]
-        self.api.update_column(self.ui.update_column1, count, column)
-        
-    def _update_column2(self):
-        '''Actualizar columna 2'''
-        self.ui.start_updating_column2()
-        count = int(self.config.read('General', 'num-tweets'))
-        column = self.viewed_cols[1]
-        self.api.update_column(self.ui.update_column2, count, column)
-        
-    def _update_column3(self):
-        '''Actualizar columna 3'''
-        self.ui.start_updating_column3()
-        count = int(self.config.read('General', 'num-tweets'))
-        column = self.viewed_cols[2]
-        self.api.update_column(self.ui.update_column3, count, column)
-        
-    def _update_favorites(self):
-        '''Actualizar favoritos'''
-        self.api.update_favorites(self.ui.update_favorites)
-    
-    def _update_rate_limits(self):
-        self.api.update_rate_limits(self.ui.update_rate_limits)
-        
-    def _update_friends(self):
-        '''Actualizar amigos'''
-        self.api.get_friends()
-    
-    def get_remembered(self, index):
-        protocol = PROTOCOLS[index]
-        us = self.protocol_cfg[protocol].read('Login', 'username')
-        pw = self.protocol_cfg[protocol].read('Login', 'password')
-        au = self.global_cfg.read('Startup', 'autologin')
-        try:
-            if au == 'on':
-                auto = True
-            else:
-                auto = False
-            if us != '' and pw != '':
-                a = base64.b64decode(pw)
-                b = a[1:-1]
-                c = base64.b32decode(b)
-                d = c[1:-1]
-                e = base64.b16decode(d)
-                pwd = e[0:len(us)]+ e[len(us):]
-                return us, pwd, True, auto
-            else:
-                return us, pw, False, False
-        except TypeError:
-            self.protocol_cfg[protocol].write('Login', 'username','')
-            self.protocol_cfg[protocol].write('Login', 'password','')
-            self.global_cfg.write('Startup', 'autologin', 'off')
-            return '', '', False, False
-        
-    def remember(self, us='', pw='', pro=0, rem=False, auto=False):
-        protocol = PROTOCOLS[pro]
-        if not rem:
-            self.protocol_cfg[protocol].write('Login', 'username', '')
-            self.protocol_cfg[protocol].write('Login', 'password', '')
-            return
-            
-        a = base64.b16encode(pw)
-        b = us[0] + a + ('%s' % us[-1])
-        c = base64.b32encode(b)
-        d = ('%s' % us[-1]) + c + us[0]
-        e = base64.b64encode(d)
-        pwd = e[0:len(us)]+ e[len(us):]
-        
-        self.protocol_cfg[protocol].write('Login', 'username', us)
-        self.protocol_cfg[protocol].write('Login', 'password', pwd)
-        if auto:
-            self.global_cfg.write('Startup', 'autologin', 'on')
+    def __on_trayicon_click(self, widget):
+        if self.showed:
+            self.showed = False
+            self.hide()
         else:
-            self.global_cfg.write('Startup', 'autologin', 'off')
+            self.showed = True
+            self.show()
             
-    def signin(self, username, password, protocol):
-        self.config = ConfigHandler(username, protocol)
-        self.config.initialize_failsafe()
-        auth = self.config.read_section('Auth')
-        self.tmp_username = username
-        self.tmp_passwd = password
-        self.current_protocol = protocol
-        self.api.start_oauth(auth, protocol, self.__validate_token)
+    def __on_focus(self, widget, event):
+        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
     
-    def auth_token(self, pin):
-        print 'PIN', pin
-        self.api.authorize_oauth_token(pin, self.__save_oauth_token)
+    def __on_key_press(self, widget, event):
+        keyname = gtk.gdk.keyval_name(event.keyval)
+        if (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'n':
+            self.show_update_box()
+            return True
+        return False
         
-    def signout(self):
-        '''Finalizar sesion'''
-        self.save_muted_list()
-        self.save_filtered_list()
-        self.log.debug('Desconectando')
-        if self.httpserv and self.interface  != 'cmd':
-            self.httpserv.quit()
-            self.httpserv.join(0)
-        if self.api: 
-            self.api.quit()
-            if self.interface  != 'cmd':
-                self.api.join(0)
+    def __show_tray_menu(self, widget, button, activate_time):
+        menu = gtk.Menu()
+        tweet = gtk.MenuItem(('Tweet'))
+        follow = gtk.MenuItem(('Follow'))
+        exit = gtk.MenuItem(('Exit'))
+        if self.mode == 2:
+            menu.append(tweet)
+            menu.append(follow)
+            menu.append(gtk.SeparatorMenuItem())
+        menu.append(exit)
+        
+        exit.connect('activate', self.main_quit)
+        #tweet.connect('activate', self.__show_update_box_from_menu)
+        #follow.connect('activate', self.__show_follow_box_from_menu)
+        
+        menu.show_all()
+        menu.popup(None, None, None, button, activate_time)
+        
+    def __close(self, widget, event=None):
+        if self.minimize == 'on':
+            self.showed = False
+            self.hide()
+        else:
+            self.main_quit()
+        return True
+        
+    def main_quit(self, widget=None):
+        #self.__save_config()
+        self.destroy()
+        self.tray = None
+        #self.wcore.quit()
+        if widget:
+            gtk.main_quit()
+        #self.request_signout()
+        #self.wcore.join()
         sys.exit(0)
+        
+    def main_loop(self):
+        try:
+            gtk.gdk.threads_enter()
+            gtk.main()
+            gtk.gdk.threads_leave()
+        except Exception:
+            sys.exit(0)
     
-    def update_status(self, text, reply_id=None):
-        if text.startswith('D '):
-            self.api.update_status(text, reply_id, self.__direct_done)
-        else:
-            self.api.update_status(text, reply_id, self.__tweet_done)
+    def load_image(self, path, pixbuf=False):
+        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            'data', 'pixmaps', path))
+        pix = gtk.gdk.pixbuf_new_from_file(img_path)
+        if pixbuf: return pix
+        avatar = gtk.Image()
+        avatar.set_from_pixbuf(pix)
+        del pix
+        return avatar
         
-    def destroy_status(self, id):
-        self.api.destroy_status(id, self.ui.after_destroy_status)
+    def update_column1(self, statuses):
+        if not statuses:
+            print "There are no statuses to show"
+            return
         
-    def set_favorite(self, id):
-        self.api.set_favorite(id, self.ui.tweet_changed)
+        if statuses.code > 0:
+            print statuses.errmsg
+            return
         
-    def unset_favorite(self, id):
-        self.api.unset_favorite(id, self.ui.tweet_changed)
-    
-    def repeat(self, id):
-        self.api.repeat(id, self.__tweet_done)
-    
-    def follow(self, user):
-        self.api.follow(user, self.__done_follow)
-        
-    def unfollow(self, user):
-        self.api.unfollow(user, self.__done_follow)
-        
-    def update_profile(self, new_name, new_url, new_bio, new_location):
-        self.api.update_profile(new_name, new_url, new_bio, new_location,
-            self.ui.update_user_profile)
-    
-    def in_reply_to(self, id):
-        self.api.in_reply_to(id, self.ui.update_in_reply_to)
-        
-    def get_conversation(self, id):
-        self.api.get_conversation(id, self.ui.update_conversation)
-    
-    def mute(self, users):
-        self.api.mute(users, self.ui.tweet_changed)
-
-    def filter_term(self, term):
-        self.api.filter_term(term, self.ui.tweet_changed)
-    
-    def short_url(self, text, callback):
-        service = self.config.read('Services', 'shorten-url')
-        self.httpserv.short_url(service, text, callback)
-
-    def expand_url(self, url, callback):
-        self.httpserv.expand_url(url, callback)
-    
-    def download_user_pic(self, user, pic_url, callback):
-        self.httpserv.download_pic(user, pic_url, callback)
-        
-    def upload_pic(self, path, message, callback):
-        service = self.config.read('Services', 'upload-pic')
-        self.httpserv.upload_pic(service, path, message, callback)
-        
-    def search(self, query):
-        self.ui.start_search()
-        self.api.search(query, self.ui.update_search)
-        
-    def get_popup_info(self, tweet_id, user):
-        if self.api.is_marked_to_fav(tweet_id):
-            return {'marking_fav': True}
-        elif self.api.is_marked_to_unfav(tweet_id):
-            return {'unmarking_fav': True}
-        elif self.api.is_marked_to_del(tweet_id):
-            return {'deleting': True}
+        page = self.page
+        for status in statuses:
+            text = status.text.replace('\n', ' ')
+            inreply = ''
+            client = ''
+            retweeted = ''
+            if status.in_reply_to_user:
+                inreply = ' in reply to %s' % status.in_reply_to_user
+            if status.source:
+                client = ' from %s' % status.source
+            if status.reposted_by:
+                users = ''
+                for u in status.reposted_by:
+                    users += u + ' '
+                retweeted = 'Retweeted by %s' % status.reposted_by
             
-        rtn = {}
-        if self.api.friends_loaded():
-            rtn['friend'] = self.api.is_friend(user)
-
-        rtn['fav'] = self.api.is_fav(tweet_id)
+            twt = self.tweet_template
+            twt = twt.replace('${avatar}', status.avatar)
+            twt = twt.replace('${username}', status.username)
+            twt = twt.replace('${text}', text)
+            twt = twt.replace('${date}', status.datetime)
+            twt = twt.replace('${client}', client)
+            twt = twt.replace('${in_reply_to}', inreply)
+            twt = twt.replace('${retweeted_by}', retweeted)
+            page += twt
+        gobject.idle_add(self.view.load_string, page, "text/html", "iso-8859-15", 'file://')
         
-        return rtn
-        
-    def save_config(self, config, update):
-        self.config.save(config)
-        if update:
-            self.ui.update_config(self.config)
-            
-    def save_global_config(self, config):
-        self.global_cfg.save(config)
-        
-    def save_muted_list(self):
-        if self.config:
-            self.config.save_muted_list(self.api.protocol.muted_users)
-        
-    def get_muted_list(self):
-        return self.api.get_muted_list()
-        
-    def save_filtered_list(self):
-        if self.config:
-            self.config.save_filtered_list(self.api.protocol.filtered_terms)
-        
-    def get_filtered_list(self):
-        return self.api.get_filtered_list()
-
-    def destroy_direct(self, id):
-        self.api.destroy_direct(id, self.ui.after_destroy_direct)
-        
-    def get_friends(self):
-        return self.api.get_single_friends_list()
-        
-    def get_hashtags_url(self):
-        return self.api.protocol.tags_url
-        
-    def get_groups_url(self):
-        return self.api.protocol.groups_url
-        
-    # FIXME: Debería pasarse como parámetro el protocolo
-    def get_profiles_url(self):
-        return self.api.protocol.profiles_url
-        
-    def get_viewed_columns(self):
-        return self.viewed_cols
-        
-    def change_column(self, index, new_id):
-        print 'change_column', self.lists.keys(), index, new_id
-        if self.lists.has_key(new_id):
-            self.viewed_cols[index] = self.lists[new_id]
-            if index == 0:
-                self.ui.home.timeline.clear()
-                self._update_column1()
-            elif index == 1:
-                self.ui.home.replies.clear()
-                self._update_column2()
-            elif index == 2:
-                self.ui.home.direct.clear()
-                self._update_column3()
-        else:
-            self.ui.set_column_item(index, reset=True)
-            self.log.debug('Error: la columna %s no existe' % new_id)
-            
-    def is_friend(self, user):
-        return self.api.is_friend(user)
-        
-class MicroBloggingList:
-    ''' Lista de los diferentes protocolos '''
-    def __init__(self, id, user, title, sunit, punit):
-        self.id = id
-        self.user = user
-        self.title = title
-        self.single_unit = sunit
-        self.plural_unit = punit
+class Worker(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.setDaemon(False)
+        self.queue = Queue.Queue()
+        self.exit = False
+        self.core = Core()
+        self.account = self.core.register_account('satanas82', 'ferrari615448935', 'twitter')
     
-if __name__ == '__main__':
-    t = Turpial()
+    def __register(self, funct, args, callback):
+        self.queue.put((funct, args, callback))
+        
+    def quit(self):
+        self.exit = True
+        
+    def run(self):
+        while not self.exit:
+            try:
+                req = self.queue.get(True, 0.3)
+            except Queue.Empty:
+                continue
+            except:
+                continue
+            
+            (funct, args, callback) = req
+            
+            rtn = funct(args)
+            if callback:
+                callback(rtn)
+        
+    def login(self):
+        self.__register(self.core.login, self.account, None)
+        
+    def get_public(self, callback):
+        self.__register(self.core.get_public_timeline, self.account, callback)
+    
+if __name__ == "__main__":
+    turpial = Main()
+    turpial.main_loop()
+

@@ -7,7 +7,6 @@ include ChangeLog
 include README.rst
 include COPYING
 include AUTHORS
-include TRANSLATORS
 include THANKS
 include ez_setup.py
 include pylintrc

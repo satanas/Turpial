@@ -1,11 +1,11 @@
 [Desktop Entry]
-Version=1.0
+Version=2.0
 Name=Turpial
 Name[es]=Turpial
-GenericName=Twitter client
-GenericName[es]=Cliente Twitter
-Comment=Twitter client written in Python
-Comment[es]=Cliente Twitter escrito en Python
+GenericName=Microblogging client
+GenericName[es]=Cliente de microblogging
+Comment=A light, beautiful and functional microblogging client
+Comment[es]=Un cliente de microblogging ligero, bonito y funcional
 Exec=turpial
 Icon=turpial
 Terminal=false

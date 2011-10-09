@@ -247,10 +247,8 @@ class Worker(threading.Thread):
         self.setDaemon(False)
         self.queue = Queue.Queue()
         self.exit = False
-        self.core = Core()
-        self.account = self.core.register_account('satanas82', 'ferrari615448935', 'twitter')
     
-    def __register(self, funct, args, callback):
+    def register(self, funct, args, callback):
         self.queue.put((funct, args, callback))
         
     def quit(self):
@@ -270,14 +268,4 @@ class Worker(threading.Thread):
             rtn = funct(args)
             if callback:
                 callback(rtn)
-        
-    def login(self):
-        self.__register(self.core.login, self.account, None)
-        
-    def get_public(self, callback):
-        self.__register(self.core.get_public_timeline, self.account, callback)
-    
-if __name__ == "__main__":
-    turpial = Main()
-    turpial.main_loop()
 

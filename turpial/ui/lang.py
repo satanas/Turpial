@@ -25,9 +25,12 @@ else:
 STRINGS = {
     'accounts': _('Accounts'),
     'login_at_startup': _('Login at startup'),
+    'connect': _('Connect'),
     'about': _('About'),
     'preferences': _('Preferences'),
     'add_account': _('Add account'),
+    'user_and_password': _('User and Password'),
+    'remember_credentials': _('Remember my credentials'),
 }
     
 class i18n:

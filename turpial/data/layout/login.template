@@ -16,7 +16,7 @@
                 <label for="startup" ondblclick="this.blur();"><% $login_at_startup %></label>
             </div>
             <div id="button">
-                <input id="login-button" type="button" value="Login"/>
+                <input id="login-button" type="button" value="<% $connect %>"/>
                 <div class="clearfix"></div>
             </div>
             <div id="extra">

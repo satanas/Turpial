@@ -10,10 +10,10 @@ import sys
 import getpass
 import logging
 import readline
-from optparse import OptionParser
 
-from libturpial.api.core import Core
 from libturpial.common import ColumnType, VERSION as libturpial_ver
+
+VERSION = '2.0'
 
 INTRO = [
     'Welcome to Turpial (shell mode).', 
@@ -32,14 +32,13 @@ ARGUMENTS = {
 }
 
 class Main(cmd.Cmd):
-    def __init__(self, parent):
+    def __init__(self, core):
         cmd.Cmd.__init__(self)
         
-        self.log = logging.getLogger('Turpial:Cmd')
+        self.log = logging.getLogger('Turpial:CMD')
         self.prompt = 'turpial> '
         self.intro = '\n'.join(INTRO)
-        self.core = Core()
-        
+        self.core = core
         self.account = None
         
     def show_login(self):

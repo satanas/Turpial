@@ -18,12 +18,17 @@ except ImportError:
 
 INTERFACES = {}
 DEFAULT_INTERFACE = None
+CMD_VERSION = None
+GTK_VERSION = None
+QT_VERSION = None
 
 # Load cmd
 try:
     from turpial.ui.cmd.main import Main as _CMD
+    from turpial.ui.cmd.main import VERSION as _CMDVERSION
     INTERFACES['cmd'] = _CMD
     DEFAULT_INTERFACE = 'cmd'
+    CMD_VERSION = _CMDVERSION
 except ImportError, exc:
     print exc
 
@@ -44,10 +49,10 @@ except ImportError, exc:
     print exc
 
 def available_interfaces():
-    ui_availables = '('
+    ui_availables = ''
     for ui in INTERFACES.keys():
-        ui_availables += ui + '|'
-    ui_availables = ui_availables[:-1] + ')'
+        ui_availables += ui + '-'
+    ui_availables = ui_availables[:-1] + ''
     return ui_availables
 
 def default_interface():

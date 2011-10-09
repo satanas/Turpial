@@ -14,8 +14,8 @@ import logging
 import gobject
 import threading
 
-from sound import Sound
-from webcontainer import WebContainer
+from turpial.ui.gtk.webcontainer import WebContainer
+from turpial.ui.gtk.about import About
 #from libturpial.api.core import Core
 from libturpial.common import ColumnType
 
@@ -25,8 +25,10 @@ gtk.gdk.threads_init()
 log = logging.getLogger('Gtk')
 
 class Main(gtk.Window):
-    def __init__(self):
+    def __init__(self, core):
         gtk.Window.__init__(self)
+        
+        self.core = core
         
         self.set_title('Turpial')
         self.set_size_request(280, 350)
@@ -38,8 +40,8 @@ class Main(gtk.Window):
         self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
         
-        
         self.container = WebContainer()
+        self.container.set_action_callback(self.action_callback)
         self.add(self.container)
         
         self.mode = 0
@@ -54,13 +56,13 @@ class Main(gtk.Window):
         self.replies_interval = -1
         self.directs_interval = -1
         self.me = None
-        self.version = None
+        self.version = '2.x'
         
         self.home_timer = None
         self.replies_timer = None
         self.directs_timer = None
         
-        self.sound = Sound()
+        #self.sound = Sound()
         #self.notify = Notification(controller.no_notif)
         
         #self.wcore = Worker()
@@ -84,9 +86,6 @@ class Main(gtk.Window):
         page = page.replace('../..', "file://" + os.getcwd() + "/data")
         gobject.idle_add(self.view.load_string, page, "text/html", "iso-8859-15", 'file://')
         '''
-        
-        self.container.load_layout('login')
-        self.container.render()
         
         self.tweet_template = '''<table>
     <tr>
@@ -185,9 +184,20 @@ class Main(gtk.Window):
         except Exception:
             sys.exit(0)
     
+    def action_callback(self, action):
+        print action
+        if action == 'about':
+            self.show_about()
+    
+    def show_login(self):
+        self.container.show_login(['satanas-twitter', 'satanas-identica'])
+        
+    def show_about(self):
+        about = About(self)
+        
     def load_image(self, path, pixbuf=False):
         img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            'data', 'pixmaps', path))
+            '..', '..', 'data', 'pixmaps', path))
         pix = gtk.gdk.pixbuf_new_from_file(img_path)
         if pixbuf: return pix
         avatar = gtk.Image()

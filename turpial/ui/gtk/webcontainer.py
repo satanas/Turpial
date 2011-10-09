@@ -11,7 +11,9 @@ import gtk
 import webkit
 import gobject
 
-DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), 'data'))
+from turpial.ui.lang import i18n
+
+DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..', 'data'))
 IMAGES_DIR = os.path.join(DATA_DIR, 'pixmaps')
 LAYOUT_DIR = os.path.join(DATA_DIR, 'layout')
 JS_LAYOUT_DIR = os.path.join(LAYOUT_DIR, 'js')
@@ -25,6 +27,7 @@ DEFAULT_CSS_DIR = os.path.realpath(os.path.join(DEFAULT_THEMES_DIR, 'css'))
 IMG_PATTERN = re.compile('(<% img [\'"](.*?)[\'"] %>)')
 CSS_IMG_PATTERN = re.compile('(<% css_img [\'"](.*?)[\'"] %>)')
 PARTIAL_PATTERN = re.compile('(<% partial [\'"](.*?)[\'"] %>)')
+I18N_PATTERN = re.compile('(<% \$(.*?) %>)')
 
 class WebContainer(gtk.VBox):
     def __init__(self):
@@ -49,19 +52,29 @@ class WebContainer(gtk.VBox):
         self.scripts = []
         self.styles = []
         self.partials = {}
-        
-        #self.__load_app_layout()
-        self.show_login(['satanas-twitter', 'satanas-identica'])
     
-    def __test(self, frame, request, action, policy, data):
-        print frame
-        print request
-        print action
-        print policy
+    def __test(self, view, frame, request, action, policy, data=None):
+        print 'frame:', frame
+        print 'request:', request
+        print 'action:', action
+        print 'policy:', policy
+        url = request.get_uri()
+        print url
+        if url is None:
+            pass
+        elif url.startswith('cmd:'):
+            self.callback(url[4:])
+            policy.ignore()
+        elif url.startswith('http:'):
+            policy.ignore()
+        policy.use()
     
     def __load_app_layout(self):
         self.app_layout = self.open_layout_template('app')
     
+    def set_action_callback(self, callback):
+        self.callback = callback
+        
     def load_layout(self, res):
         self.app_layout = self.__open_template(res)
         
@@ -152,6 +165,10 @@ class WebContainer(gtk.VBox):
         for img in CSS_IMG_PATTERN.findall(page):
             filepath = os.path.realpath(os.path.join(IMAGES_DIR, img[1]))
             page = page.replace(img[0], 'file://' + filepath)
+            
+        for text in I18N_PATTERN.findall(page):
+            # TODO: Escape invalid characters
+            page = page.replace(text[0], i18n.get(text[1]))
         
         print page
         gobject.idle_add(self.view.load_string, page, "text/html", "iso-8859-15", 'file://' + os.path.dirname(__file__))

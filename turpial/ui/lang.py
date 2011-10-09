@@ -31,6 +31,9 @@ STRINGS = {
     'add_account': _('Add account'),
     'user_and_password': _('User and Password'),
     'remember_credentials': _('Remember my credentials'),
+    'tweet': _('Tweet'),
+    'follow': _('Follow'),
+    'exit': _('Exit'),
 }
     
 class i18n:

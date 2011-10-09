@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Vista para Turpial usando Webkit
+# GTK view for Turpial
 #
 # Author: Wil Alvarez (aka Satanas)
 # Sep 03, 2011
@@ -9,14 +9,15 @@ import os
 import gtk
 import sys
 import Queue
-#import base64
 import logging
 import gobject
 import threading
 
-from turpial.ui.gtk.webcontainer import WebContainer
+from turpial.ui.lang import i18n
+from turpial.ui.base import Base
+from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.about import About
-#from libturpial.api.core import Core
+from turpial.ui.gtk.htmlview import HtmlView
 from libturpial.common import ColumnType
 
 gtk.gdk.set_program_class("Turpial")
@@ -24,12 +25,12 @@ gtk.gdk.threads_init()
 
 log = logging.getLogger('Gtk')
 
-class Main(gtk.Window):
+class Main(Base, gtk.Window):
     def __init__(self, core):
+        Base.__init__(self, core)
         gtk.Window.__init__(self)
         
-        self.core = core
-        
+        self.htmlparser = HtmlParser()
         self.set_title('Turpial')
         self.set_size_request(280, 350)
         self.set_default_size(352, 482)
@@ -40,52 +41,39 @@ class Main(gtk.Window):
         self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
         
-        self.container = WebContainer()
-        self.container.set_action_callback(self.action_callback)
+        self.container = HtmlView(uri='file://' + os.path.dirname(__file__))
+        self.container.connect('action-request', self.__action_request)
+        self.container.connect('link-request', self.__link_request)
         self.add(self.container)
         
         self.mode = 0
         
-        # Valores de config. por defecto
+        # Configuration
         self.showed = True
-        self.win_state = 'windowed'
         self.minimize = 'on'
-        self.workspace = 'single'
-        self.link_color = '#ff6633'
-        self.home_interval = -1
-        self.replies_interval = -1
-        self.directs_interval = -1
-        self.me = None
         self.version = '2.x'
         
-        self.home_timer = None
-        self.replies_timer = None
-        self.directs_timer = None
+        self.timer1 = None
+        self.timer2 = None
+        self.timer3 = None
+        self.interval1 = -1
+        self.interval2 = -1
+        self.interval3 = -1
+        
+        '''
+        self.win_state = 'windowed'
+        self.workspace = 'single'
+        self.link_color = '#ff6633'
+        '''
         
         #self.sound = Sound()
         #self.notify = Notification(controller.no_notif)
         
-        #self.wcore = Worker()
-        #self.wcore.start()
-        ##self.app_cfg = ConfigApp()
-        ##self.version = self.app_cfg.read('App', 'version')
+        self.worker = Worker()
+        self.worker.start()
         
         self.__create_trayicon()
         self.show_all()
-        '''
-        #gobject.idle_add(self.view.load_string, '<img src="data/pixmaps/ajax-loader.gif">', "text/html", "iso-8859-15", os.path.dirname(__file__))
-        filepath = "file://" + os.getcwd() + "/data/pixmaps/ajax-loader.gif"
-        print '<img src= "%s">' % filepath
-        style = "file://" + os.getcwd() + "/data/themes/default/style.css"
-        self.page = '<html><head><link href="' + style + '" rel="stylesheet" type="text/css"></head><body>'
-        #page = self.page
-        #page += '<div class="test"><img src="'+filepath+'"></div></body></html>'
-        fd = open('data/themes/default/login-test2.html', 'r')
-        page = fd.read()
-        fd.close()
-        page = page.replace('../..', "file://" + os.getcwd() + "/data")
-        gobject.idle_add(self.view.load_string, page, "text/html", "iso-8859-15", 'file://')
-        '''
         
         self.tweet_template = '''<table>
     <tr>
@@ -106,10 +94,14 @@ class Main(gtk.Window):
             </span></td>
     </tr>
 </table>'''
-        
-    def __popo(self, widget):
-        self.wcore.login()
-        self.wcore.get_public(self.update_column1)
+    
+    def __action_request(self, widget, action):
+        print action
+        if action == 'about':
+            self.show_about()
+    
+    def __link_request(self, widget, url):
+        print 'requested link: %s' % url
         
     def __create_trayicon(self):
         if gtk.check_version(2, 10, 0) is not None:
@@ -141,16 +133,16 @@ class Main(gtk.Window):
         
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
-        tweet = gtk.MenuItem(('Tweet'))
-        follow = gtk.MenuItem(('Follow'))
-        exit = gtk.MenuItem(('Exit'))
+        tweet = gtk.MenuItem(i18n.get('tweet'))
+        follow = gtk.MenuItem(i18n.get('follow'))
+        exit_ = gtk.MenuItem(i18n.get('exit'))
         if self.mode == 2:
             menu.append(tweet)
             menu.append(follow)
             menu.append(gtk.SeparatorMenuItem())
-        menu.append(exit)
+        menu.append(exit_)
         
-        exit.connect('activate', self.main_quit)
+        exit_.connect('activate', self.main_quit)
         #tweet.connect('activate', self.__show_update_box_from_menu)
         #follow.connect('activate', self.__show_follow_box_from_menu)
         
@@ -166,14 +158,13 @@ class Main(gtk.Window):
         return True
         
     def main_quit(self, widget=None):
-        #self.__save_config()
+        self.log.debug('Exit')
         self.destroy()
         self.tray = None
-        #self.wcore.quit()
+        self.worker.quit()
+        self.worker.join()
         if widget:
             gtk.main_quit()
-        #self.request_signout()
-        #self.wcore.join()
         sys.exit(0)
         
     def main_loop(self):
@@ -184,13 +175,9 @@ class Main(gtk.Window):
         except Exception:
             sys.exit(0)
     
-    def action_callback(self, action):
-        print action
-        if action == 'about':
-            self.show_about()
-    
     def show_login(self):
-        self.container.show_login(['satanas-twitter', 'satanas-identica'])
+        page = self.htmlparser.login(['satanas-twitter', 'satanas-identica'])
+        self.container.render(page)
         
     def show_about(self):
         about = About(self)
@@ -246,16 +233,16 @@ class Worker(threading.Thread):
         threading.Thread.__init__(self)
         self.setDaemon(False)
         self.queue = Queue.Queue()
-        self.exit = False
+        self.exit_ = False 
     
     def register(self, funct, args, callback):
         self.queue.put((funct, args, callback))
         
     def quit(self):
-        self.exit = True
+        self.exit_ = True
         
     def run(self):
-        while not self.exit:
+        while not self.exit_:
             try:
                 req = self.queue.get(True, 0.3)
             except Queue.Empty:

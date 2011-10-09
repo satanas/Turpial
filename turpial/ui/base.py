@@ -5,6 +5,8 @@
 # Author: Wil Alvarez (aka Satanas)
 # Oct 09, 2011
 
+import logging
+
 class Base:
     '''Parent class for every UI interface'''
     def __init__(self, core):

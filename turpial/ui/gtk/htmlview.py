@@ -52,5 +52,8 @@ class HtmlView(gtk.VBox, gobject.GObject):
     def render(self, html):
         gobject.idle_add(self.view.load_string, html, "text/html", self.coding, 
             self.uri)
+    
+    def execute(self, script):
+        self.view.execute_script(script)
 
 gobject.type_register(HtmlView)

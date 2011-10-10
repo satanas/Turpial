@@ -1,17 +1,25 @@
+body{
+    padding: 0px;
+    margin: 0px;
+    font-family: 'Lucida Grande', arial, verdana, helvetica, sans-serif !important;
+}
+
 a:link, a:visited{
     color: #006C12;
     text-decoration:none;
+    font-size: 11px;
 }
 
 a:hover{
     color: #006C12;
     text-decoration:underline;
+    font-size: 11px;
 }
 
 #login-window {
     width: 350px;
     height: 480px;
-    background: #262626 url('<% css_img "landscape.png" %>') bottom left no-repeat;
+    background: #262626 url('../../pixmaps/landscape.png') bottom left no-repeat;
 }
 
 #login-window #logo {
@@ -35,17 +43,17 @@ a:hover{
 .title {
     width: 100%;
     height: 25px;
-    background: #359130 url('<% css_img "title-background.png" %>') repeat-x;
+    background: #359130 url('../../pixmaps/title-background.png') repeat-x;
     border-radius: 5px 5px 0 0;
 }
 
 .title h1 {
     color: #fff;
+    margin: 0px;
+    padding: 6px 0 0 12px;
     font-family: Arial, Helmet, Freesans, sans-serif;
     font-weight: bold;
     font-size: 12px;
-    margin: 0px;
-    padding: 6px 0 0 12px;
 }
 
 #login-window #widgets .form {
@@ -63,6 +71,7 @@ a:hover{
     font-weight: bold;
     margin-bottom: 2px;
     padding-left: 5px;
+    
 }
 
 .account input {
@@ -139,6 +148,18 @@ a:hover{
     font-size: 11px;
 }
 
+.clearfix:before, .clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
 #modal {
     width: 350px;
     height: 480px;
@@ -196,7 +217,7 @@ a:hover{
     border: 1px solid #aaa;
     color: #555;
     vertical-align: middle;
-    background: #fff url('<% css_img "textinput-background.png" %>') repeat-x top;
+    background: #fff url('../../pixmaps/textinput-background.png') repeat-x top;
     margin: 0 0 5px 0;
 }
 
@@ -217,3 +238,4 @@ a:hover{
     color: #999;
     cursor: default !important;
 }
+

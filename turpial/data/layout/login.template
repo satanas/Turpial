@@ -5,28 +5,53 @@
 </head>
 <body>
     <div id="login-window">
+        <div id="notice" style="display: none;"></div>
         <div id="logo"><% img "logo-login.png" %></div>
         <div id="widgets" class="container">
-            <div id="title"><h1><% $accounts %></h1></div>
-            <div id="form">
+            <div class="title"><h1><% $accounts %></h1></div>
+            <div class="form">
                 <% partial 'accounts' %>
             </div>
             <div class="options">
                 <input id="startup" type="checkbox"/>
                 <label for="startup" ondblclick="this.blur();"><% $login_at_startup %></label>
             </div>
-            <div id="button">
-                <input id="login-button" type="button" value="<% $connect %>"/>
+            <div class="button">
+                <input id="login-button" type="button" value="<% $connect %>" onclick="login();"/>
+                <div id="login-loading" style="display: none;"><% $connecting %> <% rimg "loader.gif", 14, 14 %></div>
                 <div class="clearfix"></div>
             </div>
-            <div id="extra">
-                <ul>
+            <div class="extra">
+                <ul id="nav">
                     <li><a href="cmd:about"><% $about %></a></li>
                     <li><a href="cmd:preferences"><% $preferences %></a></li>
-                    <li><a href="cmd:add_account"><% $add_account %></a></li>
+                    <li><a href="javascript: show_account_dialog();"><% $add_account %></a></li>
+                </ul>
+                <ul id="blocked-nav" style="display: none;">
+                    <li class="disabled_text"><% $about %></li>
+                    <li class="disabled_text"><% $preferences %></li>
+                    <li class="disabled_text"><% $add_account %></li>
                 </ul>
             </div>
             <div class="clearfix"></div>
+        </div>
+    </div>
+    <div id="modal" style="display: none;">
+        <div class="background"></div>
+        <div id="dialog" style="display: none;">
+            <label><% $user_and_password %></label><br/>
+            <input id="user" type="text" class="textinput"/><br/>
+            <input id="passwd" type="password" class="textinput" /><br/>
+            <label><% $protocol %></label><br/>
+            <select id="protocol"><% @protocol_list %></select><br/>
+            <input id="remember" type="checkbox"/> <label for="remember"><% $remember_credentials %></label>
+            <div class="extra">
+                <ul id="account_options">
+                    <li><a href="javascript: close_account_dialog();"><% $close %></a></li>
+                    <li><a href="javascript: save_account();"><% $save %></a></li>
+                </ul>
+                <div id="account-loading" style="display: none;"><% $saving %> <% rimg "loader.gif", 14, 14 %></div>
+            </div>
         </div>
     </div>
 </body>

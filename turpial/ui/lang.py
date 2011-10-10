@@ -34,6 +34,13 @@ STRINGS = {
     'tweet': _('Tweet'),
     'follow': _('Follow'),
     'exit': _('Exit'),
+    'connecting': _('Connecting...'),
+    'user_and_password': _('User and Password'),
+    'protocol': _('Protocol'),
+    'remember_credentials': _('Remember my credentials'),
+    'close': _('Close'),
+    'save': _('Save'),
+    'saving': _('Saving...'),
 }
     
 class i18n:

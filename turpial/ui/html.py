@@ -17,6 +17,7 @@ JS_LAYOUT_DIR = os.path.join(LAYOUT_DIR, 'js')
 CSS_LAYOUT_DIR = os.path.join(LAYOUT_DIR, 'css')
 
 IMG_PATTERN = re.compile('(<% img [\'"](.*?)[\'"] %>)')
+RESIZED_IMG_PATTERN = re.compile('(<% rimg [\'"](.*?)[\'"], (.*?), (.*?) %>)')
 CSS_IMG_PATTERN = re.compile('(<% css_img [\'"](.*?)[\'"] %>)')
 PARTIAL_PATTERN = re.compile('(<% partial [\'"](.*?)[\'"] %>)')
 I18N_PATTERN = re.compile('(<% \$(.*?) %>)')
@@ -45,12 +46,13 @@ class HtmlParser:
         self.app_layout = self.__open_template(res)
         
         # Load default js
+        
         for js in ['jquery']:
             filepath = os.path.realpath(os.path.join(JS_LAYOUT_DIR, js + '.js'))
             self.scripts.append(filepath)
         
         # Load default css
-        for css in ['common']:
+        for css in ['common', 'notice']:
             filepath = os.path.realpath(os.path.join(CSS_LAYOUT_DIR, css + '.css'))
             self.styles.append(filepath)
         
@@ -70,23 +72,27 @@ class HtmlParser:
         filepath = os.path.realpath(os.path.join(DEFAULT_CSS_DIR, filename + '.css'))
         self.styles.append(filepath)
         
-    def __javascript_tag(self, filepath):
-        return "<script type='text/javascript' src='file://%s'></script>" % filepath
-        
-    def __image_tag(self, filename, base=True):
+    def __image_tag(self, filename, base=True, width=None, height=None):
         if base:
             filepath = os.path.realpath(os.path.join(IMAGES_DIR, filename))
         else:
             filepath = os.path.realpath(os.path.join(DEFAULT_IMAGES_DIR, filename))
         
-        return "<img src='file://%s'/>" % filepath
+        if width and height:
+            return "<img src='file://%s' width='%s' height='%s' />" % (filepath, width, height)
+        else:
+            return "<img src='file://%s'/>" % filepath
     
     def __render(self):
         page = self.app_layout
         
-        js_tags = ''
+        js_tags = '<script type="text/javascript">'
         for js in self.scripts:
-            js_tags += self.__javascript_tag(js) + '\n'
+            fd = open(js, 'r')
+            resource = fd.read()
+            fd.close()
+            js_tags += resource + '\n'
+        js_tags += '</script>'
         page = page.replace('<% javascripts %>', js_tags)
         
         css_tags = '<style type="text/css">'
@@ -104,6 +110,9 @@ class HtmlParser:
         for img in IMG_PATTERN.findall(page):
             page = page.replace(img[0], self.__image_tag(img[1]))
         
+        for img in RESIZED_IMG_PATTERN.findall(page):
+            page = page.replace(img[0], self.__image_tag(img[1], width=img[2], height=img[3]))
+            
         for img in CSS_IMG_PATTERN.findall(page):
             filepath = os.path.realpath(os.path.join(IMAGES_DIR, img[1]))
             page = page.replace(img[0], 'file://' + filepath)
@@ -117,13 +126,14 @@ class HtmlParser:
     
     def login(self, accounts):
         self.__load_layout('login')
-        
+        #<option value="twitter">Twitter</option><option value="identica">Identi.ca</option>
         self.partials['accounts'] = ''
         partial = self.__open_partial('account')
         for acc in accounts:
             section = partial.replace('<% @account_id %>', acc)
             section = section.replace('<% @account_name %>', acc.split('-')[0])
-            section = section.replace('@protocol', acc.split('-')[1] + '.png')
+            section = section.replace('@protocol_id', acc.split('-')[1])
+            section = section.replace('@protocol_img', acc.split('-')[1] + '.png')
             self.partials['accounts'] += section + '\n'
         
         return self.__render()

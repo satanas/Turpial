@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# GTK view for Turpial
+# GTK main view for Turpial
 #
 # Author: Wil Alvarez (aka Satanas)
 # Sep 03, 2011
@@ -10,7 +10,6 @@ import gtk
 import sys
 import Queue
 import logging
-import gobject
 import threading
 
 from turpial.ui.lang import i18n
@@ -99,6 +98,8 @@ class Main(Base, gtk.Window):
         print action
         if action == 'about':
             self.show_about()
+        elif action == 'preferences':
+            self.container.execute("alert('hola');")
     
     def __link_request(self, widget, url):
         print 'requested link: %s' % url

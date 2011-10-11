@@ -118,7 +118,17 @@ class Main(Base, gtk.Window):
             page = self.htmlparser.render_account_list(self.core.all_accounts())
             self.container.update_element("form", page)
         elif action == 'login':
-            print args
+            acc_login = []
+            for acc in self.core.all_accounts():
+                if acc.id_ in args:
+                    acc_login.append(acc)
+                    acc.activate(True)
+                    if not acc.is_remembered():
+                        print "ask for password for %s" % acc.id_
+                else:
+                    acc.activate(False)
+            for acc in acc_login:
+                print "login with %s" % acc.id_
     
     def __link_request(self, widget, url):
         print 'requested link: %s' % url

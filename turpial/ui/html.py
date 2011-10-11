@@ -138,9 +138,12 @@ class HtmlParser:
             passwd = ''
             if acc.profile.password:
                 passwd = acc.profile.password
-            section = partial.replace('<% @account_id %>', acc.id_)
+            checked = ''
+            if acc.is_active():
+                checked = 'checked="checked"'
+            section = partial.replace('<% @active %>', checked)
+            section = section.replace('<% @account_id %>', acc.id_)
             section = section.replace('<% @account_name %>', acc.profile.username)
-            print acc.profile.password
             section = section.replace('<% @passwd %>', passwd)
             section = section.replace('<% @protocol_id %>', acc.id_.split('-')[1])
             section = section.replace('@protocol_img', acc.id_.split('-')[1] + '.png')

@@ -1,5 +1,5 @@
 <div class="account" id="<% @account_id %>" onselect="this.blur();">
-    <input id="selected-acc-<% @account_id %>" type="checkbox" value="<% @account_id %>"/>
+    <input id="selected-acc-<% @account_id %>" type="checkbox" value="<% @account_id %>" <% @active %> />
     <% img "@protocol_img" %>
     <label for="selected-acc-<% @account_id %>" onselect="this.blur();"><% @account_name %></label>
     <div id="<% @account_id %>-options" class="options" style="display: none;">

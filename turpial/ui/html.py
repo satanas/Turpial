@@ -65,14 +65,6 @@ class HtmlParser:
         if os.path.isfile(css_file):
             self.styles.append(css_file)
         
-    def add_javascript(self, filename):
-        filepath = os.path.realpath(os.path.join(DEFAULT_JS_DIR, filename + '.js'))
-        self.scripts.append(filepath)
-    
-    def add_style(self, filename):
-        filepath = os.path.realpath(os.path.join(DEFAULT_CSS_DIR, filename + '.css'))
-        self.styles.append(filepath)
-        
     def __image_tag(self, filename, base=True, width=None, height=None):
         if base:
             filepath = os.path.realpath(os.path.join(IMAGES_DIR, filename))
@@ -84,6 +76,25 @@ class HtmlParser:
         else:
             return "<img src='file://%s'/>" % filepath
     
+    def __parse_tags(self, page):
+        for part in PARTIAL_PATTERN.findall(page):
+            page = page.replace(part[0], self.partials[part[1]])
+        
+        for img in IMG_PATTERN.findall(page):
+            page = page.replace(img[0], self.__image_tag(img[1]))
+        
+        for img in RESIZED_IMG_PATTERN.findall(page):
+            page = page.replace(img[0], self.__image_tag(img[1], width=img[2], height=img[3]))
+            
+        for img in CSS_IMG_PATTERN.findall(page):
+            filepath = os.path.realpath(os.path.join(IMAGES_DIR, img[1]))
+            page = page.replace(img[0], 'file://' + filepath)
+            
+        for text in I18N_PATTERN.findall(page):
+            # TODO: Escape invalid characters
+            page = page.replace(text[0], i18n.get(text[1]))
+        return page
+        
     def __render(self):
         page = self.app_layout
         
@@ -105,23 +116,7 @@ class HtmlParser:
         css_tags += '</style>'
         page = page.replace('<% stylesheets %>', css_tags)
         
-        for part in PARTIAL_PATTERN.findall(page):
-            page = page.replace(part[0], self.partials[part[1]])
-        
-        for img in IMG_PATTERN.findall(page):
-            page = page.replace(img[0], self.__image_tag(img[1]))
-        
-        for img in RESIZED_IMG_PATTERN.findall(page):
-            page = page.replace(img[0], self.__image_tag(img[1], width=img[2], height=img[3]))
-            
-        for img in CSS_IMG_PATTERN.findall(page):
-            filepath = os.path.realpath(os.path.join(IMAGES_DIR, img[1]))
-            page = page.replace(img[0], 'file://' + filepath)
-            
-        for text in I18N_PATTERN.findall(page):
-            # TODO: Escape invalid characters
-            page = page.replace(text[0], i18n.get(text[1]))
-        
+        page = self.__parse_tags(page)
         print page
         return page
     
@@ -147,3 +142,21 @@ class HtmlParser:
             self.partials['accounts'] += section + '\n'
         
         return self.__render()
+    
+    def render_account_list(self, accounts):
+        self.partials['accounts'] = ''
+        partial = self.__open_partial('account')
+        for acc in accounts:
+            section = partial.replace('<% @account_id %>', acc.id_)
+            section = section.replace('<% @account_name %>', acc.profile.username)
+            section = section.replace('<% @protocol_id %>', acc.id_.split('-')[1])
+            section = section.replace('@protocol_img', acc.id_.split('-')[1] + '.png')
+            if acc.is_remembered():
+                section = section.replace('<% @remember %>', 'true')
+            else:
+                section = section.replace('<% @remember %>', 'false')
+            
+            self.partials['accounts'] += section + '\n'
+        page = self.__parse_tags(self.partials['accounts'])
+        
+        return page

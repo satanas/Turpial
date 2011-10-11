@@ -9,7 +9,7 @@
         <div id="logo"><% img "logo-login.png" %></div>
         <div id="widgets" class="container">
             <div class="title"><h1><% $accounts %></h1></div>
-            <div class="form">
+            <div id="form">
                 <% partial 'accounts' %>
             </div>
             <div class="options">

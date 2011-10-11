@@ -48,7 +48,7 @@ a:hover{
     padding: 6px 0 0 12px;
 }
 
-#login-window #widgets .form {
+#login-window #widgets #form {
     float: left;
     width: 100%;
     height: 140px;

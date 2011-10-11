@@ -1,6 +1,19 @@
 login_started = false;
 
 $(document).ready(function() {
+    enable_mouseover();
+    
+    $('#notice').click(function() {
+        hide_notice();
+    });
+});
+
+/* This function should be defined in all .js files */
+function after_update() {
+    enable_mouseover();
+}
+
+function enable_mouseover() {
     $('.account').each(function() {
         var id = $(this).attr('id');
         $(this).mouseover(function() {
@@ -11,11 +24,7 @@ $(document).ready(function() {
             $('#' + id + '-options').hide();
         });
     });
-    
-    $('#notice').click(function() {
-        hide_notice();
-    });
-});
+}
 
 function show_account_dialog(us, pw, pt, rem) {
     $('#dialog').show();
@@ -60,6 +69,7 @@ function close_account_dialog() {
     $('#modal').fadeOut();
     $('#dialog').hide();
     $('.tab').hide();
+    block_account_controls(false);
     hide_notice();
 }
 
@@ -145,7 +155,7 @@ function save_account() {
         return false;
     }
     
-    window.location = 'cmd:save_account:' + user + '\0' + passwd+ '\0' + protocol+ '\0' + remember;
+    window.location = 'cmd:save_account:' + user + '-%&%-' + passwd+ '-%&%-' + protocol+ '-%&%-' + remember;
 }
 
 function delete_account(acc) {

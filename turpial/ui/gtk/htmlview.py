@@ -53,6 +53,14 @@ class HtmlView(gtk.VBox, gobject.GObject):
         gobject.idle_add(self.view.load_string, html, "text/html", self.coding, 
             self.uri)
     
+    def update_element(self, id_, html):
+        html = html.replace('"', '\\"')
+        html = html.replace('\n', " \\\n")
+        script = "$('#%s').html(\"%s\");" % (id_, html)
+        print script
+        self.view.execute_script(script)
+        self.view.execute_script('after_update();')
+        
     def execute(self, script):
         self.view.execute_script(script)
 

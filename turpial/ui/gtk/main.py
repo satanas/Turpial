@@ -94,12 +94,26 @@ class Main(Base, gtk.Window):
     </tr>
 </table>'''
     
-    def __action_request(self, widget, action):
-        print action
+    def __action_request(self, widget, url):
+        action = url.split(':')[0]
+        args = url.split(':')[1].split('-%&%-')
+        print url
+        print action, args
+        
         if action == 'about':
             self.show_about()
         elif action == 'preferences':
             self.container.execute("alert('hola');")
+        elif action == 'save_account':
+            rem = True if args[3] == 'true' else False
+            self.core.register_account(args[0], args[2], args[1], rem)
+            page = self.htmlparser.render_account_list(self.core.all_accounts())
+            self.container.execute("close_account_dialog();")
+            self.container.update_element("form", page)
+        elif action == 'delete_account':
+            self.core.unregister_account(args[0], True)
+            page = self.htmlparser.render_account_list(self.core.all_accounts())
+            self.container.update_element("form", page)
     
     def __link_request(self, widget, url):
         print 'requested link: %s' % url

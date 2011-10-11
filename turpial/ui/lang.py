@@ -41,6 +41,8 @@ STRINGS = {
     'close': _('Close'),
     'save': _('Save'),
     'saving': _('Saving...'),
+    'fields_cant_be_empty': _("Fields can't be empty"),
+    'one_account_to_login': _("Select at least one account to login"),
 }
     
 class i18n:

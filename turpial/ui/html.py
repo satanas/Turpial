@@ -44,6 +44,10 @@ class HtmlParser:
         return resource
     
     def __load_layout(self, res):
+        self.scripts = []
+        self.styles = []
+        self.partials = {}
+        
         self.app_layout = self.__open_template(res)
         
         # Load default js
@@ -156,3 +160,12 @@ class HtmlParser:
         page = self.__parse_tags(self.partials['accounts'])
         
         return page
+    
+    def render_credentials_dialog(self, acc_id):
+        user = acc_id.split('-')[0]
+        protocol = acc_id.split('-')[1].capitalize()
+        self.__load_layout('dialog-credentials')
+        text = i18n.get('please_type_password') % (user, protocol)
+        self.app_layout = self.app_layout.replace('<% @type_password %>', text)
+        return self.__render()
+        

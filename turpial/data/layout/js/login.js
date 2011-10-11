@@ -186,6 +186,11 @@ function login() {
     window.location = 'cmd:login:' + accounts;
 }
 
+function cancel_login(message) {
+    block_login_controls(false);
+    show_notice(message, 'error');
+}
+
 function show_notice(message, type) {
     $('#notice').html(message);
     $('#notice').addClass(type);

@@ -5,6 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # Oct 09, 2011
 
+import os
 import gtk
 import webkit
 import gobject
@@ -15,12 +16,12 @@ class HtmlView(gtk.VBox, gobject.GObject):
         "link-request": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
     }
     
-    def __init__(self, uri, coding='utf-8'):
+    def __init__(self, coding='utf-8'):
         gobject.GObject.__init__(self)
         gtk.VBox.__init__(self, False)
         
         self.coding = coding
-        self.uri = uri
+        self.uri = 'file://' + os.path.dirname(__file__)
         self.settings = webkit.WebSettings()
         self.settings.set_property('enable-default-context-menu', False)
         

@@ -17,6 +17,8 @@ from turpial.ui.base import Base
 from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.about import About
 from turpial.ui.gtk.htmlview import HtmlView
+from turpial.ui.gtk.dialogs.credentials import CredentialsDialog
+
 from libturpial.common import ColumnType
 
 gtk.gdk.set_program_class("Turpial")
@@ -40,7 +42,7 @@ class Main(Base, gtk.Window):
         self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
         
-        self.container = HtmlView(uri='file://' + os.path.dirname(__file__))
+        self.container = HtmlView()
         self.container.connect('action-request', self.__action_request)
         self.container.connect('link-request', self.__link_request)
         self.add(self.container)
@@ -121,14 +123,32 @@ class Main(Base, gtk.Window):
             acc_login = []
             for acc in self.core.all_accounts():
                 if acc.id_ in args:
-                    acc_login.append(acc)
                     acc.activate(True)
                     if not acc.is_remembered():
-                        print "ask for password for %s" % acc.id_
+                        gtk.gdk.threads_enter()
+                        dialog = CredentialsDialog(self, acc.id_)
+                        response = dialog.run()
+                        passwd = dialog.password.get_text()
+                        rem = dialog.remember.get_active()
+                        dialog.destroy()
+                        gtk.gdk.threads_leave()
+                        if response == gtk.RESPONSE_ACCEPT:
+                            acc.update(passwd, rem)
+                            acc_login.append(acc)
+                    else:
+                        acc_login.append(acc)
                 else:
                     acc.activate(False)
+            
+            # If there is no accounts then cancel_login
+            if len(acc_login) == 0:
+                msg = i18n.get('login_cancelled')
+                self.container.execute("cancel_login('" + msg + "');")
+                return
+            
+            # show main
             for acc in acc_login:
-                print "login with %s" % acc.id_
+                self.core.login(acc.id_)
     
     def __link_request(self, widget, url):
         print 'requested link: %s' % url

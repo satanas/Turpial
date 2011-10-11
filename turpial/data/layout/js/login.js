@@ -149,7 +149,7 @@ function save_account() {
     var protocol = $('#protocol').val();
     var remember = $('#remember').is(':checked');
     
-    if ((user == '') || (passwd == '')) {
+    if (user == '') {
         block_account_controls(false);
         show_notice("<% $fields_cant_be_empty %>", 'error');
         return false;
@@ -170,7 +170,7 @@ function login() {
     $('.account input[type=checkbox]').each(function() {
         var checked = $(this).attr('checked');
         if (checked == 'checked') {
-            accounts += $(this).val() + '\0';
+            accounts += $(this).val() + '-%&%-';
         }
     });
     
@@ -179,7 +179,10 @@ function login() {
         show_notice("<% $one_account_to_login %>", 'error');
         return false;
     }
-    
+    var i = accounts.lastIndexOf('-%&%-');
+    if (i > 0) {
+        accounts = accounts.slice(0, i);
+    }
     window.location = 'cmd:login:' + accounts;
 }
 

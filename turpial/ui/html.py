@@ -127,19 +127,7 @@ class HtmlParser:
             pt_list += '<option value="%s">%s</option>\n' % (pt, pt)
         self.app_layout = self.app_layout.replace('<% @protocol_list %>', pt_list)
         
-        self.partials['accounts'] = ''
-        partial = self.__open_partial('account')
-        for acc in accounts:
-            section = partial.replace('<% @account_id %>', acc.id_)
-            section = section.replace('<% @account_name %>', acc.profile.username)
-            section = section.replace('<% @protocol_id %>', acc.id_.split('-')[1])
-            section = section.replace('@protocol_img', acc.id_.split('-')[1] + '.png')
-            if acc.is_remembered():
-                section = section.replace('<% @remember %>', 'true')
-            else:
-                section = section.replace('<% @remember %>', 'false')
-            
-            self.partials['accounts'] += section + '\n'
+        self.render_account_list(accounts)
         
         return self.__render()
     
@@ -147,8 +135,13 @@ class HtmlParser:
         self.partials['accounts'] = ''
         partial = self.__open_partial('account')
         for acc in accounts:
+            passwd = ''
+            if acc.profile.password:
+                passwd = acc.profile.password
             section = partial.replace('<% @account_id %>', acc.id_)
             section = section.replace('<% @account_name %>', acc.profile.username)
+            print acc.profile.password
+            section = section.replace('<% @passwd %>', passwd)
             section = section.replace('<% @protocol_id %>', acc.id_.split('-')[1])
             section = section.replace('@protocol_img', acc.id_.split('-')[1] + '.png')
             if acc.is_remembered():

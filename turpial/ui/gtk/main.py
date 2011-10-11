@@ -96,7 +96,10 @@ class Main(Base, gtk.Window):
     
     def __action_request(self, widget, url):
         action = url.split(':')[0]
-        args = url.split(':')[1].split('-%&%-')
+        try:
+            args = url.split(':')[1].split('-%&%-')
+        except IndexError:
+            args = []
         print url
         print action, args
         
@@ -114,6 +117,8 @@ class Main(Base, gtk.Window):
             self.core.unregister_account(args[0], True)
             page = self.htmlparser.render_account_list(self.core.all_accounts())
             self.container.update_element("form", page)
+        elif action == 'login':
+            print args
     
     def __link_request(self, widget, url):
         print 'requested link: %s' % url

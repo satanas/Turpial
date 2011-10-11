@@ -30,6 +30,7 @@ from turpial.api.services.uploadpic.twitpic import TwitpicPicUploader
 from turpial.api.services.uploadpic.twitgoo import TwitgooPicUploader
 from turpial.api.services.uploadpic.mobypicture import MobypicturePicUploader
 from turpial.api.services.uploadpic.yfrog import YfrogPicUploader
+from turpial.api.services.uploadpic.imgur import ImgurPicUploader
 from turpial.api.services.uploadpic.posterous import PosterousPicUploader
 
 URL_SERVICES = {
@@ -51,6 +52,7 @@ PHOTO_SERVICES = {
     "Plixi": TweetPhotoPicUploader(),
     "TwitPic": TwitpicPicUploader(),
     "img.ly": ImglyPicUploader(),
+    "Imgur": ImgurPicUploader(),
     "Twitgoo": TwitgooPicUploader(),
     "MobyPicture": MobypicturePicUploader(),
     "Posterous": PosterousPicUploader(),

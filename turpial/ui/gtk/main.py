@@ -29,7 +29,7 @@ class Main(Base, gtk.Window):
         Base.__init__(self, core)
         gtk.Window.__init__(self)
         
-        self.htmlparser = HtmlParser()
+        self.htmlparser = HtmlParser(core.list_protocols())
         self.set_title('Turpial')
         self.set_size_request(280, 350)
         self.set_default_size(352, 482)
@@ -177,7 +177,7 @@ class Main(Base, gtk.Window):
             sys.exit(0)
     
     def show_login(self):
-        page = self.htmlparser.login(['satanas-twitter', 'satanas-identica'])
+        page = self.htmlparser.login(self.core.all_accounts())
         self.container.render(page)
         
     def show_about(self):

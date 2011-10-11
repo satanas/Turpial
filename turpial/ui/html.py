@@ -23,10 +23,11 @@ PARTIAL_PATTERN = re.compile('(<% partial [\'"](.*?)[\'"] %>)')
 I18N_PATTERN = re.compile('(<% \$(.*?) %>)')
 
 class HtmlParser:
-    def __init__(self):
+    def __init__(self, protocols):
         self.scripts = []
         self.styles = []
         self.partials = {}
+        self.protocols = protocols
     
     def __open_template(self, res):
         filepath = os.path.realpath(os.path.join(LAYOUT_DIR, res + '.template'))
@@ -126,14 +127,23 @@ class HtmlParser:
     
     def login(self, accounts):
         self.__load_layout('login')
-        #<option value="twitter">Twitter</option><option value="identica">Identi.ca</option>
+        pt_list = ''
+        for pt in self.protocols:
+            pt_list += '<option value="%s">%s</option>\n' % (pt, pt)
+        self.app_layout = self.app_layout.replace('<% @protocol_list %>', pt_list)
+        
         self.partials['accounts'] = ''
         partial = self.__open_partial('account')
         for acc in accounts:
-            section = partial.replace('<% @account_id %>', acc)
-            section = section.replace('<% @account_name %>', acc.split('-')[0])
-            section = section.replace('@protocol_id', acc.split('-')[1])
-            section = section.replace('@protocol_img', acc.split('-')[1] + '.png')
+            section = partial.replace('<% @account_id %>', acc.id_)
+            section = section.replace('<% @account_name %>', acc.profile.username)
+            section = section.replace('<% @protocol_id %>', acc.id_.split('-')[1])
+            section = section.replace('@protocol_img', acc.id_.split('-')[1] + '.png')
+            if acc.is_remembered():
+                section = section.replace('<% @remember %>', 'true')
+            else:
+                section = section.replace('<% @remember %>', 'false')
+            
             self.partials['accounts'] += section + '\n'
         
         return self.__render()

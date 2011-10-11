@@ -30,9 +30,11 @@ function show_account_dialog(us, pw, pt, rem) {
     if (us == undefined) {
         user.val('');
         user.removeAttr('disabled');
+        user.focus();
     } else {
         user.val(us);
         user.attr('disabled', 'disabled');
+        passwd.focus();
     }
     
     if (pw == undefined)
@@ -52,8 +54,6 @@ function show_account_dialog(us, pw, pt, rem) {
         remember.attr('checked', false);
     else
         remember.attr('checked', rem);
-    
-    user.focus();
 }
 
 function close_account_dialog() {
@@ -141,7 +141,7 @@ function save_account() {
     
     if ((user == '') || (passwd == '')) {
         block_account_controls(false);
-        show_notice('Fields cant be empty', 'error');
+        show_notice("<% $fields_cant_be_empty %>", 'error');
         return false;
     }
     
@@ -166,7 +166,7 @@ function login() {
     
     if (accounts == '') {
         block_login_controls(false);
-        show_notice('You must select at least one account', 'error');
+        show_notice("<% $one_account_to_login %>", 'error');
         return false;
     }
     
@@ -184,6 +184,5 @@ function hide_notice() {
     $('#notice').hide();
     $('#notice').html('');
     $('#notice').removeClass('error');
-    $('#notice').removeClass('warn');
     $('#notice').removeClass('info');
 }

@@ -5,6 +5,16 @@ body {
     font-size: 14px;
 }
 
+input[type="text"], input[type="password"]{
+    width: 200px;
+    padding: 4px;
+    border: 1px solid #aaa;
+    color: #555;
+    vertical-align: middle;
+    background: #fff url('<% css_img "textinput-background.png" %>') repeat-x top;
+    margin: 0 0 5px 0;
+}
+
 .clearfix:before, .clearfix:after {
     content: ".";
     display: block;

@@ -190,16 +190,6 @@ a:hover{
     width: 200px;
 }
 
-.textinput {
-    width: 200px;
-    padding: 4px;
-    border: 1px solid #aaa;
-    color: #555;
-    vertical-align: middle;
-    background: #fff url('<% css_img "textinput-background.png" %>') repeat-x top;
-    margin: 0 0 5px 0;
-}
-
 #account-loading {
     font-size: 11px;
     margin: 6px 10px 0 0;

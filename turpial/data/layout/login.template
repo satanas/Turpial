@@ -40,8 +40,8 @@
         <div class="background"></div>
         <div id="dialog" style="display: none;">
             <label><% $user_and_password %></label><br/>
-            <input id="user" type="text" class="textinput"/><br/>
-            <input id="passwd" type="password" class="textinput" /><br/>
+            <input id="user" type="text" /><br/>
+            <input id="passwd" type="password" /><br/>
             <label><% $protocol %></label><br/>
             <select id="protocol"><% @protocol_list %></select><br/>
             <input id="remember" type="checkbox"/> <label for="remember"><% $remember_credentials %></label>

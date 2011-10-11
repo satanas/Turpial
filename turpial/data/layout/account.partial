@@ -3,8 +3,8 @@
     <% img "@protocol_img" %>
     <label for="selected-acc-<% @account_id %>" onselect="this.blur();"><% @account_name %></label>
     <div id="<% @account_id %>-options" class="options" style="display: none;">
-        <a href="javascript: show_account_dialog('<% @account_name %>', '<% @passwd %>', '<% @protocol_id %>', <% @remember %>);"><% img "action-add-friends.png" %></a>
-        <a href="javascript: delete_account('<% @account_id %>');"><% img "action-clear.png" %></a>
+        <a href="javascript: show_account_dialog('<% @account_name %>', '<% @passwd %>', '<% @protocol_id %>', <% @remember %>);"><% img "action-edit.png" %></a>
+        <a href="javascript: delete_account('<% @account_id %>');"><% img "action-delete.png" %></a>
     </div>
     <div class="clearfix"></div>
 </div>

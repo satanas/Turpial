@@ -112,6 +112,10 @@ a:hover{
     padding-top: 15px;
 }
 
+.textinput {
+    width: 200px;
+}
+
 #login-button {
     height: 28px;
     min-width: 130px;

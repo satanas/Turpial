@@ -46,7 +46,7 @@ STRINGS = {
     'saving': _('Saving...'),
     'fields_cant_be_empty': _("Fields can't be empty"),
     'one_account_to_login': _("Select at least one account to login"),
-    'please_type_password': _("Please, type the password for %s in %s"),
+    'type_password': _("Type the password for %s (%s)"),
     'credentials': _("Credentials"),
     'remember_my_credentials': _('Remember my credentials'),
     'login_cancelled': _('Login cancelled by user'),
@@ -55,4 +55,7 @@ STRINGS = {
 class i18n:
     @staticmethod
     def get(key):
-        return STRINGS[key]
+        try:
+            return STRINGS[key]
+        except KeyError:
+            return key

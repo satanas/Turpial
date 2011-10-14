@@ -18,15 +18,19 @@ class CredentialsDialog(gtk.Dialog):
             gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
         
         self.set_has_separator(True)
+        self.set_default_response(gtk.RESPONSE_ACCEPT)
+        self.set_urgency_hint(True)
         
-        user = '<b>%s</b>' % acc_id.split('-')[0]
-        protocol = '<b>%s</b>' %  acc_id.split('-')[1].capitalize()
-        text = i18n.get('please_type_password') % (user, protocol)
+        user = acc_id.split('-')[0]
+        protocol = acc_id.split('-')[1].capitalize()
+        text = i18n.get('type_password') % (user, protocol)
+        text = "<span font_size='large'><b>" + text + "</b></span>"
         
-        message_box = gtk.Label()
-        message_box.set_use_markup(True)
-        message_box.set_alignment(0, 0.5)
-        message_box.set_markup(text)
+        message = gtk.Label()
+        message.set_use_markup(True)
+        message.set_alignment(0, 0.5)
+        message.set_line_wrap(True)
+        message.set_markup(text)
         
         label = gtk.Label()
         label.set_use_markup(True)
@@ -43,9 +47,9 @@ class CredentialsDialog(gtk.Dialog):
         self.remember = gtk.CheckButton(i18n.get('remember_my_credentials'))
         
         content = gtk.VBox(False)
-        content.pack_start(message_box, True, True, 10)
+        content.pack_start(message, True, True, 10)
         content.pack_start(passwd_box, False, False, 6)
-        content.pack_start(self.remember, False, False)
+        content.pack_start(self.remember, False, False, 6)
         
         icon = parent.load_image('dialog-secret.png')
         

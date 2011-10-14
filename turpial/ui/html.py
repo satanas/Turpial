@@ -121,7 +121,7 @@ class HtmlParser:
         page = page.replace('<% stylesheets %>', css_tags)
         
         page = self.__parse_tags(page)
-        print page
+        #print page
         return page
     
     def login(self, accounts):

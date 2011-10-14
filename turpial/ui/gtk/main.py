@@ -70,6 +70,8 @@ class Main(Base, gtk.Window):
         #self.sound = Sound()
         #self.notify = Notification(controller.no_notif)
         
+        #self.worker2 = Worker2()
+        #self.worker2.start()
         self.worker = Worker()
         self.worker.start()
         
@@ -148,7 +150,33 @@ class Main(Base, gtk.Window):
             
             # show main
             for acc in acc_login:
-                self.core.login(acc.id_)
+                #self.core.login(acc.id_)
+                self.worker.register(self.core.login, (acc.id_), self.__test)
+    
+    def __test(self, arg):
+        print 'resp', arg, arg.code, arg.errmsg, arg.items
+        # Entrar al modulo auth_object y agregar el id de la cuenta a la que corresponde
+        if arg.code > 0:
+            #msg = i18n.get(rtn.errmsg)
+            msg = arg.errmsg
+            self.container.execute("cancel_login('" + msg + "');")
+            return
+        
+        auth_obj = arg.items
+        if auth_obj.must_auth():
+            print "Please visit %s, authorize Turpial and type the pin returned" % auth_obj.url
+            #pin = self.__user_input('Pin: ')
+            #self.core.authorize_oauth_token(acc, pin)
+        
+        self.worker.register(self.core.auth, (auth_obj.account), self.__test2)        
+            
+    def __test2(self, arg):
+        if arg.code > 0:
+            msg = arg.errmsg
+            self.container.execute("cancel_login('" + msg + "');")
+            return
+        else:
+            print 'Logged in with account %s' % arg.items.id_.split('-')[0]
     
     def __link_request(self, widget, url):
         print 'requested link: %s' % url
@@ -241,43 +269,42 @@ class Main(Base, gtk.Window):
         avatar.set_from_pixbuf(pix)
         del pix
         return avatar
-        
-    def update_column1(self, statuses):
-        if not statuses:
-            print "There are no statuses to show"
-            return
-        
-        if statuses.code > 0:
-            print statuses.errmsg
-            return
-        
-        page = self.page
-        for status in statuses:
-            text = status.text.replace('\n', ' ')
-            inreply = ''
-            client = ''
-            retweeted = ''
-            if status.in_reply_to_user:
-                inreply = ' in reply to %s' % status.in_reply_to_user
-            if status.source:
-                client = ' from %s' % status.source
-            if status.reposted_by:
-                users = ''
-                for u in status.reposted_by:
-                    users += u + ' '
-                retweeted = 'Retweeted by %s' % status.reposted_by
+
+class Worker2:
+    def __init__(self):
+        self.queue = Queue.Queue()
+        self.exit_ = False
+    
+    def register(self, funct, args, callback):
+        self.queue.put((funct, args, callback))
+    
+    def login(self, acc_id, callback):
+        self.__register(self.protocol.auth, (acc_id), callback)
+    
+    def quit(self):
+        self.exit_ = True
+    
+    def start(self):
+        while not self.exit_:
+            try:
+                req = self.queue.get(True, 0.3)
+            except Queue.Empty:
+                continue
+            except:
+                continue
             
-            twt = self.tweet_template
-            twt = twt.replace('${avatar}', status.avatar)
-            twt = twt.replace('${username}', status.username)
-            twt = twt.replace('${text}', text)
-            twt = twt.replace('${date}', status.datetime)
-            twt = twt.replace('${client}', client)
-            twt = twt.replace('${in_reply_to}', inreply)
-            twt = twt.replace('${retweeted_by}', retweeted)
-            page += twt
-        gobject.idle_add(self.view.load_string, page, "text/html", "iso-8859-15", 'file://')
+            (funct, args, callback) = req
+            
+            
+            thread = Thread(rtn=funct, args=args)
+            thread.start()
+            thread.join()
+            
+            if callback:
+                callback(rtn)
+    
         
+
 class Worker(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
@@ -287,7 +314,7 @@ class Worker(threading.Thread):
     
     def register(self, funct, args, callback):
         self.queue.put((funct, args, callback))
-        
+    
     def quit(self):
         self.exit_ = True
         
@@ -301,6 +328,7 @@ class Worker(threading.Thread):
                 continue
             
             (funct, args, callback) = req
+            print funct, args, callback
             
             rtn = funct(args)
             if callback:

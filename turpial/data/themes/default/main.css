@@ -1,0 +1,89 @@
+#container {
+    padding-left: 48px;
+    height: 100%;
+    background-color: #fff;
+}
+
+#dock {
+    width: 48px;
+    height: 100%;
+    margin-left: -48px;
+    background-color: #000;
+}
+
+#content {
+    height: 100%;
+    width: 100%;
+    background-color: #ddd;
+}
+
+.column {
+    float: left;
+    width: 33%;
+    height: 100%;
+    border: 1px solid #ccc;
+    border-width: 0 0px 0 1px;
+}
+
+.header {
+    float: left;
+    height: 32px;
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    text-align: left;
+}
+
+.header img {
+    margin: 3px 2px;
+    padding: 3px;
+    display: block;
+    float: left;
+}
+
+.header label {
+    padding: 6px 6px 0 6px;
+    width: 200px;
+    display: block;
+    float: left;
+    overflow: hidden;
+    max-height: 20px;
+    font-size: 14px;
+}
+
+.wrapper {
+    float: left;
+    width: 100%;
+    height: 100%;
+}
+
+.list {
+    background-color: #fff;
+    color: #000;
+    margin: 5px;
+    border: 1px solid #f00;
+    width: 100%;
+    height: 100%;
+}
+
+/*
+table {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+}
+
+#dock {
+    width: 48px;
+    background-color: #000;
+}
+
+.column {
+    float: left;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ccc;
+    border-width: 0 0px 0 1px;
+}
+*/

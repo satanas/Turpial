@@ -53,6 +53,20 @@
                 <div id="account-loading" style="display: none;"><% $saving %> <% rimg "loader.gif", 14, 14 %></div>
             </div>
         </div>
+        
+        <div id="credentials" style="display: none;">
+            <h2 id="message"></h2>
+            <input id="account_id" type="hidden" />
+            <label><% $password %></label><br/>
+            <input id="cpasswd" type="password" class="textinput" /><br/>
+            <input id="cremember" type="checkbox"/> <label for="remember"><% $remember_credentials %></label>
+            <div class="extra">
+                <ul id="account_options">
+                    <li><a href="javascript: close_account_dialog();"><% $cancel %></a></li>
+                    <li><a href="javascript: save_account();"><% $ok %></a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -1,23 +1,27 @@
-#notice{
+#notice {
     top: 0px;
     left: 0px;
     height: 14px;
     text-align: left;
     position: absolute;
-    width: 338px;
-    padding: 4px 5px 2px 5px;
+    width: 355px;
+    padding: 4px 5px 2px 8px;
     z-index: 101;
     font-size: 11px;
+    margin: 0 auto;
+    border-radius: 5px;
+    opacity: 0.85;
+    overflow: hidden;
 }
 
 #notice.error {
     color: #444;
-    background: #ffebe8 url('../../pixmaps/action-clear.png') no-repeat top right;
+    background-color: #ffebe8;
     border: 1px solid #dd3c10;
 }
 
 #notice.info {
     color: #444;
-    background: #fff9d7 url('../../pixmaps/action-clear.png') no-repeat top right;
+    background-color: #fff9d7;
     border: 1px solid #cfb400;
 }

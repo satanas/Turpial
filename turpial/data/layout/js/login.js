@@ -204,3 +204,16 @@ function hide_notice() {
     $('#notice').removeClass('error');
     $('#notice').removeClass('info');
 }
+
+function show_credentials_dialog(message, account_id) {
+    $('#credentias').show();
+    $('#modal').fadeIn();
+    
+    var msg = $('#message');
+    var passwd = $('#cpasswd');
+    var acc = $('#account_id');
+    
+    acc.val(account_id);
+    msg.html(message);
+    passwd.focus();
+}

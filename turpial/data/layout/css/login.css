@@ -186,6 +186,31 @@ a:hover{
     padding: 0px;
 }
 
+#modal #credentials {
+    width: 200px;
+    height: 180px;
+    background-color: #fff;
+    z-index: 100;
+    top: 135px;
+    left: 55px;
+    position: absolute;
+    border-radius: 0px 8px 0px 8px;
+    box-shadow: 0px 0px 15px #000;
+    padding: 20px 20px 10px 20px;
+}
+
+#modal #credentials label {
+    font-size: 11px;
+}
+
+#modal #credentials h2 {
+    color: #000;
+    font-family: Arial, Helmet, Freesans, sans-serif;
+    font-weight: bold;
+    font-size: 13px;
+    margin: 0 0 5px 0;
+    padding: 0px;
+}
 #remember, #protocol {
     margin-left: 0px;
 }

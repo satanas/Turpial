@@ -155,7 +155,7 @@ class Main(Base, gtk.Window):
     
     def __test(self, arg):
         print 'resp', arg, arg.code, arg.errmsg, arg.items
-        # Entrar al modulo auth_object y agregar el id de la cuenta a la que corresponde
+        
         if arg.code > 0:
             #msg = i18n.get(rtn.errmsg)
             msg = arg.errmsg

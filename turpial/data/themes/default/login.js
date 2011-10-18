@@ -13,8 +13,11 @@ $(document).ready(function() {
     });
     
     $('#notice').click(function() {
-        hide_notice();
+        hide_notice(true);
     });
+    
+    configure_notice(215, 30);
+    show_notice('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor', 'info');
 });
 
 function show_account_dialog(us, pw, pt, rem) {
@@ -171,21 +174,6 @@ function login() {
     }
     
     window.location = 'cmd:login:' + accounts;
-}
-
-function show_notice(message, type) {
-    $('#notice').html(message);
-    $('#notice').addClass(type);
-    $('#notice').show();
-    setTimeout(hide_notice, 5000);
-}
-
-function hide_notice() {
-    $('#notice').hide();
-    $('#notice').html('');
-    $('#notice').removeClass('error');
-    $('#notice').removeClass('warn');
-    $('#notice').removeClass('info');
 }
 
 function test1() {

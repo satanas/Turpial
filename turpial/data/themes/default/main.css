@@ -164,36 +164,29 @@
 
 .tweet .content .name {
     float: left;
-    margin-bottom: 5px;
+    margin: 0 5px 5px 0;
     font-weight: bold;
+    color: #006c12;
 }
 
 .tweet .content .star, .tweet .content .gear {
     float: right;
 }
 
+
 .tweet .content .message {
     font-size: 12px;
 }
 
-/*
-table {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    border-collapse: collapse;
+.tweet .content .timestamp, .tweet .content .repost {
+    font-size: 11px;
+    color: #999;
 }
 
-#dock {
-    width: 48px;
-    background-color: #000;
+.tweet .content .timestamp {
+    margin-top: 5px;
 }
 
-.column {
-    float: left;
-    width: 100%;
-    height: 100%;
-    border: 1px solid #ccc;
-    border-width: 0 0px 0 1px;
+.tweet .content .repost {
+    margin-top: 2px;
 }
-*/

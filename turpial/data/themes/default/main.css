@@ -169,18 +169,19 @@
     color: #006c12;
 }
 
-.tweet .content .star, .tweet .content .gear {
+.tweet .content .star {
     float: right;
 }
 
-
 .tweet .content .message {
     font-size: 12px;
+    cursor: default;
 }
 
 .tweet .content .timestamp, .tweet .content .repost {
     font-size: 11px;
     color: #999;
+    cursor: default;
 }
 
 .tweet .content .timestamp {
@@ -188,5 +189,35 @@
 }
 
 .tweet .content .repost {
+    float: left;
     margin-top: 2px;
+}
+
+.tweet .content .action {
+    float: right;
+}
+
+.tweet .content .options {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    background-color: #fff;
+    border-radius: 7px 0px 7px 0px;
+    border: 1px solid #dbdbdb;
+    /*box-shadow: 0 2px 1px rgba(223, 223, 223, 0.4);*/
+    
+}
+
+.tweet .content .options ul {
+    height: 26px;
+    list-style-type: none;
+    margin: 10px 10px 0 0;
+    padding: 0;
+    float: right;
+}
+
+.tweet .content .options  li {
+    float: left;
+    padding-left: 15px;
+    font-size: 11px;
 }

@@ -37,19 +37,32 @@
                     <div id="list1" class="list">
                         <div class="tweet">
                             <div class="icon"><img src="../../pixmaps/unknown.png" width="48" height="48" /></div>
-                            <div class="content">
+                            <div name="123" class="content">
                                 <span class="tip"></span>
                                 <div>
                                     <label class="name">usuario</label>
                                     <img src="../../pixmaps/mark-locked.png" width="16" height="16" class="mark"/>
                                     <img src="../../pixmaps/mark-verified.png" width="16" height="16" class="mark"/>
-                                    <img src="../../pixmaps/mark-favorite.png" width="16" height="16" class="star"/>
+                                    <a href="cmd:fav:123"><img src="../../pixmaps/mark-unfavorite.png" width="16" height="16" class="star"/></a>
                                     <div class="clearfix"></div>
                                 </div>
                                 <div class="message">Normally, both your asses would be dead as fucking fried chicken, but you happen to pull this shit while I'm in a transitional period</div>
                                 <div class="timestamp">oct 18, 02:07 am from web in reply to xyz</div>
-                                <div class="repost">Retweeted by Pedrito</div>
-                                
+                                <div>
+                                    <label class="repost">Retweeted by Pedrito</label>
+                                    <div class="action"><a href="javascript: show_status_options('123');"><img src="../../pixmaps/action-status-menu.png" /></a></div>
+                                </div>
+                                <div id="options-123" class="options" style="display: none;">
+                                    <ul>
+                                        <li><a href="cmd:delete:123"><img src="../../pixmaps/action-clear.png" /></a></li>
+                                        <li><a href="cmd:repeat:123"><img src="../../pixmaps/action-repeat.png" /></a></li>
+                                        <li><a href="cmd:reply:123"><img src="../../pixmaps/action-quote.png" /></a></li>
+                                        <li><a href="cmd:reply:123"><img src="../../pixmaps/action-reply-all.png" /></a></li>
+                                        <li><a href="cmd:reply:123"><img src="../../pixmaps/action-reply.png" /></a></li>
+                                        
+                                    </ul>
+                                    <div class="clearfix"></div>
+                                </div>
                             </div>
                             <div class="clearfix"></div>
                         </div>

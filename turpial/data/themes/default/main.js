@@ -3,6 +3,17 @@ $(document).ready(function() {
     $(window).resize(function() {
         recalculate_column_size();
     });
+    
+    /*$('.content').mouseenter(function() {
+        var name = $(this).attr('name');
+        $('#options-' + name).slideDown();
+    });*/
+    
+    $('.options').mouseleave(function() {
+        /*var name = $(this).attr('name');
+        $('#options-' + name).slideUp();*/
+        $(this).slideUp();
+    });
 });
 
 function recalculate_column_size() {
@@ -20,4 +31,8 @@ function recalculate_column_size() {
     $('.list').css('width', new_width + 'px');
     $('.combo').css('width', combo_width + 'px');
     $('.tweet .content').css('width', tweet_width + 'px');
+}
+
+function show_status_options(id) {
+    $('#options-' + id).slideDown();
 }

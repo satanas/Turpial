@@ -4,14 +4,12 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     
-    /*$('.content').mouseenter(function() {
+    $('.action').mouseenter(function() {
         var name = $(this).attr('name');
         $('#options-' + name).slideDown();
-    });*/
+    });
     
     $('.options').mouseleave(function() {
-        /*var name = $(this).attr('name');
-        $('#options-' + name).slideUp();*/
         $(this).slideUp();
     });
 });

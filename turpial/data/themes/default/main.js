@@ -18,6 +18,7 @@ $(document).ready(function() {
 
 function recalculate_column_size() {
     
+    var new_dock_left = (window.innerWidth - 315) / 2;
     var new_wrapper_height = window.innerHeight - 32;
     var new_col_height = new_wrapper_height - 15;
     
@@ -31,6 +32,7 @@ function recalculate_column_size() {
     $('.list').css('width', new_width + 'px');
     $('.combo').css('width', combo_width + 'px');
     $('.tweet .content').css('width', tweet_width + 'px');
+    $('#dock').css('left', new_dock_left + 'px');
 }
 
 function show_status_options(id) {

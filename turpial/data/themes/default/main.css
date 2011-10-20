@@ -1,14 +1,21 @@
 #container {
-    padding-left: 48px;
+    /*padding-left: 48px;*/
     height: 100%;
     background-color: #fff;
 }
 
 #dock {
-    width: 48px;
+    /*width: 48px;
     height: 100%;
     margin-left: -48px;
-    background: #3c3b37 url('../../pixmaps/dock-background.png') repeat-y;
+    background: #3c3b37 url('../../pixmaps/dock-background.png') repeat-y;*/
+    width: 300px;
+    height: 48px;
+    margin: 0 auto;
+    background: #3c3b37 url('../../pixmaps/header-background.png') repeat-x;
+    position: absolute;
+    bottom: 0px;
+    z-index: 10;
 }
 
 #dock img {
@@ -22,6 +29,7 @@
 }
 
 #dock ul li {
+    float: left;
     text-align: center;
     margin: 0px 5px 10px 5px;
 }

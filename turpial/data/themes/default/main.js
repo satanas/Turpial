@@ -1,3 +1,5 @@
+var dock_visible = true;
+
 $(document).ready(function() {
     recalculate_column_size();
     $(window).resize(function() {
@@ -11,6 +13,16 @@ $(document).ready(function() {
     
     $('.options').mouseleave(function() {
         $(this).slideUp();
+    });
+    
+    $('#hider').click(function(){
+        if (dock_visible == true) {
+            $('#dock').slideUp();
+            dock_visible = false;
+        } else {
+            $('#dock').slideDown();
+            dock_visible = true;
+        }
     });
 });
 
@@ -30,7 +42,7 @@ function recalculate_column_size() {
     $('.list').css('width', new_width + 'px');
     $('.combo').css('width', combo_width + 'px');
     $('.tweet .content').css('width', tweet_width + 'px');
-    $('#dock').css('left', new_dock_left + 'px');
+    $('#dock-container').css('left', new_dock_left + 'px');
 }
 
 function show_status_options(id) {

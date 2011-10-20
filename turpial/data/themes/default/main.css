@@ -4,15 +4,28 @@
     background-color: #fff;
 }
 
+#dock-container {
+    position: absolute;
+    bottom: 0px;
+    z-index: 10;
+    width: 260px;
+    margin: 0 auto;
+    left: 0px;
+}
+
+#hider {
+    width: 60px;
+    height: 8px;
+    margin: 0 auto;
+    border-radius: 7px 7px 0 0;
+    background: #3c3b37 url('../../pixmaps/dock-background.png') repeat-x;
+}
+
 #dock {
-    float: left;
     width: 260px;
     height: 48px;
     margin: 0 auto;
     background: #3c3b37 url('../../pixmaps/dock-background.png') repeat-x;
-    position: absolute;
-    border-radius: 7px 7px 0 0;
-    bottom: 0px;
     z-index: 10;
     text-align: center;
 }
@@ -30,8 +43,8 @@
 
 .dockbutton:hover {
     opacity: 1;
-    margin-top: -10px;
-    height: 100%;
+    margin-top: -2px;
+    padding-bottom: 2px;
 }
 
 #content {

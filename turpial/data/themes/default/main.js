@@ -16,7 +16,7 @@ $(document).ready(function() {
 
 function recalculate_column_size() {
     
-    var new_dock_left = (window.innerWidth - 315) / 2;
+    var new_dock_left = ((window.innerWidth - 315) / 2) + 20;
     var new_wrapper_height = window.innerHeight - 32;
     var new_col_height = new_wrapper_height - 15;
     

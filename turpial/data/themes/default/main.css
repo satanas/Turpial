@@ -5,41 +5,33 @@
 }
 
 #dock {
-    /*width: 48px;
-    height: 100%;
-    margin-left: -48px;
-    background: #3c3b37 url('../../pixmaps/dock-background.png') repeat-y;*/
-    width: 300px;
+    float: left;
+    width: 260px;
     height: 48px;
     margin: 0 auto;
-    background: #3c3b37 url('../../pixmaps/header-background.png') repeat-x;
+    background: #3c3b37 url('../../pixmaps/dock-background.png') repeat-x;
     position: absolute;
+    border-radius: 7px 7px 0 0;
     bottom: 0px;
     z-index: 10;
+    text-align: center;
 }
 
 #dock img {
-    margin-top: 10px;
-}
-
-#dock ul {
-    list-style-type: none;
-    margin: 2px 5px;
-    padding: 0px;
-}
-
-#dock ul li {
-    float: left;
-    text-align: center;
-    margin: 0px 5px 10px 5px;
+    width: 40px;
+    height: 40px;
 }
 
 .dockbutton {
+    float: left;
     opacity: 0.45;
+    margin: 5px 6px;
 }
 
 .dockbutton:hover {
     opacity: 1;
+    margin-top: -10px;
+    height: 100%;
 }
 
 #content {

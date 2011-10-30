@@ -5,10 +5,7 @@
 # Author: Efrain Valles 
 # Oct 10, 2011
 
-import os
-import httplib
 import traceback
-import pycurl
 import base64
 import urllib
 
@@ -42,14 +39,13 @@ class ImgurPicUploader(GenericService):
             return self._error_opening_file(filepath)
         
         postdata = {"key": IMGUR_KEY,
-		    "image":base64.b64encode(_image),
-		    "caption":message,}
-	data = urllib.urlencode(postdata)
+            "image":base64.b64encode(_image),
+            "caption":message,}
+        data = urllib.urlencode(postdata)
         try:
             resp = urllib.urlopen("http://api.imgur.com/2/upload.json",data)
             resp_json = json.loads(resp.read())
             link = resp_json['upload']['links'].get('imgur_page')
-            print link
             return ServiceResponse(link)
         except Exception, error:
             self.log.debug("Error: %s\n%s" % (error, traceback.print_exc()))

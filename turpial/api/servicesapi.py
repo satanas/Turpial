@@ -52,7 +52,7 @@ PHOTO_SERVICES = {
     "Plixi": TweetPhotoPicUploader(),
     "TwitPic": TwitpicPicUploader(),
     "img.ly": ImglyPicUploader(),
-    "Imgur": ImgurPicUploader(),
+    "Img.ur": ImgurPicUploader(),
     "Twitgoo": TwitgooPicUploader(),
     "MobyPicture": MobypicturePicUploader(),
     "Posterous": PosterousPicUploader(),

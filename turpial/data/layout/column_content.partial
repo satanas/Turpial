@@ -4,8 +4,8 @@
         <label><% @column_label %></label>
         <div class="clearfix"></div>
     </div>
-    <a href="cmd:select_column:<% @column_id %>"><div class="button action_select"></div></a>
-    <a href="cmd:update_column:<% @column_id %>"><div class="button action_refresh"></div></a>
+    <a href="cmd://select_column:<% @column_id %>"><div class="button action_select"></div></a>
+    <a href="cmd://update_column:<% @column_id %>"><div class="button action_refresh"></div></a>
 </div>
 <div id="wrapper<% @column_id %>" class="wrapper">
     <div id="list<% @column_id %>" class="list"></div>

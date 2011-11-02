@@ -155,13 +155,13 @@ function save_account() {
         return false;
     }
     
-    window.location = 'cmd:save_account:' + user + '-%&%-' + passwd+ '-%&%-' + protocol+ '-%&%-' + remember;
+    window.location = 'cmd://save_account:' + user + '-%&%-' + passwd+ '-%&%-' + protocol+ '-%&%-' + remember;
 }
 
 function delete_account(acc) {
     var rtn = confirm('Delete account ' + acc);
     if (rtn == true)
-        window.location = 'cmd:delete_account:' + acc
+        window.location = 'cmd://delete_account:' + acc
 }
 
 function login() {
@@ -184,7 +184,7 @@ function login() {
         accounts = accounts.slice(0, i);
     }
     
-    window.location = 'cmd:login:' + accounts;
+    window.location = 'cmd://login:' + accounts;
 }
 
 function cancel_login(message) {

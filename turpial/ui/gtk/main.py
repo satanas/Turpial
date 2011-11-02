@@ -94,11 +94,11 @@ class Main(Base, gtk.Window):
         print url
         #print action, args
         
-        if action == 'about':
+        if action == '//about':
             self.show_about()
-        elif action == 'settings':
+        elif action == '//settings':
             self.container.execute("alert('hola');")
-        elif action == 'accounts':
+        elif action == '//accounts':
             self.accounts.show()
             
     def __link_request(self, widget, url):

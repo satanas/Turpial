@@ -15,6 +15,7 @@ import threading
 
 from turpial.ui.lang import i18n
 from turpial.ui.html import HtmlParser
+from turpial.ui.qt.worker import Worker
 from turpial.ui.qt.htmlview import HtmlView
 #from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.qt.account_form import AccountForm
@@ -28,7 +29,7 @@ class Accounts(QtGui.QDialog):
         # Main tools
         self.mainwin = parent
         self.core = parent.core
-        self.worker = parent.worker
+        self.worker = None  
         
         self.htmlparser = HtmlParser(None)
         self.setWindowTitle("Account Manager")
@@ -48,15 +49,16 @@ class Accounts(QtGui.QDialog):
         self.acc_id = None
         
     def show_all(self, accounts):
-        if self.showed:
-            self.present()
-        else:
-            self.showed = True
-            page = self.htmlparser.accounts(accounts)
-            self.container.setHtml(page)
-            self.show()
+        self.showed = True
+        if not self.worker:
+            self.worker = Worker()
+            self.worker.set_timeout_callback(self.__timeout_callback)
+            self.worker.start()
+        page = self.htmlparser.accounts(accounts)
+        self.container.setHtml(page)
+        self.show()
     
-    def __close(self, widget, event=None):
+    def __close(self, event=None):
         self.showed = False
         self.hide()
         return True
@@ -69,11 +71,11 @@ class Accounts(QtGui.QDialog):
         except IndexError:
             args = []
         
-        if action == "close":
-            self.__close(widget)
-        elif action == "new_account":
+        if action == "//close":
+            self.__close()
+        elif action == "//new_account":
             self.form = AccountForm(self, self.core.list_protocols())
-        elif action == "delete_account":
+        elif action == "//delete_account":
             self.delete_account(args[0])
         
     def __login_callback(self, arg):
@@ -100,6 +102,9 @@ class Accounts(QtGui.QDialog):
     
     def __auth_callback(self):
         self.worker.register(self.core.auth, (self.acc_id), self.__done_callback)
+
+    def __timeout_callback(self, funct, arg):
+        pass
         
     def __done_callback(self, arg):
         if arg.code > 0:

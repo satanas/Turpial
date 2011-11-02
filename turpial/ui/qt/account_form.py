@@ -41,12 +41,9 @@ class AccountForm(QtGui.QDialog):
         self.show()
         self.working = False
         
-    def __close(self, widget, event=None):
-        if not self.working:
-            self.destroy()
-            return False
-        else:
-            return True
+    def __close(self, event=None):
+        self.hide()
+
 
     def __load_request(self): 
         try:
@@ -61,20 +58,23 @@ class AccountForm(QtGui.QDialog):
     def __action_request(self,url):
         print url
 
-        action = url.split(':')[0]
+        action = url.split(':')[1]
         try:
-            args = url.split(':')[1].split('-%&%-')
+            args = url.split(':')[2].split('-%&%-')
         except IndexError:
             args = []
         
-        if action == "close":
-            self.__close(widget)
-        elif action == "save_account":
+        if action == "//close":
+            self.__close()
+        elif action == "//save_account":
             self.working = True
+            print "mandando a guardar"
             self.accwin.save_account(args[0], args[1], args[2])
+            self.done_login()
+            print "terminado de guardar"
     
     def cancel_login(self, message):
         self.container.execute("cancel_login('" + msg + "');")
     
     def done_login(self):
-        self.destroy()
+        self.hide()

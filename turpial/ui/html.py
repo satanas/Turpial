@@ -123,7 +123,7 @@ class HtmlParser:
         page = self.__parse_tags(page)
         #print page
         return page
-    
+    '''
     def login(self, accounts):
         self.__load_layout('login')
         pt_list = ''
@@ -134,7 +134,16 @@ class HtmlParser:
         self.render_account_list(accounts)
         
         return self.__render()
+    '''
     
+    def main(self):
+        self.__load_layout('main')
+        return self.__render()
+        
+    def accounts(self):
+        self.__load_layout('accounts')
+        return self.__render()
+        
     def render_account_list(self, accounts):
         self.partials['accounts'] = ''
         partial = self.__open_partial('account')

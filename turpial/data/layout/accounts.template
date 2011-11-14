@@ -1,12 +1,7 @@
 <html>
 <head>
-    <link href="common.css" rel="stylesheet" type="text/css">
-    <link href="modal.css" rel="stylesheet" type="text/css">
-    <link href="accounts.css" rel="stylesheet" type="text/css">
-    <link href="notice.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript" src="../../layout/js/jquery.js"></script>
-    <script type="text/javascript" src="common.js"></script>
-    <script type="text/javascript" src="accounts.js"></script>
+    <% stylesheets %>
+    <% javascripts %>
 </head>
 <body>
     <div id="container">

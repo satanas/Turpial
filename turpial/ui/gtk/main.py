@@ -18,6 +18,7 @@ from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.about import About
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.dialogs.credentials import CredentialsDialog
+from turpial.ui.gtk.accountmanager import AccountManager
 
 from libturpial.common import ColumnType
 
@@ -77,26 +78,6 @@ class Main(Base, gtk.Window):
         
         self.__create_trayicon()
         self.show_all()
-        
-        self.tweet_template = '''<table>
-    <tr>
-        <td valign="top" class="tweet"><img src="${avatar}" width="48" height="48"/></td>
-        <td valign="top" class="tweet desc">
-            <span>
-                <span class="mention"><b>@${username}</b></span> 
-                ${text}<br/>
-                <div class="spacer"/>
-                <span class="footer">${date} ${client} ${in_reply_to}<br/>
-                    ${retweeted_by}
-                    <span class="buttons">
-                        <a href="cmd:+fav">+fav</a> &nbsp;
-                        <a href="cmd:retweet">retweet</a> &nbsp;
-                        <a href="cmd:rt">RT </a> &nbsp;
-                        <a href="cmd:reply">responder</a></span>
-                </span>
-            </span></td>
-    </tr>
-</table>'''
     
     def __action_request(self, widget, url):
         action = url.split(':')[0]
@@ -111,6 +92,8 @@ class Main(Base, gtk.Window):
             self.show_about()
         elif action == 'preferences':
             self.container.execute("alert('hola');")
+        elif action == 'accounts':
+            a = AccountManager(self)
         elif action == 'save_account':
             rem = True if args[3] == 'true' else False
             self.core.register_account(args[0], args[2], args[1], rem)
@@ -254,7 +237,7 @@ class Main(Base, gtk.Window):
             sys.exit(0)
     
     def show_login(self):
-        page = self.htmlparser.login(self.core.all_accounts())
+        page = self.htmlparser.main()
         self.container.render(page)
         
     def show_about(self):

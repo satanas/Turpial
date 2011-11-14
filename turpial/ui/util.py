@@ -5,11 +5,11 @@
 # Author: Wil Alvarez (aka Satanas)
 # Oct 07, 2011
 
-from libturpial.common import tools
+from libturpial.common import *
 
 try:
     # TODO: Implement this function for other platforms
-    if tools.detect_os() == tools.OS_LINUX:
+    if detect_os() == OS_LINUX:
         import ctypes
         libc = ctypes.CDLL('libc.so.6')
         libc.prctl(15, 'turpial', 0, 0)

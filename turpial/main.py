@@ -12,7 +12,7 @@ import logging
 from optparse import OptionParser
 
 from turpial.ui import util
-from libturpial.common import tools
+from libturpial.common import *
 from libturpial.api.core import Core
 from libturpial.config import AppConfig
 
@@ -44,7 +44,7 @@ class Turpial:
         self.log = logging.getLogger('Controller')
         
         if options.clean:
-            tools.clean_bytecodes(__file__, self.log)
+            clean_bytecodes(__file__, self.log)
             sys.exit(0)
             
         if options.version:

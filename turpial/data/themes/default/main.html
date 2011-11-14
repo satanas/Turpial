@@ -50,7 +50,6 @@
                                 <div class="timestamp">oct 18, 02:07 am from web in reply to xyz</div>
                                 <div>
                                     <label class="repost">Retweeted by Pedrito</label>
-                                    <div class="action" name="123" ><a href="javascript: show_status_options('123');"><img src="../../pixmaps/action-status-menu.png" /></a></div>
                                 </div>
                                 <div id="options-123" class="options" style="display: none;">
                                     <ul>
@@ -58,7 +57,6 @@
                                         <li><a href="cmd:repeat:123"><img src="../../pixmaps/action-repeat.png" title="Retweet" /></a></li>
                                         <li><a href="cmd:quote:123"><img src="../../pixmaps/action-quote.png" title="Quote and retweet" /></a></li>
                                         <li><a href="cmd:reply:123"><img src="../../pixmaps/action-reply.png" title="Reply" /></a></li>
-                                        
                                     </ul>
                                     <div class="clearfix"></div>
                                 </div>
@@ -146,7 +144,9 @@
                     <a href="cmd:update_column:2"><div class="button action_refresh"></div></a>
                 </div>
                 <div id="wrapper2" class="wrapper">
-                    <div id="list2" class="list"></div>
+                    <div id="list2" class="list">
+                        <div class="no-account">You have no active accounts. You can registrate and activate your accounts with the <a href="cmd:accounts">Accounts Manager</a></div>
+                    </div>
                 </div>
             </div>
             <div id="column3" class="column yui3-u">

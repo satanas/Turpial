@@ -13,13 +13,13 @@ body {
 a:link, a:visited{
     color: #006C12;
     text-decoration: none;
-    font-size: 11px;
+    /*font-size: 11px;*/
 }
 
 a:hover{
     color: #00AB1C;
     text-decoration: none;
-    font-size: 11px;
+    /*font-size: 11px;*/
 }
 
 input[type="text"], input[type="password"]{

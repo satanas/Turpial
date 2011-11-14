@@ -6,6 +6,7 @@
 
 #dock-container {
     position: absolute;
+    max-height: 56px;
     bottom: 0px;
     z-index: 10;
     width: 260px;
@@ -18,7 +19,8 @@
     height: 8px;
     margin: 0 auto;
     border-radius: 7px 7px 0 0;
-    background: #3c3b37 url('../../pixmaps/dock-background.png') repeat-x;
+    /*background: #3c3b37 url('../../pixmaps/dock-background.png') repeat-x;*/
+    cursor: pointer;
 }
 
 #dock {
@@ -43,8 +45,8 @@
 
 .dockbutton:hover {
     opacity: 1;
-    margin-top: -2px;
-    padding-bottom: 2px;
+    /*margin-top: -2px;
+    padding-bottom: 2px;*/
 }
 
 #content {
@@ -215,10 +217,9 @@
     bottom: 0px;
     right: 0px;
     background-color: #fff;
-    border-radius: 7px 0px 7px 0px;
+    /*border-radius: 7px 0px 7px 0px;
     border: 1px solid #dbdbdb;
-    /*box-shadow: 0 2px 1px rgba(223, 223, 223, 0.4);*/
-    
+    box-shadow: 0 2px 1px rgba(223, 223, 223, 0.4);*/
 }
 
 .tweet .content .options ul {
@@ -229,8 +230,39 @@
     float: right;
 }
 
-.tweet .content .options  li {
+.tweet .content .options li {
     float: left;
     padding-left: 15px;
+    font-size: 11px;
+}
+
+.no-account {
+    margin: auto;
+    margin-top: 45%;
+    width: 85%;
+    text-align: center;
+    color: #666;
+}
+
+.tweet .content .options2 {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    height: 16px;
+    margin: 0 10px 5px 0;
+    padding: 10px 0 0 6px;
+    background-color: #fff;
+}
+
+.tweet .content .options2 ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    float: right;
+}
+
+.tweet .content .options2 li {
+    float: left;
+    padding-left: 12px;
     font-size: 11px;
 }

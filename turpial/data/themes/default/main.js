@@ -6,21 +6,33 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     
-    $('.action').mouseenter(function() {
+    $('.content').mouseenter(function() {
         var name = $(this).attr('name');
-        $('#options-' + name).slideDown();
+        $('#options-' + name).show();
     });
     
-    $('.options').mouseleave(function() {
-        $(this).slideUp();
+    /*$('.options').mouseleave(function() {
+        $(this).hide();
+    });
+    
+    $('.tweet .content .info').mouseenter(function() {
+        var name = $(this).attr('name');
+        $('#options-' + name).show();
+    });*/
+    
+    $('.content').mouseleave(function() {
+        var name = $(this).attr('name');
+        $('#options-' + name).hide();
     });
     
     $('#hider').click(function(){
         if (dock_visible == true) {
             $('#dock').slideUp();
+            $('#hider').css('background', '#3c3b37 url(\'../../pixmaps/hider-up-background.png\') no-repeat');
             dock_visible = false;
         } else {
             $('#dock').slideDown();
+            $('#hider').css('background', '#3c3b37 url(\'../../pixmaps/hider-down-background.png\') no-repeat');
             dock_visible = true;
         }
     });

@@ -42,6 +42,7 @@ class Main(Base, gtk.Window):
         self.connect('delete-event', self.__close)
         self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
+        self.connect('size-request', self.__recalculate_size)
         
         self.container = HtmlView()
         self.container.connect('action-request', self.__action_request)
@@ -78,7 +79,11 @@ class Main(Base, gtk.Window):
         
         self.__create_trayicon()
         self.show_all()
-    
+        
+    def __recalculate_size(self, widget, requisition):
+        print self.get_size()
+        self.container.execute('recalculate_column_size();')
+        
     def __action_request(self, widget, url):
         action = url.split(':')[0]
         try:
@@ -90,7 +95,7 @@ class Main(Base, gtk.Window):
         
         if action == 'about':
             self.show_about()
-        elif action == 'preferences':
+        elif action == 'settings':
             self.container.execute("alert('hola');")
         elif action == 'accounts':
             a = AccountManager(self)
@@ -239,6 +244,9 @@ class Main(Base, gtk.Window):
     def show_login(self):
         page = self.htmlparser.main()
         self.container.render(page)
+    
+    def show_main(self):
+        self.container.execute('draw_columns([["satanas", "twitter", "replies"]]);')
         
     def show_about(self):
         about = About(self)

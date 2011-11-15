@@ -43,8 +43,11 @@ function recalculate_column_size() {
     var new_dock_left = ((window.innerWidth - 315) / 2) + 20;
     var new_wrapper_height = window.innerHeight - 32;
     var new_col_height = new_wrapper_height - 15;
+    var empty_col_height = window.innerHeight - 15;
     
     $('.wrapper').css('height', new_wrapper_height + 'px');
+    $('.empty-wrapper').css('height', window.innerHeight + 'px');
+    $('.empty-list').css('height', empty_col_height + 'px');
     $('.list').css('height', new_col_height + 'px');
     
     var new_width = $('#wrapper1').width() - 13;
@@ -52,6 +55,7 @@ function recalculate_column_size() {
     var tweet_width = new_width - 105;
     
     $('.list').css('width', new_width + 'px');
+    $('.empty-list').css('width', new_width + 'px');
     $('.combo').css('width', combo_width + 'px');
     $('.tweet .content').css('width', tweet_width + 'px');
     $('#dock-container').css('left', new_dock_left + 'px');

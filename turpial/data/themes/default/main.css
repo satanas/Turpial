@@ -137,7 +137,7 @@
     border-width: 0 0 0 0px;
 }
 
-.list {
+.list, .empty-list {
     background-color: #fff;
     color: #000;
     margin: 5px;

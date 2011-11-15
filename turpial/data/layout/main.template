@@ -18,22 +18,13 @@
         </div>
         <div id="content" class="yui3-u">
             <div id="column1" class="column yui3-u">
-                <div id="header1" class="header">
-                    <div class="combo">
-                        <img src="" />
-                        <label></label>
-                        <div class="clearfix"></div>
-                    </div>
-                    <a href="cmd:select_column:1"><div class="button action_select"></div></a>
-                    <a href="cmd:update_column:1"><div class="button action_refresh"></div></a>
-                </div>
-                <div id="wrapper1" class="wrapper">
-                    <div id="list1" class="list">
-                        <div class="no-account">You have no active accounts. You can register and activate accounts with the <a href="cmd:accounts">Accounts Manager</a></div>
+                <div id="wrapper1" class="empty-wrapper">
+                    <div id="list1" class="empty-list">
+                        <div class="empty-logo"><% img "logo.png" %></div>
+                        <div class="no-account">You have no active accounts. You can registrate and activate your accounts with the <a href="cmd:accounts">Accounts Manager</a></div>
                     </div>
                 </div>
             </div>
-            
         </div>
         <div class="clearfix"></div>
     </div>

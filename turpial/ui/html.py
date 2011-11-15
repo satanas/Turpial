@@ -123,21 +123,16 @@ class HtmlParser:
         page = self.__parse_tags(page)
         #print page
         return page
-    '''
-    def login(self, accounts):
-        self.__load_layout('login')
-        pt_list = ''
-        for pt in self.protocols:
-            pt_list += '<option value="%s">%s</option>\n' % (pt, pt)
-        self.app_layout = self.app_layout.replace('<% @protocol_list %>', pt_list)
-        
-        self.render_account_list(accounts)
-        
-        return self.__render()
-    '''
     
-    def main(self):
+    def main(self, accounts, columns):
         self.__load_layout('main')
+        if len(columns) == 0:
+            dock = ''
+            content = self.__open_partial('empty')
+        else:
+            dock = self.__open_partial('dock')
+        self.app_layout = self.app_layout.replace('<% @dock %>', dock)
+        self.app_layout = self.app_layout.replace('<% @content %>', content)
         return self.__render()
         
     def accounts(self):

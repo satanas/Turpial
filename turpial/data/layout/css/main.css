@@ -153,6 +153,11 @@
     color: #666;
 }
 
+.no-account h1 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
 .empty-logo {
     top: 0px;
     width: 230px;

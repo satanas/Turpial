@@ -6,25 +6,9 @@
 <body>
     <div id="container" class="yui3-g">
         <div id="notice" class="error" style="display: none;"></div>
-        <div id="dock-container">
-            <div id="hider"></div>
-            <div id="dock">
-                <a href="cmd:follow"><div class="dockbutton" title="Follow"><% img "dock-follow2.png" %></div></a>
-                <a href="cmd:uploadpic"><div class="dockbutton" title="Upload Image"><% img "dock-uploadpic2.png" %></div></a>
-                <a href="cmd:update"><div class="dockbutton" title="Update status"><% img "dock-update2.png" %></div></a>
-                <a href="cmd:settings"><div class="dockbutton" title="Settings"><% img "dock-settings2.png" %></div></a>
-                <a href="cmd:about"><div class="dockbutton" title="About"><% img "dock-about2.png" %></div></a>
-            </div>
-        </div>
+        <% @dock %>
         <div id="content" class="yui3-u">
-            <div id="column1" class="column yui3-u">
-                <div id="wrapper1" class="empty-wrapper">
-                    <div id="list1" class="empty-list">
-                        <div class="empty-logo"><% img "logo.png" %></div>
-                        <div class="no-account">You have no active accounts. You can registrate and activate your accounts with the <a href="cmd:accounts">Accounts Manager</a></div>
-                    </div>
-                </div>
-            </div>
+            <% @content %>
         </div>
         <div class="clearfix"></div>
     </div>

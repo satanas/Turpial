@@ -62,7 +62,6 @@ class Turpial:
         self.log.debug('Starting Turpial v%s' % self.version)
         
         self.ui.show_login()
-        self.ui.show_main()
         try:
             self.ui.main_loop()
         except KeyboardInterrupt:

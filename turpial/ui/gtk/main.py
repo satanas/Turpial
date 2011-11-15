@@ -242,11 +242,8 @@ class Main(Base, gtk.Window):
             sys.exit(0)
     
     def show_login(self):
-        page = self.htmlparser.main()
+        page = self.htmlparser.main([], [])
         self.container.render(page)
-    
-    def show_main(self):
-        self.container.execute('draw_columns([["satanas", "twitter", "replies"]]);')
         
     def show_about(self):
         about = About(self)

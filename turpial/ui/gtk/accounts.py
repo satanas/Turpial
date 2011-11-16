@@ -30,12 +30,9 @@ class Accounts(gtk.Window):
         self.set_position(gtk.WIN_POS_CENTER)
         self.set_gravity(gtk.gdk.GRAVITY_STATIC)
         self.connect('delete-event', self.__close)
-        #self.connect('key-press-event', self.__on_key_press)
-        #self.connect('focus-in-event', self.__on_focus)
         
         self.container = HtmlView()
         self.container.connect('action-request', self.__action_request)
-        #self.container.connect('link-request', self.__link_request)
         self.add(self.container)
         self.showed = False
         
@@ -51,6 +48,7 @@ class Accounts(gtk.Window):
     def __close(self, widget, event=None):
         self.showed = False
         self.hide()
+        return True
     
     def __action_request(self, widget, url):
         action = url.split(':')[0]

@@ -5,10 +5,10 @@
 </head>
 <body>
     <div id="container">
-        <div id="notice" class="error" style="display: none;"></div>
         <div id="list"><% @accounts %></div>
         <div class="extra">
             <ul id="nav">
+                <li><a href="javascript: close_account_dialog();">Close</a></li>
                 <li><a href="javascript: show_account_dialog();">Add account</a></li>
             </ul>
         </div>

@@ -1,3 +1,4 @@
+var num_columns = 3;
 var dock_visible = true;
 
 $(document).ready(function() {
@@ -39,7 +40,35 @@ $(document).ready(function() {
 });
 
 function recalculate_column_size() {
+    var dock_left = (window.innerWidth - 260) / 2;
+    var column_width = (window.innerWidth - 20) / num_columns;
+    var column_height = window.innerHeight;
+    var wrapper_height = window.innerHeight - 32;
+    var empty_wrapper_height = column_height;
+    var empty_list_height = window.innerHeight - 15;
+    var list_width = column_width - 11;
+    var list_height = column_height - 45;
+    var empty_logo_top = empty_list_height / 5;
     
+    $('#dock-container').css('left', dock_left + 'px');
+    $('.column').css('width', column_width + 'px');
+    $('.wrapper').css('height', wrapper_height + 'px');
+    $('.wrapper').css('width', column_width + 'px');
+    $('.empty-wrapper').css('height', wrapper_height + 'px');
+    $('.empty-wrapper').css('width', column_width + 'px');
+    
+    $('.list').css('height', list_height + 'px');
+    $('.list').css('width', list_width + 'px');
+    $('.empty-list').css('width', list_width + 'px');
+    $('.empty-list').css('height', empty_list_height + 'px');
+    $('.empty-logo').css('margin-top', empty_logo_top + 'px');
+    
+    var combo_width = column_width - 83;
+    var tweet_width = column_width - 120;
+    
+    $('.combo').css('width', combo_width + 'px');
+    $('.tweet .content').css('width', tweet_width + 'px');
+    /*
     var new_dock_left = ((window.innerWidth - 315) / 2) + 20;
     var new_wrapper_height = window.innerHeight - 32;
     var new_col_height = new_wrapper_height - 15;
@@ -59,6 +88,7 @@ function recalculate_column_size() {
     $('.combo').css('width', combo_width + 'px');
     $('.tweet .content').css('width', tweet_width + 'px');
     $('#dock-container').css('left', new_dock_left + 'px');
+    */
 }
 
 function show_status_options(id) {

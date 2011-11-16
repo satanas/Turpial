@@ -130,9 +130,26 @@ class HtmlParser:
             dock = ''
             content = self.__open_partial('empty')
         else:
+            content = ''
             dock = self.__open_partial('dock')
+            for i in range(len(columns)):
+                acc_name = columns[i].split('-')[0]
+                col_name = columns[i].split('-')[2].capitalize()
+                protocol_img = columns[i].split('-')[1] + '.png'
+                label = "%s :: %s" % (acc_name, col_name)
+                
+                col_content = self.__open_partial('column_content')
+                col_content = col_content.replace('<% @column_id %>', str(i + 1))
+                col_content = col_content.replace('<% @column_label %>', label)
+                col_content = col_content.replace('@protocol_img', protocol_img)
+                
+                col = self.__open_partial('column')
+                col = col.replace('<% @column_id %>', str(i + 1))
+                col = col.replace('<% @column_content %>', col_content)
+                content += col
         self.app_layout = self.app_layout.replace('<% @dock %>', dock)
         self.app_layout = self.app_layout.replace('<% @content %>', content)
+        
         return self.__render()
         
     def accounts(self):

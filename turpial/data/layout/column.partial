@@ -1,0 +1,3 @@
+<div id="column<% @column_id %>" class="column yui3-u">
+    <% @column_content %>
+</div>

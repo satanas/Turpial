@@ -42,7 +42,7 @@ class Main(Base, gtk.Window):
         self.connect('delete-event', self.__close)
         self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
-        self.connect('size-request', self.__recalculate_size)
+        self.recalc = self.connect('size-request', self.__recalculate_size)
         
         self.container = HtmlView()
         self.container.connect('action-request', self.__action_request)
@@ -81,8 +81,11 @@ class Main(Base, gtk.Window):
         self.show_all()
         
     def __recalculate_size(self, widget, requisition):
-        print self.get_size()
-        self.container.execute('recalculate_column_size();')
+        pass
+        #print "recalculating...", self.get_size()
+        #self.disconnect(self.recalc)
+        #funct = "recalculate_column_size(%s, %s);" % (self.get_size()[0], self.get_size()[1])
+        #self.container.execute(funct)
         
     def __action_request(self, widget, url):
         action = url.split(':')[0]
@@ -91,7 +94,7 @@ class Main(Base, gtk.Window):
         except IndexError:
             args = []
         print url
-        print action, args
+        #print action, args
         
         if action == 'about':
             self.show_about()
@@ -109,6 +112,8 @@ class Main(Base, gtk.Window):
             self.core.unregister_account(args[0], True)
             page = self.htmlparser.render_account_list(self.core.all_accounts())
             self.container.update_element("form", page)
+        elif action == 'resize_done':
+            self.recalc = self.connect('size-request', self.__recalculate_size)
         elif action == 'login':
             acc_login = []
             for acc in self.core.all_accounts():
@@ -242,7 +247,7 @@ class Main(Base, gtk.Window):
             sys.exit(0)
     
     def show_login(self):
-        page = self.htmlparser.main([], [])
+        page = self.htmlparser.main([], ['satanas82-twitter-timeline', 'satanas-identica-timeline'])
         self.container.render(page)
         
     def show_about(self):

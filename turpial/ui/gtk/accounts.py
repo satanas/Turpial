@@ -19,7 +19,7 @@ from turpial.ui.gtk.htmlview import HtmlView
 log = logging.getLogger('Gtk')
 
 class Accounts(gtk.Window):
-    def __init__(self, parent, accounts):
+    def __init__(self, parent):
         gtk.Window.__init__(self)
         self.mainwin = parent
         self.htmlparser = HtmlParser(None)
@@ -37,14 +37,20 @@ class Accounts(gtk.Window):
         self.container.connect('action-request', self.__action_request)
         #self.container.connect('link-request', self.__link_request)
         self.add(self.container)
+        self.showed = False
         
-        page = self.htmlparser.accounts(accounts)
-        self.container.render(page)
-        
-        self.show_all()
+    def show(self, accounts):
+        if self.showed:
+            self.present()
+        else:
+            self.showed = True
+            page = self.htmlparser.accounts(accounts)
+            self.container.render(page)
+            self.show_all()
     
     def __close(self, widget, event=None):
-        self.destroy()
+        self.showed = False
+        self.hide()
     
     def __action_request(self, widget, url):
         action = url.split(':')[0]

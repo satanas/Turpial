@@ -50,7 +50,7 @@
 .options .action {
     float: left;
     display: block;
-    margin-right: 7px;
+    margin: 3px 7px 0 0;
     cursor: pointer;
 }
 

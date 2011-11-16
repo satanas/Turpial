@@ -70,6 +70,7 @@ class Main(Base, gtk.Window):
         
         #self.sound = Sound()
         #self.notify = Notification(controller.no_notif)
+        self.accounts = Accounts(self)
         
         #self.worker2 = Worker2()
         #self.worker2.start()
@@ -93,7 +94,7 @@ class Main(Base, gtk.Window):
         elif action == 'settings':
             self.container.execute("alert('hola');")
         elif action == 'accounts':
-            a = Accounts(self, self.core.list_accounts())
+            self.accounts.show(self.core.list_accounts())
         elif action == 'save_account':
             rem = True if args[3] == 'true' else False
             self.core.register_account(args[0], args[2], args[1], rem)

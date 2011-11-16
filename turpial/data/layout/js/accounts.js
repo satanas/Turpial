@@ -3,6 +3,16 @@ $(document).ready(function() {
     $(window).resize(function() {
         recalculate_column_size();
     });
+    
+    $('.account').mouseenter(function() {
+        var name = $(this).attr('id');
+        $('#options-' + name).show();
+    });
+    
+    $('.account').mouseleave(function() {
+        var name = $(this).attr('id');
+        $('#options-' + name).hide();
+    });
 });
 
 function recalculate_column_size() {

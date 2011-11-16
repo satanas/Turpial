@@ -17,8 +17,8 @@ from turpial.ui.base import Base
 from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.about import About
 from turpial.ui.gtk.htmlview import HtmlView
+from turpial.ui.gtk.accounts import Accounts
 from turpial.ui.gtk.dialogs.credentials import CredentialsDialog
-from turpial.ui.gtk.accountmanager import AccountManager
 
 from libturpial.common import ColumnType
 
@@ -42,7 +42,6 @@ class Main(Base, gtk.Window):
         self.connect('delete-event', self.__close)
         self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
-        self.recalc = self.connect('size-request', self.__recalculate_size)
         
         self.container = HtmlView()
         self.container.connect('action-request', self.__action_request)
@@ -80,13 +79,6 @@ class Main(Base, gtk.Window):
         self.__create_trayicon()
         self.show_all()
         
-    def __recalculate_size(self, widget, requisition):
-        pass
-        #print "recalculating...", self.get_size()
-        #self.disconnect(self.recalc)
-        #funct = "recalculate_column_size(%s, %s);" % (self.get_size()[0], self.get_size()[1])
-        #self.container.execute(funct)
-        
     def __action_request(self, widget, url):
         action = url.split(':')[0]
         try:
@@ -101,7 +93,7 @@ class Main(Base, gtk.Window):
         elif action == 'settings':
             self.container.execute("alert('hola');")
         elif action == 'accounts':
-            a = AccountManager(self)
+            a = Accounts(self, self.core.list_accounts())
         elif action == 'save_account':
             rem = True if args[3] == 'true' else False
             self.core.register_account(args[0], args[2], args[1], rem)
@@ -247,7 +239,7 @@ class Main(Base, gtk.Window):
             sys.exit(0)
     
     def show_login(self):
-        page = self.htmlparser.main([], ['satanas82-twitter-timeline', 'satanas-identica-timeline'])
+        page = self.htmlparser.main([], []) #['satanas82-twitter-timeline', 'satanas-identica-timeline'])
         self.container.render(page)
         
     def show_about(self):

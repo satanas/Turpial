@@ -1,4 +1,4 @@
-var num_columns = 2;
+var num_columns = 1;
 var dock_visible = true;
 
 $(document).ready(function() {

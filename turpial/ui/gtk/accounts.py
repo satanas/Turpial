@@ -18,14 +18,14 @@ from turpial.ui.gtk.htmlview import HtmlView
 
 log = logging.getLogger('Gtk')
 
-class AccountManager(gtk.Window):
-    def __init__(self, parent):
+class Accounts(gtk.Window):
+    def __init__(self, parent, accounts):
         gtk.Window.__init__(self)
         self.mainwin = parent
         self.htmlparser = HtmlParser(None)
         self.set_title('Account Manager')
-        self.set_size_request(400, 350)
-        #self.set_default_size(352, 482)
+        self.set_size_request(310, 350)
+        self.set_resizable(False)
         self.set_icon(self.mainwin.load_image('turpial.png', True))
         self.set_position(gtk.WIN_POS_CENTER)
         self.set_gravity(gtk.gdk.GRAVITY_STATIC)
@@ -38,7 +38,7 @@ class AccountManager(gtk.Window):
         #self.container.connect('link-request', self.__link_request)
         self.add(self.container)
         
-        page = self.htmlparser.accounts()
+        page = self.htmlparser.accounts(accounts)
         self.container.render(page)
         
         self.show_all()

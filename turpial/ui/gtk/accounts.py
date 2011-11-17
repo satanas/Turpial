@@ -22,8 +22,12 @@ log = logging.getLogger('Gtk')
 class Accounts(gtk.Window):
     def __init__(self, parent):
         gtk.Window.__init__(self)
+        
+        # Main tools
         self.mainwin = parent
         self.core = parent.core
+        self.worker = parent.worker
+        
         self.htmlparser = HtmlParser(None)
         self.set_title('Account Manager')
         self.set_size_request(310, 350)
@@ -59,20 +63,37 @@ class Accounts(gtk.Window):
             args = url.split(':')[1].split('-%&%-')
         except IndexError:
             args = []
-        print url
+        
         if action == "close":
             self.__close(widget)
         elif action == "new_account":
             self.form = AccountForm(self, self.core.list_protocols())
         elif action == "delete_account":
             self.delete_account(args[0])
-            
+    
+    def __login_callback(self, args):
+        print 'resp', args, args.code, args.errmsg, args.items
+        
+        if args.code > 0:
+            #msg = i18n.get(rtn.errmsg)
+            msg = arg.errmsg
+            self.form.cancel_login(msg)
+            return
+        
+        auth_obj = args.items
+        if auth_obj.must_auth():
+            print "Please visit %s, authorize Turpial and type the pin returned" % auth_obj.url
+            #pin = self.__user_input('Pin: ')
+            #self.core.authorize_oauth_token(acc, pin)
+        
+        self.worker.register(self.core.auth, (auth_obj.account), self.__test2)   
     def delete_account(self, account_id):
         self.core.unregister_account(account_id, True)
         page = self.htmlparser.render_account_list(self.core.all_accounts())
         self.container.update_element("list", page)
         
     def save_account(self, username, protocol_id, password):
-        self.core.register_account(username, protocol_id, password, True)
-        page = self.htmlparser.render_account_list(self.core.all_accounts())
-        self.container.update_element("list", page)
+        acc_id = self.core.register_account(username, protocol_id, password, True)
+        self.worker.register(self.core.login, (acc_id), self.__login_callback)
+        #page = self.htmlparser.render_account_list(self.core.all_accounts())
+        #self.container.update_element("list", page)

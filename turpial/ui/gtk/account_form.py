@@ -52,4 +52,6 @@ class AccountForm(gtk.Window):
             self.__close(widget)
         elif action == "save_account":
             self.accwin.save_account(args[0], args[1], args[2])
-            self.__close(widget)
+    
+    def cancel_login(self, message):
+        self.container.execute("cancel_login('" + msg + "');")

@@ -70,12 +70,14 @@ class Main(Base, gtk.Window):
         
         #self.sound = Sound()
         #self.notify = Notification(controller.no_notif)
-        self.accounts = Accounts(self)
         
         #self.worker2 = Worker2()
         #self.worker2.start()
         self.worker = Worker()
         self.worker.start()
+        
+        # Persistent dialogs
+        self.accounts = Accounts(self)
         
         self.__create_trayicon()
         self.show_all()
@@ -95,10 +97,6 @@ class Main(Base, gtk.Window):
             self.container.execute("alert('hola');")
         elif action == 'accounts':
             self.accounts.show(self.core.all_accounts())
-        elif action == 'save_account':
-            pass
-        elif action == 'delete_account':
-            pass
         elif action == 'login':
             acc_login = []
             for acc in self.core.all_accounts():

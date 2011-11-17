@@ -39,3 +39,8 @@ function save_account() {
     
     window.location = 'cmd:save_account:' + user + '-%&%-' + protocol + '-%&%-' + passwd;
 }
+
+function cancel_login(message) {
+    block_account_controls(false);
+    show_notice(message, 'error');
+}

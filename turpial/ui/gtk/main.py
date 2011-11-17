@@ -94,19 +94,13 @@ class Main(Base, gtk.Window):
         elif action == 'settings':
             self.container.execute("alert('hola');")
         elif action == 'accounts':
-            self.accounts.show(self.core.list_accounts())
+            self.accounts.show(self.core.all_accounts())
         elif action == 'save_account':
-            rem = True if args[3] == 'true' else False
-            self.core.register_account(args[0], args[2], args[1], rem)
-            page = self.htmlparser.render_account_list(self.core.all_accounts())
-            self.container.execute("close_account_dialog();")
-            self.container.update_element("form", page)
+            pass
         elif action == 'delete_account':
             self.core.unregister_account(args[0], True)
             page = self.htmlparser.render_account_list(self.core.all_accounts())
             self.container.update_element("form", page)
-        elif action == 'resize_done':
-            self.recalc = self.connect('size-request', self.__recalculate_size)
         elif action == 'login':
             acc_login = []
             for acc in self.core.all_accounts():
@@ -255,7 +249,13 @@ class Main(Base, gtk.Window):
         avatar.set_from_pixbuf(pix)
         del pix
         return avatar
-
+    
+    def save_account(self, username, protocol_id, password):
+        self.core.register_account(username, protocol_id, password, True)
+        page = self.htmlparser.render_account_list(self.core.all_accounts())
+        self.container.execute("close_account_dialog();")
+        self.container.update_element("form", page)
+        
 class Worker2:
     def __init__(self):
         self.queue = Queue.Queue()

@@ -154,6 +154,8 @@ class HtmlParser:
         
     def accounts(self, accounts):
         self.__load_layout('accounts')
+        acc_list = self.render_account_list(accounts)
+        '''
         acc_list = ''
         partial = self.__open_partial('account')
         for acc in accounts:
@@ -162,7 +164,7 @@ class HtmlParser:
             section = section.replace('<% @protocol_id %>', acc.split('-')[1])
             section = section.replace('@protocol_img', acc.split('-')[1] + '.png')
             acc_list += section + '\n'
-        
+        '''
         self.app_layout = self.app_layout.replace('<% @accounts %>', acc_list)
         return self.__render()
         
@@ -187,19 +189,11 @@ class HtmlParser:
             passwd = ''
             if acc.profile.password:
                 passwd = acc.profile.password
-            checked = ''
-            if acc.is_active():
-                checked = 'checked="checked"'
-            section = partial.replace('<% @active %>', checked)
-            section = section.replace('<% @account_id %>', acc.id_)
+            section = partial.replace('<% @account_id %>', acc.id_)
             section = section.replace('<% @account_name %>', acc.profile.username)
             section = section.replace('<% @passwd %>', passwd)
             section = section.replace('<% @protocol_id %>', acc.id_.split('-')[1])
             section = section.replace('@protocol_img', acc.id_.split('-')[1] + '.png')
-            if acc.is_remembered():
-                section = section.replace('<% @remember %>', 'true')
-            else:
-                section = section.replace('<% @remember %>', 'false')
             
             self.partials['accounts'] += section + '\n'
         page = self.__parse_tags(self.partials['accounts'])

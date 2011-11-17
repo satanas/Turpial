@@ -63,3 +63,5 @@ class Accounts(gtk.Window):
             self.__close(widget)
         elif action == "new_account":
             af = AccountForm(self, self.core.list_protocols())
+        elif action == "save_account":
+            pass

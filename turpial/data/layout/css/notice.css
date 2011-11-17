@@ -12,12 +12,12 @@
 
 #notice.error {
     color: #444;
-    background: #ffebe8 url('../../pixmaps/action-clear.png') no-repeat top right;
+    background: #ffebe8 url('<% css_img "action-clear.png" %>') no-repeat top right;
     border: 1px solid #dd3c10;
 }
 
 #notice.info {
     color: #444;
-    background: #fff9d7 url('../../pixmaps/action-clear.png') no-repeat top right;
+    background: #fff9d7 url('<% css_img "action-clear.png" %>') no-repeat top right;
     border: 1px solid #cfb400;
 }

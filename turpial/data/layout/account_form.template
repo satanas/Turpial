@@ -7,18 +7,18 @@
     <div id="container">
         <div id="notice" class="error" style="display: none;"></div>
         <div id="form">
-            <label>User</label><br/>
+            <label><% $user %></label><br/>
             <input id="user" type="text" class="textinput" value="<% @user %>"/><br/>
-            <label>Password</label><br/>
+            <label><% $password %></label><br/>
             <input id="passwd" type="password" class="textinput"  value="<% @pwd %>"/><br/>
-            <label>Protocol</label><br/>
+            <label><% $protocol %></label><br/>
             <select id="protocol"><% @protocols %></select><br/>
             <div class="extra">
                 <ul id="account_options">
-                    <li><a href="cmd:close">Close</a></li>
-                    <li><a href="javascript:save_account();">Save</a></li>
+                    <li><a href="cmd:close"><% $close %></a></li>
+                    <li><a href="javascript:save_account();"><% $save %></a></li>
                 </ul>
-                <div id="account-loading" style="display: none;">Saving... <% rimg "ajax-loader.gif" 14, 14 %></div>
+                <div id="account-loading" style="display: none;"><% $saving %> <% rimg "loader.gif", 14, 14 %></div>
             </div>
         </div>
     </div>

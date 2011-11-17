@@ -35,21 +35,15 @@ STRINGS = {
     'follow': _('Follow'),
     'exit': _('Exit'),
     'connecting': _('Connecting...'),
-    'user_and_password': _('User and Password'),
-    'protocol': _('Protocol'),
+    'user': _('User'),
     'password': _('Password'),
-    'remember_credentials': _('Remember my credentials'),
+    'protocol': _('Protocol'),
     'close': _('Close'),
     'save': _('Save'),
     'ok': _('Ok'),
     'cancel': _('Cancel'),
     'saving': _('Saving...'),
     'fields_cant_be_empty': _("Fields can't be empty"),
-    'one_account_to_login': _("Select at least one account to login"),
-    'type_password': _("Type the password for %s (%s)"),
-    'credentials': _("Credentials"),
-    'remember_my_credentials': _('Remember my credentials'),
-    'login_cancelled': _('Login cancelled by user'),
 }
     
 class i18n:

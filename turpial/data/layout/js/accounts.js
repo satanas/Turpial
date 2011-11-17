@@ -22,3 +22,9 @@ function recalculate_column_size() {
     $('#list').css('width', new_list_width + 'px');
     $('#list').css('height', new_list_height + 'px');
 }
+
+function delete_account(acc) {
+    var rtn = confirm('Delete account ' + acc);
+    if (rtn == true)
+        window.location = 'cmd:delete_account:' + acc
+}

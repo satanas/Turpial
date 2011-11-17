@@ -98,9 +98,7 @@ class Main(Base, gtk.Window):
         elif action == 'save_account':
             pass
         elif action == 'delete_account':
-            self.core.unregister_account(args[0], True)
-            page = self.htmlparser.render_account_list(self.core.all_accounts())
-            self.container.update_element("form", page)
+            pass
         elif action == 'login':
             acc_login = []
             for acc in self.core.all_accounts():
@@ -249,12 +247,6 @@ class Main(Base, gtk.Window):
         avatar.set_from_pixbuf(pix)
         del pix
         return avatar
-    
-    def save_account(self, username, protocol_id, password):
-        self.core.register_account(username, protocol_id, password, True)
-        page = self.htmlparser.render_account_list(self.core.all_accounts())
-        self.container.execute("close_account_dialog();")
-        self.container.update_element("form", page)
         
 class Worker2:
     def __init__(self):

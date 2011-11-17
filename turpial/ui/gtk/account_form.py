@@ -19,7 +19,7 @@ class AccountForm(gtk.Window):
     def __init__(self, parent, plist, user=None, pwd=None, protocol=None):
         gtk.Window.__init__(self)
         
-        self.mainwin = parent
+        self.accwin = parent
         self.set_transient_for(parent)
         self.set_modal(True)
         self.htmlparser = HtmlParser(None)
@@ -47,7 +47,9 @@ class AccountForm(gtk.Window):
             args = url.split(':')[1].split('-%&%-')
         except IndexError:
             args = []
-        print url
         
         if action == "close":
+            self.__close(widget)
+        elif action == "save_account":
+            self.accwin.save_account(args[0], args[1], args[2])
             self.__close(widget)

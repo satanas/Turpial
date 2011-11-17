@@ -1,9 +1,16 @@
 $(document).ready(function() {
+    enable_mouseover();
     recalculate_column_size();
     $(window).resize(function() {
         recalculate_column_size();
     });
-    
+});
+
+function after_update() {
+    enable_mouseover();
+}
+
+function enable_mouseover() {
     $('.account').mouseenter(function() {
         var name = $(this).attr('id');
         $('#options-' + name).show();
@@ -13,7 +20,7 @@ $(document).ready(function() {
         var name = $(this).attr('id');
         $('#options-' + name).hide();
     });
-});
+}
 
 function recalculate_column_size() {
     var column_width = window.innerWidth - 2;

@@ -37,5 +37,5 @@ function save_account() {
         return false;
     }
     
-    window.location = 'cmd:save_account:' + user + '-%&%-' + passwd+ '-%&%-' + protocol;
+    window.location = 'cmd:save_account:' + user + '-%&%-' + protocol + '-%&%-' + passwd;
 }

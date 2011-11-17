@@ -5,7 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # Oct 07, 2011
 
-from libturpial.common import *
+from libturpial.common.tools import *
 
 try:
     # TODO: Implement this function for other platforms

@@ -52,7 +52,7 @@ class HtmlParser:
         
         # Load default js
         
-        for js in ['jquery']:
+        for js in ['jquery', 'common']:
             filepath = os.path.realpath(os.path.join(JS_LAYOUT_DIR, js + '.js'))
             self.scripts.append(filepath)
         
@@ -164,6 +164,20 @@ class HtmlParser:
             acc_list += section + '\n'
         
         self.app_layout = self.app_layout.replace('<% @accounts %>', acc_list)
+        return self.__render()
+        
+    def account_form(self, plist, user='', pwd='', prot=''):
+        self.__load_layout('account_form')
+        protocols = '<option value="null">-- Select --</option>'
+        for pt in plist:
+            checked = ''
+            if pt == prot:
+                checked = 'checked="checked"'
+            protocols += '<option value="%s" %s>%s</option>' % (pt, checked, pt.capitalize())
+        
+        self.app_layout = self.app_layout.replace('<% @user %>', user)
+        self.app_layout = self.app_layout.replace('<% @pwd %>', pwd)
+        self.app_layout = self.app_layout.replace('<% @protocols %>', protocols)
         return self.__render()
         
     def render_account_list(self, accounts):

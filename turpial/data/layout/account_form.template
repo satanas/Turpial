@@ -1,0 +1,26 @@
+<html>
+<head>
+    <% stylesheets %>
+    <% javascripts %>
+</head>
+<body>
+    <div id="container">
+        <div id="notice" class="error" style="display: none;"></div>
+        <div id="form">
+            <label>User</label><br/>
+            <input id="user" type="text" class="textinput" value="<% @user %>"/><br/>
+            <label>Password</label><br/>
+            <input id="passwd" type="password" class="textinput"  value="<% @pwd %>"/><br/>
+            <label>Protocol</label><br/>
+            <select id="protocol"><% @protocols %></select><br/>
+            <div class="extra">
+                <ul id="account_options">
+                    <li><a href="cmd:close">Close</a></li>
+                    <li><a href="javascript:save_account();">Save</a></li>
+                </ul>
+                <div id="account-loading" style="display: none;">Saving... <% rimg "ajax-loader.gif" 14, 14 %></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

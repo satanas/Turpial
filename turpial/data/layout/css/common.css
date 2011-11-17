@@ -27,7 +27,7 @@ input[type="text"], input[type="password"]{
     border: 1px solid #aaa;
     color: #555;
     vertical-align: middle;
-    background: #fff url('../../pixmaps/textinput-background.png') repeat-x top;
+    background: #fff url('<% css_img "textinput-background.png" %>') repeat-x top;
     margin: 0 0 5px 0;
 }
 

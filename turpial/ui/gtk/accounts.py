@@ -66,8 +66,13 @@ class Accounts(gtk.Window):
             self.form = AccountForm(self, self.core.list_protocols())
         elif action == "delete_account":
             self.delete_account(args[0])
-    
+            
     def delete_account(self, account_id):
         self.core.unregister_account(account_id, True)
+        page = self.htmlparser.render_account_list(self.core.all_accounts())
+        self.container.update_element("list", page)
+        
+    def save_account(self, username, protocol_id, password):
+        self.core.register_account(username, protocol_id, password, True)
         page = self.htmlparser.render_account_list(self.core.all_accounts())
         self.container.update_element("list", page)

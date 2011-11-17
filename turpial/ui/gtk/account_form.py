@@ -37,9 +37,14 @@ class AccountForm(gtk.Window):
         page = self.htmlparser.account_form(plist)
         self.container.render(page)
         self.show_all()
-    
+        self.working = False
+        
     def __close(self, widget, event=None):
-        self.destroy()
+        if not self.working:
+            self.destroy()
+            return False
+        else:
+            return True
     
     def __action_request(self, widget, url):
         action = url.split(':')[0]
@@ -51,7 +56,11 @@ class AccountForm(gtk.Window):
         if action == "close":
             self.__close(widget)
         elif action == "save_account":
+            self.working = True
             self.accwin.save_account(args[0], args[1], args[2])
     
     def cancel_login(self, message):
         self.container.execute("cancel_login('" + msg + "');")
+    
+    def done_login(self):
+        self.destroy()

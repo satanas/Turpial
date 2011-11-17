@@ -15,6 +15,7 @@ import threading
 from turpial.ui.lang import i18n
 from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.htmlview import HtmlView
+from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.account_form import AccountForm
 
 log = logging.getLogger('Gtk')
@@ -42,6 +43,7 @@ class Accounts(gtk.Window):
         self.add(self.container)
         self.showed = False
         self.form = None
+        self.acc_id = None
         
     def show(self, accounts):
         if self.showed:
@@ -70,30 +72,46 @@ class Accounts(gtk.Window):
             self.form = AccountForm(self, self.core.list_protocols())
         elif action == "delete_account":
             self.delete_account(args[0])
-    
-    def __login_callback(self, args):
-        print 'resp', args, args.code, args.errmsg, args.items
         
-        if args.code > 0:
+    def __login_callback(self, arg):
+        print 'resp', arg, arg.code, arg.errmsg, arg.items
+        
+        if arg.code > 0:
             #msg = i18n.get(rtn.errmsg)
             msg = arg.errmsg
             self.form.cancel_login(msg)
             return
         
-        auth_obj = args.items
+        auth_obj = arg.items
         if auth_obj.must_auth():
-            print "Please visit %s, authorize Turpial and type the pin returned" % auth_obj.url
-            #pin = self.__user_input('Pin: ')
-            #self.core.authorize_oauth_token(acc, pin)
+            oauthwin = OAuthWindow(self)
+            oauthwin.connect('response', self.__oauth_callback)
+            oauthwin.connect('cancel', self.__cancel_callback)
+            oauthwin.open(auth_obj.url)
+    
+    def __cancel_callback(self):
+        pass
         
-        self.worker.register(self.core.auth, (auth_obj.account), self.__test2)   
+    def __oauth_callback(self, verifier):
+        self.worker.register(self.core.authorize_oauth_token, (self.acc_id, verifier), self.__auth_callback)  
+    
+    def __auth_callback(self):
+        self.worker.register(self.core.auth, (self.acc_id), self.__done_callback)
+        
+    def __done_callback(self, arg):
+        if arg.code > 0:
+            msg = arg.errmsg
+            self.form.cancel_login(msg)
+        else:
+            self.form.done_login()
+            page = self.htmlparser.render_account_list(self.core.all_accounts())
+            self.container.update_element("list", page)
+        
     def delete_account(self, account_id):
         self.core.unregister_account(account_id, True)
         page = self.htmlparser.render_account_list(self.core.all_accounts())
         self.container.update_element("list", page)
         
     def save_account(self, username, protocol_id, password):
-        acc_id = self.core.register_account(username, protocol_id, password, True)
-        self.worker.register(self.core.login, (acc_id), self.__login_callback)
-        #page = self.htmlparser.render_account_list(self.core.all_accounts())
-        #self.container.update_element("list", page)
+        self.acc_id = self.core.register_account(username, protocol_id, password, True)
+        self.worker.register(self.core.login, (self.acc_id), self.__login_callback)

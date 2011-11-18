@@ -1,42 +1,41 @@
 # -*- coding: utf-8 -*-
 
-# GTK account form for Turpial
+# PyQT account form view for Turpial
 #
-# Author: Wil Alvarez (aka Satanas)
-# Nov 16, 2011
+# Author:  Carlos Guerrero (aka guerrerocarlos)
+# Started: Sep 11, 2011
 
 import os
 
 import logging
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtWebKit import *
 
 from turpial.ui.lang import i18n
 from turpial.ui.html import HtmlParser
-from turpial.ui.gtk.htmlview import HtmlView
+from turpial.ui.qt.htmlview import HtmlView
 
-log = logging.getLogger('Gtk')
+log = logging.getLogger('PyQt4')
 
-class AccountForm(gtk.Window):
+class AccountForm(QtGui.QDialog):
     def __init__(self, parent, plist, user=None, pwd=None, protocol=None):
-        gtk.Window.__init__(self)
+        super(AccountForm,self).__init__()
         
         self.accwin = parent
-        self.set_transient_for(parent)
-        self.set_modal(True)
         self.htmlparser = HtmlParser(None)
-        self.set_title('Create Account')
-        self.set_size_request(290, 200)
-        self.set_resizable(False)
-        self.set_position(gtk.WIN_POS_CENTER)
-        self.set_gravity(gtk.gdk.GRAVITY_STATIC)
-        self.connect('delete-event', self.__close)
+        self.setWindowTitle('Create Account')
+        self.resize(290, 200)
+        self.finished.connect(self.__close)
         
         self.container = HtmlView()
-        self.container.connect('action-request', self.__action_request)
-        self.add(self.container)
+        self.layout = QtGui.QVBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.addWidget(self.container)
+        self.setLayout(self.layout)
         
         page = self.htmlparser.account_form(plist)
-        self.container.render(page)
-        self.show_all()
+        self.container.setHtml(page)
+        self.show()
         self.working = False
         
     def __close(self, widget, event=None):

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# GTK account manager for Turpial
+# PyQT account manager view for Turpial
 #
-# Author: Wil Alvarez (aka Satanas)
-# Nov 13, 2011
+# Author:  Carlos Guerrero (aka guerrerocarlos)
+# Started: Sep 11, 2011
 
 import os
 from PyQt4 import QtCore, QtGui
@@ -17,9 +17,9 @@ from turpial.ui.lang import i18n
 from turpial.ui.html import HtmlParser
 from turpial.ui.qt.htmlview import HtmlView
 #from turpial.ui.gtk.oauthwin import OAuthWindow
-#from turpial.ui.qt.account_form import AccountForm
+from turpial.ui.qt.account_form import AccountForm
 
-log = logging.getLogger('Gtk')
+log = logging.getLogger('PyQt4')
 
 class Accounts(QtGui.QDialog):
     def __init__(self, parent):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# QT main view for Turpial
+# PyQT main view for Turpial
 #
 # Author:  Carlos Guerrero (aka guerrerocarlos)
 # Started: Sep 11, 2011
@@ -96,7 +96,7 @@ class Main(QtGui.QMainWindow):
         except IndexError:
             args = []
         print url
-        #print action, args
+
         print "action: ",action
         
         if action == 'about':
@@ -104,7 +104,6 @@ class Main(QtGui.QMainWindow):
         elif action == 'settings':
             self.container.execute("alert('hola');")
         elif action == 'accounts':
-            print "entro en accounts"
             self.accounts.show_all(self.core.all_accounts())
         elif action == 'login':
             acc_login = []

@@ -15,7 +15,7 @@ from turpial.ui.gtk.htmlview import HtmlView
 class OAuthWindow(gtk.Window, gobject.GObject):
     __gsignals__ = {
         "response": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
-        "cancel": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        "cancel": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
     }
     
     def __init__(self, parent):
@@ -78,16 +78,15 @@ text box below and click OK:')
     def __accept(self, widget):
         verifier = self.pin.get_text()
         if verifier == '': 
-            #self.mainwin.cancel_login('You must write a valid PIN')
-            print 'You must write a valid PIN'
+            self.emit('cancel', 'invalid_pin')
+            self.destroy()
             return
         
-        #self.mainwin.request_auth_token(verifier)
         self.quit(verifier)
         
     def __started(self, widget):
         #self.waiting.start()
-        self.waiting_label.set_markup('Loading...')
+        self.waiting_label.set_markup(i18n.get('loading'))
         
     def __finished(self, widget):
         #self.waiting.stop()
@@ -103,8 +102,7 @@ text box below and click OK:')
         if response: 
             self.emit('response', response)
         else:
-            self.emit('cancel')
+            self.emit('cancel', 'login_cancelled')
         self.destroy()
-        #return True
         
 gobject.type_register(OAuthWindow)

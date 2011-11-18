@@ -78,9 +78,9 @@ class Accounts(gtk.Window):
             oauthwin.connect('cancel', self.__cancel_callback)
             oauthwin.open(auth_obj.url)
     
-    def __cancel_callback(self, widget):
+    def __cancel_callback(self, widget, reason):
         self.delete_account(self.acc_id)
-        self.form.cancel_login(i18n.get('login_cancelled'))
+        self.form.cancel_login(i18n.get(reason))
         self.acc_id = None
         
     def __oauth_callback(self, verifier):

@@ -40,10 +40,11 @@ STRINGS = {
     'ok': _('Ok'),
     'cancel': _('Cancel'),
     'saving': _('Saving...'),
+    'loading': _('Loading...'),
     'connecting': _('Connecting...'),
-    #'connecting': _('Connecting...'),
     'secure_auth': _('Secure Authentication'),
     'login_cancelled': _('Login cancelled by user'),
+    'invalid_pin': _('You must write a valid PIN'),
     
     'delete_account_confirm': _("Do you really want to delete the account "),
     'fields_cant_be_empty': _("Fields can't be empty"),

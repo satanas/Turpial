@@ -12,7 +12,7 @@ import logging
 from optparse import OptionParser
 
 from turpial.ui import util
-from libturpial.common import *
+from libturpial.common.tools import *
 from libturpial.api.core import Core
 from libturpial.config import AppConfig
 

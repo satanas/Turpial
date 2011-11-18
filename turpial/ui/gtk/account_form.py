@@ -63,6 +63,10 @@ class AccountForm(gtk.Window):
         self.working = False
         self.container.execute("cancel_login('" + message + "');")
     
+    def set_loading_message(self, message):
+        pass
+        #self.container.execute("set_loading_message('" + message + "');")
+        
     def done_login(self):
         self.working = False
         self.destroy()

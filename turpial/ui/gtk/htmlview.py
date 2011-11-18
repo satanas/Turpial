@@ -39,6 +39,7 @@ class HtmlView(gtk.VBox, gobject.GObject):
         self.view.set_settings(self.settings)
         self.view.connect('load-started', self.__started)
         self.view.connect('load-finished', self.__finished)
+        self.view.connect('console-message', self.__console_message)
         self.view.connect('navigation-policy-decision-requested', self.__process)
         
         scroll = gtk.ScrolledWindow()
@@ -47,6 +48,10 @@ class HtmlView(gtk.VBox, gobject.GObject):
         scroll.add(self.view)
         
         self.pack_start(scroll, True, True, 0)
+    
+    def __console_message(self, view, message, line, source_id, data=None):
+        print "%s <%s:%i>" % (message, source_id, line)
+        return True
     
     def __process(self, view, frame, request, action, policy, data=None):
         url = request.get_uri()
@@ -77,11 +82,11 @@ class HtmlView(gtk.VBox, gobject.GObject):
         html = html.replace('"', '\\"')
         html = html.replace('\n', " \\\n")
         script = "$('#%s').html(\"%s\");" % (id_, html)
-        print script
-        self.view.execute_script(script)
-        self.view.execute_script('after_update();')
+        self.execute(script)
+        self.execute('after_update();')
         
     def execute(self, script):
+        print script
         self.view.execute_script(script)
     
     def stop(self):

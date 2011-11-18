@@ -18,7 +18,7 @@
                     <li><a href="cmd:close"><% $close %></a></li>
                     <li><a href="javascript:save_account();"><% $save %></a></li>
                 </ul>
-                <div id="account-loading" style="display: none;"><% $connecting %> <% rimg "loader.gif", 14, 14 %></div>
+                <div id="account-loading" style="display: none;"><label id="loading-msg"><% $connecting %></label> <% rimg "loader.gif", 14, 14 %></div>
             </div>
         </div>
     </div>

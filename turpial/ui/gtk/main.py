@@ -8,19 +8,17 @@
 import os
 import gtk
 import sys
-import Queue
 import logging
-import threading
+
+from libturpial.common import ColumnType
 
 from turpial.ui.lang import i18n
 from turpial.ui.base import Base
 from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.about import About
+from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.accounts import Accounts
-from turpial.ui.gtk.dialogs.credentials import CredentialsDialog
-
-from libturpial.common import ColumnType
 
 gtk.gdk.set_program_class("Turpial")
 gtk.gdk.threads_init()
@@ -96,67 +94,7 @@ class Main(Base, gtk.Window):
         elif action == 'settings':
             self.container.execute("alert('hola');")
         elif action == 'accounts':
-            self.accounts.show(self.core.all_accounts())
-    '''
-        elif action == 'login':
-            acc_login = []
-            for acc in self.core.all_accounts():
-                if acc.id_ in args:
-                    acc.activate(True)
-                    if not acc.is_remembered():
-                        gtk.gdk.threads_enter()
-                        dialog = CredentialsDialog(self, acc.id_)
-                        response = dialog.run()
-                        passwd = dialog.password.get_text()
-                        rem = dialog.remember.get_active()
-                        dialog.destroy()
-                        gtk.gdk.threads_leave()
-                        if response == gtk.RESPONSE_ACCEPT:
-                            acc.update(passwd, rem)
-                            acc_login.append(acc)
-                    else:
-                        acc_login.append(acc)
-                else:
-                    acc.activate(False)
-            
-            # If there is no accounts then cancel_login
-            if len(acc_login) == 0:
-                msg = i18n.get('login_cancelled')
-                self.container.execute("cancel_login('" + msg + "');")
-                return
-            
-            # show main
-            for acc in acc_login:
-                #self.core.login(acc.id_)
-                self.worker.register(self.core.login, (acc.id_), self.__test)
-    
-    def __test(self, arg):
-        print 'resp', arg, arg.code, arg.errmsg, arg.items
-        
-        if arg.code > 0:
-            #msg = i18n.get(rtn.errmsg)
-            msg = arg.errmsg
-            self.container.execute("cancel_login('" + msg + "');")
-            return
-        
-        auth_obj = arg.items
-        if auth_obj.must_auth():
-            print "Please visit %s, authorize Turpial and type the pin returned" % auth_obj.url
-            #pin = self.__user_input('Pin: ')
-            #self.core.authorize_oauth_token(acc, pin)
-        
-        self.worker.register(self.core.auth, (auth_obj.account), self.__test2)        
-            
-    def __test2(self, arg):
-        if arg.code > 0:
-            msg = arg.errmsg
-            self.container.execute("cancel_login('" + msg + "');")
-            return
-        else:
-            print 'Logged in with account %s' % arg.items.id_.split('-')[0]
-    '''
-    def __link_request(self, widget, url):
-        print 'requested link: %s' % url
+            self.accounts.show()
         
     def __create_trayicon(self):
         if gtk.check_version(2, 10, 0) is not None:
@@ -246,68 +184,4 @@ class Main(Base, gtk.Window):
         avatar.set_from_pixbuf(pix)
         del pix
         return avatar
-        
-class Worker2:
-    def __init__(self):
-        self.queue = Queue.Queue()
-        self.exit_ = False
-    
-    def register(self, funct, args, callback):
-        self.queue.put((funct, args, callback))
-    
-    def login(self, acc_id, callback):
-        self.__register(self.protocol.auth, (acc_id), callback)
-    
-    def quit(self):
-        self.exit_ = True
-    
-    def start(self):
-        while not self.exit_:
-            try:
-                req = self.queue.get(True, 0.3)
-            except Queue.Empty:
-                continue
-            except:
-                continue
-            
-            (funct, args, callback) = req
-            
-            
-            thread = Thread(rtn=funct, args=args)
-            thread.start()
-            thread.join()
-            
-            if callback:
-                callback(rtn)
-    
-        
-
-class Worker(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.setDaemon(False)
-        self.queue = Queue.Queue()
-        self.exit_ = False 
-    
-    def register(self, funct, args, callback):
-        self.queue.put((funct, args, callback))
-    
-    def quit(self):
-        self.exit_ = True
-        
-    def run(self):
-        while not self.exit_:
-            try:
-                req = self.queue.get(True, 0.3)
-            except Queue.Empty:
-                continue
-            except:
-                continue
-            
-            (funct, args, callback) = req
-            print funct, args, callback
-            
-            rtn = funct(args)
-            if callback:
-                callback(rtn)
 

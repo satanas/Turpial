@@ -8,12 +8,12 @@
 import os
 import gtk
 import sys
-import Queue
+import gobject
 import logging
-import threading
 
 from turpial.ui.lang import i18n
 from turpial.ui.html import HtmlParser
+from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.account_form import AccountForm
@@ -27,7 +27,9 @@ class Accounts(gtk.Window):
         # Main tools
         self.mainwin = parent
         self.core = parent.core
-        self.worker = parent.worker
+        self.worker = Worker()
+        self.worker.set_timeout_callback(self.__timeout_callback)
+        self.worker.start()
         
         self.htmlparser = HtmlParser(None)
         self.set_title(i18n.get('accounts'))
@@ -48,6 +50,8 @@ class Accounts(gtk.Window):
     def __close(self, widget, event=None):
         self.showed = False
         self.hide()
+        self.worker.quit()
+        self.worker.join()
         return True
     
     def __action_request(self, widget, url):
@@ -70,48 +74,59 @@ class Accounts(gtk.Window):
             msg = arg.errmsg
             self.form.cancel_login(msg)
             return
-        #Authenticating...
+        
         auth_obj = arg.items
         if auth_obj.must_auth():
             oauthwin = OAuthWindow(self)
             oauthwin.connect('response', self.__oauth_callback)
             oauthwin.connect('cancel', self.__cancel_callback)
             oauthwin.open(auth_obj.url)
-    
+        else:
+            self.__auth_callback(arg)
+            
     def __cancel_callback(self, widget, reason):
         self.delete_account(self.acc_id)
         self.form.cancel_login(i18n.get(reason))
         self.acc_id = None
         
-    def __oauth_callback(self, verifier):
-        #Authorizing...
+    def __oauth_callback(self, widget, verifier):
+        self.form.set_loading_message(i18n.get('authorizing'))
         self.worker.register(self.core.authorize_oauth_token, (self.acc_id, verifier), self.__auth_callback)  
     
-    def __auth_callback(self):
-        self.worker.register(self.core.auth, (self.acc_id), self.__done_callback)
-        
+    def __auth_callback(self, arg):
+        if arg.code > 0:
+            msg = arg.errmsg
+            self.form.cancel_login(msg)
+        else:
+            self.form.set_loading_message(i18n.get('authenticating'))
+            self.worker.register(self.core.auth, (self.acc_id), self.__done_callback)
+    
+    def __timeout_callback(self, funct, arg):
+        gobject.timeout_add(200, funct, arg)
+    
     def __done_callback(self, arg):
         if arg.code > 0:
             msg = arg.errmsg
             self.form.cancel_login(msg)
         else:
             self.form.done_login()
-            page = self.htmlparser.render_account_list(self.core.all_accounts())
-            self.container.update_element("list", page)
+            self.__update()
     
-    def show(self, accounts):
+    def __update(self):
+        page = self.htmlparser.accounts(self.core.all_accounts())
+        self.container.render(page)
+    
+    def show(self):
         if self.showed:
             self.present()
         else:
             self.showed = True
-            page = self.htmlparser.accounts(accounts)
-            self.container.render(page)
+            self.__update()
             self.show_all()
     
     def delete_account(self, account_id):
         self.core.unregister_account(account_id, True)
-        page = self.htmlparser.render_account_list(self.core.all_accounts())
-        self.container.update_element("list", page)
+        self.__update()
         
     def save_account(self, username, protocol_id, password):
         self.acc_id = self.core.register_account(username, protocol_id, password, True)

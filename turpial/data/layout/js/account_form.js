@@ -45,3 +45,7 @@ function cancel_login(message) {
     block_account_controls(false);
     show_notice(message, 'error');
 }
+
+function set_loading_message(message) {
+    $('#loading-msg').html(message);
+}

@@ -14,6 +14,8 @@ class HtmlView(gtk.VBox, gobject.GObject):
     __gsignals__ = {
         "action-request": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
         "link-request": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
+        "load-started": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        "load-finished": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
     }
     
     def __init__(self, coding='utf-8'):
@@ -27,8 +29,8 @@ class HtmlView(gtk.VBox, gobject.GObject):
         
         self.view = webkit.WebView()
         self.view.set_settings(self.settings)
-        #self.view.connect('load-started', self.__started)
-        #self.view.connect('load-finished', self.__finished)
+        self.view.connect('load-started', self.__started)
+        self.view.connect('load-finished', self.__finished)
         self.view.connect('navigation-policy-decision-requested', self.__process)
         
         scroll = gtk.ScrolledWindow()
@@ -49,6 +51,12 @@ class HtmlView(gtk.VBox, gobject.GObject):
             policy.ignore()
             self.emit('link-request', url)
         policy.use()
+    
+    def __started(self, widget, frame):
+        self.emit('load-started')
+    
+    def __finished(self, widget, frame):
+        self.emit('load-finished')
     
     def render(self, html):
         gobject.idle_add(self.view.load_string, html, "text/html", self.coding, 

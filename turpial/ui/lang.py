@@ -24,17 +24,14 @@ else:
 
 STRINGS = {
     'accounts': _('Accounts'),
-    'login_at_startup': _('Login at startup'),
+    'create_account': _('Create Account'),
     'connect': _('Connect'),
     'about': _('About'),
     'preferences': _('Preferences'),
     'add_account': _('Add account'),
-    'user_and_password': _('User and Password'),
-    'remember_credentials': _('Remember my credentials'),
     'tweet': _('Tweet'),
     'follow': _('Follow'),
     'exit': _('Exit'),
-    'connecting': _('Connecting...'),
     'user': _('User'),
     'password': _('Password'),
     'protocol': _('Protocol'),
@@ -43,6 +40,12 @@ STRINGS = {
     'ok': _('Ok'),
     'cancel': _('Cancel'),
     'saving': _('Saving...'),
+    'connecting': _('Connecting...'),
+    #'connecting': _('Connecting...'),
+    'secure_auth': _('Secure Authentication'),
+    'login_cancelled': _('Login cancelled by user'),
+    
+    'delete_account_confirm': _("Do you really want to delete the account "),
     'fields_cant_be_empty': _("Fields can't be empty"),
 }
     

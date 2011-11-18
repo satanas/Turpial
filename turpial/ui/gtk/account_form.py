@@ -23,7 +23,7 @@ class AccountForm(gtk.Window):
         self.set_transient_for(parent)
         self.set_modal(True)
         self.htmlparser = HtmlParser(None)
-        self.set_title('Create Account')
+        self.set_title(i18n.get('create_account'))
         self.set_size_request(290, 200)
         self.set_resizable(False)
         self.set_position(gtk.WIN_POS_CENTER)
@@ -60,7 +60,9 @@ class AccountForm(gtk.Window):
             self.accwin.save_account(args[0], args[1], args[2])
     
     def cancel_login(self, message):
-        self.container.execute("cancel_login('" + msg + "');")
+        self.working = False
+        self.container.execute("cancel_login('" + message + "');")
     
     def done_login(self):
+        self.working = False
         self.destroy()

@@ -97,6 +97,7 @@ class Main(Base, gtk.Window):
             self.container.execute("alert('hola');")
         elif action == 'accounts':
             self.accounts.show(self.core.all_accounts())
+    '''
         elif action == 'login':
             acc_login = []
             for acc in self.core.all_accounts():
@@ -153,7 +154,7 @@ class Main(Base, gtk.Window):
             return
         else:
             print 'Logged in with account %s' % arg.items.id_.split('-')[0]
-    
+    '''
     def __link_request(self, widget, url):
         print 'requested link: %s' % url
         

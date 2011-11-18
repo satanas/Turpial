@@ -30,7 +30,7 @@ class Accounts(gtk.Window):
         self.worker = parent.worker
         
         self.htmlparser = HtmlParser(None)
-        self.set_title('Account Manager')
+        self.set_title(i18n.get('accounts'))
         self.set_size_request(310, 350)
         self.set_resizable(False)
         self.set_icon(self.mainwin.load_image('turpial.png', True))
@@ -44,15 +44,6 @@ class Accounts(gtk.Window):
         self.showed = False
         self.form = None
         self.acc_id = None
-        
-    def show(self, accounts):
-        if self.showed:
-            self.present()
-        else:
-            self.showed = True
-            page = self.htmlparser.accounts(accounts)
-            self.container.render(page)
-            self.show_all()
     
     def __close(self, widget, event=None):
         self.showed = False
@@ -74,14 +65,12 @@ class Accounts(gtk.Window):
             self.delete_account(args[0])
         
     def __login_callback(self, arg):
-        print 'resp', arg, arg.code, arg.errmsg, arg.items
-        
         if arg.code > 0:
             #msg = i18n.get(rtn.errmsg)
             msg = arg.errmsg
             self.form.cancel_login(msg)
             return
-        
+        #Authenticating...
         auth_obj = arg.items
         if auth_obj.must_auth():
             oauthwin = OAuthWindow(self)
@@ -89,10 +78,13 @@ class Accounts(gtk.Window):
             oauthwin.connect('cancel', self.__cancel_callback)
             oauthwin.open(auth_obj.url)
     
-    def __cancel_callback(self):
-        pass
+    def __cancel_callback(self, widget):
+        self.delete_account(self.acc_id)
+        self.form.cancel_login(i18n.get('login_cancelled'))
+        self.acc_id = None
         
     def __oauth_callback(self, verifier):
+        #Authorizing...
         self.worker.register(self.core.authorize_oauth_token, (self.acc_id, verifier), self.__auth_callback)  
     
     def __auth_callback(self):
@@ -106,7 +98,16 @@ class Accounts(gtk.Window):
             self.form.done_login()
             page = self.htmlparser.render_account_list(self.core.all_accounts())
             self.container.update_element("list", page)
-        
+    
+    def show(self, accounts):
+        if self.showed:
+            self.present()
+        else:
+            self.showed = True
+            page = self.htmlparser.accounts(accounts)
+            self.container.render(page)
+            self.show_all()
+    
     def delete_account(self, account_id):
         self.core.unregister_account(account_id, True)
         page = self.htmlparser.render_account_list(self.core.all_accounts())

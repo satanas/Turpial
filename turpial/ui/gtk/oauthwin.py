@@ -6,13 +6,13 @@
 # Mar 16, 2010
 
 import gtk
-import time
 import webkit
 import gobject
 
-#from turpial.ui.gtk.waiting import CairoWaiting
+from turpial.ui.lang import i18n
+from turpial.ui.gtk.htmlview import HtmlView
 
-class OAuthWindow(gtk.Window):
+class OAuthWindow(gtk.Window, gobject.GObject):
     __gsignals__ = {
         "response": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
         "cancel": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
@@ -23,35 +23,22 @@ class OAuthWindow(gtk.Window):
         gtk.Window.__init__(self)
         
         self.mainwin = parent
-        self.set_title(_('Secure Authentication')) ###
+        self.set_title(i18n.get('secure_auth'))
         self.set_default_size(800, 450)
         self.set_transient_for(parent)
+        self.set_modal(True)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         self.connect('delete-event', self.__cancel)
         
-        self.settings = webkit.WebSettings()
-        self.settings.enable_java_applet = False
-        #self.settings.enable_plugins = False
-        self.settings.enable_page_cache = True
-        self.settings.enable_offline_web_application_cache = False
-        self.settings.enable_html5_local_storage = False
-        self.settings.enable_html5_database = False
-        self.settings.enable_default_context_menu = False
-        self.view = webkit.WebView()
-        self.view.set_settings(self.settings)
+        self.view = HtmlView()
         self.view.connect('load-started', self.__started)
         self.view.connect('load-finished', self.__finished)
-        
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.set_shadow_type(gtk.SHADOW_IN)
-        scroll.add(self.view)
         
         self.label = gtk.Label()
         self.label.set_use_markup(True)
         self.label.set_alignment(0, 0)
-        self.label.set_markup(_('Autorize Turpial, copy the <b>PIN</b> in the \
-text box below and click OK:'))
+        self.label.set_markup('Autorize Turpial, copy the <b>PIN</b> in the \
+text box below and click OK:')
         
         self.waiting_label = gtk.Label()
         self.waiting_label.set_use_markup(True)
@@ -74,7 +61,8 @@ text box below and click OK:'))
         hbox.pack_start(accept, False, False, 2)
         
         vbox = gtk.VBox(False, 5)
-        vbox.pack_start(scroll, True, True, 0)
+        #vbox.pack_start(scroll, True, True, 0)
+        vbox.pack_start(self.view, True, True, 0)
         vbox.pack_start(lblbox, False, False, 2)
         vbox.pack_start(hbox, False, False, 2)
         
@@ -82,6 +70,7 @@ text box below and click OK:'))
         accept.connect('clicked', self.__accept)
         
         self.add(vbox)
+        self.show_all()
         
     def __cancel(self, widget, event=None):
         self.quit()
@@ -96,24 +85,26 @@ text box below and click OK:'))
         #self.mainwin.request_auth_token(verifier)
         self.quit(verifier)
         
-    def __started(self, widget, frame):
+    def __started(self, widget):
         #self.waiting.start()
         self.waiting_label.set_markup('Loading...')
         
-    def __finished(self, widget, frame):
+    def __finished(self, widget):
         #self.waiting.stop()
         self.waiting_label.set_markup('')
     
     def open(self, uri):
         print uri
         self.show_all()
-        self.view.open(uri)
+        self.view.load(uri)
         
     def quit(self, response=None):
-        self.view.stop_loading()
+        self.view.stop()
         if response: 
             self.emit('response', response)
         else:
             self.emit('cancel')
         self.destroy()
         #return True
+        
+gobject.type_register(OAuthWindow)

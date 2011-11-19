@@ -183,6 +183,7 @@ function login() {
     if (i > 0) {
         accounts = accounts.slice(0, i);
     }
+    
     window.location = 'cmd:login:' + accounts;
 }
 

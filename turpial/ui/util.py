@@ -45,7 +45,8 @@ try:
     from turpial.ui.qt.main import Main as _QT
     INTERFACES['qt'] = _QT
     DEFAULT_INTERFACE = 'qt'
-except ImportError, exc:
+#except ImportError, exc:
+except IOError:
     print exc
 
 def available_interfaces():

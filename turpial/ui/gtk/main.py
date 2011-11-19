@@ -43,7 +43,6 @@ class Main(Base, gtk.Window):
         
         self.container = HtmlView()
         self.container.connect('action-request', self.__action_request)
-        self.container.connect('link-request', self.__link_request)
         self.add(self.container)
         
         self.mode = 0

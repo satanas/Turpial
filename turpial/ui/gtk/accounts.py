@@ -90,7 +90,7 @@ class Accounts(gtk.Window):
         self.acc_id = None
         
     def __oauth_callback(self, widget, verifier):
-        self.form.set_loading_message(i18n.get('authorizing'))
+        #self.form.set_loading_message(i18n.get('authorizing'))
         self.worker.register(self.core.authorize_oauth_token, (self.acc_id, verifier), self.__auth_callback)  
     
     def __auth_callback(self, arg):
@@ -98,7 +98,7 @@ class Accounts(gtk.Window):
             msg = arg.errmsg
             self.form.cancel_login(msg)
         else:
-            self.form.set_loading_message(i18n.get('authenticating'))
+            #self.form.set_loading_message(i18n.get('authenticating'))
             self.worker.register(self.core.auth, (self.acc_id), self.__done_callback)
     
     def __timeout_callback(self, funct, arg):

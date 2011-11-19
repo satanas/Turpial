@@ -47,3 +47,7 @@ input[type="text"], input[type="password"]{
     margin: 6px 10px 0 0;
     text-align: right;
 }
+
+#passwd-info {
+    height: 40px;
+}

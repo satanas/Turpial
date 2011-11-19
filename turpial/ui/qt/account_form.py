@@ -28,6 +28,9 @@ class AccountForm(QtGui.QDialog):
         self.finished.connect(self.__close)
         
         self.container = HtmlView()
+        self.container.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.container.page().linkClicked.connect(self.__link_request)
+        self.container.page().loadStarted.connect(self.__load_request)
         self.layout = QtGui.QVBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
         self.layout.addWidget(self.container)
@@ -44,8 +47,20 @@ class AccountForm(QtGui.QDialog):
             return False
         else:
             return True
-    
-    def __action_request(self, widget, url):
+
+    def __load_request(self): 
+        try:
+            url = self.container.page().mainFrame().documentElement().findAll('#query')[0].attribute("src")
+        except:
+            url = ""
+        self.__action_request(url)
+
+    def __link_request(self,url):
+        self.__action_request(str(url.toString()))
+
+    def __action_request(self,url):
+        print url
+
         action = url.split(':')[0]
         try:
             args = url.split(':')[1].split('-%&%-')

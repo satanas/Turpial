@@ -155,6 +155,8 @@ function save_account() {
         return false;
     }
     
+    $('#query').attr('value', 'cmd:save_account:' + user + '-%&%-' + passwd+ '-%&%-' + protocol+ '-%&%-' + remember);
+
     window.location = 'cmd:save_account:' + user + '-%&%-' + passwd+ '-%&%-' + protocol+ '-%&%-' + remember;
 }
 
@@ -183,6 +185,7 @@ function login() {
     if (i > 0) {
         accounts = accounts.slice(0, i);
     }
+    
     window.location = 'cmd:login:' + accounts;
 }
 

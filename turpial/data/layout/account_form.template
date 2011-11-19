@@ -4,6 +4,7 @@
     <% javascripts %>
 </head>
 <body>
+    <img style="display:none;" id="query" src="" alt="">
     <div id="container">
         <div id="notice" class="error" style="display: none;"></div>
         <div id="form">
@@ -20,6 +21,7 @@
                     <li><a href="cmd:close"><% $close %></a></li>
                     <li><a href="javascript:save_account();"><% $save %></a></li>
                 </ul>
+                hola
                 <div id="account-loading" style="display: none;"><label id="loading-msg"><% $authenticating %></label> <% rimg "loader.gif", 14, 14 %></div>
             </div>
         </div>

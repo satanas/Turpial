@@ -167,7 +167,7 @@ class Main(Base, gtk.Window):
         except Exception:
             sys.exit(0)
     
-    def show_login(self):
+    def show_main(self):
         columns = []
         for i in range(1,4):
             name = "column%i" % i

@@ -9,7 +9,8 @@ import logging
 
 class Base:
     '''Parent class for every UI interface'''
-    def __init__(self, core):
+    def __init__(self, core, config):
         self.core = core
+        self.config = config
         self.log = logging.getLogger('UI')
         self.log.debug('Started')

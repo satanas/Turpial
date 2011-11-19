@@ -26,8 +26,8 @@ gtk.gdk.threads_init()
 log = logging.getLogger('Gtk')
 
 class Main(Base, gtk.Window):
-    def __init__(self, core):
-        Base.__init__(self, core)
+    def __init__(self, core, config):
+        Base.__init__(self, core, config)
         gtk.Window.__init__(self)
         
         self.htmlparser = HtmlParser(core.list_protocols())
@@ -168,8 +168,16 @@ class Main(Base, gtk.Window):
             sys.exit(0)
     
     def show_login(self):
-        page = self.htmlparser.main([], []) #['satanas82-twitter-timeline', 'satanas-identica-timeline'])
+        columns = []
+        for i in range(1,4):
+            name = "column%i" % i
+            col = self.config.read('Columns', name)
+            if col != '':
+                columns.append(col)
+        page = self.htmlparser.main(self.core.list_accounts(), columns)
         self.container.render(page)
+        #login
+        #tweets
         
     def show_about(self):
         about = About(self)

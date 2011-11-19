@@ -53,7 +53,7 @@ class Turpial:
             sys.exit(0)
         
         if options.interface in util.INTERFACES.keys():
-            self.ui = util.INTERFACES[options.interface](self.core)
+            self.ui = util.INTERFACES[options.interface](self.core, self.config)
         else:
             print "'%s' is not a valid interface. Availables interfaces are %s" % (
                 options.interface, util.available_interfaces())

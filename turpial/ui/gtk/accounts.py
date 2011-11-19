@@ -29,7 +29,6 @@ class Accounts(gtk.Window):
         self.core = parent.core
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__timeout_callback)
-        self.worker.start()
         
         self.htmlparser = HtmlParser(None)
         self.set_title(i18n.get('accounts'))
@@ -121,6 +120,7 @@ class Accounts(gtk.Window):
             self.present()
         else:
             self.showed = True
+            self.worker.start()
             self.__update()
             self.show_all()
     

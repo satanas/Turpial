@@ -167,7 +167,7 @@ class Main(Base, gtk.Window):
         except Exception:
             sys.exit(0)
     
-    def show_login(self):
+    def show_main(self):
         page = self.htmlparser.main([], []) #['satanas82-twitter-timeline', 'satanas-identica-timeline'])
         self.container.render(page)
         

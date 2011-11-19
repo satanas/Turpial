@@ -4,6 +4,7 @@
     <% javascripts %>
 </head>
 <body>
+    <% query %>
     <div id="container">
         <div id="list"><% @accounts %></div>
         <div class="extra">

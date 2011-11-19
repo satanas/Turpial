@@ -48,9 +48,7 @@ class Accounts(gtk.Window):
     
     def __close(self, widget, event=None):
         self.showed = False
-        self.hide()
-        self.worker.quit()
-        self.worker.join()
+        self.quit()
         return True
     
     def __action_request(self, widget, url):
@@ -124,6 +122,11 @@ class Accounts(gtk.Window):
             self.__update()
             self.show_all()
     
+    def quit(self):
+        self.worker.quit()
+        self.worker.join()
+        self.destroy()
+        
     def delete_account(self, account_id):
         self.core.unregister_account(account_id, True)
         self.__update()

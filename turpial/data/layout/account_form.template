@@ -4,7 +4,7 @@
     <% javascripts %>
 </head>
 <body>
-    <img style="display:none;" id="query" src="" alt="">
+    <% query %>
     <div id="container">
         <div id="notice" class="error" style="display: none;"></div>
         <div id="form">

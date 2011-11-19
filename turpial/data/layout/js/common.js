@@ -28,3 +28,8 @@ function reset_notice() {
     $('#notice').removeClass('error');
     $('#notice').removeClass('info');
 }
+
+function exec_command(cmd) {
+    $("#query").attr('src') = cmd;
+    $(window).location = cmd;
+}

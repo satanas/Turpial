@@ -80,6 +80,9 @@ class HtmlParser:
         else:
             return "<img src='file://%s'/>" % filepath
     
+    def __query_tag(self):
+        return "<img style='display:none;' id='query' src='' alt=''>"
+    
     def __parse_tags(self, page):
         for part in PARTIAL_PATTERN.findall(page):
             page = page.replace(part[0], self.partials[part[1]])
@@ -120,6 +123,8 @@ class HtmlParser:
         css_tags += '</style>'
         page = page.replace('<% stylesheets %>', css_tags)
         
+        page = page.replace('<% query %>', self.__query_tag())
+
         page = self.__parse_tags(page)
         #print page
         return page

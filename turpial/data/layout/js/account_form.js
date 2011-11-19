@@ -44,8 +44,7 @@ function save_account() {
         return false;
     }
     
-    document.getElementById("query").src = 'cmd:save_account:' + user + '-%&%-' + protocol + '-%&%-' + passwd;
-    window.location = 'cmd:save_account:' + user + '-%&%-' + protocol + '-%&%-' + passwd;
+    exec_command('cmd:save_account:' + user + '-%&%-' + protocol + '-%&%-' + passwd);
 
 }
 

@@ -153,6 +153,7 @@ class Main(Base, gtk.Window):
         self.log.debug('Exit')
         self.destroy()
         self.tray = None
+        self.accounts.quit()
         self.worker.quit()
         self.worker.join()
         if widget:

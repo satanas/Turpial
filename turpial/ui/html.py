@@ -155,16 +155,6 @@ class HtmlParser:
     def accounts(self, accounts):
         self.__load_layout('accounts')
         acc_list = self.render_account_list(accounts)
-        '''
-        acc_list = ''
-        partial = self.__open_partial('account')
-        for acc in accounts:
-            section = partial.replace('<% @account_id %>', acc)
-            section = section.replace('<% @account_name %>', acc.split('-')[0])
-            section = section.replace('<% @protocol_id %>', acc.split('-')[1])
-            section = section.replace('@protocol_img', acc.split('-')[1] + '.png')
-            acc_list += section + '\n'
-        '''
         self.app_layout = self.app_layout.replace('<% @accounts %>', acc_list)
         return self.__render()
         

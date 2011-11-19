@@ -1,6 +1,7 @@
 $(document).ready(function() {
     var column_width = window.innerWidth - 12;
     $('#notice').css('width', column_width + 'px');
+    $('#user').focus();
 });
 
 function block_account_controls(block) {
@@ -31,7 +32,13 @@ function save_account() {
     var passwd = $('#passwd').val();
     var protocol = $('#protocol').val();
     
-    if ((user == '') || (passwd == '') || (protocol == 'null')) {
+    if ((user == '') || (protocol == 'null')) {
+        block_account_controls(false);
+        show_notice("<% $fields_cant_be_empty %>", 'error');
+        return false;
+    }
+    
+    if ((passwd == '') && (protocol == 'identica')) {
         block_account_controls(false);
         show_notice("<% $fields_cant_be_empty %>", 'error');
         return false;
@@ -43,4 +50,19 @@ function save_account() {
 function cancel_login(message) {
     block_account_controls(false);
     show_notice(message, 'error');
+}
+
+function set_loading_message(message) {
+    $('#loading-msg').html(message);
+}
+
+function check_protocol() {
+    var protocol = $('#protocol').val();
+    if (protocol == 'twitter') {
+        $('#passwd').hide();
+        $('#lbl-passwd').hide();
+    } else {
+        $('#passwd').show();
+        $('#lbl-passwd').show();
+    }
 }

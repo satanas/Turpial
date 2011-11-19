@@ -8,11 +8,13 @@ $(document).ready(function() {
     });
     
     $('.content').mouseenter(function() {
+        console.log('content mouseenter');
         var name = $(this).attr('name');
         $('#options-' + name).show();
     });
     
     $('.content').mouseleave(function() {
+        console.log('content mouseleave');
         var name = $(this).attr('name');
         $('#options-' + name).hide();
     });
@@ -31,6 +33,7 @@ $(document).ready(function() {
 });
 
 function recalculate_column_size(nw, nh) {
+    console.log('recalculating...');
     var width = window.innerWidth;
     var height = window.innerHeight;
     if (nw != undefined)

@@ -155,8 +155,6 @@ function save_account() {
         return false;
     }
     
-    $('#query').attr('value', 'cmd:save_account:' + user + '-%&%-' + passwd+ '-%&%-' + protocol+ '-%&%-' + remember);
-
     window.location = 'cmd:save_account:' + user + '-%&%-' + passwd+ '-%&%-' + protocol+ '-%&%-' + remember;
 }
 

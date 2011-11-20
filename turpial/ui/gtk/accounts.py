@@ -27,8 +27,7 @@ class Accounts(gtk.Window):
         # Main tools
         self.mainwin = parent
         self.core = parent.core
-        self.worker = Worker()
-        self.worker.set_timeout_callback(self.__timeout_callback)
+        self.worker = None
         
         self.htmlparser = HtmlParser(None)
         self.set_title(i18n.get('accounts'))
@@ -88,7 +87,7 @@ class Accounts(gtk.Window):
         
     def __oauth_callback(self, widget, verifier):
         #self.form.set_loading_message(i18n.get('authorizing'))
-        self.worker.register(self.core.authorize_oauth_token, (self.acc_id, verifier), self.__auth_callback)  
+        self.worker.register(self.core.authorize_oauth_token, (self.acc_id, verifier), self.__auth_callback)
     
     def __auth_callback(self, arg):
         if arg.code > 0:
@@ -118,13 +117,17 @@ class Accounts(gtk.Window):
             self.present()
         else:
             self.showed = True
-            self.worker.start()
+            if not self.worker:
+                self.worker = Worker()
+                self.worker.set_timeout_callback(self.__timeout_callback)
+                self.worker.start()
             self.__update()
             self.show_all()
     
     def quit(self):
-        self.worker.quit()
-        self.worker.join()
+        if self.worker:
+            self.worker.quit()
+            self.worker.join()
         self.destroy()
         
     def delete_account(self, account_id):

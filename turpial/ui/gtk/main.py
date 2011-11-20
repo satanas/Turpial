@@ -8,6 +8,7 @@
 import os
 import gtk
 import sys
+import gobject
 import logging
 
 from libturpial.common import ColumnType
@@ -71,6 +72,7 @@ class Main(Base, gtk.Window):
         #self.worker2 = Worker2()
         #self.worker2.start()
         self.worker = Worker()
+        self.worker.set_timeout_callback(self.__timeout_callback)
         self.worker.start()
         
         # Persistent dialogs
@@ -148,7 +150,29 @@ class Main(Base, gtk.Window):
         else:
             self.main_quit()
         return True
+    
+    def __timeout_callback(self, funct, arg):
+        gobject.timeout_add(200, funct, arg)
         
+    def __login_callback(self, arg):
+        if arg.code > 0:
+            #msg = i18n.get(rtn.errmsg)
+            msg = arg.errmsg
+            print msg
+            return
+        
+        auth_obj = arg.items
+        if not auth_obj.must_auth():
+            self.auth(auth_obj.account)
+    
+    def auth(self, acc):
+        self.worker.register(self.core.auth, (acc), self.__done_callback)
+    
+    def __done_callback(self, arg):
+        if arg.code > 0:
+            msg = arg.errmsg
+            print msg
+    
     def main_quit(self, widget=None):
         self.log.debug('Exit')
         self.destroy()
@@ -177,7 +201,7 @@ class Main(Base, gtk.Window):
                 columns.append(col)
         page = self.htmlparser.main(self.core.list_accounts(), columns)
         self.container.render(page)
-        #login
+        self.login()
         #tweets
         
     def show_about(self):
@@ -192,4 +216,7 @@ class Main(Base, gtk.Window):
         avatar.set_from_pixbuf(pix)
         del pix
         return avatar
-
+    
+    def login(self):
+        for acc in self.core.list_accounts():
+            self.worker.register(self.core.login, (acc), self.__login_callback)

@@ -24,7 +24,7 @@ UPDATE_TYPE_PROFILE = 'profile'
 
 GLOBAL_CFG = {
     'App':{
-        'version': '1.5.0',
+        'version': '1.6.6',
     },
     'Proxy':{
         'username': '',
@@ -32,6 +32,9 @@ GLOBAL_CFG = {
         'server': '',
         'port': '',
         'url': '',
+    },
+    'Startup':{
+        'autologin': 'off',
     }
 }
 PROTOCOL_CFG = {
@@ -41,6 +44,11 @@ PROTOCOL_CFG = {
     }
 }
 DEFAULT_CFG = {
+    'Auth':{
+        'oauth-key': '',
+        'oauth-secret': '',
+        'oauth-verifier': '',
+    },
     'General':{
         'home-update-interval': '3',
         'replies-update-interval': '10',
@@ -50,6 +58,7 @@ DEFAULT_CFG = {
         'remember-login-info': 'off',
         'minimize-on-close': 'on',
         'num-tweets': '60',
+        'expand-urls': 'off',
     },
     'Window': {
         'single-win-size': '320,480',
@@ -185,25 +194,35 @@ class ConfigHandler(ConfigBase):
         ConfigBase.__init__(self)
         
         self.dir = os.path.join(os.path.expanduser('~'), '.config',
-            'turpial', protocol, user)
+            'turpial', protocol, user.lower())
         if XDG_CACHE:
             self.imgdir = os.path.join(BaseDirectory.xdg_cache_home, 
-                'turpial', protocol, user, 'images')
+                'turpial', protocol, user.lower(), 'images')
         else:
             self.imgdir = os.path.join(self.dir, 'images')
         self.filepath = os.path.join(self.dir, 'config')
         self.mutedpath = os.path.join(self.dir, 'muted')
+        self.filteredpath = os.path.join(self.dir, 'filtered')
     
     def initialize_failsafe(self):
+        '''
         if not os.path.isdir(self.dir): 
             self.load_failsafe()
         else:
             self.initialize()
+        '''
+        try:
+            self.initialize()
+            self.log.debug('Loaded user configuration')
+        except Except, exc:
+            self.load_failsafe()
+            self.log.debug('Loaded failsafe configuration')
             
     def initialize(self):
         self.log.debug('CACHEDIR: %s' % self.imgdir)
         self.log.debug('CONFIGFILE: %s' % self.filepath)
         self.log.debug('MUTEDFILE: %s' % self.mutedpath)
+        self.log.debug('FILTEREDFILE: %s' % self.filteredpath)
         
         if not os.path.isdir(self.dir): 
             os.makedirs(self.dir)
@@ -213,6 +232,8 @@ class ConfigHandler(ConfigBase):
             self.create()
         if not os.path.isfile(self.mutedpath): 
             self.create_muted_list()
+        if not os.path.isfile(self.filteredpath):
+            self.create_filtered_list()
         
         self.load()
         
@@ -236,6 +257,25 @@ class ConfigHandler(ConfigBase):
             _fd.write(user + '\n')
         _fd.close()
 
+    def create_filtered_list(self):
+        _fd = open(self.filteredpath, 'w')
+        _fd.close()
+        
+    def load_filtered_list(self):
+        filtered = []
+        _fd = open(self.filteredpath, 'r')
+        for line in _fd:
+            if line == '\n':
+                continue
+            filtered.append(line.strip('\n'))
+        _fd.close()
+        return filtered
+        
+    def save_filtered_list(self, lst):
+        _fd = open(self.filteredpath, 'w')
+        for item in lst:
+            _fd.write(item + '\n')
+        _fd.close()
 
 class ConfigApp(ConfigBase):
     """Configuracion de la aplicacion"""

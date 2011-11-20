@@ -1,3 +1,15 @@
+v1.6.6 (Nov 20, 2011):
+    + Agregado soporte para img.ur y goo.gl
+    + Implementada opción para expandir URLs en el menú contextual
+    + Mejoras en la interfaz gráfica
+    + Implementado autologin
+    + Diálogo para la autorización oAuth en Twitter
+    + Implementado filtrado de tweets por frases/palabras
+    + Restarurado el acceso a los DMs
+    + Implementado soporte para la APIv2 de bit.ly
+    + Corregido error en la detección del sistema de notificaciones
+    + Corregidos otros errores menores
+    
 v1.5.0 (May 14, 2011):
     + Visualización de mensajes directos enviados
     + Soporte para listas y columnas personalizables

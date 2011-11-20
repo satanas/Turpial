@@ -100,7 +100,7 @@ class Identica(Protocol):
         profile.followers_count = pf['followers_count']
         profile.friends_count = pf['friends_count']
         profile.statuses_count = pf['statuses_count']
-        profile.profile_link_color = pf['profile_link_color'] or '#0F0F85'
+        profile.profile_link_color = '#0F0F85'
         return profile
         
     def __create_rate(self, rl):
@@ -158,8 +158,6 @@ class Identica(Protocol):
         self.log.debug('Iniciando autenticacion segura')
         username = args['username']
         password = args['password']
-        auth = args['auth']
-        protocol = args['protocol']
         
         try:
             self.http.auth(username, password, None)
@@ -167,13 +165,17 @@ class Identica(Protocol):
                 self.apiurl)
             self.profile = self.__create_profile(rtn)
             self.profile.password = password
-            
-            return Response(self.profile, 'profile'), None, None, protocol
+            return Response(self.profile, 'profile')
         except TurpialException, exc:
-            return Response(None, 'error', exc.msg), None, None, None
+            return Response(None, 'error', exc.msg)
         except Exception, exc:
             self.log.debug('Authentication Error: %s' % exc)
-            return Response(None, 'error', _('Authentication Error')), None, None, None
+            return Response(None, 'error', _('Authentication Error'))
+    
+    def start_oauth(self, args):
+        auth = args['auth']
+        token = self.http.build_token(auth)
+        return Response(token, 'auth-done')
         
     def get_timeline(self, args):
         '''Actualizando linea de tiempo'''
@@ -213,7 +215,7 @@ class Identica(Protocol):
             return Response(self.directs, 'status')
         except TurpialException, exc:
             return Response(None, 'error', exc.msg)
-            
+        
     def get_sent(self, args):
         '''Actualizando mensajes enviados'''
         self.log.debug('Descargando mis dents')

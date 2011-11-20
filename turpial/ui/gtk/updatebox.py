@@ -61,6 +61,7 @@ class UpdateBox(gtk.Window):
         updatebox.pack_start(scroll, True, True, 3)
         
         self.url = gtk.Entry()
+        self.url.connect('changed', self.__on_url_changed)
         self.btn_url = gtk.Button(_('Shorten URL'))
         self.btn_url.set_tooltip_text(_('Shorten URL'))
         
@@ -127,6 +128,7 @@ class UpdateBox(gtk.Window):
         self.btn_clr.connect('clicked', self.clear)
         self.btn_upd.connect('clicked', self.update)
         self.btn_url.connect('clicked', self.short_url)
+        self.btn_url.set_sensitive(False)
         self.toolbox.connect('activate', self.show_options)
         self.update_text.connect('mykeypress', self.__on_key_pressed)
         
@@ -145,6 +147,14 @@ class UpdateBox(gtk.Window):
             self.update(widget)
         elif keyval == gtk.keysyms.Escape:
             self.__unclose(widget)
+        return False
+
+    def __on_url_changed(self, widget):
+        url_lenght = widget.get_text_length()
+        if url_lenght == 0:
+            self.btn_url.set_sensitive(False)
+        else:
+            self.btn_url.set_sensitive(True)
         return False
     
     def __detect_shortcut(self, widget, event=None):

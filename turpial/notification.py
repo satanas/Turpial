@@ -12,6 +12,7 @@ log = logging.getLogger('Notify')
 
 try:
     import pynotify
+    from glib import GError
     NOTIFY = True
 except ImportError:
     log.debug("pynotify is not installed")
@@ -41,7 +42,7 @@ class Notification:
         if self.disable:
             log.debug('Módulo deshabilitado. No hay notificaciones')
             return
-            
+        global NOTIFY
         if self.active and NOTIFY:
             if pynotify.init("Turpial"):
                 if not icon:
@@ -50,7 +51,11 @@ class Notification:
                     icon = os.path.realpath(iconpath)
                 icon = "file://%s" % icon
                 notification = pynotify.Notification(title, message, icon)
-                notification.show()
+                try:
+                    notification.show()
+                except GError:
+                    log.debug('Notification service not running')
+                    NOTIFY = False
     
     def new_tweets(self, title, count, tobject, tweet, icon):
         self.popup('%s (%i %s)' % (title, count, tobject), tweet, icon)

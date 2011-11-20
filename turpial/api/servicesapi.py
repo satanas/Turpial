@@ -22,6 +22,7 @@ from turpial.api.services.shorturl.supr import SuprURLShorter
 from turpial.api.services.shorturl.unu import UnuURLShorter
 from turpial.api.services.shorturl.zima import ZimaURLShorter
 from turpial.api.services.shorturl.ur1ca import Ur1caURLShorter
+from turpial.api.services.shorturl.googl import GooglURLShorter
 
 from turpial.api.services.uploadpic.imgly import ImglyPicUploader
 from turpial.api.services.uploadpic.tweetphoto import TweetPhotoPicUploader
@@ -29,6 +30,7 @@ from turpial.api.services.uploadpic.twitpic import TwitpicPicUploader
 from turpial.api.services.uploadpic.twitgoo import TwitgooPicUploader
 from turpial.api.services.uploadpic.mobypicture import MobypicturePicUploader
 from turpial.api.services.uploadpic.yfrog import YfrogPicUploader
+from turpial.api.services.uploadpic.imgur import ImgurPicUploader
 from turpial.api.services.uploadpic.posterous import PosterousPicUploader
 
 URL_SERVICES = {
@@ -37,10 +39,12 @@ URL_SERVICES = {
     "tinyurl.com": TinyurlURLShorter(),
     "tr.im": TrimURLShorter(),
     "bit.ly": BitlyURLShorter(),
+    "j.mp": BitlyURLShorter(domain='j.mp'),
     "smlk.es": SmlkesURLShorter(),
     "su.pr": SuprURLShorter(),
     "zi.ma": ZimaURLShorter(),
     "ur1.ca": Ur1caURLShorter(),
+    "goo.gl": GooglURLShorter(),
     #"sku.nu": ShortenObject("http://sku.nu?url=%s"),
 }
 
@@ -48,6 +52,7 @@ PHOTO_SERVICES = {
     "Plixi": TweetPhotoPicUploader(),
     "TwitPic": TwitpicPicUploader(),
     "img.ly": ImglyPicUploader(),
+    "Img.ur": ImgurPicUploader(),
     "Twitgoo": TwitgooPicUploader(),
     "MobyPicture": MobypicturePicUploader(),
     "Posterous": PosterousPicUploader(),
@@ -84,6 +89,10 @@ class HTTPServices(threading.Thread):
         self.register({'cmd': 'short_url', 'service': service, 'url': url},
                       callback)
     
+    def expand_url(self, url, callback):
+        self.register({'cmd': 'expand_url', 'url': url},
+                      callback)
+
     def upload_pic(self, service, path, message, callback):
         self.register({'cmd': 'upload_pic', 'service': service, 'path': path,
                       'message': message}, callback)
@@ -131,6 +140,14 @@ class HTTPServices(threading.Thread):
                 resp = urlshorter.do_service(args['url'])
                 self.log.debug('URL Cortada: %s' % resp.response)
                 callback(resp)
+            elif args['cmd'] == 'expand_url':
+                self.log.debug('Expand URL: %s' % args['url'])
+                try:
+                    expanded = GenericService._expand_url(args['url'])
+                    callback(expanded)
+                except Exception, error:
+                    self.log.debug("Failed to expand url: %s" % error)
+                    callback(args['url'])
             elif args['cmd'] == 'upload_pic':
                 self.log.debug('Subiendo imagen [%s]: %s' % 
                                (args['service'], args['path']))

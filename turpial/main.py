@@ -32,7 +32,8 @@ try:
     UI_GTK = True
     INTERFACES.append('gtk')
     INTERFACES.append('gtk+')
-except ImportError:
+except ImportError, exc:
+    print exc
     UI_GTK = False
 
 class Turpial:
@@ -180,22 +181,43 @@ class Turpial:
         self.remember(user, passwd, protocol, True)
         print "Credentials saved successfully"
         
-    def __validate_credentials(self, val, key, secret, protocol):
+    def __validate_credentials(self, val):
         '''Chequeo de credenciales'''
         if val.type == 'error':
             self.ui.cancel_login(val.errmsg)
         elif val.type == 'profile':
             self.profile = val.items
-            self.config = ConfigHandler(self.profile.username, protocol)
+            self.config = ConfigHandler(self.profile.username, self.current_protocol)
             self.config.initialize()
             
-            self.current_protocol = protocol
+            if self.tmp_key is not None:
+                self.config.write('Auth', 'oauth-key', self.tmp_key)
+            if self.tmp_secret is not None:
+                self.config.write('Auth', 'oauth-secret', self.tmp_secret)
+            if self.tmp_verifier is not None:
+                self.config.write('Auth', 'oauth-verifier', self.tmp_verifier)
+            
             self.httpserv.update_img_dir(self.config.imgdir)
             self.httpserv.set_credentials(self.profile.username, 
                 self.profile.password, self.api.protocol.http)
             
-            self.__signin_done(key, secret, val)
-    
+            self.__signin_done()
+        
+    def __validate_token(self, val):
+        if val.type == 'auth-done':
+            token = val.items
+            self.__save_oauth_token(token.key, token.secret, token.verifier)
+        elif val.type == 'auth-token':
+            self.ui.show_oauth_pin_request(val.items)
+        
+    def __save_oauth_token(self, key, secret, verifier):
+        self.tmp_key = key
+        self.tmp_secret = secret
+        self.tmp_verifier = verifier
+        auth = self.config.read_section('Auth')
+        self.api.auth(self.tmp_username, self.tmp_passwd, auth, 
+            self.__validate_credentials)
+        
     def __done_follow(self, response):
         user = response.items[1]
         follow = response.items[2]
@@ -217,9 +239,10 @@ class Turpial:
             self.ui.update_user_profile(self.profile)
         self.ui.tweet_done(status)
         
-    def __signin_done(self, key, secret, resp_profile):
+    def __signin_done(self):
         '''Inicio de sesion finalizado'''
-        
+        resp_profile = self.profile
+            
         # TODO: Llenar con el resto de listas
         self.lists = {
             'timeline': MicroBloggingList('timeline', '', _('Timeline'),
@@ -263,6 +286,7 @@ class Turpial:
         self.viewed_cols = [column1, column2, column3]
         
         self.api.protocol.muted_users = self.config.load_muted_list()
+        self.api.protocol.filtered_terms = self.config.load_filtered_list()
         self.ui.set_lists(self.lists, self.viewed_cols)
         self.ui.show_main(self.config, self.global_cfg, resp_profile)
         
@@ -316,7 +340,12 @@ class Turpial:
         protocol = PROTOCOLS[index]
         us = self.protocol_cfg[protocol].read('Login', 'username')
         pw = self.protocol_cfg[protocol].read('Login', 'password')
+        au = self.global_cfg.read('Startup', 'autologin')
         try:
+            if au == 'on':
+                auto = True
+            else:
+                auto = False
             if us != '' and pw != '':
                 a = base64.b64decode(pw)
                 b = a[1:-1]
@@ -324,15 +353,16 @@ class Turpial:
                 d = c[1:-1]
                 e = base64.b16decode(d)
                 pwd = e[0:len(us)]+ e[len(us):]
-                return us, pwd, True
+                return us, pwd, True, auto
             else:
-                return us, pw, False
+                return us, pw, False, False
         except TypeError:
             self.protocol_cfg[protocol].write('Login', 'username','')
             self.protocol_cfg[protocol].write('Login', 'password','')
-            return '', '', False
+            self.global_cfg.write('Startup', 'autologin', 'off')
+            return '', '', False, False
         
-    def remember(self, us='', pw='', pro=0, rem=False):
+    def remember(self, us='', pw='', pro=0, rem=False, auto=False):
         protocol = PROTOCOLS[pro]
         if not rem:
             self.protocol_cfg[protocol].write('Login', 'username', '')
@@ -348,17 +378,28 @@ class Turpial:
         
         self.protocol_cfg[protocol].write('Login', 'username', us)
         self.protocol_cfg[protocol].write('Login', 'password', pwd)
-    
+        if auto:
+            self.global_cfg.write('Startup', 'autologin', 'on')
+        else:
+            self.global_cfg.write('Startup', 'autologin', 'off')
+            
     def signin(self, username, password, protocol):
-        config = ConfigHandler(username, protocol)
-        config.initialize_failsafe()
-        auth = config.read_section('Auth')
-        self.api.auth(username, password, auth, protocol,
-            self.__validate_credentials)
+        self.config = ConfigHandler(username, protocol)
+        self.config.initialize_failsafe()
+        auth = self.config.read_section('Auth')
+        self.tmp_username = username
+        self.tmp_passwd = password
+        self.current_protocol = protocol
+        self.api.start_oauth(auth, protocol, self.__validate_token)
+    
+    def auth_token(self, pin):
+        print 'PIN', pin
+        self.api.authorize_oauth_token(pin, self.__save_oauth_token)
         
     def signout(self):
         '''Finalizar sesion'''
         self.save_muted_list()
+        self.save_filtered_list()
         self.log.debug('Desconectando')
         if self.httpserv and self.interface  != 'cmd':
             self.httpserv.quit()
@@ -405,10 +446,16 @@ class Turpial:
     
     def mute(self, users):
         self.api.mute(users, self.ui.tweet_changed)
+
+    def filter_term(self, term):
+        self.api.filter_term(term, self.ui.tweet_changed)
     
     def short_url(self, text, callback):
         service = self.config.read('Services', 'shorten-url')
         self.httpserv.short_url(service, text, callback)
+
+    def expand_url(self, url, callback):
+        self.httpserv.expand_url(url, callback)
     
     def download_user_pic(self, user, pic_url, callback):
         self.httpserv.download_pic(user, pic_url, callback)
@@ -452,6 +499,13 @@ class Turpial:
     def get_muted_list(self):
         return self.api.get_muted_list()
         
+    def save_filtered_list(self):
+        if self.config:
+            self.config.save_filtered_list(self.api.protocol.filtered_terms)
+        
+    def get_filtered_list(self):
+        return self.api.get_filtered_list()
+
     def destroy_direct(self, id):
         self.api.destroy_direct(id, self.ui.after_destroy_direct)
         
@@ -476,10 +530,13 @@ class Turpial:
         if self.lists.has_key(new_id):
             self.viewed_cols[index] = self.lists[new_id]
             if index == 0:
+                self.ui.home.timeline.clear()
                 self._update_column1()
             elif index == 1:
+                self.ui.home.replies.clear()
                 self._update_column2()
             elif index == 2:
+                self.ui.home.direct.clear()
                 self._update_column3()
         else:
             self.ui.set_column_item(index, reset=True)

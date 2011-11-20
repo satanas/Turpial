@@ -18,7 +18,7 @@ class Twitter(Protocol):
             'http://search.twitter.com', 'http://twitter.com/search?q=%23',
             None, 'http://www.twitter.com')
         
-        self.http = TwitterHTTP()
+        self.http = TwitterHTTP(self.apiurl)
         self.retweet_by_me = []
         self.oauth_support = False
         
@@ -179,22 +179,36 @@ class Twitter(Protocol):
         self.log.debug('Iniciando autenticacion segura')
         username = args['username']
         password = args['password']
-        auth = args['auth']
-        protocol = args['protocol']
         
         try:
-            key, secret = self.http.auth(username, password)
+            #key, secret = self.http.auth(username, password)
             rtn = self.http.request('%s/account/verify_credentials' % 
                 self.apiurl)
             self.profile = self.__create_profile(rtn)
             self.profile.password = password
-            #return Response([self.profile, key, secret], 'mixed')
-            return Response(self.profile, 'profile'), key, secret, protocol
+            return Response(self.profile, 'profile')
         except TurpialException, exc:
-            return Response(None, 'error', exc.msg), None, None, None
+            return Response(None, 'error', exc.msg)
         except Exception, exc:
             self.log.debug('Authentication Error: %s' % exc)
-            return Response(None, 'error', _('Authentication Error')), None, None, None
+            return Response(None, 'error', _('Authentication Error'))
+    
+    def start_oauth(self, args):
+        auth = args['auth']
+        if auth['oauth-key'] != '' and auth['oauth-secret'] != '' and \
+        auth['oauth-verifier'] != '':
+            token = self.http.build_token(auth)
+            return Response(token, 'auth-done')
+        else:
+            try:
+                url = self.http.request_token()
+                return Response(url, 'auth-token')
+            except TurpialException, exc:
+                return Response(None, 'error', exc.msg)
+    
+    def authorize_oauth_token(self, args):
+        token = self.http.authorize_token(args['pin'])
+        return token.key, token.secret, token.verifier #Response(token, 'auth-done')
         
     def get_timeline(self, args):
         '''Actualizando linea de tiempo'''

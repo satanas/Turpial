@@ -15,7 +15,7 @@ class About:
         about.set_logo(parent.load_image('turpial.png', True))
         about.set_name('Turpial')
         about.set_version(parent.version)
-        about.set_copyright('Copyright (C) 2009 - 2010 Wil Alvarez')
+        about.set_copyright('Copyright (C) 2009 - 2011 Wil Alvarez')
         about.set_comments(_('Microblogging client written in Python'))
         about.set_transient_for(parent)
         about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
@@ -28,14 +28,14 @@ class About:
             license = lic.read()
             lic.close()
         except Exception, msg:
-            license = 'This script is free software; you can redistribute it'
-            'and\/or modify it under the\n\terms of the GNU General Public '
-            'License as published by the Free Software\n\Foundation; either '
-            'version 3 of the License, or (at your option) any later version.'
-            '\n\n\You should have received a copy of the GNU General Public '
-            'License along with\n\this script (see license); if not, write to '
-            'the Free Software\n\Foundation, Inc., 59 Temple Place, Suite 330, '
-            'Boston, MA  02111-1307  USA'
+            license =  'This script is free software; you can redistribute it '
+            license += 'and/or modify it under the\nterms of the GNU General Public '
+            license += 'License as published by the Free Software\nFoundation; either ' 
+            license += 'version 3 of the License, or (at your option) any later version.'
+            license += '\n\nYou should have received a copy of the GNU General Public '
+            license += 'License along with\nthis script (see license); if not, write to '
+            license += 'the Free Software\nFoundation, Inc., 59 Temple Place, Suite 330, '
+            license += 'Boston, MA  02111-1307  USA'
         about.set_license(license)
         authors = []
         try:

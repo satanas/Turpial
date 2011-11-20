@@ -18,6 +18,9 @@ class IdenticaHTTP(TurpialHTTP):
         TurpialHTTP.__init__(self, POST_ACTIONS)
         self.log = logging.getLogger('IdenticaHTTP')
         
+    def build_token(self, auth):
+        return FakeToken()
+    
     def request(self, uri, args={}):
         try:
             rtn = self.do_request(uri, args)
@@ -68,3 +71,9 @@ class IdenticaHTTP(TurpialHTTP):
                 )
             )
             raise TurpialException(exc)
+            
+class FakeToken:
+    def __init__(self):
+        self.key = ''
+        self.secret = ''
+        self.verifier = ''

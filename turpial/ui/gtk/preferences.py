@@ -47,12 +47,16 @@ class Preferences(gtk.Window):
             self.notif = NotificationsTab(self.current['Notifications'])
             self.services = ServicesTab(self.current['Services'])
             self.muted = MutedTab(self.mainwin)
+            self.filtered = FilterTab(self.mainwin)
             self.browser = BrowserTab(self.mainwin, self.current['Browser'])
+            self.startup = StartupTab(self.global_cfg['Startup'])
             
             notebook.append_page(self.general, gtk.Label(_('General')))
+            notebook.append_page(self.startup, gtk.Label(_('Startup')))
             notebook.append_page(self.notif, gtk.Label(_('Notifications')))
             notebook.append_page(self.services, gtk.Label(_('Services')))
             notebook.append_page(self.muted, gtk.Label(_('Mute')))
+            notebook.append_page(self.filtered, gtk.Label(_('Filters')))
             notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
             
         self.proxy = ProxyTab(self.global_cfg['Proxy'])
@@ -79,6 +83,7 @@ class Preferences(gtk.Window):
             notif = self.notif.get_config()
             services = self.services.get_config()
             browser = self.browser.get_config()
+            startup = self.startup.get_config()
             
             new_config = {
                 'General': general,
@@ -89,10 +94,12 @@ class Preferences(gtk.Window):
             
             self.mainwin.save_config(new_config)
             self.mainwin.request_mute(self.muted.get_muted())
+            self.mainwin.request_filter(self.filtered.get_filtered())
         
         proxy = self.proxy.get_config()
         new_global = {
             'Proxy': proxy,
+            'Startup': startup,
         }
         
         self.destroy()
@@ -158,7 +165,7 @@ class GeneralTab(PreferencesTab):
     def __init__(self, current):
         PreferencesTab.__init__(
             self,
-            _('Adjust update frequency for'
+            _('Adjust update frequency for '
               'timeline, mentions and direct messages'),
             current
         )
@@ -170,6 +177,7 @@ class GeneralTab(PreferencesTab):
         pf = True if self.current['profile-color'] == 'on' else False
         ws = True if self.current['workspace'] == 'wide' else False
         min = True if self.current['minimize-on-close'] == 'on' else False
+        exp_urls = True if self.current['expand-urls'] == 'on' else False
         
         self.home = TimeScroll(_('Column 1 (Left)'), h,
             callback=self.update_api_calls)
@@ -195,13 +203,13 @@ class GeneralTab(PreferencesTab):
             pass
         
         self.profile_colors = gtk.CheckButton(_(
-            'Load profile color'
+            'Load profile color '
             '(Needs Turpial to be restarted)'))
         self.profile_colors.set_active(pf)
         try:
             self.profile_colors.set_has_tooltip(True)
             self.profile_colors.set_tooltip_text(_(
-                'Use user profile color'
+                'Use user profile color '
                 'to highlight mentions, hashtags and URLs')
             )
         except:
@@ -212,9 +220,17 @@ class GeneralTab(PreferencesTab):
         try:
             self.minimize.set_has_tooltip(True)
             self.minimize.set_tooltip_text(_(
-                'Send Turpial to system tray'
+                'Send Turpial to system tray '
                 'when closing main window')
             )
+        except:
+            pass
+            
+        self.expand_urls = gtk.CheckButton(_('Expand URLs'))
+        self.expand_urls.set_active(exp_urls)
+        try:
+            self.expand_urls.set_has_tooltip(True)
+            self.expand_urls.set_tooltip_text(_('Expand URLS in Open menu'))
         except:
             pass
 
@@ -226,6 +242,7 @@ class GeneralTab(PreferencesTab):
         self.pack_start(self.workspace, False, False, 2)
         self.pack_start(self.profile_colors, False, False, 2)
         self.pack_start(self.minimize, False, False, 2)
+        self.pack_start(self.expand_urls, False, False, 2)
         self.show_all()
         self.update_api_calls()
         
@@ -242,6 +259,7 @@ class GeneralTab(PreferencesTab):
         ws = 'wide' if self.workspace.get_active() else 'single'
         min = 'on' if self.minimize.get_active() else 'off'
         pf = 'on' if self.profile_colors.get_active() else 'off'
+        exp_url = 'on' if self.expand_urls.get_active() else 'off'
         
         return {
             'home-update-interval': int(self.home.value),
@@ -251,6 +269,7 @@ class GeneralTab(PreferencesTab):
             'profile-color': pf,
             'minimize-on-close': min,
             'num-tweets': int(self.tweets.value),
+            'expand-urls': exp_url,
         }
 
 class NotificationsTab(PreferencesTab):
@@ -493,6 +512,76 @@ class MutedTab(PreferencesTab):
         self.model.foreach(self.__process)
         return self.muted
 
+class FilterTab(PreferencesTab):
+    def __init__(self, parent):
+        PreferencesTab.__init__(self, _("Filter out words you don't want to see"))
+
+        self.mainwin = parent
+
+        self.filtered = self.mainwin.request_filtered_list()
+        self.updated_filtered = set(self.filtered)
+        input_box = gtk.HBox()
+        input_box.pack_start(gtk.Label(_("New Filter")), False, False, 0)
+        self.term_input = gtk.Entry()
+        input_box.pack_start(self.term_input, True, True, 2)
+        add_button = gtk.Button("+")
+        add_button.connect("clicked", self._add_filter, "add_filter_button")
+        input_box.pack_start(add_button, False, False, 0)
+        remove_button = gtk.Button("-")
+        remove_button.connect("clicked", self._remove_filter, "remove_filter_button")
+        input_box.pack_start(remove_button, False, False, 0)
+        self.pack_start(input_box, False, False, 2)
+
+        self.model = gtk.ListStore(str)
+        self.list = gtk.TreeView()
+        self.list.set_headers_visible(False)
+        self.list.set_events(gtk.gdk.POINTER_MOTION_MASK)
+        self.list.set_level_indentation(0)
+        self.list.set_rules_hint(True)
+        self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
+        self.list.set_model(self.model)
+
+        column = gtk.TreeViewColumn('')
+        column.set_alignment(0.0)
+        cell_term = gtk.CellRendererText()
+        column.pack_start(cell_term, True)
+        column.set_attributes(cell_term, markup=0)
+        self.list.append_column(column)
+
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        scroll.set_shadow_type(gtk.SHADOW_IN)
+        scroll.add(self.list)
+
+        for filtered_item in self.filtered:
+            self.model.append([filtered_item])
+
+        self.pack_start(scroll, True, True, 2)
+        self.show_all()
+
+    def __process(self, model, path, iter):
+        filtered_item = model.get_value(iter, 0)
+        self.filtered.append(filtered_item)
+
+    def get_filtered(self):
+        self.filtered = []
+        self.model.foreach(self.__process)
+        return self.filtered
+
+    def _add_filter(self, widget, data=None):
+        new_filter_term = self.term_input.get_text()
+        if new_filter_term and new_filter_term not in self.updated_filtered:
+            self.model.append([new_filter_term])
+            self.updated_filtered.add(new_filter_term)
+        self.term_input.set_text("")
+
+    def _remove_filter(self, widget, data=None):
+        model, term = self.list.get_selection().get_selected()
+        if term:
+            str_term = self.model.get_value(term, 0)
+            self.model.remove(term)
+            self.updated_filtered.remove(str_term)
+
 class BrowserTab(PreferencesTab):
     def __init__(self, parent, current):
         PreferencesTab.__init__(
@@ -634,3 +723,30 @@ class ProxyTab(PreferencesTab):
             'url': self.url.get_text()
         }
         
+class StartupTab(PreferencesTab):
+    def __init__(self, current):
+        PreferencesTab.__init__(
+            self,
+            _('Configure Turpial behavior at startup'),
+            current
+        )
+        
+        auto = True if self.current['autologin'] == 'on' else False
+        
+        self.autologin = gtk.CheckButton(_('Automatic login'))
+        self.autologin.set_active(auto)
+        try:
+            self.autologin.set_has_tooltip(True)
+            self.autologin.set_tooltip_text(_('Login automatically at startup'))
+        except:
+            pass
+
+        self.pack_start(self.autologin, False, False, 5)
+        self.show_all()
+        
+    def get_config(self):
+        autologin = 'on' if self.autologin.get_active() else 'off'
+        
+        return {
+            'autologin': autologin,
+        }

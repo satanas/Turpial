@@ -10,6 +10,7 @@ import logging
 
 from turpial.ui import util as util
 from turpial.ui.gtk.errorbox import ErrorBox
+from turpial.ui.gtk.button import SpinnerButton
 from turpial.ui.gtk.statuslist import StatusList
 from turpial.ui.gtk.waiting import CairoWaiting
 
@@ -83,8 +84,7 @@ class StandardColumn(GenericColumn):
         self.listcombo.add_attribute(cell, 'text', 1)
         self.listcombo.set_model(model)
         
-        self.refresh = gtk.Button()
-        self.refresh.set_image(self.mainwin.load_image('action-refresh.png'))
+        self.refresh = SpinnerButton(mainwin, 'action-refresh.png')
         self.refresh.set_tooltip_text(_('Manual Update'))
         
         self.mark_all = gtk.Button()
@@ -95,7 +95,6 @@ class StandardColumn(GenericColumn):
         listsbox.pack_start(self.mark_all, False, False)
         listsbox.pack_start(self.listcombo, True, True)
         listsbox.pack_start(self.refresh, False, False)
-        listsbox.pack_start(self.walign, False, False, 2)
         
         self.pack_start(listsbox, False, False)
         self.pack_start(self.errorbox, False, False)
@@ -166,9 +165,8 @@ class StandardColumn(GenericColumn):
         return model.get_value(iter, 0)
         
     def start_update(self):
-        self.waiting.start()
         self.errorbox.hide()
-        self.refresh.set_sensitive(False)
+        self.refresh.spin()
         self.listcombo.set_sensitive(False)
         self.mark_all.set_sensitive(False)
         
@@ -177,11 +175,13 @@ class StandardColumn(GenericColumn):
             self.set_combo_item(True)
         else:
             self.set_combo_item()
-        self.waiting.stop(error)
         self.errorbox.show_error(msg, error)
-        self.refresh.set_sensitive(True)
+        self.refresh.stop()
         self.listcombo.set_sensitive(True)
         self.mark_all.set_sensitive(True)
+    
+    def update_wrap(self, width):
+        self.statuslist.update_wrap(width)
         
 class SingleColumn(GenericColumn):
     def __init__(self, mainwin, label=''):
@@ -199,10 +199,8 @@ class SearchColumn(GenericColumn):
         GenericColumn.__init__(self, mainwin, label)
         
         self.input_topics = gtk.Entry()
-        self.clearbtn = gtk.Button()
-        self.clearbtn.set_image(self.mainwin.load_image('action-clear.png'))
+        self.clearbtn = SpinnerButton(mainwin, 'action-clear.png')
         self.clearbtn.set_tooltip_text(_('Clear results'))
-        #self.clearbtn.set_relief(gtk.RELIEF_NONE)
         try:
             #self.input_topics.set_property("primary-icon-stock", 
             #                               gtk.STOCK_FIND)
@@ -215,7 +213,6 @@ class SearchColumn(GenericColumn):
         inputbox = gtk.HBox(False)
         inputbox.pack_start(self.input_topics, True, True)
         inputbox.pack_start(self.clearbtn, False, False)
-        inputbox.pack_start(self.walign, False, False, 2)
         
         self.pack_start(inputbox, False, False)
         self.pack_start(self.errorbox, False, False)
@@ -256,4 +253,12 @@ class SearchColumn(GenericColumn):
     def unlock(self):
         self.input_topics.set_sensitive(True)
         self.clearbtn.set_sensitive(True)
+        
+    def start_update(self):
+        self.clearbtn.spin()
+        self.errorbox.hide()
+        
+    def stop_update(self, error=False, msg=''):
+        self.clearbtn.stop()
+        self.errorbox.show_error(msg, error)
 

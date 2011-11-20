@@ -91,6 +91,9 @@ class BaseGui:
             return path
         else:
             return default
+            
+    def get_current_protocol(self):
+        return self.__controller.current_protocol
     
     def parse_tweet(self, xtweet):
         '''Decompose tweet in basic parts'''
@@ -127,9 +130,9 @@ class BaseGui:
         '''Saves the global config'''
         self.__controller.save_global_config(new_config)
     
-    def request_remember(self, username, password, protocol, rem=False):
+    def request_remember(self, username, password, protocol, rem=False, auto=False):
         '''Request remember'''
-        self.__controller.remember(username, password, protocol, rem)
+        self.__controller.remember(username, password, protocol, rem, auto)
         
     def request_remembered(self, protocol):
         '''Request simple signin'''
@@ -138,6 +141,10 @@ class BaseGui:
     def request_signin(self, username, password, protocol):
         '''Request simple signin'''
         self.__controller.signin(username, password, protocol)
+        
+    def request_auth_token(self, pin):
+        '''Request OAuth token authorization'''
+        self.__controller.auth_token(pin)
         
     def request_signout(self):
         '''Request signout'''
@@ -181,6 +188,10 @@ class BaseGui:
         '''Mute some user'''
         self.__controller.mute(user)
         
+    def request_filter(self, term):
+        '''Filter some terms'''
+        self.__controller.filter_term(term)
+
     def request_unmute(self, user):
         '''Unmute some user'''
         self.__controller.unmute(user)
@@ -205,6 +216,10 @@ class BaseGui:
         '''Short URL'''
         self.__controller.short_url(longurl, callback)
         
+    def request_expanded_url(self, url, callback):
+        '''Expand URL'''
+        self.__controller.expand_url(url, callback)
+
     def request_upload_pic(self, filename, message, callback):
         '''Upload a pic'''
         self.__controller.upload_pic(filename, message, callback)
@@ -236,6 +251,10 @@ class BaseGui:
     def request_muted_list(self):
         '''Get the muted list'''
         return self.__controller.get_muted_list()
+
+    def request_filtered_list(self):
+        '''Get the filtered list'''
+        return self.__controller.get_filtered_list()
         
     def request_destroy_direct(self, id):
         '''Destroy a direct message'''

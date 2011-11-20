@@ -14,12 +14,14 @@ from turpial.api.interfaces.http import TurpialHTTP, TurpialException
 from turpial.api.protocols.twitter.globals import POST_ACTIONS
 from turpial.api.protocols.twitter.globals import CONSUMER_KEY, CONSUMER_SECRET
 
+REQUEST_TOKEN_URL = 'http://api.twitter.com/oauth/request_token'
+ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
+AUTHORIZATION_URL = 'http://api.twitter.com/oauth/authorize'
 
 class TwitterHTTP(TurpialHTTP):
-    def __init__(self):
+    def __init__(self, apiurl):
         TurpialHTTP.__init__(self, POST_ACTIONS)
         self.log = logging.getLogger('TwitterHTTP')
-        self.access_url = 'https://api.twitter.com/oauth/access_token'
         
         self.token = None
         self.consumer = oauth.OAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
@@ -28,7 +30,7 @@ class TwitterHTTP(TurpialHTTP):
     def __fetch_xauth_access_token(self, username, password):
         request = oauth.OAuthRequest.from_consumer_and_token(
             oauth_consumer=self.consumer,
-            http_method='POST', http_url=self.access_url,
+            http_method='POST', http_url=ACCESS_TOKEN_URL,
             parameters = {
                 'x_auth_mode': 'client_auth',
                 'x_auth_username': username,
@@ -37,9 +39,64 @@ class TwitterHTTP(TurpialHTTP):
         )
         request.sign_request(self.sign_method_hmac_sha1, self.consumer, None)
 
-        req = urllib2.Request(self.access_url, data=request.to_postdata())
+        req = urllib2.Request(ACCESS_TOKEN_URL, data=request.to_postdata())
         response = urllib2.urlopen(req)
         self.token = oauth.OAuthToken.from_string(response.read())
+        return self.token
+        
+    def build_token(self, auth):
+        self.token = oauth.OAuthToken(auth['oauth-key'], auth['oauth-secret'])
+        self.token.set_verifier(auth['oauth-verifier'])
+        return self.token
+        
+    def request_token(self):
+        self.log.debug('Obtain a request token')
+        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
+            http_url=REQUEST_TOKEN_URL)
+        
+        oauth_request.sign_request(self.sign_method_hmac_sha1,
+            self.consumer, None)
+        
+        self.log.debug('REQUEST (via headers)')
+        self.log.debug('parameters: %s' % str(oauth_request.parameters))
+        
+        req = urllib2.Request(REQUEST_TOKEN_URL, headers=oauth_request.to_header())
+        response = urllib2.urlopen(req)
+        self.token = oauth.OAuthToken.from_string(response.read())
+        
+        self.log.debug('GOT')
+        self.log.debug('key: %s' % str(self.token.key))
+        self.log.debug('secret: %s' % str(self.token.secret))
+        self.log.debug('callback confirmed? %s' % str(self.token.callback_confirmed))
+        
+        self.log.debug('Authorize the request token')
+        oauth_request = oauth.OAuthRequest.from_token_and_callback(token=self.token,
+            http_url=AUTHORIZATION_URL)
+        
+        self.log.debug('REQUEST (via url query string)')
+        self.log.debug('parameters: %s' % str(oauth_request.parameters))
+        return oauth_request.to_url()
+        
+    def authorize_token(self, pin):
+        self.log.debug('Obtain an access token')
+        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
+            token=self.token, verifier=pin,
+            http_url=ACCESS_TOKEN_URL)
+        
+        oauth_request.sign_request(self.sign_method_hmac_sha1,
+            self.consumer, self.token)
+        
+        self.log.debug('REQUEST (via headers)')
+        self.log.debug('parameters: %s' % str(oauth_request.parameters))
+        
+        req = urllib2.Request(ACCESS_TOKEN_URL, headers=oauth_request.to_header())
+        response = urllib2.urlopen(req)
+        self.token = oauth.OAuthToken.from_string(response.read())
+        
+        self.log.debug('GOT')
+        self.log.debug('key: %s' % str(self.token.key))
+        self.log.debug('secret: %s' % str(self.token.secret))
+        self.token.verifier = pin
         return self.token
         
     def apply_auth(self, httpreq):

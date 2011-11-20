@@ -30,6 +30,6 @@ function reset_notice() {
 }
 
 function exec_command(cmd) {
-    $("#query").attr('src') = cmd;
-    $(window).location = cmd;
+    document.getElementById("query").src = cmd;
+    window.location = cmd;
 }

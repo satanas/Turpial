@@ -1,10 +1,10 @@
 <div id="dock-container">
     <div id="hider"></div>
     <div id="dock">
-        <a href="cmd:follow"><div class="dockbutton" title="Follow"><% img "dock-follow2.png" %></div></a>
-        <a href="cmd:uploadpic"><div class="dockbutton" title="Upload Image"><% img "dock-uploadpic2.png" %></div></a>
-        <a href="cmd:update"><div class="dockbutton" title="Update status"><% img "dock-update2.png" %></div></a>
-        <a href="cmd:settings"><div class="dockbutton" title="Settings"><% img "dock-settings2.png" %></div></a>
-        <a href="cmd:about"><div class="dockbutton" title="About"><% img "dock-about2.png" %></div></a>
+        <a href="cmd://follow"><div class="dockbutton" title="Follow"><% img "dock-follow2.png" %></div></a>
+        <a href="cmd://uploadpic"><div class="dockbutton" title="Upload Image"><% img "dock-uploadpic2.png" %></div></a>
+        <a href="cmd://update"><div class="dockbutton" title="Update status"><% img "dock-update2.png" %></div></a>
+        <a href="cmd://settings"><div class="dockbutton" title="Settings"><% img "dock-settings2.png" %></div></a>
+        <a href="cmd://about"><div class="dockbutton" title="About"><% img "dock-about2.png" %></div></a>
     </div>
 </div>

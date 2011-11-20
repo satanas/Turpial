@@ -33,5 +33,5 @@ function recalculate_column_size() {
 function delete_account(acc) {
     var rtn = confirm('<% $delete_account_confirm %> ' + acc);
     if (rtn == true)
-        exec_command('cmd:delete_account:' + acc);
+        exec_command('cmd://delete_account:' + acc);
 }

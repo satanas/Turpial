@@ -57,11 +57,11 @@ class Accounts(gtk.Window):
         except IndexError:
             args = []
         
-        if action == "close":
+        if action == "//close":
             self.__close(widget)
-        elif action == "new_account":
+        elif action == "//new_account":
             self.form = AccountForm(self, self.core.list_protocols())
-        elif action == "delete_account":
+        elif action == "//delete_account":
             self.delete_account(args[0])
         
     def __login_callback(self, arg):

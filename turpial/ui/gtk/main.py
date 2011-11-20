@@ -44,6 +44,7 @@ class Main(Base, gtk.Window):
         
         self.container = HtmlView()
         self.container.connect('action-request', self.__action_request)
+        self.container.connect('link-request', self.__link_request)
         self.add(self.container)
         
         self.mode = 0
@@ -99,6 +100,9 @@ class Main(Base, gtk.Window):
             self.container.execute("alert('hola');")
         elif action == 'accounts':
             self.accounts.show()
+            
+    def __link_request(self, widget, url):
+        self.open_url(url)
         
     def __create_trayicon(self):
         if gtk.check_version(2, 10, 0) is not None:

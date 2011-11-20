@@ -69,19 +69,71 @@ class HtmlParser:
         if os.path.isfile(css_file):
             self.styles.append(css_file)
         
-    def __image_tag(self, filename, base=True, width=None, height=None):
+    def __image_tag(self, filename, base=True, width=None, height=None, class_=None):
         if base:
             filepath = os.path.realpath(os.path.join(IMAGES_DIR, filename))
         else:
             filepath = os.path.realpath(os.path.join(DEFAULT_IMAGES_DIR, filename))
         
+        class_tag = ''
+        if class_:
+            class_tag = "class='%s'" % class_
+        
         if width and height:
-            return "<img src='file://%s' width='%s' height='%s' />" % (filepath, width, height)
+            return "<img src='file://%s' width='%s' height='%s' %s/>" % (filepath, width, height, class_tag)
         else:
-            return "<img src='file://%s'/>" % filepath
+            return "<img src='file://%s' %s/>" % (filepath, class_tag)
     
     def __query_tag(self):
         return "<img style='display:none;' id='query' src='' alt=''>"
+    
+    def __verified_tag(self, verified):
+        if verified:
+            return self.__image_tag("mark-verified.png", 16, 16, class_='mark')
+        else:
+            return ''
+    
+    def __protected_tag(self, protected):
+        if protected:
+            return self.__image_tag("mark-locked.png", 16, 16, class_='mark')
+        else:
+            return ''
+    
+    def __favorite_tag(self, favorite, status_id):
+        if favorite:
+            cmd = "cmd:unfav:%s" % status_id
+            icon = self.__image_tag("mark-favorite.png", 16, 16, class_='star')
+        else:
+            cmd = "cmd:fav:%s" % status_id
+            icon = self.__image_tag("mark-unfavorite.png", 16, 16, class_='star')
+        
+        return "<a href='%s'>%s</a>" % (cmd, icon)
+    
+    def __highlight_hashtags(self, status, text):
+        for h in status.entities['hashtags']:
+            cad = '<a href="cmd:show_hashtag:%s">%s</a>' % (h, h)
+            text = text.replace(h, cad)
+        return text
+    
+    def __highlight_groups(self, status, text):
+        for h in status.entities['groups']:
+            cad = '<a href="cmd:show_group:%s">%s</a>' % (h, h)
+            text = text.replace(h, cad)
+        return text
+    
+    def __highlight_mentions(self, status, text):
+        for h in status.entities['mentions']:
+            #if len(h) == 1: 
+            #    continue
+            cad = '<a href="cmd:show_profile:%s">%s</a>' % (h, h)
+            text = text.replace(h, cad)
+        return text
+        
+    def __highlight_urls(self, status, text):
+        for url in status.entities['url']:
+            cad = '<a href="%s">%s</a>' % (url, url)
+            text = text.replace(url, cad)
+        return text
     
     def __parse_tags(self, page):
         for part in PARTIAL_PATTERN.findall(page):
@@ -222,12 +274,21 @@ class HtmlParser:
                     temp = '1 %s' % i18n.get('person')
                 reposted_by = '%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
             
+            message = self.__highlight_urls(status, status.text)
+            message = self.__highlight_hashtags(status, message)
+            message = self.__highlight_groups(status, message)
+            message = self.__highlight_mentions(status, message)
+            
             section = partial.replace('<% @status_id %>', status.id_)
             section = section.replace('<% @avatar %>', status.avatar)
             section = section.replace('<% @username %>', status.username)
-            section = section.replace('<% @message %>', status.text)
+            section = section.replace('<% @message %>', message)
             section = section.replace('<% @timestamp %>', timestamp)
             section = section.replace('<% @repost %>', reposted_by)
+            section = section.replace('<% @verified %>', self.__verified_tag(status.is_verified))
+            section = section.replace('<% @protected %>', self.__protected_tag(status.is_protected))
+            section = section.replace('<% @favorite %>', self.__favorite_tag(status.is_favorite, status.id_))
+            
             result += section + '\n'
         
         page = self.__parse_tags(result)

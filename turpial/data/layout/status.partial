@@ -1,12 +1,12 @@
-<div class="tweet">
+<div class="tweet" name="<% @status_id %>">
     <div class="icon"><img src="<% @avatar %>" width="48" height="48" /></div>
-    <div name="<% @status_id %>" class="content">
+    <div class="content">
         <span class="tip"></span>
         <div>
             <label class="name"><% @username %></label>
-            <img src="../../pixmaps/mark-locked.png" width="16" height="16" class="mark"/>
-            <img src="../../pixmaps/mark-verified.png" width="16" height="16" class="mark"/>
-            <a href="cmd:fav:<% @status_id %>"><img src="../../pixmaps/mark-unfavorite.png" width="16" height="16" class="star"/></a>
+            <% @protected %>
+            <% @verified %>
+            <% @favorite %>
             <div class="clearfix"></div>
         </div>
         <div class="message"><% @message %></div>

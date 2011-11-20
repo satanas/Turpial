@@ -33,6 +33,7 @@ $(document).ready(function() {
 });
 
 function recalculate_column_size(nw, nh) {
+    console.log('hello');
     var width = window.innerWidth;
     var height = window.innerHeight;
     if (nw != undefined)

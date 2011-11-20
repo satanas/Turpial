@@ -60,7 +60,7 @@ class HtmlView(gtk.VBox, gobject.GObject):
         elif url.startswith('cmd:'):
             policy.ignore()
             self.emit('action-request', url[4:])
-        elif url.startswith('http:'):
+        elif url.startswith('http'):
             policy.ignore()
             self.emit('link-request', url)
         policy.use()
@@ -86,7 +86,7 @@ class HtmlView(gtk.VBox, gobject.GObject):
         #self.execute('after_update();')
         
     def execute(self, script):
-        print script
+        #print script
         self.view.execute_script(script)
     
     def stop(self):

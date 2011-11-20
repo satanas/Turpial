@@ -36,12 +36,13 @@ class Main(QtGui.QMainWindow):
         self.webView.setFocus()
  
 
-    def __init__(self, core):
+    def __init__(self, core, config):
         
         import sys
         self.app = QtGui.QApplication(sys.argv)
         super(Main, self).__init__()
         self.core = core
+        self.config = config
 
         self.htmlparser = HtmlParser(core.list_protocols())
         self.resize(350, 480)
@@ -99,13 +100,13 @@ class Main(QtGui.QMainWindow):
 
         print "action: ",action
         
-        if action == 'about':
+        if action == '//about':
             self.show_about()
-        elif action == 'settings':
+        elif action == '//settings':
             self.container.execute("alert('hola');")
-        elif action == 'accounts':
+        elif action == '//accounts':
             self.accounts.show_all(self.core.all_accounts())
-        elif action == 'login':
+        elif action == '//login':
             acc_login = []
             for acc in self.core.all_accounts():
                 if acc.id_ in args:

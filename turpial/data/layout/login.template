@@ -23,8 +23,8 @@
             </div>
             <div class="extra">
                 <ul id="nav">
-                    <li><a href="cmd:about"><% $about %></a></li>
-                    <li><a href="cmd:preferences"><% $preferences %></a></li>
+                    <li><a href="cmd://about"><% $about %></a></li>
+                    <li><a href="cmd://preferences"><% $preferences %></a></li>
                     <li><a href="javascript: show_account_dialog();"><% $add_account %></a></li>
                 </ul>
                 <ul id="blocked-nav" style="display: none;">

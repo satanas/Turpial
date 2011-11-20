@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# GTK Worker for Turpial
+# PyQt Worker for Turpial
 #
-# Author: Wil Alvarez (aka Satanas)
-# Nov 18, 2011
+# Author: Carlos Guerrero
+# Nov 19, 2011
 
 import Queue
 import threading

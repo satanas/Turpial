@@ -1,0 +1,9 @@
+<html>
+<head>
+    <% stylesheets %>
+    <% javascripts %>
+</head>
+<body>
+    <% app_body %>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<div class="account" id="<% @account_id %>" onselect="this.blur();">
+    <% img "@protocol_img" %>
+    <label for="selected-acc-<% @account_id %>" onselect="this.blur();"><% @account_name %></label>
+    <div id="options-<% @account_id %>" class="options" style="display: none;">
+        <a class="action" href="javascript: delete_account('<% @account_id %>');"><% img "action-clear.png" %></a>
+        <div class="clearfix"></div>
+    </div>
+    <div class="clearfix"></div>
+</div>

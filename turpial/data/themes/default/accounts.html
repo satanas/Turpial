@@ -1,0 +1,46 @@
+<html>
+<head>
+    <link href="common.css" rel="stylesheet" type="text/css">
+    <link href="modal.css" rel="stylesheet" type="text/css">
+    <link href="accounts.css" rel="stylesheet" type="text/css">
+    <link href="notice.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../../layout/js/jquery.js"></script>
+    <script type="text/javascript" src="common.js"></script>
+    <script type="text/javascript" src="accounts.js"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="notice" class="error" style="display: none;"></div>
+        <div id="list"></div>
+        <div class="extra">
+            <ul id="nav">
+                <li><a href="javascript: show_account_dialog();">Add account</a></li>
+            </ul>
+            <ul id="blocked-nav" style="display: none;">
+                <li class="disabled_text">Add account</li>
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div id="modal" style="display: none;">
+        <div class="background"></div>
+        <div id="dialog" style="display: none;">
+            <label>User</label><br/>
+            <input id="user" type="text" class="textinput"/><br/>
+            <label>Password</label><br/>
+            <input id="passwd" type="password" class="textinput" /><br/>
+            <label>Protocol</label><br/>
+            <select id="protocol"><option value="twitter">Twitter</option><option value="identica">Identi.ca</option></select><br/>
+            <input id="remember" type="checkbox"/> <label for="remember">Remember my credentials</label>
+            <div class="extra">
+                <ul id="account_options">
+                    <li><a href="javascript: close_account_dialog();">Close</a></li>
+                    <li><a href="javascript: save_account();">Save</a></li>
+                </ul>
+                <div id="account-loading" style="display: none;">Saving... <img src="../../pixmaps/ajax-loader.gif" width="14" height="14"></div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>

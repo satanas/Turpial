@@ -25,14 +25,14 @@ Requisitos
 Turpial necesita los siguientes paquetes para funcionar correctamente:
 
  * ``python >= 2.5``
- * ``python-simplejson >= 1.9.2``
- * ``python-gtk2 >= 2.12``
- * ``python-notify >= 0.1.1``
- * ``python-gst0.10``
- * ``python-pybabel >= 0.9.1``
- * ``python-gtkspell >= 2.25.3``
- * ``python-webkit``
- * ``python-setuptools``
+ * ``python-simplejson >= 1.9.2`` (python-simplejson)
+ * ``python-gtk2 >= 2.12`` (pygtk2)
+ * ``python-notify >= 0.1.1`` (python-notify)
+ * ``python-gst0.10`` (gstreamer0.10-python)
+ * ``python-pybabel >= 0.9.1`` (python-babel)
+ * ``python-gtkspell >= 2.25.3`` (python2-gtkspell)
+ * ``python-webkit``  (pywebkitgtk)
+ * ``python-setuptools`` (python2-distribute)
  * ``python-pkg-resources``
 
 Una instalacion estandar de *Python* (como la que viene en la mayoria de las

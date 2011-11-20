@@ -1,0 +1,68 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Lucida Grande', Verdana, Helvetica, sans-serif !important;
+    font-size: 14px;
+}
+
+a:link, a:visited{
+    color: #006C12;
+    text-decoration: none;
+    /*font-size: 11px;*/
+}
+
+a:hover{
+    color: #00AB1C;
+    text-decoration: none;
+    /*font-size: 11px;*/
+}
+
+input[type="text"], input[type="password"]{
+    padding: 4px;
+    border: 1px solid #aaa;
+    color: #555;
+    vertical-align: middle;
+    background: #fff url('../../pixmaps/textinput-background.png') repeat-x top;
+    margin: 0 0 5px 0;
+}
+
+.disabled_text {
+    color: #999;
+    cursor: default !important;
+}
+
+.clearfix:before, .clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+::-webkit-scrollbar {
+    background: transparent;
+    overflow: visible;
+    width: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.15);
+    border: solid #fff;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}

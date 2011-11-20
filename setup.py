@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import glob
 import os
 import re
+import glob
 
 try:
     from setuptools import setup, find_packages
@@ -14,13 +14,10 @@ except ImportError:
 
 from distutils.command.build import build as _build
 from babel.messages import frontend as babel
-from turpial.config import GLOBAL_CFG
 
 LONG_DESCRIPTION = """
-Turpial es un cliente alternativo para microblogging con multiples
-interfaces. Esta escrito en Python y tiene como meta ser una aplicacion con
-bajo consumo de recursos y que se integre al escritorio del usuario pero sin
-renunciar a ninguna funcionalidad
+Turpial is a light, fast and beatiful microblogging client for GNU/Linux, 
+written in Python and fully functional
 """
 
 class build(_build):
@@ -33,16 +30,14 @@ class build(_build):
 # TODO: Maybe find some better ways to do this
 # looking distutils's copy_tree method
 data_files=[
-    ('./', ['AUTHORS', 'TRANSLATORS']),
+    ('./', ['AUTHORS']),
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
     ('share/applications', ['turpial.desktop']),
-    ('share/doc/turpial', ['doc/turpial.png',
-                   'doc/turpial.dia',
-                   'ChangeLog',
+    ('share/doc/turpial', ['ChangeLog',
                    'README.rst',
                    'COPYING']),
 ]
-
+'''
 pattern = re.compile('turpial/i18n/')
 for root, dirs, files in os.walk(os.path.join('turpial', 'i18n')):
     for filename in files:
@@ -50,15 +45,15 @@ for root, dirs, files in os.walk(os.path.join('turpial', 'i18n')):
             fullpath = os.path.join(root, filename)
             dest = os.path.join('/', 'usr', 'share', 'locale', re.sub(pattern, '', root))
             data_files.append((dest, [fullpath]))
-
+'''
 setup(name="turpial",
-      version=GLOBAL_CFG['App']['version'],
-      description="Cliente Twitter escrito en Python",
+      version='2.0',
+      description="A light, beautiful and functional microblogging client",
       long_description=LONG_DESCRIPTION,
       author="Wil Alvarez",
       author_email="wil.alejandro@gmail.com",
-      maintainer="Milton Mazzarri",
-      maintainer_email="milmazz@gmail.com",
+      maintainer="Wil Alvarez",
+      maintainer_email="wil.alejandro@gmail.com",
       url="http://turpial.org.ve",
       download_url="http://turpial.org.ve/downloads",
       license="GPLv3",

@@ -1,0 +1,74 @@
+#container {
+    background-color: #f2f1f0;
+    border: 1px solid #aaa;
+    padding: 10px;
+}
+
+#list {
+    width: 100px;
+    height: 100px;
+    background-color: #fff;
+    border: 1px solid #aaa;
+}
+
+.account {
+    height: 30px;
+    font-weight: bold;
+    margin-bottom: 2px;
+    padding-left: 5px;
+}
+
+.account:hover {
+    height: 30px;
+    background-color: #ddd;
+    /*border: 1px solid #aaa;*/
+    color: #000;
+}
+
+.account img {
+    margin: 3px 3px;
+    padding: 0px;
+    display: block;
+    float: left;
+}
+
+.account label {
+    padding: 6px 4px 0 4px;
+    width: 160px;
+    display: block;
+    float: left;
+    overflow: hidden;
+    max-height: 20px;
+    font-size: 14px;
+}
+
+.options label {
+    font-size: 13px;
+}
+
+.options .action {
+    float: left;
+    display: block;
+    margin: 3px 7px 0 0;
+    cursor: pointer;
+}
+
+.extra {
+    height: 26px;
+}
+
+.extra ul {
+    height: 26px;
+    list-style-type: none;
+    margin: 10px 10px 0 0;
+    padding: 0;
+    float: right;
+}
+
+.extra li {
+    float: left;
+    padding-left: 15px;
+    font-size: 11px;
+}
+
+

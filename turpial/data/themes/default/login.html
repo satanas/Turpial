@@ -1,0 +1,110 @@
+<html>
+<head>
+    <link href="login.css" rel="stylesheet" type="text/css">
+    <link href="notice.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../../layout/js/jquery.js"></script>
+    <script type="text/javascript" src="login.js"></script>
+</head>
+<body>
+    <div id="login-window">
+        <div id="notice" class="error" style="display: none;"></div>
+        <div id="logo"><img src="../../pixmaps/logo-login.png"/></div>
+        <div id="widgets" class="container">
+            <div class="title"><h1>Accounts</h1></div>
+            <div class="form">
+                <div class="account" id="acc-1" onselect="this.blur();">
+                    <input id="selected-acc-1" type="checkbox" value="acc-1" />
+                    <img class="protocol" src="../../pixmaps/twitter.png"/>
+                    <label for="selected-acc-1" onselect="this.blur();">pedrito</label>
+                    <div id="acc-1-options" class="options" style="display: none;">
+                        <a href="javascript: show_account_dialog('pedrito', '', 'identica', true);"><img src="../../pixmaps/action-add-friends.png"/></a>
+                        <a href="javascript: delete_account('acc-1');"><img src="../../pixmaps/action-clear.png"/></a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="account" id="acc-2">
+                    <input id="selected-acc-2" type="checkbox"/>
+                    <img class="protocol" src="../../pixmaps/identica.png"/>
+                    <label for="selected-acc-2">juancito</label>
+                    <div  id="acc-2-options" class="options" style="display: none;">
+                        <a href="cmd:delete"><img src="../../pixmaps/action-add-friends.png"/></a>
+                        <a href="cmd:delete"><img src="../../pixmaps/action-clear.png"/></a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="account" id="acc-3">
+                    <input id="selected-acc-3" type="checkbox"/>
+                    <img class="protocol" src="../../pixmaps/twitter.png"/>
+                    <label for="selected-acc-3">maria petronila sinforosa</label>
+                    <div  id="acc-3-options" class="options" style="display: none;">
+                        <a href="cmd:delete"><img src="../../pixmaps/action-add-friends.png"/></a>
+                        <a href="cmd:delete"><img src="../../pixmaps/action-clear.png"/></a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="account" id="acc-4">
+                    <input id="selected-acc-4" type="checkbox"/>
+                    <img class="protocol" src="../../pixmaps/twitter.png"/>
+                    <label for="selected-acc-4">juana</label>
+                    <div  id="acc-4-options" class="options" style="display: none;">
+                        <a href="cmd:delete"><img src="../../pixmaps/action-add-friends.png"/></a>
+                        <a href="cmd:delete"><img src="../../pixmaps/action-clear.png"/></a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="account" id="acc-5">
+                    <input id="selected-acc-5" type="checkbox"/>
+                    <img class="protocol" src="../../pixmaps/identica.png"/>
+                    <label for="selected-acc-5">josefina</label>
+                    <div  id="acc-5-options" class="options" style="display: none;">
+                        <a href="cmd:delete"><img src="../../pixmaps/action-add-friends.png"/></a>
+                        <a href="cmd:delete"><img src="../../pixmaps/action-clear.png"/></a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <div class="options">
+                <input id="startup" type="checkbox"/>
+                <label for="startup" ondblclick="this.blur();">Login at startup</label>
+            </div>
+            <div class="button">
+                <input id="login-button" type="button" value="Login" onclick="login();"/>
+                <div id="login-loading" style="display: none;">Connecting... <img src="../../pixmaps/loader.gif" width="14" height="14"></div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="extra">
+                <ul id="nav">
+                    <li><a href="cmd:about">About</a></li>
+                    <li><a href="cmd:about">Preferences</a></li>
+                    <li><a href="javascript: show_account_dialog();">Add account</a></li>
+                </ul>
+                <ul id="blocked-nav" style="display: none;">
+                    <li class="disabled_text">About</li>
+                    <li class="disabled_text">Preferences</li>
+                    <li class="disabled_text">Add account</li>
+                </ul>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div id="modal" style="display: none;">
+        <div class="background"></div>
+        <div id="dialog" style="display: none;">
+            <label>User and Password</label><br/>
+            <input id="user" type="text" class="textinput"/><br/>
+            <input id="passwd" type="password" class="textinput" /><br/>
+            <label>Protocol</label><br/>
+            <select id="protocol"><option value="twitter">Twitter</option><option value="identica">Identi.ca</option></select><br/>
+            <input id="remember" type="checkbox"/> <label for="remember">Remember my credentials</label>
+            <div class="extra">
+                <ul id="account_options">
+                    <li><a href="javascript: close_account_dialog();">Close</a></li>
+                    <li><a href="javascript: save_account();">Save</a></li>
+                </ul>
+                <div id="account-loading" style="display: none;">Saving... <img src="../../pixmaps/ajax-loader.gif" width="14" height="14"></div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>

@@ -1,13 +1,8 @@
 Developers
- * Wil Alvarez (Core, UI)
- * Milton Mazzarri (Core)
- * Alfonso Ali (Windows port)
+ * Wil Alvarez (Design, Core, UI)
+ * Andrea Stagi (Core, Services)
  * Carlos Guerrero (Text Interface)
- * Andrea Stagi (Patch writer)
- * Mariano Simone (Patch writer)
- * Danilo Bargen (Patch writer)
- * Magnus Erixzon (Patch writer)
- 
+
 Testers
  * Azrael Arocha
  * José Leonel Subero
@@ -18,3 +13,12 @@ Testers
 Art and Design
  * Eleazar Meza
 
+Patch Writers
+ * Mariano Simone
+ * Danilo Bargen
+ * Magnus Erixzon
+ 
+Retired Developers
+ * Milton Mazzarri (Core - Turpial 1.x)
+ * Alfonso Ali (Windows port - Turpial 1.3.4)
+ * Sebastián Magri (Core Design - Turpial 2.x)

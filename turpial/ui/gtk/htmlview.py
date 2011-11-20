@@ -83,7 +83,7 @@ class HtmlView(gtk.VBox, gobject.GObject):
         html = html.replace('\n', " \\\n")
         script = "$('#%s').html(\"%s\");" % (id_, html)
         self.execute(script)
-        self.execute('after_update();')
+        #self.execute('after_update();')
         
     def execute(self, script):
         print script

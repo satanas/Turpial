@@ -202,4 +202,33 @@ class HtmlParser:
         text = i18n.get('please_type_password') % (user, protocol)
         self.app_layout = self.app_layout.replace('<% @type_password %>', text)
         return self.__render()
+    
+    def render_statuses(self, statuses):
+        result = ''
+        partial = self.__open_partial('status')
+        for status in statuses:
+            timestamp = status.datetime
+            if status.source: 
+                timestamp += ' %s %s' % (i18n.get('from'), status.source)
+            if status.in_reply_to_user:
+                timestamp += ' %s %s' % (i18n.get('in_reply_to'), status.in_reply_to_user)
+            
+            reposted_by = ''
+            if status.reposted_by:
+                count = len(status.reposted_by)
+                if count > 1:
+                    temp = '%i %s' % (count, i18n.get('people'))
+                elif count == 1:
+                    temp = '1 %s' % i18n.get('person')
+                reposted_by = '%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
+            
+            section = partial.replace('<% @status_id %>', status.id_)
+            section = section.replace('<% @avatar %>', status.avatar)
+            section = section.replace('<% @username %>', status.username)
+            section = section.replace('<% @message %>', status.text)
+            section = section.replace('<% @timestamp %>', timestamp)
+            section = section.replace('<% @repost %>', reposted_by)
+            result += section + '\n'
         
+        page = self.__parse_tags(result)
+        return page

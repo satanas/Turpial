@@ -60,6 +60,9 @@ class Main(Base, gtk.Window):
         self.interval2 = -1
         self.interval3 = -1
         
+        self.columns = []
+        self.updating = []
+        
         '''
         self.win_state = 'windowed'
         self.workspace = 'single'
@@ -165,13 +168,32 @@ class Main(Base, gtk.Window):
         if not auth_obj.must_auth():
             self.auth(auth_obj.account)
     
-    def auth(self, acc):
-        self.worker.register(self.core.auth, (acc), self.__done_callback)
-    
     def __done_callback(self, arg):
         if arg.code > 0:
             msg = arg.errmsg
             print msg
+        
+        self.download_stream1()
+    
+    def __update_column_streams(self):
+        self.columns = []
+        self.updating = []
+        for i in range(1,4):
+            name = "column%i" % i
+            col = self.config.read('Columns', name)
+            if col != '':
+                self.columns.append(col)
+                self.updating.append(False)
+                
+    def load_image(self, path, pixbuf=False):
+        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            '..', '..', 'data', 'pixmaps', path))
+        pix = gtk.gdk.pixbuf_new_from_file(img_path)
+        if pixbuf: return pix
+        avatar = gtk.Image()
+        avatar.set_from_pixbuf(pix)
+        del pix
+        return avatar
     
     def main_quit(self, widget=None):
         self.log.debug('Exit')
@@ -193,30 +215,84 @@ class Main(Base, gtk.Window):
             sys.exit(0)
     
     def show_main(self):
-        columns = []
-        for i in range(1,4):
-            name = "column%i" % i
-            col = self.config.read('Columns', name)
-            if col != '':
-                columns.append(col)
-        page = self.htmlparser.main(self.core.list_accounts(), columns)
+        self.__update_column_streams()
+        page = self.htmlparser.main(self.core.list_accounts(), self.columns)
         self.container.render(page)
         self.login()
-        #tweets
         
     def show_about(self):
         about = About(self)
-        
-    def load_image(self, path, pixbuf=False):
-        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            '..', '..', 'data', 'pixmaps', path))
-        pix = gtk.gdk.pixbuf_new_from_file(img_path)
-        if pixbuf: return pix
-        avatar = gtk.Image()
-        avatar.set_from_pixbuf(pix)
-        del pix
-        return avatar
     
     def login(self):
         for acc in self.core.list_accounts():
             self.worker.register(self.core.login, (acc), self.__login_callback)
+    
+    def auth(self, acc):
+        self.worker.register(self.core.auth, (acc), self.__done_callback)
+    
+    # ------------------------------------------------------------
+    # Timer Methods
+    # ------------------------------------------------------------
+    
+    def download_stream1(self):
+        try:
+            test = self.columns[0]
+        except IndexError:
+            return True
+        
+        if self.updating[0]: return True
+        
+        self.updating[0] = True
+        temp = self.columns[0].rfind('-')
+        acc_id = self.columns[0][:temp]
+        col_id = self.columns[0][temp + 1:]
+        self.worker.register(self.core.get_column_statuses, (acc_id, col_id), self.update_column1)
+        return True
+        
+    def download_rates(self):
+        self.__controller._update_rate_limits()
+        return True
+        
+    def download_favorites(self):
+        self.__controller._update_favorites()
+        return True
+        
+    def download_friends(self):
+        self.__controller._update_friends()
+        return True
+        
+
+    def start_updating_column1(self):
+        self.home.timeline.start_update()
+        
+    def start_updating_column2(self):
+        self.home.replies.start_update()
+        
+    def start_updating_column3(self):
+        self.home.direct.start_update()
+        
+    def start_search(self):
+        self.profile.search.start_update()
+        
+    def update_column1(self, arg):
+        if arg.code > 0:
+            print arg.errmsg
+            return
+        
+        page = self.htmlparser.render_statuses(arg.items)
+        self.container.update_element("list1", page)
+        '''
+        gtk.gdk.threads_enter()
+        
+        last = self.home.timeline.statuslist.last
+        count = self.home.timeline.update_tweets(tweets)
+        column = self.request_viewed_columns()[0]
+        show_notif = self.read_config_value('Notifications', 'home')
+        
+        log.debug(u'Actualizando %s' % column.title)
+        if self.updating[0] and show_notif == 'on':
+            self._notify_new_tweets(column, tweets, last, count)
+            
+        gtk.gdk.threads_leave()
+        '''
+        self.updating[0] = False

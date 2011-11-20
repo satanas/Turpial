@@ -49,8 +49,13 @@ STRINGS = {
     'invalid_pin': _('You must write a valid PIN'),
     'delete_account_confirm': _("Do you really want to delete the account "),
     'fields_cant_be_empty': _("Fields can't be empty"),
+    'from': _("from"),
+    'in_reply_to': _("in reply to"),
+    'people': _("people"),
+    'person': _("person"),
+    'retweeted_by': _("Retweeted by"),
 }
-    
+
 class i18n:
     @staticmethod
     def get(key):

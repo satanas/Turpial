@@ -53,9 +53,9 @@ class AccountForm(gtk.Window):
         except IndexError:
             args = []
         
-        if action == "//close":
+        if action == "close":
             self.__close(widget)
-        elif action == "//save_account":
+        elif action == "save_account":
             self.working = True
             self.accwin.save_account(args[0], args[1], args[2])
     

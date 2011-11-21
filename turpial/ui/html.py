@@ -131,7 +131,7 @@ class HtmlParser:
         
     def __highlight_urls(self, status, text):
         for url in status.entities['url']:
-            cad = '<a href="%s">%s</a>' % (url, url)
+            cad = '<a href="link:%s">%s</a>' % (url, url)
             text = text.replace(url, cad)
         return text
     

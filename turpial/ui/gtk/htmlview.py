@@ -60,9 +60,9 @@ class HtmlView(gtk.VBox, gobject.GObject):
         elif url.startswith('cmd:'):
             policy.ignore()
             self.emit('action-request', url[4:])
-        elif url.startswith('http'):
+        elif url.startswith('link:'):
             policy.ignore()
-            self.emit('link-request', url)
+            self.emit('link-request', url[5:])
         policy.use()
     
     def __started(self, widget, frame):
@@ -72,11 +72,7 @@ class HtmlView(gtk.VBox, gobject.GObject):
         self.emit('load-finished')
     
     def load(self, url):
-        #gobject.idle_add(self.view.load_uri, url)
-        self.view.load_uri(url)
-        #cmd = "window.location='%s';" % url
-        #self.view.execute_script(cmd)
-        print "load: ", url
+        gobject.idle_add(self.view.load_uri, url)
         
     def render(self, html):
         gobject.idle_add(self.view.load_string, html, "text/html", self.coding, 

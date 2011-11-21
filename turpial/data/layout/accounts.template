@@ -9,8 +9,8 @@
         <div id="list"><% @accounts %></div>
         <div class="extra">
             <ul id="nav">
-                <li><a href="cmd://close"><% $close %></a></li>
-                <li><a href="cmd://new_account"><% $add_account %></a></li>
+                <li><a href="cmd:close"><% $close %></a></li>
+                <li><a href="cmd:new_account"><% $add_account %></a></li>
             </ul>
         </div>
         <div class="clearfix"></div>

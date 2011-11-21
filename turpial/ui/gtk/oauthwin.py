@@ -42,7 +42,7 @@ class OAuthWindow(gtk.Window, gobject.GObject):
         
         self.waiting_label = gtk.Label()
         self.waiting_label.set_use_markup(True)
-        self.waiting = CairoWaiting(parent)
+        self.waiting = CairoWaiting(parent.mainwin)
         waiting_box = gtk.Alignment(xalign=1.0)
         waiting_box.add(self.waiting_label)
         
@@ -69,7 +69,6 @@ class OAuthWindow(gtk.Window, gobject.GObject):
         accept.connect('clicked', self.__accept)
         
         self.add(vbox)
-        #self.show_all()
         
     def __cancel(self, widget, event=None):
         self.quit()

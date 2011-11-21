@@ -45,7 +45,7 @@ STRINGS = {
     'authenticating': _('Authenticating...'),
     'authorizing': _('Authorizing...'),
     'secure_auth': _('Secure Authentication'),
-    'authorize_turpial': _('Autorize Turpial, copy the <b>PIN</b> in the \
+    'authorize_turpial': _('Autorize Turpial, copy the PIN in the \
 text box below and click OK:'),
     'login_cancelled': _('Login cancelled by user'),
     'invalid_pin': _('You must write a valid PIN'),

@@ -44,7 +44,7 @@ function save_account() {
         return false;
     }
     
-    exec_command('cmd://save_account:' + user + '-%&%-' + protocol + '-%&%-' + passwd);
+    exec_command('cmd:save_account:' + user + '-%&%-' + protocol + '-%&%-' + passwd);
 
 }
 

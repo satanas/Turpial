@@ -18,7 +18,7 @@
             </div>
             <div class="extra">
                 <ul id="account_options">
-                    <li><a href="cmd://close"><% $close %></a></li>
+                    <li><a href="cmd:close"><% $close %></a></li>
                     <li><a href="javascript:save_account();"><% $save %></a></li>
                 </ul>
                 <div id="account-loading" style="display: none;"><label id="loading-msg"><% $authenticating %></label> <% rimg "loader.gif", 14, 14 %></div>

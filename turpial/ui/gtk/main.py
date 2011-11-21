@@ -188,7 +188,7 @@ class Main(Base, gtk.Window):
             if col != '':
                 self.columns.append(col)
                 self.updating.append(False)
-                
+    
     def load_image(self, path, pixbuf=False):
         img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
             '..', '..', 'data', 'pixmaps', path))

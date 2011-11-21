@@ -52,7 +52,8 @@ class AccountForm(gtk.Window):
             args = url.split(':')[1].split('-%&%-')
         except IndexError:
             args = []
-        
+        print url
+        print action, args
         if action == "close":
             self.__close(widget)
         elif action == "save_account":

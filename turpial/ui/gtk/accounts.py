@@ -47,7 +47,7 @@ class Accounts(gtk.Window):
     
     def __close(self, widget, event=None):
         self.showed = False
-        self.quit()
+        self.hide()
         return True
     
     def __action_request(self, widget, url):
@@ -109,6 +109,7 @@ class Accounts(gtk.Window):
             self.__update()
     
     def __update(self):
+        print 'update'
         page = self.htmlparser.accounts(self.core.all_accounts())
         self.container.render(page)
     

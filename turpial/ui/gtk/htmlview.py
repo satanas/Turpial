@@ -72,8 +72,12 @@ class HtmlView(gtk.VBox, gobject.GObject):
         self.emit('load-finished')
     
     def load(self, url):
-        gobject.idle_add(self.view.load_uri, url)
-            
+        #gobject.idle_add(self.view.load_uri, url)
+        self.view.load_uri(url)
+        #cmd = "window.location='%s';" % url
+        #self.view.execute_script(cmd)
+        print "load: ", url
+        
     def render(self, html):
         gobject.idle_add(self.view.load_string, html, "text/html", self.coding, 
             self.uri)

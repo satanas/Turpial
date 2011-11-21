@@ -11,6 +11,7 @@ import gobject
 
 from turpial.ui.lang import i18n
 from turpial.ui.gtk.htmlview import HtmlView
+from turpial.ui.gtk.waiting import CairoWaiting
 
 class OAuthWindow(gtk.Window, gobject.GObject):
     __gsignals__ = {
@@ -37,19 +38,18 @@ class OAuthWindow(gtk.Window, gobject.GObject):
         self.label = gtk.Label()
         self.label.set_use_markup(True)
         self.label.set_alignment(0, 0)
-        self.label.set_markup('Autorize Turpial, copy the <b>PIN</b> in the \
-text box below and click OK:')
+        self.label.set_markup(i18n.get('authorize_turpial'))
         
         self.waiting_label = gtk.Label()
         self.waiting_label.set_use_markup(True)
-        #self.waiting = CairoWaiting(parent)
+        self.waiting = CairoWaiting(parent)
         waiting_box = gtk.Alignment(xalign=1.0)
         waiting_box.add(self.waiting_label)
         
         lblbox = gtk.HBox(False, 2)
         lblbox.pack_start(self.label, True, True, 2)
         lblbox.pack_start(waiting_box, True, True, 2)
-        #lblbox.pack_start(self.waiting, False, False, 2)
+        lblbox.pack_start(self.waiting, False, False, 2)
         
         self.pin = gtk.Entry()
         cancel = gtk.Button(stock=gtk.STOCK_CANCEL)
@@ -61,7 +61,6 @@ text box below and click OK:')
         hbox.pack_start(accept, False, False, 2)
         
         vbox = gtk.VBox(False, 5)
-        #vbox.pack_start(scroll, True, True, 0)
         vbox.pack_start(self.view, True, True, 0)
         vbox.pack_start(lblbox, False, False, 2)
         vbox.pack_start(hbox, False, False, 2)
@@ -70,7 +69,7 @@ text box below and click OK:')
         accept.connect('clicked', self.__accept)
         
         self.add(vbox)
-        self.show_all()
+        #self.show_all()
         
     def __cancel(self, widget, event=None):
         self.quit()
@@ -85,17 +84,17 @@ text box below and click OK:')
         self.quit(verifier)
         
     def __started(self, widget):
-        #self.waiting.start()
+        self.waiting.start()
         self.waiting_label.set_markup(i18n.get('loading'))
         
     def __finished(self, widget):
-        #self.waiting.stop()
+        self.waiting.stop()
         self.waiting_label.set_markup('')
     
     def open(self, uri):
         print uri
-        self.show_all()
         self.view.load(uri)
+        self.show_all()
         
     def quit(self, response=None):
         self.view.stop()

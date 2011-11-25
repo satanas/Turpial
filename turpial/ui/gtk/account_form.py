@@ -16,10 +16,10 @@ from turpial.ui.gtk.htmlview import HtmlView
 log = logging.getLogger('Gtk')
 
 class AccountForm(gtk.Window):
-    def __init__(self, parent, plist, user=None, pwd=None, protocol=None):
+    def __init__(self, mainwin, parent, plist, user=None, pwd=None, protocol=None):
         gtk.Window.__init__(self)
         
-        self.accwin = parent
+        self.mainwin = mainwin
         self.set_transient_for(parent)
         self.set_modal(True)
         self.htmlparser = HtmlParser(None)
@@ -57,9 +57,9 @@ class AccountForm(gtk.Window):
             self.__close(widget)
         elif action == "save_account":
             self.working = True
-            self.accwin.save_account(args[0], args[1], args[2])
+            self.mainwin.save_account(args[0], args[1], args[2])
     
-    def cancel_login(self, message):
+    def cancel(self, message):
         self.working = False
         self.container.execute("cancel_login('" + message + "');")
     
@@ -67,6 +67,6 @@ class AccountForm(gtk.Window):
         pass
         #self.container.execute("set_loading_message('" + message + "');")
         
-    def done_login(self):
+    def done(self):
         self.working = False
         self.destroy()

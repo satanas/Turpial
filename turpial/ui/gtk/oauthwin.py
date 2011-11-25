@@ -19,11 +19,11 @@ class OAuthWindow(gtk.Window, gobject.GObject):
         "cancel": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
     }
     
-    def __init__(self, parent):
+    def __init__(self, mainwin, parent):
         gobject.GObject.__init__(self)
         gtk.Window.__init__(self)
         
-        self.mainwin = parent
+        self.mainwin = mainwin
         self.set_title(i18n.get('secure_auth'))
         self.set_default_size(800, 450)
         self.set_transient_for(parent)
@@ -42,7 +42,7 @@ class OAuthWindow(gtk.Window, gobject.GObject):
         
         self.waiting_label = gtk.Label()
         self.waiting_label.set_use_markup(True)
-        self.waiting = CairoWaiting(parent.mainwin)
+        self.waiting = CairoWaiting(self.mainwin)
         waiting_box = gtk.Alignment(xalign=1.0)
         waiting_box.add(self.waiting_label)
         

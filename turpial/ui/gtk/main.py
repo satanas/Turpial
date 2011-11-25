@@ -20,6 +20,7 @@ from turpial.ui.gtk.about import About
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.accounts import Accounts
+from turpial.ui.gtk.oauthwin import OAuthWindow
 
 gtk.gdk.set_program_class("Turpial")
 gtk.gdk.threads_init()
@@ -48,6 +49,7 @@ class Main(Base, gtk.Window):
         self.add(self.container)
         
         self.mode = 0
+        self.curr_acc = None
         
         # Configuration
         self.showed = True
@@ -203,7 +205,6 @@ class Main(Base, gtk.Window):
         self.log.debug('Exit')
         self.destroy()
         self.tray = None
-        self.accounts.quit()
         self.worker.quit()
         self.worker.join()
         if widget:
@@ -229,10 +230,60 @@ class Main(Base, gtk.Window):
     
     def login(self):
         for acc in self.core.list_accounts():
+            self.curr_acc = acc
             self.worker.register(self.core.login, (acc), self.__login_callback)
     
     def auth(self, acc):
         self.worker.register(self.core.auth, (acc), self.__done_callback)
+    
+    def __login_callback(self, arg):
+        if arg.code > 0:
+            #msg = i18n.get(rtn.errmsg)
+            msg = arg.errmsg
+            self.accounts.cancel_login(msg)
+            return
+        
+        auth_obj = arg.items
+        if auth_obj.must_auth():
+            oauthwin = OAuthWindow(self, self.accounts.form)
+            oauthwin.connect('response', self.__oauth_callback)
+            oauthwin.connect('cancel', self.__cancel_callback)
+            oauthwin.open(auth_obj.url)
+        else:
+            self.__auth_callback(arg)
+    
+    def __oauth_callback(self, widget, verifier):
+        #self.form.set_loading_message(i18n.get('authorizing'))
+        self.worker.register(self.core.authorize_oauth_token, (self.curr_acc, verifier), self.__auth_callback)
+    
+    def __cancel_callback(self, widget, reason):
+        self.delete_account(self.curr_acc)
+        self.accounts.cancel_login(i18n.get(reason))
+        self.curr_acc = None
+    
+    def __auth_callback(self, arg):
+        if arg.code > 0:
+            msg = arg.errmsg
+            self.accounts.cancel_login(msg)
+        else:
+            #self.form.set_loading_message(i18n.get('authenticating'))
+            self.worker.register(self.core.auth, (self.curr_acc), self.__done_callback)
+    
+    def __done_callback(self, arg):
+        if arg.code > 0:
+            msg = arg.errmsg
+            self.accounts.cancel_login(msg)
+        else:
+            self.accounts.done_login()
+            self.accounts.update()
+            
+    def delete_account(self, account_id):
+        self.core.unregister_account(account_id, True)
+        self.accounts.update()
+    
+    def save_account(self, username, protocol_id, password):
+        self.curr_acc = self.core.register_account(username, protocol_id, password, True)
+        self.worker.register(self.core.login, (self.curr_acc), self.__login_callback)
     
     # ------------------------------------------------------------
     # Timer Methods

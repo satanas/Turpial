@@ -32,7 +32,7 @@ ARGUMENTS = {
 }
 
 class Main(cmd.Cmd):
-    def __init__(self, core):
+    def __init__(self, core, config):
         cmd.Cmd.__init__(self)
         
         self.log = logging.getLogger('Turpial:CMD')
@@ -41,7 +41,7 @@ class Main(cmd.Cmd):
         self.core = core
         self.account = None
         
-    def show_login(self):
+    def show_main(self):
         pass
         
     def main_loop(self):

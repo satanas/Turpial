@@ -19,7 +19,7 @@ from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.about import About
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
-from turpial.ui.gtk.accounts import Accounts
+from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.gtk.oauthwin import OAuthWindow
 
 gtk.gdk.set_program_class("Turpial")
@@ -32,7 +32,7 @@ class Main(Base, gtk.Window):
         Base.__init__(self, core, config)
         gtk.Window.__init__(self)
         
-        self.htmlparser = HtmlParser(core.list_protocols())
+        self.htmlparser = HtmlParser()
         self.set_title('Turpial')
         self.set_size_request(280, 350)
         self.set_default_size(352, 482)
@@ -75,14 +75,12 @@ class Main(Base, gtk.Window):
         #self.sound = Sound()
         #self.notify = Notification(controller.no_notif)
         
-        #self.worker2 = Worker2()
-        #self.worker2.start()
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__timeout_callback)
         self.worker.start()
         
         # Persistent dialogs
-        self.accounts = Accounts(self)
+        self.accounts = AccountsDialog(self)
         
         self.__create_trayicon()
         self.show_all()
@@ -181,15 +179,11 @@ class Main(Base, gtk.Window):
         
         self.download_stream1()
     
-    def __update_column_streams(self):
-        self.columns = []
-        self.updating = []
-        for i in range(1,4):
-            name = "column%i" % i
-            col = self.config.read('Columns', name)
-            if col != '':
-                self.columns.append(col)
-                self.updating.append(False)
+    def get_protocols_list(self):
+        return self.core.list_protocols()
+    
+    def get_all_accounts(self):
+        return self.core.all_accounts()
     
     def load_image(self, path, pixbuf=False):
         img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
@@ -220,7 +214,7 @@ class Main(Base, gtk.Window):
             sys.exit(0)
     
     def show_main(self):
-        self.__update_column_streams()
+        self.columns = self.config.get_stored_columns()
         page = self.htmlparser.main(self.core.list_accounts(), self.columns)
         self.container.render(page)
         self.login()
@@ -232,9 +226,6 @@ class Main(Base, gtk.Window):
         for acc in self.core.list_accounts():
             self.curr_acc = acc
             self.worker.register(self.core.login, (acc), self.__login_callback)
-    
-    def auth(self, acc):
-        self.worker.register(self.core.auth, (acc), self.__done_callback)
     
     def __login_callback(self, arg):
         if arg.code > 0:
@@ -276,7 +267,23 @@ class Main(Base, gtk.Window):
         else:
             self.accounts.done_login()
             self.accounts.update()
-            
+        
+            for col in self.columns:
+                if not col: continue
+                if col.account_id == self.curr_acc:
+                    if col.id_ == '1':
+                        self.download_stream1()
+                        self.__build_timer1()
+        
+        self.curr_acc = None
+    
+    def __build_timer1(self):
+        #if (self.timer1 != home_interval):
+        if self.timer1: gobject.source_remove(self.timer1)
+        self.interval1 = 2
+        self.timer1 = gobject.timeout_add(self.interval1 * 60 * 1000, self.download_stream1)
+        log.debug('--Creado timer de col 1 cada %i min' % self.interval1)
+                    
     def delete_account(self, account_id):
         self.core.unregister_account(account_id, True)
         self.accounts.update()
@@ -290,18 +297,13 @@ class Main(Base, gtk.Window):
     # ------------------------------------------------------------
     
     def download_stream1(self):
-        try:
-            test = self.columns[0]
-        except IndexError:
-            return True
+        if not self.columns[0]: return True
+        if self.columns[0].updating: return True
+        self.columns[0].updating = True
         
-        if self.updating[0]: return True
-        
-        self.updating[0] = True
-        temp = self.columns[0].rfind('-')
-        acc_id = self.columns[0][:temp]
-        col_id = self.columns[0][temp + 1:]
-        self.worker.register(self.core.get_column_statuses, (acc_id, col_id), self.update_column1)
+        self.start_updating_column1()
+        self.worker.register(self.core.get_column_statuses, (self.columns[0].account_id, 
+            self.columns[0].column_id), self.update_column1)
         return True
         
     def download_rates(self):
@@ -316,9 +318,8 @@ class Main(Base, gtk.Window):
         self.__controller._update_friends()
         return True
         
-
     def start_updating_column1(self):
-        self.home.timeline.start_update()
+        print 'Updating column 1'
         
     def start_updating_column2(self):
         self.home.replies.start_update()
@@ -350,4 +351,4 @@ class Main(Base, gtk.Window):
             
         gtk.gdk.threads_leave()
         '''
-        self.updating[0] = False
+        self.columns[0].updating = False

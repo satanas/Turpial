@@ -23,11 +23,10 @@ PARTIAL_PATTERN = re.compile('(<% partial [\'"](.*?)[\'"] %>)')
 I18N_PATTERN = re.compile('(<% \$(.*?) %>)')
 
 class HtmlParser:
-    def __init__(self, protocols):
+    def __init__(self):
         self.scripts = []
         self.styles = []
         self.partials = {}
-        self.protocols = protocols
     
     def __open_template(self, res):
         filepath = os.path.realpath(os.path.join(LAYOUT_DIR, res + '.template'))
@@ -183,25 +182,30 @@ class HtmlParser:
     
     def main(self, accounts, columns):
         self.__load_layout('main')
-        if len(columns) == 0:
+        empty = True
+        for column in columns:
+            if column: 
+                empty = False
+                break
+        
+        if empty:
             dock = ''
             content = self.__open_partial('empty')
         else:
             content = ''
             dock = self.__open_partial('dock')
-            for i in range(len(columns)):
-                acc_name = columns[i].split('-')[0]
-                col_name = columns[i].split('-')[2].capitalize()
-                protocol_img = columns[i].split('-')[1] + '.png'
-                label = "%s :: %s" % (acc_name, col_name)
+            for column in columns: #i in range(len(columns)):
+                if not column: continue
+                protocol_img = column.protocol_id + '.png'
+                label = "%s :: %s" % (column.account_id, column.column_id.capitalize())
                 
                 col_content = self.__open_partial('column_content')
-                col_content = col_content.replace('<% @column_id %>', str(i + 1))
+                col_content = col_content.replace('<% @column_id %>', column.id_)
                 col_content = col_content.replace('<% @column_label %>', label)
                 col_content = col_content.replace('@protocol_img', protocol_img)
                 
                 col = self.__open_partial('column')
-                col = col.replace('<% @column_id %>', str(i + 1))
+                col = col.replace('<% @column_id %>', column.id_)
                 col = col.replace('<% @column_content %>', col_content)
                 content += col
         self.app_layout = self.app_layout.replace('<% @dock %>', dock)

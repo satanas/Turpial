@@ -23,7 +23,8 @@ else:
     trans = gettext.install(gettext_domain)
 
 STRINGS = {
-    'accounts': _('Accounts'),
+    'account': _('Accounts'),
+    'columns': _('Columns'),
     'create_account': _('Create Account'),
     'connect': _('Connect'),
     'about': _('About'),

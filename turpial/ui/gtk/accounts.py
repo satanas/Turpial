@@ -5,10 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 13, 2011
 
-import os
 import gtk
-import sys
-import gobject
 import logging
 
 from turpial.ui.lang import i18n
@@ -24,7 +21,7 @@ class Accounts(gtk.Window):
         
         self.mainwin = parent
         self.core = self.mainwin.core
-        self.htmlparser = HtmlParser(None)
+        self.htmlparser = HtmlParser()
         self.set_title(i18n.get('accounts'))
         self.set_size_request(310, 350)
         self.set_resizable(False)
@@ -66,10 +63,14 @@ class Accounts(gtk.Window):
     def cancel_login(self, message):
         if self.form:
             self.form.cancel(message)
+            return True
+        return False
     
     def done_login(self):
         if self.form:
             self.form.done()
+            return True
+        return False
     
     def show(self):
         if self.showed:

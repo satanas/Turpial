@@ -5,7 +5,6 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 16, 2011
 
-import os
 import gtk
 import logging
 
@@ -22,7 +21,7 @@ class AccountForm(gtk.Window):
         self.mainwin = mainwin
         self.set_transient_for(parent)
         self.set_modal(True)
-        self.htmlparser = HtmlParser(None)
+        self.htmlparser = HtmlParser()
         self.set_title(i18n.get('create_account'))
         self.set_size_request(290, 200)
         self.set_resizable(False)

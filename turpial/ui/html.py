@@ -221,18 +221,45 @@ class HtmlParser:
         
     def account_form(self, plist, user='', pwd='', prot=''):
         self.__load_layout('account_form')
-        protocols = '<option value="null">-- Select --</option>'
-        for pt in plist:
-            checked = ''
-            if pt == prot:
-                checked = 'checked="checked"'
-            protocols += '<option value="%s" %s>%s</option>' % (pt, checked, pt.capitalize())
         
+        protocols = self.protocols_for_options(plist, prot)
         self.app_layout = self.app_layout.replace('<% @user %>', user)
         self.app_layout = self.app_layout.replace('<% @pwd %>', pwd)
         self.app_layout = self.app_layout.replace('<% @protocols %>', protocols)
         return self.__render()
-        
+    
+    def protocols_for_options(self, plist, default=''):
+        ''' Receive an array of protocols like ['protocol1', 'protocol2'] '''
+        protocols = '<option value="null">%s</option>' % i18n.get('--select--')
+        for p in plist:
+            checked = ''
+            if p == default:
+                checked = 'checked="checked"'
+            protocols += '<option value="%s" %s>%s</option>' % (p, checked, p.capitalize())
+        return protocols
+    
+    def accounts_for_options(self, alist, default=''):
+        ''' Receive an array of accounts objects '''
+        accounts = '<option value="null">%s</option>' % i18n.get('--account--')
+        for a in alist:
+            checked = ''
+            if a.id_ == default:
+                checked = 'selected="selected"'
+            name = "%s (%s)" % (a.id_.split('-')[0], a.id_.split('-')[1])
+            accounts += '<option value="%s" %s>%s</option>' % (a.id_, checked, name)
+        return accounts
+    
+    def columns_for_options(self, clist, default=''):
+        ''' Receive an array of strings '''
+        columns = '<option value="null">%s</option>' % i18n.get('--column--')
+        for c in clist:
+            checked = ''
+            if c == default:
+                checked = 'selected="selected"'
+            name = c.capitalize()
+            columns += '<option value="%s" %s>%s</option>' % (c, checked, name)
+        return columns
+    
     def render_account_list(self, accounts):
         self.partials['accounts'] = ''
         partial = self.__open_partial('account')
@@ -250,14 +277,6 @@ class HtmlParser:
         page = self.__parse_tags(self.partials['accounts'])
         
         return page
-    
-    def render_credentials_dialog(self, acc_id):
-        user = acc_id.split('-')[0]
-        protocol = acc_id.split('-')[1].capitalize()
-        self.__load_layout('dialog-credentials')
-        text = i18n.get('please_type_password') % (user, protocol)
-        self.app_layout = self.app_layout.replace('<% @type_password %>', text)
-        return self.__render()
     
     def render_statuses(self, statuses):
         result = ''
@@ -297,3 +316,58 @@ class HtmlParser:
         
         page = self.__parse_tags(result)
         return page
+    
+    def render_columns_list(self, accounts, reg_columns, all_columns):
+        result = ''
+        partial = self.__open_partial('column_form')
+        print accounts, all_columns, reg_columns
+        for col in reg_columns:
+            columns = all_columns[col.account_id]
+            acc_options = self.accounts_for_options(accounts, col.account_id)
+            col_options = self.columns_for_options(columns, col.column_id)
+            section = partial.replace('<% @column_id %>', col.id_)
+            section = section.replace('<% @accounts %>', acc_options)
+            section = section.replace('<% @columns %>', col_options)
+            
+            result += section + '\n'
+        page = self.__parse_tags(result)
+        return page
+    
+    def render_new_column(self, accounts, col_count):
+        section = self.__open_partial('column_form')
+        acc_options = self.accounts_for_options(accounts)
+        col_options = self.columns_for_options([])
+        section = section.replace('<% @column_id %>', str(col_count + 1))
+        section = section.replace('<% @accounts %>', acc_options)
+        section = section.replace('<% @columns %>', col_options)
+        section = self.__parse_tags(section)
+        return section
+    
+    def columns(self, accounts, reg_columns, all_columns):
+        self.__load_layout('columns')
+        col_list = self.render_columns_list(accounts, reg_columns, all_columns)
+        self.app_layout = self.app_layout.replace('<% @columns %>', col_list)
+        columns_js = self.js_columns_array(all_columns)
+        accounts_js = self.js_accounts_array(accounts)
+        script = '<script>' + columns_js + accounts_js + '</script>'
+        self.app_layout = self.app_layout.replace('<% @variables_js %>', script)
+        return self.__render()
+    
+    def js_accounts_array(self, all_accounts):
+        script = 'all_accounts = new Array;\n'
+        array = "["
+        for acc in all_accounts:
+            array += "'%s'," % str(acc.id_)
+        array = array[:-1] + "]"
+        script += "all_accounts = %s;\n" % array
+        return script
+        
+    def js_columns_array(self, all_columns):
+        script = 'all_columns = new Object;\n'
+        for key, value in all_columns.iteritems():
+            array = "["
+            for v in value:
+                array += "'%s'," % str(v)
+            array = array[:-1] + "]"
+            script += "all_columns['%s'] = %s;\n" % (key, array)
+        return script

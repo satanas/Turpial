@@ -52,6 +52,9 @@ class AccountsDialog(gtk.Window):
             self.form = AccountForm(self.mainwin, self)
         elif action == "delete_account":
             self.mainwin.delete_account(args[0])
+        elif action == "columns":
+            #self.__close(widget)
+            self.mainwin.columnsdlg.show()
     
     def update(self):
         if self.showed:

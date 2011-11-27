@@ -23,13 +23,14 @@ else:
     trans = gettext.install(gettext_domain)
 
 STRINGS = {
-    'account': _('Accounts'),
+    'accounts': _('Accounts'),
     'columns': _('Columns'),
     'create_account': _('Create Account'),
     'connect': _('Connect'),
     'about': _('About'),
     'preferences': _('Preferences'),
-    'add_account': _('Add account'),
+    'add': _('Add'),
+    'delete': _('Delete'),
     'tweet': _('Tweet'),
     'follow': _('Follow'),
     'exit': _('Exit'),
@@ -51,12 +52,17 @@ text box below and click OK:'),
     'login_cancelled': _('Login cancelled by user'),
     'invalid_pin': _('You must write a valid PIN'),
     'delete_account_confirm': _("Do you really want to delete the account "),
+    'delete_column_confirm': _("Do you really want to delete the column "),
     'fields_cant_be_empty': _("Fields can't be empty"),
     'from': _("from"),
     'in_reply_to': _("in reply to"),
     'people': _("people"),
     'person': _("person"),
     'retweeted_by': _("Retweeted by"),
+    '--select--': _("-- Select --"),
+    '--account--': _("-- Account --"),
+    '--column--': _("-- Column --"),
+    'column': _("Column"),
 }
 
 class i18n:

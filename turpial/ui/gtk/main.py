@@ -20,6 +20,7 @@ from turpial.ui.gtk.about import About
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.accounts import AccountsDialog
+from turpial.ui.gtk.columns import ColumnsDialog
 from turpial.ui.gtk.oauthwin import OAuthWindow
 
 gtk.gdk.set_program_class("Turpial")
@@ -80,7 +81,8 @@ class Main(Base, gtk.Window):
         self.worker.start()
         
         # Persistent dialogs
-        self.accounts = AccountsDialog(self)
+        self.accountsdlg = AccountsDialog(self)
+        self.columnsdlg = ColumnsDialog(self)
         
         self.__create_trayicon()
         self.show_all()
@@ -99,7 +101,7 @@ class Main(Base, gtk.Window):
         elif action == 'settings':
             self.container.execute("alert('hola');")
         elif action == 'accounts':
-            self.accounts.show()
+            self.accountsdlg.show()
             
     def __link_request(self, widget, url):
         self.open_url(url)
@@ -185,6 +187,12 @@ class Main(Base, gtk.Window):
     def get_all_accounts(self):
         return self.core.all_accounts()
     
+    def get_all_columns(self):
+        return self.core.list_columns()
+    
+    def get_registered_columns(self):
+        return self.columns
+    
     def load_image(self, path, pixbuf=False):
         img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
             '..', '..', 'data', 'pixmaps', path))
@@ -215,7 +223,7 @@ class Main(Base, gtk.Window):
     
     def show_main(self):
         self.columns = self.config.get_stored_columns()
-        page = self.htmlparser.main(self.core.list_accounts(), self.columns)
+        page = self.htmlparser.main(self.core.list_accounts(), []) #self.columns)
         self.container.render(page)
         self.login()
         
@@ -231,12 +239,12 @@ class Main(Base, gtk.Window):
         if arg.code > 0:
             #msg = i18n.get(rtn.errmsg)
             msg = arg.errmsg
-            self.accounts.cancel_login(msg)
+            self.accountsdlg.cancel_login(msg)
             return
         
         auth_obj = arg.items
         if auth_obj.must_auth():
-            oauthwin = OAuthWindow(self, self.accounts.form)
+            oauthwin = OAuthWindow(self, self.accountsdlg.form)
             oauthwin.connect('response', self.__oauth_callback)
             oauthwin.connect('cancel', self.__cancel_callback)
             oauthwin.open(auth_obj.url)
@@ -249,13 +257,13 @@ class Main(Base, gtk.Window):
     
     def __cancel_callback(self, widget, reason):
         self.delete_account(self.curr_acc)
-        self.accounts.cancel_login(i18n.get(reason))
+        self.accountsdlg.cancel_login(i18n.get(reason))
         self.curr_acc = None
     
     def __auth_callback(self, arg):
         if arg.code > 0:
             msg = arg.errmsg
-            self.accounts.cancel_login(msg)
+            self.accountsdlg.cancel_login(msg)
         else:
             #self.form.set_loading_message(i18n.get('authenticating'))
             self.worker.register(self.core.auth, (self.curr_acc), self.__done_callback)
@@ -263,10 +271,10 @@ class Main(Base, gtk.Window):
     def __done_callback(self, arg):
         if arg.code > 0:
             msg = arg.errmsg
-            self.accounts.cancel_login(msg)
+            self.accountsdlg.cancel_login(msg)
         else:
-            self.accounts.done_login()
-            self.accounts.update()
+            self.accountsdlg.done_login()
+            self.accountsdlg.update()
         
             for col in self.columns:
                 if not col: continue
@@ -280,17 +288,20 @@ class Main(Base, gtk.Window):
     def __build_timer1(self):
         #if (self.timer1 != home_interval):
         if self.timer1: gobject.source_remove(self.timer1)
-        self.interval1 = 2
+        self.interval1 = 5
         self.timer1 = gobject.timeout_add(self.interval1 * 60 * 1000, self.download_stream1)
         log.debug('--Creado timer de col 1 cada %i min' % self.interval1)
                     
     def delete_account(self, account_id):
         self.core.unregister_account(account_id, True)
-        self.accounts.update()
+        self.accountsdlg.update()
     
     def save_account(self, username, protocol_id, password):
         self.curr_acc = self.core.register_account(username, protocol_id, password, True)
         self.worker.register(self.core.login, (self.curr_acc), self.__login_callback)
+    
+    def create_column(self):
+        pass
     
     # ------------------------------------------------------------
     # Timer Methods

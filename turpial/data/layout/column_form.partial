@@ -1,0 +1,6 @@
+<div class="column" id="<% @column_id %>" onselect="this.blur();">
+    <label><% $column %> <% @column_id %>:</label>
+    <select id="account_<% @column_id %>" name="<% @column_id %>" class="accounts"><% @accounts %></select>
+    <select id="column_<% @column_id %>" class="columns"><% @columns %></select>
+    <a class="action" href="javascript: delete_column(\'<% @column_id %>\');"><% $delete %></a>
+</div>

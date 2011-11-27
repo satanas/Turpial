@@ -6,12 +6,14 @@
 <body>
     <% query %>
     <div id="container">
-        <div id="list"><% @accounts %></div>
+        <div id="list"><% @columns %></div>
+        <% @variables_js %>
         <div class="extra">
             <ul id="nav">
                 <li><a href="cmd:close"><% $close %></a></li>
-                <li><a href="cmd:columns"><% $columns %></a></li>
-                <li><a href="cmd:new_account"><% $add %></a></li>
+                <li><a href="cmd:save"><% $save %></a></li>
+                <li><a href="cmd:new_column"><% $add %></a></li>
+                
             </ul>
         </div>
         <div class="clearfix"></div>

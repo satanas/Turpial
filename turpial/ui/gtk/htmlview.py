@@ -78,15 +78,21 @@ class HtmlView(gtk.VBox, gobject.GObject):
         gobject.idle_add(self.view.load_string, html, "text/html", self.coding, 
             self.uri)
     
-    def update_element(self, id_, html):
+    def update_element(self, id_, html, extra=''):
         html = html.replace('"', '\\"')
-        html = html.replace('\n', " \\\n")
-        script = "$('#%s').html(\"%s\");" % (id_, html)
+        html = html.replace('\n', " ")
+        script = "$('%s').html(\"%s\"); %s" % (id_, html, extra)
         self.execute(script)
-        #self.execute('after_update();')
+        
+    def append_element(self, id_, html, extra=''):
+        html = html.replace('"', '\\"')
+        html = html.replace('\n', " ")
+        script = "$('%s').append(\"%s\"); %s" % (id_, html, extra)
+        self.execute(script)
         
     def execute(self, script):
         #print script
+        script = script.replace('\n', ' ')
         self.view.execute_script(script)
     
     def stop(self):

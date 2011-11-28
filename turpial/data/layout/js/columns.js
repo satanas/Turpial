@@ -9,8 +9,16 @@ $(document).ready(function() {
     activate_change_trigger();
 });
 
+function recalculate_column_size() {
+    var column_width = window.innerWidth - 2;
+    var new_list_width = window.innerWidth - 25;
+    var new_list_height = window.innerHeight - 60;
+    $('#list').css('width', new_list_width + 'px');
+    $('#list').css('height', new_list_height + 'px');
+}
+
 function activate_change_trigger() {
-    $('.accounts').change(function() {
+    $('.account').change(function() {
         var col_id = $(this).attr('name');
         var acc_id = $(this).val();
         update_columns(acc_id, col_id);
@@ -24,24 +32,32 @@ function update_columns(acc_id, col_id) {
             options += '<option>' + item + '</option>\n';
         });
     }
-    $('#column_' + col_id).html(options);
-}
-
-function recalculate_column_size() {
-    var column_width = window.innerWidth - 2;
-    var new_list_width = window.innerWidth - 25;
-    var new_list_height = window.innerHeight - 60;
-    $('#list').css('width', new_list_width + 'px');
-    $('#list').css('height', new_list_height + 'px');
+    $('#stream_' + col_id).html(options);
 }
 
 function new_column() {
-    $('#list').append('Nueva columna');
+    var count = $('.column').length;
+    exec_command('cmd:new_column:' + count);
 }
 
-function delete_column(col) {
-    alert(all_columns['pupu']);
-    var rtn = confirm('<% $delete_column_confirm %> ' + col);
-    if (rtn == true)
-        exec_command('cmd:delete_column:' + col);
+function delete_column(col_id) {
+    var count = 0;
+    $('#column_' + col_id).remove();
+    $('.column').each(function() {
+        count++;
+        
+        var start = $(this).attr('id').indexOf('_');
+        var length = $(this).attr('id').length;
+        var curr_id = $(this).attr('id').substr(start + 1, length);
+        
+        $('#column_' + curr_id).attr('id', 'column_' + count);
+        $('#label_' + curr_id).attr('id', 'label_' + count);
+        $('#account_' + curr_id).attr('name', count);
+        $('#account_' + curr_id).attr('id', 'account_' + count);
+        $('#stream_' + curr_id).attr('id', 'stream_' + count);
+        $('#action_' + curr_id).attr('href', "javascript: delete_column('" + count + "');");
+        $('#action_' + curr_id).attr('id', 'action_' + count);
+        $('#label_' + count).html(count);
+    });
 }
+

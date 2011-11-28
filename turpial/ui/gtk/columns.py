@@ -43,23 +43,19 @@ class ColumnsDialog(gtk.Window):
         return True
     
     def __action_request(self, widget, url):
-        action = url.split(':')[0]
-        try:
-            args = url.split(':')[1].split('-%&%-')
-        except IndexError:
-            args = []
+        action, args = self.htmlparser.parse_command(url)
         
         if action == "close":
             self.__close(widget)
         elif action == "new_column":
             column = self.htmlparser.render_new_column(self.mainwin.get_all_accounts(),
-                len(self.mainwin.get_registered_columns()))
-            script = "$('#list').append('%s'); activate_change_trigger();" % column
-            script = script.replace('\n', ' ')
-            self.container.execute(script)
-            
+                int(args[0]))
+            extra = "activate_change_trigger();"
+            self.container.append_element('#list', column, extra)
+        elif action == "delete":
+            pass
         elif action == "save":
-            self.mainwin.delete_account(args[0])
+            self.mainwin.save_columns(args[0])
     
     def update(self):
         if self.showed:

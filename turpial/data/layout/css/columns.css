@@ -9,47 +9,12 @@
     height: 100px;
 }
 
-button {
-    min-width: 80px;
-}
-
-select.accounts {
+select.account {
     width: 180px;
 }
 
-select.columns {
+select.stream {
     width: 120px;
-}
-
-.account {
-    height: 30px;
-    font-weight: bold;
-    margin-bottom: 2px;
-    padding-left: 5px;
-}
-
-.account:hover {
-    height: 30px;
-    background-color: #ddd;
-    /*border: 1px solid #aaa;*/
-    color: #000;
-}
-
-.account img {
-    margin: 3px 3px;
-    padding: 0px;
-    display: block;
-    float: left;
-}
-
-.account label {
-    padding: 6px 4px 0 4px;
-    width: 160px;
-    display: block;
-    float: left;
-    overflow: hidden;
-    max-height: 20px;
-    font-size: 14px;
 }
 
 label {
@@ -78,5 +43,3 @@ label {
     padding-left: 15px;
     font-size: 11px;
 }
-
-

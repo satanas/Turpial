@@ -177,8 +177,15 @@ class HtmlParser:
         page = page.replace('<% query %>', self.__query_tag())
 
         page = self.__parse_tags(page)
-        #print page
         return page
+    
+    def parse_command(self, command):
+        action = command.split(':')[0]
+        try:
+            args = command.split(':')[1].split('-%&%-')
+        except IndexError:
+            args = []
+        return action, args
     
     def main(self, accounts, columns):
         self.__load_layout('main')

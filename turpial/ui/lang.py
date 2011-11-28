@@ -63,6 +63,7 @@ text box below and click OK:'),
     '--account--': _("-- Account --"),
     '--column--': _("-- Column --"),
     'column': _("Column"),
+    'no_column_yet': _("There are no available columns because I'm still logging in"),
 }
 
 class i18n:

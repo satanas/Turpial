@@ -68,8 +68,20 @@ class ColumnsDialog(gtk.Window):
             
     def update(self):
         if self.showed:
-            page = self.htmlparser.columns(self.mainwin.get_all_accounts(),
-                self.mainwin.get_registered_columns(), self.mainwin.get_all_columns())
+            empty = False
+            accounts = self.mainwin.get_all_accounts()
+            for acc in accounts:
+                if not acc.logged_in:
+                    empty = True
+                    break
+            
+            if empty:
+                page = self.htmlparser.empty_columns()
+            else:
+                page = self.htmlparser.columns(accounts, 
+                    self.mainwin.get_registered_columns(), 
+                    self.mainwin.get_all_columns())
+            
             self.container.render(page)
     
     def cancel_login(self, message):

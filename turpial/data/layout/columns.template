@@ -7,14 +7,14 @@
     <% query %>
     <div id="container">
         <div id="list"><% @columns %></div>
-        <% @variables_js %>
         <div class="extra">
             <ul id="nav">
                 <li><a href="cmd:close"><% $close %></a></li>
-                <li><a href="javascript: save_columns();"><% $save %></a></li>
-                <li><a href="javascript: new_column();"><% $add %></a></li>
+                <li id="cmd_save"><a href="javascript: save_columns();"><% $save %></a></li>
+                <li id="cmd_new"><a href="javascript: new_column();"><% $add %></a></li>
             </ul>
         </div>
+        <% @variables_js %>
         <div class="clearfix"></div>
     </div>
 </body>

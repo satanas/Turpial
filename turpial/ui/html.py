@@ -354,7 +354,14 @@ class HtmlParser:
         self.app_layout = self.app_layout.replace('<% @columns %>', col_list)
         columns_js = self.js_columns_array(all_columns)
         accounts_js = self.js_accounts_array(accounts)
-        script = '<script>' + columns_js + accounts_js + '</script>'
+        script = '<script>' + columns_js + accounts_js + self.empty_column_label() + '</script>'
+        self.app_layout = self.app_layout.replace('<% @variables_js %>', script)
+        return self.__render()
+    
+    def empty_columns(self):
+        self.__load_layout('columns')
+        self.app_layout = self.app_layout.replace('<% @columns %>', i18n.get('no_column_yet'))
+        script = '<script>$("#cmd_save").hide(); $("#cmd_new").hide();</script>'
         self.app_layout = self.app_layout.replace('<% @variables_js %>', script)
         return self.__render()
     
@@ -376,3 +383,6 @@ class HtmlParser:
             array = array[:-1] + "]"
             script += "all_columns['%s'] = %s;\n" % (key, array)
         return script
+    
+    def empty_column_label(self):
+        return 'empty_column_label = "%s";\n' % i18n.get('--column--')

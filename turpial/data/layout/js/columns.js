@@ -1,5 +1,6 @@
 var all_columns = new Object;
 var all_accounts = new Object;
+var empty_column_label = "";
 
 $(document).ready(function() {
     recalculate_column_size();
@@ -22,17 +23,16 @@ function activate_change_trigger() {
         var start = $(this).attr('id').indexOf('_');
         var length = $(this).attr('id').length;
         var col_id = $(this).attr('id').substr(start + 1, length);
-        /*var col_id = $(this).attr('name');*/
         var acc_id = $(this).val();
         update_columns(acc_id, col_id);
     });
 }
 
 function update_columns(acc_id, col_id) {
-    var options = '<option selected="selected">-- Column --</option>\n'
+    var options = '<option selected="selected" value="null">' + empty_column_label + '</option>\n'
     if (all_columns[acc_id] != undefined) {
         all_columns[acc_id].forEach(function(item) {
-            options += '<option>' + item + '</option>\n';
+            options += '<option value="' + item + '">' + item + '</option>\n';
         });
     }
     $('#stream_' + col_id).html(options);
@@ -61,14 +61,22 @@ function delete_column(col_id) {
 }
 
 function save_columns() {
+    var valid = true;
     var cmd = 'cmd:save_columns:';
     $('.column').each(function() {
         var curr_id = $(this).attr('name');
         var acc_id = $('#account_' + curr_id).val();
         var col_id = $('#stream_' + curr_id).val();
         cmd += curr_id + '|' + acc_id + '|' + col_id + '^';
+        if ((acc_id == "null") || (col_id == "null")) {
+            valid = false;
+        }
     });
     
-    cmd = cmd.substr(0, cmd.length - 1);
-    exec_command(cmd);
+    if (valid == true) {
+        cmd = cmd.substr(0, cmd.length - 1);
+        exec_command(cmd);
+    } else {
+        alert('No puede dejar campos vacios');
+    }
 }

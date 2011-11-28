@@ -222,7 +222,7 @@ class Main(Base, gtk.Window):
             sys.exit(0)
     
     def show_main(self):
-        self.columns = self.config.get_stored_columns()
+        self.columns = self.core.list_stored_columns()
         page = self.htmlparser.main(self.core.list_accounts(), []) #self.columns)
         self.container.render(page)
         self.login()
@@ -300,8 +300,9 @@ class Main(Base, gtk.Window):
         self.curr_acc = self.core.register_account(username, protocol_id, password, True)
         self.worker.register(self.core.login, (self.curr_acc), self.__login_callback)
     
-    def create_column(self):
-        pass
+    def save_columns(self, columns):
+        self.core.update_stored_columns(columns)
+        self.columns = self.core.list_stored_columns()
     
     # ------------------------------------------------------------
     # Timer Methods

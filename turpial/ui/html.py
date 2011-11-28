@@ -263,8 +263,7 @@ class HtmlParser:
             checked = ''
             if c == default:
                 checked = 'selected="selected"'
-            name = c.capitalize()
-            columns += '<option value="%s" %s>%s</option>' % (c, checked, name)
+            columns += '<option value="%s" %s>%s</option>' % (c, checked, c)
         return columns
     
     def render_account_list(self, accounts):
@@ -327,7 +326,6 @@ class HtmlParser:
     def render_columns_list(self, accounts, reg_columns, all_columns):
         result = ''
         partial = self.__open_partial('column_form')
-        print accounts, all_columns, reg_columns
         for col in reg_columns:
             columns = all_columns[col.account_id]
             acc_options = self.accounts_for_options(accounts, col.account_id)

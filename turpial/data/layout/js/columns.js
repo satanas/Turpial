@@ -19,7 +19,10 @@ function recalculate_column_size() {
 
 function activate_change_trigger() {
     $('.account').change(function() {
-        var col_id = $(this).attr('name');
+        var start = $(this).attr('id').indexOf('_');
+        var length = $(this).attr('id').length;
+        var col_id = $(this).attr('id').substr(start + 1, length);
+        /*var col_id = $(this).attr('name');*/
         var acc_id = $(this).val();
         update_columns(acc_id, col_id);
     });
@@ -45,14 +48,10 @@ function delete_column(col_id) {
     $('#column_' + col_id).remove();
     $('.column').each(function() {
         count++;
-        
-        var start = $(this).attr('id').indexOf('_');
-        var length = $(this).attr('id').length;
-        var curr_id = $(this).attr('id').substr(start + 1, length);
-        
+        var curr_id = $(this).attr('name');
+        $('#column_' + curr_id).attr('name', count);
         $('#column_' + curr_id).attr('id', 'column_' + count);
         $('#label_' + curr_id).attr('id', 'label_' + count);
-        $('#account_' + curr_id).attr('name', count);
         $('#account_' + curr_id).attr('id', 'account_' + count);
         $('#stream_' + curr_id).attr('id', 'stream_' + count);
         $('#action_' + curr_id).attr('href', "javascript: delete_column('" + count + "');");
@@ -61,3 +60,15 @@ function delete_column(col_id) {
     });
 }
 
+function save_columns() {
+    var cmd = 'cmd:save_columns:';
+    $('.column').each(function() {
+        var curr_id = $(this).attr('name');
+        var acc_id = $('#account_' + curr_id).val();
+        var col_id = $('#stream_' + curr_id).val();
+        cmd += curr_id + '|' + acc_id + '|' + col_id + '^';
+    });
+    
+    cmd = cmd.substr(0, cmd.length - 1);
+    exec_command(cmd);
+}

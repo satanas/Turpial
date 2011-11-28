@@ -14,6 +14,8 @@ from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.account_form import AccountForm
 
+from libturpial.api.models.column import Column
+
 log = logging.getLogger('Gtk')
 
 class ColumnsDialog(gtk.Window):
@@ -52,11 +54,18 @@ class ColumnsDialog(gtk.Window):
                 int(args[0]))
             extra = "activate_change_trigger();"
             self.container.append_element('#list', column, extra)
-        elif action == "delete":
-            pass
-        elif action == "save":
-            self.mainwin.save_columns(args[0])
-    
+        elif action == "save_columns":
+            columns = []
+            col_data = args[0].split('^')
+            for col in col_data:
+                id_ = col.split('|')[0]
+                acc_id = col.split('|')[1].split('-')[0]
+                pt_id = col.split('|')[1].split('-')[1]
+                col_id = col.split('|')[2]
+                columns.append(Column(id_, acc_id, pt_id, col_id))
+            self.mainwin.save_columns(columns)
+            self.__close(widget)
+            
     def update(self):
         if self.showed:
             page = self.htmlparser.columns(self.mainwin.get_all_accounts(),

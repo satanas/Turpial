@@ -506,7 +506,7 @@ class Main(cmd.Cmd):
         if not self.__validate_default_account(): 
             return False
         
-        lists = self.core.list_columns(self.account)
+        lists = self.core.list_columns_per_account(self.account)
         if arg == '':
             self.help_column(False)
         elif arg == 'list':

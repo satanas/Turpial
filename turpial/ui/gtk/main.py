@@ -283,7 +283,7 @@ class Main(Base, gtk.Window):
                 if col.account_id == self.curr_acc:
                     if col.id_ == '1':
                         self.download_stream1()
-                        #self.__build_timer1()
+                        self.__build_timer1()
         
         self.curr_acc = None
     
@@ -350,7 +350,7 @@ class Main(Base, gtk.Window):
             print arg.errmsg
             return
         page = self.htmlparser.render_statuses(arg.items)
-        self.container.update_element("#list1", page)
+        self.container.update_element("#list1", page, 'recalculate_column_size();')
         '''
         gtk.gdk.threads_enter()
         

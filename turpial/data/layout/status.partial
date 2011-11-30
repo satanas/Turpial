@@ -1,6 +1,6 @@
-<div class="tweet" name="<% @status_id %>">
+<div class="tweet">
     <div class="icon"><img src="<% @avatar %>" width="48" height="48" /></div>
-    <div class="content">
+    <div class="content" name="<% @status_id %>">
         <span class="tip"></span>
         <div>
             <label class="name"><% @username %></label>
@@ -16,10 +16,10 @@
         </div>
         <div id="options-<% @status_id %>" class="options" style="display: none;">
             <ul>
-                <li><a href="cmd:delete:<% @status_id %>"><img src="../../pixmaps/action-clear.png" title="Delete" /></a></li>
-                <li><a href="cmd:repeat:<% @status_id %>"><img src="../../pixmaps/action-repeat.png" title="Retweet" /></a></li>
-                <li><a href="cmd:quote:<% @status_id %>"><img src="../../pixmaps/action-quote.png" title="Quote and retweet" /></a></li>
-                <li><a href="cmd:reply:<% @status_id %>"><img src="../../pixmaps/action-reply.png" title="Reply" /></a></li>
+                <li><a href="cmd:delete:<% @status_id %>"><% img "action-clear.png" %></a></li>
+                <li><a href="cmd:repeat:<% @status_id %>"><% img "action-repeat.png" %></a></li>
+                <li><a href="cmd:quote:<% @status_id %>"><% img "action-quote.png" %></a></li>
+                <li><a href="cmd:reply:<% @status_id %>"><% img "action-reply.png" %></a></li>
             </ul>
             <div class="clearfix"></div>
         </div>

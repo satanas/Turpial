@@ -7,17 +7,7 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     
-    $('.content').mouseenter(function() {
-        console.log('content mouseenter');
-        var name = $(this).attr('name');
-        $('#options-' + name).show();
-    });
-    
-    $('.content').mouseleave(function() {
-        console.log('content mouseleave');
-        var name = $(this).attr('name');
-        $('#options-' + name).hide();
-    });
+    activate_options_trigger();
     
     $('#hider').click(function(){
         if (dock_visible == true) {
@@ -67,6 +57,20 @@ function recalculate_column_size(nw, nh) {
     
     $('.combo').css('width', combo_width + 'px');
     $('.tweet .content').css('width', tweet_width + 'px');
+}
+
+function activate_options_trigger() {
+    $('.content').mouseenter(function() {
+        var name = $(this).attr('name');
+        console.log(name);
+        $('#options-' + name).show();
+    });
+    
+    $('.content').mouseleave(function() {
+        var name = $(this).attr('name');
+        console.log(name);
+        $('#options-' + name).hide();
+    });
 }
 
 function show_status_options(id) {

@@ -350,7 +350,7 @@ class Main(Base, gtk.Window):
             print arg.errmsg
             return
         page = self.htmlparser.render_statuses(arg.items)
-        self.container.update_element("#list1", page, 'recalculate_column_size();')
+        self.container.update_element("#list1", page, 'recalculate_column_size(); activate_options_trigger();')
         '''
         gtk.gdk.threads_enter()
         

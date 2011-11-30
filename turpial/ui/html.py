@@ -201,7 +201,7 @@ class HtmlParser:
         else:
             content = ''
             dock = self.__open_partial('dock')
-            for column in columns: #i in range(len(columns)):
+            for column in columns:
                 if not column: continue
                 protocol_img = column.protocol_id + '.png'
                 label = "%s :: %s" % (column.account_id, column.column_id.capitalize())

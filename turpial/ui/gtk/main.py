@@ -102,6 +102,8 @@ class Main(Base, gtk.Window):
             self.container.execute("alert('hola');")
         elif action == 'accounts':
             self.accountsdlg.show()
+        elif action == 'follow':
+            self.accountsdlg.show()
             
     def __link_request(self, widget, url):
         self.open_url(url)
@@ -162,7 +164,7 @@ class Main(Base, gtk.Window):
     
     def __timeout_callback(self, funct, arg):
         gobject.timeout_add(200, funct, arg)
-        
+    '''
     def __login_callback(self, arg):
         if arg.code > 0:
             #msg = i18n.get(rtn.errmsg)
@@ -180,7 +182,7 @@ class Main(Base, gtk.Window):
             print msg
         
         self.download_stream1()
-    
+    '''
     def get_protocols_list(self):
         return self.core.list_protocols()
     
@@ -223,7 +225,7 @@ class Main(Base, gtk.Window):
     
     def show_main(self):
         self.columns = self.core.list_stored_columns()
-        page = self.htmlparser.main(self.core.list_accounts(), []) #self.columns)
+        page = self.htmlparser.main(self.core.list_accounts(), self.columns) # [])
         self.container.render(page)
         self.login()
         
@@ -281,7 +283,7 @@ class Main(Base, gtk.Window):
                 if col.account_id == self.curr_acc:
                     if col.id_ == '1':
                         self.download_stream1()
-                        self.__build_timer1()
+                        #self.__build_timer1()
         
         self.curr_acc = None
     
@@ -309,6 +311,7 @@ class Main(Base, gtk.Window):
     # ------------------------------------------------------------
     
     def download_stream1(self):
+        print self.columns, self.columns[0]
         if not self.columns[0]: return True
         if self.columns[0].updating: return True
         self.columns[0].updating = True
@@ -346,9 +349,8 @@ class Main(Base, gtk.Window):
         if arg.code > 0:
             print arg.errmsg
             return
-        
         page = self.htmlparser.render_statuses(arg.items)
-        self.container.update_element("list1", page)
+        self.container.update_element("#list1", page)
         '''
         gtk.gdk.threads_enter()
         

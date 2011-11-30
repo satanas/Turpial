@@ -7,10 +7,10 @@
     <% query %>
     <div id="container" class="yui3-g">
         <div id="notice" class="error" style="display: none;"></div>
-        <% @dock %>
         <div id="content" class="yui3-u">
             <% @content %>
         </div>
+        <% @dock %>
         <div class="clearfix"></div>
     </div>
 </body>

@@ -84,7 +84,7 @@ class HtmlParser:
             return "<img src='file://%s' %s/>" % (filepath, class_tag)
     
     def __query_tag(self):
-        return "<img style='display:none;' id='query' src='' alt=''>"
+        return "<img style='display:none;' id='query' src='' alt='' />"
     
     def __verified_tag(self, verified):
         if verified:

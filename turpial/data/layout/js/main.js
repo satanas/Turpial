@@ -20,10 +20,6 @@ $(document).ready(function() {
             dock_visible = true;
         }
     });
-    
-    $('#dock-container').click(function(){
-        console.log('puta');
-    });
 });
 
 function recalculate_column_size(nw, nh) {
@@ -35,12 +31,10 @@ function recalculate_column_size(nw, nh) {
         height = nh;
     
     var content_height = height - 64;
-    
     var button_width = width * 0.08;
     var updatebox_width = width * 0.43;
     var status_width = updatebox_width - 30;
-    var dock_width = (button_width * 4) + 50 + updatebox_width;
-    
+    var dock_width = (button_width * 4) + 43 + updatebox_width;
     var column_width = (width / num_columns) - 1;
     var column_height = content_height; /*height;*/
     var wrapper_height = height - 32;

@@ -1,6 +1,11 @@
 #container {
     height: 100%;
     background-color: #fff;
+    float: left;
+}
+
+#content {
+    float: left;
 }
 
 #dock-container {

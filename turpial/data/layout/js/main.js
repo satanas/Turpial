@@ -20,6 +20,10 @@ $(document).ready(function() {
             dock_visible = true;
         }
     });
+    
+    $('#dock-container').click(function(){
+        console.log('puta');
+    });
 });
 
 function recalculate_column_size(nw, nh) {
@@ -30,9 +34,15 @@ function recalculate_column_size(nw, nh) {
     if (nh != undefined)
         height = nh;
     
-    var dock_left = (width - 260) / 2;
+    var content_height = height - 64;
+    
+    var button_width = width * 0.08;
+    var updatebox_width = width * 0.43;
+    var status_width = updatebox_width - 30;
+    var dock_width = (button_width * 4) + 50 + updatebox_width;
+    
     var column_width = (width / num_columns) - 1;
-    var column_height = height;
+    var column_height = content_height; /*height;*/
     var wrapper_height = height - 32;
     var empty_wrapper_height = column_height;
     var empty_list_height = height - 15;
@@ -42,7 +52,11 @@ function recalculate_column_size(nw, nh) {
     var combo_width = column_width - 83;
     var tweet_width = column_width - 120;
     
-    $('#dock-container').css('left', dock_left + 'px');
+    $('#content').css('height', content_height + 'px');
+    $('#dock .button').css('width', button_width + 'px');
+    $('#status').css('width', status_width + 'px');
+    $('#dock').css('width', dock_width + 'px');
+    $('#update-box').css('width', updatebox_width + 'px');
     $('.column').css('width', column_width + 'px');
     $('.wrapper').css('height', wrapper_height + 'px');
     $('.wrapper').css('width', column_width + 'px');

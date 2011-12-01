@@ -35,8 +35,8 @@ class Main(Base, gtk.Window):
         
         self.htmlparser = HtmlParser()
         self.set_title('Turpial')
-        self.set_size_request(280, 350)
-        self.set_default_size(352, 482)
+        self.set_size_request(310, 350)
+        self.set_default_size(310, 482)
         self.set_icon(self.load_image('turpial.png', True))
         self.set_position(gtk.WIN_POS_CENTER)
         self.set_gravity(gtk.gdk.GRAVITY_STATIC)
@@ -225,9 +225,9 @@ class Main(Base, gtk.Window):
     
     def show_main(self):
         self.columns = self.core.list_stored_columns()
-        page = self.htmlparser.main(self.core.list_accounts(), self.columns) # [])
+        page = self.htmlparser.main(self.core.list_accounts(), self.columns)
         self.container.render(page)
-        self.login()
+        #self.login()
         
     def show_about(self):
         about = About(self)

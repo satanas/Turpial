@@ -1,8 +1,8 @@
 <div class="tweet">
     <div class="icon"><img src="<% @avatar %>" width="48" height="48" /></div>
     <div class="content" name="<% @status_id %>">
-        <span class="tip"></span>
         <div>
+            <% @reposted %>
             <label class="name"><% @username %></label>
             <% @protected %>
             <% @verified %>
@@ -12,16 +12,7 @@
         <div class="message"><% @message %></div>
         <div class="timestamp"><% @timestamp %></div>
         <div>
-            <label class="repost"><% @repost %></label>
-        </div>
-        <div id="options-<% @status_id %>" class="options" style="display: none;">
-            <ul>
-                <li><a href="cmd:delete:<% @status_id %>"><% img "action-clear.png" %></a></li>
-                <li><a href="cmd:repeat:<% @status_id %>"><% img "action-repeat.png" %></a></li>
-                <li><a href="cmd:quote:<% @status_id %>"><% img "action-quote.png" %></a></li>
-                <li><a href="cmd:reply:<% @status_id %>"><% img "action-reply.png" %></a></li>
-            </ul>
-            <div class="clearfix"></div>
+            <label class="repost"><% @reposted_by %></label>
         </div>
     </div>
     <div class="clearfix"></div>

@@ -98,6 +98,12 @@ class HtmlParser:
         else:
             return ''
     
+    def __reposted_tag(self, reposted):
+        if reposted:
+            return self.__image_tag("mark-repeated.png", 16, 16, class_='mark')
+        else:
+            return ''
+    
     def __favorite_tag(self, favorite, status_id):
         if favorite:
             cmd = "cmd:unfav:%s" % status_id
@@ -189,22 +195,16 @@ class HtmlParser:
     
     def main(self, accounts, columns):
         self.__load_layout('main')
-        empty = True
-        for column in columns:
-            if column: 
-                empty = False
-                break
         
-        if empty:
+        if len(columns) == 0:
             dock = ''
             content = self.__open_partial('empty')
         else:
             content = ''
             dock = self.__open_partial('dock')
             for column in columns:
-                if not column: continue
                 protocol_img = column.protocol_id + '.png'
-                label = "%s :: %s" % (column.account_id, column.column_id.capitalize())
+                label = "%s :: %s" % (column.account_id.split('-')[0], column.column_name)
                 
                 col_content = self.__open_partial('column_content')
                 col_content = col_content.replace('<% @column_id %>', column.id_)
@@ -313,9 +313,10 @@ class HtmlParser:
             section = section.replace('<% @username %>', status.username)
             section = section.replace('<% @message %>', message)
             section = section.replace('<% @timestamp %>', timestamp)
-            section = section.replace('<% @repost %>', reposted_by)
+            section = section.replace('<% @reposted_by %>', reposted_by)
             section = section.replace('<% @verified %>', self.__verified_tag(status.is_verified))
             section = section.replace('<% @protected %>', self.__protected_tag(status.is_protected))
+            section = section.replace('<% @reposted %>', self.__reposted_tag(status.reposted_by))
             section = section.replace('<% @favorite %>', self.__favorite_tag(status.is_favorite, status.id_))
             
             result += section + '\n'

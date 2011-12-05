@@ -57,14 +57,11 @@ class Main(Base, gtk.Window):
         self.minimize = 'on'
         self.version = '2.x'
         
-        self.timer1 = None
-        self.timer2 = None
-        self.timer3 = None
+        self.timers = {}
         self.interval1 = -1
         self.interval2 = -1
         self.interval3 = -1
         
-        self.columns = []
         self.updating = []
         
         '''
@@ -104,6 +101,8 @@ class Main(Base, gtk.Window):
             self.accountsdlg.show()
         elif action == 'follow':
             self.accountsdlg.show()
+        elif action == 'add_column':
+            self.__show_add_column_menu(widget)
             
     def __link_request(self, widget, url):
         self.open_url(url)
@@ -153,6 +152,52 @@ class Main(Base, gtk.Window):
         
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
+    
+    def __show_add_column_menu(self, widget):
+        menu = gtk.Menu()
+        
+        public_tl = gtk.MenuItem(i18n.get('public_timeline'))
+        public_tl_menu = gtk.Menu()
+        public_tl_menu.append(gtk.MenuItem(i18n.get('twitter')))
+        public_tl_menu.append(gtk.MenuItem(i18n.get('identica')))
+        public_tl.set_submenu(public_tl_menu)
+        
+        search = gtk.MenuItem(i18n.get('search'))
+        search_menu = gtk.Menu()
+        search_menu.append(gtk.MenuItem(i18n.get('twitter')))
+        search_menu.append(gtk.MenuItem(i18n.get('identica')))
+        search.set_submenu(search_menu)
+        
+        empty = True
+        accounts = self.get_all_accounts()
+        columns = self.get_all_columns()
+        
+        for acc in accounts:
+            name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
+            temp = gtk.MenuItem(name)
+            if acc.logged_in:
+                temp_menu = gtk.Menu()
+                for key, col in columns[acc.id_].iteritems():
+                    item = gtk.MenuItem(key)
+                    if col.id_ != "":
+                        item.set_sensitive(False)
+                    temp_menu.append(item)
+                temp.set_submenu(temp_menu)
+            else:
+                temp.set_sensitive(False)
+            menu.append(temp)
+            empty = False
+        
+        if not empty:
+            menu.append(gtk.SeparatorMenuItem())
+        menu.append(public_tl)
+        menu.append(search)
+        
+        #tweet.connect('activate', self.__show_update_box_from_menu)
+        #follow.connect('activate', self.__show_follow_box_from_menu)
+        
+        menu.show_all()
+        menu.popup(None, None, None, 0, gtk.get_current_event_time())
         
     def __close(self, widget, event=None):
         if self.minimize == 'on':
@@ -162,38 +207,26 @@ class Main(Base, gtk.Window):
             self.main_quit()
         return True
     
-    def __timeout_callback(self, funct, arg):
-        gobject.timeout_add(200, funct, arg)
-    '''
-    def __login_callback(self, arg):
-        if arg.code > 0:
-            #msg = i18n.get(rtn.errmsg)
-            msg = arg.errmsg
-            print msg
-            return
-        
-        auth_obj = arg.items
-        if not auth_obj.must_auth():
-            self.auth(auth_obj.account)
+    def __timeout_callback(self, funct, arg, user_data):
+        if user_data:
+            gobject.timeout_add(200, funct, arg, user_data)
+        else:
+            gobject.timeout_add(200, funct, arg)
     
-    def __done_callback(self, arg):
-        if arg.code > 0:
-            msg = arg.errmsg
-            print msg
-        
-        self.download_stream1()
-    '''
     def get_protocols_list(self):
         return self.core.list_protocols()
     
     def get_all_accounts(self):
         return self.core.all_accounts()
     
+    def get_accounts_list(self):
+        return self.core.list_accounts()
+        
     def get_all_columns(self):
-        return self.core.list_columns()
+        return self.core.all_columns()
     
     def get_registered_columns(self):
-        return self.columns
+        return self.core.all_registered_columns()
     
     def load_image(self, path, pixbuf=False):
         img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
@@ -224,16 +257,16 @@ class Main(Base, gtk.Window):
             sys.exit(0)
     
     def show_main(self):
-        self.columns = self.core.list_stored_columns()
-        page = self.htmlparser.main(self.core.list_accounts(), self.columns)
+        columns = self.get_registered_columns()
+        page = self.htmlparser.main(self.get_accounts_list(), columns)
         self.container.render(page)
-        #self.login()
+        self.login()
         
     def show_about(self):
         about = About(self)
     
     def login(self):
-        for acc in self.core.list_accounts():
+        for acc in self.get_accounts_list():
             self.curr_acc = acc
             self.worker.register(self.core.login, (acc), self.__login_callback)
     
@@ -278,20 +311,23 @@ class Main(Base, gtk.Window):
             self.accountsdlg.done_login()
             self.accountsdlg.update()
         
-            for col in self.columns:
-                if not col: continue
+            for col in self.get_registered_columns():
                 if col.account_id == self.curr_acc:
-                    if col.id_ == '1':
-                        self.download_stream1()
-                        self.__build_timer1()
+                    self.download_stream(col)
+                    self.__build_timer(col)
+                    #if col.id_ == '1':
+                    #    self.download_stream1()
+                    #    self.__build_timer1()
         
         self.curr_acc = None
     
-    def __build_timer1(self):
+    def __build_timer(self, column):
         #if (self.timer1 != home_interval):
-        if self.timer1: gobject.source_remove(self.timer1)
+        if self.timers.has_key(column.id_):
+            gobject.source_remove(self.timers[column.id_])
         self.interval1 = 5
-        self.timer1 = gobject.timeout_add(self.interval1 * 60 * 1000, self.download_stream1)
+        self.timers[column.id_] = gobject.timeout_add(self.interval1 * 60 * 1000, 
+            self.download_stream, column)
         log.debug('--Creado timer de col 1 cada %i min' % self.interval1)
                     
     def delete_account(self, account_id):
@@ -304,13 +340,14 @@ class Main(Base, gtk.Window):
     
     def save_columns(self, columns):
         self.core.update_stored_columns(columns)
-        self.columns = self.core.list_stored_columns()
+        #self.columns = self.core.list_stored_columns()
     
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
     
-    def download_stream1(self):
+    def download_stream(self, column):
+        '''
         print self.columns, self.columns[0]
         if not self.columns[0]: return True
         if self.columns[0].updating: return True
@@ -319,6 +356,9 @@ class Main(Base, gtk.Window):
         self.start_updating_column1()
         self.worker.register(self.core.get_column_statuses, (self.columns[0].account_id, 
             self.columns[0].column_id), self.update_column1)
+        '''
+        self.worker.register(self.core.get_column_statuses, (column.account_id, 
+            column.column_name), self.update_column, column.id_)
         return True
         
     def download_rates(self):
@@ -345,12 +385,13 @@ class Main(Base, gtk.Window):
     def start_search(self):
         self.profile.search.start_update()
         
-    def update_column1(self, arg):
+    def update_column(self, arg, column_id):
         if arg.code > 0:
             print arg.errmsg
             return
         page = self.htmlparser.render_statuses(arg.items)
-        self.container.update_element("#list1", page, 'recalculate_column_size(); activate_options_trigger();')
+        element = "#list-%s" % column_id
+        self.container.update_element(element, page, 'recalculate_column_size(); activate_options_trigger();')
         '''
         gtk.gdk.threads_enter()
         
@@ -364,5 +405,6 @@ class Main(Base, gtk.Window):
             self._notify_new_tweets(column, tweets, last, count)
             
         gtk.gdk.threads_leave()
-        '''
         self.columns[0].updating = False
+        '''
+        

@@ -18,8 +18,8 @@ class Worker(threading.Thread):
     def set_timeout_callback(self, tcallback):
         self.tcallback = tcallback
         
-    def register(self, funct, args, callback):
-        self.queue.put((funct, args, callback))
+    def register(self, funct, args, callback, user_data=None):
+        self.queue.put((funct, args, callback, user_data))
     
     def quit(self):
         self.exit_ = True
@@ -33,7 +33,7 @@ class Worker(threading.Thread):
             except:
                 continue
             
-            (funct, args, callback) = req
+            (funct, args, callback, user_data) = req
             
             if type(args) == tuple:
                 rtn = funct(*args)
@@ -41,5 +41,4 @@ class Worker(threading.Thread):
                 rtn = funct(args)
             
             if callback:
-                #callback(rtn)
-                self.tcallback(callback, rtn)
+                self.tcallback(callback, rtn, user_data)

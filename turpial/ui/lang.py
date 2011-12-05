@@ -25,6 +25,8 @@ else:
 STRINGS = {
     'accounts': _('Accounts'),
     'columns': _('Columns'),
+    'twitter': _('Twitter'),
+    'identica': _('Identi.ca'),
     'create_account': _('Create Account'),
     'connect': _('Connect'),
     'about': _('About'),
@@ -41,6 +43,8 @@ STRINGS = {
     'save': _('Save'),
     'ok': _('Ok'),
     'cancel': _('Cancel'),
+    'search': _('Search'),
+    'public_timeline': _('Public Timeline'),
     'saving': _('Saving...'),
     'loading': _('Loading...'),
     'connecting': _('Connecting...'),

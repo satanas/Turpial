@@ -1,11 +1,13 @@
 <div id="dock-container">
-    <div id="notice">Prueba de un mensaje reaaaaaaaaaalmente laaaaaaaaaargo y sin ningun sentido</div>
+    <div id="notice-container">
+        <div id="notice"></div>
+    </div>
     <div id="dock">
-        <div class="button"></div>
-        <div class="button"></div>
-        <div class="button"></div>
-        <div class="button"></div>
-        <div class="button"></div>
+        <div class="button"><a href="cmd:about"><% img "dock-about.png" %></a></div>
+        <div class="button"><a href="cmd:preferences"><% img "dock-preferences.png" %></a></div>
+        <div class="button"><a href="cmd:follow"><% img "dock-profile.png" %></a></div>
+        <div class="button"><a href="cmd:add_column"><% img "dock-add.png" %></a></div>
+        <div class="button"><a href="cmd:update_status"><% img "dock-update.png" %></a></div>
         <div class="clearfix"></div>
     </div>
 </div>

@@ -1,5 +1,7 @@
 var num_columns = 1;
 var dock_visible = true;
+var timeout = null;
+var reset = null;
 
 $(document).ready(function() {
     recalculate_column_size();
@@ -8,6 +10,7 @@ $(document).ready(function() {
     });
     
     activate_options_trigger();
+    show_notice('La puta que te pario con este mensaje tan jodidamente largo', 'error');
 });
 
 function recalculate_column_size(nw, nh) {
@@ -19,9 +22,10 @@ function recalculate_column_size(nw, nh) {
         height = nh;
     
     var content_height = height - 23;
-    var notice_width = width - 120;
+    var notice_container_width = width - 120;
+    var notice_width = notice_container_width - 20;
     var column_width = (width / num_columns) - 1;
-    var column_height = content_height; /*height;*/
+    var column_height = content_height;
     var wrapper_height = height - 32;
     var empty_wrapper_height = column_height;
     var empty_list_height = height - 15;
@@ -34,6 +38,7 @@ function recalculate_column_size(nw, nh) {
     $('#content').css('height', content_height + 'px');
     $('.column').css('width', column_width + 'px');
     $('.column').css('height', column_height + 'px');
+    $('#notice-container').css('width', notice_container_width + 'px');
     $('#notice').css('width', notice_width + 'px');
     $('.wrapper').css('height', wrapper_height + 'px');
     $('.wrapper').css('width', column_width + 'px');
@@ -66,4 +71,28 @@ function activate_options_trigger() {
 
 function show_status_options(id) {
     $('#options-' + id).slideDown();
+}
+
+function show_notice(message, type) {
+    $('#notice').html(message);
+    $('#notice').fadeIn();
+    $('#notice').addClass(type);
+    timeout = setTimeout(hide_notice, 5000);
+}
+
+function hide_notice(force) {
+    clearTimeout(timeout);
+    if (force == undefined)
+        $('#notice').fadeOut();
+    else if (force == true)
+        $('#notice').hide();
+    reset = setTimeout(reset_notice, 500);
+}
+
+function reset_notice() {
+    clearTimeout(reset);
+    $('#notice').html('');
+    $('#notice').removeClass('error');
+    $('#notice').removeClass('warning');
+    $('#notice').removeClass('info');
 }

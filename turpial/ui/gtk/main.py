@@ -227,7 +227,7 @@ class Main(Base, gtk.Window):
         self.columns = self.core.list_stored_columns()
         page = self.htmlparser.main(self.core.list_accounts(), self.columns)
         self.container.render(page)
-        self.login()
+        #self.login()
         
     def show_about(self):
         about = About(self)

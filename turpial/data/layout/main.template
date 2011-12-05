@@ -6,7 +6,6 @@
 <body>
     <% query %>
     <div id="container">
-        <div id="notice" class="error" style="display: none;"></div>
         <div id="content">
             <% @content %>
         </div>

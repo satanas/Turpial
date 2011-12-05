@@ -1,26 +1,11 @@
 <div id="dock-container">
+    <div id="notice">Prueba de un mensaje reaaaaaaaaaalmente laaaaaaaaaargo y sin ningun sentido</div>
     <div id="dock">
-        <div class="button">
-            <p>1/4 l</p>
-        </div>
-        <div class="button">
-            <p>1/4 l</p>
-        </div>
-        <div id="update-box">
-            <textarea id="status">Whats happening?</textarea>
-            <div id="update-opts">
-                <div id="counter">140</div>
-                <div class="text-opt"></div>
-                <div class="text-opt"></div>
-            </div>
-            <div class="clearfix"></div>
-        </div>
-        <div class="button">
-            <p>1/4 r</p>
-        </div>
-        <div class="button">
-            <p>1/4 r</p>
-        </div>
+        <div class="button"></div>
+        <div class="button"></div>
+        <div class="button"></div>
+        <div class="button"></div>
+        <div class="button"></div>
         <div class="clearfix"></div>
     </div>
 </div>

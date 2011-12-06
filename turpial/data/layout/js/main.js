@@ -1,4 +1,4 @@
-var num_columns = 1;
+var num_columns = 2;
 var dock_visible = true;
 var timeout = null;
 var reset = null;
@@ -56,21 +56,6 @@ function recalculate_column_size(nw, nh) {
 }
 
 function activate_options_trigger() {
-    $('.content').mouseenter(function() {
-        var name = $(this).attr('name');
-        console.log(name);
-        $('#options-' + name).show();
-    });
-    
-    $('.content').mouseleave(function() {
-        var name = $(this).attr('name');
-        console.log(name);
-        $('#options-' + name).hide();
-    });
-}
-
-function show_status_options(id) {
-    $('#options-' + id).slideDown();
 }
 
 function show_notice(message, type) {

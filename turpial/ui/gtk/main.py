@@ -91,8 +91,6 @@ class Main(Base, gtk.Window):
         except IndexError:
             args = []
         print url
-        #print action, args
-        
         if action == 'about':
             self.show_about()
         elif action == 'settings':
@@ -181,6 +179,7 @@ class Main(Base, gtk.Window):
                     item = gtk.MenuItem(key)
                     if col.id_ != "":
                         item.set_sensitive(False)
+                    item.connect('activate', self.__add_column, col.build_id())
                     temp_menu.append(item)
                 temp.set_submenu(temp_menu)
             else:
@@ -192,12 +191,11 @@ class Main(Base, gtk.Window):
             menu.append(gtk.SeparatorMenuItem())
         menu.append(public_tl)
         menu.append(search)
-        
-        #tweet.connect('activate', self.__show_update_box_from_menu)
-        #follow.connect('activate', self.__show_follow_box_from_menu)
-        
         menu.show_all()
         menu.popup(None, None, None, 0, gtk.get_current_event_time())
+    
+    def __add_column(self, widget, column_id):
+        self.save_column(column_id)
         
     def __close(self, widget, event=None):
         if self.minimize == 'on':
@@ -338,8 +336,8 @@ class Main(Base, gtk.Window):
         self.curr_acc = self.core.register_account(username, protocol_id, password, True)
         self.worker.register(self.core.login, (self.curr_acc), self.__login_callback)
     
-    def save_columns(self, columns):
-        self.core.update_stored_columns(columns)
+    def save_column(self, column_id):
+        self.core.register_column(column_id)
         #self.columns = self.core.list_stored_columns()
     
     # ------------------------------------------------------------

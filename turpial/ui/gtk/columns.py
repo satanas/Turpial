@@ -5,14 +5,12 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 26, 2011
 
-import os
 import gtk
 import logging
 
 from turpial.ui.lang import i18n
 from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.htmlview import HtmlView
-from turpial.ui.gtk.account_form import AccountForm
 
 from libturpial.api.models.column import Column
 

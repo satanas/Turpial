@@ -5,15 +5,10 @@
 # Author:  Carlos Guerrero (aka guerrerocarlos)
 # Started: Sep 11, 2011
 
-import os
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui
 from PyQt4.QtWebKit import *
-import sys
-import Queue
 import logging
-import threading
 
-from turpial.ui.lang import i18n
 from turpial.ui.html import HtmlParser
 from turpial.ui.qt.worker import Worker
 from turpial.ui.qt.htmlview import HtmlView

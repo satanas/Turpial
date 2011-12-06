@@ -14,14 +14,11 @@ import logging
 import threading
 
 from turpial.ui.lang import i18n
-from turpial.ui.base import Base
 from turpial.ui.html import HtmlParser
 #from turpial.ui.gtk.about import About
 from turpial.ui.qt.htmlview import HtmlView
 from turpial.ui.qt.accounts import Accounts 
 #from turpial.ui.gtk.dialogs.credentials import CredentialsDialog
-
-from libturpial.common import ColumnType
 
 #gtk.gdk.set_program_class("Turpial")
 #gtk.gdk.threads_init()

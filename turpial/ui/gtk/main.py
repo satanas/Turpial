@@ -11,8 +11,6 @@ import sys
 import gobject
 import logging
 
-from libturpial.common import ColumnType
-
 from turpial.ui.lang import i18n
 from turpial.ui.base import Base
 from turpial.ui.html import HtmlParser

@@ -1,6 +1,6 @@
-<div id="column1" class="column yui3-u">
-    <div id="wrapper1" class="empty-wrapper">
-        <div id="list1" class="empty-list">
+<div id="column-empty" class="column">
+    <div id="wrapper-empty" class="empty-wrapper">
+        <div id="list-empty" class="empty-list">
             <div class="empty-logo"><% img "logo.png" %></div>
             <div class="no-account"><b>Welcome to Turpial!</b><br/><br/>You have no active accounts. You can register and activate your accounts with the <a href="cmd:accounts">Accounts Manager</a></div>
         </div>

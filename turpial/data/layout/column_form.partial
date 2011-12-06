@@ -1,6 +1,0 @@
-<div id="column_<% @column_id %>" class="column" name="<% @column_id %>">
-    <label><% $column %> <span id="label_<% @column_id %>"><% @column_id %></span>:</label>
-    <select id="account_<% @column_id %>" class="account"><% @accounts %></select>
-    <select id="stream_<% @column_id %>" class="stream"><% @columns %></select>
-    <a id="action_<% @column_id %>" href="javascript: delete_column('<% @column_id %>');" class="action"><% $delete %></a>
-</div>

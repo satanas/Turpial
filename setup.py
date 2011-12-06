@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import re
-import glob
-
 try:
     from setuptools import setup, find_packages
 except ImportError:

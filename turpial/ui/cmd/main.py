@@ -6,12 +6,8 @@
 # 26 Jun, 2011
 
 import cmd
-import sys
 import getpass
 import logging
-import readline
-
-from libturpial.common import ColumnType, VERSION as libturpial_ver
 
 VERSION = '2.0'
 

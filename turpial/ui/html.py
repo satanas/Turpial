@@ -203,22 +203,17 @@ class HtmlParser:
             content = ''
             dock = self.__open_partial('dock')
             for column in columns:
-                protocol_img = column.protocol_id + '.png'
-                label = "%s :: %s" % (column.account_id.split('-')[0], column.column_name)
-                
-                col_content = self.__open_partial('column_content')
-                col_content = col_content.replace('<% @column_id %>', column.id_)
-                col_content = col_content.replace('<% @column_label %>', label)
-                col_content = col_content.replace('@protocol_img', protocol_img)
-                
-                col = self.__open_partial('column')
-                col = col.replace('<% @column_id %>', column.id_)
-                col = col.replace('<% @column_content %>', col_content)
-                content += col
+                content += self.render_column(column)
+        
         self.app_layout = self.app_layout.replace('<% @dock %>', dock)
         self.app_layout = self.app_layout.replace('<% @content %>', content)
         
-        return self.__render()
+        page = self.__render()
+        num_columns = 1
+        if len(columns) >= 1:
+            num_columns = len(columns)
+        page = page.replace('<% @num_columns %>', str(num_columns))
+        return page
         
     def accounts(self, accounts):
         self.__load_layout('accounts')
@@ -324,66 +319,17 @@ class HtmlParser:
         page = self.__parse_tags(result)
         return page
     
-    def render_columns_list(self, accounts, reg_columns, all_columns):
-        result = ''
-        partial = self.__open_partial('column_form')
-        for col in reg_columns:
-            columns = all_columns[col.account_id]
-            acc_options = self.accounts_for_options(accounts, col.account_id)
-            col_options = self.columns_for_options(columns, col.column_id)
-            section = partial.replace('<% @column_id %>', col.id_)
-            section = section.replace('<% @accounts %>', acc_options)
-            section = section.replace('<% @columns %>', col_options)
-            
-            result += section + '\n'
-        page = self.__parse_tags(result)
-        return page
-    
-    def render_new_column(self, accounts, col_count):
-        section = self.__open_partial('column_form')
-        acc_options = self.accounts_for_options(accounts)
-        col_options = self.columns_for_options([])
-        section = section.replace('<% @column_id %>', str(col_count + 1))
-        section = section.replace('<% @accounts %>', acc_options)
-        section = section.replace('<% @columns %>', col_options)
-        section = self.__parse_tags(section)
-        return section
-    
-    def columns(self, accounts, reg_columns, all_columns):
-        self.__load_layout('columns')
-        col_list = self.render_columns_list(accounts, reg_columns, all_columns)
-        self.app_layout = self.app_layout.replace('<% @columns %>', col_list)
-        columns_js = self.js_columns_array(all_columns)
-        accounts_js = self.js_accounts_array(accounts)
-        script = '<script>' + columns_js + accounts_js + self.empty_column_label() + '</script>'
-        self.app_layout = self.app_layout.replace('<% @variables_js %>', script)
-        return self.__render()
-    
-    def empty_columns(self):
-        self.__load_layout('columns')
-        self.app_layout = self.app_layout.replace('<% @columns %>', i18n.get('no_column_yet'))
-        script = '<script>$("#cmd_save").hide(); $("#cmd_new").hide();</script>'
-        self.app_layout = self.app_layout.replace('<% @variables_js %>', script)
-        return self.__render()
-    
-    def js_accounts_array(self, all_accounts):
-        script = 'all_accounts = new Array;\n'
-        array = "["
-        for acc in all_accounts:
-            array += "'%s'," % str(acc.id_)
-        array = array[:-1] + "]"
-        script += "all_accounts = %s;\n" % array
-        return script
+    def render_column(self, column):
+        protocol_img = column.protocol_id + '.png'
+        label = "%s :: %s" % (column.account_id.split('-')[0], column.column_name)
         
-    def js_columns_array(self, all_columns):
-        script = 'all_columns = new Object;\n'
-        for key, value in all_columns.iteritems():
-            array = "["
-            for v in value:
-                array += "'%s'," % str(v)
-            array = array[:-1] + "]"
-            script += "all_columns['%s'] = %s;\n" % (key, array)
-        return script
-    
-    def empty_column_label(self):
-        return 'empty_column_label = "%s";\n' % i18n.get('--column--')
+        col_content = self.__open_partial('column_content')
+        col_content = col_content.replace('<% @column_id %>', column.id_)
+        col_content = col_content.replace('<% @column_label %>', label)
+        col_content = col_content.replace('@protocol_img', protocol_img)
+        
+        col = self.__open_partial('column')
+        col = col.replace('<% @column_id %>', column.id_)
+        col = col.replace('<% @column_content %>', col_content)
+        return col
+        

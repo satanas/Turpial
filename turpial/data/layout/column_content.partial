@@ -1,7 +1,7 @@
 <div id="header-<% @column_id %>" class="header">
     <div class="combo">
         <% img "@protocol_img" %>
-        <label><% @column_label %></label>
+        <label class="overflow"><% @column_label %></label>
         <div class="clearfix"></div>
     </div>
     <a href="cmd:delete_column:<% @column_id %>"><div class="button action_delete"></div></a>

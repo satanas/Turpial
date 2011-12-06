@@ -1,6 +1,6 @@
 <div id="dock-container">
     <div id="notice-container">
-        <div id="notice"></div>
+        <div id="notice" class="overflow"></div>
     </div>
     <div id="dock">
         <div class="button"><a href="cmd:about"><% img "dock-about.png" %></a></div>

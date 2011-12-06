@@ -101,6 +101,8 @@ class Main(Base, gtk.Window):
             self.accountsdlg.show()
         elif action == 'add_column':
             self.__show_add_column_menu(widget)
+        elif action == 'delete_column':
+            self.delete_column(args[0])
             
     def __link_request(self, widget, url):
         self.open_url(url)
@@ -211,63 +213,6 @@ class Main(Base, gtk.Window):
         else:
             gobject.timeout_add(200, funct, arg)
     
-    def get_protocols_list(self):
-        return self.core.list_protocols()
-    
-    def get_all_accounts(self):
-        return self.core.all_accounts()
-    
-    def get_accounts_list(self):
-        return self.core.list_accounts()
-        
-    def get_all_columns(self):
-        return self.core.all_columns()
-    
-    def get_registered_columns(self):
-        return self.core.all_registered_columns()
-    
-    def load_image(self, path, pixbuf=False):
-        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            '..', '..', 'data', 'pixmaps', path))
-        pix = gtk.gdk.pixbuf_new_from_file(img_path)
-        if pixbuf: return pix
-        avatar = gtk.Image()
-        avatar.set_from_pixbuf(pix)
-        del pix
-        return avatar
-    
-    def main_quit(self, widget=None):
-        self.log.debug('Exit')
-        self.destroy()
-        self.tray = None
-        self.worker.quit()
-        self.worker.join()
-        if widget:
-            gtk.main_quit()
-        sys.exit(0)
-        
-    def main_loop(self):
-        try:
-            gtk.gdk.threads_enter()
-            gtk.main()
-            gtk.gdk.threads_leave()
-        except Exception:
-            sys.exit(0)
-    
-    def show_main(self):
-        columns = self.get_registered_columns()
-        page = self.htmlparser.main(self.get_accounts_list(), columns)
-        self.container.render(page)
-        self.login()
-        
-    def show_about(self):
-        about = About(self)
-    
-    def login(self):
-        for acc in self.get_accounts_list():
-            self.curr_acc = acc
-            self.worker.register(self.core.login, (acc), self.__login_callback)
-    
     def __login_callback(self, arg):
         if arg.code > 0:
             #msg = i18n.get(rtn.errmsg)
@@ -327,6 +272,63 @@ class Main(Base, gtk.Window):
         self.timers[column.id_] = gobject.timeout_add(self.interval1 * 60 * 1000, 
             self.download_stream, column)
         log.debug('--Creado timer de col 1 cada %i min' % self.interval1)
+    
+    def get_protocols_list(self):
+        return self.core.list_protocols()
+    
+    def get_all_accounts(self):
+        return self.core.all_accounts()
+    
+    def get_accounts_list(self):
+        return self.core.list_accounts()
+        
+    def get_all_columns(self):
+        return self.core.all_columns()
+    
+    def get_registered_columns(self):
+        return self.core.all_registered_columns()
+    
+    def load_image(self, path, pixbuf=False):
+        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            '..', '..', 'data', 'pixmaps', path))
+        pix = gtk.gdk.pixbuf_new_from_file(img_path)
+        if pixbuf: return pix
+        avatar = gtk.Image()
+        avatar.set_from_pixbuf(pix)
+        del pix
+        return avatar
+    
+    def main_quit(self, widget=None):
+        self.log.debug('Exit')
+        self.destroy()
+        self.tray = None
+        self.worker.quit()
+        self.worker.join()
+        if widget:
+            gtk.main_quit()
+        sys.exit(0)
+        
+    def main_loop(self):
+        try:
+            gtk.gdk.threads_enter()
+            gtk.main()
+            gtk.gdk.threads_leave()
+        except Exception:
+            sys.exit(0)
+    
+    def show_main(self):
+        columns = self.get_registered_columns()
+        page = self.htmlparser.main(self.get_accounts_list(), columns)
+        self.container.render(page)
+        self.login()
+        
+    def show_about(self):
+        about = About(self)
+    
+    def login(self):
+        for acc in self.get_accounts_list():
+            self.curr_acc = acc
+            self.worker.register(self.core.login, (acc), self.__login_callback)
                     
     def delete_account(self, account_id):
         self.core.unregister_account(account_id, True)
@@ -337,8 +339,13 @@ class Main(Base, gtk.Window):
         self.worker.register(self.core.login, (self.curr_acc), self.__login_callback)
     
     def save_column(self, column_id):
-        self.core.register_column(column_id)
-        #self.columns = self.core.list_stored_columns()
+        column = self.core.register_column(column_id)
+        content = self.htmlparser.render_column(column)
+        self.container.append_element('#content', content, 'add_column();')
+    
+    def delete_column(self, column_id):
+        self.core.unregister_column(column_id)
+        self.container.execute('remove_column("' + column_id + '");')
     
     # ------------------------------------------------------------
     # Timer Methods
@@ -389,7 +396,7 @@ class Main(Base, gtk.Window):
             return
         page = self.htmlparser.render_statuses(arg.items)
         element = "#list-%s" % column_id
-        self.container.update_element(element, page, 'recalculate_column_size(); activate_options_trigger();')
+        self.container.update_element(element, page, 'recalculate_column_size();')
         '''
         gtk.gdk.threads_enter()
         

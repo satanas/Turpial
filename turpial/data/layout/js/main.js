@@ -1,4 +1,4 @@
-var num_columns = 2;
+var num_columns = <% @num_columns %>;
 var dock_visible = true;
 var timeout = null;
 var reset = null;
@@ -9,7 +9,6 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     
-    activate_options_trigger();
     show_notice('La puta que te pario con este mensaje tan jodidamente largo', 'error');
 });
 
@@ -32,7 +31,7 @@ function recalculate_column_size(nw, nh) {
     var list_width = column_width - 11;
     var list_height = column_height - 45;
     var empty_logo_top = empty_list_height / 5;
-    var combo_width = column_width - 83;
+    var combo_width = column_width - 60;
     var tweet_width = column_width - 100;
     
     $('#content').css('height', content_height + 'px');
@@ -55,7 +54,19 @@ function recalculate_column_size(nw, nh) {
     $('.tweet .content').css('width', tweet_width + 'px');
 }
 
-function activate_options_trigger() {
+function change_num_columns(num) {
+    num_columns = num;
+}
+
+function add_column() {
+    num_columns++;
+    recalculate_column_size();
+}
+
+function remove_column(column_id) {
+    $('#column-' + column_id).remove();
+    num_columns--;
+    recalculate_column_size();
 }
 
 function show_notice(message, type) {

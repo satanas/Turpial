@@ -20,10 +20,10 @@
 
 .header {
     float: left;
-    height: 32px;
+    height: 22px;
     width: 100%;
     background: #3c3b37 url('<% css_img "header-background.png" %>') repeat-x;
-    color: #fff;
+    color: #ebebeb;
     text-align: left;
     border: 1px solid #fff;
     border-width: 0 1px 0 0;
@@ -31,50 +31,32 @@
 
 .header .combo {
     float: left;
-    /*background: #424242 url('<% css_img "button-menu.png" %>') no-repeat top right;
-    background: transparent url('<% css_img "button-menu.png" %>') no-repeat top right;*/
     border-radius: 2px;
-    color: #fff;
-    margin: 5px 5px 0 5px;
-    /*height: 22px;
-    border: 1px solid #333;
-    padding-right: 26px;*/
-}
-
-.header .combo2:hover {
-    /*background-color: #666;*/
-    background-color: #424242;
+    margin: 0px 5px 0 5px;
 }
 
 .header .combo img {
-    margin: 0px 2px 3px 2px;
-    padding: 3px;
+    padding: 3px 0 0 3px;
     display: block;
     float: left;
 }
 
 .header .combo label {
-    padding: 2px 6px 0 6px;
-    /*width: 200px;
-    display: block;*/
+    padding: 4px 6px 0 6px;
     float: left;
-    overflow: hidden;
     max-height: 20px;
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: bold;
 }
 
 .header .button {
     float: left;
-    /*background-color: #424242;
-    border: 1px solid #333;
-    border-radius: 2px;*/
-    color: #fff;
-    height: 32px;
-    width: 32px;
-    margin-top: 0px;
+    height: 19px;
+    width: 19px;
+    padding: 3px 0 0 3px;
 }
 
-.header .button:hover {
+.button:hover {
     background-color: #424242;
 }
 
@@ -237,10 +219,7 @@
     margin-top: 4px;
     padding-left: 20px;
     font-size: 11px;
-    overflow: hidden;
-    text-overflow: ellipsis;
     color: #fff;
-    white-space: nowrap;
 }
 
 #notice.error {
@@ -266,4 +245,10 @@
     width: 19px;
     height: 19px;
     padding: 3px 0 0 3px;
+}
+
+.overflow {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

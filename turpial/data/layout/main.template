@@ -17,7 +17,7 @@
                 <div class="button" title="<% $about %>"><a href="cmd:about"><% img "dock-about.png" %></a></div>
                 <div class="button" title="<% $preferences %>"><a href="cmd:preferences"><% img "dock-preferences.png" %></a></div>
                 <div class="button" title="<% $add_columns %>"><a href="cmd:add_column"><% img "dock-add.png" %></a></div>
-                <div class="button" title="<% $accounts_manager %>"><a href="cmd:account_manager"><% img "dock-accounts.png" %></a></div>
+                <div class="button" title="<% $accounts_manager %>"><a href="cmd:accounts_manager"><% img "dock-accounts.png" %></a></div>
                 <div class="button" title="<% $follow %>"><a href="cmd:follow"><% img "dock-profile.png" %></a></div>
                 <div class="button" title="<% $update_status %>"><a href="cmd:update_status"><% img "dock-update.png" %></a></div>
                 <div class="clearfix"></div>

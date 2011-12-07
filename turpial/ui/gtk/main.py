@@ -95,10 +95,10 @@ class Main(Base, gtk.Window):
             self.show_about()
         elif action == 'settings':
             self.container.execute("alert('hola');")
-        elif action == 'accounts':
+        elif action == 'accounts_manager':
             self.accountsdlg.show()
         elif action == 'follow':
-            self.accountsdlg.show()
+            pass
         elif action == 'add_column':
             self.__show_add_column_menu(widget)
         elif action == 'delete_column':
@@ -257,22 +257,24 @@ class Main(Base, gtk.Window):
             for col in self.get_registered_columns():
                 if col.account_id == self.curr_acc:
                     self.download_stream(col)
-                    self.__build_timer(col)
-                    #if col.id_ == '1':
-                    #    self.download_stream1()
-                    #    self.__build_timer1()
+                    self.__add_timer(col)
         
         self.curr_acc = None
     
-    def __build_timer(self, column):
+    def __add_timer(self, column):
         #if (self.timer1 != home_interval):
         if self.timers.has_key(column.id_):
             gobject.source_remove(self.timers[column.id_])
         self.interval1 = 5
         self.timers[column.id_] = gobject.timeout_add(self.interval1 * 60 * 1000, 
             self.download_stream, column)
-        log.debug('--Creado timer de col 1 cada %i min' % self.interval1)
+        log.debug('--Created timer for %s every %i min' % (column.id_, self.interval1))
     
+    def __remove_timer(self, column_id):
+        if self.timers.has_key(column_id):
+            gobject.source_remove(self.timers[column_id])
+            log.debug('--Removed timer for %s' % column_id)
+            
     def get_protocols_list(self):
         return self.core.list_protocols()
     
@@ -350,16 +352,18 @@ class Main(Base, gtk.Window):
         else:
             content = self.htmlparser.render_column(column)
             self.container.append_element('#content', content, 'add_column();')
+        self.download_stream(column)
+        self.__add_timer(column)
     
     def delete_column(self, column_id):
         self.core.unregister_column(column_id)
         reg_columns = self.get_registered_columns()
-        print len(reg_columns), reg_columns
         if len(reg_columns) == 0:
             page = self.htmlparser.empty()
             self.container.render(page)
         else:
             self.container.execute('remove_column("' + column_id + '");')
+        self.__remove_timer(column_id)
     
     # ------------------------------------------------------------
     # Timer Methods

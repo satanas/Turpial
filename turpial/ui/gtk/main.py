@@ -250,6 +250,7 @@ class Main(Base, gtk.Window):
         if arg.code > 0:
             msg = arg.errmsg
             self.accountsdlg.cancel_login(msg)
+            self.show_notice(msg, 'error')
         else:
             self.accountsdlg.done_login()
             self.accountsdlg.update()
@@ -261,6 +262,10 @@ class Main(Base, gtk.Window):
         
         self.curr_acc = None
     
+    def show_notice(self, msg, type_):
+        cmd = 'show_notice("%s", "%s");' % (msg, type_)
+        self.container.execute(cmd)
+        
     def __add_timer(self, column):
         #if (self.timer1 != home_interval):
         if self.timers.has_key(column.id_):

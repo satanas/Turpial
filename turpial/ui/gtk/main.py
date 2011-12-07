@@ -317,13 +317,13 @@ class Main(Base, gtk.Window):
             sys.exit(0)
     
     def show_main(self):
-        columns = self.get_registered_columns()
-        if len(columns) == 0:
+        reg_columns = self.get_registered_columns()
+        if len(reg_columns) == 0:
             page = self.htmlparser.empty()
         else:
-            page = self.htmlparser.main(self.get_accounts_list(), columns)
+            page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
         self.container.render(page)
-        #self.login()
+        self.login()
         
     def show_about(self):
         about = About(self)
@@ -353,7 +353,13 @@ class Main(Base, gtk.Window):
     
     def delete_column(self, column_id):
         self.core.unregister_column(column_id)
-        self.container.execute('remove_column("' + column_id + '");')
+        reg_columns = self.get_registered_columns()
+        print len(reg_columns), reg_columns
+        if len(reg_columns) == 0:
+            page = self.htmlparser.empty()
+            self.container.render(page)
+        else:
+            self.container.execute('remove_column("' + column_id + '");')
     
     # ------------------------------------------------------------
     # Timer Methods

@@ -199,24 +199,14 @@ class HtmlParser:
     
     def main(self, accounts, columns):
         self.__load_layout('main')
-        
-        if len(columns) == 0:
-            dock = ''
-            content = self.__open_partial('empty')
-        else:
-            content = ''
-            dock = self.__open_partial('dock')
-            for column in columns:
-                content += self.render_column(column)
-        
-        self.app_layout = self.app_layout.replace('<% @dock %>', dock)
+        content = ''
+        for column in columns:
+            content += self.render_column(column)
         self.app_layout = self.app_layout.replace('<% @content %>', content)
         
         page = self.__render()
-        num_columns = 1
-        if len(columns) >= 1:
-            num_columns = len(columns)
-        page = page.replace('<% @num_columns %>', str(num_columns))
+        # TODO: Look for a better way of handle javascript code from python
+        page = page.replace('<% @num_columns %>', str(len(columns)))
         return page
         
     def accounts(self, accounts):

@@ -20,7 +20,6 @@ from turpial.ui.gtk.about import About
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.accounts import AccountsDialog
-from turpial.ui.gtk.columns import ColumnsDialog
 from turpial.ui.gtk.oauthwin import OAuthWindow
 
 gtk.gdk.set_program_class("Turpial")
@@ -337,6 +336,7 @@ class Main(Base, gtk.Window):
     
     def login(self):
         for acc in self.get_accounts_list():
+            if acc.startswith('satanas82'): continue
             self.curr_acc = acc
             self.worker.register(self.core.login, (acc), self.__login_callback)
                     

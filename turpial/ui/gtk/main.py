@@ -318,9 +318,12 @@ class Main(Base, gtk.Window):
     
     def show_main(self):
         columns = self.get_registered_columns()
-        page = self.htmlparser.main(self.get_accounts_list(), columns)
+        if len(columns) == 0:
+            page = self.htmlparser.empty()
+        else:
+            page = self.htmlparser.main(self.get_accounts_list(), columns)
         self.container.render(page)
-        self.login()
+        #self.login()
         
     def show_about(self):
         about = About(self)
@@ -340,8 +343,13 @@ class Main(Base, gtk.Window):
     
     def save_column(self, column_id):
         column = self.core.register_column(column_id)
-        content = self.htmlparser.render_column(column)
-        self.container.append_element('#content', content, 'add_column();')
+        reg_columns = self.get_registered_columns()
+        if len(reg_columns) == 1:
+            page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
+            self.container.render(page)
+        else:
+            content = self.htmlparser.render_column(column)
+            self.container.append_element('#content', content, 'add_column();')
     
     def delete_column(self, column_id):
         self.core.unregister_column(column_id)

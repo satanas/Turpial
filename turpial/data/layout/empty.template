@@ -7,7 +7,14 @@
     <% query %>
     <div id="container">
         <div id="content">
-            <% @content %>
+            <div id="column-empty" class="column">
+                <div id="wrapper-empty" class="empty-wrapper">
+                    <div id="list-empty" class="empty-list">
+                        <div class="empty-logo"><% img "logo.png" %></div>
+                        <div class="empty-message"><b><% $welcome %></b><br/><br/><% $no_active_accounts %></div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="dock-container">
             <div id="notice-container">
@@ -17,8 +24,7 @@
                 <div class="button" title="<% $about %>"><a href="cmd:about"><% img "dock-about.png" %></a></div>
                 <div class="button" title="<% $preferences %>"><a href="cmd:preferences"><% img "dock-preferences.png" %></a></div>
                 <div class="button" title="<% $add_columns %>"><a href="cmd:add_column"><% img "dock-add.png" %></a></div>
-                <div class="button" title="<% $follow %>"><a href="cmd:follow"><% img "dock-profile.png" %></a></div>
-                <div class="button" title="<% $update_status %>"><a href="cmd:update_status"><% img "dock-update.png" %></a></div>
+                <div class="button" title="<% $accounts_manager %>"><a href="cmd:account_manager"><% img "dock-add.png" %></a></div>
                 <div class="clearfix"></div>
             </div>
         </div>

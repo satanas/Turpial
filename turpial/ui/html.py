@@ -193,6 +193,10 @@ class HtmlParser:
             args = []
         return action, args
     
+    def empty(self):
+        self.__load_layout('empty')
+        return self.__render()
+    
     def main(self, accounts, columns):
         self.__load_layout('main')
         

@@ -23,14 +23,21 @@ else:
     trans = gettext.install(gettext_domain)
 
 STRINGS = {
-    'accounts': _('Accounts'),
-    'columns': _('Columns'),
-    'twitter': _('Twitter'),
-    'identica': _('Identi.ca'),
-    'create_account': _('Create Account'),
-    'connect': _('Connect'),
+    'twitter': 'Twitter',
+    'identica': 'Identi.ca',
+    'welcome': _('Welcome to Turpial!'),
+    'no_active_accounts': _('You have no active accounts. Please register your \
+accounts and add some columns'),
     'about': _('About'),
     'preferences': _('Preferences'),
+    'add_columns': _('Add columns'),
+    'accounts_manager': _('Accounts Manager'),
+    'update_status': _('Update status'),
+    'accounts': _('Accounts'),
+    'columns': _('Columns'),
+    'column': _("Column"),
+    'create_account': _('Create Account'),
+    'connect': _('Connect'),
     'add': _('Add'),
     'delete': _('Delete'),
     'tweet': _('Tweet'),
@@ -63,10 +70,6 @@ text box below and click OK:'),
     'people': _("people"),
     'person': _("person"),
     'retweeted_by': _("Retweeted by"),
-    '--select--': _("-- Select --"),
-    '--account--': _("-- Account --"),
-    '--column--': _("-- Column --"),
-    'column': _("Column"),
     'no_column_yet': _("There are no available columns because I'm still logging in"),
 }
 

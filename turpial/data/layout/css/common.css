@@ -48,6 +48,57 @@ input[type="text"], input[type="password"]{
     clear: both;
 }
 
+.overflow {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/*** Dock stuffs ***/
+
+#dock-container {
+    height: 22px;
+    background: #3c3b37 url('<% css_img "header-background.png" %>') repeat-x;
+    float: left;
+    width: 100%;
+}
+
+#dock {
+    float: left;
+    width: 110px;
+    height: 22px;
+}
+
+/*** Notice stuffs ***/
+
+#notice-container {
+    float: left;
+    width: 200px;
+    height: 22px;
+}
+
+#notice {
+    float: left;
+    width: 200px;
+    height: 18px;
+    margin-top: 4px;
+    padding-left: 20px;
+    font-size: 11px;
+    color: #fff;
+}
+
+#notice.error {
+    background: url('<% css_img "notice-error.png" %>') no-repeat 2px 0px;
+}
+
+#notice.info {
+    background: url('<% css_img "notice-information.png" %>') no-repeat 2px 0px;
+}
+
+#notice.warning {
+    background: url('<% css_img "notice-warning.png" %>') no-repeat 2px 0px;
+}
+
 ::-webkit-scrollbar {
     background: transparent;
     overflow: visible;

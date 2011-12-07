@@ -78,7 +78,6 @@ class Main(Base, gtk.Window):
         
         # Persistent dialogs
         self.accountsdlg = AccountsDialog(self)
-        self.columnsdlg = ColumnsDialog(self)
         
         self.__create_trayicon()
         self.show_all()

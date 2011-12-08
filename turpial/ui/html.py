@@ -289,7 +289,7 @@ class HtmlParser:
                 elif count == 1:
                     temp = '1 %s' % i18n.get('person')
                 reposted_by = '%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
-            
+
             message = self.__highlight_urls(status, status.text)
             message = self.__highlight_hashtags(status, message)
             message = self.__highlight_groups(status, message)

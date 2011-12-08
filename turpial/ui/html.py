@@ -186,7 +186,7 @@ class HtmlParser:
     def parse_command(self, command):
         action = command.split(':')[0]
         try:
-            args = command.split(':')[1].split('-%&%-')
+            args = command.split(':')[1].split(ARG_SEP)
         except IndexError:
             args = []
         return action, args

@@ -76,11 +76,14 @@ class Main(Base, gtk.Window):
         self.show_all()
         
     def __action_request(self, widget, url):
+        '''
         action = url.split(':')[0]
         try:
-            args = url.split(':')[1].split('-%&%-')
+            args = url.split(':')[1].split(ARG_SEP)
         except IndexError:
             args = []
+        '''
+        action, args = self.htmlparser.parse_command(url)
         print url
         if action == 'about':
             self.show_about()

@@ -40,11 +40,7 @@ class AccountsDialog(gtk.Window):
         return True
     
     def __action_request(self, widget, url):
-        action = url.split(':')[0]
-        try:
-            args = url.split(':')[1].split('-%&%-')
-        except IndexError:
-            args = []
+        action, args = self.htmlparser.parse_command(url)
         
         if action == "close":
             self.__close(widget)
@@ -116,11 +112,7 @@ class AccountForm(gtk.Window):
             return True
     
     def __action_request(self, widget, url):
-        action = url.split(':')[0]
-        try:
-            args = url.split(':')[1].split('-%&%-')
-        except IndexError:
-            args = []
+        action, args = self.htmlparser.parse_command(url)
         
         if action == "close":
             self.__close(widget)

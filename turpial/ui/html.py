@@ -116,28 +116,28 @@ class HtmlParser:
     
     def __highlight_hashtags(self, status, text):
         for h in status.entities['hashtags']:
-            cad = '<a href="cmd:show_hashtag:%s">%s</a>' % (h, h)
-            text = text.replace(h, cad)
+            cad = '<a href="cmd:show_hashtag:%s">%s</a>' % (h.url, h.display_text)
+            text = text.replace(h.search_for, cad)
         return text
     
     def __highlight_groups(self, status, text):
         for h in status.entities['groups']:
-            cad = '<a href="cmd:show_group:%s">%s</a>' % (h, h)
-            text = text.replace(h, cad)
+            cad = '<a href="cmd:show_group:%s">%s</a>' % (h.url, h.display_text)
+            text = text.replace(h.search_for, cad)
         return text
     
     def __highlight_mentions(self, status, text):
         for h in status.entities['mentions']:
             #if len(h) == 1: 
             #    continue
-            cad = '<a href="cmd:show_profile:%s">%s</a>' % (h, h)
-            text = text.replace(h, cad)
+            cad = '<a href="cmd:show_profile:%s">%s</a>' % (h.url, h.display_text)
+            text = text.replace(h.search_for, cad)
         return text
         
     def __highlight_urls(self, status, text):
-        for url in status.entities['url']:
-            cad = '<a href="link:%s">%s</a>' % (url, url)
-            text = text.replace(url, cad)
+        for url in status.entities['urls']:
+            cad = '<a href="link:%s">%s</a>' % (url.url, url.display_text)
+            text = text.replace(url.search_for, cad)
         return text
     
     def __parse_tags(self, page):
@@ -291,7 +291,7 @@ class HtmlParser:
                 elif count == 1:
                     temp = '1 %s' % i18n.get('person')
                 reposted_by = '%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
-            
+
             message = self.__highlight_urls(status, status.text)
             message = self.__highlight_hashtags(status, message)
             message = self.__highlight_groups(status, message)

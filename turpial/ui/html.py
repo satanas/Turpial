@@ -9,6 +9,7 @@ import re
 import os
 
 from turpial.ui.lang import i18n
+from libturpial.common import ARG_SEP
 
 DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 IMAGES_DIR = os.path.join(DATA_DIR, 'pixmaps')

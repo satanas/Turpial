@@ -7,6 +7,7 @@
 
 import os
 import gtk
+from turpial import VERSION
 
 class About:
     def __init__(self, parent=None):
@@ -14,7 +15,7 @@ class About:
         about.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         about.set_logo(parent.load_image('turpial.png', True))
         about.set_name('Turpial')
-        about.set_version(parent.version)
+        about.set_version(VERSION)
         about.set_copyright('Copyright (C) 2009 - 2011 Wil Alvarez')
         about.set_comments(_('Microblogging client written in Python'))
         about.set_transient_for(parent)

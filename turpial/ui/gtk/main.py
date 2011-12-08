@@ -54,7 +54,6 @@ class Main(Base, gtk.Window):
         # Configuration
         self.showed = True
         self.minimize = 'on'
-        self.version = '2.x'
         
         self.timers = {}
         self.interval1 = -1
@@ -62,12 +61,6 @@ class Main(Base, gtk.Window):
         self.interval3 = -1
         
         self.updating = []
-        
-        '''
-        self.win_state = 'windowed'
-        self.workspace = 'single'
-        self.link_color = '#ff6633'
-        '''
         
         #self.sound = Sound()
         #self.notify = Notification(controller.no_notif)
@@ -335,7 +328,6 @@ class Main(Base, gtk.Window):
     
     def login(self):
         for acc in self.get_accounts_list():
-            if acc.startswith('satanas82'): continue
             self.curr_acc = acc
             self.worker.register(self.core.login, (acc), self.__login_callback)
                     

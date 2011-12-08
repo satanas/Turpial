@@ -11,7 +11,9 @@ import logging
 
 from optparse import OptionParser
 
+from turpial import VERSION
 from turpial.ui import util
+from libturpial import VERSION as LIBVERSION
 from libturpial.common.tools import *
 from libturpial.api.core import Core
 from libturpial.config import AppConfig
@@ -34,8 +36,7 @@ class Turpial:
         self.core = Core()
         self.config = AppConfig()
         self.interface = options.interface
-        #self.version = self.global_cfg.read('App', 'version')
-        self.version = '2.0'
+        self.version = "Turpial v%s with libturpial v%s" % (VERSION, LIBVERSION)
         
         if options.debug or options.clean: 
             logging.basicConfig(level=logging.DEBUG)
@@ -48,7 +49,7 @@ class Turpial:
             sys.exit(0)
             
         if options.version:
-            print "Turpial v%s" % self.version
+            print self.version
             print "Python v%X" % sys.hexversion
             sys.exit(0)
         
@@ -59,7 +60,7 @@ class Turpial:
                 options.interface, util.available_interfaces())
             sys.exit(-1)
         
-        self.log.debug('Starting Turpial v%s' % self.version)
+        self.log.debug('Starting %s' % self.version)
         
         self.ui.show_main()
         try:

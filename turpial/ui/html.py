@@ -231,9 +231,8 @@ class HtmlParser:
                 checked = 'checked="checked"'
             protocols += '<option value="%s" %s>%s</option>' % (p, checked, p.capitalize())
         return protocols
-    
+    '''
     def accounts_for_options(self, alist, default=''):
-        ''' Receive an array of accounts objects '''
         accounts = '<option value="null">%s</option>' % i18n.get('--account--')
         for a in alist:
             checked = ''
@@ -244,7 +243,6 @@ class HtmlParser:
         return accounts
     
     def columns_for_options(self, clist, default=''):
-        ''' Receive an array of strings '''
         columns = '<option value="null">%s</option>' % i18n.get('--column--')
         for c in clist:
             checked = ''
@@ -252,7 +250,7 @@ class HtmlParser:
                 checked = 'selected="selected"'
             columns += '<option value="%s" %s>%s</option>' % (c, checked, c)
         return columns
-    
+    '''
     def render_account_list(self, accounts):
         self.partials['accounts'] = ''
         partial = self.__open_partial('account')
@@ -323,5 +321,6 @@ class HtmlParser:
         col = self.__open_partial('column')
         col = col.replace('<% @column_id %>', column.id_)
         col = col.replace('<% @column_content %>', col_content)
-        return col
+        page = self.__parse_tags(col)
+        return page
         

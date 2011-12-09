@@ -135,6 +135,10 @@ class HtmlParser:
         
     def __highlight_urls(self, status, text):
         for url in status.entities['urls']:
+            if url.url == None:
+                url.url = url.search_for
+            if url.url[0:7] != "http://":
+                url.url = "http://%s" % url.url
             cad = '<a href="link:%s">%s</a>' % (url.url, url.display_text)
             text = text.replace(url.search_for, cad)
         return text

@@ -115,6 +115,10 @@ class HtmlParser:
         
         return "<a href='%s'>%s</a>" % (cmd, icon)
     
+    def __highlight_username(self, status):
+        url = status.username + ARG_SEP + status.account_id
+        return '<a href="cmd:show_profile:%s">%s</a>' % (url, status.username)
+
     def __highlight_hashtags(self, status, text):
         for h in status.entities['hashtags']:
             cad = '<a href="cmd:show_hashtag:%s">%s</a>' % (h.url, h.display_text)
@@ -297,10 +301,11 @@ class HtmlParser:
             message = self.__highlight_hashtags(status, message)
             message = self.__highlight_groups(status, message)
             message = self.__highlight_mentions(status, message)
+            username = self.__highlight_username(status)
             
             section = partial.replace('<% @status_id %>', status.id_)
             section = section.replace('<% @avatar %>', status.avatar)
-            section = section.replace('<% @username %>', status.username)
+            section = section.replace('<% @username %>', username)
             section = section.replace('<% @message %>', message)
             section = section.replace('<% @timestamp %>', timestamp)
             section = section.replace('<% @reposted_by %>', reposted_by)

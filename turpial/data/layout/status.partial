@@ -11,8 +11,14 @@
         </div>
         <div class="message"><% @message %></div>
         <div class="timestamp"><% @timestamp %></div>
-        <div>
-            <label class="repost"><% @reposted_by %></label>
+        <div class="repost"><label><% @reposted_by %></label></div>
+        <div class="options">
+            <a href="#"><img src="hola.png" width="16" height="16" class="action"/></a>
+            <a href="#"><img src="hola.png" width="16" height="16" class="action"/></a>
+            <a href="#"><img src="hola.png" width="16" height="16" class="action"/></a>
+            <a href="#"><img src="hola.png" width="16" height="16" class="action"/></a>
+            <a href="#"><img src="hola.png" width="16" height="16" class="action"/></a>
+            <div class="clearfix"></div>
         </div>
     </div>
     <div class="clearfix"></div>

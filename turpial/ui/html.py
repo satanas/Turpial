@@ -101,7 +101,7 @@ class HtmlParser:
     
     def __reposted_tag(self, reposted):
         if reposted:
-            return self.__image_tag("mark-repeated.png", 16, 16, class_='mark')
+            return self.__image_tag("mark-repeated.png", 16, 16, class_='repost_mark')
         else:
             return ''
     

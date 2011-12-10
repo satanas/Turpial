@@ -6,8 +6,6 @@ $(document).ready(function() {
     $(window).resize(function() {
         recalculate_column_size();
     });
-    
-    show_notice('La puta que te pario con este mensaje tan jodidamente largo', 'error');
 });
 
 function recalculate_column_size(nw, nh) {
@@ -25,13 +23,10 @@ function recalculate_column_size(nw, nh) {
     var column_width = (width / num_columns) - 1;
     var column_height = content_height;
     var wrapper_height = height - 32;
-    /*var empty_wrapper_height = column_height;
-    var empty_list_height = height - 15;*/
     var list_width = column_width - 11;
-    var list_height = column_height - 45;
-    /*var empty_logo_top = empty_list_height / 5;*/
+    var list_height = column_height - 35;
     var combo_width = column_width - 60;
-    var tweet_width = column_width - 100;
+    var tweet_width = column_width - 92;
     
     $('#content').css('height', content_height + 'px');
     $('.column').css('width', column_width + 'px');
@@ -41,15 +36,9 @@ function recalculate_column_size(nw, nh) {
     $('#notice').css('width', notice_width + 'px');
     $('.wrapper').css('height', wrapper_height + 'px');
     $('.wrapper').css('width', column_width + 'px');
-    /*$('.empty-wrapper').css('height', wrapper_height + 'px');
-    $('.empty-wrapper').css('width', column_width + 'px');*/
     
     $('.list').css('height', list_height + 'px');
     $('.list').css('width', list_width + 'px');
-    /*$('.empty-list').css('width', list_width + 'px');
-    $('.empty-list').css('height', empty_list_height + 'px');
-    $('.empty-logo').css('margin-top', empty_logo_top + 'px');*/
-    
     $('.combo').css('width', combo_width + 'px');
     $('.tweet .content').css('width', tweet_width + 'px');
 }

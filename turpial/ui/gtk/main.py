@@ -88,6 +88,8 @@ class Main(Base, gtk.Window):
             pass
         elif action == 'add_column':
             self.__show_add_column_menu(widget)
+        elif action == 'update_column':
+            self.refresh_column(args[0])
         elif action == 'delete_column':
             self.delete_column(args[0])
             
@@ -399,6 +401,11 @@ class Main(Base, gtk.Window):
         
     def start_search(self):
         self.profile.search.start_update()
+
+    def refresh_column(self, column_id):
+        for col in self.get_registered_columns():
+            if col.build_id() == column_id:
+                self.download_stream(col)
         
     def update_column(self, arg, column_id):
         if arg.code > 0:

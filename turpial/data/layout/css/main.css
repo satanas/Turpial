@@ -188,3 +188,81 @@
     float: right;
     font-size: 10px;
 }
+
+/*** Modal stuffs ***/
+#modal {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left:0px;
+}
+    
+#modal .background {
+    opacity: 0.50;
+    background-color: #424242;
+    position: absolute;
+    z-index: 99;
+    width: 100%;
+    height: 100%;
+}
+
+/*** Update-Box stuffs ***/
+#update-box {
+    position: absolute;
+    z-index: 100;
+    background-color: #333;
+    bottom: 0px;
+    height: 120px;
+    width: 100%;
+}
+
+#update-box .header {
+    width: 100%;
+    height: 22px;
+    color: #ccc;
+    background: #3c3b37 url('<% css_img "header-background.png" %>') repeat-x;
+}
+
+#update-box .header .text {
+    float: left;
+    margin: 3px 0 0 5px;
+    font-size: 12px;
+}
+
+#update-box .header .close {
+    float: right;
+    margin: 3px 0 0 10px;
+}
+
+#char-counter {
+    float: right;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.maxchar {
+    color: #E20000;
+}
+
+#update-box .body {
+}
+
+.message-container {
+    width: 100%;
+    border: 1px solid #ccc;
+    margin: 5px;
+}
+
+#update-message {
+    width: 100%;
+    height: 50px;
+    resize: none;
+    border: none;
+}
+
+#update-message:focus {
+    outline: 0;
+    /*border-color: rgba(0, 108, 18, 0.8);
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(0, 108, 18, 0.6);*/
+}

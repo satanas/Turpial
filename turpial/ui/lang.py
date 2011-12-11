@@ -75,6 +75,7 @@ text box below and click OK:'),
     'person': _("person"),
     'retweeted_by': _("Retweeted by"),
     'no_column_yet': _("There are no available columns because I'm still logging in"),
+    'whats_happening': _("What's happening?"),
 }
 
 class i18n:

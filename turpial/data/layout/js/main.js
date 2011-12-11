@@ -1,3 +1,4 @@
+var maxcharlimit = 140;
 var dock_elements = 6;
 var num_columns = <% @num_columns %>;
 
@@ -6,6 +7,7 @@ $(document).ready(function() {
     $(window).resize(function() {
         recalculate_column_size();
     });
+    count_chars();
 });
 
 function recalculate_column_size(nw, nh) {
@@ -27,6 +29,7 @@ function recalculate_column_size(nw, nh) {
     var list_height = column_height - 35;
     var combo_width = column_width - 60;
     var tweet_width = column_width - 92;
+    var update_msg_width = width - 15;
     
     $('#content').css('height', content_height + 'px');
     $('.column').css('width', column_width + 'px');
@@ -41,6 +44,9 @@ function recalculate_column_size(nw, nh) {
     $('.list').css('width', list_width + 'px');
     $('.combo').css('width', combo_width + 'px');
     $('.tweet .content').css('width', tweet_width + 'px');
+    
+    //$('#update-message').css('width', update_msg_width + 'px');
+    $('.message-container').css('width', update_msg_width + 'px');
 }
 
 function change_num_columns(num) {
@@ -62,10 +68,40 @@ function enable_trigger() {
     $('.content').mouseover(function() {
         var name = $(this).attr('name');
         $('#buttonbox-' + name).show();
+        $('.favmark-' + name).show();
     });
     
     $('.content').mouseleave(function() {
         var name = $(this).attr('name');
         $('#buttonbox-' + name).hide();
+        $('.favmark-' + name).hide();
     });
+}
+
+function show_update_box() {
+    $('#modal').fadeIn();
+    $('#update-box').fadeIn();
+    $('#update-message').focus();
+}
+
+function close_update_box() {
+    $('#update-box').fadeOut(400, reset_update_box);
+    $('#modal').fadeOut(400);
+}
+
+function count_chars() {
+    $('#update-message').keydown(function() {
+        var count = maxcharlimit - $('#update-message').val().length;
+        $('#char-counter').html(count);
+        if (count < 10) {
+            $('#char-counter').addClass('maxchar');
+        } else {
+            $('#char-counter').removeClass('maxchar');
+        }
+    });
+}
+
+function reset_update_box() {
+    $('#update-message').val('');
+    $('#char-counter').html('140');
 }

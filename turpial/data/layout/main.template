@@ -19,11 +19,23 @@
                 <div class="button" title="<% $add_columns %>"><a href="cmd:add_column"><% img "dock-add.png" %></a></div>
                 <div class="button" title="<% $accounts_manager %>"><a href="cmd:accounts_manager"><% img "dock-accounts.png" %></a></div>
                 <div class="button" title="<% $follow %>"><a href="cmd:follow"><% img "dock-profile.png" %></a></div>
-                <div class="button" title="<% $update_status %>"><a href="cmd:update_status"><% img "dock-update.png" %></a></div>
+                <div class="button" title="<% $update_status %>"><a href="javascript: show_update_box()"><% img "dock-update.png" %></a></div>
                 <div class="clearfix"></div>
             </div>
         </div>
         <div class="clearfix"></div>
+        <div id="modal" style="display: block;"><div class="background"></div></div>
+        <div id="update-box">
+            <div class="header">
+                <label class="text"><% $whats_happening %></label>
+                <a href="javascript: close_update_box();" class="close" title="<% $close %>"><% img "action-delete.png" %></a>
+                <label id="char-counter">140</label>
+                <div class="clearfix"></div>
+            </div>
+            <div class="body">
+                <div class="message-container"><textarea id="update-message" rows="3"></textarea></div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

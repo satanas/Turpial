@@ -106,15 +106,16 @@ class HtmlParser:
         else:
             return ''
     
-    def __favorite_tag(self, favorite, status_id):
-        if favorite:
-            cmd = "cmd:unfav:%s" % status_id
+    def __favorite_tag(self, status):
+        args = ARG_SEP.join([status.account_id, status.id_])
+        if status.is_favorite:
+            cmd = "cmd:unfav:%s" % args
             icon = self.__image_tag("mark-favorite.png", 16, 16, class_='star')
+            return "<a id='fav-mark-%s' href='%s'>%s</a>" % (status.id_, cmd, icon)
         else:
-            cmd = "cmd:fav:%s" % status_id
+            cmd = "cmd:fav:%s" % args
             icon = self.__image_tag("mark-unfavorite.png", 16, 16, class_='star')
-        
-        return "<a href='%s'>%s</a>" % (cmd, icon)
+            return "<a id='fav-mark-%s' href='%s' style='display: none;' class='favmark-%s'>%s</a>" % (status.id_, cmd, status.id_, icon)
     
     def __highlight_username(self, status):
         url = status.username + ARG_SEP + status.account_id
@@ -320,7 +321,7 @@ class HtmlParser:
             section = section.replace('<% @verified %>', self.__verified_tag(status.is_verified))
             section = section.replace('<% @protected %>', self.__protected_tag(status.is_protected))
             section = section.replace('<% @reposted %>', self.__reposted_tag(status.reposted_by))
-            section = section.replace('<% @favorite %>', self.__favorite_tag(status.is_favorite, status.id_))
+            section = section.replace('<% @favorite %>', self.__favorite_tag(status))
             section = section.replace('<% @menu %>', menu)
             
             result += section + '\n'

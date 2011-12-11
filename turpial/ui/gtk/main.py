@@ -8,8 +8,11 @@
 import os
 import gtk
 import sys
+import urllib
 import gobject
 import logging
+
+from xml.sax.saxutils import unescape
 
 from libturpial.common import ColumnType
 
@@ -92,6 +95,9 @@ class Main(Base, gtk.Window):
             self.refresh_column(args[0])
         elif action == 'delete_column':
             self.delete_column(args[0])
+        elif action == 'status_quote':
+            text = unescape(urllib.unquote(args[2]))
+            print "RT @%s: %s" % (args[1], text)
             
     def __link_request(self, widget, url):
         self.open_url(url)
@@ -375,7 +381,7 @@ class Main(Base, gtk.Window):
             self.columns[0].column_id), self.update_column1)
         '''
         self.worker.register(self.core.get_column_statuses, (column.account_id, 
-            column.column_name), self.update_column, column.id_)
+            column.column_name, 60), self.update_column, column.id_)
         return True
         
     def download_rates(self):
@@ -414,6 +420,7 @@ class Main(Base, gtk.Window):
         page = self.htmlparser.render_statuses(arg.items)
         element = "#list-%s" % column_id
         self.container.update_element(element, page, 'recalculate_column_size(); enable_trigger();')
+        
         '''
         gtk.gdk.threads_enter()
         

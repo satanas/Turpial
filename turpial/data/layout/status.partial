@@ -14,9 +14,7 @@
         <div class="repost"><label><% @reposted_by %></label></div>
         <div class="options">
             <div id="buttonbox-<% @status_id %>" style="display: none;">
-                <a href="#" class="action">Reply</a>
-                <a href="#" class="action">Quote</a>
-                <a href="#" class="action">Retweet</a>
+                <% @menu %>
             </div>
             <div class="clearfix"></div>
         </div>

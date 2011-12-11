@@ -7,6 +7,7 @@
 
 import re
 import os
+import urllib
 
 from turpial.ui.lang import i18n
 from libturpial.common import ARG_SEP
@@ -134,7 +135,8 @@ class HtmlParser:
     def __highlight_mentions(self, status, text):
         for h in status.entities['mentions']:
             cad = '<a href="cmd:show_profile:%s">%s</a>' % (h.url, h.display_text)
-            text = text.replace(h.search_for, cad)
+            pattern = re.compile(h.search_for, re.IGNORECASE)
+            text = pattern.sub(cad, text)
         return text
         
     def __highlight_urls(self, status, text):
@@ -146,6 +148,30 @@ class HtmlParser:
             cad = '<a href="link:%s">%s</a>' % (url.url, url.display_text)
             text = text.replace(url.search_for, cad)
         return text
+    
+    def __build_menu(self, status):
+        menu = ''
+        if not status.is_own:
+            # Reply
+            cmd = ARG_SEP.join([status.account_id, status.id_, status.username])
+            menu += "<a href='cmd:status_reply:%s' class='action'>%s</a>" % (cmd, i18n.get('reply'))
+            mentions = status.get_reply_mentions()
+            if len(mentions) > 1:
+                str_mentions = '-'.join(mentions)
+                cmd = ARG_SEP.join([status.account_id, status.id_, str_mentions])
+                menu += "<a href='cmd:status_reply_all:%s' class='action'>%s</a>" % (cmd, i18n.get('reply_all'))
+            
+            # Quote
+            cmd = ARG_SEP.join([status.account_id, status.username, urllib.quote(status.text.encode('utf-8'))])
+            menu += "<a href='cmd:status_quote:%s' class='action'>%s</a>" % (cmd, i18n.get('quote'))
+            
+            # Repeat
+            cmd = ARG_SEP.join([status.account_id, status.id_])
+            menu += "<a href='cmd:status_repeat:%s' class='action'>%s</a>" % (cmd, i18n.get('retweet'))
+        else:
+            cmd = ARG_SEP.join([status.account_id, status.id_])
+            menu += "<a href='cmd:status_delete:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))
+        return menu
     
     def __parse_tags(self, page):
         for part in PARTIAL_PATTERN.findall(page):
@@ -240,26 +266,7 @@ class HtmlParser:
                 checked = 'checked="checked"'
             protocols += '<option value="%s" %s>%s</option>' % (p, checked, p.capitalize())
         return protocols
-    '''
-    def accounts_for_options(self, alist, default=''):
-        accounts = '<option value="null">%s</option>' % i18n.get('--account--')
-        for a in alist:
-            checked = ''
-            if a.id_ == default:
-                checked = 'selected="selected"'
-            name = "%s (%s)" % (a.id_.split('-')[0], a.id_.split('-')[1])
-            accounts += '<option value="%s" %s>%s</option>' % (a.id_, checked, name)
-        return accounts
     
-    def columns_for_options(self, clist, default=''):
-        columns = '<option value="null">%s</option>' % i18n.get('--column--')
-        for c in clist:
-            checked = ''
-            if c == default:
-                checked = 'selected="selected"'
-            columns += '<option value="%s" %s>%s</option>' % (c, checked, c)
-        return columns
-    '''
     def render_account_list(self, accounts):
         self.partials['accounts'] = ''
         partial = self.__open_partial('account')
@@ -302,6 +309,7 @@ class HtmlParser:
             message = self.__highlight_groups(status, message)
             message = self.__highlight_mentions(status, message)
             username = self.__highlight_username(status)
+            menu = self.__build_menu(status)
             
             section = partial.replace('<% @status_id %>', status.id_)
             section = section.replace('<% @avatar %>', status.avatar)
@@ -313,6 +321,7 @@ class HtmlParser:
             section = section.replace('<% @protected %>', self.__protected_tag(status.is_protected))
             section = section.replace('<% @reposted %>', self.__reposted_tag(status.reposted_by))
             section = section.replace('<% @favorite %>', self.__favorite_tag(status.is_favorite, status.id_))
+            section = section.replace('<% @menu %>', menu)
             
             result += section + '\n'
         

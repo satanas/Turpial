@@ -180,6 +180,7 @@
 
 .tweet .content .options {
     height: 16px;
+    margin-top: 3px;
 }
 
 .tweet .content .options .action {

@@ -31,7 +31,7 @@
 
 .header .combo {
     float: left;
-    border-radius: 2px;
+    /*border-radius: 2px;*/
     margin: 0px 5px 0 5px;
 }
 
@@ -72,8 +72,8 @@
     float: left;
     width: 100%;
     height: 100%;
-    border: 1px solid #ccc;
-    border-width: 0 0 0 0px;
+    /*border: 1px solid #ccc;
+    border-width: 0 0 0 0px;*/
 }
 
 .list, .empty-list {
@@ -175,16 +175,15 @@
 }
 
 .tweet .content .repost {
-    /*float: left;*/
     margin-top: 2px;
 }
 
 .tweet .content .options {
-    /*float: right;*/
+    height: 16px;
 }
 
-.tweet .content .action {
-    margin-left: 5px;
-    border: 1px solid #ccc;
+.tweet .content .options .action {
+    margin-left: 10px;
     float: right;
+    font-size: 10px;
 }

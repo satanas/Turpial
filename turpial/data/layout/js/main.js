@@ -57,3 +57,15 @@ function remove_column(column_id) {
     num_columns--;
     recalculate_column_size();
 }
+
+function enable_trigger() {
+    $('.content').mouseover(function() {
+        var name = $(this).attr('name');
+        $('#buttonbox-' + name).show();
+    });
+    
+    $('.content').mouseleave(function() {
+        var name = $(this).attr('name');
+        $('#buttonbox-' + name).hide();
+    });
+}

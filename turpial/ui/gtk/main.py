@@ -413,7 +413,7 @@ class Main(Base, gtk.Window):
             return
         page = self.htmlparser.render_statuses(arg.items)
         element = "#list-%s" % column_id
-        self.container.update_element(element, page, 'recalculate_column_size();')
+        self.container.update_element(element, page, 'recalculate_column_size(); enable_trigger();')
         '''
         gtk.gdk.threads_enter()
         

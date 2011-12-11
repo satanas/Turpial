@@ -57,7 +57,7 @@ class HtmlParser:
             self.scripts.append(filepath)
         
         # Load default css
-        for css in ['common']: #'grids-min', , 'notice'
+        for css in ['common']:
             filepath = os.path.realpath(os.path.join(CSS_LAYOUT_DIR, css + '.css'))
             self.styles.append(filepath)
         

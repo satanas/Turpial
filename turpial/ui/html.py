@@ -155,13 +155,10 @@ class HtmlParser:
         menu = ''
         if not status.is_own:
             # Reply
-            cmd = ARG_SEP.join([status.account_id, status.id_, status.username])
-            menu += "<a href='cmd:reply_status:%s' class='action'>%s</a>" % (cmd, i18n.get('reply'))
             mentions = status.get_reply_mentions()
-            if len(mentions) > 1:
-                str_mentions = '-'.join(mentions)
-                cmd = ARG_SEP.join([status.account_id, status.id_, str_mentions])
-                menu += "<a href='cmd:reply_all_status:%s' class='action'>%s</a>" % (cmd, i18n.get('reply_all'))
+            str_mentions = '|'.join(mentions)
+            cmd = ARG_SEP.join([status.account_id, status.id_, str_mentions])
+            menu += "<a href='cmd:reply_status:%s' class='action'>%s</a>" % (cmd, i18n.get('reply'))
             
             # Quote
             cmd = ARG_SEP.join([status.account_id, status.username, urllib.quote(status.text.encode('utf-8'))])

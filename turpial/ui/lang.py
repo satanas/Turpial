@@ -76,6 +76,10 @@ text box below and click OK:'),
     'retweeted_by': _("Retweeted by"),
     'no_column_yet': _("There are no available columns because I'm still logging in"),
     'whats_happening': _("What's happening?"),
+    'retweeting': _("Retweeting..."),
+    'successfully_retweeted': _("Sucessfully retweeted"),
+    'adding_to_fav': _("Adding to favorites..."),
+    'removing_from_fav': _("Removing from favorites..."),
 }
 
 class i18n:

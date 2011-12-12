@@ -67,6 +67,8 @@ function remove_column(column_id) {
 function enable_trigger() {
     $('.content').mouseover(function() {
         var name = $(this).attr('name');
+        var indicator = $('#indicator-' + name).val();
+        if (indicator != "") return;
         $('#buttonbox-' + name).show();
         $('.favmark-' + name).show();
     });
@@ -90,7 +92,12 @@ function close_update_box() {
 }
 
 function count_chars() {
-    $('#update-message').keydown(function() {
+    $('#update-message').keyup(function(event) {
+        console.log('tecla: ' + event.keyCode);
+        if (event.keyCode == 27) {
+            close_update_box();
+            return;
+        }
         var count = maxcharlimit - $('#update-message').val().length;
         $('#char-counter').html(count);
         if (count < 10) {
@@ -104,4 +111,22 @@ function count_chars() {
 function reset_update_box() {
     $('#update-message').val('');
     $('#char-counter').html('140');
+}
+
+function lock_status(status_id, message) {
+    $('#buttonbox-' + status_id).hide();
+    $('.favmark-' + status_id).hide();
+    $('#progress-box-' + status_id).show();
+    $('#progress-msg-' + status_id).html(message);
+    $('#indicator-' + status_id).val(message);
+}
+
+function unlock_status(status_id) {
+    $('#progress-box-' + status_id).fadeOut(400, function() {
+        $('#progress-msg-' + status_id).html('');
+        $('#indicator-' + status_id).val('');
+    });
+}
+
+function mark_favorite(status_id) {
 }

@@ -109,11 +109,11 @@ class HtmlParser:
     def __favorite_tag(self, status):
         args = ARG_SEP.join([status.account_id, status.id_])
         if status.is_favorite:
-            cmd = "cmd:unfav:%s" % args
+            cmd = "cmd:unfav_status:%s" % args
             icon = self.__image_tag("mark-favorite.png", 16, 16, class_='star')
             return "<a id='fav-mark-%s' href='%s'>%s</a>" % (status.id_, cmd, icon)
         else:
-            cmd = "cmd:fav:%s" % args
+            cmd = "cmd:fav_status:%s" % args
             icon = self.__image_tag("mark-unfavorite.png", 16, 16, class_='star')
             return "<a id='fav-mark-%s' href='%s' style='display: none;' class='favmark-%s'>%s</a>" % (status.id_, cmd, status.id_, icon)
     
@@ -155,23 +155,23 @@ class HtmlParser:
         if not status.is_own:
             # Reply
             cmd = ARG_SEP.join([status.account_id, status.id_, status.username])
-            menu += "<a href='cmd:status_reply:%s' class='action'>%s</a>" % (cmd, i18n.get('reply'))
+            menu += "<a href='cmd:reply_status:%s' class='action'>%s</a>" % (cmd, i18n.get('reply'))
             mentions = status.get_reply_mentions()
             if len(mentions) > 1:
                 str_mentions = '-'.join(mentions)
                 cmd = ARG_SEP.join([status.account_id, status.id_, str_mentions])
-                menu += "<a href='cmd:status_reply_all:%s' class='action'>%s</a>" % (cmd, i18n.get('reply_all'))
+                menu += "<a href='cmd:reply_all_status:%s' class='action'>%s</a>" % (cmd, i18n.get('reply_all'))
             
             # Quote
             cmd = ARG_SEP.join([status.account_id, status.username, urllib.quote(status.text.encode('utf-8'))])
-            menu += "<a href='cmd:status_quote:%s' class='action'>%s</a>" % (cmd, i18n.get('quote'))
+            menu += "<a href='cmd:quote_status:%s' class='action'>%s</a>" % (cmd, i18n.get('quote'))
             
             # Repeat
             cmd = ARG_SEP.join([status.account_id, status.id_])
-            menu += "<a href='cmd:status_repeat:%s' class='action'>%s</a>" % (cmd, i18n.get('retweet'))
+            menu += "<a href='cmd:repeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('retweet'))
         else:
             cmd = ARG_SEP.join([status.account_id, status.id_])
-            menu += "<a href='cmd:status_delete:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))
+            menu += "<a href='cmd:delete_status:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))
         return menu
     
     def __parse_tags(self, page):

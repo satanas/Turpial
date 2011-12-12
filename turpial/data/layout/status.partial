@@ -1,4 +1,5 @@
 <div class="tweet">
+    <input id="indicator-<% @status_id %>" type="hidden" value="" />
     <div class="icon"><img src="<% @avatar %>" width="48" height="48" /></div>
     <div class="content" name="<% @status_id %>">
         <div>
@@ -15,6 +16,10 @@
         <div class="options">
             <div id="buttonbox-<% @status_id %>" style="display: none;">
                 <% @menu %>
+            </div>
+            <div class="progress-box" id="progress-box-<% @status_id %>" style="display: none;">
+                <label id="progress-msg-<% @status_id %>">Loading...</label>
+                <% rimg "loader.gif", 14, 14 %>
             </div>
             <div class="clearfix"></div>
         </div>

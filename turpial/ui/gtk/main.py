@@ -95,9 +95,17 @@ class Main(Base, gtk.Window):
             self.refresh_column(args[0])
         elif action == 'delete_column':
             self.delete_column(args[0])
-        elif action == 'status_quote':
+        elif action == 'quote_status':
             text = unescape(urllib.unquote(args[2]))
             print "RT @%s: %s" % (args[1], text)
+        elif action == 'repeat_status':
+            self.repeat_status(args[0], args[1])
+        elif action == 'fav_status':
+            cmd = "lock_status('%s', '%s');" % (args[1], 'Marking favorite...')
+            self.container.execute(cmd)
+        elif action == 'unfav_status':
+            cmd = "lock_status('%s', '%s');" % (args[1], 'Unmarking favorite...')
+            self.container.execute(cmd)
             
     def __link_request(self, widget, url):
         self.open_url(url)
@@ -365,6 +373,34 @@ class Main(Base, gtk.Window):
             self.container.execute('remove_column("' + column_id + '");')
         self.__remove_timer(column_id)
     
+    def repeat_status(self, account_id, status_id):
+        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('retweeting'))
+        self.container.execute(cmd)
+        
+        self.worker.register(self.core.repeat_status, (account_id, status_id), 
+            self.repeat_response, status_id)
+    
+    def repeat_response(self, response, status_id):
+        if response.code > 0:
+            self.show_notice(response.errmsg, 'error')
+        else:
+            self.show_notice(i18n.get('successfully_retweeted'), 'info')
+        cmd = "unlock_status('%s');" % (status_id)
+        self.container.execute(cmd)
+    
+    def fav_status(self, account_id, status_id):
+        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('adding_to_fav'))
+        self.container.execute(cmd)
+        
+        self.worker.register(self.core.mark_favorite, (account_id, status_id), 
+            self.fav_response, status_id)
+    
+    def fav_response(self, response, status_id):
+        if response.code > 0:
+            self.show_notice(response.errmsg, 'error')
+        cmd = "unlock_status('%s');" % (status_id)
+        self.container.execute(cmd)
+        
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------

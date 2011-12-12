@@ -266,3 +266,14 @@
     /*border-color: rgba(0, 108, 18, 0.8);
     -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(0, 108, 18, 0.6);*/
 }
+
+.progress-box label {
+    font-size: 11px;
+    color: #000;
+    float: right;
+}
+
+.progress-box img {
+    float: right;
+    margin-right: 10px;
+}

@@ -15,8 +15,8 @@ from turpial.ui.gtk.waiting import CairoWaiting
 
 class OAuthWindow(gtk.Window, gobject.GObject):
     __gsignals__ = {
-        "response": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
-        "cancel": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
+        "response": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gobject.TYPE_STRING,)),
+        "cancel": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gobject.TYPE_STRING,)),
     }
     
     def __init__(self, mainwin, parent, account_id):

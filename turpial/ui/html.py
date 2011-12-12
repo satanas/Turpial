@@ -70,7 +70,7 @@ class HtmlParser:
         if os.path.isfile(css_file):
             self.styles.append(css_file)
         
-    def __image_tag(self, filename, base=True, width=None, height=None, class_=None):
+    def __image_tag(self, filename, base=True, width=None, height=None, class_=None, visible=True):
         if base:
             filepath = os.path.realpath(os.path.join(IMAGES_DIR, filename))
         else:
@@ -80,10 +80,14 @@ class HtmlParser:
         if class_:
             class_tag = "class='%s'" % class_
         
+        visible_tag = ''
+        if not visible:
+            visible_tag = "style='display: none;'"
+        
         if width and height:
-            return "<img src='file://%s' width='%s' height='%s' %s/>" % (filepath, width, height, class_tag)
+            return "<img src='file://%s' width='%s' height='%s' %s %s/>" % (filepath, width, height, class_tag, visible_tag)
         else:
-            return "<img src='file://%s' %s/>" % (filepath, class_tag)
+            return "<img src='file://%s' %s %s/>" % (filepath, class_tag, visible_tag)
     
     def __query_tag(self):
         return "<img style='display:none;' id='query' src='' alt='' />"
@@ -106,16 +110,13 @@ class HtmlParser:
         else:
             return ''
     
-    def __favorite_tag(self, status):
-        args = ARG_SEP.join([status.account_id, status.id_])
+    def __favorite_tag(self):
+        return self.__image_tag("mark-favorite.png", 16, 16, class_='star')
+    
+    def __favorite_visible(self, status):
         if status.is_favorite:
-            cmd = "cmd:unfav_status:%s" % args
-            icon = self.__image_tag("mark-favorite.png", 16, 16, class_='star')
-            return "<a id='fav-mark-%s' href='%s'>%s</a>" % (status.id_, cmd, icon)
-        else:
-            cmd = "cmd:fav_status:%s" % args
-            icon = self.__image_tag("mark-unfavorite.png", 16, 16, class_='star')
-            return "<a id='fav-mark-%s' href='%s' style='display: none;' class='favmark-%s'>%s</a>" % (status.id_, cmd, status.id_, icon)
+            return 'display: block;'
+        return 'display: none;'
     
     def __highlight_username(self, status):
         url = status.username + ARG_SEP + status.account_id
@@ -169,6 +170,15 @@ class HtmlParser:
             # Repeat
             cmd = ARG_SEP.join([status.account_id, status.id_])
             menu += "<a href='cmd:repeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('retweet'))
+            
+            # Fav
+            args = ARG_SEP.join([status.account_id, status.id_])
+            if status.is_favorite:
+                cmd = "cmd:unfav_status:%s" % args
+                menu += "<a id='fav-mark-%s' href='%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('-fav'))
+            else:
+                cmd = "cmd:fav_status:%s" % args
+                menu += "<a id='fav-mark-%s' href='%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('+fav'))
         else:
             cmd = ARG_SEP.join([status.account_id, status.id_])
             menu += "<a href='cmd:delete_status:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))
@@ -321,7 +331,8 @@ class HtmlParser:
             section = section.replace('<% @verified %>', self.__verified_tag(status.is_verified))
             section = section.replace('<% @protected %>', self.__protected_tag(status.is_protected))
             section = section.replace('<% @reposted %>', self.__reposted_tag(status.reposted_by))
-            section = section.replace('<% @favorite %>', self.__favorite_tag(status))
+            section = section.replace('<% @fav_visible %>', self.__favorite_visible(status))
+            section = section.replace('<% @favorite %>', self.__favorite_tag())
             section = section.replace('<% @menu %>', menu)
             
             result += section + '\n'

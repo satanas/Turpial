@@ -128,5 +128,11 @@ function unlock_status(status_id) {
     });
 }
 
-function mark_favorite(status_id) {
+function update_favorite_mark(status_id, cmd, label, visible) {
+    $('#fav-mark-' + status_id).attr('href', cmd);
+    $('#fav-mark-' + status_id).html(label);
+    if (visible == true)
+        $('#fav-icon-' + status_id).show();
+    else
+        $('#fav-icon-' + status_id).hide();
 }

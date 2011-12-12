@@ -7,7 +7,7 @@
             <label class="name"><% @username %></label>
             <% @protected %>
             <% @verified %>
-            <% @favorite %>
+            <div id="fav-icon-<% @status_id %>" style="<% @fav_visible %>"><% @favorite %></div>
             <div class="clearfix"></div>
         </div>
         <div class="message"><% @message %></div>

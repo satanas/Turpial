@@ -14,6 +14,7 @@ import logging
 
 from xml.sax.saxutils import unescape
 
+from libturpial.common import ARG_SEP
 from libturpial.common import ColumnType
 
 from turpial.ui.lang import i18n
@@ -101,11 +102,9 @@ class Main(Base, gtk.Window):
         elif action == 'repeat_status':
             self.repeat_status(args[0], args[1])
         elif action == 'fav_status':
-            cmd = "lock_status('%s', '%s');" % (args[1], 'Marking favorite...')
-            self.container.execute(cmd)
+            self.fav_status(args[0], args[1])
         elif action == 'unfav_status':
-            cmd = "lock_status('%s', '%s');" % (args[1], 'Unmarking favorite...')
-            self.container.execute(cmd)
+            self.unfav_status(args[0], args[1])
             
     def __link_request(self, widget, url):
         self.open_url(url)
@@ -393,13 +392,32 @@ class Main(Base, gtk.Window):
         self.container.execute(cmd)
         
         self.worker.register(self.core.mark_favorite, (account_id, status_id), 
-            self.fav_response, status_id)
+            self.fav_response, True)
     
-    def fav_response(self, response, status_id):
+    def unfav_status(self, account_id, status_id):
+        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('removing_from_fav'))
+        self.container.execute(cmd)
+        
+        self.worker.register(self.core.unmark_favorite, (account_id, status_id), 
+            self.fav_response, False)
+    
+    def fav_response(self, response, fav=False):
         if response.code > 0:
             self.show_notice(response.errmsg, 'error')
-        cmd = "unlock_status('%s');" % (status_id)
-        self.container.execute(cmd)
+        else:
+            status = response.items
+            args = ARG_SEP.join([status.account_id, status.id_])
+            temp = ''
+            if fav:
+                newcmd = "cmd:unfav_status:%s" % args
+                temp = "update_favorite_mark('%s', '%s', '%s', true);" % (status.id_, 
+                    newcmd, i18n.get('-fav'))
+            else:
+                newcmd = "cmd:fav_status:%s" % args
+                temp = "update_favorite_mark('%s', '%s', '%s', false);" % (status.id_, 
+                    newcmd, i18n.get('+fav'))
+        temp += "unlock_status('%s');" % (status.id_)
+        self.container.execute(temp)
         
     # ------------------------------------------------------------
     # Timer Methods

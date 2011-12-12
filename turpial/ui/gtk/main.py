@@ -53,7 +53,6 @@ class Main(Base, gtk.Window):
         self.add(self.container)
         
         self.mode = 0
-        self.curr_acc = None
         
         # Configuration
         self.showed = True
@@ -215,40 +214,40 @@ class Main(Base, gtk.Window):
         else:
             gobject.timeout_add(200, funct, arg)
     
-    def __login_callback(self, arg):
+    def __login_callback(self, arg, account_id):
         if arg.code > 0:
-            #msg = i18n.get(rtn.errmsg)
             msg = arg.errmsg
             self.accountsdlg.cancel_login(msg)
             return
         
         auth_obj = arg.items
         if auth_obj.must_auth():
-            oauthwin = OAuthWindow(self, self.accountsdlg.form)
+            oauthwin = OAuthWindow(self, self.accountsdlg.form, account_id)
             oauthwin.connect('response', self.__oauth_callback)
             oauthwin.connect('cancel', self.__cancel_callback)
             oauthwin.open(auth_obj.url)
         else:
-            self.__auth_callback(arg)
+            self.__auth_callback(arg, account_id)
     
-    def __oauth_callback(self, widget, verifier):
+    def __oauth_callback(self, widget, verifier, account_id):
         #self.form.set_loading_message(i18n.get('authorizing'))
-        self.worker.register(self.core.authorize_oauth_token, (self.curr_acc, verifier), self.__auth_callback)
+        self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
     
-    def __cancel_callback(self, widget, reason):
-        self.delete_account(self.curr_acc)
+    def __cancel_callback(self, widget, reason, account_id):
+        self.delete_account(account_id)
         self.accountsdlg.cancel_login(i18n.get(reason))
-        self.curr_acc = None
     
-    def __auth_callback(self, arg):
+    def __auth_callback(self, arg, account_id):
+        print "auth", arg.code, arg.items
         if arg.code > 0:
             msg = arg.errmsg
             self.accountsdlg.cancel_login(msg)
         else:
             #self.form.set_loading_message(i18n.get('authenticating'))
-            self.worker.register(self.core.auth, (self.curr_acc), self.__done_callback)
+            self.worker.register(self.core.auth, (account_id), self.__done_callback, account_id)
     
-    def __done_callback(self, arg):
+    def __done_callback(self, arg, account_id):
+        print "done", arg.code, arg.items
         if arg.code > 0:
             msg = arg.errmsg
             self.accountsdlg.cancel_login(msg)
@@ -258,11 +257,9 @@ class Main(Base, gtk.Window):
             self.accountsdlg.update()
         
             for col in self.get_registered_columns():
-                if col.account_id == self.curr_acc:
+                if col.account_id == account_id:
                     self.download_stream(col)
                     self.__add_timer(col)
-        
-        self.curr_acc = None
     
     def show_notice(self, msg, type_):
         cmd = 'show_notice("%s", "%s");' % (msg, type_)
@@ -339,16 +336,16 @@ class Main(Base, gtk.Window):
     
     def login(self):
         for acc in self.get_accounts_list():
-            self.curr_acc = acc
-            self.worker.register(self.core.login, (acc), self.__login_callback)
+            #if acc == 'satanas82-twitter': continue
+            self.worker.register(self.core.login, (acc), self.__login_callback, acc)
                     
     def delete_account(self, account_id):
         self.core.unregister_account(account_id, True)
         self.accountsdlg.update()
     
     def save_account(self, username, protocol_id, password):
-        self.curr_acc = self.core.register_account(username, protocol_id, password, True)
-        self.worker.register(self.core.login, (self.curr_acc), self.__login_callback)
+        account_id = self.core.register_account(username, protocol_id, password, True)
+        self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
     
     def save_column(self, column_id):
         column = self.core.register_column(column_id)

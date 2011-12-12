@@ -19,10 +19,11 @@ class OAuthWindow(gtk.Window, gobject.GObject):
         "cancel": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
     }
     
-    def __init__(self, mainwin, parent):
+    def __init__(self, mainwin, parent, account_id):
         gobject.GObject.__init__(self)
         gtk.Window.__init__(self)
         
+        self.account_id = account_id
         self.mainwin = mainwin
         self.set_title(i18n.get('secure_auth'))
         self.set_default_size(800, 450)
@@ -76,7 +77,7 @@ class OAuthWindow(gtk.Window, gobject.GObject):
     def __accept(self, widget):
         verifier = self.pin.get_text()
         if verifier == '': 
-            self.emit('cancel', 'invalid_pin')
+            self.emit('cancel', 'invalid_pin', self.account_id)
             self.destroy()
             return
         
@@ -98,9 +99,9 @@ class OAuthWindow(gtk.Window, gobject.GObject):
     def quit(self, response=None):
         self.view.stop()
         if response: 
-            self.emit('response', response)
+            self.emit('response', response, self.account_id)
         else:
-            self.emit('cancel', 'login_cancelled')
+            self.emit('cancel', 'login_cancelled', self.account_id)
         self.destroy()
         
 gobject.type_register(OAuthWindow)

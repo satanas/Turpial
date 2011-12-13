@@ -10,7 +10,6 @@
         <div class="extra">
             <ul id="nav">
                 <li><a href="cmd:close"><% $close %></a></li>
-                <li><a href="cmd:columns"><% $columns %></a></li>
                 <li><a href="cmd:new_account"><% $add %></a></li>
             </ul>
         </div>

@@ -238,7 +238,6 @@ class Main(Base, gtk.Window):
         self.accountsdlg.cancel_login(i18n.get(reason))
     
     def __auth_callback(self, arg, account_id):
-        print "auth", arg.code, arg.items
         if arg.code > 0:
             msg = arg.errmsg
             self.accountsdlg.cancel_login(msg)
@@ -247,7 +246,6 @@ class Main(Base, gtk.Window):
             self.worker.register(self.core.auth, (account_id), self.__done_callback, account_id)
     
     def __done_callback(self, arg, account_id):
-        print "done", arg.code, arg.items
         if arg.code > 0:
             msg = arg.errmsg
             self.accountsdlg.cancel_login(msg)
@@ -336,10 +334,13 @@ class Main(Base, gtk.Window):
     
     def login(self):
         for acc in self.get_accounts_list():
-            #if acc == 'satanas82-twitter': continue
             self.worker.register(self.core.login, (acc), self.__login_callback, acc)
                     
     def delete_account(self, account_id):
+        reg_columns = self.get_registered_columns()
+        for col in reg_columns:
+            if col.account_id == account_id:
+                self.delete_column(col.id_)
         self.core.unregister_account(account_id, True)
         self.accountsdlg.update()
     

@@ -16,6 +16,7 @@
         <div class="options">
             <div id="buttonbox-<% @status_id %>" style="display: none;">
                 <% @menu %>
+                <div class="clearfix"></div>
             </div>
             <div class="progress-box" id="progress-box-<% @status_id %>" style="display: none;">
                 <label id="progress-msg-<% @status_id %>">Loading...</label>

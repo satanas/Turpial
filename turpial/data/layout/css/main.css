@@ -60,6 +60,12 @@
     background-color: #424242;
 }
 
+.action {
+    margin-left: 10px;
+    float: right;
+    font-size: 10px;
+}
+
 .action_refresh {
     background: transparent url('<% css_img "action-refresh.png" %>') no-repeat center;
 }
@@ -183,12 +189,6 @@
     margin-top: 3px;
 }
 
-.tweet .content .options .action {
-    margin-left: 10px;
-    float: right;
-    font-size: 10px;
-}
-
 /*** Modal stuffs ***/
 #modal {
     width: 100%;
@@ -276,4 +276,47 @@
 .progress-box img {
     float: right;
     margin-right: 10px;
+}
+
+#buttonbox-update {
+    margin: 0 10px 0 5px;
+}
+
+#buttonbox-update a {
+    color: #ccc;
+}
+
+#buttonbox-update a:hover {
+    color: #fff;
+}
+
+#sendwith-box {
+    margin: 0 10px 0 5px;
+}
+
+#sendwith-box label {
+    color: #ccc;
+    font-size: 11px;
+    float: left;
+    margin: 5px 5px 0 0;
+}
+
+.toggle {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #444;
+    display: block;
+    float: left;
+    margin-right: 5px;
+    background-color: #666;
+}
+
+.toggle.down {
+    border: 1px solid #ccc;
+    background-color: #ddd;
+}
+
+.toggleicon {
+    margin: 2px 0 0 2px;
 }

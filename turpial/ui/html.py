@@ -181,6 +181,15 @@ class HtmlParser:
             menu += "<a href='cmd:delete_status:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))
         return menu
     
+    def __account_buttons(self, accounts):
+        buttons = ''
+        for acc in accounts:
+            name = acc.split('-')[0]
+            image_name = acc.split('-')[1] + ".png"
+            image = self.__image_tag(image_name, 16, 16, class_='toggleicon')
+            buttons += "<a href='#' title='%s' class='toggle'>%s</a>" % (name, image)
+        return buttons
+        
     def __parse_tags(self, page):
         for part in PARTIAL_PATTERN.findall(page):
             page = page.replace(part[0], self.partials[part[1]])
@@ -243,7 +252,9 @@ class HtmlParser:
         content = ''
         for column in columns:
             content += self.render_column(column)
+        acc_buttons = self.__account_buttons(accounts)
         self.app_layout = self.app_layout.replace('<% @content %>', content)
+        self.app_layout = self.app_layout.replace('<% @account_buttons %>', acc_buttons)
         
         page = self.__render()
         # TODO: Look for a better way of handle javascript code from python

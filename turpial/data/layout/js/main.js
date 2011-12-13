@@ -8,6 +8,7 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     count_chars();
+    enable_updatebox_toggle();
 });
 
 function recalculate_column_size(nw, nh) {
@@ -29,7 +30,7 @@ function recalculate_column_size(nw, nh) {
     var list_height = column_height - 35;
     var combo_width = column_width - 60;
     var tweet_width = column_width - 92;
-    var update_msg_width = width - 15;
+    var update_msg_width = width - 12;
     
     $('#content').css('height', content_height + 'px');
     $('.column').css('width', column_width + 'px');
@@ -77,6 +78,12 @@ function enable_trigger() {
         var name = $(this).attr('name');
         $('#buttonbox-' + name).hide();
         $('.favmark-' + name).hide();
+    });
+}
+
+function enable_updatebox_toggle() {
+    $('.toggle').click(function() {
+        $(this).toggleClass('down');
     });
 }
 

@@ -81,6 +81,11 @@ text box below and click OK:'),
     'successfully_retweeted': _("Sucessfully retweeted"),
     'adding_to_fav': _("Adding to favorites..."),
     'removing_from_fav': _("Removing from favorites..."),
+    'short_urls': _("Short URLs"),
+    'short': _("Short"),
+    'upload_image': _("Upload image"),
+    'image': _("Image"),
+    'send_with': _("Send with:"),
 }
 
 class i18n:

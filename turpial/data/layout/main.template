@@ -34,6 +34,17 @@
             </div>
             <div class="body">
                 <div class="message-container"><textarea id="update-message" rows="3"></textarea></div>
+                <div id="buttonbox-update">
+                    <a href="#" class="action" title="<% $update_status %>">Submit</a>
+                    <a href="#" class="action" title="<% $short_urls %>">Short</a>
+                    <a href="#" class="action" title="<% $upload_image %>">Image</a>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="sendwith-box">
+                    <label><% $send_with %></label>
+                    <% @account_buttons %>
+                    <div class="clearfix"></div>
+                </div>
             </div>
         </div>
     </div>

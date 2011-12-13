@@ -327,7 +327,7 @@ class Main(Base, gtk.Window):
         else:
             page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
         self.container.render(page)
-        self.login()
+        #self.login()
         
     def show_about(self):
         about = About(self)
@@ -436,29 +436,8 @@ class Main(Base, gtk.Window):
             column.column_name, 60), self.update_column, column.id_)
         return True
         
-    def download_rates(self):
-        self.__controller._update_rate_limits()
-        return True
-        
-    def download_favorites(self):
-        self.__controller._update_favorites()
-        return True
-        
-    def download_friends(self):
-        self.__controller._update_friends()
-        return True
-        
     def start_updating_column1(self):
         print 'Updating column 1'
-        
-    def start_updating_column2(self):
-        self.home.replies.start_update()
-        
-    def start_updating_column3(self):
-        self.home.direct.start_update()
-        
-    def start_search(self):
-        self.profile.search.start_update()
 
     def refresh_column(self, column_id):
         for col in self.get_registered_columns():

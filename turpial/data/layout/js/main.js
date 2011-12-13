@@ -21,8 +21,9 @@ function recalculate_column_size(nw, nh) {
     
     var content_height = height - 23;
     var dock_width = 22 * dock_elements;
-    var notice_container_width = width - (22 * dock_elements) - 10;
-    var notice_width = notice_container_width - 20;
+    var main_notice_container_width = width - (22 * dock_elements) - 10;
+    var main_notice_width = main_notice_container_width - 20;
+    var updatebox_notice_width = width - 170;
     var column_width = (width / num_columns) - 1;
     var column_height = content_height;
     var wrapper_height = height - 32;
@@ -36,8 +37,9 @@ function recalculate_column_size(nw, nh) {
     $('.column').css('width', column_width + 'px');
     $('.column').css('height', column_height + 'px');
     $('#dock').css('width', dock_width + 'px');
-    $('#notice-container').css('width', notice_container_width + 'px');
-    $('#notice').css('width', notice_width + 'px');
+    $('#main-notice-container').css('width', main_notice_container_width + 'px');
+    $('#main-notice').css('width', main_notice_width + 'px');
+    $('#updatebox-notice').css('width', updatebox_notice_width + 'px');
     $('.wrapper').css('height', wrapper_height + 'px');
     $('.wrapper').css('width', column_width + 'px');
     
@@ -91,6 +93,7 @@ function show_update_box() {
     $('#modal').fadeIn();
     $('#update-box').fadeIn();
     $('#update-message').focus();
+    show_notice('updatebox', 'Mierda, probando probando 1, 2, 3', 'error');
 }
 
 function close_update_box() {
@@ -142,4 +145,14 @@ function update_favorite_mark(status_id, cmd, label, visible) {
         $('#fav-icon-' + status_id).show();
     else
         $('#fav-icon-' + status_id).hide();
+}
+
+function update_status() {
+    lock_updatebox('Sending...');
+}
+
+function lock_updatebox(message) {
+    $('#buttonbox-update').hide();
+    $('#progress-box-updatebox').show();
+    $('#progress-msg-updatebox').html(message);
 }

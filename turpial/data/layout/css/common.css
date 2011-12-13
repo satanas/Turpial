@@ -31,6 +31,17 @@ input[type="text"], input[type="password"]{
     margin: 0 0 5px 0;
 }
 
+.button {
+    float: left;
+    height: 19px;
+    width: 19px;
+    padding: 3px 0 0 3px;
+}
+
+.button:hover {
+    background-color: #424242;
+}
+
 .disabled_text {
     color: #999;
     cursor: default !important;
@@ -71,15 +82,13 @@ input[type="text"], input[type="password"]{
 
 /*** Notice stuffs ***/
 
-#notice-container {
+#main-notice-container {
     float: left;
-    width: 200px;
     height: 22px;
 }
 
-#notice {
+.notice {
     float: left;
-    width: 200px;
     height: 18px;
     margin-top: 4px;
     padding-left: 20px;
@@ -87,15 +96,15 @@ input[type="text"], input[type="password"]{
     color: #fff;
 }
 
-#notice.error {
+.notice.error {
     background: url('<% css_img "notice-error.png" %>') no-repeat 2px 0px;
 }
 
-#notice.info {
+.notice.info {
     background: url('<% css_img "notice-information.png" %>') no-repeat 2px 0px;
 }
 
-#notice.warning {
+.notice.warning {
     background: url('<% css_img "notice-warning.png" %>') no-repeat 2px 0px;
 }
 

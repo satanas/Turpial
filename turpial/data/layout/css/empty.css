@@ -7,26 +7,15 @@
 }
 
 #content {
+    float: left;
     height: 100%;
     width: 100%;
     background-color: #f2f1f0;
-    float: left;
 }
 
 .column {
     float: left;
     height: 100%;
-}
-
-.button, .disabled-button {
-    float: left;
-    width: 19px;
-    height: 19px;
-    padding: 3px 0 0 3px;
-}
-
-.button:hover {
-    background-color: #424242;
 }
 
 .empty-wrapper {

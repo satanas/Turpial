@@ -49,21 +49,11 @@
     font-weight: bold;
 }
 
-.button {
-    float: left;
-    height: 19px;
-    width: 19px;
-    padding: 3px 0 0 3px;
-}
-
-.button:hover {
-    background-color: #424242;
-}
-
 .action {
     margin-left: 10px;
     float: right;
     font-size: 10px;
+    max-width: 50px;
 }
 
 .action_refresh {
@@ -82,7 +72,8 @@
     border-width: 0 0 0 0px;*/
 }
 
-.list, .empty-list {
+/*.list, .empty-list {*/
+.list {
     background-color: #fff;
     color: #000;
     margin: 5px;
@@ -92,7 +83,7 @@
     height: 100%;
     overflow-y: auto;
 }
-
+/*
 .no-account {
     margin: 0 auto;
     width: 270px;
@@ -111,7 +102,7 @@
     margin: 0 auto;
     text-align: center;
 }
-
+*/
 /*** Tweet stuffs ***/
 
 .tweet {
@@ -213,7 +204,7 @@
     z-index: 100;
     background-color: #333;
     bottom: 0px;
-    height: 120px;
+    height: 130px;
     width: 100%;
 }
 
@@ -275,10 +266,11 @@
 
 .progress-box img {
     float: right;
-    margin-right: 10px;
+    margin-right: 8px;
 }
 
 #buttonbox-update {
+    height: 22px;
     margin: 0 10px 0 5px;
 }
 
@@ -288,6 +280,12 @@
 
 #buttonbox-update a:hover {
     color: #fff;
+}
+
+#progress-box-updatebox {
+    width: 100%;
+    margin: 0 -10px;
+    height: 22px;
 }
 
 #sendwith-box {

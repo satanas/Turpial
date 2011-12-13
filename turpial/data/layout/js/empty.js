@@ -30,8 +30,8 @@ function recalculate_column_size(nw, nh) {
     $('.column').css('width', column_width + 'px');
     $('.column').css('height', column_height + 'px');
     $('#dock').css('width', dock_width + 'px');
-    $('#notice-container').css('width', notice_container_width + 'px');
-    $('#notice').css('width', notice_width + 'px');
+    $('#main-notice-container').css('width', notice_container_width + 'px');
+    $('#main-notice').css('width', notice_width + 'px');
     $('.empty-wrapper').css('height', wrapper_height + 'px');
     $('.empty-wrapper').css('width', column_width + 'px');
     $('.empty-list').css('width', list_width + 'px');

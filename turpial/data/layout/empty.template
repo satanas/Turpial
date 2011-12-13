@@ -17,8 +17,8 @@
             </div>
         </div>
         <div id="dock-container">
-            <div id="notice-container">
-                <div id="notice" class="overflow"></div>
+            <div id="main-notice-container">
+                <div id="main-notice" class="notice overflow"></div>
             </div>
             <div id="dock">
                 <div class="button" title="<% $about %>"><a href="cmd:about"><% img "dock-about.png" %></a></div>

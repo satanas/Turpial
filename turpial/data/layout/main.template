@@ -10,8 +10,8 @@
             <% @content %>
         </div>
         <div id="dock-container">
-            <div id="notice-container">
-                <div id="notice" class="overflow"></div>
+            <div id="main-notice-container">
+                <div id="main-notice" class="notice overflow"></div>
             </div>
             <div id="dock">
                 <div class="button" title="<% $about %>"><a href="cmd:about"><% img "dock-about.png" %></a></div>
@@ -24,8 +24,8 @@
             </div>
         </div>
         <div class="clearfix"></div>
-        <div id="modal" style="display: block;"><div class="background"></div></div>
-        <div id="update-box">
+        <div id="modal" style="display: none;"><div class="background"></div></div>
+        <div id="update-box" style="display: none;">
             <div class="header">
                 <label class="text"><% $whats_happening %></label>
                 <a href="javascript: close_update_box();" class="close" title="<% $close %>"><% img "action-delete.png" %></a>
@@ -35,10 +35,15 @@
             <div class="body">
                 <div class="message-container"><textarea id="update-message" rows="3"></textarea></div>
                 <div id="buttonbox-update">
-                    <a href="#" class="action" title="<% $update_status %>">Submit</a>
+                    <div id="updatebox-notice" class="notice overflow"></div>
+                    <a href="javascript: update_status();" class="action" title="<% $update_status %>">Submit</a>
                     <a href="#" class="action" title="<% $short_urls %>">Short</a>
                     <a href="#" class="action" title="<% $upload_image %>">Image</a>
                     <div class="clearfix"></div>
+                </div>
+                <div class="progress-box" id="progress-box-updatebox" style="display: none;">
+                    <label id="progress-msg-updatebox">Loading...</label>
+                    <% rimg "loader.gif", 14, 14 %>
                 </div>
                 <div id="sendwith-box">
                     <label><% $send_with %></label>

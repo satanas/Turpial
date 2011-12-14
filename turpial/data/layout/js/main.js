@@ -1,5 +1,5 @@
+var arg_sep = '<% @arg_sep %>';
 var maxcharlimit = 140;
-var dock_elements = 6;
 var num_columns = <% @num_columns %>;
 
 $(document).ready(function() {
@@ -24,10 +24,6 @@ function recalculate_column_size(nw, nh) {
         height = nh;
     
     var content_height = height - 23;
-    var dock_width = 22 * dock_elements;
-    var main_notice_container_width = width - (22 * dock_elements) - 10;
-    var main_notice_width = main_notice_container_width - 20;
-    var updatebox_notice_width = width - 170;
     var column_width = (width / num_columns) - 1;
     var column_height = content_height;
     var wrapper_height = height - 32;
@@ -44,10 +40,6 @@ function recalculate_column_size(nw, nh) {
     $('#content').css('height', content_height + 'px');
     $('.column').css('width', column_width + 'px');
     $('.column').css('height', column_height + 'px');
-    $('#dock').css('width', dock_width + 'px');
-    $('#main-notice-container').css('width', main_notice_container_width + 'px');
-    $('#main-notice').css('width', main_notice_width + 'px');
-    $('#updatebox-notice').css('width', updatebox_notice_width + 'px');
     $('.wrapper').css('height', wrapper_height + 'px');
     $('.wrapper').css('width', column_width + 'px');
     
@@ -56,7 +48,6 @@ function recalculate_column_size(nw, nh) {
     $('.combo').css('width', combo_width + 'px');
     $('.tweet .content').css('width', tweet_width + 'px');
     
-    //$('#update-message').css('width', update_msg_width + 'px');
     $('.message-container').css('width', update_msg_width + 'px');
     
     $('#alert-message').css('width', alert_msg_width + 'px');
@@ -110,15 +101,47 @@ function show_update_box() {
 function close_update_box() {
     var status = $('#update-box').attr('name');
     if (status != '') return;
-    unlock_updatebox();
     hide_notice();
     $('#update-box').fadeOut(400, reset_update_box);
     $('#modal').fadeOut(400);
 }
 
+function done_update_box() {
+    $('#update-box').attr('name', '');
+    close_update_box();
+}
+
+function lock_update_box(message) {
+    $('#update-box').attr('name', message);
+    $('#update-message').attr('disabled', 'disabled');
+    $('.acc_selector').each(function() {
+        $(this).attr('disabled', 'disabled');
+    });
+    $('#buttonbox-update').hide();
+    $('#progress-box-updatebox').show();
+    $('#progress-msg-updatebox').html(message);
+}
+
+function unlock_update_box() {
+    //$('#update-box').attr('name', '');
+    $('#update-message').removeAttr('disabled');
+    $('.acc_selector').each(function() {
+        $(this).removeAttr('disabled');
+    });
+    $('#progress-box-updatebox').hide();
+    $('#progress-msg-updatebox').html('');
+    $('#buttonbox-update').show();
+}
+
+function reset_update_box() {
+    $('#update-message').val('');
+    $('#char-counter').html('140');
+    unlock_update_box();
+}
+
 function count_chars() {
     $('#update-message').keyup(function(event) {
-        console.log('tecla: ' + event.keyCode);
+        //console.log('tecla: ' + event.keyCode);
         if (event.keyCode == 27) {
             close_update_box();
             return;
@@ -131,11 +154,6 @@ function count_chars() {
             $('#char-counter').removeClass('maxchar');
         }
     });
-}
-
-function reset_update_box() {
-    $('#update-message').val('');
-    $('#char-counter').html('140');
 }
 
 function lock_status(status_id, message) {
@@ -163,44 +181,26 @@ function update_favorite_mark(status_id, cmd, label, visible) {
 }
 
 function update_status() {
-    var selected = false;
+    var selected = '';
     var text = $('#update-message').val();
     $('.acc_selector').each(function() {
         if ($(this).attr('checked'))
-            selected = true;
+            if (selected == '')
+                selected = $(this).val();
+            else
+                selected += '|' + $(this).val();
     });
-    if (selected) {
+    
+    if (selected != '') {
         if (text == '') {
             show_notice('<% $you_must_write_something %>', 'warning');
         } else if (text.length > maxcharlimit) {
             show_notice('<% $message_like_testament %>', 'warning');
         } else {
-            lock_updatebox('Sending...');
-            alert(text);
+            lock_update_box('<% $updating_status %>');
+            exec_command('cmd:update_status:' + selected + arg_sep + text);
         }
     } else {
         show_notice('<% $select_account_to_post %>', 'warning');
     }
-}
-
-function lock_updatebox(message) {
-    $('#update-box').attr('name', message);
-    $('#update-message').attr('disabled', 'disabled');
-    $('.acc_selector').each(function() {
-        $(this).attr('disabled', 'disabled');
-    });
-    $('#buttonbox-update').hide();
-    $('#progress-box-updatebox').show();
-    $('#progress-msg-updatebox').html(message);
-}
-
-function unlock_updatebox() {
-    $('#update-box').attr('name', '');
-    $('#update-message').removeAttr('disabled');
-    $('.acc_selector').each(function() {
-        $(this).removeAttr('disabled');
-    });
-    $('#progress-box-updatebox').hide();
-    $('#progress-msg-updatebox').html('');
-    $('#buttonbox-update').show();
 }

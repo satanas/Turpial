@@ -104,6 +104,8 @@ class Main(Base, gtk.Window):
             self.fav_status(args[0], args[1])
         elif action == 'unfav_status':
             self.unfav_status(args[0], args[1])
+        elif action == 'update_status':
+            self.update_status(args[0], args[1])
             
     def __link_request(self, widget, url):
         self.open_url(url)
@@ -416,7 +418,22 @@ class Main(Base, gtk.Window):
                     newcmd, i18n.get('+fav'))
         temp += "unlock_status('%s');" % (status.id_)
         self.container.execute(temp)
+    
+    def update_status(self, accounts, text):
+        message = urllib.unquote(text)
+        for acc in accounts.split('|'):
+            print acc, message
+            self.worker.register(self.core.update_status, (acc, message), 
+                self.update_status_response, acc)
+        self.container.execute('done_update_box();')
         
+    def update_status_response(self, response, acc):
+        if response.code > 0:
+            self.show_notice(response.errmsg, 'error')
+        else:
+            pass
+            #add to list
+    
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------

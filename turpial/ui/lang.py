@@ -89,6 +89,7 @@ text box below and click OK:'),
     'select_account_to_post': _("Select accounts to post"),
     'you_must_write_something': _("Hey! You must write something to post"),
     'message_like_testament': _("That message looks like a testament!"),
+    'updating_status': _("Updating status..."),
 }
 
 class i18n:

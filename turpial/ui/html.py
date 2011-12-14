@@ -259,6 +259,7 @@ class HtmlParser:
         
         page = self.__render()
         # TODO: Look for a better way of handle javascript code from python
+        page = page.replace('<% @arg_sep %>', ARG_SEP)
         page = page.replace('<% @num_columns %>', str(len(columns)))
         return page
         

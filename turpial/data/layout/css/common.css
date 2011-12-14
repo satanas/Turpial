@@ -75,43 +75,70 @@ input[disabled], textarea[disabled] { /*.disabled_input {*/
 
 #dock-container {
     height: 22px;
-    background: #3c3b37 url('<% css_img "header-background.png" %>') repeat-x;
-    float: left;
-    width: 100%;
+    background: url('<% css_img "anchor.png" %>') no-repeat bottom right;
+    float: right;
+    width: 160px;
 }
 
 #dock {
-    float: left;
-    width: 110px;
+    float: right;
     height: 22px;
+    margin-right: 10px;
 }
 
 /*** Notice stuffs ***/
 
-#main-notice-container {
-    float: left;
-    height: 22px;
+#alert-message {
+    position: absolute;
+    top: 25px;
+    margin: 0 auto;
+    z-index: 9999;
+    border-radius: 4px;
+    padding: 4px 5px 4px 10px;
+    background-repeat: repeat-x;
+    border-width: 1px;
+    border-style: solid;
+    cursor: pointer;
 }
 
-.notice {
+#alert-label {
     float: left;
-    height: 18px;
-    margin-top: 4px;
-    padding-left: 20px;
-    font-size: 11px;
+    font-size: 12px;
+    width: 200px;
+    margin-top: 3px;
+    cursor: pointer;
+}
+
+#alert-message .close {
+    float: right;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    opacity: 0.25;
+    width: 15px;
+    color: #000;
+}
+
+#alert-message.error {
     color: #fff;
+    background-color: #c43c35;
+    background-image: -webkit-linear-gradient(top, #ee5f5b, #c43c35);
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 
-.notice.error {
-    background: url('<% css_img "notice-error.png" %>') no-repeat 2px 0px;
+#alert-message.warning {
+    color: #404040;
+    background-color: #eedc94;
+    background-image: -webkit-linear-gradient(top, #fceec1, #eedc94);
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
-.notice.info {
-    background: url('<% css_img "notice-information.png" %>') no-repeat 2px 0px;
-}
-
-.notice.warning {
-    background: url('<% css_img "notice-warning.png" %>') no-repeat 2px 0px;
+#alert-message.info {
+    color: #fff;
+    background-color: #57a957;
+    background-image: -webkit-linear-gradient(top, #62c462, #57a957);
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 
 ::-webkit-scrollbar {

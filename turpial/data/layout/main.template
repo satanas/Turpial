@@ -7,16 +7,13 @@
     <% query %>
     <div id="container">
         <div id="alert-message" class="info" style="display: none;">
-            <a href='#' class="close">x</a>
+            <span class="close">x</span>
             <label id="alert-label" class="overflow"></label>
         </div>
         <div id="content">
             <% @content %>
         </div>
         <div id="dock-container">
-            <div id="main-notice-container">
-                <div id="main-notice" class="notice overflow"></div>
-            </div>
             <div id="dock">
                 <div class="button" title="<% $about %>"><a href="cmd:about"><% img "dock-about.png" %></a></div>
                 <div class="button" title="<% $preferences %>"><a href="cmd:preferences"><% img "dock-preferences.png" %></a></div>
@@ -39,7 +36,6 @@
             <div class="body">
                 <div class="message-container"><textarea id="update-message" rows="3"></textarea></div>
                 <div id="buttonbox-update">
-                    <div id="updatebox-notice" class="notice overflow"></div>
                     <a href="javascript: update_status();" class="action" title="<% $update_status %>">Submit</a>
                     <a href="#" class="action" title="<% $short_urls %>">Short</a>
                     <a href="#" class="action" title="<% $upload_image %>">Image</a>

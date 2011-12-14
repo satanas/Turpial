@@ -186,8 +186,9 @@ class HtmlParser:
         for acc in accounts:
             name = acc.split('-')[0]
             image_name = acc.split('-')[1] + ".png"
-            image = self.__image_tag(image_name, 16, 16, class_='toggleicon')
-            buttons += "<a href='#' title='%s' class='toggle'>%s</a>" % (name, image)
+            image = self.__image_tag(image_name, 16, 16)
+            #buttons += "<a href='#' title='%s' class='toggle'>%s</a>" % (name, image)
+            buttons += "<div class='checkbox' title='%s'>%s<label><input type='checkbox' class='acc_selector' value='%s' /></label><div class='clearfix'></div></div>" % (name, image, acc)
         return buttons
         
     def __parse_tags(self, page):

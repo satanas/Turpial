@@ -6,27 +6,26 @@ function exec_command(cmd) {
     window.location = cmd;
 }
 
-function show_notice(container, message, type) {
-    var cid = '#' + container + '-notice';
-    $(cid).html(message);
-    $(cid).fadeIn();
-    $(cid).addClass(type);
-    timeout = setTimeout(function(){hide_notice(cid)}, 5000);
+function show_notice(message, type) {
+    $('#alert-label').html(message);
+    $('#alert-message').fadeIn();
+    $('#alert-message').addClass(type);
+    timeout = setTimeout(function(){hide_notice()}, 5000);
 }
 
-function hide_notice(cid, force) {
+function hide_notice(force) {
     clearTimeout(timeout);
     if (force == undefined)
-        $(cid).fadeOut();
+        $('#alert-message').fadeOut();
     else if (force == true)
-        $(cid).hide();
-    reset = setTimeout(function(){reset_notice(cid)}, 500);
+        $('#alert-message').hide();
+    reset = setTimeout(function(){reset_notice()}, 500);
 }
 
-function reset_notice(cid) {
+function reset_notice() {
     clearTimeout(reset);
-    $(cid).html('');
-    $(cid).removeClass('error');
-    $(cid).removeClass('warning');
-    $(cid).removeClass('info');
+    $('#alert-label').html('');
+    $('#alert-message').removeClass('error');
+    $('#alert-message').removeClass('warning');
+    $('#alert-message').removeClass('info');
 }

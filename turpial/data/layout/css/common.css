@@ -29,6 +29,7 @@ input[type="text"], input[type="password"]{
     vertical-align: middle;
     background: #fff url('<% css_img "textinput-background.png" %>') repeat-x top;
     margin: 0 0 5px 0;
+    border-color: #a7a3a0;
 }
 
 .button {
@@ -45,6 +46,11 @@ input[type="text"], input[type="password"]{
 .disabled_text {
     color: #999;
     cursor: default !important;
+}
+
+input[disabled], textarea[disabled] { /*.disabled_input {*/
+    color: #808080;
+    background-color: #ddd;
 }
 
 .clearfix:before, .clearfix:after {

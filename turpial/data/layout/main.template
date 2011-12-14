@@ -6,6 +6,10 @@
 <body>
     <% query %>
     <div id="container">
+        <div id="alert-message" class="info" style="display: none;">
+            <a href='#' class="close">x</a>
+            <label id="alert-label" class="overflow"></label>
+        </div>
         <div id="content">
             <% @content %>
         </div>
@@ -25,7 +29,7 @@
         </div>
         <div class="clearfix"></div>
         <div id="modal" style="display: none;"><div class="background"></div></div>
-        <div id="update-box" style="display: none;">
+        <div id="update-box" name="" style="display: none;">
             <div class="header">
                 <label class="text"><% $whats_happening %></label>
                 <a href="javascript: close_update_box();" class="close" title="<% $close %>"><% img "action-delete.png" %></a>

@@ -8,6 +8,7 @@
 import os
 import gtk
 import sys
+import base64
 import urllib
 import gobject
 import logging
@@ -420,11 +421,12 @@ class Main(Base, gtk.Window):
         self.container.execute(temp)
     
     def update_status(self, accounts, text):
-        message = urllib.unquote(text)
+        #message = urllib.unquote(text)
+        message = base64.b64decode(text)
         for acc in accounts.split('|'):
             print acc, message
-            self.worker.register(self.core.update_status, (acc, message), 
-                self.update_status_response, acc)
+            #self.worker.register(self.core.update_status, (acc, message), 
+            #    self.update_status_response, acc)
         self.container.execute('done_update_box();')
         
     def update_status_response(self, response, acc):

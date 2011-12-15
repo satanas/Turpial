@@ -29,3 +29,7 @@ function reset_notice() {
     $('#alert-message').removeClass('warning');
     $('#alert-message').removeClass('info');
 }
+
+function packstr(str) {
+    return window.btoa(unescape(encodeURIComponent(str)));
+}

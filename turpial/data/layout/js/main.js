@@ -205,7 +205,7 @@ function update_status() {
             show_notice('<% $message_like_testament %>', 'warning');
         } else {
             lock_update_box('<% $updating_status %>');
-            exec_command('cmd:update_status:' + selected + arg_sep + text);
+            exec_command('cmd:update_status:' + selected + arg_sep + packstr(text));
         }
     } else {
         show_notice('<% $select_account_to_post %>', 'warning');

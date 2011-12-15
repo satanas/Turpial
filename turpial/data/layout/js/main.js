@@ -10,9 +10,8 @@ $(document).ready(function() {
     $(window).resize(function() {
         recalculate_column_size();
     });
-    count_chars();
+    enable_key_events();
     enable_updatebox_toggle();
-    show_notice('Retweeted successfully', 'info');
 });
 
 function recalculate_column_size(nw, nh) {
@@ -92,10 +91,25 @@ function enable_updatebox_toggle() {
     });
 }
 
-function show_update_box() {
+function enable_key_events() {
+    $('#update-message').keyup(function(event) {
+        //console.log('tecla: ' + event.keyCode);
+        if (event.keyCode == 27) {
+            close_update_box();
+            return;
+        }
+        count_chars();
+    });
+}
+
+function show_update_box(message) {
     $('#modal').fadeIn();
     $('#update-box').fadeIn();
     $('#update-message').focus();
+    if (message != undefined) {
+        $('#update-message').val(message);
+        count_chars();
+    }
 }
 
 function close_update_box() {
@@ -140,20 +154,13 @@ function reset_update_box() {
 }
 
 function count_chars() {
-    $('#update-message').keyup(function(event) {
-        //console.log('tecla: ' + event.keyCode);
-        if (event.keyCode == 27) {
-            close_update_box();
-            return;
-        }
-        var count = maxcharlimit - $('#update-message').val().length;
-        $('#char-counter').html(count);
-        if (count < 10) {
-            $('#char-counter').addClass('maxchar');
-        } else {
-            $('#char-counter').removeClass('maxchar');
-        }
-    });
+    var count = maxcharlimit - $('#update-message').val().length;
+    $('#char-counter').html(count);
+    if (count < 10) {
+        $('#char-counter').addClass('maxchar');
+    } else {
+        $('#char-counter').removeClass('maxchar');
+    }
 }
 
 function lock_status(status_id, message) {
@@ -203,4 +210,10 @@ function update_status() {
     } else {
         show_notice('<% $select_account_to_post %>', 'warning');
     }
+}
+
+function quote_status(account_id, username, text) {
+    console.log(account_id + ',' + username + ',' + text);
+    var rt = "RT @" + username + ": " + text;
+    show_update_box(rt);
 }

@@ -464,6 +464,7 @@ class Main(Base, gtk.Window):
     def update_column(self, arg, column_id):
         if arg.code > 0:
             print arg.errmsg
+            self.show_notice(arg.errmsg, 'error')
             return
         page = self.htmlparser.render_statuses(arg.items)
         element = "#list-%s" % column_id

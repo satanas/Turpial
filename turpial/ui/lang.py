@@ -91,6 +91,8 @@ text box below and click OK:'),
     'message_like_testament': _("That message looks like a testament!"),
     'updating_status': _("Updating status..."),
     'error_posting_to': _("Error posting to %s"),
+    'manual_update': _("Manual Update"),
+    'delete_column': _("Delete Column"),
 }
 
 class i18n:

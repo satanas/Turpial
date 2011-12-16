@@ -20,7 +20,7 @@
             </div>
             <div class="progress-box" id="progress-box-<% @status_id %>" style="display: none;">
                 <label id="progress-msg-<% @status_id %>">Loading...</label>
-                <% rimg "loader.gif", 14, 14 %>
+                <% rimg "light-loader.gif", 16, 16 %>
             </div>
             <div class="clearfix"></div>
         </div>

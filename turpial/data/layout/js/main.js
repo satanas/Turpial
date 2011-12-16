@@ -225,6 +225,18 @@ function update_favorite_mark(status_id, cmd, label, visible) {
         $('#fav-icon-' + status_id).hide();
 }
 
+function start_updating_column(column_id) {
+    $('#header-buttons-' + column_id).hide();
+    $('#header-progress-' + column_id).show();
+}
+
+function stop_updating_column(column_id) {
+    $('#header-buttons-' + column_id).show();
+    $('#header-progress-' + column_id).hide();
+    recalculate_column_size();
+    enable_trigger();
+}
+
 /*** Commands ***/
 
 function update_status() {

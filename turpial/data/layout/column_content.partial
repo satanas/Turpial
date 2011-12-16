@@ -4,8 +4,14 @@
         <label class="overflow"><% @column_label %></label>
         <div class="clearfix"></div>
     </div>
-    <a href="cmd:delete_column:<% @column_id %>"><div class="button action_delete"></div></a>
-    <a href="cmd:update_column:<% @column_id %>"><div class="button action_refresh"></div></a>
+    <div id="header-buttons-<% @column_id %>" class="buttons" style="display: none">
+        <div class="button" title="<% $delete_column %>"><a href="cmd:delete_column:<% @column_id %>"><% img "action-delete.png" %></a></div>
+        <div class="button" title="<% $manual_update %>"><a href="cmd:update_column:<% @column_id %>"><% img "action-refresh.png" %></a></div>
+    </div>
+    <div id="header-progress-<% @column_id %>" class="progress">
+        <% img "dark-loader.gif" %>
+    </div>
+    <div class="clearfix"></div>
 </div>
 <div id="wrapper-<% @column_id %>" class="wrapper">
     <div id="list-<% @column_id %>" class="list"></div>

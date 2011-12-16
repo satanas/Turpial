@@ -342,7 +342,7 @@ class Main(Base, gtk.Window):
     def login(self):
         for acc in self.get_accounts_list():
             self.worker.register(self.core.login, (acc), self.__login_callback, acc)
-                    
+        
     def delete_account(self, account_id):
         reg_columns = self.get_registered_columns()
         for col in reg_columns:
@@ -475,22 +475,15 @@ class Main(Base, gtk.Window):
     
     def download_stream(self, column):
         '''
-        print self.columns, self.columns[0]
         if not self.columns[0]: return True
         if self.columns[0].updating: return True
         self.columns[0].updating = True
-        
-        self.start_updating_column1()
-        self.worker.register(self.core.get_column_statuses, (self.columns[0].account_id, 
-            self.columns[0].column_id), self.update_column1)
         '''
+        self.container.execute("start_updating_column('" + column.id_ + "');")
         self.worker.register(self.core.get_column_statuses, (column.account_id, 
             column.column_name, 60), self.update_column, column.id_)
         return True
         
-    def start_updating_column1(self):
-        print 'Updating column 1'
-
     def refresh_column(self, column_id):
         for col in self.get_registered_columns():
             if col.build_id() == column_id:
@@ -498,12 +491,13 @@ class Main(Base, gtk.Window):
         
     def update_column(self, arg, column_id):
         if arg.code > 0:
-            print arg.errmsg
             self.show_notice(arg.errmsg, 'error')
             return
-        page = self.htmlparser.render_statuses(arg.items)
+        
+        page = self.htmlparser.statuses(arg.items)
         element = "#list-%s" % column_id
-        self.container.update_element(element, page, 'recalculate_column_size(); enable_trigger();')
+        extra = "stop_updating_column('" + column_id + "');"
+        self.container.update_element(element, page, extra)
         
         '''
         gtk.gdk.threads_enter()

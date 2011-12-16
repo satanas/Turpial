@@ -46,19 +46,21 @@
     font-weight: bold;
 }
 
+.header .buttons {
+    float: right;
+    margin-right: 5px;
+}
+
+.header .progress {
+    float: right;
+    margin: 2px 8px 0 0;
+}
+
 .action {
     margin-left: 10px;
     float: right;
     font-size: 10px;
     max-width: 50px;
-}
-
-.action_refresh {
-    background: transparent url('<% css_img "action-refresh.png" %>') no-repeat center;
-}
-
-.action_delete {
-    background: transparent url('<% css_img "action-delete.png" %>') no-repeat center;
 }
 
 .wrapper {

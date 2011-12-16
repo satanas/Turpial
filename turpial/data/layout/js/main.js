@@ -84,12 +84,12 @@ function enable_trigger() {
         $('.favmark-' + name).hide();
     });
 }
-
+/*
 function enable_updatebox_toggle() {
     $('.toggle').click(function() {
         $(this).toggleClass('down');
     });
-}
+}*/
 
 function enable_key_events() {
     $('#update-message').keyup(function(event) {
@@ -125,6 +125,29 @@ function done_update_box() {
     close_update_box();
 }
 
+function reset_update_box() {
+    $('#update-message').val('');
+    $('#char-counter').html('140');
+    unlock_update_box();
+}
+
+function update_status_error(message) {
+    $('#update-box').attr('name', '');
+    show_notice(message, 'error');
+    unlock_update_box();
+}
+
+function broadcast_status_error(good_accounts, message) {
+    $('#update-box').attr('name', '');
+    show_notice(message, 'error');
+    unlock_update_box();
+    for (var i=0; i < good_accounts.length; i++) {
+        var acc = good_accounts[i];
+        $('#acc-selector-' + acc).attr('disabled', 'disabled');
+        $('#acc-selector-' + acc).attr('checked', '');
+    }
+}
+
 function lock_update_box(message) {
     $('#update-box').attr('name', message);
     $('#update-message').attr('disabled', 'disabled');
@@ -137,7 +160,6 @@ function lock_update_box(message) {
 }
 
 function unlock_update_box() {
-    //$('#update-box').attr('name', '');
     $('#update-message').removeAttr('disabled');
     $('.acc_selector').each(function() {
         $(this).removeAttr('disabled');
@@ -145,12 +167,6 @@ function unlock_update_box() {
     $('#progress-box-updatebox').hide();
     $('#progress-msg-updatebox').html('');
     $('#buttonbox-update').show();
-}
-
-function reset_update_box() {
-    $('#update-message').val('');
-    $('#char-counter').html('140');
-    unlock_update_box();
 }
 
 function count_chars() {
@@ -186,6 +202,8 @@ function update_favorite_mark(status_id, cmd, label, visible) {
     else
         $('#fav-icon-' + status_id).hide();
 }
+
+/*** Commands ***/
 
 function update_status() {
     var selected = '';

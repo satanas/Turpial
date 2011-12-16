@@ -420,21 +420,47 @@ class Main(Base, gtk.Window):
         temp += "unlock_status('%s');" % (status.id_)
         self.container.execute(temp)
     
-    def update_status(self, accounts, text):
+    def update_status(self, account, text):
         #message = urllib.unquote(text)
         message = base64.b64decode(text)
-        for acc in accounts.split('|'):
-            print acc, message
-            #self.worker.register(self.core.update_status, (acc, message), 
-            #    self.update_status_response, acc)
-        self.container.execute('done_update_box();')
+        accounts = []
+        for acc in account.split('|'):
+            accounts.append(acc)
         
-    def update_status_response(self, response, acc):
-        if response.code > 0:
-            self.show_notice(response.errmsg, 'error')
+        if len(accounts) > 1:
+            self.worker.register(self.core.broadcast_status, (accounts, message), 
+                self.broadcast_status_response)
         else:
-            pass
-            #add to list
+            self.worker.register(self.core.update_status, (accounts[0], message), 
+                self.update_status_response)
+        
+    def update_status_response(self, response):
+        if response.code > 0:
+            self.container.execute('update_status_error(' + response.errmsg + ');')
+        else:
+            self.container.execute('done_update_box();')
+        
+    def broadcast_status_response(self, responses):
+        bad_acc = []
+        good_acc = []
+        
+        error = False
+        for resp in responses:
+            if resp.code > 0:
+                error = True
+                pr_name = i18n.get(resp.account_id.split('-')[1])
+                bad_acc.append("%s (%s)" % (resp.account_id.split('-')[0], pr_name))
+            else:
+                good_acc.append(resp.account_id)
+        
+        if error:
+            errmsg = i18n.get('error_posting_to')
+            errmsg += ', '.join(bad_acc)
+            accounts = '["' + '","'.join(good_acc) + '"]'
+            print 'broadcast_status_error(' + accounts + ', "' + errmsg + '");'
+            self.container.execute('broadcast_status_error(' + accounts + ', "' + errmsg + '");')
+        else:
+            self.container.execute('done_update_box();')
     
     # ------------------------------------------------------------
     # Timer Methods

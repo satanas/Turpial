@@ -102,13 +102,33 @@ function enable_key_events() {
     });
 }
 
-function show_update_box(message) {
+function show_update_box(message, status_id, account_id, title) {
     $('#modal').fadeIn();
     $('#update-box').fadeIn();
-    $('#update-message').focus();
+    
+    
+    if (title == undefined) {
+        $('#update-box-title').html("<% $whats_happening %>");
+    } else {
+        $('#update-box-title').html(title);
+    }
+    
     if (message != undefined) {
         $('#update-message').val(message);
         count_chars();
+    }
+    
+    $('#update-message').focus();
+    
+    if (status_id != undefined) {
+        $('#in-reply-to-id').val(status_id);
+        $('.acc_selector').each(function() {
+            $(this).attr('disabled', 'disabled');
+            $(this).attr('checked', false);
+        });
+        $('#acc-selector-' + account_id).attr('checked', true);
+        /*index = message.length;
+        $('#update-message').setSelectionRange(index, index);*/
     }
 }
 
@@ -127,7 +147,9 @@ function done_update_box() {
 
 function reset_update_box() {
     $('#update-message').val('');
+    $('#in-reply-to-id').val('');
     $('#char-counter').html('140');
+    $('#char-counter').removeClass('maxchar');
     unlock_update_box();
 }
 
@@ -144,7 +166,7 @@ function broadcast_status_error(good_accounts, message) {
     for (var i=0; i < good_accounts.length; i++) {
         var acc = good_accounts[i];
         $('#acc-selector-' + acc).attr('disabled', 'disabled');
-        $('#acc-selector-' + acc).attr('checked', '');
+        $('#acc-selector-' + acc).attr('checked', false);
     }
 }
 
@@ -207,6 +229,7 @@ function update_favorite_mark(status_id, cmd, label, visible) {
 
 function update_status() {
     var selected = '';
+    var in_reply_to_id = $('#in-reply-to-id').val();
     var text = $('#update-message').val();
     $('.acc_selector').each(function() {
         if ($(this).attr('checked'))
@@ -223,7 +246,11 @@ function update_status() {
             show_notice('<% $message_like_testament %>', 'warning');
         } else {
             lock_update_box('<% $updating_status %>');
-            exec_command('cmd:update_status:' + selected + arg_sep + packstr(text));
+            if (in_reply_to_id == ''){
+                exec_command('cmd:update_status:' + selected + arg_sep + packstr(text));
+            } else {
+                exec_command('cmd:reply_status:' + selected + arg_sep + in_reply_to_id + arg_sep + packstr(text));
+            }
         }
     } else {
         show_notice('<% $select_account_to_post %>', 'warning');
@@ -234,4 +261,13 @@ function quote_status(account_id, username, text) {
     console.log(account_id + ',' + username + ',' + text);
     var rt = "RT @" + username + ": " + text;
     show_update_box(rt);
+}
+
+function reply_status(account_id, status_id, title, mentions) {
+    console.log(account_id + ',' + status_id + ',' + mentions);
+    var msg = "";
+    for (var i=0; i < mentions.length; i++) {
+        msg += "@" + mentions[i] + " ";
+    }
+    show_update_box(msg, status_id, account_id, title);
 }

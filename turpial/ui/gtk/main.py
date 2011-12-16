@@ -109,6 +109,8 @@ class Main(Base, gtk.Window):
             self.unfav_status(args[0], args[1])
         elif action == 'update_status':
             self.update_status(args[0], args[1])
+        elif action == 'reply_status':
+            self.reply_status(args[0], args[1], args[2])
             
     def __link_request(self, widget, url):
         self.open_url(url)
@@ -423,7 +425,6 @@ class Main(Base, gtk.Window):
         self.container.execute(temp)
     
     def update_status(self, account, text):
-        #message = urllib.unquote(text)
         message = base64.b64decode(text)
         accounts = []
         for acc in account.split('|'):
@@ -435,7 +436,12 @@ class Main(Base, gtk.Window):
         else:
             self.worker.register(self.core.update_status, (accounts[0], message), 
                 self.update_status_response)
-        
+    
+    def reply_status(self, account, status_id, text):
+        message = base64.b64decode(text)
+        self.worker.register(self.core.update_status, (account, message, status_id), 
+                self.update_status_response)
+    
     def update_status_response(self, response):
         if response.code > 0:
             self.container.execute('update_status_error(' + response.errmsg + ');')
@@ -456,8 +462,7 @@ class Main(Base, gtk.Window):
                 good_acc.append(resp.account_id)
         
         if error:
-            errmsg = i18n.get('error_posting_to')
-            errmsg += ', '.join(bad_acc)
+            errmsg = i18n.get('error_posting_to') % (', '.join(bad_acc))
             accounts = '["' + '","'.join(good_acc) + '"]'
             print 'broadcast_status_error(' + accounts + ', "' + errmsg + '");'
             self.container.execute('broadcast_status_error(' + accounts + ', "' + errmsg + '");')

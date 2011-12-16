@@ -90,7 +90,8 @@ text box below and click OK:'),
     'you_must_write_something': _("Hey! You must write something to post"),
     'message_like_testament': _("That message looks like a testament!"),
     'updating_status': _("Updating status..."),
-    'error_posting_to': _("Error posting to"),
+    'error_posting_to': _("Error posting to %s"),
+    'in_reply_to': _("In reply to %s"),
 }
 
 class i18n:

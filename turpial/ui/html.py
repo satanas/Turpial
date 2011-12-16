@@ -157,7 +157,7 @@ class HtmlParser:
             # Reply
             mentions = status.get_reply_mentions()
             str_mentions = '[\'' + '\',\''.join(mentions) + '\']'
-            title = i18n.get('in_reply_to') % (mentions[0])
+            title = i18n.get('in_reply_to').capitalize() + " " + mentions[0]
             cmd = "'%s','%s','%s',%s" % (status.account_id, status.id_, title, str_mentions)
             menu += "<a href=\"javascript: reply_status(%s)\" class='action'>%s</a>" % (cmd, i18n.get('reply'))
             

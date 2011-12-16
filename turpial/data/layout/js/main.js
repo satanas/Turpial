@@ -11,7 +11,7 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     enable_key_events();
-    enable_updatebox_toggle();
+    //enable_updatebox_toggle();
 });
 
 function recalculate_column_size(nw, nh) {

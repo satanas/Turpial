@@ -161,8 +161,8 @@ class HtmlParser:
             menu += "<a href='cmd:reply_status:%s' class='action'>%s</a>" % (cmd, i18n.get('reply'))
             
             # Quote
-            cmd = "\"%s\",\"%s\",\"%s\"" % (status.account_id, status.username, urllib.quote(status.text.encode('utf-8')))
-            menu += "<a href='javascript: quote_status(%s)' class='action'>%s</a>" % (cmd, i18n.get('quote'))
+            cmd = "'%s','%s','%s'" % (status.account_id, status.username, urllib.quote(status.text.encode('utf-8')))
+            menu += "<a href=\"javascript: quote_status(%s)\" class='action'>%s</a>" % (cmd, i18n.get('quote'))
             
             # Repeat
             cmd = ARG_SEP.join([status.account_id, status.id_])

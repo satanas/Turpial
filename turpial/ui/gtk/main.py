@@ -32,6 +32,8 @@ gtk.gdk.threads_init()
 
 log = logging.getLogger('Gtk')
 
+# TODO: Improve all splits for accounts_id with a common function
+
 class Main(Base, gtk.Window):
     def __init__(self, core, config):
         Base.__init__(self, core, config)

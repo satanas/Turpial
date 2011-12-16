@@ -307,47 +307,10 @@ class HtmlParser:
         
         return page
     
-    def render_statuses(self, statuses):
+    def statuses(self, statuses):
         result = ''
-        partial = self.__open_partial('status')
         for status in statuses:
-            timestamp = status.datetime
-            if status.source: 
-                timestamp += ' %s %s' % (i18n.get('from'), status.source)
-            if status.in_reply_to_user:
-                timestamp += ' %s %s' % (i18n.get('in_reply_to'), status.in_reply_to_user)
-            
-            reposted_by = ''
-            if status.reposted_by:
-                count = len(status.reposted_by)
-                if count > 1:
-                    temp = '%i %s' % (count, i18n.get('people'))
-                elif count == 1:
-                    temp = '1 %s' % i18n.get('person')
-                reposted_by = '%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
-
-            message = self.__highlight_urls(status, status.text)
-            message = self.__highlight_hashtags(status, message)
-            message = self.__highlight_groups(status, message)
-            message = self.__highlight_mentions(status, message)
-            username = self.__highlight_username(status)
-            menu = self.__build_menu(status)
-            
-            section = partial.replace('<% @status_id %>', status.id_)
-            section = section.replace('<% @avatar %>', status.avatar)
-            section = section.replace('<% @username %>', username)
-            section = section.replace('<% @message %>', message)
-            section = section.replace('<% @timestamp %>', timestamp)
-            section = section.replace('<% @reposted_by %>', reposted_by)
-            section = section.replace('<% @verified %>', self.__verified_tag(status.is_verified))
-            section = section.replace('<% @protected %>', self.__protected_tag(status.is_protected))
-            section = section.replace('<% @reposted %>', self.__reposted_tag(status.reposted_by))
-            section = section.replace('<% @fav_visible %>', self.__favorite_visible(status))
-            section = section.replace('<% @favorite %>', self.__favorite_tag())
-            section = section.replace('<% @menu %>', menu)
-            
-            result += section + '\n'
-        
+            result += self.status(status) + '\n'
         page = self.__parse_tags(result)
         return page
     
@@ -365,4 +328,42 @@ class HtmlParser:
         col = col.replace('<% @column_content %>', col_content)
         page = self.__parse_tags(col)
         return page
+    
+    def status(self, status):
+        timestamp = status.datetime
+        if status.source: 
+            timestamp += ' %s %s' % (i18n.get('from'), status.source)
+        if status.in_reply_to_user:
+            timestamp += ' %s %s' % (i18n.get('in_reply_to'), status.in_reply_to_user)
         
+        reposted_by = ''
+        if status.reposted_by:
+            count = len(status.reposted_by)
+            if count > 1:
+                temp = '%i %s' % (count, i18n.get('people'))
+            elif count == 1:
+                temp = '1 %s' % i18n.get('person')
+            reposted_by = '%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
+
+        message = self.__highlight_urls(status, status.text)
+        message = self.__highlight_hashtags(status, message)
+        message = self.__highlight_groups(status, message)
+        message = self.__highlight_mentions(status, message)
+        username = self.__highlight_username(status)
+        menu = self.__build_menu(status)
+        
+        section = self.__open_partial('status')
+        section = section.replace('<% @status_id %>', status.id_)
+        section = section.replace('<% @avatar %>', status.avatar)
+        section = section.replace('<% @username %>', username)
+        section = section.replace('<% @message %>', message)
+        section = section.replace('<% @timestamp %>', timestamp)
+        section = section.replace('<% @reposted_by %>', reposted_by)
+        section = section.replace('<% @verified %>', self.__verified_tag(status.is_verified))
+        section = section.replace('<% @protected %>', self.__protected_tag(status.is_protected))
+        section = section.replace('<% @reposted %>', self.__reposted_tag(status.reposted_by))
+        section = section.replace('<% @fav_visible %>', self.__favorite_visible(status))
+        section = section.replace('<% @favorite %>', self.__favorite_tag())
+        section = section.replace('<% @menu %>', menu)
+        
+        return section

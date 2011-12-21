@@ -114,7 +114,7 @@ function show_update_box(message, status_id, account_id, title) {
     }
     
     if (message != undefined) {
-        $('#update-message').val(message);
+        $('#update-message').focus().val(message);
         count_chars();
     }
     

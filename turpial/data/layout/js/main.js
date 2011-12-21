@@ -114,7 +114,7 @@ function show_update_box(message, status_id, account_id, title) {
     }
     
     if (message != undefined) {
-        $('#update-message').val(message);
+        $('#update-message').focus().val(message);
         count_chars();
     }
     
@@ -223,6 +223,13 @@ function update_favorite_mark(status_id, cmd, label, visible) {
         $('#fav-icon-' + status_id).show();
     else
         $('#fav-icon-' + status_id).hide();
+}
+
+function update_retweeted_mark(status_id, visible) {
+    if (visible == true)
+        $('#retweeted-icon-' + status_id).show();
+    else
+        $('#retweeted-icon-' + status_id).hide();
 }
 
 function start_updating_column(column_id) {

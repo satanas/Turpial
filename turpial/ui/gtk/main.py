@@ -385,11 +385,13 @@ class Main(Base, gtk.Window):
             self.repeat_response, status_id)
     
     def repeat_response(self, response, status_id):
+        cmd = ''
         if response.code > 0:
             self.show_notice(response.errmsg, 'error')
         else:
             self.show_notice(i18n.get('successfully_retweeted'), 'info')
-        cmd = "unlock_status('%s');" % (status_id)
+            cmd = "update_retweeted_mark('%s', true);" % (status_id)
+        cmd += "unlock_status('%s');" % (status_id)
         self.container.execute(cmd)
     
     def fav_status(self, account_id, status_id):

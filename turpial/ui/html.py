@@ -112,7 +112,15 @@ class HtmlParser:
     
     def __favorite_tag(self):
         return self.__image_tag("mark-favorite.png", 16, 16, class_='star')
-    
+ 
+    def __retweeted_tag(self):
+        return self.__image_tag("mark-retweeted.png", 16, 16, class_='retweeted')
+   
+    def __retweeted_visible(self, status):
+        if status.retweeted:
+            return 'display: block;'
+        return 'display: none;'
+
     def __favorite_visible(self, status):
         if status.is_favorite:
             return 'display: block;'
@@ -364,6 +372,8 @@ class HtmlParser:
         section = section.replace('<% @reposted %>', self.__reposted_tag(status.reposted_by))
         section = section.replace('<% @fav_visible %>', self.__favorite_visible(status))
         section = section.replace('<% @favorite %>', self.__favorite_tag())
+        section = section.replace('<% @retweeted_visible %>', self.__retweeted_visible(status))
+        section = section.replace('<% @retweeted %>', self.__retweeted_tag())
         section = section.replace('<% @menu %>', menu)
         
         return section

@@ -56,4 +56,4 @@ def available_interfaces():
     return ui_availables
 
 def default_interface():
-    return INTERFACES[0]
+    return INTERFACES['gtk']

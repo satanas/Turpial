@@ -491,6 +491,7 @@ class Main(Base, gtk.Window):
         
     def update_column(self, arg, column_id):
         if arg.code > 0:
+            self.container.execute("stop_updating_column('" + column_id + "');")
             self.show_notice(arg.errmsg, 'error')
             return
         

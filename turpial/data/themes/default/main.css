@@ -188,6 +188,10 @@
     float: right;
 }
 
+.tweet .content .retweeted {
+    float: right;
+}
+
 .tweet .content .message {
     font-size: 12px;
     cursor: default;

@@ -13,22 +13,17 @@ try:
         import ctypes
         libc = ctypes.CDLL('libc.so.6')
         libc.prctl(15, 'turpial', 0, 0)
-except ImportError:
-    pass
+except ImportError, exc:
+    print exc
 
 INTERFACES = {}
 DEFAULT_INTERFACE = None
-CMD_VERSION = None
-GTK_VERSION = None
-QT_VERSION = None
 
 # Load cmd
 try:
     from turpial.ui.cmd.main import Main as _CMD
-    from turpial.ui.cmd.main import VERSION as _CMDVERSION
     INTERFACES['cmd'] = _CMD
     DEFAULT_INTERFACE = 'cmd'
-    CMD_VERSION = _CMDVERSION
 except ImportError, exc:
     print exc
 

@@ -22,6 +22,7 @@ from turpial.ui.lang import i18n
 from turpial.ui.base import Base
 from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.about import About
+from turpial.singleton import Singleton
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.accounts import AccountsDialog
@@ -34,8 +35,9 @@ log = logging.getLogger('Gtk')
 
 # TODO: Improve all splits for accounts_id with a common function
 
-class Main(Base, gtk.Window):
+class Main(Base, Singleton, gtk.Window):
     def __init__(self, core, config):
+        Singleton.__init__(self)
         Base.__init__(self, core, config)
         gtk.Window.__init__(self)
         

@@ -134,6 +134,11 @@
     display: block;
 }
 
+.tweet .content .retweeted {
+    float: right;
+    display: block;
+}
+
 .tweet .content .message {
     font-size: 12px;
     cursor: default;

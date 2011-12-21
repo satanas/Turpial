@@ -225,6 +225,13 @@ function update_favorite_mark(status_id, cmd, label, visible) {
         $('#fav-icon-' + status_id).hide();
 }
 
+function update_retweeted_mark(status_id, visible) {
+    if (visible == true)
+        $('#retweeted-icon-' + status_id).show();
+    else
+        $('#retweeted-icon-' + status_id).hide();
+}
+
 function start_updating_column(column_id) {
     $('#header-buttons-' + column_id).hide();
     $('#header-progress-' + column_id).show();

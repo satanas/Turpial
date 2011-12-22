@@ -357,6 +357,7 @@ class HtmlParser:
         message = self.__highlight_hashtags(status, message)
         message = self.__highlight_groups(status, message)
         message = self.__highlight_mentions(status, message)
+        message = message.replace('\r', ' ')
         username = self.__highlight_username(status)
         menu = self.__build_menu(status)
         

@@ -327,6 +327,11 @@ class HtmlParser:
         page = self.__parse_tags(result)
         return page
     
+    def single_status(self, status):
+        result = self.status(status)
+        page = self.__parse_tags(result)
+        return page
+        
     def render_column(self, column):
         protocol_img = column.protocol_id + '.png'
         label = "%s :: %s" % (column.account_id.split('-')[0], column.column_name)
@@ -363,6 +368,7 @@ class HtmlParser:
         message = self.__highlight_groups(status, message)
         message = self.__highlight_mentions(status, message)
         message = message.replace('\r', ' ')
+        message = message.replace('\\"', '"')
         username = self.__highlight_username(status)
         menu = self.__build_menu(status)
         

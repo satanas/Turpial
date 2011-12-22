@@ -444,23 +444,25 @@ class Main(Base, Singleton, gtk.Window):
                 self.broadcast_status_response)
         else:
             self.worker.register(self.core.update_status, (accounts[0], message), 
-                self.update_status_response)
+                self.update_status_response, accounts[0])
     
     def reply_status(self, account, status_id, text):
         message = base64.b64decode(text)
         self.worker.register(self.core.update_status, (account, message, status_id), 
-                self.update_status_response)
+                self.update_status_response, accounts[0])
     
-    def update_status_response(self, response):
+    def update_status_response(self, response, account_id):
         if response.code > 0:
             self.container.execute('update_status_error(' + response.errmsg + ');')
         else:
-            self.container.execute('done_update_box();')
+            html_status = self.htmlparser.status(response.items)
+            id_ = '#list-%s-timeline' % account_id
+            self.container.prepend_element(id_, html_status, 'done_update_box(true);')
         
     def broadcast_status_response(self, responses):
+        cmd = ''
         bad_acc = []
         good_acc = []
-        
         error = False
         for resp in responses:
             if resp.code > 0:
@@ -468,15 +470,18 @@ class Main(Base, Singleton, gtk.Window):
                 pr_name = i18n.get(resp.account_id.split('-')[1])
                 bad_acc.append("%s (%s)" % (resp.account_id.split('-')[0], pr_name))
             else:
+                html_status = self.htmlparser.status(resp.items)
+                html_status = html_status.replace('"', '\\"')
+                cmd += 'append_status_to_timeline("%s", "%s");' % (resp.account_id, html_status)
                 good_acc.append(resp.account_id)
         
         if error:
             errmsg = i18n.get('error_posting_to') % (', '.join(bad_acc))
             accounts = '["' + '","'.join(good_acc) + '"]'
-            print 'broadcast_status_error(' + accounts + ', "' + errmsg + '");'
-            self.container.execute('broadcast_status_error(' + accounts + ', "' + errmsg + '");')
+            cmd += 'broadcast_status_error(' + accounts + ', "' + errmsg + '");'
         else:
-            self.container.execute('done_update_box();')
+            cmd += 'done_update_box();'
+        self.container.execute(cmd)
     
     # ------------------------------------------------------------
     # Timer Methods

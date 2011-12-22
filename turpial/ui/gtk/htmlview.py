@@ -90,9 +90,13 @@ class HtmlView(gtk.VBox, gobject.GObject):
         html = html.replace('"', '\\"')
         script = "$('%s').append(\"%s\"); %s" % (id_, html, extra)
         self.execute(script)
+    
+    def prepend_element(self, id_, html, extra=''):
+        html = html.replace('"', '\\"')
+        script = "$('%s').prepend(\"%s\"); %s" % (id_, html, extra)
+        self.execute(script)
         
-    def execute(self, script):
-        #print script
+    def execute(self, script, sanitize=False):
         script = script.replace('\n', ' ')
         self.view.execute_script(script)
     

@@ -131,8 +131,12 @@ function close_update_box() {
     $('#modal').fadeOut(400);
 }
 
-function done_update_box() {
+function done_update_box(recalculate) {
     $('#update-box').attr('name', '');
+    if ((recalculate != undefined) && (recalculate == true)) {
+        recalculate_column_size();
+        enable_trigger();
+    }
     close_update_box();
 }
 
@@ -223,6 +227,8 @@ function update_retweeted_mark(status_id, visible) {
         $('#retweeted-icon-' + status_id).hide();
 }
 
+/* Callbacks */
+
 function start_updating_column(column_id) {
     $('#header-buttons-' + column_id).hide();
     $('#header-progress-' + column_id).show();
@@ -231,6 +237,12 @@ function start_updating_column(column_id) {
 function stop_updating_column(column_id) {
     $('#header-buttons-' + column_id).show();
     $('#header-progress-' + column_id).hide();
+    recalculate_column_size();
+    enable_trigger();
+}
+
+function append_status_to_timeline(account_id, html_status) {
+    $('#list-' + account_id + '-timeline').prepend(html_status);
     recalculate_column_size();
     enable_trigger();
 }

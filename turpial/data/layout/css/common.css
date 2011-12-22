@@ -150,7 +150,7 @@ input[disabled], textarea[disabled] { /*.disabled_input {*/
 ::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.15);
     border: solid #fff;
-    min-height: 50px;
+    min-height: 30px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

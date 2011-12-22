@@ -15,6 +15,8 @@ except ImportError:
 from distutils.command.build import build as _build
 from babel.messages import frontend as babel
 
+from turpial import VERSION
+
 LONG_DESCRIPTION = """
 Turpial is a light, fast and beatiful microblogging client for GNU/Linux, 
 written in Python and fully functional
@@ -31,11 +33,10 @@ class build(_build):
 # looking distutils's copy_tree method
 data_files=[
     ('./', ['AUTHORS']),
+    ('share/icons/scalable/apps', ['turpial/data/pixmaps/turpial.svg']),
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
     ('share/applications', ['turpial.desktop']),
-    ('share/doc/turpial', ['ChangeLog',
-                   'README.rst',
-                   'COPYING']),
+    ('share/doc/turpial', ['ChangeLog', 'README.rst', 'COPYING']),
 ]
 '''
 pattern = re.compile('turpial/i18n/')
@@ -47,7 +48,7 @@ for root, dirs, files in os.walk(os.path.join('turpial', 'i18n')):
             data_files.append((dest, [fullpath]))
 '''
 setup(name="turpial",
-      version='2.0',
+      version=VERSION,
       description="A light, beautiful and functional microblogging client",
       long_description=LONG_DESCRIPTION,
       author="Wil Alvarez",
@@ -70,7 +71,8 @@ setup(name="turpial",
       packages=find_packages(),
       package_data={
         'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/themes/default/*', 
-            'data/layout/*.template', 'data/layout/*.partial', 'data/layout/js/*', 'data/layout/css/*']
+            'data/layout/*.template', 'data/layout/*.partial', 
+            'data/layout/js/*', 'data/layout/css/*']
       },
       entry_points={
         'console_scripts': [

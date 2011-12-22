@@ -11,7 +11,6 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     enable_key_events();
-    //enable_updatebox_toggle();
 });
 
 function recalculate_column_size(nw, nh) {
@@ -84,12 +83,6 @@ function enable_trigger() {
         $('.favmark-' + name).hide();
     });
 }
-/*
-function enable_updatebox_toggle() {
-    $('.toggle').click(function() {
-        $(this).toggleClass('down');
-    });
-}*/
 
 function enable_key_events() {
     $('#update-message').keyup(function(event) {
@@ -127,8 +120,6 @@ function show_update_box(message, status_id, account_id, title) {
             $(this).attr('checked', false);
         });
         $('#acc-selector-' + account_id).attr('checked', true);
-        /*index = message.length;
-        $('#update-message').setSelectionRange(index, index);*/
     }
 }
 
@@ -244,7 +235,7 @@ function stop_updating_column(column_id) {
     enable_trigger();
 }
 
-/*** Commands ***/
+/* Commands */
 
 function update_status() {
     var selected = '';

@@ -45,7 +45,7 @@ class Main(Base, Singleton, gtk.Window):
         self.set_title('Turpial')
         self.set_size_request(310, 350)
         self.set_default_size(310, 482)
-        self.set_icon(self.load_image('turpial.png', True))
+        self.set_icon(self.load_image('turpial.svg', True))
         self.set_position(gtk.WIN_POS_CENTER)
         self.set_gravity(gtk.gdk.GRAVITY_STATIC)
         self.connect('delete-event', self.__close)
@@ -305,7 +305,8 @@ class Main(Base, Singleton, gtk.Window):
         img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
             '..', '..', 'data', 'pixmaps', path))
         pix = gtk.gdk.pixbuf_new_from_file(img_path)
-        if pixbuf: return pix
+        if pixbuf: 
+            return pix
         avatar = gtk.Image()
         avatar.set_from_pixbuf(pix)
         del pix
@@ -485,7 +486,7 @@ class Main(Base, Singleton, gtk.Window):
         '''
         self.container.execute("start_updating_column('" + column.id_ + "');")
         self.worker.register(self.core.get_column_statuses, (column.account_id, 
-            column.column_name, 60), self.update_column, column.id_)
+            column.column_name, 200), self.update_column, column.id_)
         return True
         
     def refresh_column(self, column_id):
@@ -498,7 +499,6 @@ class Main(Base, Singleton, gtk.Window):
             self.container.execute("stop_updating_column('" + column_id + "');")
             self.show_notice(arg.errmsg, 'error')
             return
-        
         page = self.htmlparser.statuses(arg.items)
         element = "#list-%s" % column_id
         extra = "stop_updating_column('" + column_id + "');"

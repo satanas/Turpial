@@ -81,6 +81,9 @@ class HtmlView(gtk.VBox, gobject.GObject):
     def update_element(self, id_, html, extra=''):
         html = html.replace('"', '\\"')
         script = "$('%s').html(\"%s\"); %s" % (id_, html, extra)
+        #fd = open('/tmp/traceback', 'w')
+        #fd.write(script)
+        #fd.close()
         self.execute(script)
         
     def append_element(self, id_, html, extra=''):

@@ -99,13 +99,11 @@
     width: 48px;
     height: 48px;
     -webkit-border-radius: 8px;
-    -webkit-box-reflect:below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.5, transparent), to(white));
 }
 
 .tweet .content {
     float: left;
     padding: 0;
-    /*margin: 5px 0px 5px 5px;*/
     margin-top: 5px;
     position: relative;
     min-height: 50px;

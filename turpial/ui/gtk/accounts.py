@@ -21,7 +21,7 @@ class AccountsDialog(gtk.Window):
         self.mainwin = parent
         self.htmlparser = HtmlParser()
         self.set_title(i18n.get('accounts'))
-        self.set_size_request(310, 350)
+        self.set_size_request(360, 320)
         self.set_resizable(False)
         self.set_icon(self.mainwin.load_image('turpial.png', True))
         self.set_position(gtk.WIN_POS_CENTER)
@@ -48,9 +48,8 @@ class AccountsDialog(gtk.Window):
             self.form = AccountForm(self.mainwin, self)
         elif action == "delete_account":
             self.mainwin.delete_account(args[0])
-        elif action == "columns":
-            #self.__close(widget)
-            self.mainwin.columnsdlg.show()
+        elif action == "login":
+            self.mainwin.single_login(args[0])
     
     def update(self):
         if self.showed:

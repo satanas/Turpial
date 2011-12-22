@@ -15,8 +15,7 @@ import logging
 
 from xml.sax.saxutils import unescape
 
-from libturpial.common import ARG_SEP
-from libturpial.common import ColumnType
+from libturpial.common import *
 
 from turpial.ui.lang import i18n
 from turpial.ui.base import Base
@@ -113,7 +112,7 @@ class Main(Base, Singleton, gtk.Window):
             self.update_status(args[0], args[1])
         elif action == 'reply_status':
             self.reply_status(args[0], args[1], args[2])
-            
+        
     def __link_request(self, widget, url):
         self.open_url(url)
         
@@ -344,8 +343,13 @@ class Main(Base, Singleton, gtk.Window):
     
     def login(self):
         for acc in self.get_accounts_list():
-            self.worker.register(self.core.login, (acc), self.__login_callback, acc)
-        
+            self.single_login(acc)
+    
+    def single_login(self, acc):
+        self.core.change_login_status(acc, LoginStatus.IN_PROGRESS)
+        self.accountsdlg.update()
+        self.worker.register(self.core.login, (acc), self.__login_callback, acc)
+    
     def delete_account(self, account_id):
         reg_columns = self.get_registered_columns()
         for col in reg_columns:

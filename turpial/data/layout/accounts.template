@@ -7,13 +7,12 @@
     <% query %>
     <div id="container">
         <div id="list"><% @accounts %></div>
-        <div class="extra">
-            <ul id="nav">
-                <li><a href="cmd:close"><% $close %></a></li>
-                <li><a href="cmd:new_account"><% $add %></a></li>
-            </ul>
+    </div>
+    <div id="dock-container">
+        <div id="dock">
+            <div class="button" title="<% $add_account %>"><a href="cmd:new_account"><% img "dock-add.png" %></a></div>
+            <div class="clearfix"></div>
         </div>
-        <div class="clearfix"></div>
     </div>
 </body>
 </html>

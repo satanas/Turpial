@@ -10,7 +10,7 @@ import os
 import urllib
 
 from turpial.ui.lang import i18n
-from libturpial.common import ARG_SEP
+from libturpial.common import ARG_SEP, LoginStatus
 
 DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 IMAGES_DIR = os.path.join(DATA_DIR, 'pixmaps')
@@ -126,6 +126,14 @@ class HtmlParser:
             return 'display: block;'
         return 'display: none;'
     
+    def __login_action_tag(self, account):
+        if account.logged_in == LoginStatus.NONE:
+            return "<a href='cmd:login:%s'>%s</a>" % (account.id_, i18n.get('login'))
+        elif account.logged_in == LoginStatus.IN_PROGRESS:
+            return "<span class=\"progress\">%s</span>" % (i18n.get('in_progress'))
+        elif account.logged_in == LoginStatus.DONE:
+            return "<span class=\"done\">%s</span>" % (i18n.get('logged_in'))
+            
     def __highlight_username(self, status):
         url = status.username + ARG_SEP + status.account_id
         return '<a href="cmd:show_profile:%s">%s</a>' % (url, status.username)
@@ -301,14 +309,11 @@ class HtmlParser:
         self.partials['accounts'] = ''
         partial = self.__open_partial('account')
         for acc in accounts:
-            passwd = ''
-            if acc.profile.password:
-                passwd = acc.profile.password
             section = partial.replace('<% @account_id %>', acc.id_)
             section = section.replace('<% @account_name %>', acc.profile.username)
-            section = section.replace('<% @passwd %>', passwd)
             section = section.replace('<% @protocol_id %>', acc.id_.split('-')[1])
             section = section.replace('@protocol_img', acc.id_.split('-')[1] + '.png')
+            section = section.replace('<% @login_action %>', self.__login_action_tag(acc))
             
             self.partials['accounts'] += section + '\n'
         page = self.__parse_tags(self.partials['accounts'])

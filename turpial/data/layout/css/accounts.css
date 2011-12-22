@@ -1,14 +1,26 @@
+body {
+    background-color: #000;
+}
+
 #container {
     background-color: #f2f1f0;
     border: 1px solid #aaa;
-    padding: 10px;
+    padding: 5px;
 }
 
 #list {
-    width: 100px;
-    height: 100px;
+    width: 345px;
+    height: 282px;
     background-color: #fff;
     border: 1px solid #aaa;
+}
+
+#dock-container {
+    background: #000 url() no-repeat;
+}
+
+#dock {
+    margin-right: 5px;
 }
 
 .account {
@@ -21,7 +33,6 @@
 .account:hover {
     height: 30px;
     background-color: #ddd;
-    /*border: 1px solid #aaa;*/
     color: #000;
 }
 
@@ -42,33 +53,23 @@
     font-size: 14px;
 }
 
-.options label {
-    font-size: 13px;
+.options {
+    margin-right: 15px;
 }
 
-.options .action {
-    float: left;
-    display: block;
-    margin: 3px 7px 0 0;
-    cursor: pointer;
-}
-
-.extra {
-    height: 26px;
-}
-
-.extra ul {
-    height: 26px;
-    list-style-type: none;
-    margin: 10px 10px 0 0;
-    padding: 0;
+.action {
+    margin: 8px 0 0 10px;
     float: right;
+    font-size: 10px;
+    max-width: 70px;
+    font-weight: normal;
+    display: block;
 }
 
-.extra li {
-    float: left;
-    padding-left: 15px;
-    font-size: 11px;
+.progress {
+    color: #999;
 }
 
-
+.done {
+    color: #900;
+}

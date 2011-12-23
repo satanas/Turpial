@@ -227,6 +227,10 @@ function update_retweeted_mark(status_id, visible) {
         $('#retweeted-icon-' + status_id).hide();
 }
 
+function delete_status(status_id) {
+    $('#' + status_id).remove();
+}
+
 /* Callbacks */
 
 function start_updating_column(column_id) {

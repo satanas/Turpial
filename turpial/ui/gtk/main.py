@@ -83,37 +83,6 @@ class Main(Base, Singleton, gtk.Window):
         self.__create_trayicon()
         self.show_all()
         
-    def __action_request(self, widget, url):
-        action, args = self.htmlparser.parse_command(url)
-        print action, args
-        if action == 'about':
-            self.show_about()
-        elif action == 'settings':
-            self.container.execute("alert('hola');")
-        elif action == 'accounts_manager':
-            self.accountsdlg.show()
-        elif action == 'follow':
-            pass
-        elif action == 'add_column':
-            self.__show_add_column_menu(widget)
-        elif action == 'update_column':
-            self.refresh_column(args[0])
-        elif action == 'delete_column':
-            self.delete_column(args[0])
-        elif action == 'quote_status':
-            text = unescape(urllib.unquote(args[2]))
-            print "RT @%s: %s" % (args[1], text)
-        elif action == 'repeat_status':
-            self.repeat_status(args[0], args[1])
-        elif action == 'fav_status':
-            self.fav_status(args[0], args[1])
-        elif action == 'unfav_status':
-            self.unfav_status(args[0], args[1])
-        elif action == 'update_status':
-            self.update_status(args[0], args[1])
-        elif action == 'reply_status':
-            self.reply_status(args[0], args[1], args[2])
-        
     def __link_request(self, widget, url):
         self.open_url(url)
         
@@ -275,10 +244,6 @@ class Main(Base, Singleton, gtk.Window):
                 if col.account_id == account_id:
                     self.download_stream(col)
                     self.__add_timer(col)
-    
-    def show_notice(self, msg, type_):
-        cmd = 'show_notice("%s", "%s");' % (msg, type_)
-        self.container.execute(cmd)
         
     def __add_timer(self, column):
         #if (self.timer1 != home_interval):
@@ -293,7 +258,40 @@ class Main(Base, Singleton, gtk.Window):
         if self.timers.has_key(column_id):
             gobject.source_remove(self.timers[column_id])
             log.debug('--Removed timer for %s' % column_id)
-            
+    
+    def __action_request(self, widget, url):
+        action, args = self.htmlparser.parse_command(url)
+        print action, args
+        if action == 'about':
+            self.show_about()
+        elif action == 'settings':
+            self.container.execute("alert('hola');")
+        elif action == 'accounts_manager':
+            self.accountsdlg.show()
+        elif action == 'follow':
+            pass
+        elif action == 'add_column':
+            self.__show_add_column_menu(widget)
+        elif action == 'update_column':
+            self.refresh_column(args[0])
+        elif action == 'delete_column':
+            self.delete_column(args[0])
+        elif action == 'quote_status':
+            text = unescape(urllib.unquote(args[2]))
+            print "RT @%s: %s" % (args[1], text)
+        elif action == 'repeat_status':
+            self.repeat_status(args[0], args[1])
+        elif action == 'fav_status':
+            self.fav_status(args[0], args[1])
+        elif action == 'unfav_status':
+            self.unfav_status(args[0], args[1])
+        elif action == 'update_status':
+            self.update_status(args[0], args[1])
+        elif action == 'reply_status':
+            self.reply_status(args[0], args[1], args[2])
+        elif action == 'delete_status':
+            self.delete_status(args[0], args[1])
+    
     def get_protocols_list(self):
         return self.core.list_protocols()
     
@@ -350,6 +348,10 @@ class Main(Base, Singleton, gtk.Window):
     def show_about(self):
         about = About(self)
     
+    def show_notice(self, msg, type_):
+        cmd = 'show_notice("%s", "%s");' % (msg, type_)
+        self.container.execute(cmd)
+    
     def login(self):
         for acc in self.get_accounts_list():
             self.single_login(acc)
@@ -400,16 +402,6 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.register(self.core.repeat_status, (account_id, status_id), 
             self.repeat_response, status_id)
     
-    def repeat_response(self, response, status_id):
-        cmd = ''
-        if response.code > 0:
-            self.show_notice(response.errmsg, 'error')
-        else:
-            self.show_notice(i18n.get('successfully_retweeted'), 'info')
-            cmd = "update_retweeted_mark('%s', true);" % (status_id)
-        cmd += "unlock_status('%s');" % (status_id)
-        self.container.execute(cmd)
-    
     def fav_status(self, account_id, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('adding_to_fav'))
         self.container.execute(cmd)
@@ -423,24 +415,6 @@ class Main(Base, Singleton, gtk.Window):
         
         self.worker.register(self.core.unmark_favorite, (account_id, status_id), 
             self.fav_response, False)
-    
-    def fav_response(self, response, fav=False):
-        if response.code > 0:
-            self.show_notice(response.errmsg, 'error')
-        else:
-            status = response.items
-            args = ARG_SEP.join([status.account_id, status.id_])
-            temp = ''
-            if fav:
-                newcmd = "cmd:unfav_status:%s" % args
-                temp = "update_favorite_mark('%s', '%s', '%s', true);" % (status.id_, 
-                    newcmd, i18n.get('-fav'))
-            else:
-                newcmd = "cmd:fav_status:%s" % args
-                temp = "update_favorite_mark('%s', '%s', '%s', false);" % (status.id_, 
-                    newcmd, i18n.get('+fav'))
-        temp += "unlock_status('%s');" % (status.id_)
-        self.container.execute(temp)
     
     def update_status(self, account, text):
         message = base64.b64decode(text)
@@ -460,11 +434,23 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.register(self.core.update_status, (account, message, status_id), 
                 self.update_status_response, account)
     
+    def delete_status(self, account, status_id):
+        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('deleting'))
+        self.container.execute(cmd)
+        
+        self.worker.register(self.core.destroy_status, (account, status_id), 
+                self.delete_status_response)
+    
+    # ------------------------------------------------------------
+    # Callbacks
+    # ------------------------------------------------------------
+    
     def update_status_response(self, response, account_id):
         if response.code > 0:
             self.container.execute('update_status_error(' + response.errmsg + ');')
         else:
-            html_status = self.htmlparser.status(response.items)
+            html_status = self.htmlparser.single_status(response.items)
+            print html_status
             id_ = '#list-%s-timeline' % account_id
             self.container.prepend_element(id_, html_status, 'done_update_box(true);')
         
@@ -490,6 +476,46 @@ class Main(Base, Singleton, gtk.Window):
             cmd += 'broadcast_status_error(' + accounts + ', "' + errmsg + '");'
         else:
             cmd += 'done_update_box();'
+        self.container.execute(cmd)
+    
+    def repeat_response(self, response, status_id):
+        cmd = ''
+        if response.code > 0:
+            self.show_notice(response.errmsg, 'error')
+        else:
+            cmd = "update_retweeted_mark('%s', true); show_notice('%s', '%s');" % (status_id, 
+                i18n.get('successfully_retweeted'), 'info')
+        cmd += "unlock_status('%s');" % (status_id)
+        self.container.execute(cmd)
+    
+    def fav_response(self, response, fav=False):
+        cmd = ''
+        if response.code > 0:
+            self.show_notice(response.errmsg, 'error')
+        else:
+            status = response.items
+            args = ARG_SEP.join([status.account_id, status.id_])
+            if fav:
+                newcmd = "cmd:unfav_status:%s" % args
+                cmd = "update_favorite_mark('%s', '%s', '%s', true);" % (status.id_, 
+                    newcmd, i18n.get('-fav'))
+            else:
+                newcmd = "cmd:fav_status:%s" % args
+                cmd = "update_favorite_mark('%s', '%s', '%s', false);" % (status.id_, 
+                    newcmd, i18n.get('+fav'))
+        cmd += "unlock_status('%s');" % (status.id_)
+        self.container.execute(cmd)
+    
+    def delete_status_response(self, response):
+        cmd = ''
+        if response.code > 0:
+            self.show_notice(response.errmsg, 'error')
+        else:
+            status = response.items
+            cmd = "delete_status('%s'); show_notice('%s', '%s');" % (status.id_,
+                i18n.get('successfully_deleted'), 'info')
+        
+        cmd += "unlock_status('%s');" % (status.id_)
         self.container.execute(cmd)
     
     # ------------------------------------------------------------

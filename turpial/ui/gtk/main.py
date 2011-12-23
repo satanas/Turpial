@@ -24,8 +24,9 @@ from turpial.ui.gtk.about import About
 from turpial.singleton import Singleton
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
-from turpial.ui.gtk.accounts import AccountsDialog
+from turpial.notification import Notification
 from turpial.ui.gtk.oauthwin import OAuthWindow
+from turpial.ui.gtk.accounts import AccountsDialog
 
 gtk.gdk.set_program_class("Turpial")
 gtk.gdk.threads_init()
@@ -70,7 +71,7 @@ class Main(Base, Singleton, gtk.Window):
         self.updating = []
         
         #self.sound = Sound()
-        #self.notify = Notification(controller.no_notif)
+        self.notify = Notification()
         
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__timeout_callback)
@@ -225,6 +226,7 @@ class Main(Base, Singleton, gtk.Window):
     def __login_callback(self, arg, account_id):
         if arg.code > 0:
             msg = arg.errmsg
+            self.show_notice(msg, 'error')
             self.accountsdlg.cancel_login(msg)
             return
         
@@ -248,20 +250,27 @@ class Main(Base, Singleton, gtk.Window):
     def __auth_callback(self, arg, account_id):
         if arg.code > 0:
             msg = arg.errmsg
+            self.show_notice(msg, 'error')
             self.accountsdlg.cancel_login(msg)
         else:
-            #self.form.set_loading_message(i18n.get('authenticating'))
             self.worker.register(self.core.auth, (account_id), self.__done_callback, account_id)
     
     def __done_callback(self, arg, account_id):
         if arg.code > 0:
+            self.core.change_login_status(account_id, LoginStatus.NONE)
             msg = arg.errmsg
             self.accountsdlg.cancel_login(msg)
             self.show_notice(msg, 'error')
         else:
             self.accountsdlg.done_login()
             self.accountsdlg.update()
-        
+            
+            response = self.core.get_own_profile(account_id)
+            if response.code > 0:
+                self.show_notice(response.errmsg, 'error')
+            else:
+                self.notify.login(response.items)
+            
             for col in self.get_registered_columns():
                 if col.account_id == account_id:
                     self.download_stream(col)
@@ -449,7 +458,7 @@ class Main(Base, Singleton, gtk.Window):
     def reply_status(self, account, status_id, text):
         message = base64.b64decode(text)
         self.worker.register(self.core.update_status, (account, message, status_id), 
-                self.update_status_response, accounts[0])
+                self.update_status_response, account)
     
     def update_status_response(self, response, account_id):
         if response.code > 0:

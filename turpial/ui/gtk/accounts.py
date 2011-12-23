@@ -60,6 +60,7 @@ class AccountsDialog(gtk.Window):
         if self.form:
             self.form.cancel(message)
             return True
+        self.update()
         return False
     
     def done_login(self):

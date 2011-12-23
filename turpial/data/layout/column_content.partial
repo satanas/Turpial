@@ -1,4 +1,5 @@
 <div id="header-<% @column_id %>" class="header">
+    <a href="cmd:reset_column:<% @column_id %>" style="color: #FFFFFF">
     <div class="combo">
         <% img "@protocol_img" %>
         <label class="overflow"><% @column_label %></label>
@@ -12,6 +13,7 @@
         <% img "dark-loader.gif" %>
     </div>
     <div class="clearfix"></div>
+    </a>
 </div>
 <div id="wrapper-<% @column_id %>" class="wrapper">
     <div id="list-<% @column_id %>" class="list"></div>

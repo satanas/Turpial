@@ -68,6 +68,10 @@ function remove_column(column_id) {
     recalculate_column_size();
 }
 
+function reset_column(column_id) {
+    $('#list-' + column_id).animate({scrollTop : 0},1000);
+}
+
 function enable_trigger() {
     $('.content').mouseover(function() {
         var name = $(this).attr('name');

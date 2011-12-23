@@ -100,6 +100,8 @@ class Main(Base, Singleton, gtk.Window):
             self.refresh_column(args[0])
         elif action == 'delete_column':
             self.delete_column(args[0])
+        elif action == 'reset_column':
+            self.reset_column(args[0])
         elif action == 'quote_status':
             text = unescape(urllib.unquote(args[2]))
             print "RT @%s: %s" % (args[1], text)
@@ -392,6 +394,9 @@ class Main(Base, Singleton, gtk.Window):
         else:
             self.container.execute('remove_column("' + column_id + '");')
         self.__remove_timer(column_id)
+
+    def reset_column(self, column_id):
+        self.container.execute('reset_column("' + column_id + '");')
     
     def repeat_status(self, account_id, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('retweeting'))

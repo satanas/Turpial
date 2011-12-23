@@ -6,7 +6,7 @@
 <body>
     <% query %>
     <div id="container">
-        <div id="alert-message" class="info" style="display: none;">
+        <div id="alert-message" style="display: none;">
             <span class="close">x</span>
             <label id="alert-label" class="overflow"></label>
         </div>

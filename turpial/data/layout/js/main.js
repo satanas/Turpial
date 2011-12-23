@@ -69,7 +69,7 @@ function remove_column(column_id) {
 }
 
 function reset_column(column_id) {
-    $('#list-' + column_id).scrollTop(0);
+    $('#list-' + column_id).animate({scrollTop : 0},1000);
 }
 
 function enable_trigger() {

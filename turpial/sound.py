@@ -8,11 +8,9 @@
 import os
 import logging
 import platform
-import traceback
 
 DRIVER = None
 if platform.system() == 'Windows':
-    import winsound
     DRIVER = 'Windows'
 elif platform.system() == 'Linux':
     import gst

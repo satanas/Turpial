@@ -25,6 +25,7 @@ try:
     INTERFACES['cmd'] = _CMD
     DEFAULT_INTERFACE = 'cmd'
 except ImportError, exc:
+    print 'Could not initialize CMD interface.'
     print exc
 
 # Load gtk
@@ -33,6 +34,7 @@ try:
     INTERFACES['gtk'] = _GTK
     DEFAULT_INTERFACE = 'gtk'
 except ImportError, exc:
+    print 'Could not initialize GTK interface.'
     print exc
 
 # Load qt
@@ -41,14 +43,11 @@ try:
     INTERFACES['qt'] = _QT
     DEFAULT_INTERFACE = 'qt'
 except ImportError, exc:
+    print 'Could not initialize QT interface.'
     print exc
 
 def available_interfaces():
-    ui_availables = ''
-    for ui in INTERFACES.keys():
-        ui_availables += ui + '-'
-    ui_availables = ui_availables[:-1] + ''
-    return ui_availables
+    return ', '.join(INTERFACES.keys())
 
 def default_interface():
     return INTERFACES['gtk']

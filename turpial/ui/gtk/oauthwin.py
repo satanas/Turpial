@@ -6,7 +6,6 @@
 # Mar 16, 2010
 
 import gtk
-import webkit
 import gobject
 
 from turpial.ui.lang import i18n

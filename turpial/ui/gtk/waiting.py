@@ -6,7 +6,6 @@
 # Dic 20, 2009
 
 import gtk
-import cairo
 import gobject
 
 class CairoWaiting(gtk.DrawingArea):

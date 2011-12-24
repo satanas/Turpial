@@ -193,7 +193,7 @@
     width: 100%;
 }
 
-#update-box .header {
+#update-box .header, #profile-window .header {
     width: 100%;
     height: 22px;
     color: #ccc;
@@ -201,13 +201,13 @@
     margin-bottom: 5px;
 }
 
-#update-box .header .text {
+#update-box .header .text, #profile-window .header .text {
     float: left;
     margin: 3px 0 0 5px;
     font-size: 12px;
 }
 
-#update-box .header .close {
+#update-box .header .close, #profile-window .header .close {
     float: right;
     margin: 3px 0 0 10px;
 }
@@ -301,4 +301,143 @@
 .acc_selector {
     margin: 0;
     padding: 0;
+}
+
+/*** Profile window stuffs ***/
+#profile-window {
+    position: absolute;
+    z-index: 100;
+    background-color: #f2f1f0;
+    top: 50px;
+    left: 10px;
+    min-height: 290px;
+    width: 290px;
+    margin: 0 auto;
+    border: 1px solid #999;
+}
+
+#progress-box-profile-window {
+    float: right;
+    margin: 10px;
+}
+
+#profile-window .top {
+    float: left;
+    padding: 0 8px;
+}
+
+#profile-window .top .icon {
+    float: left;
+    width: 48px;
+    margin-bottom: 5px;
+}
+
+#profile-window .top .icon img {
+    width: 48px;
+    height: 48px;
+    -webkit-border-radius: 8px;
+}
+
+#profile-window .top .info {
+    float: left;
+}
+
+#profile-window .top .info .name {
+    float: left;
+    margin: 5px 5px;
+    font-weight: bold;
+    color: #000;
+    font-size: 14px;
+    display: block;
+}
+
+#profile-window .top .info .mark {
+    float: left;
+    display: block;
+    margin-top: 5px;
+}
+
+#profile-window .top .info .username {
+    float: left;
+    margin: 0px 5px;
+    color: #000;
+    font-size: 12px;
+    display: block;
+}
+
+#profile-window .options {
+    float: left;
+    height: 22px;
+    padding: 0 8px;
+    width: 274px;
+    border-bottom: 1px solid #ccc;
+}
+
+#profile-window .body {
+    float: left;
+    padding: 10px 8px 0px 8px;
+    width: 274px;
+    background-color: #eee;
+    border-bottom: 1px solid #ccc;
+}
+
+#profile-window .body .mark {
+    float: left;
+    display: block;
+}
+
+#profile-window .body label {
+    float: left;
+    margin-left: 5px;
+    font-weight: bold;
+    color: #000;
+    font-size: 12px;
+    display: block;
+}
+
+#profile-window .body p {
+    float: left;
+    margin: 5px 0 10px 0;
+    color: #333;
+    font-size: 12px;
+    display: block;
+}
+
+#profile-window .stats {
+    float: left;
+    height: 48px;
+    width: 290px;
+}
+
+#profile-window .stats .box {
+    float: left;
+    height: 48px;
+    width: 71px;
+    border-right: 1px solid #ccc;
+}
+
+#profile-window .stats .bbox {
+    float: left;
+    height: 48px;
+    width: 71px;
+}
+
+#profile-window .stats p {
+    float: left;
+    width: 71px;
+    text-align: center;
+    font-weight: bold;
+    color: #000;
+    font-size: 12px;
+    display: block;
+    margin: 8px 0 5px 0;
+}
+
+#profile-window .stats label {
+    float: left;
+    width: 71px;
+    text-align: center;
+    color: #333;
+    font-size: 10px;
+    display: block;
 }

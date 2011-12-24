@@ -1,0 +1,54 @@
+<div class="top">
+    <div id="profile-avatar" class="icon"><img src="<% @avatar %>" width="48" height="48" /></div>
+    <div class="info">
+        <label class="name"><% @fullname %></label>
+        <% @protected %>
+        <% @verified %>
+        <div class="clearfix"></div>
+        <label class="username"><% @username %></label>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+<div class="options">
+</div>
+
+<div class="body">
+    <% @bio_icon %>
+    <label><% $bio %></label>
+    <div class="clearfix"></div>
+    <p><% @bio %></p>
+    <div class="clearfix"></div>
+    
+    <% @location_icon %>
+    <label><% $location %></label>
+    <div class="clearfix"></div>
+    <p><% @location %></p>
+    <div class="clearfix"></div>
+    
+    <% @web_icon %>
+    <label><% $web %></label>
+    <div class="clearfix"></div>
+    <p><% @web %></p>
+    <div class="clearfix"></div>
+</div>
+
+<div class="stats">
+    <div class="box">
+        <p><% @following %></p>
+        <label><% $following %></label>
+    </div>
+    <div class="box">
+        <p><% @followers %></p>
+        <label><% $followers %></label>
+    </div>
+    <div class="box">
+        <p><% @posts %></p>
+        <label><% $statuses %></label>
+    </div>
+    <div class="bbox">
+        <p><% @favorites %></p>
+        <label><% $favorites %></label>
+    </div>
+</div>
+<div class="clearfix"></div>

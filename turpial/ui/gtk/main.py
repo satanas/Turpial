@@ -264,8 +264,9 @@ class Main(Base, Singleton, gtk.Window):
         print action, args
         if action == 'about':
             self.show_about()
-        elif action == 'settings':
+        elif action == 'preferences':
             self.container.execute("alert('hola');")
+            #self.container.execute("show_profile_window('prueba', 'hola');")
         elif action == 'accounts_manager':
             self.accountsdlg.show()
         elif action == 'follow':
@@ -291,6 +292,8 @@ class Main(Base, Singleton, gtk.Window):
             self.reply_status(args[0], args[1], args[2])
         elif action == 'delete_status':
             self.delete_status(args[0], args[1])
+        elif action == 'show_profile':
+            self.show_profile(args[0], args[1])
     
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -441,6 +444,10 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.register(self.core.destroy_status, (account, status_id), 
                 self.delete_status_response)
     
+    def show_profile(self, account_id, username):
+        self.worker.register(self.core.get_user_profile, (account_id, username),
+                self.show_profile_response)
+                
     # ------------------------------------------------------------
     # Callbacks
     # ------------------------------------------------------------
@@ -450,7 +457,6 @@ class Main(Base, Singleton, gtk.Window):
             self.container.execute('update_status_error(' + response.errmsg + ');')
         else:
             html_status = self.htmlparser.single_status(response.items)
-            print html_status
             id_ = '#list-%s-timeline' % account_id
             self.container.prepend_element(id_, html_status, 'done_update_box(true);')
         
@@ -518,6 +524,16 @@ class Main(Base, Singleton, gtk.Window):
         cmd += "unlock_status('%s');" % (status.id_)
         self.container.execute(cmd)
     
+    def show_profile_response(self, response):
+        cmd = ''
+        if response.code > 0:
+            cmd = 'profile_window_error("%s");' % response.errmsg
+        else:
+            profile = self.htmlparser.profile(response.items)
+            profile = profile.replace('"', '\\"')
+            cmd = 'update_profile_window("%s");' % (profile)
+        self.container.execute(cmd)
+        
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------

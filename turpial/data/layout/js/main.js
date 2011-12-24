@@ -35,6 +35,8 @@ function recalculate_column_size(nw, nh) {
     var alert_msg_left = 20;
     var alert_lbl_width = alert_msg_width - 35;
     
+    var profile_win_left = (width - 290) / 2;
+    
     $('#content').css('height', content_height + 'px');
     $('.column').css('width', column_width + 'px');
     $('.column').css('height', column_height + 'px');
@@ -51,6 +53,8 @@ function recalculate_column_size(nw, nh) {
     $('#alert-message').css('width', alert_msg_width + 'px');
     $('#alert-message').css('left', alert_msg_left + 'px');
     $('#alert-label').css('width', alert_lbl_width + 'px');
+    
+    $('#profile-window').css('left', profile_win_left + 'px');
 }
 
 function change_num_columns(num) {
@@ -233,6 +237,36 @@ function update_retweeted_mark(status_id, visible) {
 
 function delete_status(status_id) {
     $('#' + status_id).remove();
+}
+
+function show_profile_window(account_id, username) {
+    $('#modal').fadeIn();
+    $('#profile-window').fadeIn();
+    $('#progress-box-profile-window').fadeIn();
+    exec_command('cmd:show_profile:' + account_id + arg_sep + username);
+    
+}
+
+function update_profile_window(profile) {
+    $('#progress-box-profile-window').hide();
+    $('#profile-window-content').html(profile);
+}
+
+function profile_window_error(message) {
+    $('#progress-box-profile-window').hide();
+    show_notice(message, 'error');
+}
+
+function close_profile_window() {
+    var status = $('#profile-window').attr('name');
+    if (status != '') return;
+    hide_notice();
+    $('#profile-window').fadeOut(400, reset_profile_window);
+    $('#modal').fadeOut(400);
+}
+
+function reset_profile_window() {
+    $('#profile-window-content').html('');
 }
 
 /* Callbacks */

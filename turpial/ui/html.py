@@ -135,8 +135,8 @@ class HtmlParser:
             return "<span class=\"done\">%s</span>" % (i18n.get('logged_in'))
             
     def __highlight_username(self, status):
-        url = status.username + ARG_SEP + status.account_id
-        return '<a href="cmd:show_profile:%s">%s</a>' % (url, status.username)
+        args = "'%s', '%s'" % (status.account_id, status.username)
+        return '<a href="javascript: show_profile_window(%s);">%s</a>' % (args, status.username)
 
     def __highlight_hashtags(self, status, text):
         for h in status.entities['hashtags']:
@@ -152,7 +152,8 @@ class HtmlParser:
     
     def __highlight_mentions(self, status, text):
         for h in status.entities['mentions']:
-            cad = '<a href="cmd:show_profile:%s">%s</a>' % (h.url, h.display_text)
+            args = "'%s', '%s'" % (status.account_id, h.display_text)
+            cad = '<a href="javascript: show_profile_window(%s);">%s</a>' % (args, h.display_text)
             pattern = re.compile(h.search_for, re.IGNORECASE)
             text = pattern.sub(cad, text)
         return text
@@ -389,3 +390,30 @@ class HtmlParser:
         section = section.replace('<% @menu %>', menu)
         
         return section
+    
+    def profile(self, profile):
+        bio_icon = self.__image_tag('icon-bio.png', width='16', height='16', class_='mark')
+        loc_icon = self.__image_tag('icon-location.png', width='16', height='16', class_='mark')
+        web_icon = self.__image_tag('icon-web.png', width='16', height='16', class_='mark')
+        url = ''
+        if profile.url != '' and profile.url != None:
+            url = '<a href="link:%s">%s</a>' % (profile.url, profile.url)
+        
+        section = self.__open_partial('profile')
+        section = section.replace('<% @avatar %>', profile.avatar)
+        section = section.replace('<% @fullname %>', profile.fullname)
+        section = section.replace('<% @username %>', profile.username)
+        section = section.replace('<% @verified %>', self.__verified_tag(profile.verified))
+        section = section.replace('<% @protected %>', self.__protected_tag(profile.protected))
+        section = section.replace('<% @bio_icon %>', bio_icon)
+        section = section.replace('<% @location_icon %>', loc_icon)
+        section = section.replace('<% @web_icon %>', web_icon)
+        section = section.replace('<% @bio %>', profile.bio)
+        section = section.replace('<% @location %>', profile.location)
+        section = section.replace('<% @web %>', url)
+        section = section.replace('<% @following %>', str(profile.friends_count))
+        section = section.replace('<% @followers %>', str(profile.followers_count))
+        section = section.replace('<% @posts %>', str(profile.statuses_count))
+        section = section.replace('<% @favorites %>', str(profile.favorites_count))
+        page = self.__parse_tags(section)
+        return page

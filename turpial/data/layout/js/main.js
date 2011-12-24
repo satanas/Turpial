@@ -232,7 +232,7 @@ function update_retweeted_mark(status_id, visible) {
 }
 
 function delete_status(status_id) {
-    $('#' + status_id).remove();
+    $('#' + status_id).hide('slow', function(){ $('#' + status_id).remove(); });;
 }
 
 /* Callbacks */

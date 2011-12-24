@@ -185,7 +185,7 @@ class HtmlParser:
             # Repeat
             cmd = ARG_SEP.join([status.account_id, status.id_])
             if status.retweeted:
-                menu += "<a id='repeat-mark-%s' href='cmd:unrepeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('unretweet'))
+                menu += "<a id='repeat-mark-%s' href='cmd:unrepeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('undo_retweet'))
             else:
                 menu += "<a id='repeat-mark-%s' href='cmd:repeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('retweet'))
             
@@ -354,10 +354,11 @@ class HtmlParser:
     def status(self, status):
         timestamp = status.datetime
         if status.source: 
-            if status.source_link:
-                timestamp += ' %s <a href="link:%s">%s</a>' % (i18n.get('from'), status.source_link, status.source)
+            if status.source.url:
+                timestamp += ' %s <a href="link:%s">%s</a>' % (i18n.get('from'), status.source.url, status.source.name)
             else:
-                timestamp += ' %s %s' % (i18n.get('from'), status.source)
+                timestamp += ' %s %s' % (i18n.get('from'), status.source.name)
+        
         if status.in_reply_to_user:
             timestamp += ' %s %s' % (i18n.get('in_reply_to'), status.in_reply_to_user)
         

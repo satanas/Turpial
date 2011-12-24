@@ -243,7 +243,7 @@ class Main(cmd.Cmd):
             if status.in_reply_to_user:
                 inreply = ' in reply to %s' % status.in_reply_to_user
             if status.source:
-                client = ' from %s' % status.source
+                client = ' from %s' % status.source.name
             print "%d. @%s: %s (id: %s)" % (count, status.username, text, status.id_)
             print "%s%s%s" % (status.datetime, client, inreply)
             if status.reposted_by:

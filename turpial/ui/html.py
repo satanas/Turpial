@@ -184,9 +184,9 @@ class HtmlParser:
             # Repeat
             cmd = ARG_SEP.join([status.account_id, status.id_])
             if status.retweeted:
-                menu += "<a href='cmd:unrepeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('unretweet'))
+                menu += "<a id='repeat-mark-%s' href='cmd:unrepeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('unretweet'))
             else:
-                menu += "<a href='cmd:repeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('retweet'))
+                menu += "<a id='repeat-mark-%s' href='cmd:repeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('retweet'))
             
             # Fav
             args = ARG_SEP.join([status.account_id, status.id_])

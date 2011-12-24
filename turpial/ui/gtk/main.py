@@ -281,6 +281,8 @@ class Main(Base, Singleton, gtk.Window):
             print "RT @%s: %s" % (args[1], text)
         elif action == 'repeat_status':
             self.repeat_status(args[0], args[1])
+        elif action == 'unrepeat_status':
+            self.unrepeat_status(args[0], args[1])
         elif action == 'fav_status':
             self.fav_status(args[0], args[1])
         elif action == 'unfav_status':
@@ -400,14 +402,14 @@ class Main(Base, Singleton, gtk.Window):
         self.container.execute(cmd)
         
         self.worker.register(self.core.repeat_status, (account_id, status_id), 
-            self.repeat_response, status_id)
+            self.repeat_response, True)
     
     def unrepeat_status(self, account_id, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('delete'))
         self.container.execute(cmd)
 
-        self.worker.register(self.core.destroy_status, (account_id, status_id), 
-                self.delete_response, status_id)
+        self.worker.register(self.core.unrepeat_status, (account_id, status_id), 
+                self.repeat_response, False)
     
     def fav_status(self, account_id, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('adding_to_fav'))
@@ -495,14 +497,22 @@ class Main(Base, Singleton, gtk.Window):
             cmd += 'done_update_box();'
         self.container.execute(cmd)
     
-    def repeat_response(self, response, status_id):
+    def repeat_response(self, response, repeat=False):
         cmd = ''
         if response.code > 0:
             self.show_notice(response.errmsg, 'error')
         else:
-            cmd = "update_retweeted_mark('%s', true); show_notice('%s', '%s');" % (status_id, 
-                i18n.get('successfully_retweeted'), 'info')
-        cmd += "unlock_status('%s');" % (status_id)
+            status = response.items
+            args = ARG_SEP.join([status.account_id, status.id_])
+            if repeat:
+                newcmd = "cmd:unrepeat_status:%s" % args
+                cmd = "update_retweeted_mark('%s', '%s', '%s', true); show_notice('%s', '%s');" % (status.id_, 
+                    newcmd, i18n.get('unretweet'), i18n.get('successfully_retweeted'), 'info')
+            else:
+                newcmd = "cmd:unrepeat_status:%s" % args
+                cmd = "update_retweeted_mark('%s', '%s', '%s', false); show_notice('%s', '%s');" % (status.id_, 
+                    newcmd, i18n.get('retweet'), i18n.get('successfully_unretweeted'), 'info')
+        cmd += "unlock_status('%s');" % (status.id_)
         self.container.execute(cmd)
     
     def fav_response(self, response, fav=False):

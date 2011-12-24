@@ -513,11 +513,11 @@ class Main(Base, Singleton, gtk.Window):
             if repeat:
                 newcmd = "cmd:unrepeat_status:%s" % args
                 cmd = "update_retweeted_mark('%s', '%s', '%s', true); show_notice('%s', '%s');" % (status.id_, 
-                    newcmd, i18n.get('undo_retweet'), i18n.get('successfully_retweeted'), 'info')
+                    newcmd, i18n.get('-retweet'), i18n.get('successfully_retweeted'), 'info')
             else:
                 newcmd = "cmd:unrepeat_status:%s" % args
                 cmd = "update_retweeted_mark('%s', '%s', '%s', false); show_notice('%s', '%s');" % (status.id_, 
-                    newcmd, i18n.get('retweet'), i18n.get('retweet_successfully_undone'), 'info')
+                    newcmd, i18n.get('+retweet'), i18n.get('retweet_successfully_undone'), 'info')
         cmd += "unlock_status('%s');" % (status.id_)
         self.container.execute(cmd)
     

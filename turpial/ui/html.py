@@ -183,7 +183,10 @@ class HtmlParser:
             
             # Repeat
             cmd = ARG_SEP.join([status.account_id, status.id_])
-            menu += "<a href='cmd:repeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('retweet'))
+            if status.retweeted:
+                menu += "<a href='cmd:unrepeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('unretweet'))
+            else:
+                menu += "<a href='cmd:repeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('retweet'))
             
             # Fav
             args = ARG_SEP.join([status.account_id, status.id_])

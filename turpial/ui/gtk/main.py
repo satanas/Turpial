@@ -107,6 +107,8 @@ class Main(Base, Singleton, gtk.Window):
             print "RT @%s: %s" % (args[1], text)
         elif action == 'repeat_status':
             self.repeat_status(args[0], args[1])
+        elif action == 'unrepeat_status':
+            self.unrepeat_status(args[0], args[1])
         elif action == 'fav_status':
             self.fav_status(args[0], args[1])
         elif action == 'unfav_status':
@@ -405,6 +407,13 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.register(self.core.repeat_status, (account_id, status_id), 
             self.repeat_response, status_id)
     
+    def unrepeat_status(self, account_id, status_id):
+        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('delete'))
+        self.container.execute(cmd)
+
+        self.worker.register(self.core.destroy_status, (account_id, status_id), 
+                self.delete_response, status_id)
+
     def repeat_response(self, response, status_id):
         cmd = ''
         if response.code > 0:
@@ -464,6 +473,16 @@ class Main(Base, Singleton, gtk.Window):
         message = base64.b64decode(text)
         self.worker.register(self.core.update_status, (account, message, status_id), 
                 self.update_status_response, account)
+
+    def delete_response(self, response, status_id):
+        cmd = ''
+        if response.code > 0:
+            self.show_notice(response.errmsg, 'error')
+        else:
+            self.show_notice(i18n.get('successfully_deleted'), 'info')
+            cmd = ""
+        cmd += "unlock_status('%s');" % (status_id)
+        self.container.execute(cmd)
     
     def update_status_response(self, response, account_id):
         if response.code > 0:

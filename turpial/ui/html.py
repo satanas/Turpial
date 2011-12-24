@@ -405,7 +405,12 @@ class HtmlParser:
         url = ''
         if profile.url != '' and profile.url != None:
             url = '<a href="link:%s">%s</a>' % (profile.url, profile.url)
-        
+        bio = ''
+        if profile.bio:
+            bio = profile.bio
+        location = ''
+        if profile.location:
+            location = profile.location
         section = self.__open_partial('profile')
         section = section.replace('<% @avatar %>', profile.avatar)
         section = section.replace('<% @fullname %>', profile.fullname)
@@ -415,8 +420,8 @@ class HtmlParser:
         section = section.replace('<% @bio_icon %>', bio_icon)
         section = section.replace('<% @location_icon %>', loc_icon)
         section = section.replace('<% @web_icon %>', web_icon)
-        section = section.replace('<% @bio %>', profile.bio)
-        section = section.replace('<% @location %>', profile.location)
+        section = section.replace('<% @bio %>', bio)
+        section = section.replace('<% @location %>', location)
         section = section.replace('<% @web %>', url)
         section = section.replace('<% @following %>', str(profile.friends_count))
         section = section.replace('<% @followers %>', str(profile.followers_count))

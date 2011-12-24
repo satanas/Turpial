@@ -150,9 +150,17 @@
     color: #999;
     cursor: default;
 }
-
+    
 .tweet .content .timestamp {
     margin-top: 5px;
+}
+
+.tweet .content .timestamp a {
+    color: #666;
+}
+
+.tweet .content .timestamp a:hover {
+    color: #333;
 }
 
 .tweet .content .repost {

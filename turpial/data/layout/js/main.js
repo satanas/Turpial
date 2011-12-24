@@ -251,7 +251,7 @@ function show_profile_window(account_id, username) {
 
 function update_profile_window(profile) {
     $('#progress-box-profile-window').hide();
-    $('#profile-window-content').html(profile);
+    $('#profile-window-content').html(profile).slideDown();
 }
 
 function profile_window_error(message) {

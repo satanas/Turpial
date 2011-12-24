@@ -184,7 +184,10 @@ class HtmlParser:
             
             # Repeat
             cmd = ARG_SEP.join([status.account_id, status.id_])
-            menu += "<a href='cmd:repeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('retweet'))
+            if status.retweeted:
+                menu += "<a id='repeat-mark-%s' href='cmd:unrepeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('unretweet'))
+            else:
+                menu += "<a id='repeat-mark-%s' href='cmd:repeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('retweet'))
             
             # Fav
             args = ARG_SEP.join([status.account_id, status.id_])
@@ -351,7 +354,10 @@ class HtmlParser:
     def status(self, status):
         timestamp = status.datetime
         if status.source: 
-            timestamp += ' %s %s' % (i18n.get('from'), status.source)
+            if status.source_link:
+                timestamp += ' %s <a href="link:%s">%s</a>' % (i18n.get('from'), status.source_link, status.source)
+            else:
+                timestamp += ' %s %s' % (i18n.get('from'), status.source)
         if status.in_reply_to_user:
             timestamp += ' %s %s' % (i18n.get('in_reply_to'), status.in_reply_to_user)
         

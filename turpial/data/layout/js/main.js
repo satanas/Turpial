@@ -228,7 +228,9 @@ function update_favorite_mark(status_id, cmd, label, visible) {
         $('#fav-icon-' + status_id).hide();
 }
 
-function update_retweeted_mark(status_id, visible) {
+function update_retweeted_mark(status_id, cmd, label, visible) {
+    $('#repeat-mark-' + status_id).attr('href', cmd);
+    $('#repeat-mark-' + status_id).html(label);
     if (visible == true)
         $('#retweeted-icon-' + status_id).show();
     else
@@ -236,7 +238,7 @@ function update_retweeted_mark(status_id, visible) {
 }
 
 function delete_status(status_id) {
-    $('#' + status_id).remove();
+    $('#' + status_id).hide('slow', function(){ $('#' + status_id).remove(); });;
 }
 
 function show_profile_window(account_id, username) {

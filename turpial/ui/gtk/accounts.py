@@ -24,7 +24,8 @@ class AccountsDialog(gtk.Window):
         self.set_size_request(360, 320)
         self.set_resizable(False)
         self.set_icon(self.mainwin.load_image('turpial.png', True))
-        self.set_position(gtk.WIN_POS_CENTER)
+        self.set_transient_for(parent)
+        self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         self.set_gravity(gtk.gdk.GRAVITY_STATIC)
         self.connect('delete-event', self.__close)
         

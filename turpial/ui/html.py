@@ -353,7 +353,10 @@ class HtmlParser:
     def status(self, status):
         timestamp = status.datetime
         if status.source: 
-            timestamp += ' %s %s' % (i18n.get('from'), status.source)
+            if status.source_link:
+                timestamp += ' %s <a href="link:%s">%s</a>' % (i18n.get('from'), status.source_link, status.source)
+            else:
+                timestamp += ' %s %s' % (i18n.get('from'), status.source)
         if status.in_reply_to_user:
             timestamp += ' %s %s' % (i18n.get('in_reply_to'), status.in_reply_to_user)
         

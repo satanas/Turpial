@@ -1,5 +1,5 @@
 <div id="header-<% @column_id %>" class="header">
-    <a href="cmd:reset_column:<% @column_id %>" style="color: #FFFFFF">
+    <a href="javascript: reset_column('<% @column_id %>');" style="color: #FFFFFF">
     <div class="combo">
         <% img "@protocol_img" %>
         <label class="overflow"><% @column_label %></label>

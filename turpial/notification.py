@@ -63,13 +63,12 @@ class Notification:
     def new_tweets(self, title, count, tobject, tweet, icon):
         self.popup('%s (%i %s)' % (title, count, tobject), tweet, icon)
         
-    def login(self, profiles):
-        for p in profiles:
-            self.popup('@%s' % p.username,
-                '%s: %i\n%s: %i\n%s: %i' % 
-                (i18n.get('tweets'), p.statuses_count,
-                i18n.get('following'), p.friends_count, 
-                i18n.get('followers'), p.followers_count))
+    def login(self, profile):
+        self.popup('@%s' % profile.username,
+            '%s: %i\n%s: %i\n%s: %i' % 
+            (i18n.get('tweets'), profile.statuses_count,
+            i18n.get('following'), profile.friends_count, 
+            i18n.get('followers'), profile.followers_count))
     
     def following(self, user, follow):
         name = user.username

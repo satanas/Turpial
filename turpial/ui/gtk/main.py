@@ -532,6 +532,7 @@ class Main(Base, Singleton, gtk.Window):
             profile = self.htmlparser.profile(response.items)
             profile = profile.replace('"', '\\"')
             cmd = 'update_profile_window("%s");' % (profile)
+            print cmd
         self.container.execute(cmd)
         
     # ------------------------------------------------------------

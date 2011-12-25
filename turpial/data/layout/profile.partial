@@ -10,7 +10,12 @@
     </div>
 </div>
 
-<div class="options">
+<div class="options" id="profile-options">
+    <% @menu %>
+</div>
+<div class="progress-box" id="progress-box-profile-options" style="display: none;">
+    <label id="progress-msg-profile-options">Loading...</label>
+    <% rimg "light-loader.gif", 16, 16 %>
 </div>
 
 <div class="body">

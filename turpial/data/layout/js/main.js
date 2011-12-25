@@ -107,13 +107,12 @@ function show_update_box(message, status_id, account_id, title) {
     $('#modal').fadeIn();
     $('#update-box').fadeIn();
     
-    
     if (title == undefined) {
         $('#update-box-title').html("<% $whats_happening %>");
     } else {
         $('#update-box-title').html(title);
     }
-    
+    console.log('message ' + message);
     if (message != undefined) {
         $('#update-message').focus().val(message);
         count_chars();
@@ -269,6 +268,20 @@ function close_profile_window() {
 
 function reset_profile_window() {
     $('#profile-window-content').html('');
+}
+
+function lock_profile(message) {
+    $('#profile-options').hide();
+    $('#progress-box-profile-options').show();
+    $('#progress-msg-profile-options').html(message);
+    $('#indicator-profile-window').val(message);
+}
+
+function unlock_profile() {
+    $('#progress-box-profile-options').hide();
+    $('#progress-msg-profile-options').html('');
+    $('#indicator-profile-window').val('');
+    $('#profile-options').show();
 }
 
 /* Callbacks */

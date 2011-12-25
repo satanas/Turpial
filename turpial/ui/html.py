@@ -168,7 +168,7 @@ class HtmlParser:
             text = text.replace(url.search_for, cad)
         return text
     
-    def __build_menu(self, status):
+    def __build_status_menu(self, status):
         menu = ''
         if not status.is_own:
             # Reply
@@ -202,6 +202,33 @@ class HtmlParser:
             menu += "<a href='cmd:delete_status:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))
         return menu
     
+    def __build_profile_menu(self, profile):
+        menu = ''
+        cmd = '#'
+        # Direct Messages
+        menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('message'))
+        
+        # Follow
+        if profile.following:
+            menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('unfollow'))
+        elif profile.follow_request:
+            menu += "<span>%s</span>" % (i18n.get('request_send'))
+        else:
+            menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('follow'))
+        
+        # Mute
+        menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('mute'))
+        
+        # Block
+        cmd = ARG_SEP.join([profile.account_id, profile.username])
+        menu += "<a href='cmd:block:%s' class='action'>%s</a>" % (cmd, i18n.get('block'))
+        
+        # Spam
+        cmd = ARG_SEP.join([profile.account_id, profile.username])
+        menu += "<a href='cmd:report_spam:%s' class='action'>%s</a>" % (cmd, i18n.get('spam'))
+        
+        return menu
+            
     def __account_buttons(self, accounts):
         buttons = ''
         for acc in accounts:
@@ -378,7 +405,7 @@ class HtmlParser:
         message = message.replace('\r', ' ')
         message = message.replace('\\"', '"')
         username = self.__highlight_username(status)
-        menu = self.__build_menu(status)
+        menu = self.__build_status_menu(status)
         
         section = self.__open_partial('status')
         section = section.replace('<% @status_id %>', status.id_)
@@ -427,5 +454,7 @@ class HtmlParser:
         section = section.replace('<% @followers %>', str(profile.followers_count))
         section = section.replace('<% @posts %>', str(profile.statuses_count))
         section = section.replace('<% @favorites %>', str(profile.favorites_count))
+        section = section.replace('<% @menu %>', self.__build_profile_menu(profile))
         page = self.__parse_tags(section)
+        print page
         return page

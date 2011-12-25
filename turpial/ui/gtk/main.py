@@ -277,9 +277,6 @@ class Main(Base, Singleton, gtk.Window):
             self.refresh_column(args[0])
         elif action == 'delete_column':
             self.delete_column(args[0])
-        elif action == 'quote_status':
-            text = unescape(urllib.unquote(args[2]))
-            print "RT @%s: %s" % (args[1], text)
         elif action == 'repeat_status':
             self.repeat_status(args[0], args[1])
         elif action == 'unrepeat_status':
@@ -296,6 +293,10 @@ class Main(Base, Singleton, gtk.Window):
             self.delete_status(args[0], args[1])
         elif action == 'show_profile':
             self.show_profile(args[0], args[1])
+        elif action == 'report_spam':
+            self.report_spam(args[0], args[1])
+        elif action == 'block':
+            self.block(args[0], args[1])
     
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -464,9 +465,23 @@ class Main(Base, Singleton, gtk.Window):
                 self.delete_status_response)
     
     def show_profile(self, account_id, username):
+        username = 'satanas'
         self.worker.register(self.core.get_user_profile, (account_id, username),
                 self.show_profile_response)
-                
+    
+    def report_spam(self, account_id, username):
+        cmd = "lock_profile('%s');" % (i18n.get('reporting_as_spam'))
+        self.container.execute(cmd)
+        
+        self.worker.register(self.core.report_spam, (account_id, username), 
+                self.report_spam_response)
+    
+    def block(self, account_id, username):
+        cmd = "lock_profile('%s');" % (i18n.get('blocking_user'))
+        self.container.execute(cmd)
+        
+        self.worker.register(self.core.block, (account_id, username), 
+                self.block_response)
     # ------------------------------------------------------------
     # Callbacks
     # ------------------------------------------------------------
@@ -560,7 +575,27 @@ class Main(Base, Singleton, gtk.Window):
             profile = profile.replace('"', '\\"')
             cmd = 'update_profile_window("%s");' % (profile)
         self.container.execute(cmd)
-        
+    
+    def report_spam_response(self, response):
+        cmd = ''
+        if response.code > 0:
+            cmd = "unlock_profile(); show_notice('%s', '%s');" % (
+                response.errmsg, 'error')
+        else:
+            cmd = "unlock_profile(); show_notice('%s', '%s');" % (
+                i18n.get('user_reported_spam_successfully'), 'info')
+        self.container.execute(cmd)
+    
+    def block_response(self, response):
+        cmd = ''
+        if response.code > 0:
+            cmd = "unlock_profile(); show_notice('%s', '%s');" % (
+                response.errmsg, 'error')
+        else:
+            cmd = "unlock_profile(); show_notice('%s', '%s');" % (
+                i18n.get('user_blocked_successfully'), 'info')
+        self.container.execute(cmd)
+    
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------

@@ -329,6 +329,14 @@
     margin: 10px;
 }
 
+#progress-box-profile-options {
+    float: right;
+    margin-right: 10px;
+    height: 22px;
+    width: 274px;
+    border-bottom: 1px solid #ccc;
+}
+
 #profile-window .top {
     float: left;
     padding: 0 8px;

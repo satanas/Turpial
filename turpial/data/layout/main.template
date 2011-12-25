@@ -58,6 +58,7 @@
         
         <!-- Profile window -->
         <div id="profile-window" name="" style="display: none;">
+            <input id="indicator-profile-window" type="hidden" value="" />
             <div class="header">
                 <label id="profile-window-title" class="text"><% $user_profile %></label>
                 <a href="javascript: close_profile_window();" class="close" title="<% $close %>"><% img "action-delete.png" %></a>

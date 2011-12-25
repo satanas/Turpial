@@ -408,7 +408,7 @@ class Main(Base, Singleton, gtk.Window):
             self.repeat_response, True)
     
     def unrepeat_status(self, account_id, status_id):
-        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('delete'))
+        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('unretweeting'))
         self.container.execute(cmd)
 
         self.worker.register(self.core.unrepeat_status, (account_id, status_id), 

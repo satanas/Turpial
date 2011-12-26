@@ -204,7 +204,7 @@ class HtmlParser:
     
     def __build_profile_menu(self, profile):
         if profile.is_me():
-            return "<span class='disabled action'>%s</span>" % (i18n.get('it_is_you'))
+            return "<span class='disabled action'>%s</span>" % (i18n.get('this_is_you'))
         
         menu = ''
         cmd = ARG_SEP.join([profile.account_id, profile.username])
@@ -215,7 +215,7 @@ class HtmlParser:
         if profile.following:
             menu += "<a id='profile-follow-cmd' href='cmd:unfollow:%s' class='action'>%s</a>" % (cmd, i18n.get('unfollow'))
         elif profile.follow_request:
-            menu += "<span class='action'>%s</span>" % (i18n.get('request_send'))
+            menu += "<span class='action'>%s</span>" % (i18n.get('requested'))
         else:
             menu += "<a id='profile-follow-cmd' href='cmd:follow:%s' class='action'>%s</a>" % (cmd, i18n.get('follow'))
         

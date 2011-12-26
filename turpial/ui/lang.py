@@ -123,6 +123,7 @@ text box below and click OK:'),
     'user_reported_spam_successfully': _("User reported as spam successfully"),
     'blocking_user': _("Blocking user..."),
     'user_blocked_successfully': _("User blocked successfully"),
+    'it_is_you': _("It's you"),
 }
 
 class i18n:

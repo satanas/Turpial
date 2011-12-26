@@ -203,6 +203,9 @@ class HtmlParser:
         return menu
     
     def __build_profile_menu(self, profile):
+        if profile.is_me():
+            return "<span class='disabled action'>%s</span>" % (i18n.get('it_is_you'))
+        
         menu = ''
         cmd = '#'
         # Direct Messages
@@ -212,7 +215,7 @@ class HtmlParser:
         if profile.following:
             menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('unfollow'))
         elif profile.follow_request:
-            menu += "<span>%s</span>" % (i18n.get('request_send'))
+            menu += "<span class='action'>%s</span>" % (i18n.get('request_send'))
         else:
             menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('follow'))
         

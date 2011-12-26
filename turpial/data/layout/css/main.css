@@ -389,6 +389,10 @@
     border-bottom: 1px solid #ccc;
 }
 
+#profile-window .options span {
+    color: #666;
+}
+
 #profile-window .body {
     float: left;
     padding: 10px 8px 0px 8px;

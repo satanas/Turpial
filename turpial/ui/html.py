@@ -152,7 +152,7 @@ class HtmlParser:
     
     def __highlight_mentions(self, status, text):
         for h in status.entities['mentions']:
-            args = "'%s', '%s'" % (status.account_id, h.display_text)
+            args = "'%s', '%s'" % (status.account_id, h.display_text[1:])
             cad = '<a href="javascript: show_profile_window(%s);">%s</a>' % (args, h.display_text)
             pattern = re.compile(h.search_for, re.IGNORECASE)
             text = pattern.sub(cad, text)
@@ -220,7 +220,10 @@ class HtmlParser:
             menu += "<a id='profile-follow-cmd' href='cmd:follow:%s' class='action'>%s</a>" % (cmd, i18n.get('follow'))
         
         # Mute
-        menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('mute'))
+        if profile.muted:
+            menu += "<a id='profile-mute-cmd' href='cmd:unmute:%s' class='action'>%s</a>" % (profile.username, i18n.get('unmute'))
+        else:
+            menu += "<a id='profile-mute-cmd' href='cmd:mute:%s' class='action'>%s</a>" % (profile.username, i18n.get('mute'))
         
         # Block
         menu += "<a href='cmd:block:%s' class='action'>%s</a>" % (cmd, i18n.get('block'))

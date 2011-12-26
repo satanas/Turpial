@@ -128,6 +128,10 @@ text box below and click OK:'),
     'unfollowing_user': _('Unfollowing user...'),
     'you_are_now_following': _("You are now following @%s"),
     'you_are_no_longer_following': _("You are no longer following @%s"),
+    'muting_user': _('Muting user...'),
+    'unmuting_user': _('Unmuting user...'),
+    'user_muted_successfully': _('User muted successfully'),
+    'user_unmuted_successfully': _('User unmuted successfully'),
 }
 
 class i18n:

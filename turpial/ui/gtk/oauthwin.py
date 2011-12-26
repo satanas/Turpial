@@ -42,14 +42,14 @@ class OAuthWindow(gtk.Window, gobject.GObject):
         
         self.waiting_label = gtk.Label()
         self.waiting_label.set_use_markup(True)
-        self.waiting = CairoWaiting(self.mainwin)
+        #self.waiting = CairoWaiting(self.mainwin)
         waiting_box = gtk.Alignment(xalign=1.0)
         waiting_box.add(self.waiting_label)
         
         lblbox = gtk.HBox(False, 2)
         lblbox.pack_start(self.label, True, True, 2)
         lblbox.pack_start(waiting_box, True, True, 2)
-        lblbox.pack_start(self.waiting, False, False, 2)
+        #lblbox.pack_start(self.waiting, False, False, 2)
         
         self.pin = gtk.Entry()
         cancel = gtk.Button(stock=gtk.STOCK_CANCEL)
@@ -83,11 +83,11 @@ class OAuthWindow(gtk.Window, gobject.GObject):
         self.quit(verifier)
         
     def __started(self, widget):
-        self.waiting.start()
+        #self.waiting.start()
         self.waiting_label.set_markup(i18n.get('loading'))
         
     def __finished(self, widget):
-        self.waiting.stop()
+        #self.waiting.stop()
         self.waiting_label.set_markup('')
     
     def open(self, uri):

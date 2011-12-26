@@ -241,6 +241,11 @@ function update_profile_follow_cmd(cmd, label) {
     $('#profile-follow-cmd').html(label);
 }
 
+function update_profile_mute_cmd(cmd, label) {
+    $('#profile-mute-cmd').attr('href', cmd);
+    $('#profile-mute-cmd').html(label);
+}
+
 function delete_status(status_id) {
     $('#' + status_id).hide('slow', function(){ $('#' + status_id).remove(); });;
 }
@@ -307,6 +312,22 @@ function append_status_to_timeline(account_id, html_status) {
     $('#list-' + account_id + '-timeline').prepend(html_status);
     recalculate_column_size();
     enable_trigger();
+}
+
+function mute_user(username, mute) {
+    $('.tweet .content .name').each(function(){
+        var html = $(this).html();
+        var start = html.indexOf('>') + 1;
+        var end = html.length - 4;
+        var name = html.substring(start, end);
+        if (name == username) {
+            if (mute == true) {
+                $(this).parent().parent().parent().hide();
+            } else {
+                $(this).parent().parent().parent().show();
+            }
+        }
+    });
 }
 
 /* Commands */

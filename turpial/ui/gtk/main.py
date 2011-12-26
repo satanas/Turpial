@@ -36,9 +36,9 @@ log = logging.getLogger('Gtk')
 # TODO: Improve all splits for accounts_id with a common function
 
 class Main(Base, Singleton, gtk.Window):
-    def __init__(self, core, config):
+    def __init__(self, core):
         Singleton.__init__(self)
-        Base.__init__(self, core, config)
+        Base.__init__(self, core)
         gtk.Window.__init__(self)
         
         self.htmlparser = HtmlParser()
@@ -298,6 +298,10 @@ class Main(Base, Singleton, gtk.Window):
             self.follow(args[0], args[1])
         elif action == 'unfollow':
             self.unfollow(args[0], args[1])
+        elif action == 'mute':
+            self.mute(args[0])
+        elif action == 'unmute':
+            self.unmute(args[0])
     
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -377,7 +381,7 @@ class Main(Base, Singleton, gtk.Window):
         self.accountsdlg.update()
     
     def save_account(self, username, protocol_id, password):
-        account_id = self.core.register_account(username, protocol_id, password, True)
+        account_id = self.core.register_account(username, protocol_id, password)
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
     
     def save_column(self, column_id):
@@ -486,6 +490,20 @@ class Main(Base, Singleton, gtk.Window):
         
         self.worker.register(self.core.follow, (account_id, username), 
                 self.follow_response, False)
+    
+    def mute(self, username):
+        cmd = "lock_profile('%s');" % (i18n.get('muting_user'))
+        self.container.execute(cmd)
+        
+        self.worker.register(self.core.mute, (username), 
+                self.mute_response, True)
+    
+    def unmute(self, username):
+        cmd = "lock_profile('%s');" % (i18n.get('unmuting_user'))
+        self.container.execute(cmd)
+        
+        self.worker.register(self.core.unmute, (username), 
+                self.mute_response, False)
     
     # ------------------------------------------------------------
     # Callbacks
@@ -619,6 +637,27 @@ class Main(Base, Singleton, gtk.Window):
                 cmd = "update_profile_follow_cmd('%s', '%s'); show_notice('%s', '%s');" % (
                     newcmd, i18n.get('follow'), message, 'info')
         
+        cmd += "unlock_profile();"
+        self.container.execute(cmd)
+    
+    def mute_response(self, response, mute=False):
+        cmd = ''
+        if response.code > 0:
+            cmd = "show_notice('%s', '%s');" % (response.errmsg, 'error')
+        else:
+            username = response.items
+            if mute:
+                newcmd = "cmd:unmute:%s" % username
+                message = i18n.get('user_muted_successfully')
+                cmd = "update_profile_mute_cmd('%s', '%s');" % (newcmd, i18n.get('unmute'))
+                cmd += "show_notice('%s', '%s');" % (message, 'info')
+                cmd += "mute_user('%s', true);" % username
+            else:
+                newcmd = "cmd:mute:%s" % username
+                message = i18n.get('user_unmuted_successfully')
+                cmd = "update_profile_mute_cmd('%s', '%s'); show_notice('%s', '%s');" % (
+                    newcmd, i18n.get('mute'), message, 'info')
+                cmd += "mute_user('%s', false);" % username
         cmd += "unlock_profile();"
         self.container.execute(cmd)
     

@@ -34,7 +34,6 @@ class Turpial:
         (options, args) = parser.parse_args()
         
         self.core = Core()
-        self.config = AppConfig()
         self.interface = options.interface
         self.version = "Turpial v%s with libturpial v%s" % (VERSION, LIBVERSION)
         
@@ -54,7 +53,7 @@ class Turpial:
             sys.exit(0)
         
         if options.interface in util.INTERFACES.keys():
-            self.ui = util.INTERFACES[options.interface](self.core, self.config)
+            self.ui = util.INTERFACES[options.interface](self.core)
         else:
             print "'%s' is not a valid interface. Availables interfaces are %s" % (
                 options.interface, util.available_interfaces())

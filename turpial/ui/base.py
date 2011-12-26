@@ -11,9 +11,8 @@ import subprocess
 
 class Base:
     '''Parent class for every UI interface'''
-    def __init__(self, core, config):
+    def __init__(self, core):
         self.core = core
-        self.config = config
         self.log = logging.getLogger('UI')
         self.log.debug('Started')
     
@@ -23,7 +22,7 @@ class Base:
     
     def open_url(self, url):
         '''Open a URL in the configured web browser'''
-        browser = self.config.read('Browser', 'cmd')
+        browser = self.core.get_default_browser()
         if browser != '':
             self.log.debug('Opening URL %s with %s' % (url, browser))
             subprocess.Popen([browser, url])

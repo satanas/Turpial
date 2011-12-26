@@ -207,27 +207,25 @@ class HtmlParser:
             return "<span class='disabled action'>%s</span>" % (i18n.get('it_is_you'))
         
         menu = ''
-        cmd = '#'
+        cmd = ARG_SEP.join([profile.account_id, profile.username])
         # Direct Messages
         menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('message'))
         
         # Follow
         if profile.following:
-            menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('unfollow'))
+            menu += "<a id='profile-follow-cmd' href='cmd:unfollow:%s' class='action'>%s</a>" % (cmd, i18n.get('unfollow'))
         elif profile.follow_request:
             menu += "<span class='action'>%s</span>" % (i18n.get('request_send'))
         else:
-            menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('follow'))
+            menu += "<a id='profile-follow-cmd' href='cmd:follow:%s' class='action'>%s</a>" % (cmd, i18n.get('follow'))
         
         # Mute
         menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('mute'))
         
         # Block
-        cmd = ARG_SEP.join([profile.account_id, profile.username])
         menu += "<a href='cmd:block:%s' class='action'>%s</a>" % (cmd, i18n.get('block'))
         
         # Spam
-        cmd = ARG_SEP.join([profile.account_id, profile.username])
         menu += "<a href='cmd:report_spam:%s' class='action'>%s</a>" % (cmd, i18n.get('spam'))
         
         return menu

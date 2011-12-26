@@ -19,7 +19,7 @@
                 <div class="button" title="<% $preferences %>"><a href="cmd:preferences"><% img "dock-preferences.png" %></a></div>
                 <div class="button" title="<% $columns %>"><a href="cmd:add_column"><% img "dock-add.png" %></a></div>
                 <div class="button" title="<% $accounts %>"><a href="cmd:accounts_manager"><% img "dock-accounts.png" %></a></div>
-                <div class="button" title="<% $follow %>"><a href="cmd:follow"><% img "dock-profile.png" %></a></div>
+                <div class="button" title="<% $follow %>"><a href="cmd:users"><% img "dock-profile.png" %></a></div>
                 <div class="button" title="<% $update_status %>"><a href="javascript: show_update_box()"><% img "dock-update.png" %></a></div>
                 <div class="clearfix"></div>
             </div>

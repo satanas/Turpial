@@ -236,6 +236,11 @@ function update_retweeted_mark(status_id, cmd, label, visible) {
         $('#retweeted-icon-' + status_id).hide();
 }
 
+function update_profile_follow_cmd(cmd, label) {
+    $('#profile-follow-cmd').attr('href', cmd);
+    $('#profile-follow-cmd').html(label);
+}
+
 function delete_status(status_id) {
     $('#' + status_id).hide('slow', function(){ $('#' + status_id).remove(); });;
 }

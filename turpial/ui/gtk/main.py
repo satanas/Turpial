@@ -266,11 +266,8 @@ class Main(Base, Singleton, gtk.Window):
             self.show_about()
         elif action == 'preferences':
             self.container.execute("alert('hola');")
-            #self.container.execute("show_profile_window('prueba', 'hola');")
         elif action == 'accounts_manager':
             self.accountsdlg.show()
-        elif action == 'follow':
-            pass
         elif action == 'add_column':
             self.__show_add_column_menu(widget)
         elif action == 'update_column':
@@ -297,6 +294,10 @@ class Main(Base, Singleton, gtk.Window):
             self.report_spam(args[0], args[1])
         elif action == 'block':
             self.block(args[0], args[1])
+        elif action == 'follow':
+            self.follow(args[0], args[1])
+        elif action == 'unfollow':
+            self.unfollow(args[0], args[1])
     
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -446,16 +447,6 @@ class Main(Base, Singleton, gtk.Window):
         message = base64.b64decode(text)
         self.worker.register(self.core.update_status, (account, message, status_id), 
                 self.update_status_response, account)
-
-    def delete_response(self, response, status_id):
-        cmd = ''
-        if response.code > 0:
-            self.show_notice(response.errmsg, 'error')
-        else:
-            self.show_notice(i18n.get('successfully_deleted'), 'info')
-            cmd = ""
-        cmd += "unlock_status('%s');" % (status_id)
-        self.container.execute(cmd)
     
     def delete_status(self, account, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('deleting'))
@@ -465,6 +456,7 @@ class Main(Base, Singleton, gtk.Window):
                 self.delete_status_response)
     
     def show_profile(self, account_id, username):
+        username = 'elimpulsocom'
         self.worker.register(self.core.get_user_profile, (account_id, username),
                 self.show_profile_response)
     
@@ -481,6 +473,21 @@ class Main(Base, Singleton, gtk.Window):
         
         self.worker.register(self.core.block, (account_id, username), 
                 self.block_response)
+    
+    def follow(self, account_id, username):
+        cmd = "lock_profile('%s');" % (i18n.get('following_user'))
+        self.container.execute(cmd)
+        
+        self.worker.register(self.core.follow, (account_id, username), 
+                self.follow_response, True)
+    
+    def unfollow(self, account_id, username):
+        cmd = "lock_profile('%s');" % (i18n.get('unfollowing_user'))
+        self.container.execute(cmd)
+        
+        self.worker.register(self.core.follow, (account_id, username), 
+                self.follow_response, False)
+    
     # ------------------------------------------------------------
     # Callbacks
     # ------------------------------------------------------------
@@ -520,7 +527,7 @@ class Main(Base, Singleton, gtk.Window):
     def repeat_response(self, response, repeat=False):
         cmd = ''
         if response.code > 0:
-            self.show_notice(response.errmsg, 'error')
+            cmd = "show_notice('%s', '%s');" % (response.errmsg, 'error')
         else:
             status = response.items
             args = ARG_SEP.join([status.account_id, status.id_])
@@ -538,7 +545,7 @@ class Main(Base, Singleton, gtk.Window):
     def fav_response(self, response, fav=False):
         cmd = ''
         if response.code > 0:
-            self.show_notice(response.errmsg, 'error')
+            cmd = "show_notice('%s', '%s');" % (response.errmsg, 'error')
         else:
             status = response.items
             args = ARG_SEP.join([status.account_id, status.id_])
@@ -556,7 +563,7 @@ class Main(Base, Singleton, gtk.Window):
     def delete_status_response(self, response):
         cmd = ''
         if response.code > 0:
-            self.show_notice(response.errmsg, 'error')
+            cmd = "show_notice('%s', '%s');" % (response.errmsg, 'error')
         else:
             status = response.items
             cmd = "delete_status('%s'); show_notice('%s', '%s');" % (status.id_,
@@ -593,6 +600,27 @@ class Main(Base, Singleton, gtk.Window):
         else:
             cmd = "unlock_profile(); show_notice('%s', '%s');" % (
                 i18n.get('user_blocked_successfully'), 'info')
+        self.container.execute(cmd)
+    
+    def follow_response(self, response, follow=False):
+        cmd = ''
+        if response.code > 0:
+            cmd = "show_notice('%s', '%s');" % (response.errmsg, 'error')
+        else:
+            profile = response.items
+            cmd = ARG_SEP.join([profile.account_id, profile.username])
+            if follow:
+                newcmd = "cmd:unfollow:%s" % cmd
+                message = i18n.get('you_are_now_following') % profile.username
+                cmd = "update_profile_follow_cmd('%s', '%s'); show_notice('%s', '%s');" % (
+                    newcmd, i18n.get('unfollow'), message, 'info')
+            else:
+                newcmd = "cmd:follow:%s" % cmd
+                message = i18n.get('you_are_no_longer_following') % profile.username
+                cmd = "update_profile_follow_cmd('%s', '%s'); show_notice('%s', '%s');" % (
+                    newcmd, i18n.get('follow'), message, 'info')
+        
+        cmd += "unlock_profile();"
         self.container.execute(cmd)
     
     # ------------------------------------------------------------

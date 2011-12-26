@@ -124,6 +124,10 @@ text box below and click OK:'),
     'blocking_user': _("Blocking user..."),
     'user_blocked_successfully': _("User blocked successfully"),
     'it_is_you': _("It's you"),
+    'following_user': _('Following user...'),
+    'unfollowing_user': _('Unfollowing user...'),
+    'you_are_now_following': _("You are now following @%s"),
+    'you_are_no_longer_following': _("You are no longer following @%s"),
 }
 
 class i18n:

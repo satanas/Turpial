@@ -411,14 +411,14 @@ class Main(Base, Singleton, gtk.Window):
         self.container.execute(cmd)
         
         self.worker.register(self.core.repeat_status, (account_id, status_id), 
-            self.repeat_response, True)
+            self.repeat_response, (True, status_id))
     
     def unrepeat_status(self, account_id, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('unretweeting'))
         self.container.execute(cmd)
 
         self.worker.register(self.core.unrepeat_status, (account_id, status_id), 
-                self.repeat_response, False)
+                self.repeat_response, (False, status_id))
     
     def fav_status(self, account_id, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('adding_to_fav'))
@@ -541,22 +541,24 @@ class Main(Base, Singleton, gtk.Window):
             cmd += 'done_update_box();'
         self.container.execute(cmd)
     
-    def repeat_response(self, response, repeat=False):
+    def repeat_response(self, response, user_data):
         cmd = ''
         if response.code > 0:
             cmd = "show_notice('%s', '%s');" % (response.errmsg, 'error')
+            current_status_id = user_data[1]
         else:
             status = response.items
             args = ARG_SEP.join([status.account_id, status.id_])
-            if repeat:
+            if user_data[0]:
                 newcmd = "cmd:unrepeat_status:%s" % args
                 cmd = "update_retweeted_mark('%s', '%s', '%s', true); show_notice('%s', '%s');" % (status.id_, 
                     newcmd, i18n.get('-retweet'), i18n.get('successfully_retweeted'), 'info')
             else:
-                newcmd = "cmd:unrepeat_status:%s" % args
+                newcmd = "cmd:repeat_status:%s" % args
                 cmd = "update_retweeted_mark('%s', '%s', '%s', false); show_notice('%s', '%s');" % (status.id_, 
                     newcmd, i18n.get('+retweet'), i18n.get('retweet_successfully_undone'), 'info')
-        cmd += "unlock_status('%s');" % (status.id_)
+            current_status_id = status.id_
+        cmd += "unlock_status('%s');" % (current_status_id)
         self.container.execute(cmd)
     
     def fav_response(self, response, fav=False):

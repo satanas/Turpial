@@ -30,6 +30,7 @@ input[type="text"], input[type="password"]{
     background: #fff url('<% css_img "textinput-background.png" %>') repeat-x top;
     margin: 0 0 5px 0;
     border-color: #a7a3a0;
+    outline: none;
 }
 
 .button {

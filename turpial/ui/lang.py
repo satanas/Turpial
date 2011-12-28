@@ -132,6 +132,9 @@ text box below and click OK:'),
     'unmuting_user': _('Unmuting user...'),
     'user_muted_successfully': _('User muted successfully'),
     'user_unmuted_successfully': _('User unmuted successfully'),
+    'add_friend': _('Add friend'),
+    'load_friends': _('Load friends'),
+    'loading_friends': _('Loading friends...'),
 }
 
 class i18n:

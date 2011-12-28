@@ -25,11 +25,13 @@
             </div>
         </div>
         <div class="clearfix"></div>
+        
         <!-- Modality -->
         <div id="modal" style="display: none;"><div class="background"></div></div>
+        
         <!-- Updatebox -->
         <div id="update-box" name="" style="display: none;">
-            <div class="header">
+            <div class="titlebar">
                 <label id="update-box-title" class="text"><% $whats_happening %></label>
                 <a href="javascript: close_update_box();" class="close" title="<% $close %>"><% img "action-delete.png" %></a>
                 <label id="char-counter">140</label>
@@ -59,7 +61,7 @@
         <!-- Profile window -->
         <div id="profile-window" name="" style="display: none;">
             <input id="indicator-profile-window" type="hidden" value="" />
-            <div class="header">
+            <div class="titlebar">
                 <label id="profile-window-title" class="text"><% $user_profile %></label>
                 <a href="javascript: close_profile_window();" class="close" title="<% $close %>"><% img "action-delete.png" %></a>
                 <div class="clearfix"></div>
@@ -70,6 +72,34 @@
             </div>
             <div id="profile-window-content"></div>
             <div class="clearfix"></div>
+        </div>
+        
+        <!-- Autocomplete window -->
+        <div id="autocomplete-window" name="" style="display: none;">
+            <input id="indicator-autocomplete-window" type="hidden" value="" />
+            <input id="autocomplete-index" type="hidden" value="" />
+            <div class="titlebar">
+                <label class="text"><% $add_friend %></label>
+                <a href="javascript: close_autocomplete_window();" class="close" title="<% $close %>"><% img "action-delete.png" %></a>
+                <div class="clearfix"></div>
+            </div>
+            <div class="content">
+                <div id="user-input">
+                    <label>@</label>
+                    <input id="autocomplete-username" type="text" />
+                    <a id="autocomplete-load-cmd" href="javascript: load_friends();" title="<% $load_friends %>"><% img "action-refresh2.png" %></a>
+                </div>
+                <div id="buttonbox-autocomplete">
+                    <a href="#" class="action" title="<% $add_friend %>"><% $add %></a>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="progress-box" id="progress-box-autocomplete" style="display: none;">
+                    <label id="progress-msg-autocomplete"><% $loading_friends %></label>
+                    <% rimg "light-loader.gif", 16, 16 %>
+                </div>
+                <div id="autocomplete-list">
+                </div>
+            </div>
         </div>
     </div>
 </body>

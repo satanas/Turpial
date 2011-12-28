@@ -179,13 +179,13 @@
     position: absolute;
     top: 0px;
     left:0px;
+    z-index: 99;
 }
     
 #modal .background {
     opacity: 0.50;
     background-color: #424242;
     position: absolute;
-    z-index: 99;
     width: 100%;
     height: 100%;
 }
@@ -201,7 +201,7 @@
     width: 100%;
 }
 
-#update-box .header, #profile-window .header {
+.titlebar {
     width: 100%;
     height: 22px;
     color: #ccc;
@@ -209,13 +209,13 @@
     margin-bottom: 5px;
 }
 
-#update-box .header .text, #profile-window .header .text {
+.titlebar .text {
     float: left;
     margin: 3px 0 0 5px;
     font-size: 12px;
 }
 
-#update-box .header .close, #profile-window .header .close {
+.titlebar .close {
     float: right;
     margin: 3px 0 0 10px;
 }
@@ -460,4 +460,39 @@
     color: #333;
     font-size: 10px;
     display: block;
+}
+
+/*** Autocomplete window stuffs ***/
+#autocomplete-window {
+    position: absolute;
+    z-index: 101;
+    background-color: #f2f1f0;
+    bottom: 50px;
+    left: 10px;
+    height: 85px;
+    width: 200px;
+    margin: 0 auto;
+    border: 1px solid #999;
+}
+
+#autocomplete-window .content {
+    /*width: 100%;*/
+    margin: 5px;
+}
+
+#autocomplete-username {
+    width: 150px;
+}
+
+#buttonbox-autocomplete {
+    height: 17px;
+    margin: 0 5px 0 5px;
+    padding-top: 5px;
+    text-align: right;
+}
+
+#progress-box-autocomplete {
+    width: 100%;
+    margin: 0 -10px;
+    height: 22px;
 }

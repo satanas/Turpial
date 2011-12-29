@@ -88,6 +88,50 @@
     padding-bottom: 5px;
 }
 
+.tweet .content-divider {
+    position: relative;
+    width: 16px;
+    height: 8px;
+}
+
+.tweet .content-divider .inner-carrot {
+    position: absolute;
+    top: -7px;
+    left: 4;
+    z-index: 11;
+    border-bottom: 7px solid white;
+    border-bottom-width: 7px;
+    border-bottom-style: solid;
+    border-bottom-color: white;
+    border-right: 7px solid transparent;
+    border-right-width: 7px;
+    border-right-style: solid;
+    border-right-color: transparent;
+    border-left: 7px solid transparent;
+    border-left-width: 7px;
+    border-left-style: solid;
+    border-left-color: transparent;
+}
+
+.tweet .content-divider .outer-carrot {
+    position: absolute;
+    top: -9;
+    left: 3;
+    z-index: 10;
+    border-bottom: 8px solid #DDD;
+    border-bottom-width: 8px;
+    border-bottom-style: solid;
+    border-bottom-color: #DDD;
+    border-right: 8px solid transparent;
+    border-right-width: 8px;
+    border-right-style: solid;
+    border-right-color: transparent;
+    border-left: 8px solid transparent;
+    border-left-width: 8px;
+    border-left-style: solid;
+    border-left-color: transparent;
+}
+
 .tweet .icon {
     float: left;
     width: 48px;
@@ -99,6 +143,12 @@
     width: 48px;
     height: 48px;
     -webkit-border-radius: 8px;
+}
+
+.tweet .replylist {
+    background-color:#F7F6F6;
+    -webkit-box-shadow: inset 0 5px 5px -5px hsla(0,0%,0%,.5),
+                inset 0 -5px 5px -5px hsla(0,0%,0%,.5);
 }
 
 .tweet .content {

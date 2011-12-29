@@ -382,7 +382,7 @@ class HtmlParser:
         page = self.__parse_tags(col)
         return page
     
-    def status(self, status):
+    def status(self, status, ignore_reply=False):
         timestamp = status.datetime
         if status.source: 
             if status.source.url:
@@ -390,8 +390,10 @@ class HtmlParser:
             else:
                 timestamp += ' %s %s' % (i18n.get('from'), status.source.name)
         
-        if status.in_reply_to_user:
-            timestamp += ' %s %s' % (i18n.get('in_reply_to'), status.in_reply_to_user)
+        if status.in_reply_to_user and not ignore_reply:
+            args = ARG_SEP.join([status.account_id, status.id_, '%s' % status.in_reply_to_id])
+            timestamp += ' <a href="cmd:showreply:%s">%s %s</a>' % (args, i18n.get('in_reply_to'), status.in_reply_to_user)
+            timestamp += ' <a href="cmd:showconversation:%s">(%s)</a>' % (args, i18n.get('show_all'))
         
         reposted_by = ''
         if status.reposted_by:
@@ -410,9 +412,15 @@ class HtmlParser:
         message = message.replace('\\"', '"')
         username = self.__highlight_username(status)
         menu = self.__build_status_menu(status)
+
+        args = ARG_SEP.join([status.account_id, status.id_])
+        
         
         section = self.__open_partial('status')
         section = section.replace('<% @status_id %>', status.id_)
+        if status.in_reply_to_id:
+            section = section.replace('<% @status_replyto_id %>', '%s' % status.id_)
+            
         section = section.replace('<% @avatar %>', status.avatar)
         section = section.replace('<% @username %>', username)
         section = section.replace('<% @message %>', message)
@@ -426,8 +434,8 @@ class HtmlParser:
         section = section.replace('<% @retweeted_visible %>', self.__retweeted_visible(status))
         section = section.replace('<% @retweeted %>', self.__retweeted_tag())
         section = section.replace('<% @menu %>', menu)
-        
-        return section
+
+        return section      
     
     def profile(self, profile):
         bio_icon = self.__image_tag('icon-bio.png', width='16', height='16', class_='mark')

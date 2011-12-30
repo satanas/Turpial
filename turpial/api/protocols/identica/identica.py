@@ -15,7 +15,7 @@ from turpial.config import UPDATE_TYPE_DM, UPDATE_TYPE_STD, UPDATE_TYPE_PROFILE
 
 class Identica(Protocol):
     def __init__(self):
-        Protocol.__init__(self, 'Identi.ca', 'http://identi.ca/api', 
+        Protocol.__init__(self, 'Identi.ca', 'https://identi.ca/api', 
             'http://identi.ca/api', 'http://identi.ca/tag/', 
             'http://identi.ca/group', 'http://identi.ca')
         

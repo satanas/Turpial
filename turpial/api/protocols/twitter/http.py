@@ -14,9 +14,9 @@ from turpial.api.interfaces.http import TurpialHTTP, TurpialException
 from turpial.api.protocols.twitter.globals import POST_ACTIONS
 from turpial.api.protocols.twitter.globals import CONSUMER_KEY, CONSUMER_SECRET
 
-REQUEST_TOKEN_URL = 'http://api.twitter.com/oauth/request_token'
+REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
 ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
-AUTHORIZATION_URL = 'http://api.twitter.com/oauth/authorize'
+AUTHORIZATION_URL = 'https://api.twitter.com/oauth/authorize'
 
 class TwitterHTTP(TurpialHTTP):
     def __init__(self, apiurl):

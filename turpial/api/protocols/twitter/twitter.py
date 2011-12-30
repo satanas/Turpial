@@ -181,9 +181,9 @@ class Twitter(Protocol):
         password = args['password']
         
         try:
-            #key, secret = self.http.auth(username, password)
-            rtn = self.http.request('%s/account/verify_credentials' % 
-                self.apiurl)
+            url = '%s/account/verify_credentials' % self.apiurl
+            url = url.replace('http://', 'https://')
+            rtn = self.http.request(url)
             self.profile = self.__create_profile(rtn)
             self.profile.password = password
             return Response(self.profile, 'profile')

@@ -6,6 +6,7 @@
 # May 20, 2010
 
 import os
+import ssl
 import socket
 import urllib2
 import urllib
@@ -56,6 +57,8 @@ class TurpialHTTP:
         self.password = None
         self.post_actions = post_actions
         self.log = logging.getLogger('TurpialHTTP')
+        self.ca_certs_file = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            '..', '..', 'certs', 'cacert.pem'))
         
         # timeout in seconds
         timeout = 20
@@ -87,6 +90,29 @@ class TurpialHTTP:
                 urllib2.install_opener(opener)
             else:
                 self.log.debug('No se detectaron proxies en el sistema')
+    
+    def __validate_ssl_cert(self, request):
+        req = request.split('://')[1]
+        host = req[:req.find('/')]
+        port = 443
+        
+        ip = socket.getaddrinfo(host, port)[0][4][0]
+        sock = socket.socket()
+        sock.connect((ip, port))
+        
+        sock = ssl.wrap_socket(sock, 
+            cert_reqs=ssl.CERT_REQUIRED, ca_certs=self.ca_certs_file)
+        
+        cert = sock.getpeercert()
+        
+        for field in cert['subject']:
+            if field[0][0] == 'commonName':
+                certhost = field[0][1]
+                if certhost != host:
+                    raise ssl.SSLError("Host name '%s' doesn't match certificate host '%s'"
+                                 % (host, certhost))
+        
+        self.log.debug('Validated SSL cert for host: %s' % host)
         
     def __build(self, uri, args={}):
         '''Construir la petición HTTP'''
@@ -119,6 +145,11 @@ class TurpialHTTP:
             argData = encoded_args
         
         strReq = "%s%s" % (uri, argStr)
+        
+        proReq = strReq.split('://')[0]
+        if proReq.find('https') >= 0:
+            self.__validate_ssl_cert(strReq)
+        
         req = TurpialHTTPRequest(argStr, headers, argData, encoded_args, 
             method, strReq, uri, args)
         return req

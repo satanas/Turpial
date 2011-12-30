@@ -1,3 +1,6 @@
+v1.6.7 (Dic 29, 2011):
+    + Corregido bug sobre validación de certificados SSL
+    
 v1.6.6 (Nov 20, 2011):
     + Agregado soporte para img.ur y goo.gl
     + Implementada opción para expandir URLs en el menú contextual

@@ -388,12 +388,13 @@ function stop_updating_column(column_id) {
 function show_replies_to_status(status_id) {
     recalculate_column_size();
     enable_trigger();
-    $('#replystatus-' + status_id).fadeIn(1000);
+    $('#replycontainer-' + status_id).fadeIn(1000);
     $('#bubble-' + status_id).show();
 }
 
 function hide_replies_to_status(status_id) {
     $('#bubble-' + status_id).hide();
+    $('#replycontainer-' + status_id).fadeOut(1000);
 }
 
 function stop_updating_column(column_id) {

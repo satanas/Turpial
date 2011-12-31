@@ -91,13 +91,13 @@
 .tweet .content-divider {
     position: relative;
     width: 16px;
-    height: 8px;
+    height:8px;
 }
 
 .tweet .content-divider .inner-carrot {
     position: absolute;
     top: -7px;
-    left: 4;
+    left: 21;
     z-index: 11;
     border-bottom: 7px solid white;
     border-bottom-width: 7px;
@@ -115,8 +115,8 @@
 
 .tweet .content-divider .outer-carrot {
     position: absolute;
-    top: -9;
-    left: 3;
+    top: -8;
+    left: 20;
     z-index: 10;
     border-bottom: 8px solid #DDD;
     border-bottom-width: 8px;
@@ -130,6 +130,13 @@
     border-left-width: 8px;
     border-left-style: solid;
     border-left-color: transparent;
+}
+
+.tweet .bubble-x {
+    position: absolute;
+    top: -18;
+    left: 2;
+    z-index: 12;
 }
 
 .tweet .icon {

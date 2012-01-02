@@ -1,6 +1,7 @@
 include turpial/data/pixmaps/*
 include turpial/data/sounds/*
 include turpial/data/themes/default/*
+include turpial/certs/*
 include turpial.desktop
 include doc/*
 include ChangeLog

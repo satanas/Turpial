@@ -5,6 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # May 26, 2010
 
+import ssl
 import urllib2
 import logging
 import traceback
@@ -171,6 +172,8 @@ class TwitterHTTP(TurpialHTTP):
                 )
             )
             raise TurpialException(_('Can\'t connect to Twitter'))
+        except ssl.SSLError:
+            raise TurpialException(_("SSL certificate doesn't match"))
         except Exception, exc:
             self.log.debug((
                 "Unknown error for URL:"

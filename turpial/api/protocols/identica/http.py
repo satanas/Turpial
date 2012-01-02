@@ -5,6 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 # Jun 08, 2010
 
+import ssl
 import urllib2
 import logging
 import traceback
@@ -64,6 +65,8 @@ class IdenticaHTTP(TurpialHTTP):
                 )
             )
             raise TurpialException(_('Can\'t connect to Twitter'))
+        except ssl.SSLError:
+            raise TurpialException(_("SSL certificate doesn't match"))
         except Exception, exc:
             self.log.debug(
                 "Unknown error for URL: %s\nparameters: (%s)\ndetails: %s" % (

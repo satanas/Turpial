@@ -74,7 +74,8 @@ setup(name="turpial",
       ],
       packages=find_packages(),
       package_data={
-        'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/themes/default/*']
+        'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/themes/default/*',
+            'certs/*']
       },
       entry_points={
         'console_scripts': [

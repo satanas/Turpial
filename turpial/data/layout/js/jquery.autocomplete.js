@@ -91,6 +91,7 @@ jQuery.autocomplete = function(input, options) {
 					$input.get(0).blur();
 					e.preventDefault();
 					e.stopPropagation();
+                    console.log('laksdñlasdñk');
 				}
 				break;
 			default:

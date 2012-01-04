@@ -86,17 +86,16 @@ function enable_trigger() {
 }
 
 function enable_key_events() {
-    $('#update-message').keyup(function(event) {
-        /*console.log('tecla: ' + event.keyCode);*/
-        if (event.keyCode == 27) {
-            event.stopPropagation();
+    $('#update-message').keyup(function(e) {
+        if (e.keyCode == 27) {
             close_update_box();
+            e.stopPropagation();
             return;
-        } else if (event.keyCode == 13) {
-            event.stopPropagation();
+        } else if (e.keyCode == 13) {
             /* TODO: Submit with Enter */
             console.log('submit with enter');
-            return false;
+            e.stopPropagation();
+            return;
         }
         count_chars();
     });
@@ -392,11 +391,13 @@ function update_friends(array) {
     unlock_autocomplete();
 }
 
-function select_friend() {
+function select_friend(value) {
+    var username = value;
+    if (username == undefined) {
+        username = $('#autocomplete-username').val();
+    }
     var message = $('#update-message');
     var index = $('#autocomplete-index').val();
-    var username = $('#autocomplete-username').val();
-    username = username.trim();
     var text = message.val();
     var prevtext = text.substr(0, index + 1);
     var nexttext = text.substr(index + 1, text.length);
@@ -412,9 +413,9 @@ function select_friend() {
 }
 
 function autocomplete_friend(value) {
-    var name = $(value).html();
-    
-    console.log('hail ' + name.charCodeAt(name.length - 1));
+    var username = $(value).html();
+    select_friend(username);
+    //console.log('hail ' + name.charCodeAt(name.length - 1));
 }
 
 /* Callbacks */

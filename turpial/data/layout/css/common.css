@@ -13,21 +13,22 @@ body {
 a:link, a:visited{
     color: #006C12;
     text-decoration: none;
-    /*font-size: 11px;*/
+    outline: none;
 }
 
 a:hover{
     color: #00AB1C;
     text-decoration: none;
-    /*font-size: 11px;*/
+    outline: none;
 }
 
+/* TODO: Fix the gradient here */
 input[type="text"], input[type="password"]{
     padding: 4px;
     border: 1px solid #aaa;
     color: #333;
     vertical-align: middle;
-    background: #fff url('<% css_img "textinput-background.png" %>') repeat-x top;
+    /*background: #fff url('<% css_img "textinput-background.png" %>') repeat-x top;*/
     margin: 0 0 5px 0;
     border-color: #a7a3a0;
     outline: none;
@@ -49,7 +50,7 @@ input[type="text"], input[type="password"]{
     cursor: default !important;
 }
 
-input[disabled], textarea[disabled] { /*.disabled_input {*/
+input[disabled='disabled'], textarea[disabled='disabled'] {
     color: #808080;
     background-color: #ddd;
 }

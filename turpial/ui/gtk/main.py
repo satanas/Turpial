@@ -302,6 +302,8 @@ class Main(Base, Singleton, gtk.Window):
             self.mute(args[0])
         elif action == 'unmute':
             self.unmute(args[0])
+        elif action == 'load_friends':
+            self.load_friends()
     
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -354,7 +356,7 @@ class Main(Base, Singleton, gtk.Window):
         else:
             page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
         self.container.render(page)
-        self.login()
+        #self.login()
         
     def show_about(self):
         about = About(self)
@@ -450,60 +452,64 @@ class Main(Base, Singleton, gtk.Window):
     def reply_status(self, account, status_id, text):
         message = base64.b64decode(text)
         self.worker.register(self.core.update_status, (account, message, status_id), 
-                self.update_status_response, account)
+            self.update_status_response, account)
     
     def delete_status(self, account, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('deleting'))
         self.container.execute(cmd)
         
         self.worker.register(self.core.destroy_status, (account, status_id), 
-                self.delete_status_response)
+            self.delete_status_response)
     
     def show_profile(self, account_id, username):
         self.worker.register(self.core.get_user_profile, (account_id, username),
-                self.show_profile_response)
+            self.show_profile_response)
     
     def report_spam(self, account_id, username):
         cmd = "lock_profile('%s');" % (i18n.get('reporting_as_spam'))
         self.container.execute(cmd)
         
         self.worker.register(self.core.report_spam, (account_id, username), 
-                self.report_spam_response)
+            self.report_spam_response)
     
     def block(self, account_id, username):
         cmd = "lock_profile('%s');" % (i18n.get('blocking_user'))
         self.container.execute(cmd)
         
         self.worker.register(self.core.block, (account_id, username), 
-                self.block_response)
+            self.block_response)
     
     def follow(self, account_id, username):
         cmd = "lock_profile('%s');" % (i18n.get('following_user'))
         self.container.execute(cmd)
         
         self.worker.register(self.core.follow, (account_id, username), 
-                self.follow_response, True)
+            self.follow_response, True)
     
     def unfollow(self, account_id, username):
         cmd = "lock_profile('%s');" % (i18n.get('unfollowing_user'))
         self.container.execute(cmd)
         
         self.worker.register(self.core.follow, (account_id, username), 
-                self.follow_response, False)
+            self.follow_response, False)
     
     def mute(self, username):
         cmd = "lock_profile('%s');" % (i18n.get('muting_user'))
         self.container.execute(cmd)
         
         self.worker.register(self.core.mute, (username), 
-                self.mute_response, True)
+            self.mute_response, True)
     
     def unmute(self, username):
         cmd = "lock_profile('%s');" % (i18n.get('unmuting_user'))
         self.container.execute(cmd)
         
         self.worker.register(self.core.unmute, (username), 
-                self.mute_response, False)
+            self.mute_response, False)
+    
+    def load_friends(self):
+        self.worker.register(self.core.get_all_friends_list, (), 
+            self.load_friends_response)
     
     # ------------------------------------------------------------
     # Callbacks
@@ -544,7 +550,7 @@ class Main(Base, Singleton, gtk.Window):
     def repeat_response(self, response, user_data):
         cmd = ''
         if response.code > 0:
-            cmd = "show_notice('%s', '%s');" % (response.errmsg, 'error')
+            cmd = "show_notice('%s', 'error');" % response.errmsg
             current_status_id = user_data[1]
         else:
             status = response.items
@@ -564,7 +570,7 @@ class Main(Base, Singleton, gtk.Window):
     def fav_response(self, response, fav=False):
         cmd = ''
         if response.code > 0:
-            cmd = "show_notice('%s', '%s');" % (response.errmsg, 'error')
+            cmd = "show_notice('%s', 'error');" % response.errmsg
         else:
             status = response.items
             args = ARG_SEP.join([status.account_id, status.id_])
@@ -582,7 +588,7 @@ class Main(Base, Singleton, gtk.Window):
     def delete_status_response(self, response):
         cmd = ''
         if response.code > 0:
-            cmd = "show_notice('%s', '%s');" % (response.errmsg, 'error')
+            cmd = "show_notice('%s', 'error');" % response.errmsg
         else:
             status = response.items
             cmd = "delete_status('%s'); show_notice('%s', '%s');" % (status.id_,
@@ -624,7 +630,7 @@ class Main(Base, Singleton, gtk.Window):
     def follow_response(self, response, follow=False):
         cmd = ''
         if response.code > 0:
-            cmd = "show_notice('%s', '%s');" % (response.errmsg, 'error')
+            cmd = "show_notice('%s', 'error');" % response.errmsg
         else:
             profile = response.items
             cmd = ARG_SEP.join([profile.account_id, profile.username])
@@ -645,7 +651,7 @@ class Main(Base, Singleton, gtk.Window):
     def mute_response(self, response, mute=False):
         cmd = ''
         if response.code > 0:
-            cmd = "show_notice('%s', '%s');" % (response.errmsg, 'error')
+            cmd = "show_notice('%s', 'error');" % response.errmsg
         else:
             username = response.items
             if mute:
@@ -661,6 +667,20 @@ class Main(Base, Singleton, gtk.Window):
                     newcmd, i18n.get('mute'), message, 'info')
                 cmd += "mute_user('%s', false);" % username
         cmd += "unlock_profile();"
+        self.container.execute(cmd)
+    
+    def load_friends_response(self, response):
+        cmd = ''
+        if response.code > 0:
+            cmd = "show_notice('%s', 'error');" % response.errmsg
+        else:
+            users = []
+            for profile in response:
+                users.append(profile.username)
+            friends = self.htmlparser.js_string_array(users)
+            print friends
+            cmd = "show_notice('%s', 'info'); update_friends(%s);" % (
+                i18n.get('friends_loaded'), friends)
         self.container.execute(cmd)
     
     # ------------------------------------------------------------

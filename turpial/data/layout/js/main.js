@@ -1,20 +1,22 @@
 var arg_sep = '<% @arg_sep %>';
 var maxcharlimit = 140;
 var num_columns = <% @num_columns %>;
-var friends = [];
+var friends = ["Allen","Albert","Alberto","Alladin","Sparta","Spencer","Spencerville","Spring Valley","Springboro","Springfield"];
 
 $(document).ready(function() {
     recalculate_column_size();
     $('#alert-message').click(function() {
         hide_notice();
     });
-    $('a').click(function(){
+    $('a').live('click', (function(){
         this.blur();
-    });
+    }));
     $(window).resize(function() {
         recalculate_column_size();
     });
     enable_key_events();
+    $("#autocomplete-username").autocompleteArray(friends, {delay:10, minChars:1, 
+        matchSubset:1, maxItemsToShow:10, onItemSelect: autocomplete_friend});
 });
 
 function recalculate_column_size(nw, nh) {
@@ -87,9 +89,11 @@ function enable_key_events() {
     $('#update-message').keyup(function(event) {
         /*console.log('tecla: ' + event.keyCode);*/
         if (event.keyCode == 27) {
+            event.stopPropagation();
             close_update_box();
             return;
         } else if (event.keyCode == 13) {
+            event.stopPropagation();
             /* TODO: Submit with Enter */
             console.log('submit with enter');
             return false;
@@ -100,6 +104,7 @@ function enable_key_events() {
     /* Activate autocomplete dialog */
     $('#update-message').keypress(function(event) {
         if (event.which == 64) {
+            event.stopPropagation();
             var index = $(this).getCursorPosition();
             var text = $('#update-message').val();
             if (index == 0) {
@@ -112,6 +117,16 @@ function enable_key_events() {
             }
             return;
         }
+    });
+    
+    $('#autocomplete-username').keyup(function(e) {
+        if (e.keyCode == 27) {
+            close_autocomplete_window();
+        } else if (e.keyCode == 13) {
+            console.log('keyup');
+            select_friend();
+        }
+        e.stopPropagation();
     });
 }
 
@@ -347,6 +362,7 @@ function close_autocomplete_window() {
 
 function reset_autocomplete_window() {
     $('#autocomplete-index').val('');
+    $('#autocomplete-username').val('');
     $('#modal').css('z-index', 99);
 }
 
@@ -369,6 +385,36 @@ function unlock_autocomplete() {
 function load_friends() {
     lock_autocomplete();
     exec_command('cmd:load_friends');
+}
+
+function update_friends(array) {
+    friends = array;
+    unlock_autocomplete();
+}
+
+function select_friend() {
+    var message = $('#update-message');
+    var index = $('#autocomplete-index').val();
+    var username = $('#autocomplete-username').val();
+    username = username.trim();
+    var text = message.val();
+    var prevtext = text.substr(0, index + 1);
+    var nexttext = text.substr(index + 1, text.length);
+    /*
+    if (nexttext.substr(0) != ' ')
+        username += ' '
+    */
+    var newtext = prevtext + username + nexttext;
+    message.val(newtext);
+    close_autocomplete_window();
+    message.focus();
+    message.setCursorPosition(index + 2 + username.length);
+}
+
+function autocomplete_friend(value) {
+    var name = $(value).html();
+    
+    console.log('hail ' + name.charCodeAt(name.length - 1));
 }
 
 /* Callbacks */

@@ -53,12 +53,12 @@ class HtmlParser:
         
         # Load default js
         
-        for js in ['jquery', 'common']:
+        for js in ['jquery', 'jquery.autocomplete', 'common']:
             filepath = os.path.realpath(os.path.join(JS_LAYOUT_DIR, js + '.js'))
             self.scripts.append(filepath)
         
         # Load default css
-        for css in ['common']:
+        for css in ['common', 'jquery.autocomplete']:
             filepath = os.path.realpath(os.path.join(CSS_LAYOUT_DIR, css + '.css'))
             self.styles.append(filepath)
         
@@ -288,6 +288,9 @@ class HtmlParser:
         page = self.__parse_tags(page)
         return page
     
+    def js_string_array(self, array):
+        return '["' + '","'.join(array) + '"]'
+        
     def parse_command(self, command):
         action = command.split(':')[0]
         try:

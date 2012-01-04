@@ -86,8 +86,9 @@
             <div class="content">
                 <div id="user-input">
                     <label>@</label>
-                    <input id="autocomplete-username" type="text" />
+                    <input id="autocomplete-username" autocomplete="off" class="ac_input" type="text" />
                     <a id="autocomplete-load-cmd" href="javascript: load_friends();" title="<% $load_friends %>"><% img "action-refresh2.png" %></a>
+                    <div style="display: none; position: absolute; z-index: 102;" class="ac_results"></div>
                 </div>
                 <div id="buttonbox-autocomplete">
                     <a href="#" class="action" title="<% $add_friend %>"><% $add %></a>

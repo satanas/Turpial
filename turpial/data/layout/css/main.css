@@ -467,7 +467,7 @@
     position: absolute;
     z-index: 101;
     background-color: #f2f1f0;
-    bottom: 50px;
+    bottom: 200px;
     left: 10px;
     height: 85px;
     width: 200px;
@@ -495,4 +495,8 @@
     width: 100%;
     margin: 0 -10px;
     height: 22px;
+}
+
+.ac_results {
+    z-index: 102;
 }

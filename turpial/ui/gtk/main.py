@@ -356,7 +356,7 @@ class Main(Base, Singleton, gtk.Window):
         else:
             page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
         self.container.render(page)
-        #self.login()
+        self.login()
         
     def show_about(self):
         about = About(self)
@@ -508,7 +508,7 @@ class Main(Base, Singleton, gtk.Window):
             self.mute_response, False)
     
     def load_friends(self):
-        self.worker.register(self.core.get_all_friends_list, (), 
+        self.worker.register(self.core.get_all_friends_list, None,
             self.load_friends_response)
     
     # ------------------------------------------------------------
@@ -672,13 +672,12 @@ class Main(Base, Singleton, gtk.Window):
     def load_friends_response(self, response):
         cmd = ''
         if response.code > 0:
-            cmd = "show_notice('%s', 'error');" % response.errmsg
+            cmd = "show_notice('%s', 'error'); unlock_autocomplete();" % response.errmsg
         else:
             users = []
             for profile in response:
                 users.append(profile.username)
             friends = self.htmlparser.js_string_array(users)
-            print friends
             cmd = "show_notice('%s', 'info'); update_friends(%s);" % (
                 i18n.get('friends_loaded'), friends)
         self.container.execute(cmd)

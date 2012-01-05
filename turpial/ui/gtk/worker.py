@@ -37,8 +37,10 @@ class Worker(threading.Thread):
             
             if type(args) == tuple:
                 rtn = funct(*args)
-            else:
+            elif args:
                 rtn = funct(args)
+            else:
+                rtn = funct()
             
             if callback:
                 self.tcallback(callback, rtn, user_data)

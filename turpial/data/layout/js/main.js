@@ -1,7 +1,7 @@
 var arg_sep = '<% @arg_sep %>';
 var maxcharlimit = 140;
 var num_columns = <% @num_columns %>;
-var friends = ["Allen","Albert","Alberto","Alladin","Sparta","Spencer","Spencerville","Spring Valley","Springboro","Springfield"];
+var friends = [];
 
 $(document).ready(function() {
     recalculate_column_size();
@@ -129,9 +129,6 @@ function enable_key_events() {
             select_friend();
         }
     });
-    
-    $("#autocomplete-username").autocompleteArray(friends, {delay:10, minChars:1, 
-        matchSubset:1, maxItemsToShow:10, onItemSelect: autocomplete_friend});
 }
 
 /* Columns */
@@ -382,8 +379,8 @@ function unlock_autocomplete() {
     $('#autocomplete-username').removeAttr('disabled');
     $('#autocomplete-load-cmd').attr('href', "javascript: load_friends();");
     $('#autocomplete-load-cmd').css('opacity', 1);
-    $('#autocomplete-load-cmd').show();
     $('#buttonbox-autocomplete').show();
+    $('#progress-box-autocomplete').hide();
 }
 
 function load_friends() {
@@ -393,6 +390,8 @@ function load_friends() {
 
 function update_friends(array) {
     friends = array;
+    $("#autocomplete-username").autocompleteArray(friends, {delay:10, minChars:1, 
+        matchSubset:1, maxItemsToShow:10, onItemSelect: autocomplete_friend});
     unlock_autocomplete();
 }
 
@@ -419,7 +418,6 @@ function select_friend(value) {
 }
 
 function autocomplete_friend(value) {
-    autocompleted = true;
     select_friend($(value).html());
 }
 

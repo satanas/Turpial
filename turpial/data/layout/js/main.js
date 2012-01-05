@@ -297,7 +297,7 @@ function update_profile_mute_cmd(cmd, label) {
 }
 
 function delete_status(status_id) {
-    $('#' + status_id).hide('slow', function(){ $('#' + status_id).remove(); });;
+    $('#' + status_id).hide('slow', function(){ $('#' + status_id).remove(); });
 }
 
 /* Profile Window */
@@ -434,6 +434,26 @@ function stop_updating_column(column_id) {
     recalculate_column_size();
     enable_trigger();
 }
+
+function show_replies_to_status(status_id) {
+    recalculate_column_size();
+    enable_trigger();
+    $('#replycontainer-' + status_id).fadeIn(1000);
+    $('#bubble-' + status_id).show();
+}
+
+function hide_replies_to_status(status_id) {
+    $('#bubble-' + status_id).hide();
+    $('#replycontainer-' + status_id).fadeOut(1000);
+}
+
+function stop_updating_column(column_id) {
+    $('#header-buttons-' + column_id).show();
+    $('#header-progress-' + column_id).hide();
+    recalculate_column_size();
+    enable_trigger();
+}
+
 
 function append_status_to_timeline(account_id, html_status) {
     $('#list-' + account_id + '-timeline').prepend(html_status);

@@ -304,6 +304,10 @@ class Main(Base, Singleton, gtk.Window):
             self.unmute(args[0])
         elif action == 'load_friends':
             self.load_friends()
+        elif action == 'showreply':
+            self.showreply(args[0], args[1], args[2])
+        elif action == 'showconversation':
+            self.showconversation(args[0], args[1])
     
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -510,6 +514,18 @@ class Main(Base, Singleton, gtk.Window):
     def load_friends(self):
         self.worker.register(self.core.get_all_friends_list, None,
             self.load_friends_response)
+
+    def showreply(self, account_id, status_id, status_id_replyto):
+        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('loading'))
+        self.container.execute(cmd)
+        self.worker.register(self.core.get_single_status, (account_id, status_id_replyto), 
+            self.showreply_response, status_id)
+
+    def showconversation(self, account_id, status_id):
+        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('loading'))
+        self.container.execute(cmd)
+        self.worker.register(self.core.get_conversation, (account_id, status_id), 
+            self.showconversation_response, status_id)
     
     # ------------------------------------------------------------
     # Callbacks
@@ -681,6 +697,26 @@ class Main(Base, Singleton, gtk.Window):
             cmd = "show_notice('%s', 'info'); update_friends(%s);" % (
                 i18n.get('friends_loaded'), friends)
         self.container.execute(cmd)
+    
+    def showconversation_response(self, response, status_id):
+        statuses = response.items
+        statuses.reverse()
+        id_ = '#replystatus-%s' % status_id
+        html_status = ''
+        for status in statuses:
+            if status.id_ != status_id:
+                html_status += self.htmlparser.status(status, True)
+        cmd = "unlock_status('%s');" % (status_id)
+        cmd += "show_replies_to_status('%s')" % status_id
+        self.container.update_element(id_, html_status, cmd)
+    
+    def showreply_response(self, response, status_id):
+        status = response.items
+        id_ = '#replystatus-%s' % status_id
+        html_status = self.htmlparser.status(status, True)
+        cmd = "unlock_status('%s');" % (status_id)
+        cmd += "show_replies_to_status('%s')" % status_id
+        self.container.update_element(id_, html_status, cmd)
     
     # ------------------------------------------------------------
     # Timer Methods

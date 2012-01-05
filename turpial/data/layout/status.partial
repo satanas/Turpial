@@ -1,4 +1,9 @@
 <div class="tweet" id="<% @status_id %>">
+    <div id="replycontainer-<% @status_replyto_id %>" class="replylist" style="display: none;">
+        <div id="replystatus-<% @status_replyto_id %>" >
+        </div>
+        
+    </div>
     <input id="indicator-<% @status_id %>" type="hidden" value="" />
     <div class="icon"><img src="<% @avatar %>" width="48" height="48" /></div>
     <div class="content" name="<% @status_id %>">
@@ -25,6 +30,11 @@
             </div>
             <div class="clearfix"></div>
         </div>
+    </div>
+    <div id="bubble-<% @status_id %>" class="content-divider" style="display:none">
+        <div class="outer-carrot"></div>
+        <div class="inner-carrot"></div>
+        <div class="bubble-x"><a href="javascript:hide_replies_to_status('<% @status_id %>')">x</a></div>
     </div>
     <div class="clearfix"></div>
 </div>

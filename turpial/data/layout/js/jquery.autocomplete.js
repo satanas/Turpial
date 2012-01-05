@@ -85,13 +85,11 @@ jQuery.autocomplete = function(input, options) {
 				break;
 			case 9:  // tab
 			case 13: // return
-				console.log('keydown');
 				if( selectCurrent() ){
 					// make sure to blur off the current field
 					$input.get(0).blur();
 					e.preventDefault();
 					e.stopPropagation();
-                    console.log('laksdñlasdñk');
 				}
 				break;
 			default:

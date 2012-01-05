@@ -2,7 +2,6 @@ var arg_sep = '<% @arg_sep %>';
 var maxcharlimit = 140;
 var num_columns = <% @num_columns %>;
 var friends = ["Allen","Albert","Alberto","Alladin","Sparta","Spencer","Spencerville","Spring Valley","Springboro","Springfield"];
-var autocompleted = false;
 
 $(document).ready(function() {
     recalculate_column_size();
@@ -16,8 +15,6 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     enable_key_events();
-    $("#autocomplete-username").autocompleteArray(friends, {delay:10, minChars:1, 
-        matchSubset:1, maxItemsToShow:10, onItemSelect: autocomplete_friend});
 });
 
 function recalculate_column_size(nw, nh) {
@@ -88,18 +85,20 @@ function enable_trigger() {
 
 function enable_key_events() {
     $('#update-message').keyup(function(e) {
+        count_chars();
+    });
+    
+    $('#update-message').keydown(function(e) {
         if (e.keyCode == 27) {
             close_update_box();
             e.stopPropagation();
             return;
         } else if (e.keyCode == 13) {
-            if (autocompleted == true) return;
             /* TODO: Submit with Enter */
             console.log('submit with enter');
             e.stopPropagation();
             return;
         }
-        count_chars();
     });
     
     /* Activate autocomplete dialog */
@@ -130,6 +129,9 @@ function enable_key_events() {
             select_friend();
         }
     });
+    
+    $("#autocomplete-username").autocompleteArray(friends, {delay:10, minChars:1, 
+        matchSubset:1, maxItemsToShow:10, onItemSelect: autocomplete_friend});
 }
 
 /* Columns */
@@ -419,11 +421,6 @@ function select_friend(value) {
 function autocomplete_friend(value) {
     autocompleted = true;
     select_friend($(value).html());
-    setTimeout(function(){reset_autocompleted();}, 100);
-}
-
-function reset_autocompleted() {
-    autocompleted = false;
 }
 
 /* Callbacks */

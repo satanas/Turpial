@@ -478,6 +478,9 @@
     color: #333;
     font-size: 12px;
     display: block;
+    width: 255px;
+    word-wrap: break-word;
+    overflow: hidden;
 }
 
 #profile-window .stats {

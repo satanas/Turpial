@@ -695,7 +695,7 @@ class Main(Base, Singleton, gtk.Window):
                 users.append(profile.username)
             friends = self.htmlparser.js_string_array(users)
             cmd = "show_notice('%s', 'info'); update_friends(%s);" % (
-                i18n.get('friends_loaded'), friends)
+                i18n.get('friends_loaded_successfully'), friends)
         self.container.execute(cmd)
     
     def showconversation_response(self, response, status_id):

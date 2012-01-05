@@ -406,13 +406,15 @@ class HtmlParser:
             elif count == 1:
                 temp = '1 %s' % i18n.get('person')
             reposted_by = '%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
-
+        if status.text.find('\\') > 0:
+            print status.text
         message = self.__highlight_urls(status, status.text)
         message = self.__highlight_hashtags(status, message)
         message = self.__highlight_groups(status, message)
         message = self.__highlight_mentions(status, message)
         message = message.replace('\r', ' ')
         message = message.replace('\\"', '"')
+        message = message.replace('\\', "&#92;")
         username = self.__highlight_username(status)
         menu = self.__build_status_menu(status)
 

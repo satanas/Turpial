@@ -136,6 +136,9 @@ text box below and click OK:'),
     'add_friend': _('Add friend'),
     'load_friends': _('Load friends'),
     'loading_friends': _('Loading friends...'),
+    'friends': _('friends'),
+    'friend': _('friend'),
+    'friends_loaded_successfully': _('Friends loaded successfully'),
 }
 
 class i18n:

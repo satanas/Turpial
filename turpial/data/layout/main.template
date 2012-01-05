@@ -91,6 +91,7 @@
                     <div style="display: none; position: absolute; z-index: 102;" class="ac_results"></div>
                 </div>
                 <div id="buttonbox-autocomplete">
+                    <label id="friends_counter">0 <% $friends %></label>
                     <a href="#" class="action" title="<% $add_friend %>"><% $add %></a>
                     <div class="clearfix"></div>
                 </div>

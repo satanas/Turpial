@@ -390,6 +390,16 @@ function load_friends() {
 
 function update_friends(array) {
     friends = array;
+    var label = '';
+    var plabel = "<% $friends %>";
+    var slabel = "<% $friend %>";
+    
+    if (friends.length == 1)
+        label = friends.length + ' ' + slabel;
+    else
+        label = friends.length + ' ' + plabel;
+    
+    $('#friends_counter').html(label);
     $("#autocomplete-username").autocompleteArray(friends, {delay:10, minChars:1, 
         matchSubset:1, maxItemsToShow:10, onItemSelect: autocomplete_friend});
     unlock_autocomplete();

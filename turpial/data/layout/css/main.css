@@ -551,6 +551,13 @@
     text-align: right;
 }
 
+#friends_counter {
+    float: left;
+    display: block;
+    color: #999;
+    font-size: 11px;
+}
+
 #progress-box-autocomplete {
     width: 100%;
     margin: 0 -10px;

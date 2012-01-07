@@ -307,7 +307,6 @@ function show_profile_window(account_id, username) {
     $('#profile-window').fadeIn();
     $('#progress-box-profile-window').fadeIn();
     exec_command('cmd:show_profile:' + account_id + arg_sep + username);
-    
 }
 
 function update_profile_window(profile) {
@@ -487,6 +486,11 @@ function mute_user(username, mute) {
     });
 }
 
+function set_update_box_message(message) {
+    $('#update-message').val(message);
+    unlock_update_box();
+}
+
 /* Commands */
 
 function update_status() {
@@ -532,4 +536,15 @@ function reply_status(account_id, status_id, title, mentions) {
         msg += "@" + mentions[i] + " ";
     }
     show_update_box(msg, status_id, account_id, title);
+}
+
+function short_url() {
+    var text = $('#update-message').val();
+    
+    if (text == '') {
+        show_notice('<% $you_must_write_something %>', 'warning');
+    } else {
+        lock_update_box('<% $shorting_urls %>');
+        exec_command('cmd:short_urls:' + packstr(text));
+    }
 }

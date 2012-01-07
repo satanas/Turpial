@@ -139,6 +139,7 @@ text box below and click OK:'),
     'friends': _('friends'),
     'friend': _('friend'),
     'friends_loaded_successfully': _('Friends loaded successfully'),
+    'shorting_urls': _('Shorting URLs...'),
 }
 
 class i18n:

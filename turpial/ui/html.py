@@ -30,6 +30,10 @@ class HtmlParser:
         self.styles = []
         self.partials = {}
     
+    def __url_quote(self, text):
+        ntext = text.encode('utf-8').replace('\\\\', '\\')
+        return urllib.quote(ntext)
+    
     def __open_template(self, res):
         filepath = os.path.realpath(os.path.join(LAYOUT_DIR, res + '.template'))
         fd = open(filepath, 'r')
@@ -179,7 +183,7 @@ class HtmlParser:
             menu += "<a href=\"javascript: reply_status(%s)\" class='action'>%s</a>" % (cmd, i18n.get('reply'))
             
             # Quote
-            cmd = "'%s','%s','%s'" % (status.account_id, status.username, urllib.quote(status.text.encode('utf-8')))
+            cmd = "'%s','%s','%s'" % (status.account_id, status.username, self.__url_quote(status.text))
             menu += "<a href=\"javascript: quote_status(%s)\" class='action'>%s</a>" % (cmd, i18n.get('quote'))
             
             # Repeat
@@ -406,8 +410,8 @@ class HtmlParser:
             elif count == 1:
                 temp = '1 %s' % i18n.get('person')
             reposted_by = '%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
-        if status.text.find('\\') > 0:
-            print status.text
+        #if status.text.find('\\') > 0:
+        #    print status.text
         message = self.__highlight_urls(status, status.text)
         message = self.__highlight_hashtags(status, message)
         message = self.__highlight_groups(status, message)

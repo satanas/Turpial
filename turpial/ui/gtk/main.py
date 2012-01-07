@@ -308,6 +308,8 @@ class Main(Base, Singleton, gtk.Window):
             self.showreply(args[0], args[1], args[2])
         elif action == 'showconversation':
             self.showconversation(args[0], args[1])
+        elif action == 'short_urls':
+            self.short_urls(args[0])
     
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -527,13 +529,18 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.register(self.core.get_conversation, (account_id, status_id), 
             self.showconversation_response, status_id)
     
+    def short_urls(self, text):
+        message = base64.b64decode(text)
+        self.worker.register(self.core.autoshort_url, (message), 
+            self.short_url_response)
+    
     # ------------------------------------------------------------
     # Callbacks
     # ------------------------------------------------------------
     
     def update_status_response(self, response, account_id):
         if response.code > 0:
-            self.container.execute('update_status_error(' + response.errmsg + ');')
+            self.container.execute('update_status_error("' + response.errmsg + '");')
         else:
             html_status = self.htmlparser.single_status(response.items)
             id_ = '#list-%s-timeline' % account_id
@@ -717,6 +724,16 @@ class Main(Base, Singleton, gtk.Window):
         cmd = "unlock_status('%s');" % (status_id)
         cmd += "show_replies_to_status('%s')" % status_id
         self.container.update_element(id_, html_status, cmd)
+    
+    def short_url_response(self, response):
+        cmd = ''
+        if response.code > 0:
+            print response.errmsg
+            cmd = 'update_status_error("' + response.errmsg + '");'
+        else:
+            print response.items
+            cmd = 'set_update_box_message("' + response.items + '");'
+        self.container.execute(cmd)
     
     # ------------------------------------------------------------
     # Timer Methods

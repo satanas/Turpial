@@ -42,7 +42,7 @@
                 <div class="message-container"><textarea id="update-message" rows="3"></textarea></div>
                 <div id="buttonbox-update">
                     <a href="javascript: update_status();" class="action" title="<% $update_status %>">Submit</a>
-                    <a href="#" class="action" title="<% $short_urls %>">Short</a>
+                    <a href="javascript: short_url();" class="action" title="<% $short_urls %>">Short</a>
                     <a href="#" class="action" title="<% $upload_image %>">Image</a>
                     <div class="clearfix"></div>
                 </div>

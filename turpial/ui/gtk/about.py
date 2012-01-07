@@ -16,7 +16,7 @@ class About:
         about.set_logo(parent.load_image('turpial.png', True))
         about.set_name('Turpial')
         about.set_version(VERSION)
-        about.set_copyright('Copyright (C) 2009 - 2011 Wil Alvarez')
+        about.set_copyright('Copyright (C) 2009 - 2012 Wil Alvarez')
         about.set_comments(_('Microblogging client written in Python'))
         about.set_transient_for(parent)
         about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)

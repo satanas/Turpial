@@ -79,7 +79,7 @@
             <input id="indicator-autocomplete-window" type="hidden" value="" />
             <input id="autocomplete-index" type="hidden" value="" />
             <div class="titlebar">
-                <label class="text"><% $add_friend %></label>
+                <label id="autocomplete-window-title" class="text"></label>
                 <a href="javascript: close_autocomplete_window();" class="close" title="<% $close %>"><% img "action-delete.png" %></a>
                 <div class="clearfix"></div>
             </div>
@@ -92,7 +92,8 @@
                 </div>
                 <div id="buttonbox-autocomplete">
                     <label id="friends_counter">0 <% $friends %></label>
-                    <a href="javascript: select_friend();" class="action" title="<% $add_friend %>"><% $add %></a>
+                    <a id="autocomplete-add-cmd" href="" class="action" title="<% $add_friend %>"><% $add %></a>
+                    <input id="autocomplete-add-function" type="hidden" value=""/>
                     <div class="clearfix"></div>
                 </div>
                 <div class="progress-box" id="progress-box-autocomplete" style="display: none;">

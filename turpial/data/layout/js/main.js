@@ -126,7 +126,8 @@ function enable_key_events() {
             close_autocomplete_window();
         } else if (e.keyCode == 13) {
             console.log('keyup');
-            select_friend();
+            //select_friend();
+            eval($('#autocomplete-add-function').val());
         }
     });
 }
@@ -347,11 +348,19 @@ function unlock_profile() {
 
 /* Autocomplete */
 
-function show_autocomplete(index) {
+function build_autocomplete_dialog(title, addcmd, index) {
+    if (index != undefined)
+        $('#autocomplete-index').val(index);
+    $('#autocomplete-window-title').html(title);
+    $('#autocomplete-add-cmd').attr('href', 'javascript: ' + addcmd);
+    $('#autocomplete-add-function').val(addcmd);
     $('#modal').css('z-index', 101);
     $('#autocomplete-window').fadeIn();
-    $('#autocomplete-index').val(index);
     $('#autocomplete-username').focus();
+}
+
+function show_autocomplete(index) {
+    build_autocomplete_dialog('<% $add_friend %>', 'select_friend();', index);
 }
 
 function close_autocomplete_window() {

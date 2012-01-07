@@ -208,12 +208,12 @@ class HtmlParser:
     
     def __build_profile_menu(self, profile):
         if profile.is_me():
-            return "<span class='disabled action'>%s</span>" % (i18n.get('this_is_you'))
+            return "<span class='disabled action_you'>%s</span>" % (i18n.get('this_is_you'))
         
         menu = ''
         cmd = ARG_SEP.join([profile.account_id, profile.username])
         # Direct Messages
-        menu += "<a href=\"%s\" class='action'>%s</a>" % (cmd, i18n.get('message'))
+        menu += "<a href=\"javascript: send_direct_from_profile('%s')\" class='action'>%s</a>" % (profile.username, i18n.get('message'))
         
         # Follow
         if profile.following:

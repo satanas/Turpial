@@ -328,17 +328,25 @@ function update_profile_window(profile) {
     $('#profile-window-content').html(profile).slideDown();
 }
 
+function send_direct_from_profile(username) {
+    var message = $('#update-message');
+    show_update_box_for_direct(username);
+    close_profile_window(true);
+    message.focus();
+}
+
 function profile_window_error(message) {
     $('#progress-box-profile-window').hide();
     show_notice(message, 'error');
 }
 
-function close_profile_window() {
+function close_profile_window(keep_modal) {
     var status = $('#profile-window').attr('name');
     if (status != '') return;
     hide_notice();
     $('#profile-window').fadeOut(400, reset_profile_window);
-    $('#modal').fadeOut(400);
+    if ((keep_modal == undefined) || (keep_modal == false))
+        $('#modal').fadeOut(400);
 }
 
 function reset_profile_window() {
@@ -378,7 +386,7 @@ function show_autocomplete_for_status(index) {
 }
 
 function show_autocomplete_for_direct() {
-    build_autocomplete_dialog('<% $select_user %>', 'select_friend_for_dm();');
+    build_autocomplete_dialog('<% $select_user %>', 'select_friend_for_direct();');
 }
 
 function close_autocomplete_window() {
@@ -455,15 +463,13 @@ function select_friend(value) {
     count_chars();
 }
 
-function select_friend_for_dm() {
-    var message = $('#update-message');
-    show_update_box_for_direct($('#autocomplete-username').val());
+function select_friend_for_direct() {
     close_autocomplete_window();
-    message.focus();
+    show_update_box_for_direct($('#autocomplete-username').val());
 }
 
 function autocomplete_friend(value) {
-    select_friend($(value).html());
+    eval($('#autocomplete-add-function').val());
 }
 
 /* Callbacks */

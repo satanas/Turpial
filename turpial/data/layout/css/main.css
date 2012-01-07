@@ -63,6 +63,13 @@
     max-width: 50px;
 }
 
+.action_you {
+    margin-left: 10px;
+    float: right;
+    font-size: 10px;
+    max-width: 100px;
+}
+
 .wrapper {
     float: left;
     width: 100%;

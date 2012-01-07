@@ -728,10 +728,8 @@ class Main(Base, Singleton, gtk.Window):
     def short_url_response(self, response):
         cmd = ''
         if response.code > 0:
-            print response.errmsg
             cmd = 'update_status_error("' + response.errmsg + '");'
         else:
-            print response.items
             cmd = 'set_update_box_message("' + response.items + '");'
         self.container.execute(cmd)
     

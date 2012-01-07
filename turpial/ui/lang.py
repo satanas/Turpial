@@ -140,6 +140,12 @@ text box below and click OK:'),
     'friend': _('friend'),
     'friends_loaded_successfully': _('Friends loaded successfully'),
     'shorting_urls': _('Shorting URLs...'),
+    'direct_messages': _('Direct Messages'),
+    'select_user': _('Select user'),
+    'send_message_to': _('Send message to'),
+    'can_send_message_to_one_account': _("Wait! I just can send messages to one account at once"),
+    'sending_message': _('Sending message...'),
+    'direct_message_sent_successfully': _('Direct message sent successfully'),
 }
 
 class i18n:

@@ -310,6 +310,8 @@ class Main(Base, Singleton, gtk.Window):
             self.showconversation(args[0], args[1])
         elif action == 'short_urls':
             self.short_urls(args[0])
+        elif action == 'direct_message':
+            self.direct_message(args[0], args[1], args[2])
     
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -534,6 +536,11 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.register(self.core.autoshort_url, (message), 
             self.short_url_response)
     
+    def direct_message(self, account, user, text):
+        message = base64.b64decode(text)
+        self.worker.register(self.core.send_direct, (account, user, message),
+            self.direct_message_response)
+    
     # ------------------------------------------------------------
     # Callbacks
     # ------------------------------------------------------------
@@ -732,6 +739,14 @@ class Main(Base, Singleton, gtk.Window):
         else:
             cmd = 'set_update_box_message("' + response.items + '");'
         self.container.execute(cmd)
+    
+    def direct_message_response(self, response):
+        if response.code > 0:
+            self.container.execute('update_status_error("' + response.errmsg + '");')
+        else:
+            cmd = "show_notice('%s', 'info'); done_update_box_with_direct();" % (
+                i18n.get('direct_message_sent_successfully'))
+            self.container.execute(cmd)
     
     # ------------------------------------------------------------
     # Timer Methods

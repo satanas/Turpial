@@ -108,11 +108,11 @@ function enable_key_events() {
             var index = $(this).getCursorPosition();
             var text = $('#update-message').val();
             if (index == 0) {
-                show_autocomplete(index);
+                show_autocomplete_for_status(index);
             } else {
                 var prev = text.substr(index - 1, 1);
                 if (prev == ' ') {
-                    show_autocomplete(index);
+                    show_autocomplete_for_status(index);
                 }
             }
             return;
@@ -125,8 +125,6 @@ function enable_key_events() {
         if (e.keyCode == 27) {
             close_autocomplete_window();
         } else if (e.keyCode == 13) {
-            console.log('keyup');
-            //select_friend();
             eval($('#autocomplete-add-function').val());
         }
     });
@@ -154,6 +152,8 @@ function reset_column(column_id) {
 function show_update_box(message, status_id, account_id, title) {
     $('#modal').fadeIn();
     $('#update-box').fadeIn();
+    $('#upload-img-cmd').show();
+    $('#direct-message-to').val('');
     
     if (title == undefined) {
         $('#update-box-title').html("<% $whats_happening %>");
@@ -179,6 +179,14 @@ function show_update_box(message, status_id, account_id, title) {
     }
 }
 
+function show_update_box_for_direct(user) {
+    $('#update-box').fadeIn();
+    $('#upload-img-cmd').hide();
+    $('#update-box-title').html("<% $send_message_to %> " + user);
+    $('#direct-message-to').val(user);
+    $('#update-message').focus();
+}
+
 function close_update_box() {
     var status = $('#update-box').attr('name');
     if (status != '') return;
@@ -193,6 +201,11 @@ function done_update_box(recalculate) {
         recalculate_column_size();
         enable_trigger();
     }
+    close_update_box();
+}
+
+function done_update_box_with_direct() {
+    $('#update-box').attr('name', '');
     close_update_box();
 }
 
@@ -349,18 +362,23 @@ function unlock_profile() {
 /* Autocomplete */
 
 function build_autocomplete_dialog(title, addcmd, index) {
+    $('#modal').fadeIn();
+    $('#modal').css('z-index', 101);
     if (index != undefined)
         $('#autocomplete-index').val(index);
     $('#autocomplete-window-title').html(title);
     $('#autocomplete-add-cmd').attr('href', 'javascript: ' + addcmd);
     $('#autocomplete-add-function').val(addcmd);
-    $('#modal').css('z-index', 101);
     $('#autocomplete-window').fadeIn();
     $('#autocomplete-username').focus();
 }
 
-function show_autocomplete(index) {
+function show_autocomplete_for_status(index) {
     build_autocomplete_dialog('<% $add_friend %>', 'select_friend();', index);
+}
+
+function show_autocomplete_for_direct() {
+    build_autocomplete_dialog('<% $select_user %>', 'select_friend_for_dm();');
 }
 
 function close_autocomplete_window() {
@@ -414,9 +432,11 @@ function update_friends(array) {
 }
 
 function select_friend(value) {
-    var username = value;
+    var username = null;
     if (username == undefined) {
         username = $('#autocomplete-username').val();
+    } else {
+        username = value;
     }
     var message = $('#update-message');
     var index = $('#autocomplete-index').val();
@@ -433,6 +453,13 @@ function select_friend(value) {
     message.focus();
     message.setCursorPosition(index + 2 + username.length);
     count_chars();
+}
+
+function select_friend_for_dm() {
+    var message = $('#update-message');
+    show_update_box_for_direct($('#autocomplete-username').val());
+    close_autocomplete_window();
+    message.focus();
 }
 
 function autocomplete_friend(value) {
@@ -472,7 +499,6 @@ function stop_updating_column(column_id) {
     enable_trigger();
 }
 
-
 function append_status_to_timeline(account_id, html_status) {
     $('#list-' + account_id + '-timeline').prepend(html_status);
     recalculate_column_size();
@@ -505,26 +531,41 @@ function set_update_box_message(message) {
 function update_status() {
     var selected = '';
     var in_reply_to_id = $('#in-reply-to-id').val();
+    var direct_message_to = $('#direct-message-to').val();
     var text = $('#update-message').val();
+    var accounts = 0;
     $('.acc_selector').each(function() {
-        if ($(this).attr('checked'))
+        if ($(this).attr('checked')) {
             if (selected == '')
                 selected = $(this).val();
             else
                 selected += '|' + $(this).val();
+            accounts += 1;
+        }
     });
     
-    if (selected != '') {
+    if (accounts > 0) {
         if (text == '') {
             show_notice('<% $you_must_write_something %>', 'warning');
         } else if (text.length > maxcharlimit) {
             show_notice('<% $message_like_testament %>', 'warning');
         } else {
-            lock_update_box('<% $updating_status %>');
-            if (in_reply_to_id == ''){
-                exec_command('cmd:update_status:' + selected + arg_sep + packstr(text));
+            if (direct_message_to != '') {
+                /* Direct message */
+                if (accounts > 1) {
+                    show_notice('<% $can_send_message_to_one_account %>', 'warning');
+                } else {
+                    lock_update_box('<% $sending_message %>');
+                    exec_command('cmd:direct_message:' + selected + arg_sep + direct_message_to + arg_sep + packstr(text));
+                }
             } else {
-                exec_command('cmd:reply_status:' + selected + arg_sep + in_reply_to_id + arg_sep + packstr(text));
+                /* Regular status */
+                lock_update_box('<% $updating_status %>');
+                if (in_reply_to_id == ''){
+                    exec_command('cmd:update_status:' + selected + arg_sep + packstr(text));
+                } else {
+                    exec_command('cmd:reply_status:' + selected + arg_sep + in_reply_to_id + arg_sep + packstr(text));
+                }
             }
         }
     } else {

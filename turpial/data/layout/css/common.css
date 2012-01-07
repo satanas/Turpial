@@ -79,7 +79,7 @@ input[disabled='disabled'], textarea[disabled='disabled'] {
     height: 22px;
     background: url('<% css_img "anchor.png" %>') no-repeat bottom right;
     float: right;
-    width: 160px;
+    width: 182px;
 }
 
 #dock {

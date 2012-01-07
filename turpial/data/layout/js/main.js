@@ -393,12 +393,18 @@ function close_autocomplete_window() {
     var status = $('#autocomplete-window').attr('name');
     if (status != '') return;
     $('#autocomplete-window').fadeOut(400, reset_autocomplete_window);
+    if (!$('#update-box').is(":visible")) {
+        $('#modal').fadeOut(400);
+    }
 }
 
 function reset_autocomplete_window() {
     $('#autocomplete-index').val('');
     $('#autocomplete-username').val('');
     $('#modal').css('z-index', 99);
+    if ($('#update-box').is(":visible")) {
+        $('#update-message').focus();
+    }
 }
 
 function lock_autocomplete() {

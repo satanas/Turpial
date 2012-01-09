@@ -137,7 +137,7 @@ class HtmlParser:
             return "<span class=\"progress\">%s</span>" % (i18n.get('in_progress'))
         elif account.logged_in == LoginStatus.DONE:
             return "<span class=\"done\">%s</span>" % (i18n.get('logged_in'))
-            
+    
     def __highlight_username(self, status):
         args = "'%s', '%s'" % (status.account_id, status.username)
         return '<a href="javascript: show_profile_window(%s);">%s</a>' % (args, status.username)
@@ -161,7 +161,7 @@ class HtmlParser:
             pattern = re.compile(h.search_for, re.IGNORECASE)
             text = pattern.sub(cad, text)
         return text
-        
+    
     def __highlight_urls(self, status, text):
         for url in status.entities['urls']:
             if url.url == None:
@@ -236,7 +236,7 @@ class HtmlParser:
         menu += "<a href='cmd:report_spam:%s' class='action'>%s</a>" % (cmd, i18n.get('spam'))
         
         return menu
-            
+    
     def __account_buttons(self, accounts):
         buttons = ''
         for acc in accounts:
@@ -246,7 +246,7 @@ class HtmlParser:
             #buttons += "<a href='#' title='%s' class='toggle'>%s</a>" % (name, image)
             buttons += "<div class='checkbox' title='%s'>%s<label><input id='acc-selector-%s' type='checkbox' class='acc_selector' value='%s' /></label><div class='clearfix'></div></div>" % (name, image, acc, acc)
         return buttons
-        
+    
     def __parse_tags(self, page):
         for part in PARTIAL_PATTERN.findall(page):
             page = page.replace(part[0], self.partials[part[1]])
@@ -265,7 +265,7 @@ class HtmlParser:
             # TODO: Escape invalid characters
             page = page.replace(text[0], i18n.get(text[1]))
         return page
-        
+    
     def __render(self):
         page = self.app_layout
         
@@ -294,7 +294,7 @@ class HtmlParser:
     
     def js_string_array(self, array):
         return '["' + '","'.join(array) + '"]'
-        
+    
     def parse_command(self, command):
         action = command.split(':')[0]
         try:
@@ -321,7 +321,7 @@ class HtmlParser:
         page = page.replace('<% @arg_sep %>', ARG_SEP)
         page = page.replace('<% @num_columns %>', str(len(columns)))
         return page
-        
+    
     def accounts(self, accounts):
         self.__load_layout('accounts')
         acc_list = self.render_account_list(accounts)
@@ -376,7 +376,11 @@ class HtmlParser:
         
     def render_column(self, column):
         protocol_img = column.protocol_id + '.png'
-        label = "%s :: %s" % (column.account_id.split('-')[0], column.column_name)
+        label = ''
+        if column.column_name == 'public':
+            label = "%s :: %s" % (column.column_name, i18n.get('timeline'))
+        else:
+            label = "%s :: %s" % (column.account_id.split('-')[0], column.column_name)
         
         col_content = self.__open_partial('column_content')
         col_content = col_content.replace('<% @column_id %>', column.id_)

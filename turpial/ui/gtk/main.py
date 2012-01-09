@@ -135,12 +135,6 @@ class Main(Base, Singleton, gtk.Window):
     def __show_add_column_menu(self, widget):
         menu = gtk.Menu()
         
-        public_tl = gtk.MenuItem(i18n.get('public_timeline'))
-        public_tl_menu = gtk.Menu()
-        public_tl_menu.append(gtk.MenuItem(i18n.get('twitter')))
-        public_tl_menu.append(gtk.MenuItem(i18n.get('identica')))
-        public_tl.set_submenu(public_tl_menu)
-        
         search = gtk.MenuItem(i18n.get('search'))
         search_menu = gtk.Menu()
         search_menu.append(gtk.MenuItem(i18n.get('twitter')))
@@ -148,10 +142,17 @@ class Main(Base, Singleton, gtk.Window):
         search.set_submenu(search_menu)
         
         empty = True
+        twitter_public_acc = None
+        identica_public_acc = None
         accounts = self.get_all_accounts()
         columns = self.get_all_columns()
+        reg_columns = self.get_registered_columns()
         
         for acc in accounts:
+            if acc.protocol_id == 'twitter' and twitter_public_acc is None:
+                twitter_public_acc = acc.id_
+            if acc.protocol_id == 'identica' and identica_public_acc is None:
+                identica_public_acc = acc.id_
             name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
             temp = gtk.MenuItem(name)
             if acc.logged_in:
@@ -168,8 +169,31 @@ class Main(Base, Singleton, gtk.Window):
             menu.append(temp)
             empty = False
         
+        public_tl = gtk.MenuItem(i18n.get('public_timeline'))
+        public_tl_menu = gtk.Menu()
+        public_tl.set_submenu(public_tl_menu)
+        
+        if twitter_public_acc:
+            public_acc = twitter_public_acc + '-public'
+            twitter_public_tl = gtk.MenuItem(i18n.get('twitter'))
+            twitter_public_tl.connect('activate', self.__add_column, public_acc)
+            public_tl_menu.append(twitter_public_tl)
+            for reg in reg_columns:
+                if twitter_public_acc == reg.account_id and reg.column_name == 'public':
+                    twitter_public_tl.set_sensitive(False)
+        
+        if identica_public_acc:
+            public_acc = identica_public_acc + '-public'
+            identica_public_tl = gtk.MenuItem(i18n.get('identica'))
+            identica_public_tl.connect('activate', self.__add_column, public_acc)
+            public_tl_menu.append(identica_public_tl)
+            for reg in reg_columns:
+                if identica_public_acc == reg.account_id and reg.column_name == 'public':
+                    identica_public_tl.set_sensitive(False)
+        
         if not empty:
             menu.append(gtk.SeparatorMenuItem())
+            
         menu.append(public_tl)
         menu.append(search)
         menu.show_all()

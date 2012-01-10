@@ -32,7 +32,7 @@ class Base:
             self.log.debug('Opening URL %s with default browser' % url)
             webbrowser.open(url)
     
-    def count_new_statuses(last, current):
+    def count_new_statuses(self, last, current):
         if not last:
             return len(current)
         

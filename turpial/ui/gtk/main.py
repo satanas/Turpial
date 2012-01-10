@@ -783,18 +783,18 @@ class Main(Base, Singleton, gtk.Window):
     # ------------------------------------------------------------
     
     def download_stream(self, column, notif=True):
-        if self.updating.has_key(column):
-            if self.updating[column]:
+        if self.updating.has_key(column.id_):
+            if self.updating[column.id_]:
                 return True
         else:
-            self.updating[column] = True
+            self.updating[column.id_] = True
         
-        if not self.columns.has_key(column):
-            self.columns[column] = None
-            
+        if not self.columns.has_key(column.id_):
+            self.columns[column.id_] = None
+        
         self.container.execute("start_updating_column('" + column.id_ + "');")
         self.worker.register(self.core.get_column_statuses, (column.account_id, 
-            column.column_name, 200), self.update_column, (column.id_, notif))
+            column.column_name, 200), self.update_column, (column, notif))
         return True
         
     def refresh_column(self, column_id):
@@ -803,33 +803,25 @@ class Main(Base, Singleton, gtk.Window):
                 self.download_stream(col)
         
     def update_column(self, arg, data):
-        column_id, notif = data
-        self.log.debug('Updated column %s' % column_id)
+        column, notif = data
+        self.log.debug('Updated column %s' % column.id_)
         
         if arg.code > 0:
-            self.container.execute("stop_updating_column('" + column_id + "');")
+            self.container.execute("stop_updating_column('" + column.id_ + "');")
             self.show_notice(arg.errmsg, 'error')
             return
         page = self.htmlparser.statuses(arg.items)
-        element = "#list-%s" % column_id
-        extra = "stop_updating_column('" + column_id + "');"
+        element = "#list-%s" % column.id_
+        extra = "stop_updating_column('" + column.id_ + "');"
         self.container.update_element(element, page, extra)
         
         # Notifications
-        print 'notif', notif
-        count = self.count_new_statuses(self.columns[column_id], arg.items)
-        
+        count = self.count_new_statuses(self.columns[column.id_], arg.items)
         if notif and self.core.show_notifications_in_updates():
-            self.notify.updates(column_id, count)
+            self.notify.updates(column, count)
         if self.core.play_sounds_in_notification():
             self.sound.updates()
         
-        self.columns[column_id] = arg.items
-        self.updating[column_id] = False
-        
-        '''
-        last = self.home.timeline.statuslist.last
-        count = self.home.timeline.update_tweets(tweets)
-        column = self.request_viewed_columns()[0]
-        '''
+        self.columns[column.id_] = arg.items
+        self.updating[column.id_] = False
         

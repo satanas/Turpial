@@ -61,8 +61,21 @@ class Notification:
                     NOTIFY = False
     
     def updates(self, column, count):
-        # TODO: Detect protocol and use strings according each one
-        self.popup('%s (%i %s)' % (column, count, i18n.get('tweets')))
+        object_name = ''
+        if column.protocol_id == 'twitter':
+            if count > 1:
+                object_name = i18n.get('new_tweets')
+            else:
+                object_name = i18n.get('new_tweet')
+        else:
+            if count > 1:
+                object_name = i18n.get('new_dents')
+            else:
+                object_name = i18n.get('new_dent')
+        message = "%s :: %s (%s)" % (column.account_id.split('-')[0], 
+            column.column_name, i18n.get(column.protocol_id))
+        
+        self.popup('%i %s' % (count, object_name), message)
         
     def login(self, profile):
         object_name = ''

@@ -31,3 +31,15 @@ class Base:
             #    url = 'http://' + url
             self.log.debug('Opening URL %s with default browser' % url)
             webbrowser.open(url)
+    
+    def count_new_statuses(last, current):
+        if not last:
+            return len(current)
+        
+        count = 0
+        for st in last:
+            for ss in current:
+                if ss.id_ == st.id_:
+                    break
+            count += 1
+        return count

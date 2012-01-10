@@ -19,6 +19,7 @@ from libturpial.common import *
 
 from turpial.ui.lang import i18n
 from turpial.ui.base import Base
+from turpial.ui.sound import Sound
 from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.about import About
 from turpial.singleton import Singleton
@@ -31,8 +32,6 @@ from turpial.ui.gtk.accounts import AccountsDialog
 gtk.gdk.set_program_class("Turpial")
 gtk.gdk.threads_init()
 
-log = logging.getLogger('Gtk')
-
 # TODO: Improve all splits for accounts_id with a common function
 
 class Main(Base, Singleton, gtk.Window):
@@ -41,6 +40,7 @@ class Main(Base, Singleton, gtk.Window):
         Base.__init__(self, core)
         gtk.Window.__init__(self)
         
+        self.log = logging.getLogger('Gtk')
         self.htmlparser = HtmlParser()
         self.set_title('Turpial')
         self.set_size_request(310, 350)
@@ -57,6 +57,7 @@ class Main(Base, Singleton, gtk.Window):
         self.container.connect('link-request', self.__link_request)
         self.add(self.container)
         
+        # TODO: Improve the use of this mode
         self.mode = 0
         
         # Configuration
@@ -68,9 +69,10 @@ class Main(Base, Singleton, gtk.Window):
         self.interval2 = -1
         self.interval3 = -1
         
-        self.updating = []
+        self.updating = {}
+        self.columns = {}
         
-        #self.sound = Sound()
+        self.sound = Sound()
         self.notify = Notification()
         
         self.worker = Worker()
@@ -82,13 +84,13 @@ class Main(Base, Singleton, gtk.Window):
         
         self.__create_trayicon()
         self.show_all()
-
+    
     def __link_request(self, widget, url):
         self.open_url(url)
         
     def __create_trayicon(self):
         if gtk.check_version(2, 10, 0) is not None:
-            log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
+            self.log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
             return
         self.tray = gtk.StatusIcon()
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
@@ -262,11 +264,12 @@ class Main(Base, Singleton, gtk.Window):
             if response.code > 0:
                 self.show_notice(response.errmsg, 'error')
             else:
-                self.notify.login(response.items)
+                if self.core.show_notifications_in_login():
+                    self.notify.login(response.items)
             
             for col in self.get_registered_columns():
                 if col.account_id == account_id:
-                    self.download_stream(col)
+                    self.download_stream(col, True)
                     self.__add_timer(col)
         
     def __add_timer(self, column):
@@ -276,12 +279,12 @@ class Main(Base, Singleton, gtk.Window):
         self.interval1 = 5
         self.timers[column.id_] = gobject.timeout_add(self.interval1 * 60 * 1000, 
             self.download_stream, column)
-        log.debug('--Created timer for %s every %i min' % (column.id_, self.interval1))
+        self.log.debug('--Created timer for %s every %i min' % (column.id_, self.interval1))
     
     def __remove_timer(self, column_id):
         if self.timers.has_key(column_id):
             gobject.source_remove(self.timers[column_id])
-            log.debug('--Removed timer for %s' % column_id)
+            self.log.debug('--Removed timer for %s' % column_id)
     
     def __action_request(self, widget, url):
         action, args = self.htmlparser.parse_command(url)
@@ -398,6 +401,9 @@ class Main(Base, Singleton, gtk.Window):
         self.container.execute(cmd)
     
     def login(self):
+        if self.core.play_sounds_in_notification():
+            self.sound.login()
+        
         for acc in self.get_accounts_list():
             self.single_login(acc)
     
@@ -776,15 +782,19 @@ class Main(Base, Singleton, gtk.Window):
     # Timer Methods
     # ------------------------------------------------------------
     
-    def download_stream(self, column):
-        '''
-        if not self.columns[0]: return True
-        if self.columns[0].updating: return True
-        self.columns[0].updating = True
-        '''
+    def download_stream(self, column, notif=True):
+        if self.updating.has_key(column):
+            if self.updating[column]:
+                return True
+        else:
+            self.updating[column] = True
+        
+        if not self.columns.has_key(column):
+            self.columns[column] = None
+            
         self.container.execute("start_updating_column('" + column.id_ + "');")
         self.worker.register(self.core.get_column_statuses, (column.account_id, 
-            column.column_name, 200), self.update_column, column.id_)
+            column.column_name, 200), self.update_column, (column.id_, notif))
         return True
         
     def refresh_column(self, column_id):
@@ -792,7 +802,10 @@ class Main(Base, Singleton, gtk.Window):
             if col.build_id() == column_id:
                 self.download_stream(col)
         
-    def update_column(self, arg, column_id):
+    def update_column(self, arg, data):
+        column_id, notif = data
+        self.log.debug('Updated column %s' % column_id)
+        
         if arg.code > 0:
             self.container.execute("stop_updating_column('" + column_id + "');")
             self.show_notice(arg.errmsg, 'error')
@@ -802,19 +815,21 @@ class Main(Base, Singleton, gtk.Window):
         extra = "stop_updating_column('" + column_id + "');"
         self.container.update_element(element, page, extra)
         
-        '''
-        gtk.gdk.threads_enter()
+        # Notifications
+        print 'notif', notif
+        count = self.count_new_statuses(self.columns[column_id], arg.items)
         
+        if notif and self.core.show_notifications_in_updates():
+            self.notify.updates(column_id, count)
+        if self.core.play_sounds_in_notification():
+            self.sound.updates()
+        
+        self.columns[column_id] = arg.items
+        self.updating[column_id] = False
+        
+        '''
         last = self.home.timeline.statuslist.last
         count = self.home.timeline.update_tweets(tweets)
         column = self.request_viewed_columns()[0]
-        show_notif = self.read_config_value('Notifications', 'home')
-        
-        log.debug(u'Actualizando %s' % column.title)
-        if self.updating[0] and show_notif == 'on':
-            self._notify_new_tweets(column, tweets, last, count)
-            
-        gtk.gdk.threads_leave()
-        self.columns[0].updating = False
         '''
         

@@ -60,13 +60,26 @@ class Notification:
                     log.debug('Notification service not running')
                     NOTIFY = False
     
-    def new_tweets(self, title, count, tobject, tweet, icon):
-        self.popup('%s (%i %s)' % (title, count, tobject), tweet, icon)
+    def updates(self, column, count):
+        # TODO: Detect protocol and use strings according each one
+        self.popup('%s (%i %s)' % (column, count, i18n.get('tweets')))
         
     def login(self, profile):
+        object_name = ''
+        if profile.get_protocol_id() == 'twitter':
+            if profile.statuses_count > 1:
+                object_name = i18n.get('tweets')
+            else:
+                object_name = i18n.get('tweet')
+        else:
+            if profile.statuses_count > 1:
+                object_name = i18n.get('dents')
+            else:
+                object_name = i18n.get('dent')
+        
         self.popup('@%s' % profile.username,
             '%s: %i\n%s: %i\n%s: %i' % 
-            (i18n.get('tweets'), profile.statuses_count,
+            (object_name, profile.statuses_count,
             i18n.get('following'), profile.friends_count, 
             i18n.get('followers'), profile.followers_count))
     

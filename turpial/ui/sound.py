@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Clase para reproducir sonidos en múltiples plataformas en Turpial"""
+""" Base class for Turpial sounds"""
 #
 # Author: Wil Alvarez (aka Satanas)
 # Ene 08, 2010
@@ -46,24 +46,11 @@ class Sound:
         
     def disable(self, value):
         self.disable = value
-        
-    def play(self, filename):
-        if self.disable:
-            return
-        
-        filepath = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            'data', 'sounds', filename))
-        global DRIVER
-        if DRIVER == 'Windows':
-            pass
-        elif DRIVER == 'Linux':
-            self.player.set_property("uri", "file://" + filepath)
-            self.player.set_state(gst.STATE_PLAYING)
-        
+    
     def login(self):
         self.play('cambur_pinton.ogg')
         
-    def tweets(self):
+    def updates(self):
         self.play('turpial.ogg')
         
     def replies(self):
@@ -71,3 +58,20 @@ class Sound:
         
     def directs(self):
         self.play('mencion2.ogg')
+    
+    # ------------------------------------------------------------
+    # This method must be overwritten for each UI if necessary
+    # ------------------------------------------------------------
+    
+    def play(self, filename):
+        if self.disable:
+            return
+        
+        filepath = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            '..', 'data', 'sounds', filename))
+        global DRIVER
+        if DRIVER == 'Windows':
+            pass
+        elif DRIVER == 'Linux':
+            self.player.set_property("uri", "file://" + filepath)
+            self.player.set_state(gst.STATE_PLAYING)

@@ -14,7 +14,7 @@ from babel.messages import frontend as babel
 from turpial import VERSION
 
 LONG_DESCRIPTION = """
-Turpial is a light, fast and beatiful microblogging client for GNU/Linux, 
+Turpial is a light, fast and beautiful microblogging client for GNU/Linux, 
 written in Python and fully functional
 """
 
@@ -28,11 +28,11 @@ class build(_build):
 # TODO: Maybe find some better ways to do this
 # looking distutils's copy_tree method
 data_files=[
-    ('./', ['AUTHORS']),
+    ('./', ['AUTHORS', 'COPYING']),
     ('share/icons/scalable/apps', ['turpial/data/pixmaps/turpial.svg']),
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
     ('share/applications', ['turpial.desktop']),
-    ('share/doc/turpial', ['ChangeLog', 'README.rst', 'COPYING']),
+    ('share/doc/turpial', ['ChangeLog', 'README.rst']),
 ]
 '''
 pattern = re.compile('turpial/i18n/')

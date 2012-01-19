@@ -32,14 +32,17 @@ class Base:
             self.log.debug('Opening URL %s with default browser' % url)
             webbrowser.open(url)
     
-    def count_new_statuses(self, last, current):
+    def get_new_statuses(self, current, last):
+        if not current:
+            return last
         if not last:
-            return len(current)
+            return None
         
-        count = 0
-        for st in last:
-            for ss in current:
+        for ss in current:
+            count = 0
+            for st in last:
                 if ss.id_ == st.id_:
-                    break
-            count += 1
-        return count
+                    last.pop(count)
+                else:
+                    count += 1
+        return last

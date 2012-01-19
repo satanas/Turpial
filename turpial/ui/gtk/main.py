@@ -582,6 +582,7 @@ class Main(Base, Singleton, gtk.Window):
             html_status = self.htmlparser.single_status(response.items)
             id_ = '#list-%s-timeline' % account_id
             self.container.prepend_element(id_, html_status, 'done_update_box(true);')
+            self.columns['%s-timeline' % account_id].append(response.items)
         
     def broadcast_status_response(self, responses):
         cmd = ''
@@ -810,18 +811,29 @@ class Main(Base, Singleton, gtk.Window):
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             self.show_notice(arg.errmsg, 'error')
             return
-        page = self.htmlparser.statuses(arg.items)
+        new_statuses = self.get_new_statuses(self.columns[column.id_], arg.items)
+        
+        if new_statuses == None:
+            self.container.execute("stop_updating_column('" + column.id_ + "');")
+            return
+
+        page = self.htmlparser.statuses(new_statuses)
         element = "#list-%s" % column.id_
         extra = "stop_updating_column('" + column.id_ + "');"
-        self.container.update_element(element, page, extra)
+        self.container.prepend_element(element, page, extra)
         
         # Notifications
-        count = self.count_new_statuses(self.columns[column.id_], arg.items)
-        if notif and self.core.show_notifications_in_updates():
-            self.notify.updates(column, count)
-        if self.core.play_sounds_in_notification():
-            self.sound.updates()
-        
-        self.columns[column.id_] = arg.items
+        count = len(new_statuses)
+        if count != 0:
+            if notif and self.core.show_notifications_in_updates():
+                self.notify.updates(column, count)
+            if self.core.play_sounds_in_notification():
+                self.sound.updates()
+
+        if not self.columns[column.id_]:
+            self.columns[column.id_] = new_statuses
+        else:
+            self.columns[column.id_].extend(new_statuses)
+
         self.updating[column.id_] = False
         

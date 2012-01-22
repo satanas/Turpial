@@ -535,6 +535,7 @@ function mute_user(username, mute) {
 
 function set_update_box_message(message) {
     $('#update-message').val(message);
+    count_chars();
     unlock_update_box();
 }
 

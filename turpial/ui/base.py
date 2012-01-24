@@ -9,6 +9,8 @@ import logging
 import webbrowser
 import subprocess
 
+MIN_WINDOW_WIDTH = 250
+
 class Base:
     '''Parent class for every UI interface'''
     def __init__(self, core):
@@ -43,3 +45,6 @@ class Base:
                     break
             count += 1
         return count
+    
+    def save_window_geometry(self, width, height):
+        pass

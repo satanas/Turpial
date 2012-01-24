@@ -26,6 +26,7 @@ from turpial.singleton import Singleton
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.notification import Notification
+from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.accounts import AccountsDialog
 
@@ -74,6 +75,9 @@ class Main(Base, Singleton, gtk.Window):
         
         self.sound = Sound()
         self.notify = Notification()
+        self.indicator = Indicators()
+        self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
+        self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
         
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__timeout_callback)
@@ -105,7 +109,16 @@ class Main(Base, Singleton, gtk.Window):
         else:
             self.showed = True
             self.show()
-            
+    
+    def __on_main_indicator_clicked(self, indicator):
+        self.showed = True
+        self.show()
+        self.present()
+        
+    def __on_indicator_clicked(self, indicator, data):
+        self.indicator.clean()
+        self.__on_main_indicator_clicked(indicator)
+    
     def __on_focus(self, widget, event):
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
     
@@ -819,6 +832,7 @@ class Main(Base, Singleton, gtk.Window):
         count = self.count_new_statuses(self.columns[column.id_], arg.items)
         if notif and self.core.show_notifications_in_updates():
             self.notify.updates(column, count)
+        self.indicator.add_update(column, count)
         if self.core.play_sounds_in_notification():
             self.sound.updates()
         

@@ -314,6 +314,10 @@ function delete_status(status_id) {
     $('#' + status_id).hide('slow', function(){ $('#' + status_id).remove(); });
 }
 
+function show_avatar(img_url) {
+    console.log(img_url);
+}
+
 /* Profile Window */
 
 function show_profile_window(account_id, username) {

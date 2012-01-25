@@ -17,8 +17,8 @@ from xml.sax.saxutils import unescape
 
 from libturpial.common import *
 
+from turpial.ui.base import *
 from turpial.ui.lang import i18n
-from turpial.ui.base import Base
 from turpial.ui.sound import Sound
 from turpial.ui.html import HtmlParser
 from turpial.ui.gtk.about import About
@@ -26,6 +26,7 @@ from turpial.singleton import Singleton
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.notification import Notification
+from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.accounts import AccountsDialog
 
@@ -43,14 +44,15 @@ class Main(Base, Singleton, gtk.Window):
         self.log = logging.getLogger('Gtk')
         self.htmlparser = HtmlParser()
         self.set_title('Turpial')
-        self.set_size_request(310, 350)
-        self.set_default_size(310, 482)
+        self.set_size_request(310, 480)
+        self.set_default_size(310, 480)
         self.set_icon(self.load_image('turpial.svg', True))
         self.set_position(gtk.WIN_POS_CENTER)
         self.set_gravity(gtk.gdk.GRAVITY_STATIC)
         self.connect('delete-event', self.__close)
         self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
+        self.connect('size-request', self.__size_request)
         
         self.container = HtmlView()
         self.container.connect('action-request', self.__action_request)
@@ -59,6 +61,9 @@ class Main(Base, Singleton, gtk.Window):
         
         # TODO: Improve the use of this mode
         self.mode = 0
+        
+        self.screen_width = self.get_screen().get_width()
+        self.max_columns = self.screen_width / MIN_WINDOW_WIDTH
         
         # Configuration
         self.showed = True
@@ -74,6 +79,9 @@ class Main(Base, Singleton, gtk.Window):
         
         self.sound = Sound()
         self.notify = Notification()
+        self.indicator = Indicators()
+        self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
+        self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
         
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__timeout_callback)
@@ -84,6 +92,17 @@ class Main(Base, Singleton, gtk.Window):
         
         self.__create_trayicon()
         self.show_all()
+    
+    def __size_request(self, widget, rectangle):
+        print rectangle.width, rectangle.height, self.max_columns
+        width = rectangle.width
+        columns = len(self.core.all_registered_columns())
+        preferred_width = MIN_WINDOW_WIDTH * columns
+        if width < preferred_width:
+            width = preferred_width
+        print width, rectangle.width, preferred_width
+        #self.set_default_size(width, rectangle.height)
+        self.save_window_geometry(width, rectangle.height)
     
     def __link_request(self, widget, url):
         self.open_url(url)
@@ -105,7 +124,16 @@ class Main(Base, Singleton, gtk.Window):
         else:
             self.showed = True
             self.show()
-            
+    
+    def __on_main_indicator_clicked(self, indicator):
+        self.showed = True
+        self.show()
+        self.present()
+        
+    def __on_indicator_clicked(self, indicator, data):
+        self.indicator.clean()
+        self.__on_main_indicator_clicked(indicator)
+    
     def __on_focus(self, widget, event):
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
     
@@ -822,7 +850,7 @@ class Main(Base, Singleton, gtk.Window):
         extra = "stop_updating_column('" + column.id_ + "');"
         self.container.prepend_element(element, page, extra)
         
-        # Notifications
+        # Notifications         
         count = len(new_statuses)
         if count != 0:
             if notif and self.core.show_notifications_in_updates():
@@ -834,6 +862,5 @@ class Main(Base, Singleton, gtk.Window):
             self.columns[column.id_] = new_statuses
         else:
             self.columns[column.id_].extend(new_statuses)
-
         self.updating[column.id_] = False
         

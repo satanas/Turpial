@@ -5,7 +5,7 @@
         
     </div>
     <input id="indicator-<% @status_id %>" type="hidden" value="" />
-    <div class="icon"><img src="<% @avatar %>" width="48" height="48" /></div>
+    <div class="icon"><a href="javascript:show_avatar('<% @avatar %>')"><img src="<% @avatar %>" width="48" height="48" /></a></div>
     <div class="content" name="<% @status_id %>">
         <div>
             <% @reposted %>

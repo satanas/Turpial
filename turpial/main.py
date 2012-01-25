@@ -25,7 +25,7 @@ class Turpial:
             help='show debug info in shell during execution', default=False)
         parser.add_option('-i', '--interface', dest='interface',
             help='select interface to use. Available: %s' % util.available_interfaces(),
-            default='cmd')
+            default='gtk')
         parser.add_option('-c', '--clean', dest='clean', action='store_true',
             help='clean all bytecodes', default=False)
         parser.add_option('--version', dest='version', action='store_true',

@@ -25,6 +25,12 @@ class Notification:
     def __init__(self, disable=False):
         self.activate()
         self.disable = disable
+        
+        if not NOTIFY:
+            log.debug('Module not available')
+            self.disable = True
+            return
+        
         if disable:
             log.debug('Module disabled')
         

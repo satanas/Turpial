@@ -152,6 +152,7 @@ text box below and click OK:'),
     'can_send_message_to_one_account': _("Wait! I just can send messages to one account at once"),
     'sending_message': _('Sending message...'),
     'direct_message_sent_successfully': _('Direct message sent successfully'),
+    'turpial_image_viewer': _("Turpial Image Viewer"),
 }
 
 class i18n:

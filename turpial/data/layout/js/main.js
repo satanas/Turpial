@@ -15,6 +15,9 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     enable_key_events();
+    $('#imageview').click(function() {
+        hide_imageview();
+    });
 });
 
 function recalculate_column_size(nw, nh) {
@@ -314,10 +317,6 @@ function delete_status(status_id) {
     $('#' + status_id).hide('slow', function(){ $('#' + status_id).remove(); });
 }
 
-function show_avatar(img_url) {
-    console.log(img_url);
-}
-
 /* Profile Window */
 
 function show_profile_window(account_id, username) {
@@ -480,6 +479,22 @@ function select_friend_for_direct() {
 
 function autocomplete_friend(value) {
     eval($('#autocomplete-add-function').val());
+}
+
+/* Imageview */
+
+function show_imageview(img_url) {
+    console.log(img_url);
+    $('#modal').fadeIn();
+    $('#imageview-window').fadeIn();
+    $('#imageview').attr('src', img_url);
+}
+
+function hide_imageview() {
+    $('#imageview-window').fadeOut(400, function() {
+        $('#imageview').attr('src', '');
+        $('#modal').fadeOut(400);
+    });
 }
 
 /* Callbacks */

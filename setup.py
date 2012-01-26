@@ -47,8 +47,9 @@ data_files=[
 pattern = re.compile('turpial/i18n/')
 for root, dirs, files in os.walk(os.path.join('turpial', 'i18n')):
     for filename in files:
-        if filename.endswith('.mo'):
-            fullpath = os.path.join(root, filename)
+        if filename.endswith('.po'):
+            # Yes, it's an ugly hack to build list of files that do not exist yet
+            fullpath = os.path.join(root, filename[0:-2]+'mo')
             dest = os.path.join('share', 'locale', re.sub(pattern, '', root))
             data_files.append((dest, [fullpath]))
 

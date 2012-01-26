@@ -49,7 +49,7 @@ for root, dirs, files in os.walk(os.path.join('turpial', 'i18n')):
     for filename in files:
         if filename.endswith('.mo'):
             fullpath = os.path.join(root, filename)
-            dest = os.path.join('/', 'usr', 'share', 'locale', re.sub(pattern, '', root))
+            dest = os.path.join('share', 'locale', re.sub(pattern, '', root))
             data_files.append((dest, [fullpath]))
 
 setup(name="turpial",

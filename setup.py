@@ -33,22 +33,24 @@ class build(_build):
 # TODO: Maybe find some better ways to do this
 # looking distutils's copy_tree method
 data_files=[
-    ('./', ['AUTHORS', 'TRANSLATORS']),
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
     ('share/applications', ['turpial.desktop']),
     ('share/doc/turpial', ['doc/turpial.png',
                    'doc/turpial.dia',
                    'ChangeLog',
                    'README.rst',
-                   'COPYING']),
+                   'COPYING',
+                   'AUTHORS',
+                   'TRANSLATORS']),
 ]
 
 pattern = re.compile('turpial/i18n/')
 for root, dirs, files in os.walk(os.path.join('turpial', 'i18n')):
     for filename in files:
-        if filename.endswith('.mo'):
-            fullpath = os.path.join(root, filename)
-            dest = os.path.join('/', 'usr', 'share', 'locale', re.sub(pattern, '', root))
+        if filename.endswith('.po'):
+            # Yes, it's an ugly hack to build list of files that do not exist yet
+            fullpath = os.path.join(root, filename[0:-2]+'mo')
+            dest = os.path.join('share', 'locale', re.sub(pattern, '', root))
             data_files.append((dest, [fullpath]))
 
 setup(name="turpial",

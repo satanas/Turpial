@@ -73,16 +73,15 @@ function change_num_columns(num) {
 function enable_trigger() {
     $('.content').mouseover(function() {
         var name = $(this).attr('name');
+        console.log(name);
         var indicator = $('#indicator-' + name).val();
         if (indicator != "") return;
         $('#buttonbox-' + name).show();
-        $('.favmark-' + name).show();
     });
     
     $('.content').mouseleave(function() {
         var name = $(this).attr('name');
         $('#buttonbox-' + name).hide();
-        $('.favmark-' + name).hide();
     });
 }
 

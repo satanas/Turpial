@@ -362,10 +362,10 @@ class HtmlParser:
         
         return page
     
-    def statuses(self, statuses):
+    def statuses(self, statuses, column_id):
         result = ''
         for status in statuses:
-            result += self.status(status) + '\n'
+            result += self.status(status, column_id) + '\n'
         page = self.__parse_tags(result)
         return page
     
@@ -393,7 +393,7 @@ class HtmlParser:
         page = self.__parse_tags(col)
         return page
     
-    def status(self, status, ignore_reply=False):
+    def status(self, status, column_id, ignore_reply=False):
         timestamp = status.datetime
         if status.source: 
             if status.source.url:
@@ -428,9 +428,9 @@ class HtmlParser:
 
         args = ARG_SEP.join([status.account_id, status.id_])
         
-        
+        real_status_id = "%s-%s" % (status.id_, column_id)
         section = self.__open_partial('status')
-        section = section.replace('<% @status_id %>', status.id_)
+        section = section.replace('<% @status_id %>', real_status_id)
         if status.in_reply_to_id:
             section = section.replace('<% @status_replyto_id %>', '%s' % status.id_)
             

@@ -73,7 +73,6 @@ function change_num_columns(num) {
 function enable_trigger() {
     $('.content').mouseover(function() {
         var name = $(this).attr('name');
-        console.log(name);
         var indicator = $('#indicator-' + name).val();
         if (indicator != "") return;
         $('#buttonbox-' + name).show();
@@ -249,9 +248,13 @@ function lock_update_box(message) {
 
 function unlock_update_box() {
     $('#update-message').removeAttr('disabled');
-    $('.acc_selector').each(function() {
-        $(this).removeAttr('disabled');
-    });
+    var in_reply = $('#in-reply-to-id').val();
+    if (in_reply == '') {
+        $('.acc_selector').each(function() {
+            $(this).removeAttr('disabled');
+        });
+    }
+    $('#update-box').attr('name', '');
     $('#progress-box-updatebox').hide();
     $('#progress-msg-updatebox').html('');
     $('#buttonbox-update').show();
@@ -605,13 +608,13 @@ function update_status() {
 }
 
 function quote_status(account_id, username, text) {
-    console.log(account_id + ',' + username + ',' + text);
+    //console.log(account_id + ',' + username + ',' + text);
     var rt = "RT @" + username + ": " + text;
     show_update_box(rt);
 }
 
 function reply_status(account_id, status_id, title, mentions) {
-    console.log(account_id + ',' + status_id + ',' + mentions);
+    //console.log(account_id + ',' + status_id + ',' + mentions);
     var msg = "";
     for (var i=0; i < mentions.length; i++) {
         msg += "@" + mentions[i] + " ";

@@ -1,3 +1,7 @@
+v1.6.8 (Feb 02, 2012):
+    + Implementada integración básica con Unity
+    + Corregidos errores menores con los idiomas
+    
 v1.6.7 (Dic 29, 2011):
     + Corregido bug sobre validación de certificados SSL
     

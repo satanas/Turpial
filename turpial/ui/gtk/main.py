@@ -22,6 +22,7 @@ from turpial.ui.gtk.login import LoginBox
 from turpial.ui.gtk.profile import Profile
 from turpial.notification import Notification
 from turpial.ui.gtk.updatebox import UpdateBox
+from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.preferences import Preferences
 from turpial.ui.gtk.uploadpicbox import UploadPicBox
@@ -79,6 +80,9 @@ class Main(BaseGui, gtk.Window):
         
         self.sound = Sound(controller.no_sound)
         self.notify = Notification(controller.no_notif)
+        self.indicator = Indicators()
+        self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
+        self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
         
         self.home = Home(self, self.workspace)
         self.profile = Profile(self)
@@ -117,7 +121,16 @@ class Main(BaseGui, gtk.Window):
                 self.move(self.win_wide_pos[0], self.win_wide_pos[1])
             else:
                 self.move(self.win_single_pos[0], self.win_single_pos[1])
-            
+    
+    def __on_main_indicator_clicked(self, indicator):
+        self.showed = True
+        self.show()
+        self.present()
+        
+    def __on_indicator_clicked(self, indicator, data):
+        self.indicator.clean()
+        self.__on_main_indicator_clicked(indicator)
+    
     def __on_focus(self, widget, event):
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
     
@@ -227,6 +240,7 @@ class Main(BaseGui, gtk.Window):
         text = "<b>@%s</b> %s" % (p.username, twt)
         
         self.notify.new_tweets(column.title, count, tobject, text, icon)
+        self.indicator.add_update(column.title, count)
         
         if self.read_config_value('Notifications', 'sound') == 'on':
             if column.id == 'replies':

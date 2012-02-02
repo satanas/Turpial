@@ -33,15 +33,14 @@ class build(_build):
 # TODO: Maybe find some better ways to do this
 # looking distutils's copy_tree method
 data_files=[
+    ('./', ['AUTHORS', 'TRANSLATORS']),
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
     ('share/applications', ['turpial.desktop']),
     ('share/doc/turpial', ['doc/turpial.png',
                    'doc/turpial.dia',
                    'ChangeLog',
                    'README.rst',
-                   'COPYING',
-                   'AUTHORS',
-                   'TRANSLATORS']),
+                   'COPYING']),
 ]
 
 pattern = re.compile('turpial/i18n/')

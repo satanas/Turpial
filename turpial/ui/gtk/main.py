@@ -367,6 +367,8 @@ class Main(Base, Singleton, gtk.Window):
             self.short_urls(args[0])
         elif action == 'direct_message':
             self.direct_message(args[0], args[1], args[2])
+        elif action == 'profile_image':
+            self.profile_image(args[0], args[1])
     
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -599,6 +601,10 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.register(self.core.send_direct, (account, user, message),
             self.direct_message_response)
     
+    def profile_image(self, account, user):
+        self.worker.register(self.core.get_profile_image, (account, user),
+            self.profile_image_response)
+    
     # ------------------------------------------------------------
     # Callbacks
     # ------------------------------------------------------------
@@ -810,6 +816,14 @@ class Main(Base, Singleton, gtk.Window):
                 i18n.get('direct_message_sent_successfully'))
             self.container.execute(cmd)
     
+    def profile_image_response(self, response):
+        if response.code > 0:
+            self.container.execute('hide_imageview(); show_notice("' + response.errmsg + '", "error");')
+        else:
+            img_url = 'file://' + response.items
+            cmd = "update_imageview('%s');" % (img_url)
+            self.container.execute(cmd)
+    
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
@@ -826,7 +840,7 @@ class Main(Base, Singleton, gtk.Window):
         
         self.container.execute("start_updating_column('" + column.id_ + "');")
         self.worker.register(self.core.get_column_statuses, (column.account_id, 
-            column.column_name, 200), self.update_column, (column, notif))
+            column.column_name, 100), self.update_column, (column, notif))
         return True
         
     def refresh_column(self, column_id):

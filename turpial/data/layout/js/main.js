@@ -483,12 +483,20 @@ function autocomplete_friend(value) {
     eval($('#autocomplete-add-function').val());
 }
 
-/* Imageview */
+/* Images */
 
 function show_imageview(img_url) {
     console.log(img_url);
     $('#modal').fadeIn();
     $('#imageview-window').fadeIn();
+    if (img_url == undefined) {
+        //Show the loading progress
+    } else {
+        $('#imageview').attr('src', img_url);
+    }
+}
+
+function update_imageview(img_url) {
     $('#imageview').attr('src', img_url);
 }
 
@@ -631,4 +639,9 @@ function short_url() {
         lock_update_box('<% $shorting_urls %>');
         exec_command('cmd:short_urls:' + packstr(text));
     }
+}
+
+function show_avatar(account_id, username) {
+    show_imageview();
+    exec_command('cmd:profile_image:' + account_id + arg_sep + username);
 }

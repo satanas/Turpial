@@ -290,6 +290,9 @@ class HtmlParser:
         page = page.replace('<% query %>', self.__query_tag())
 
         page = self.__parse_tags(page)
+        fd = open('/tmp/pupu', 'w')
+        fd.write(page)
+        fd.close()
         return page
     
     def js_string_array(self, array):
@@ -435,6 +438,8 @@ class HtmlParser:
             section = section.replace('<% @status_replyto_id %>', '%s' % status.id_)
             
         section = section.replace('<% @avatar %>', status.avatar)
+        section = section.replace('<% @account_id %>', status.account_id)
+        section = section.replace('<% @clean_username %>', status.username)
         section = section.replace('<% @username %>', username)
         section = section.replace('<% @message %>', message)
         section = section.replace('<% @timestamp %>', timestamp)

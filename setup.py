@@ -13,6 +13,7 @@ except ImportError:
     from setuptools import setup, find_packages
 
 from distutils.command.build import build as _build
+from distutils.command.install import install as _install
 from babel.messages import frontend as babel
 from turpial.config import GLOBAL_CFG
 
@@ -24,11 +25,16 @@ renunciar a ninguna funcionalidad
 """
 
 class build(_build):
-    sub_commands = [('compile_catalog', None), ] + _build.sub_commands
+    #sub_commands = [('compile_catalog', None), ] + _build.sub_commands
 
-    def run(self):
-        """Run all sub-commands"""
-        _build.run(self)
+    #def run(self):
+    #    """Run all sub-commands"""
+    #    _build.run(self)
+
+    def get_sub_commands(self):
+        sub_commands = _build.get_sub_commands(self)
+        print sub_commands
+        return [('compile_catalog', None), ] + sub_commands
 
 # TODO: Maybe find some better ways to do this
 # looking distutils's copy_tree method
@@ -48,7 +54,7 @@ for root, dirs, files in os.walk(os.path.join('turpial', 'i18n')):
     for filename in files:
         if filename.endswith('.po'):
             # Yes, it's an ugly hack to build list of files that do not exist yet
-            fullpath = os.path.join(root, filename[0:-2]+'mo')
+            fullpath = os.path.join(root, filename[0:-2] + 'mo')
             dest = os.path.join('share', 'locale', re.sub(pattern, '', root))
             data_files.append((dest, [fullpath]))
 
@@ -58,8 +64,8 @@ setup(name="turpial",
       long_description=LONG_DESCRIPTION,
       author="Wil Alvarez",
       author_email="wil.alejandro@gmail.com",
-      maintainer="Milton Mazzarri",
-      maintainer_email="milmazz@gmail.com",
+      maintainer="Wil Alvarez",
+      maintainer_email="wil.alejandro@gmail.com",
       url="http://turpial.org.ve",
       download_url="http://turpial.org.ve/downloads",
       license="GPLv3",

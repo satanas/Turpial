@@ -297,21 +297,35 @@ function unlock_status(status_id) {
 }
 
 function update_favorite_mark(status_id, cmd, label, visible) {
-    $('#fav-mark-' + status_id).attr('href', cmd);
-    $('#fav-mark-' + status_id).html(label);
-    if (visible == true)
-        $('#fav-icon-' + status_id).show();
-    else
-        $('#fav-icon-' + status_id).hide();
+    $('div[name="' + status_id + '"]').each(function() {
+        // favcmd
+        var favcmd = $(this).find('a[name="fav-cmd"]');
+        favcmd.attr('href', cmd);
+        favcmd.html(label);
+        
+        // favicon
+        var favicon = $(this).find('div[name="fav-icon"]');
+        if (visible == true)
+            favicon.show();
+        else
+            favicon.hide();
+    });
 }
 
 function update_retweeted_mark(status_id, cmd, label, visible) {
-    $('#repeat-mark-' + status_id).attr('href', cmd);
-    $('#repeat-mark-' + status_id).html(label);
-    if (visible == true)
-        $('#retweeted-icon-' + status_id).show();
-    else
-        $('#retweeted-icon-' + status_id).hide();
+    $('div[name="' + status_id + '"]').each(function() {
+        // repeatcmd
+        var repeatcmd = $(this).find('a[name="repeat-cmd"]');
+        repeatcmd.attr('href', cmd);
+        repeatcmd.html(label);
+        
+        // repeaticon
+        var repeaticon = $(this).find('div[name="repeat-icon"]');
+        if (visible == true)
+            repeaticon.show();
+        else
+            repeaticon.hide();
+    });
 }
 
 function update_profile_follow_cmd(cmd, label) {

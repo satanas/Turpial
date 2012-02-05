@@ -495,14 +495,14 @@ class Main(Base, Singleton, gtk.Window):
         self.container.execute(cmd)
         
         self.worker.register(self.core.mark_favorite, (account_id, status_id), 
-            self.fav_response, True)
+            self.fav_response, (True, status_id))
     
     def unfav_status(self, account_id, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('removing_from_fav'))
         self.container.execute(cmd)
         
         self.worker.register(self.core.unmark_favorite, (account_id, status_id), 
-            self.fav_response, False)
+            self.fav_response, (False, status_id))
     
     def update_status(self, account, text):
         message = base64.b64decode(text)
@@ -664,7 +664,9 @@ class Main(Base, Singleton, gtk.Window):
         cmd += "unlock_status('%s');" % (current_status_id)
         self.container.execute(cmd)
     
-    def fav_response(self, response, fav=False):
+    def fav_response(self, response, user_data):
+        fav = user_data[0]
+        status_id = user_data[1]
         cmd = ''
         if response.code > 0:
             cmd = "show_notice('%s', 'error');" % response.errmsg
@@ -679,7 +681,7 @@ class Main(Base, Singleton, gtk.Window):
                 newcmd = "cmd:fav_status:%s" % args
                 cmd = "update_favorite_mark('%s', '%s', '%s', false);" % (status.id_, 
                     newcmd, i18n.get('+fav'))
-        cmd += "unlock_status('%s');" % (status.id_)
+        cmd += "unlock_status('%s');" % (status_id)
         self.container.execute(cmd)
     
     def delete_status_response(self, response):

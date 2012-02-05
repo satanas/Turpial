@@ -189,18 +189,18 @@ class HtmlParser:
             # Repeat
             cmd = ARG_SEP.join([status.account_id, status.id_])
             if status.retweeted:
-                menu += "<a id='repeat-mark-%s' name='repeat-cmd' href='cmd:unrepeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('-retweet'))
+                menu += "<a name='repeat-cmd' href='cmd:unrepeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('-retweet'))
             else:
-                menu += "<a id='repeat-mark-%s' name='repeat-cmd' href='cmd:repeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('+retweet'))
+                menu += "<a name='repeat-cmd' href='cmd:repeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('+retweet'))
             
             # Fav
             args = ARG_SEP.join([status.account_id, status.id_])
             if status.is_favorite:
                 cmd = "cmd:unfav_status:%s" % args
-                menu += "<a id='fav-mark-%s' href='%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('-fav'))
+                menu += "<a name='fav-cmd' href='%s' class='action'>%s</a>" % (cmd, i18n.get('-fav'))
             else:
                 cmd = "cmd:fav_status:%s" % args
-                menu += "<a id='fav-mark-%s' href='%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('+fav'))
+                menu += "<a name='fav-cmd' href='%s' class='action'>%s</a>" % (cmd, i18n.get('+fav'))
         else:
             cmd = ARG_SEP.join([status.account_id, status.id_])
             menu += "<a href='cmd:delete_status:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))

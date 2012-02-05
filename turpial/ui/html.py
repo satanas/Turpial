@@ -189,9 +189,9 @@ class HtmlParser:
             # Repeat
             cmd = ARG_SEP.join([status.account_id, status.id_])
             if status.retweeted:
-                menu += "<a id='repeat-mark-%s' href='cmd:unrepeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('-retweet'))
+                menu += "<a id='repeat-mark-%s' name='repeat-cmd' href='cmd:unrepeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('-retweet'))
             else:
-                menu += "<a id='repeat-mark-%s' href='cmd:repeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('+retweet'))
+                menu += "<a id='repeat-mark-%s' name='repeat-cmd' href='cmd:repeat_status:%s' class='action'>%s</a>" % (status.id_, cmd, i18n.get('+retweet'))
             
             # Fav
             args = ARG_SEP.join([status.account_id, status.id_])
@@ -365,10 +365,10 @@ class HtmlParser:
         
         return page
     
-    def statuses(self, statuses, column_id):
+    def statuses(self, statuses):
         result = ''
         for status in statuses:
-            result += self.status(status, column_id) + '\n'
+            result += self.status(status) + '\n'
         page = self.__parse_tags(result)
         return page
     
@@ -396,7 +396,7 @@ class HtmlParser:
         page = self.__parse_tags(col)
         return page
     
-    def status(self, status, column_id, ignore_reply=False):
+    def status(self, status, ignore_reply=False):
         timestamp = status.datetime
         if status.source: 
             if status.source.url:
@@ -431,11 +431,13 @@ class HtmlParser:
 
         args = ARG_SEP.join([status.account_id, status.id_])
         
-        real_status_id = "%s-%s" % (status.id_, column_id)
         section = self.__open_partial('status')
-        section = section.replace('<% @status_id %>', real_status_id)
+        section = section.replace('<% @status_id %>', status.id_)
+        section = section.replace('<% @status_display_id %>', status.display_id)
         if status.in_reply_to_id:
             section = section.replace('<% @status_replyto_id %>', '%s' % status.id_)
+        else:
+            section = section.replace('<% @status_replyto_id %>', '')
             
         section = section.replace('<% @avatar %>', status.avatar)
         section = section.replace('<% @account_id %>', status.account_id)
@@ -452,8 +454,8 @@ class HtmlParser:
         section = section.replace('<% @retweeted_visible %>', self.__retweeted_visible(status))
         section = section.replace('<% @retweeted %>', self.__retweeted_tag())
         section = section.replace('<% @menu %>', menu)
-
-        return section      
+        
+        return section
     
     def profile(self, profile):
         bio_icon = self.__image_tag('icon-bio.png', width='16', height='16', class_='mark')

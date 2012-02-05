@@ -613,13 +613,12 @@ class Main(Base, Singleton, gtk.Window):
         if response.code > 0:
             self.container.execute('update_status_error("' + response.errmsg + '");')
         else:
-            '''
             html_status = self.htmlparser.single_status(response.items)
             id_ = '#list-%s-timeline' % account_id
             self.container.prepend_element(id_, html_status, 'done_update_box(true);')
-            self.columns['%s-timeline' % account_id].append(response.items)
-            '''
-            pass
+            column_key = '%s-timeline' % account_id
+            if self.columns.has_key(column_key):
+                self.columns[column_key].append(response.items)
         
     def broadcast_status_response(self, responses):
         cmd = ''
@@ -862,7 +861,7 @@ class Main(Base, Singleton, gtk.Window):
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             return
 
-        page = self.htmlparser.statuses(new_statuses, column.id_)
+        page = self.htmlparser.statuses(new_statuses)
         element = "#list-%s" % column.id_
         extra = "stop_updating_column('" + column.id_ + "');"
         self.container.prepend_element(element, page, extra)

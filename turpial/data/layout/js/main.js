@@ -72,15 +72,13 @@ function change_num_columns(num) {
 
 function enable_trigger() {
     $('.content').mouseover(function() {
-        var name = $(this).attr('name');
-        var indicator = $('#indicator-' + name).val();
+        var indicator = $(this).children('input:first').val();
         if (indicator != "") return;
-        $('#buttonbox-' + name).show();
+        $(this).children(":nth-child(6)").children(':nth-child(1)').show();
     });
     
     $('.content').mouseleave(function() {
-        var name = $(this).attr('name');
-        $('#buttonbox-' + name).hide();
+        $(this).children(":nth-child(6)").children(':nth-child(1)').hide();
     });
 }
 
@@ -273,17 +271,28 @@ function count_chars() {
 /* Statuses */
 
 function lock_status(status_id, message) {
-    $('#buttonbox-' + status_id).hide();
-    $('.favmark-' + status_id).hide();
-    $('#progress-box-' + status_id).show();
-    $('#progress-msg-' + status_id).html(message);
-    $('#indicator-' + status_id).val(message);
+    $('div[name="' + status_id + '"]').each(function() {
+        // buttonbox
+        $(this).children(":nth-child(6)").children(':nth-child(1)').hide();
+        // progressbox
+        var progressbox = $(this).children(":nth-child(6)").children(':nth-child(2)');
+        progressbox.show();
+        // indicator
+        $(this).children('input:first').val(message);
+        // progressmsg
+        progressbox.children('label:first').html(message);
+    });
 }
 
 function unlock_status(status_id) {
-    $('#progress-box-' + status_id).fadeOut(400, function() {
-        $('#progress-msg-' + status_id).html('');
-        $('#indicator-' + status_id).val('');
+    $('div[name="' + status_id + '"]').each(function() {
+        // progressbox
+        var progressbox = $(this).children(":nth-child(6)").children(':nth-child(2)');
+        progressbox.fadeOut(400, function() {
+            $(this).children('label:first').html('');
+        });
+        // indicator
+        $(this).children('input:first').val('');
     });
 }
 
@@ -316,7 +325,9 @@ function update_profile_mute_cmd(cmd, label) {
 }
 
 function delete_status(status_id) {
-    $('#' + status_id).hide('slow', function(){ $('#' + status_id).remove(); });
+    $('div[name="' + status_id + '"]').hide('slow', function() { 
+        $(this).remove();
+    });
 }
 
 /* Profile Window */

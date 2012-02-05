@@ -174,7 +174,7 @@ class HtmlParser:
     
     def __build_status_menu(self, status):
         menu = ''
-        if not status.is_own:
+        if not status.is_own and not status.is_direct():
             # Reply
             mentions = status.get_reply_mentions()
             str_mentions = '[\'' + '\',\''.join(mentions) + '\']'
@@ -201,7 +201,15 @@ class HtmlParser:
             else:
                 cmd = "cmd:fav_status:%s" % args
                 menu += "<a name='fav-cmd' href='%s' class='action'>%s</a>" % (cmd, i18n.get('+fav'))
-        else:
+        elif not status.is_own and status.is_direct():
+            # Reply
+            cmd = "'%s','%s'" % (status.account_id, status.username)
+            menu += "<a href=\"javascript: reply_direct(%s)\" class='action'>%s</a>" % (cmd, i18n.get('reply'))
+            
+            # Delete
+            cmd = ARG_SEP.join([status.account_id, status.id_])
+            menu += "<a href='cmd:delete_direct:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))
+        elif status.is_own:
             cmd = ARG_SEP.join([status.account_id, status.id_])
             menu += "<a href='cmd:delete_status:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))
         return menu
@@ -211,11 +219,12 @@ class HtmlParser:
             return "<span class='disabled action_you'>%s</span>" % (i18n.get('this_is_you'))
         
         menu = ''
-        cmd = ARG_SEP.join([profile.account_id, profile.username])
+        cmd = "'%s','%s'" % (profile.account_id, profile.username)
         # Direct Messages
-        menu += "<a href=\"javascript: send_direct_from_profile('%s')\" class='action'>%s</a>" % (profile.username, i18n.get('message'))
+        menu += "<a href=\"javascript: send_direct_from_profile(%s)\" class='action'>%s</a>" % (cmd, i18n.get('message'))
         
         # Follow
+        cmd = ARG_SEP.join([profile.account_id, profile.username])
         if profile.following:
             menu += "<a id='profile-follow-cmd' href='cmd:unfollow:%s' class='action'>%s</a>" % (cmd, i18n.get('unfollow'))
         elif profile.follow_request:

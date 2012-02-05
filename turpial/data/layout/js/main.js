@@ -178,12 +178,18 @@ function show_update_box(message, status_id, account_id, title) {
     }
 }
 
-function show_update_box_for_direct(user) {
+function show_update_box_for_direct(account_id, username) {
+    $('#modal').fadeIn();
     $('#update-box').fadeIn();
     $('#upload-img-cmd').hide();
-    $('#update-box-title').html("<% $send_message_to %> " + user);
-    $('#direct-message-to').val(user);
+    $('#update-box-title').html("<% $send_message_to %> " + username);
+    $('#direct-message-to').val(username);
     $('#update-message').focus();
+    $('.acc_selector').each(function() {
+        $(this).attr('disabled', 'disabled');
+        $(this).attr('checked', false);
+    });
+    $('#acc-selector-' + account_id).attr('checked', true);
 }
 
 function close_update_box() {
@@ -358,9 +364,9 @@ function update_profile_window(profile) {
     $('#profile-window-content').html(profile).slideDown();
 }
 
-function send_direct_from_profile(username) {
+function send_direct_from_profile(account_id, username) {
     var message = $('#update-message');
-    show_update_box_for_direct(username);
+    show_update_box_for_direct(account_id, username);
     close_profile_window(true);
     message.focus();
 }
@@ -653,6 +659,10 @@ function reply_status(account_id, status_id, title, mentions) {
         msg += "@" + mentions[i] + " ";
     }
     show_update_box(msg, status_id, account_id, title);
+}
+
+function reply_direct(account_id, username) {
+    show_update_box_for_direct(account_id, username);
 }
 
 function short_url() {

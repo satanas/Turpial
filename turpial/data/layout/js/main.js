@@ -345,7 +345,7 @@ function update_profile_mute_cmd(cmd, label) {
 }
 
 function delete_status(status_id) {
-    $('div[name="' + status_id + '"]').hide('slow', function() { 
+    $('.' + status_id).hide('slow', function() { 
         $(this).remove();
     });
 }
@@ -594,6 +594,7 @@ function mute_user(username, mute) {
 }
 
 function set_update_box_message(message) {
+    console.log('update-message: ' + message);
     $('#update-message').val(message);
     count_chars();
     unlock_update_box();

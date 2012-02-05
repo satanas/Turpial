@@ -1,4 +1,4 @@
-<div class="tweet">
+<div class="tweet <% @status_id %>">
     <div id="replycontainer-<% @status_replyto_id %>" class="replylist" style="display: none;">
         <div id="replystatus-<% @status_replyto_id %>" >
         </div>

@@ -369,6 +369,8 @@ class Main(Base, Singleton, gtk.Window):
             self.direct_message(args[0], args[1], args[2])
         elif action == 'profile_image':
             self.profile_image(args[0], args[1])
+        elif action == 'delete_direct':
+            self.delete_direct(args[0], args[1])
     
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -527,7 +529,7 @@ class Main(Base, Singleton, gtk.Window):
         self.container.execute(cmd)
         
         self.worker.register(self.core.destroy_status, (account, status_id), 
-            self.delete_status_response)
+            self.delete_status_response, status_id)
     
     def show_profile(self, account_id, username):
         self.worker.register(self.core.get_user_profile, (account_id, username),
@@ -604,6 +606,13 @@ class Main(Base, Singleton, gtk.Window):
     def profile_image(self, account, user):
         self.worker.register(self.core.get_profile_image, (account, user),
             self.profile_image_response)
+    
+    def delete_direct(self, account, status_id):
+        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('deleting'))
+        self.container.execute(cmd)
+        
+        self.worker.register(self.core.destroy_direct, (account, status_id), 
+            self.delete_status_response, status_id)
     
     # ------------------------------------------------------------
     # Callbacks
@@ -684,7 +693,7 @@ class Main(Base, Singleton, gtk.Window):
         cmd += "unlock_status('%s');" % (status_id)
         self.container.execute(cmd)
     
-    def delete_status_response(self, response):
+    def delete_status_response(self, response, status_id):
         cmd = ''
         if response.code > 0:
             cmd = "show_notice('%s', 'error');" % response.errmsg
@@ -693,7 +702,7 @@ class Main(Base, Singleton, gtk.Window):
             cmd = "delete_status('%s'); show_notice('%s', '%s');" % (status.id_,
                 i18n.get('successfully_deleted'), 'info')
         
-        cmd += "unlock_status('%s');" % (status.id_)
+        cmd += "unlock_status('%s');" % (status_id)
         self.container.execute(cmd)
     
     def show_profile_response(self, response):

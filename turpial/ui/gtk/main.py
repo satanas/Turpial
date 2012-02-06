@@ -830,8 +830,9 @@ class Main(Base, Singleton, gtk.Window):
         if response.code > 0:
             self.container.execute('hide_imageview(); show_notice("' + response.errmsg + '", "error");')
         else:
-            img_url = 'file://' + response.items
-            cmd = "update_imageview('%s');" % (img_url)
+            #img_url = 'file://' + response.items
+            #cmd = "update_imageview('%s');" % (img_url)
+            cmd = "update_imageview('%s');" % (response.items)
             self.container.execute(cmd)
     
     # ------------------------------------------------------------

@@ -109,7 +109,7 @@
         
         <!-- Imageview window -->
         <div id="imageview-window" name="" style="display: none;">
-            <img id="imageview" src="http://us.media.blizzard.com/wow/media/wallpapers/covers/magazine01/magazine01-1600x1200.jpg">
+            <img id="imageview" src="">
         <div/>
     </div>
 </body>

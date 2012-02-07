@@ -528,12 +528,26 @@ function show_imageview(img_url) {
 }
 
 function update_imageview(img_url) {
-    $('#imageview').attr('src', img_url);
+    $('#progress-box-imageview').hide();
+    var imageview = $('#imageview');
+    imageview.attr('src', img_url);
+    imageview.show();
+    var width = imageview.clientWidth + 20;
+    var height = imageview.clientHeight + 20;
+    var imagecontainer = $('#imageview-container');
+    imagecontainer.css('width', width + 'px');
+    imagecontainer.css('height', height + 'px');
 }
 
 function hide_imageview() {
     $('#imageview-window').fadeOut(400, function() {
-        $('#imageview').attr('src', '');
+        var imageview = $('#imageview');
+        imageview.attr('src', '');
+        imageview.hide();
+        var imagecontainer = $('#imageview-container');
+        imagecontainer.css('width', '200px');
+        imagecontainer.css('height', '200px');
+        $('#progress-box-imageview').show();
         $('#modal').fadeOut(400);
     });
 }

@@ -815,7 +815,9 @@ class Main(Base, Singleton, gtk.Window):
         if response.code > 0:
             cmd = 'update_status_error("' + response.errmsg + '");'
         else:
-            cmd = 'set_update_box_message("' + response.items + '");'
+            new_msg = response.items.replace('"', '\\"')
+            cmd = 'set_update_box_message("' + new_msg + '");'
+            print cmd
         self.container.execute(cmd)
     
     def direct_message_response(self, response):

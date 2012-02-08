@@ -108,12 +108,13 @@
         </div>
         
         <!-- Imageview window -->
-        <div id="imageview-window" name="" style="display: none;">
+        <div id="imageview-window" name="" style="display: block;">
             <div id="imageview-container">
-                <img id="imageview" src="" style="display: none;">
-                <div class="progress-box" id="progress-box-imageview">
-                    <label id="progress-msg-imageview"><% $loading %></label>
+                <div id="imageview-close"><a href="javascript:hide_imageview()"><% $close %></a></div>
+                <img id="imageview" src="" style="display: block;">
+                <div id="progress-box-imageview" style="display: none;">
                     <% rimg "dark-loader.gif", 16, 16 %>
+                    <label id="progress-msg-imageview"><% $loading %></label>
                 </div>
             </div>
         <div/>

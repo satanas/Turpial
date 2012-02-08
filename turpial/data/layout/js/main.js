@@ -45,6 +45,8 @@ function recalculate_column_size(nw, nh) {
     var profile_win_left = (width - 290) / 2;
     var autocomplete_win_left = (width - 200) / 2;
     
+    var imageview_progress_top = (height - 250) / 2;
+    
     $('#content').css('height', content_height + 'px');
     $('.column').css('width', column_width + 'px');
     $('.column').css('height', column_height + 'px');
@@ -64,6 +66,8 @@ function recalculate_column_size(nw, nh) {
     
     $('#profile-window').css('left', profile_win_left + 'px');
     $('#autocomplete-window').css('left', autocomplete_win_left + 'px');
+    
+    $('#imageview-container').css('margin-top', imageview_progress_top + 'px');
 }
 
 function change_num_columns(num) {
@@ -539,6 +543,7 @@ function update_imageview(img_url) {
     var width = imageview.clientWidth + 20;
     var height = imageview.clientHeight + 20;
     var imagecontainer = $('#imageview-container');
+    imageview-container
     imagecontainer.css('width', width + 'px');
     imagecontainer.css('height', height + 'px');
 }

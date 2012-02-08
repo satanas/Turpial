@@ -588,8 +588,6 @@
 
 #imageview-container {
     overflow: hidden;
-    min-width: 150px;
-    min-height: 150px;
     color: #fff;
     margin: 0 auto;
     text-align: center;
@@ -597,13 +595,36 @@
     background-color: #000;
     border: 1px solid #ccc;
     text-align: center;
+    width: 200px;
+    height: 200px;
 }
 
 #imageview {
-    /*display: block;*/
-    max-height: 85%;
+    background-color: #090;
 }
 
-#progress-msg-imageview {
-    color: #000 !important;
+#imageview-close {
+    text-align: right;
+}
+
+#imageview-close a:link, #imageview-close a:visited{
+    font-size: 10px;
+    color: #ccc;
+}
+
+#imageview-close a:hover{
+    font-size: 10px;
+    color: #fff;
+}
+
+#progress-box-imageview {
+    width: 200px;
+    height: 80px;
+    margin: 0 auto;
+    margin-top: 70px;
+}
+
+#progress-box-imageview label {
+    font-size: 11px;
+    color: #fff !important;
 }

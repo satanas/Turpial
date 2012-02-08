@@ -186,7 +186,11 @@ function show_update_box_for_direct(account_id, username) {
     $('#direct-message-to').val(username);
     $('#update-message').focus();
     $('.acc_selector').each(function() {
-        $(this).attr('disabled', 'disabled');
+        if (account_id != '') {
+            $(this).attr('disabled', 'disabled');
+        } else {
+            $(this).removeAttr('disabled');
+        }
         $(this).attr('checked', false);
     });
     $('#acc-selector-' + account_id).attr('checked', true);
@@ -507,7 +511,7 @@ function select_friend(value) {
 
 function select_friend_for_direct() {
     close_autocomplete_window();
-    show_update_box_for_direct($('#autocomplete-username').val());
+    show_update_box_for_direct('', $('#autocomplete-username').val());
 }
 
 function autocomplete_friend(value) {
@@ -677,6 +681,7 @@ function reply_status(account_id, status_id, title, mentions) {
 }
 
 function reply_direct(account_id, username) {
+    console.log(account_id + ' ' + username);
     show_update_box_for_direct(account_id, username);
 }
 

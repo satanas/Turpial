@@ -108,7 +108,7 @@
         </div>
         
         <!-- Imageview window -->
-        <div id="imageview-window" name="" style="display: block;">
+        <div id="imageview-window" name="" style="display: none;">
             <div id="imageview-container">
                 <div id="imageview-close"><a href="javascript:hide_imageview()"><% $close %></a></div>
                 <img id="imageview" src="" style="display: block;">

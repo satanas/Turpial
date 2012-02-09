@@ -586,21 +586,19 @@
     margin: 0 auto;
 }
 
-#imageview-container {
-    overflow: hidden;
-    color: #fff;
+#imageview-frame {
+    background-color: #000;
+    position: absolute;
+    padding: 5px;
+    top: 0px;
+    left: 0px;
     margin: 0 auto;
     text-align: center;
-    padding: 10px;
-    background-color: #000;
-    border: 1px solid #ccc;
-    text-align: center;
-    width: 200px;
-    height: 200px;
 }
 
 #imageview {
-    background-color: #090;
+    width: 200px;
+    height: 200px;
 }
 
 #imageview-close {
@@ -619,9 +617,9 @@
 
 #progress-box-imageview {
     width: 200px;
-    height: 80px;
+    height: 100px;
     margin: 0 auto;
-    margin-top: 70px;
+    margin-top: 60px;
 }
 
 #progress-box-imageview label {

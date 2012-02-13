@@ -131,36 +131,49 @@ function enable_key_events() {
     });
 }
 
-function resize_imageview() {
-    var width = window.innerWidth; // $(window).width();
-    var height = window.innerHeight; // $(window).height();
+function resize_imageview(orig_w, orig_h) {
+    var img_w = 0;
+    var img_h = 0;
+    var width = window.innerWidth;
+    var height = window.innerHeight;
     var imageview_border = 100;
     var imageview = $('#imageview');
     
+    if (orig_w == undefined)
+        orig_w = imageview.width();
+    if (orig_h == undefined)
+        orig_h = imageview.height();
+    
     if (imageview.attr('src') == '') {
-        img_h = imageview.height();
-        img_w = imageview.width();
-        $('#imageview-frame').css({ 
-            top: (height / 2) - (img_h / 2),
-            left: (width / 2) - (img_w / 2)
-        });
+        img_h = 200;
+        img_w = 200;
     } else {
-        img_h = height - imageview_border;
-        img_w = (imageview.width() * img_h) / imageview.height();
-        
-        if (img_w >= width - imageview_border) {
-            img_w = width - imageview_border;
-            img_h = (imageview.height() * img_w) / imageview.width();
+        var rate = orig_w / orig_h;
+        if (rate >= 1) {
+            var temp_w = width - imageview_border;
+            if (temp_w > orig_w)
+                img_w = orig_w;
+            else
+                img_w = temp_w;
+            img_h = img_w / rate;
+        } else {
+            var temp_h = height - imageview_border;
+            if (temp_h > orig_h)
+                img_h = orig_h;
+            else
+                img_h = temp_h;
+            img_w = img_h * rate;
         }
-        imageview.css({
-            height: img_h, 
-            width: img_w
-        });
-        $('#imageview-frame').css({ 
-            top: (height / 2) - (img_h / 2),
-            left: (width / 2) - (img_w / 2)
-        });
     }
+    
+    imageview.css({
+        height: img_h, 
+        width: img_w
+    });
+    $('#imageview-frame').css({ 
+        top: (height / 2) - (img_h / 2),
+        left: (width / 2) - (img_w / 2)
+    });
 }
 
 /* Columns */
@@ -565,12 +578,12 @@ function show_imageview(img_url) {
     }
 }
 
-function update_imageview(img_url) {
+function update_imageview(img_url, orig_w, orig_h) {
     $('#progress-box-imageview').hide();
     var imageview = $('#imageview');
     imageview.attr('src', img_url);
     imageview.show();
-    resize_imageview();
+    resize_imageview(orig_w, orig_h);
 }
 
 function hide_imageview() {

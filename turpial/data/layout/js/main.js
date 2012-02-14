@@ -76,11 +76,11 @@ function enable_trigger() {
     $('.content').mouseover(function() {
         var indicator = $(this).children('input:first').val();
         if (indicator != "") return;
-        $(this).children(":nth-child(6)").children(':nth-child(1)').show();
+        $(this).nextAll('.options').children(':nth-child(1)').show();
     });
     
     $('.content').mouseleave(function() {
-        $(this).children(":nth-child(6)").children(':nth-child(1)').hide();
+        $(this).nextAll('.options').children(':nth-child(1)').hide();
     });
 }
 

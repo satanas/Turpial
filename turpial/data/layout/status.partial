@@ -1,11 +1,11 @@
 <div class="tweet <% @status_id %>">
+    <input name="indicator" type="hidden" value="" />
     <div id="replycontainer-<% @status_replyto_id %>" class="replylist" style="display: none;">
         <div id="replystatus-<% @status_replyto_id %>" >
         </div>
     </div>
     <div class="icon"><a href="javascript:show_avatar('<% @account_id %>', '<% @clean_username %>')"><img src="<% @avatar %>" width="48" height="48" /></a></div>
     <div class="content" name="<% @status_id %>">
-        <input name="indicator" type="hidden" value="" />
         <div>
             <% @reposted %>
             <label class="name"><% @username %></label>

@@ -73,14 +73,14 @@ function change_num_columns(num) {
 }
 
 function enable_trigger() {
-    $('.content').mouseover(function() {
+    $('.tweet').mouseover(function() {
         var indicator = $(this).children('input:first').val();
         if (indicator != "") return;
-        $(this).nextAll('.options').children(':nth-child(1)').show();
+        $(this).children('.options').children(':nth-child(1)').show();
     });
     
-    $('.content').mouseleave(function() {
-        $(this).nextAll('.options').children(':nth-child(1)').hide();
+    $('.tweet').mouseleave(function() {
+        $(this).children('.options').children(':nth-child(1)').hide();
     });
 }
 

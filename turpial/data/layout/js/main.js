@@ -193,6 +193,10 @@ function reset_column(column_id) {
     $('#list-' + column_id).animate({scrollTop : 0},1000);
 }
 
+function update_column(column_id, statuses) {
+    stop_updating_column(column_id);
+}
+
 /* Updatebox */
 
 function show_update_box(message, status_id, account_id, title) {

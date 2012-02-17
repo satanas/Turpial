@@ -2,6 +2,8 @@ var arg_sep = '<% @arg_sep %>';
 var maxcharlimit = 140;
 var num_columns = <% @num_columns %>;
 var friends = [];
+var imageview_w;
+var imageview_h;
 
 $(document).ready(function() {
     recalculate_column_size();
@@ -65,7 +67,7 @@ function recalculate_column_size(nw, nh) {
     $('#profile-window').css('left', profile_win_left + 'px');
     $('#autocomplete-window').css('left', autocomplete_win_left + 'px');
     
-    resize_imageview();
+    resize_imageview(imageview_w, imageview_h);
 }
 
 function change_num_columns(num) {
@@ -139,6 +141,7 @@ function resize_imageview(orig_w, orig_h) {
     var imageview_border = 100;
     var imageview = $('#imageview');
     
+    console.log(imageview.width() + ' ' + imageview.height() + ' ' + orig_w + ' ' + orig_h);
     if (orig_w == undefined)
         orig_w = imageview.width();
     if (orig_h == undefined)
@@ -568,22 +571,30 @@ function autocomplete_friend(value) {
 /* Images */
 
 function show_imageview(img_url) {
-    console.log(img_url);
+    console.log('img_url (show_imageview): ' + img_url);
     $('#modal').fadeIn();
     $('#imageview-window').fadeIn();
     if (img_url == undefined) {
         //Show the loading progress
     } else {
         $('#imageview').attr('src', img_url);
+        imageview_w = $('#imageview').width();
+        imageview_h = $('#imageview').height();
+        console.log('avatar_size (show_imageview): ' + imageview_w + 'x' + imageview_h);
     }
 }
 
 function update_imageview(img_url, orig_w, orig_h) {
+    console.log('img_url (update_imageview): ' + img_url);
     $('#progress-box-imageview').hide();
     var imageview = $('#imageview');
     imageview.attr('src', img_url);
     imageview.show();
-    resize_imageview(orig_w, orig_h);
+    imageview_w = orig_w;
+    imageview_h = orig_h;
+    console.log('avatar_size (update_imageview): ' + imageview_w + 'x' + imageview_h);
+    resize_imageview(imageview_w, imageview_h);
+    //resize_imageview(orig_w, orig_h);
 }
 
 function hide_imageview() {

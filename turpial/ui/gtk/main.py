@@ -94,13 +94,13 @@ class Main(Base, Singleton, gtk.Window):
         self.show_all()
     
     def __size_request(self, widget, rectangle):
-        print rectangle.width, rectangle.height, self.max_columns
+        ##print rectangle.width, rectangle.height, self.max_columns
         width = rectangle.width
         columns = len(self.core.all_registered_columns())
         preferred_width = MIN_WINDOW_WIDTH * columns
         if width < preferred_width:
             width = preferred_width
-        print width, rectangle.width, preferred_width
+        ##print width, rectangle.width, preferred_width
         #self.set_default_size(width, rectangle.height)
         self.save_window_geometry(width, rectangle.height)
     

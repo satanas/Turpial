@@ -231,7 +231,8 @@
     margin-top: 2px;
 }
 
-.tweet .content .options {
+.tweet .options {
+    float: right;
     height: 16px;
     margin-top: 3px;
 }

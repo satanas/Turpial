@@ -75,14 +75,14 @@ function change_num_columns(num) {
 }
 
 function enable_trigger() {
-    $('.content').mouseover(function() {
+    $('.tweet').mouseover(function() {
         var indicator = $(this).children('input:first').val();
         if (indicator != "") return;
-        $(this).children(":nth-child(6)").children(':nth-child(1)').show();
+        $(this).children('.options').children(':nth-child(1)').show();
     });
     
-    $('.content').mouseleave(function() {
-        $(this).children(":nth-child(6)").children(':nth-child(1)').hide();
+    $('.tweet').mouseleave(function() {
+        $(this).children('.options').children(':nth-child(1)').hide();
     });
 }
 
@@ -194,6 +194,10 @@ function remove_column(column_id) {
 
 function reset_column(column_id) {
     $('#list-' + column_id).animate({scrollTop : 0},1000);
+}
+
+function update_column(column_id, statuses) {
+    stop_updating_column(column_id);
 }
 
 /* Updatebox */

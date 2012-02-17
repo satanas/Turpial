@@ -644,6 +644,9 @@ class Main(Base, Singleton, gtk.Window):
                 html_status = html_status.replace('"', '\\"')
                 cmd += 'append_status_to_timeline("%s", "%s");' % (resp.account_id, html_status)
                 good_acc.append(resp.account_id)
+                column_key = '%s-timeline' % resp.account_id
+                if self.columns.has_key(column_key):
+                    self.columns[column_key].append(resp.items)
         
         if error:
             errmsg = i18n.get('error_posting_to') % (', '.join(bad_acc))
@@ -855,7 +858,7 @@ class Main(Base, Singleton, gtk.Window):
         
         self.container.execute("start_updating_column('" + column.id_ + "');")
         self.worker.register(self.core.get_column_statuses, (column.account_id, 
-            column.column_name, 100), self.update_column, (column, notif))
+            column.column_name, 100), self.update_column, (column, notif, 100))
         return True
         
     def refresh_column(self, column_id):
@@ -864,23 +867,29 @@ class Main(Base, Singleton, gtk.Window):
                 self.download_stream(col)
         
     def update_column(self, arg, data):
-        column, notif = data
+        column, notif, max_ = data
         self.log.debug('Updated column %s' % column.id_)
         
         if arg.code > 0:
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             self.show_notice(arg.errmsg, 'error')
             return
-        new_statuses = self.get_new_statuses(self.columns[column.id_], arg.items)
+        # This was passing arg.items by reference altering the original value,
+        # so I copied the array before passing it - satanas
+        new_statuses = self.get_new_statuses(self.columns[column.id_], arg.items[:])
         
         if new_statuses == None:
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             return
-
-        page = self.htmlparser.statuses(new_statuses)
+        
         element = "#list-%s" % column.id_
         extra = "stop_updating_column('" + column.id_ + "');"
-        self.container.prepend_element(element, page, extra)
+        # FIX: This code was eating a lot of resources because it doesn't limit
+        # the amount of tweets in current array
+        #page = self.htmlparser.statuses(new_statuses)
+        #self.container.prepend_element(element, page, extra)
+        page = self.htmlparser.statuses(arg.items)
+        self.container.update_element(element, page, extra)
         
         # Notifications         
         count = len(new_statuses)
@@ -889,10 +898,14 @@ class Main(Base, Singleton, gtk.Window):
                 self.notify.updates(column, count)
             if self.core.play_sounds_in_notification():
                 self.sound.updates()
-
+        
+        self.columns[column.id_] = arg.items
+        '''
         if not self.columns[column.id_]:
             self.columns[column.id_] = new_statuses
         else:
-            self.columns[column.id_].extend(new_statuses)
+            self.columns[column.id_] = new_statuses + self.columns[column.id_]
+        self.columns[column.id_] = self.columns[column.id_][:max_]
+        '''
         self.updating[column.id_] = False
         

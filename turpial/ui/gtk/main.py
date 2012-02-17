@@ -406,7 +406,7 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.join()
         if widget:
             gtk.main_quit()
-        sys.exit(0)
+        #sys.exit(0)
         
     def main_loop(self):
         try:
@@ -874,14 +874,17 @@ class Main(Base, Singleton, gtk.Window):
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             self.show_notice(arg.errmsg, 'error')
             return
+        
+        # Commented to test out performance
         # This was passing arg.items by reference altering the original value,
         # so I copied the array before passing it - satanas
+        """
         new_statuses = self.get_new_statuses(self.columns[column.id_], arg.items[:])
         
         if new_statuses == None:
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             return
-        
+        """
         element = "#list-%s" % column.id_
         extra = "stop_updating_column('" + column.id_ + "');"
         # FIX: This code was eating a lot of resources because it doesn't limit
@@ -891,6 +894,7 @@ class Main(Base, Singleton, gtk.Window):
         page = self.htmlparser.statuses(arg.items)
         self.container.update_element(element, page, extra)
         
+        """
         # Notifications         
         count = len(new_statuses)
         if count != 0:
@@ -900,6 +904,7 @@ class Main(Base, Singleton, gtk.Window):
                 self.sound.updates()
         
         self.columns[column.id_] = arg.items
+        """
         '''
         if not self.columns[column.id_]:
             self.columns[column.id_] = new_statuses

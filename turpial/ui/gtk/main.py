@@ -626,9 +626,9 @@ class Main(Base, Singleton, gtk.Window):
             id_ = '#list-%s-timeline' % account_id
             self.container.prepend_element(id_, html_status, 'done_update_box(true);')
             column_key = '%s-timeline' % account_id
-            if self.columns.has_key(column_key):
-                self.columns[column_key].append(response.items)
-        
+            #if self.columns.has_key(column_key):
+            #    self.columns[column_key].append(response.items)
+    
     def broadcast_status_response(self, responses):
         cmd = ''
         bad_acc = []
@@ -645,8 +645,8 @@ class Main(Base, Singleton, gtk.Window):
                 cmd += 'append_status_to_timeline("%s", "%s");' % (resp.account_id, html_status)
                 good_acc.append(resp.account_id)
                 column_key = '%s-timeline' % resp.account_id
-                if self.columns.has_key(column_key):
-                    self.columns[column_key].append(resp.items)
+                #if self.columns.has_key(column_key):
+                #    self.columns[column_key].append(resp.items)
         
         if error:
             errmsg = i18n.get('error_posting_to') % (', '.join(bad_acc))

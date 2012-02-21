@@ -1,7 +1,7 @@
 <div class="top">
     <div id="profile-avatar" class="icon"><img src="<% @avatar %>" width="48" height="48" /></div>
     <div class="info">
-        <label class="name"><% @fullname %></label>
+        <label class="name overflow"><% @fullname %></label>
         <% @protected %>
         <% @verified %>
         <div class="clearfix"></div>

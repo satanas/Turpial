@@ -417,9 +417,11 @@ function show_profile_window(account_id, username) {
     exec_command('cmd:show_profile:' + account_id + arg_sep + username);
 }
 
-function update_profile_window(profile) {
+function update_profile_window2(profile) {
+    console.log(profile);
     $('#progress-box-profile-window').hide();
     $('#profile-window-content').html(profile).slideDown();
+    console.log('out');
 }
 
 function send_direct_from_profile(account_id, username) {
@@ -435,8 +437,8 @@ function profile_window_error(message) {
 }
 
 function close_profile_window(keep_modal) {
-    var status = $('#profile-window').attr('name');
-    if (status != '') return;
+    if ($('#indicator-profile-window').val() != '')
+        return;
     hide_notice();
     $('#profile-window').fadeOut(400, reset_profile_window);
     if ((keep_modal == undefined) || (keep_modal == false))

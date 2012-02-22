@@ -501,5 +501,5 @@ class HtmlParser:
         section = section.replace('<% @favorites %>', str(profile.favorites_count))
         section = section.replace('<% @menu %>', self.__build_profile_menu(profile))
         page = self.__parse_tags(section)
-        print page
+        #print page
         return page

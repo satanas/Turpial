@@ -44,7 +44,7 @@ class Base:
             count = 0
             for st in last:
                 if ss.id_ == st.id_:
-                    last.pop(count)
+                    return last[0:count]
                 else:
                     count += 1
         return last

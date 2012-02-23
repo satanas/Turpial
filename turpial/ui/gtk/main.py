@@ -901,7 +901,7 @@ class Main(Base, Singleton, gtk.Window):
                     break
                 else:
                     cur_status = cur_column.pop()
-                    self.container.remove_element(cur_status.id_)
+                    self.container.remove_element(".tweet.%s" % cur_status.id_)
                     deleted_count -= 1
 
         self.container.prepend_element(element, page, extra)

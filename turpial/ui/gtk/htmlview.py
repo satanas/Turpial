@@ -90,7 +90,7 @@ class HtmlView(gtk.VBox, gobject.GObject):
         self.execute(script)
 
     def remove_element(self, id_):
-        script = "$('.tweet.%s').remove();" % (id_)
+        script = "$('%s').remove();" % (id_)
         self.execute(script)
         
     def append_element(self, id_, html, extra=''):

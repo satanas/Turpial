@@ -35,14 +35,23 @@ class UnityDBusController(dbus.service.Object):
     def Query(self):
         return self.app_uri, self.properties
 
+class NullUnityDBusController(object):
+
+    def set_property(self, property_, value):
+        pass
+
 class UnityLauncher(object):
     def __init__ (self, app_url):
         self.count = 0
         self.dbus_loop = DBusGMainLoop(set_as_default=True)
+        app_uri = ""
         if not app_url.startswith("application://"):
-            self.launcher = UnityDBusController("application://%s" % app_url)
-        else:
-            self.launcher = UnityDBusController(app_url)
+            app_uri = "application://%s" % app_url
+
+        try:
+            self.launcher = UnityDBusController(app_uri)
+        except dbus.exceptions.DBusException:
+            self.launcher = NullUnityDBusController()
 
     def set_count(self, count):
         self.count = count

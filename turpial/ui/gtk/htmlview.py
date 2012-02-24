@@ -88,6 +88,10 @@ class HtmlView(gtk.VBox, gobject.GObject):
         #fd.write(script)
         #fd.close()
         self.execute(script)
+
+    def remove_element(self, id_):
+        script = "$('%s').remove();" % (id_)
+        self.execute(script)
         
     def append_element(self, id_, html, extra=''):
         html = html.replace('"', '\\"')

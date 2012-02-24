@@ -39,12 +39,18 @@ class Base:
             return last
         if not last:
             return None
-        
+
+        for st in last:
+            if st.is_own:
+                last.remove(st)
+
         for ss in current:
+            if ss.is_own:
+                continue
             count = 0
             for st in last:
                 if ss.id_ == st.id_:
-                    last.pop(count)
+                    return last[0:count]
                 else:
                     count += 1
         return last

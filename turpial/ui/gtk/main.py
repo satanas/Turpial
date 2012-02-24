@@ -27,6 +27,7 @@ from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.notification import Notification
 from turpial.ui.gtk.indicator import Indicators
+from turpial.ui.gtk.unitylauncher import UnityLauncher
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.accounts import AccountsDialog
 
@@ -86,6 +87,7 @@ class Main(Base, Singleton, gtk.Window):
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__timeout_callback)
         self.worker.start()
+        self.unitylauncher = UnityLauncher("turpial.desktop");
         
         # Persistent dialogs
         self.accountsdlg = AccountsDialog(self)
@@ -135,6 +137,9 @@ class Main(Base, Singleton, gtk.Window):
         self.__on_main_indicator_clicked(indicator)
     
     def __on_focus(self, widget, event):
+        self.set_urgency_hint(False)
+        self.unitylauncher.set_count_visible(False)
+        self.unitylauncher.set_count(0)
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
     
     def __on_key_press(self, widget, event):
@@ -876,27 +881,33 @@ class Main(Base, Singleton, gtk.Window):
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             self.show_notice(arg.errmsg, 'error')
             return
-        
-        # Commented to test out performance
-        # This was passing arg.items by reference altering the original value,
-        # so I copied the array before passing it - satanas
-        """
+
         new_statuses = self.get_new_statuses(self.columns[column.id_], arg.items[:])
         
         if new_statuses == None:
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             return
-        """
+        
         element = "#list-%s" % column.id_
         extra = "stop_updating_column('" + column.id_ + "');"
-        # FIX: This code was eating a lot of resources because it doesn't limit
-        # the amount of tweets in current array
-        #page = self.htmlparser.statuses(new_statuses)
-        #self.container.prepend_element(element, page, extra)
-        page = self.htmlparser.statuses(arg.items)
-        self.container.update_element(element, page, extra)
+
+        page = self.htmlparser.statuses(new_statuses)
+
         
-        """
+        if self.columns[column.id_] != None:
+            deleted_count = len(new_statuses)
+            cur_column = self.columns[column.id_]
+            statuses_len = len(cur_column)
+            for status in cur_column:
+                if deleted_count == 0:
+                    break
+                else:
+                    cur_status = cur_column.pop()
+                    self.container.remove_element(".tweet.%s" % cur_status.id_)
+                    deleted_count -= 1
+
+        self.container.prepend_element(element, page, extra)
+
         # Notifications         
         count = len(new_statuses)
         if count != 0:
@@ -904,15 +915,21 @@ class Main(Base, Singleton, gtk.Window):
                 self.notify.updates(column, count)
             if self.core.play_sounds_in_notification():
                 self.sound.updates()
+            if not self.is_active():
+                self.set_urgency_hint(True)
+                self.unitylauncher.increment_count(count)
+                self.unitylauncher.set_count_visible(True)
+            else:
+                self.unitylauncher.set_count_visible(False)
         
         self.columns[column.id_] = arg.items
-        """
-        '''
+        
+        
         if not self.columns[column.id_]:
             self.columns[column.id_] = new_statuses
         else:
             self.columns[column.id_] = new_statuses + self.columns[column.id_]
         self.columns[column.id_] = self.columns[column.id_][:max_]
-        '''
+        
         self.updating[column.id_] = False
         

@@ -10,7 +10,7 @@
         <div id="form">
             <label><% $protocol %></label><br/>
             <select id="protocol" ><% @protocols %></select><br/>
-            <label><% $user %></label><br/>
+            <label id="lbl-user"><% $user %></label><br/>
             <input id="user" type="text" class="textinput" value="<% @user %>"/><br/>
             <div id="passwd-info">
                 <label id="lbl-passwd"><% $password %></label><br/>

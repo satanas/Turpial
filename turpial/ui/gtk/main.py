@@ -265,7 +265,7 @@ class Main(Base, Singleton, gtk.Window):
             oauthwin.connect('cancel', self.__cancel_callback)
             oauthwin.open(auth_obj.url)
         else:
-            self.__auth_callback(arg, account_id)
+            self.__auth_callback(arg, account_id, False)
     
     def __oauth_callback(self, widget, verifier, account_id):
         #self.form.set_loading_message(i18n.get('authorizing'))
@@ -275,21 +275,25 @@ class Main(Base, Singleton, gtk.Window):
         self.delete_account(account_id)
         self.accountsdlg.cancel_login(i18n.get(reason))
     
-    def __auth_callback(self, arg, account_id):
+    def __auth_callback(self, arg, account_id, register = True):
         if arg.code > 0:
             msg = arg.errmsg
             self.show_notice(msg, 'error')
             self.accountsdlg.cancel_login(msg)
         else:
-            self.worker.register(self.core.auth, (account_id), self.__done_callback, account_id)
+            self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
     
-    def __done_callback(self, arg, account_id):
+    def __done_callback(self, arg, userdata):
+        (account_id, register) = userdata
         if arg.code > 0:
             self.core.change_login_status(account_id, LoginStatus.NONE)
             msg = arg.errmsg
             self.accountsdlg.cancel_login(msg)
             self.show_notice(msg, 'error')
         else:
+            if register:
+                account_id = self.core.name_as_id(account_id)
+
             self.accountsdlg.done_login()
             self.accountsdlg.update()
             
@@ -304,6 +308,7 @@ class Main(Base, Singleton, gtk.Window):
                 if col.account_id == account_id:
                     self.download_stream(col, True)
                     self.__add_timer(col)
+
         
     def __add_timer(self, column):
         #if (self.timer1 != home_interval):
@@ -458,6 +463,8 @@ class Main(Base, Singleton, gtk.Window):
         self.accountsdlg.update()
     
     def save_account(self, username, protocol_id, password):
+        if username == "" or username == None:
+            username = "%s" % len(self.core.all_accounts());
         account_id = self.core.register_account(username, protocol_id, password)
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
     

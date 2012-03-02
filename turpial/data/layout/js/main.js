@@ -29,7 +29,7 @@ function recalculate_column_size(nw, nh) {
         width = nw;
     if (nh != undefined)
         height = nh;
-    
+
     var content_height = height - 23;
     var column_width = (width / num_columns) - 1;
     var column_height = content_height;
@@ -80,7 +80,7 @@ function enable_trigger() {
         if (indicator != "") return;
         $(this).children('.options').children(':nth-child(1)').show();
     });
-    
+
     $('.tweet').mouseleave(function() {
         $(this).children('.options').children(':nth-child(1)').hide();
     });
@@ -90,8 +90,9 @@ function enable_key_events() {
     $('#update-message').keyup(function(e) {
         count_chars();
     });
-    
-    $('#update-message').keydown(function(e) {
+
+
+$('#update-message').keydown(function(e) {
         if (e.keyCode == 27) {
             close_update_box();
             e.stopPropagation();
@@ -512,11 +513,14 @@ function lock_autocomplete() {
 }
 
 function unlock_autocomplete() {
-    $('#autocomplete-username').removeAttr('disabled');
-    $('#autocomplete-load-cmd').attr('href', "javascript: load_friends();");
-    $('#autocomplete-load-cmd').css('opacity', 1);
+    username = $('#autocomplete-username');
+    username.removeAttr('disabled');
+    load_cmd = $('#autocomplete-load-cmd');
+    load_cmd.attr('href', "javascript: load_friends();");
+    load_cmd.css('opacity', 1);
     $('#buttonbox-autocomplete').show();
     $('#progress-box-autocomplete').hide();
+    username.focus();
 }
 
 function load_friends() {
@@ -529,14 +533,14 @@ function update_friends(array) {
     var label = '';
     var plabel = "<% $friends %>";
     var slabel = "<% $friend %>";
-    
+
     if (friends.length == 1)
         label = friends.length + ' ' + slabel;
     else
         label = friends.length + ' ' + plabel;
-    
+
     $('#friends_counter').html(label);
-    $("#autocomplete-username").autocompleteArray(friends, {delay:10, minChars:1, 
+    $('#autocomplete-username').autocompleteArray(friends, {delay:10, minChars:1, 
         matchSubset:1, maxItemsToShow:10, onItemSelect: autocomplete_friend});
     unlock_autocomplete();
 }

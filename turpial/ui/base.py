@@ -17,11 +17,11 @@ class Base:
         self.core = core
         self.log = logging.getLogger('UI')
         self.log.debug('Started')
-    
+
     # ------------------------------------------------------------
     # Common methods to all interfaces
     # ------------------------------------------------------------
-    
+
     def open_url(self, url):
         '''Open a URL in the configured web browser'''
         browser = self.core.get_default_browser()
@@ -33,7 +33,7 @@ class Base:
             #    url = 'http://' + url
             self.log.debug('Opening URL %s with default browser' % url)
             webbrowser.open(url)
-    
+
     def get_new_statuses(self, current, last):
         if not current:
             return last
@@ -54,6 +54,12 @@ class Base:
                 else:
                     count += 1
         return last
-    
+
     def save_window_geometry(self, width, height):
         pass
+
+    def get_config(self):
+        return self.core.get_config()
+
+    def save_config(self, new_config):
+        self.core.save_all_config(new_config)

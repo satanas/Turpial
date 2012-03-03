@@ -42,18 +42,16 @@ class Preferences(gtk.Window):
         self.general = GeneralTab(self.current['General'])
         self.notif = NotificationsTab(self.current['Notifications'],
             self.current['Sounds'])
-        #self.services = ServicesTab(self.current['Services'])
-        #self.browser = BrowserTab(self.mainwin, self.current['Browser'])
-        #self.muted = MutedTab(self.mainwin)
-        #self.filtered = FilterTab(self.mainwin)
+        self.services = ServicesTab(self.current['Services'])
+        self.browser = BrowserTab(self.mainwin, self.current['Browser'])
+        self.filtered = FilterTab(self.mainwin)
         #self.advanced = AdvancedTab(self.mainwin, self.current['Advanced'])
 
         notebook.append_page(self.general, gtk.Label(_('General')))
         notebook.append_page(self.notif, gtk.Label(_('Notifications')))
-        #notebook.append_page(self.services, gtk.Label(_('Services')))
-        #notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
-        #notebook.append_page(self.muted, gtk.Label(_('Mute')))
-        #notebook.append_page(self.filtered, gtk.Label(_('Filters')))
+        notebook.append_page(self.services, gtk.Label(_('Services')))
+        notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
+        notebook.append_page(self.filtered, gtk.Label(_('Filters')))
         #notebook.append_page(self.advanced, gtk.Label(_('Advanced')))
 
         ##self.proxy = ProxyTab(self.global_cfg['Proxy'])
@@ -305,6 +303,7 @@ class ServicesTab(PreferencesTab):
 
         url_lbl = gtk.Label(_('Shorten URL'))
         url_lbl.set_size_request(lbl_size, -1)
+        url_lbl.set_alignment(1.0, 0.5)
         self.shorten = gtk.combo_box_new_text()
         for key, v in URL_SERVICES.iteritems():
             self.shorten.append_text(key)
@@ -319,6 +318,7 @@ class ServicesTab(PreferencesTab):
 
         pic_lbl = gtk.Label(_('Upload images'))
         pic_lbl.set_size_request(lbl_size, -1)
+        pic_lbl.set_alignment(1.0, 0.5)
         self.upload = gtk.combo_box_new_text()
         i = 0
         for key, v in PIC_SERVICES.iteritems():
@@ -332,8 +332,8 @@ class ServicesTab(PreferencesTab):
         pic_box.pack_start(pic_lbl, False, False, 3)
         pic_box.pack_start(self.upload, False, False, 3)
 
-        self.pack_start(url_box, False, False, 2)
-        self.pack_start(pic_box, False, False, 2)
+        self.add_child(url_box, False, False, 2)
+        self.add_child(pic_box, False, False, 2)
         self.show_all()
 
     def get_config(self):
@@ -342,122 +342,27 @@ class ServicesTab(PreferencesTab):
             'upload-pic': self.upload.get_active_text(),
         }
 
-class MutedTab(PreferencesTab):
-    def __init__(self, parent):
-        PreferencesTab.__init__(
-            self,
-            _(
-                'Select all those users that bother'
-                ' you and shut them up temporarily'
-            )
-        )
-
-        self.muted = []
-        self.mainwin = parent
-        self.muted = self.mainwin.request_muted_list()
-        self.friends = self.mainwin.request_friends_list()
-
-        self.model = gtk.ListStore(str, bool)
-
-        self.list = gtk.TreeView()
-        self.list.set_headers_visible(False)
-        self.list.set_events(gtk.gdk.POINTER_MOTION_MASK)
-        self.list.set_level_indentation(0)
-        self.list.set_rules_hint(True)
-        self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
-        self.list.set_model(self.model)
-
-        cell_check = gtk.CellRendererToggle()
-        cell_check.set_property('activatable', True)
-        cell_user = gtk.CellRendererText()
-
-        column = gtk.TreeViewColumn('')
-        column.set_alignment(0.0)
-        column.pack_start(cell_check, False)
-        column.pack_start(cell_user, True)
-        column.set_attributes(cell_check, active=1)
-        column.set_attributes(cell_user, markup=0)
-        self.list.append_column(column)
-
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        scroll.set_shadow_type(gtk.SHADOW_IN)
-        scroll.add(self.list)
-
-        cell_check.connect("toggled", self.__toggled)
-
-        label = gtk.Label()
-        label.set_line_wrap(True)
-        label.set_use_markup(True)
-        label.set_justify(gtk.JUSTIFY_FILL)
-
-        align = gtk.Alignment(xalign=0.0, yalign=0.0)
-        align.set_padding(0, 5, 10, 10)
-        align.add(label)
-
-        if self.friends is not None:
-            if len(self.friends) > 0:
-                for f in self.friends:
-                    mark = True if (f in self.muted) else False
-                    self.model.append([f, mark])
-
-                self.pack_start(scroll, True, True, 2)
-            elif len(self.friends) == 0:
-                label.set_markup(
-                    '<span foreground="#920d12">%s</span>' %
-                    _(
-                        'What? You don\'t have any friends.'
-                        ' Try to go out and know some nice people'
-                    )
-                )
-                self.pack_start(align, True, True, 2)
-        else:
-            label.set_markup(
-                '<span foreground="#920d12">%s</span>' %
-                _(
-                    'I am still loading all of your friends.'
-                    ' Try again in a few seconds'
-                )
-            )
-            self.pack_start(align, True, True, 2)
-
-        self.show_all()
-
-    def __process(self, model, path, iter):
-        user = model.get_value(iter, 0)
-        mark = model.get_value(iter, 1)
-
-        if mark:
-            self.muted.append(user)
-
-    def __toggled(self, widget, path):
-        value = not self.model[path][1]
-        self.model[path][1] = value
-
-    def get_muted(self):
-        self.muted = []
-        self.model.foreach(self.__process)
-        return self.muted
-
 class FilterTab(PreferencesTab):
     def __init__(self, parent):
-        PreferencesTab.__init__(self, _("Filter out words you don't want to see"))
+        PreferencesTab.__init__(
+            self, 
+            _("Filter out words you don't want to see")
+        )
 
         self.mainwin = parent
 
-        self.filtered = self.mainwin.request_filtered_list()
+        self.filtered = self.mainwin.get_filters()
         self.updated_filtered = set(self.filtered)
         input_box = gtk.HBox()
         input_box.pack_start(gtk.Label(_("New Filter")), False, False, 0)
         self.term_input = gtk.Entry()
         input_box.pack_start(self.term_input, True, True, 2)
-        add_button = gtk.Button("+")
+        add_button = gtk.Button(stock=gtk.STOCK_ADD)
         add_button.connect("clicked", self._add_filter, "add_filter_button")
         input_box.pack_start(add_button, False, False, 0)
-        remove_button = gtk.Button("-")
+        remove_button = gtk.Button(stock=gtk.STOCK_DELETE)
         remove_button.connect("clicked", self._remove_filter, "remove_filter_button")
         input_box.pack_start(remove_button, False, False, 0)
-        self.pack_start(input_box, False, False, 2)
 
         self.model = gtk.ListStore(str)
         self.list = gtk.TreeView()
@@ -483,7 +388,8 @@ class FilterTab(PreferencesTab):
         for filtered_item in self.filtered:
             self.model.append([filtered_item])
 
-        self.pack_start(scroll, True, True, 2)
+        self.add_child(input_box, False, False, 2)
+        self.add_child(scroll, True, True, 2)
         self.show_all()
 
     def __process(self, model, path, iter):
@@ -525,6 +431,8 @@ class BrowserTab(PreferencesTab):
             _('Choose another web browser'))
 
         cmd_lbl = gtk.Label(_('Command'))
+        cmd_lbl.set_size_request(90, -1)
+        cmd_lbl.set_alignment(1.0, 0.5)
         self.command = gtk.Entry()
         btn_test = gtk.Button(_('Test'))
         btn_browse = gtk.Button(_('Browse'))
@@ -544,9 +452,9 @@ class BrowserTab(PreferencesTab):
         self.other_vbox.pack_start(buttons_box, False, False, 2)
         self.other_vbox.set_sensitive(False)
 
-        self.pack_start(chk_default, False, False, 2)
-        self.pack_start(chk_other, False, False, 2)
-        self.pack_start(self.other_vbox, False, False, 2)
+        self.add_child(chk_default, False, False, 2)
+        self.add_child(chk_other, False, False, 2)
+        self.add_child(self.other_vbox, False, False, 2)
 
         if current['cmd'] != '':
             self.other_vbox.set_sensitive(True)
@@ -630,9 +538,9 @@ class AdvancedTab(PreferencesTab):
         except:
             pass
 
-        self.pack_start(table, False, False, 2)
-        self.pack_start(self.timeout, False, False, 2)
-        self.pack_start(self.show_avatars, False, False, 2)
+        self.add_child(table, False, False, 2)
+        self.add_child(self.timeout, False, False, 2)
+        self.add_child(self.show_avatars, False, False, 2)
         self.show_all()
 
     def __clean_cache(self, widget):
@@ -658,15 +566,12 @@ class ProxyTab(PreferencesTab):
         )
 
         chk_none = gtk.RadioButton(None, _('No proxy'))
-        chk_url = gtk.RadioButton(chk_none, _('Twitter API proxy'))
+        chk_url = gtk.RadioButton(chk_none, _('Proxy'))
 
         try:
             chk_url.set_has_tooltip(True)
             chk_url.set_tooltip_text(
-                _(
-                    'Use a URL to access Twitter API different of twitter.com'
-                )
-            )
+                _('Use a proxy to access internet'))
         except:
             pass
         url_lbl = gtk.Label(_('Twitter API URL'))
@@ -677,9 +582,9 @@ class ProxyTab(PreferencesTab):
         self.url_box.pack_start(self.url, True, True, 3)
         self.url_box.set_sensitive(False)
 
-        self.pack_start(chk_none, False, False, 2)
-        self.pack_start(chk_url, False, False, 2)
-        self.pack_start(self.url_box, False, False, 2)
+        self.add_child(chk_none, False, False, 2)
+        self.add_child(chk_url, False, False, 2)
+        self.add_child(self.url_box, False, False, 2)
 
         if current['url'] != '':
             self.url_box.set_sensitive(True)

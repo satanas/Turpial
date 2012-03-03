@@ -63,3 +63,6 @@ class Base:
 
     def save_config(self, new_config):
         self.core.save_all_config(new_config)
+
+    def get_filters(self):
+        return self.core.list_filters()

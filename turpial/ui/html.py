@@ -419,8 +419,7 @@ class HtmlParser:
         
         if status.in_reply_to_user and not ignore_reply:
             args = ARG_SEP.join([status.account_id, status.id_, '%s' % status.in_reply_to_id])
-            timestamp += ' <a href="cmd:showreply:%s">%s %s</a>' % (args, i18n.get('in_reply_to'), status.in_reply_to_user)
-            timestamp += ' <a href="cmd:showconversation:%s">(%s)</a>' % (args, i18n.get('show_all'))
+            timestamp += ' <a href="cmd:show_conversation:%s">%s %s</a>' % (args, i18n.get('in_reply_to'), status.in_reply_to_user)
         
         reposted_by = ''
         if status.reposted_by:

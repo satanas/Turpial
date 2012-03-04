@@ -366,12 +366,12 @@ function unlock_status(status_id) {
 }
 
 function update_favorite_mark(status_id, cmd, label, visible) {
-    $('div[name="' + status_id + '"]').each(function() {
+    $('.' + status_id).each(function() {
         // favcmd
-        var favcmd = $(this).find('a[name="fav-cmd"]');
+        var favcmd = $(this).find('a[name="fav-cmd"]:first');
         favcmd.attr('href', cmd);
         favcmd.html(label);
-        
+
         // favicon
         var favicon = $(this).find('div[name="fav-icon"]');
         if (visible == true)
@@ -382,12 +382,12 @@ function update_favorite_mark(status_id, cmd, label, visible) {
 }
 
 function update_retweeted_mark(status_id, cmd, label, visible) {
-    $('div[name="' + status_id + '"]').each(function() {
+    $('.' + status_id).each(function() {
         // repeatcmd
         var repeatcmd = $(this).find('a[name="repeat-cmd"]');
         repeatcmd.attr('href', cmd);
         repeatcmd.html(label);
-        
+
         // repeaticon
         var repeaticon = $(this).find('div[name="repeat-icon"]');
         if (visible == true)

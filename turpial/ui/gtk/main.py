@@ -597,17 +597,17 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.register(self.core.get_all_friends_list, None,
             self.load_friends_response)
 
-    def showreply(self, account_id, status_id, status_id_replyto):
+    def show_reply(self, account_id, status_id, status_id_replyto):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('loading'))
         self.container.execute(cmd)
         self.worker.register(self.core.get_single_status, (account_id, status_id_replyto),
-            self.showreply_response, status_id)
+            self.show_reply_response, status_id)
 
-    def showconversation(self, account_id, status_id):
+    def show_conversation(self, account_id, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('loading'))
         self.container.execute(cmd)
         self.worker.register(self.core.get_conversation, (account_id, status_id),
-            self.showconversation_response, status_id)
+            self.show_conversation_response, status_id)
 
     def short_urls(self, text):
         message = base64.b64decode(text)
@@ -811,7 +811,7 @@ class Main(Base, Singleton, gtk.Window):
                 i18n.get('friends_loaded_successfully'), friends)
         self.container.execute(cmd)
 
-    def showconversation_response(self, response, status_id):
+    def show_conversation_response(self, response, status_id):
         statuses = response.items
         statuses.reverse()
         id_ = '#replystatus-%s' % status_id
@@ -823,7 +823,7 @@ class Main(Base, Singleton, gtk.Window):
         cmd += "show_replies_to_status('%s')" % status_id
         self.container.update_element(id_, html_status, cmd)
 
-    def showreply_response(self, response, status_id):
+    def show_reply_response(self, response, status_id):
         status = response.items
         id_ = '#replystatus-%s' % status_id
         html_status = self.htmlparser.status(status, True)

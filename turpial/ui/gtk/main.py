@@ -434,7 +434,7 @@ class Main(Base, Singleton, gtk.Window):
         else:
             page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
         self.container.render(page)
-        self.login()
+        #self.login()
 
     def show_about(self):
         about = About(self)

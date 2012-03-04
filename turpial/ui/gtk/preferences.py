@@ -45,17 +45,16 @@ class Preferences(gtk.Window):
         self.services = ServicesTab(self.current['Services'])
         self.browser = BrowserTab(self.mainwin, self.current['Browser'])
         self.filtered = FilterTab(self.mainwin)
-        #self.advanced = AdvancedTab(self.mainwin, self.current['Advanced'])
+        self.proxy = ProxyTab(self.current['Proxy'])
+        self.advanced = AdvancedTab(self.mainwin, self.current['Advanced'])
 
         notebook.append_page(self.general, gtk.Label(_('General')))
         notebook.append_page(self.notif, gtk.Label(_('Notifications')))
         notebook.append_page(self.services, gtk.Label(_('Services')))
         notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
         notebook.append_page(self.filtered, gtk.Label(_('Filters')))
-        #notebook.append_page(self.advanced, gtk.Label(_('Advanced')))
-
-        ##self.proxy = ProxyTab(self.global_cfg['Proxy'])
-        ##notebook.append_page(self.proxy, gtk.Label(_('API Proxy')))
+        notebook.append_page(self.proxy, gtk.Label(_('Proxy')))
+        notebook.append_page(self.advanced, gtk.Label(_('Advanced')))
 
         vbox = gtk.VBox()
         #vbox.set_spacing(4)
@@ -77,7 +76,8 @@ class Preferences(gtk.Window):
         notif, sounds = self.notif.get_config()
         services = self.services.get_config()
         browser = self.browser.get_config()
-        advanced = self.browser.get_config()
+        proxy = self.proxy.get_config()
+        advanced = self.advanced.get_config()
 
         new_config = {
             'General': general,
@@ -85,17 +85,13 @@ class Preferences(gtk.Window):
             'Sounds': sounds,
             'Services': services,
             'Browser': browser,
+            'Proxy': proxy,
             'Advanced': advanced,
         }
 
-        '''
-        self.mainwin.request_mute(self.muted.get_muted())
-        self.mainwin.request_filter(self.filtered.get_filtered())
-        '''
-        print new_config
-        self.destroy()
-
         self.mainwin.save_config(new_config)
+        self.mainwin.save_filters(self.filtered.get_filters())
+        self.destroy()
 
 class PreferencesTab(gtk.VBox):
     def __init__(self, desc, current=None):
@@ -128,7 +124,7 @@ class PreferencesTab(gtk.VBox):
 class TitleLabel(gtk.Alignment):
     def __init__(self, text, padding=0):
         gtk.Alignment.__init__(self, xalign=0.0, yalign=0.0)
-        caption ="<big><b>%s</b></big>" % text
+        caption ="<b>%s</b>" % text
         label = gtk.Label()
         label.set_line_wrap(True)
         label.set_use_markup(True)
@@ -154,6 +150,65 @@ class CheckBox(gtk.Alignment):
 
     def get_active(self):
         return self.checkbtn.get_active()
+
+class ComboBox(gtk.HBox):
+    def __init__(self, caption, array, current):
+        gtk.HBox.__init__(self, False)
+        i = 0
+        default = -1
+        lbl = gtk.Label(caption)
+        lbl.set_alignment(0.0, 0.5)
+        self.combo = gtk.combo_box_new_text()
+        self.combo.set_size_request(180, -1)
+        for key, v in array.iteritems():
+            self.combo.append_text(key)
+            if key == current:
+                default = i
+            i += 1
+        self.combo.set_active(default)
+
+        self.pack_start(self.combo, False, False, 5)
+        self.pack_start(lbl, True, True, 5)
+
+    def get_active_text(self):
+        return self.combo.get_active_text()
+
+class FormField(gtk.HBox):
+    def __init__(self, caption, current, password=False):
+        gtk.HBox.__init__(self, False)
+        lbl = gtk.Label(caption)
+        lbl.set_alignment(0.0, 0.5)
+        self.entry = gtk.Entry()
+        if password:
+            self.entry.set_visibility(False)
+        self.entry.set_size_request(180, -1)
+        self.entry.set_text(current)
+
+        self.pack_start(self.entry, False, False, 2)
+        self.pack_start(lbl, True, True, 5)
+
+    def get_text(self):
+        return self.entry.get_text()
+
+class ProxyField(gtk.HBox):
+    def __init__(self, caption, server, port):
+        gtk.HBox.__init__(self, False)
+        lbl = gtk.Label(caption)
+        lbl.set_alignment(0.0, 0.5)
+        self.server = gtk.Entry()
+        self.server.set_size_request(130, -1)
+        self.server.set_text(server)
+
+        self.port = gtk.Entry()
+        self.port.set_size_request(50, -1)
+        self.port.set_text(server)
+
+        self.pack_start(self.server, False, False, 2)
+        self.pack_start(self.port, False, False, 2)
+        self.pack_start(lbl, True, True, 5)
+
+    def get_proxy(self):
+        return self.server.get_text(), self.port.get_text()
 
 class HSeparator(gtk.HBox):
     def __init__(self, spacing=15):
@@ -297,43 +352,14 @@ class ServicesTab(PreferencesTab):
               'to shorten URLs and to upload images'),
             current
         )
-        i = 0
-        default = -1
-        lbl_size = 120
 
-        url_lbl = gtk.Label(_('Shorten URL'))
-        url_lbl.set_size_request(lbl_size, -1)
-        url_lbl.set_alignment(1.0, 0.5)
-        self.shorten = gtk.combo_box_new_text()
-        for key, v in URL_SERVICES.iteritems():
-            self.shorten.append_text(key)
-            if key == self.current['shorten-url']:
-                default = i
-            i += 1
-        self.shorten.set_active(default)
+        self.shorten = ComboBox(_('Shorten URL'), URL_SERVICES,
+            self.current['shorten-url'])
+        self.upload = ComboBox(_('Upload images'), PIC_SERVICES,
+            self.current['upload-pic'])
 
-        url_box = gtk.HBox(False)
-        url_box.pack_start(url_lbl, False, False, 3)
-        url_box.pack_start(self.shorten, False, False, 3)
-
-        pic_lbl = gtk.Label(_('Upload images'))
-        pic_lbl.set_size_request(lbl_size, -1)
-        pic_lbl.set_alignment(1.0, 0.5)
-        self.upload = gtk.combo_box_new_text()
-        i = 0
-        for key, v in PIC_SERVICES.iteritems():
-            self.upload.append_text(key)
-            if key == self.current['upload-pic']:
-                default = i
-            i += 1
-        self.upload.set_active(default)
-
-        pic_box = gtk.HBox(False)
-        pic_box.pack_start(pic_lbl, False, False, 3)
-        pic_box.pack_start(self.upload, False, False, 3)
-
-        self.add_child(url_box, False, False, 2)
-        self.add_child(pic_box, False, False, 2)
+        self.add_child(self.shorten, False, False, 2)
+        self.add_child(self.upload, False, False, 2)
         self.show_all()
 
     def get_config(self):
@@ -346,23 +372,29 @@ class FilterTab(PreferencesTab):
     def __init__(self, parent):
         PreferencesTab.__init__(
             self, 
-            _("Filter out words you don't want to see")
+            _("Filter out anything that bothers you")
         )
 
         self.mainwin = parent
 
         self.filtered = self.mainwin.get_filters()
         self.updated_filtered = set(self.filtered)
-        input_box = gtk.HBox()
-        input_box.pack_start(gtk.Label(_("New Filter")), False, False, 0)
+
         self.term_input = gtk.Entry()
-        input_box.pack_start(self.term_input, True, True, 2)
+        self.term_input.connect('activate', self.__add_filter)
+
         add_button = gtk.Button(stock=gtk.STOCK_ADD)
-        add_button.connect("clicked", self._add_filter, "add_filter_button")
+        add_button.set_size_request(80, -1)
+        add_button.connect("clicked", self.__add_filter)
+        self.del_button = gtk.Button(stock=gtk.STOCK_DELETE)
+        self.del_button.set_size_request(80, -1)
+        self.del_button.set_sensitive(False)
+        self.del_button.connect("clicked", self.__remove_filter)
+
+        input_box = gtk.HBox()
+        input_box.pack_start(self.term_input, True, True, 2)
         input_box.pack_start(add_button, False, False, 0)
-        remove_button = gtk.Button(stock=gtk.STOCK_DELETE)
-        remove_button.connect("clicked", self._remove_filter, "remove_filter_button")
-        input_box.pack_start(remove_button, False, False, 0)
+        input_box.pack_start(self.del_button, False, False, 0)
 
         self.model = gtk.ListStore(str)
         self.list = gtk.TreeView()
@@ -372,6 +404,7 @@ class FilterTab(PreferencesTab):
         self.list.set_rules_hint(True)
         self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
         self.list.set_model(self.model)
+        self.list.connect('cursor-changed', self.__cursor_changed)
 
         column = gtk.TreeViewColumn('')
         column.set_alignment(0.0)
@@ -396,24 +429,30 @@ class FilterTab(PreferencesTab):
         filtered_item = model.get_value(iter, 0)
         self.filtered.append(filtered_item)
 
-    def get_filtered(self):
-        self.filtered = []
-        self.model.foreach(self.__process)
-        return self.filtered
+    def __cursor_changed(self, widget):
+        self.del_button.set_sensitive(True)
 
-    def _add_filter(self, widget, data=None):
-        new_filter_term = self.term_input.get_text()
-        if new_filter_term and new_filter_term not in self.updated_filtered:
-            self.model.append([new_filter_term])
-            self.updated_filtered.add(new_filter_term)
+    def __add_filter(self, widget):
+        new_filter = self.term_input.get_text()
+        if (new_filter != '') and (new_filter not in self.updated_filtered):
+            self.model.append([new_filter])
+            self.updated_filtered.add(new_filter)
         self.term_input.set_text("")
+        self.term_input.grab_focus()
 
-    def _remove_filter(self, widget, data=None):
+    def __remove_filter(self, widget):
         model, term = self.list.get_selection().get_selected()
         if term:
             str_term = self.model.get_value(term, 0)
             self.model.remove(term)
             self.updated_filtered.remove(str_term)
+            self.del_button.set_sensitive(False)
+            self.term_input.grab_focus()
+
+    def get_filters(self):
+        self.filtered = []
+        self.model.foreach(self.__process)
+        return self.filtered
 
 class BrowserTab(PreferencesTab):
     def __init__(self, parent, current):
@@ -507,38 +546,36 @@ class AdvancedTab(PreferencesTab):
         )
 
         self.mainwin = mainwin
-        cachelbl = gtk.Label(_('Clean images cache'))
-        cachebtn = gtk.Button(_('Clean'))
+        cachelbl = gtk.Label(_('Delete images cache'))
+        cachelbl.set_alignment(0.0, 0.5)
+        cachebtn = gtk.Button(_('Clean cache'))
+        cachebtn.set_size_request(110, -1)
         cachebtn.connect('clicked', self.__clean_cache)
 
-        configlbl = gtk.Label(_('Restore default config'))
-        configbtn = gtk.Button(_('Restore'))
+        configlbl = gtk.Label(_('Restore config to default'))
+        configlbl.set_alignment(0.0, 0.5)
+        configbtn = gtk.Button(_('Restore config'))
+        configbtn.set_size_request(110, -1)
         configbtn.connect('clicked', self.__restore_default_config)
 
-        table = gtk.Table(2, 2, True)
-        #table.attach(cachelbl, 0, 1, 0, 1, gtk.EXPAND|gtk.FILL)
-        #table.attach(cachebtn, 1, 2, 0, 1, gtk.EXPAND|gtk.FILL)
-        #table.attach(configlbl, 0, 1, 1, 2, gtk.EXPAND|gtk.FILL)
-        #table.attach(configbtn, 1, 2, 1, 2, gtk.EXPAND|gtk.FILL)
-        table.attach(cachebtn, 0, 1, 0, 1)
-        table.attach(configbtn, 0, 1, 1, 2)
+        table = gtk.Table(2, 2, False)
+        table.attach(cachebtn, 0, 1, 0, 1, gtk.EXPAND|gtk.FILL)
+        table.attach(cachelbl, 1, 2, 0, 1, gtk.EXPAND|gtk.FILL, xpadding=5)
+        table.attach(configbtn, 0, 1, 1, 2, gtk.EXPAND|gtk.FILL)
+        table.attach(configlbl, 1, 2, 1, 2, gtk.EXPAND|gtk.FILL, xpadding=5)
 
         timeout = int(self.current['socket-timeout'])
         show_avatars = True if self.current['show-user-avatars'] == 'on' else False
 
-        self.timeout = TimeScroll(_('Connection Timeout'), timeout, min=5, max=120,
-            unit=_('seconds'), lbl_size=120)
+        self.timeout = TimeScroll(_('Timeout'), timeout, min=5, max=120,
+            unit='sec', lbl_size=120)
 
-        self.show_avatars = gtk.CheckButton(_('Load user avatars in columns'))
-        self.show_avatars.set_active(show_avatars)
-        try:
-            self.show_avatars.set_has_tooltip(True)
-            self.show_avatars.set_tooltip_text(_(
-                'Disable loading user avatars for slow connections'))
-        except:
-            pass
+        self.show_avatars = CheckBox(_('Not load user avatars'), show_avatars, 
+            _('Disable loading user avatars for slow connections'))
 
+        self.add_child(TitleLabel(_('Maintenance')), False, False, 2)
         self.add_child(table, False, False, 2)
+        self.add_child(TitleLabel(_('Connection')), False, False, 2)
         self.add_child(self.timeout, False, False, 2)
         self.add_child(self.show_avatars, False, False, 2)
         self.show_all()
@@ -565,51 +602,22 @@ class ProxyTab(PreferencesTab):
             current
         )
 
-        chk_none = gtk.RadioButton(None, _('No proxy'))
-        chk_url = gtk.RadioButton(chk_none, _('Proxy'))
+        self.server = ProxyField(_('Server/Port'), current['server'],
+            current['port'])
+        self.username = FormField(_('Username'), current['username'])
+        self.password = FormField(_('Password'), current['password'], True)
 
-        try:
-            chk_url.set_has_tooltip(True)
-            chk_url.set_tooltip_text(
-                _('Use a proxy to access internet'))
-        except:
-            pass
-        url_lbl = gtk.Label(_('Twitter API URL'))
-        self.url = gtk.Entry()
-
-        self.url_box = gtk.HBox(False)
-        self.url_box.pack_start(url_lbl, False, False, 3)
-        self.url_box.pack_start(self.url, True, True, 3)
-        self.url_box.set_sensitive(False)
-
-        self.add_child(chk_none, False, False, 2)
-        self.add_child(chk_url, False, False, 2)
-        self.add_child(self.url_box, False, False, 2)
-
-        if current['url'] != '':
-            self.url_box.set_sensitive(True)
-            self.url.set_text(current['url'])
-            chk_url.set_active(True)
-        else:
-            chk_none.set_active(True)
-
-        chk_none.connect('toggled', self.__activate, 'none')
-        chk_url.connect('toggled', self.__activate, 'url')
+        self.add_child(self.server, False, False, 2)
+        self.add_child(self.username, False, False, 2)
+        self.add_child(self.password, False, False, 2)
 
         self.show_all()
 
-    def __activate(self, widget, param):
-        if param == 'none':
-            self.url_box.set_sensitive(False)
-            self.url.set_text('')
-        elif param == 'url':
-            self.url_box.set_sensitive(True)
-
     def get_config(self):
+        server, port = self.server.get_proxy()
         return {
-            'username': '',
-            'password': '',
-            'server': '',
-            'port': '',
-            'url': self.url.get_text()
+            'username': self.username.get_text(),
+            'password': self.password.get_text(),
+            'server': server,
+            'port': port,
         }

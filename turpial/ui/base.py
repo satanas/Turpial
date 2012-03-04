@@ -66,3 +66,6 @@ class Base:
 
     def get_filters(self):
         return self.core.list_filters()
+
+    def save_filters(self, lst):
+        self.core.save_filters(lst)

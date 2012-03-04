@@ -92,7 +92,7 @@ function enable_key_events() {
     });
 
 
-$('#update-message').keydown(function(e) {
+    $('#update-message').keydown(function(e) {
         if (e.keyCode == 27) {
             close_update_box();
             e.stopPropagation();
@@ -104,7 +104,7 @@ $('#update-message').keydown(function(e) {
             return;
         }
     });
-    
+
     /* Activate autocomplete dialog */
     $('#update-message').keypress(function(event) {
         if (event.which == 64) {
@@ -336,26 +336,30 @@ function count_chars() {
 /* Statuses */
 
 function lock_status(status_id, message) {
-    $('div[name="' + status_id + '"]').each(function() {
+    $('.' + status_id).each(function() {
+        var optionsbox = $(this).children('.options');
         // buttonbox
-        $(this).children(":nth-child(6)").children(':nth-child(1)').hide();
+        optionsbox.children(':nth-child(1)').hide();
         // progressbox
-        var progressbox = $(this).children(":nth-child(6)").children(':nth-child(2)');
+        var progressbox = optionsbox.children(':nth-child(2)');
         progressbox.show();
-        // indicator
-        $(this).children('input:first').val(message);
         // progressmsg
         progressbox.children('label:first').html(message);
+        // indicator
+        $(this).children('input:first').val(message);
     });
 }
 
 function unlock_status(status_id) {
-    $('div[name="' + status_id + '"]').each(function() {
+    $('.' + status_id).each(function() {
+        var optionsbox = $(this).children('.options');
+        // buttonbox
+        optionsbox.children(':nth-child(1)').show();
         // progressbox
-        var progressbox = $(this).children(":nth-child(6)").children(':nth-child(2)');
-        progressbox.fadeOut(400, function() {
-            $(this).children('label:first').html('');
-        });
+        var progressbox = optionsbox.children(':nth-child(2)');
+        progressbox.hide();
+        // progressmsg
+        progressbox.children('label:first').html('');
         // indicator
         $(this).children('input:first').val('');
     });

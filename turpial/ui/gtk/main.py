@@ -372,8 +372,8 @@ class Main(Base, Singleton, gtk.Window):
             self.load_friends()
         elif action == 'showreply':
             self.showreply(args[0], args[1], args[2])
-        elif action == 'showconversation':
-            self.showconversation(args[0], args[1])
+        elif action == 'show_conversation':
+            self.show_conversation(args[0], args[1])
         elif action == 'short_urls':
             self.short_urls(args[0])
         elif action == 'direct_message':

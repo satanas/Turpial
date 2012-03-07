@@ -78,7 +78,7 @@ class Preferences(gtk.Window):
         browser = self.browser.get_config()
         proxy = self.proxy.get_config()
         advanced = self.advanced.get_config()
-
+        print advanced
         new_config = {
             'General': general,
             'Notifications': notif,
@@ -243,9 +243,9 @@ class TimeScroll(gtk.HBox):
         scale.connect('value-changed', self.__on_change)
 
     def __on_change(self, widget):
-        value = widget.get_value()
+        self.value = widget.get_value()
         label = "%s <span foreground='#999999'>%i %s</span>" % (self.caption,
-            value, self.unit)
+            self.value, self.unit)
         self.label.set_markup(label)
 
 class GeneralTab(PreferencesTab):
@@ -257,7 +257,7 @@ class GeneralTab(PreferencesTab):
         )
 
         interval = int(self.current['update-interval'])
-        tweets = int(self.current['num-tweets'])
+        tweets = int(self.current['statuses'])
         profile = True if self.current['profile-color'] == 'on' else False
         minimize = True if self.current['minimize-on-close'] == 'on' else False
 
@@ -285,7 +285,7 @@ class GeneralTab(PreferencesTab):
             'update-interval': int(self.interval.value),
             'profile-color': profile,
             'minimize-on-close': minimize,
-            'num-tweets': int(self.tweets.value),
+            'statuses': int(self.tweets.value),
         }
 
 class NotificationsTab(PreferencesTab):
@@ -570,7 +570,7 @@ class AdvancedTab(PreferencesTab):
         self.timeout = TimeScroll(_('Timeout'), timeout, min=5, max=120,
             unit='sec', lbl_size=120)
 
-        self.show_avatars = CheckBox(_('Not load user avatars'), show_avatars, 
+        self.show_avatars = CheckBox(_('Load user avatars'), show_avatars, 
             _('Disable loading user avatars for slow connections'))
 
         self.add_child(TitleLabel(_('Maintenance')), False, False, 2)

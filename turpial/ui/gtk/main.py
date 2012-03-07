@@ -315,7 +315,7 @@ class Main(Base, Singleton, gtk.Window):
         #if (self.timer1 != home_interval):
         if self.timers.has_key(column.id_):
             gobject.source_remove(self.timers[column.id_])
-        self.interval1 = 5
+        self.interval1 = self.core.get_update_interval()
         self.timers[column.id_] = gobject.timeout_add(self.interval1 * 60 * 1000,
             self.download_stream, column)
         self.log.debug('--Created timer for %s every %i min' % (column.id_, self.interval1))
@@ -874,9 +874,11 @@ class Main(Base, Singleton, gtk.Window):
         if not self.columns.has_key(column.id_):
             self.columns[column.id_] = None
 
+        num_statuses = self.core.get_max_statuses_per_column()
         self.container.execute("start_updating_column('" + column.id_ + "');")
         self.worker.register(self.core.get_column_statuses, (column.account_id,
-            column.column_name, 100), self.update_column, (column, notif, 100))
+            column.column_name, num_statuses), self.update_column, 
+            (column, notif, num_statuses))
         return True
 
     def refresh_column(self, column_id):

@@ -239,11 +239,11 @@ class Main(Base, Singleton, gtk.Window):
         self.save_column(column_id)
 
     def __close(self, widget, event=None):
-        if self.minimize == 'on':
+        if self.core.minimize_on_close():
             self.showed = False
             self.hide()
         else:
-            self.main_quit()
+            self.main_quit(widget)
         return True
 
     def __timeout_callback(self, funct, arg, user_data):
@@ -410,7 +410,7 @@ class Main(Base, Singleton, gtk.Window):
         return avatar
 
     def main_quit(self, widget=None):
-        self.log.debug('Exit')
+        self.log.debug('Exiting...')
         self.destroy()
         self.tray = None
         self.worker.quit()

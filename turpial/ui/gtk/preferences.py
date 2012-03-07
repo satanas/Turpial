@@ -266,6 +266,7 @@ class GeneralTab(PreferencesTab):
 
         self.profile_colors = CheckBox(_('Load profile color'), profile,
             _('Use your profile color for highlighted elements'))
+        self.profile_colors.set_sensitive(False)
 
         self.minimize = CheckBox(_('Minimize to tray'), minimize,
             _('Send Turpial to system tray when closing main window'))

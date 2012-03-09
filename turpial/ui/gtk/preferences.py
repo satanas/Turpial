@@ -8,6 +8,7 @@
 import gtk
 import subprocess
 
+from turpial.ui.lang import i18n
 from libturpial.api.services.uploadpic.servicelist import PIC_SERVICES
 from libturpial.api.services.shorturl.servicelist import URL_SERVICES
 
@@ -18,14 +19,14 @@ class Preferences(gtk.Window):
         self.mainwin = parent
         self.current = parent.get_config()
         self.set_default_size(450, 400)
-        self.set_title(_('Preferences'))
+        self.set_title(i18n.get('preferences'))
         self.set_border_width(6)
         self.set_transient_for(parent)
         self.set_modal(True)
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
 
-        btn_save = gtk.Button(_('Save'))
-        btn_close = gtk.Button(_('Close'))
+        btn_save = gtk.Button(i18n.get('save'))
+        btn_close = gtk.Button(i18n.get('close'))
 
         box_button = gtk.HButtonBox()
         box_button.set_spacing(6)
@@ -48,13 +49,13 @@ class Preferences(gtk.Window):
         self.proxy = ProxyTab(self.current['Proxy'])
         self.advanced = AdvancedTab(self.mainwin, self.current['Advanced'])
 
-        notebook.append_page(self.general, gtk.Label(_('General')))
-        notebook.append_page(self.notif, gtk.Label(_('Notifications')))
-        notebook.append_page(self.services, gtk.Label(_('Services')))
-        notebook.append_page(self.browser, gtk.Label(_('Web Browser')))
-        notebook.append_page(self.filtered, gtk.Label(_('Filters')))
-        notebook.append_page(self.proxy, gtk.Label(_('Proxy')))
-        notebook.append_page(self.advanced, gtk.Label(_('Advanced')))
+        notebook.append_page(self.general, gtk.Label(i18n.get('general')))
+        notebook.append_page(self.notif, gtk.Label(i18n.get('notifications')))
+        notebook.append_page(self.services, gtk.Label(i18n.get('services')))
+        notebook.append_page(self.browser, gtk.Label(i18n.get('web_browser')))
+        notebook.append_page(self.filtered, gtk.Label(i18n.get('filters')))
+        notebook.append_page(self.proxy, gtk.Label(i18n.get('proxy')))
+        notebook.append_page(self.advanced, gtk.Label(i18n.get('advanced')))
 
         vbox = gtk.VBox()
         #vbox.set_spacing(4)
@@ -545,24 +546,31 @@ class AdvancedTab(PreferencesTab):
             _('Advanced options. Use it only if you know what you do'),
             current
         )
-
         self.mainwin = mainwin
-        cachelbl = gtk.Label(_('Delete images cache'))
-        cachelbl.set_alignment(0.0, 0.5)
-        cachebtn = gtk.Button(_('Clean cache'))
-        cachebtn.set_size_request(110, -1)
-        cachebtn.connect('clicked', self.__clean_cache)
+        cache_size = self.mainwin.get_cache_size()
+        label = "%s <span foreground='#999999'>%s</span>" % (
+            i18n.get('delete_all_images_in_cache'),
+            cache_size)
+        self.cachelbl = gtk.Label()
+        self.cachelbl.set_use_markup(True)
+        self.cachelbl.set_markup(label)
+        self.cachelbl.set_alignment(0.0, 0.5)
+        self.cachebtn = gtk.Button(_('Clean cache'))
+        self.cachebtn.set_size_request(110, -1)
+        self.cachebtn.connect('clicked', self.__clean_cache)
+        if cache_size == '0 B':
+            self.cachebtn.set_sensitive(False)
 
         configlbl = gtk.Label(_('Restore config to default'))
         configlbl.set_alignment(0.0, 0.5)
-        configbtn = gtk.Button(_('Restore config'))
-        configbtn.set_size_request(110, -1)
-        configbtn.connect('clicked', self.__restore_default_config)
+        self.configbtn = gtk.Button(_('Restore config'))
+        self.configbtn.set_size_request(110, -1)
+        self.configbtn.connect('clicked', self.__restore_default_config)
 
         table = gtk.Table(2, 2, False)
-        table.attach(cachebtn, 0, 1, 0, 1, gtk.EXPAND|gtk.FILL)
-        table.attach(cachelbl, 1, 2, 0, 1, gtk.EXPAND|gtk.FILL, xpadding=5)
-        table.attach(configbtn, 0, 1, 1, 2, gtk.EXPAND|gtk.FILL)
+        table.attach(self.cachebtn, 0, 1, 0, 1, gtk.EXPAND|gtk.FILL)
+        table.attach(self.cachelbl, 1, 2, 0, 1, gtk.EXPAND|gtk.FILL, xpadding=5)
+        table.attach(self.configbtn, 0, 1, 1, 2, gtk.EXPAND|gtk.FILL)
         table.attach(configlbl, 1, 2, 1, 2, gtk.EXPAND|gtk.FILL, xpadding=5)
 
         timeout = int(self.current['socket-timeout'])
@@ -573,6 +581,7 @@ class AdvancedTab(PreferencesTab):
 
         self.show_avatars = CheckBox(_('Load user avatars'), show_avatars, 
             _('Disable loading user avatars for slow connections'))
+        self.show_avatars.set_sensitive(False)
 
         self.add_child(TitleLabel(_('Maintenance')), False, False, 2)
         self.add_child(table, False, False, 2)
@@ -582,10 +591,24 @@ class AdvancedTab(PreferencesTab):
         self.show_all()
 
     def __clean_cache(self, widget):
-        pass
+        self.mainwin.delete_all_cache()
+        self.cachebtn.set_sensitive(False)
+        label = "%s <span foreground='#999999'>%s</span>" % (
+            i18n.get('delete_all_images_in_cache'),
+            self.mainwin.get_cache_size())
+        self.cachelbl.set_markup(label)
 
     def __restore_default_config(self, widget):
-        pass
+        message = gtk.MessageDialog(self.mainwin, gtk.DIALOG_MODAL |
+            gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
+            gtk.BUTTONS_YES_NO)
+        message.set_markup(i18n.get('restore_config_warning'))
+        response = message.run()
+        message.destroy()
+        if response == gtk.RESPONSE_YES:
+            self.mainwin.restore_default_config()
+            self.configbtn.set_sensitive(False)
+            self.mainwin.main_quit(force=True)
 
     def get_config(self):
         show_avatars = 'on' if self.show_avatars.get_active() else 'off'

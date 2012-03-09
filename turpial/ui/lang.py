@@ -149,10 +149,23 @@ text box below and click OK:'),
     'direct_messages': _('Direct Messages'),
     'select_user': _('Select user'),
     'send_message_to': _('Send message to'),
-    'can_send_message_to_one_account': _("Wait! I just can send messages to one account at once"),
+    'can_send_message_to_one_account': _("Wait! I just can send messages to \
+one account at once"),
     'sending_message': _('Sending message...'),
     'direct_message_sent_successfully': _('Direct message sent successfully'),
     'turpial_image_viewer': _("Turpial Image Viewer"),
+    'general': _('General'),
+    'notifications': _('Notifications'),
+    'services': _('Services'),
+    'web_browser': _('Web Browser'),
+    'filters': _('Filters'),
+    'proxy': _('Proxy'),
+    'advanced': _('Advanced'),
+    'delete_all_images_in_cache': _('Delete all images in cache'),
+    'restore_config_warning': _('This action will close Turpial and will \
+delete your current config (you must start Turpial again). Do you want to \
+continue?')
+
 }
 
 class i18n:

@@ -18,6 +18,24 @@ class Base:
         self.log = logging.getLogger('UI')
         self.log.debug('Started')
 
+    # TODO: Put this in util.py
+    def humanize_size(self, size):
+        if size == 0:
+            return '0 B'
+
+        kbsize = size / 1024
+        if kbsize > 0:
+            mbsize = kbsize / 1024
+            if mbsize > 0:
+                gbsize = mbsize / 1024
+                if gbsize > 0:
+                    return "%.2f GB" % (mbsize / 1024.0)
+                else:
+                    return "%.2f MB" % (kbsize / 1024.0)
+            else:
+                return "%.2f KB" % (size / 1024.0)
+        else:
+            return "%.2f B" % size
     # ------------------------------------------------------------
     # Common methods to all interfaces
     # ------------------------------------------------------------
@@ -69,3 +87,12 @@ class Base:
 
     def save_filters(self, lst):
         self.core.save_filters(lst)
+
+    def restore_default_config(self):
+        self.core.delete_current_config()
+
+    def delete_all_cache(self):
+        self.core.delete_cache()
+
+    def get_cache_size(self):
+        return self.humanize_size(self.core.get_cache_size())

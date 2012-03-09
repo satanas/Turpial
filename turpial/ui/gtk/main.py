@@ -412,7 +412,7 @@ class Main(Base, Singleton, gtk.Window):
         del pix
         return avatar
 
-    def main_quit(self, widget=None):
+    def main_quit(self, widget=None, force=False):
         self.log.debug('Exiting...')
         self.destroy()
         self.tray = None
@@ -420,7 +420,8 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.join()
         if widget:
             gtk.main_quit()
-        #sys.exit(0)
+        if force:
+            sys.exit(0)
 
     def main_loop(self):
         try:

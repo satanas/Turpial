@@ -201,7 +201,7 @@ class ProxyField(gtk.HBox):
 
         self.port = gtk.Entry()
         self.port.set_size_request(50, -1)
-        self.port.set_text(server)
+        self.port.set_text(port)
 
         self.pack_start(self.server, False, False, 2)
         self.pack_start(self.port, False, False, 2)

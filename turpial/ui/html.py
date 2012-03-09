@@ -173,7 +173,8 @@ class HtmlParser:
                 cad = '<a href="link:%s" title="%s">%s</a>' % (url.url, url.url, 
                     url.display_text)
             else:
-                cad = '<a href="cmd:show_media:%s" title="%s">%s</a>' % (url.url.replace(":", "$"), url.url, 
+                pars = ARG_SEP.join([url.url.replace(":", "$"), status.account_id])
+                cad = '<a href="cmd:show_media:%s" title="%s">%s</a>' % (pars, url.url, 
                     url.display_text)
             text = text.replace(url.search_for, cad)
         return text

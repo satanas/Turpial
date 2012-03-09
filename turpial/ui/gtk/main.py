@@ -382,7 +382,7 @@ class Main(Base, Singleton, gtk.Window):
         elif action == 'profile_image':
             self.profile_image(args[0], args[1])
         elif action == 'show_media':
-            self.show_media(args[0].replace("$", ":"))
+            self.show_media(args[0].replace("$", ":"), args[1])
         elif action == 'delete_direct':
             self.delete_direct(args[0], args[1])
 
@@ -626,11 +626,11 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.register(self.core.get_profile_image, (account, user),
             self.profile_image_response)
 
-    def show_media(self, url):
+    def show_media(self, url, account_id): 
         cmd = "show_imageview();"
         self.container.execute(cmd)
-        self.worker.register(self.core.get_media_content, (url),
-            self.show_media_response, url)
+        self.worker.register(self.core.get_media_content, (url, account_id),
+            self.show_media_response)
 
     def delete_direct(self, account, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('deleting'))
@@ -869,22 +869,14 @@ class Main(Base, Singleton, gtk.Window):
             cmd = "update_imageview('%s',%s,%s);" % (response.items, width, height)
             self.container.execute(cmd)
 
-    def show_media_response(self, response, fileurl):
-        filename = fileurl.replace("/", "%")
-        img_path = self.save_in_temp_file(filename, response.items.response)
+    def show_media_response(self, response):
+        img_path = response.items	
         pix = gtk.gdk.pixbuf_new_from_file(img_path)
         width = pix.get_width()
         height = pix.get_height()
         del pix
         cmd = "update_imageview('%s',%s,%s);" % (img_path, width, height)
         self.container.execute(cmd)
-
-    def save_in_temp_file(self, filename, data):
-        img_path = os.path.join(tempfile.gettempdir(), filename)
-        f = open(img_path, 'wb')
-        f.write(data)
-        f.close()
-        return img_path
 
     # ------------------------------------------------------------
     # Timer Methods

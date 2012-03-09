@@ -11,6 +11,7 @@ import urllib
 
 from turpial.ui.lang import i18n
 from libturpial.common import ARG_SEP, LoginStatus
+from libturpial.api.services.showmedia.utils import ShowMediaServiceUtils
 
 DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 IMAGES_DIR = os.path.join(DATA_DIR, 'pixmaps')
@@ -168,8 +169,12 @@ class HtmlParser:
                 url.url = url.search_for
             #if url.url[0:7] != "http://":
             #    url.url = "http://%s" % url.url
-            cad = '<a href="link:%s" title="%s">%s</a>' % (url.url, url.url, 
-                url.display_text)
+            if not ShowMediaServiceUtils.can_manage_url(url.url):
+                cad = '<a href="link:%s" title="%s">%s</a>' % (url.url, url.url, 
+                    url.display_text)
+            else:
+                cad = '<a href="cmd:show_media:%s" title="%s">%s</a>' % (url.url.replace(":", "$"), url.url, 
+                    url.display_text)
             text = text.replace(url.search_for, cad)
         return text
     

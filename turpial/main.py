@@ -30,37 +30,37 @@ class Turpial:
             help='clean all bytecodes', default=False)
         parser.add_option('--version', dest='version', action='store_true',
             help='show the version of Turpial and exit', default=False)
-        
+
         (options, args) = parser.parse_args()
-        
+
         self.core = Core()
         self.interface = options.interface
         self.version = "Turpial v%s with libturpial v%s" % (VERSION, LIBVERSION)
-        
-        if options.debug or options.clean: 
+
+        if options.debug or options.clean:
             logging.basicConfig(level=logging.DEBUG)
         else:
             logging.basicConfig(level=logging.INFO)
         self.log = logging.getLogger('Controller')
-        
+
         if options.clean:
             clean_bytecodes(__file__, self.log)
             sys.exit(0)
-            
+
         if options.version:
             print self.version
             print "Python v%X" % sys.hexversion
             sys.exit(0)
-        
+
         if options.interface in util.INTERFACES.keys():
             self.ui = util.INTERFACES[options.interface](self.core)
         else:
             print "'%s' is not a valid interface. Availables interfaces are %s" % (
                 options.interface, util.available_interfaces())
             sys.exit(-1)
-        
+
         self.log.debug('Starting %s' % self.version)
-        
+
         self.ui.show_main()
         try:
             self.ui.main_loop()

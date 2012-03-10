@@ -9,8 +9,8 @@ import gtk
 import subprocess
 
 from turpial.ui.lang import i18n
-from libturpial.api.services.uploadpic.servicelist import PIC_SERVICES
-from libturpial.api.services.shorturl.servicelist import URL_SERVICES
+from libturpial.api.services.uploadpic import PIC_SERVICES
+from libturpial.api.services.shorturl import URL_SERVICES
 
 class Preferences(gtk.Window):
     def __init__(self, parent=None, mode='user'):

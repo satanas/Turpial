@@ -638,10 +638,13 @@ function stop_updating_column(column_id) {
     enable_trigger();
 }
 
-function show_replies_to_status(status_id) {
+function show_replies_to_status(status_id, animated) {
     recalculate_column_size();
     enable_trigger();
-    $('#replycontainer-' + status_id).fadeIn(1000);
+    if (animated == true)
+        $('#replycontainer-' + status_id).fadeIn(1000);
+    else
+        $('#replycontainer-' + status_id).show();
     $('#bubble-' + status_id).show();
 }
 

@@ -86,6 +86,8 @@ class Main(Base, Singleton, gtk.Window):
         self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
         self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
 
+        self.openstatuses = {}
+
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__timeout_callback)
         self.worker.start()
@@ -375,6 +377,8 @@ class Main(Base, Singleton, gtk.Window):
             self.showreply(args[0], args[1], args[2])
         elif action == 'show_conversation':
             self.show_conversation(args[0], args[1])
+        elif action == 'hide_conversation':
+            self.hide_conversation(args[0])
         elif action == 'short_urls':
             self.short_urls(args[0])
         elif action == 'direct_message':
@@ -613,6 +617,11 @@ class Main(Base, Singleton, gtk.Window):
         self.worker.register(self.core.get_conversation, (account_id, status_id),
             self.show_conversation_response, status_id)
 
+    def hide_conversation(self, status_id):
+        del self.openstatuses[status_id]
+        cmd = "hide_replies_to_status('%s')" % status_id
+        self.container.execute(cmd)
+
     def short_urls(self, text):
         message = base64.b64decode(text)
         self.worker.register(self.core.autoshort_url, (message),
@@ -829,8 +838,13 @@ class Main(Base, Singleton, gtk.Window):
         for status in statuses:
             if status.id_ != status_id:
                 html_status += self.htmlparser.status(status, True)
+                try:
+                    self.openstatuses[status_id].append(status)
+                except KeyError:
+                    self.openstatuses[status_id] = []
+                    self.openstatuses[status_id].append(status)
         cmd = "unlock_status('%s');" % (status_id)
-        cmd += "show_replies_to_status('%s')" % status_id
+        cmd += "show_replies_to_status('%s', true)" % status_id
         self.container.update_element(id_, html_status, cmd)
 
     def show_reply_response(self, response, status_id):
@@ -838,7 +852,7 @@ class Main(Base, Singleton, gtk.Window):
         id_ = '#replystatus-%s' % status_id
         html_status = self.htmlparser.status(status, True)
         cmd = "unlock_status('%s');" % (status_id)
-        cmd += "show_replies_to_status('%s')" % status_id
+        cmd += "show_replies_to_status('%s', true)" % status_id
         self.container.update_element(id_, html_status, cmd)
 
     def short_url_response(self, response):
@@ -908,40 +922,18 @@ class Main(Base, Singleton, gtk.Window):
     def update_column(self, arg, data):
         column, notif, max_ = data
         self.log.debug('Updated column %s' % column.id_)
-
+        
         if arg.code > 0:
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             self.show_notice(arg.errmsg, 'error')
             return
-
-        new_statuses = self.get_new_statuses(self.columns[column.id_], arg.items[:])
-
-        if new_statuses == None:
-            self.container.execute("stop_updating_column('" + column.id_ + "');")
-            return
-
+        page = self.htmlparser.statuses(arg.items)
         element = "#list-%s" % column.id_
         extra = "stop_updating_column('" + column.id_ + "');"
-
-        page = self.htmlparser.statuses(new_statuses)
-
-
-        if self.columns[column.id_] != None:
-            deleted_count = len(new_statuses)
-            cur_column = self.columns[column.id_]
-            statuses_len = len(cur_column)
-            for status in cur_column:
-                if deleted_count == 0:
-                    break
-                else:
-                    cur_status = cur_column.pop()
-                    self.container.remove_element(".tweet.%s" % cur_status.id_)
-                    deleted_count -= 1
-
-        self.container.prepend_element(element, page, extra)
-
+        self.container.update_element(element, page, extra)
+        
         # Notifications
-        count = len(new_statuses)
+        count = self.get_new_statuses(self.columns[column.id_], arg.items)
         if count != 0:
             if notif and self.core.show_notifications_in_updates():
                 self.notify.updates(column, count)
@@ -953,15 +945,16 @@ class Main(Base, Singleton, gtk.Window):
                 self.unitylauncher.set_count_visible(True)
             else:
                 self.unitylauncher.set_count_visible(False)
-
         self.columns[column.id_] = arg.items
-
-
-        if not self.columns[column.id_]:
-            self.columns[column.id_] = new_statuses
-        else:
-            self.columns[column.id_] = new_statuses + self.columns[column.id_]
-        self.columns[column.id_] = self.columns[column.id_][:max_]
-
         self.updating[column.id_] = False
 
+        self.restore_open_tweets()
+
+    def restore_open_tweets(self):
+        for status in self.openstatuses:
+            html_status = ''
+            id_ = '#replystatus-%s' % status
+            for rep_status in self.openstatuses[status]:
+                html_status += self.htmlparser.status(rep_status, True)
+            cmd = "show_replies_to_status('%s', false)" % status
+            self.container.update_element(id_, html_status, cmd)

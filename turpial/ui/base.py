@@ -54,24 +54,20 @@ class Base:
 
     def get_new_statuses(self, current, last):
         if not current:
-            return last
+            return len(last)
         if not last:
-            return None
+            return 0
 
-        for st in last:
-            if st.is_own:
-                last.remove(st)
+        count = 0
+        our_last_status_id = current[0].id_
 
-        for ss in current:
-            if ss.is_own:
-                continue
-            count = 0
-            for st in last:
-                if ss.id_ == st.id_:
-                    return last[0:count]
-                else:
-                    count += 1
-        return last
+        for last_status in last:
+            if last_status.id_ != our_last_status_id:
+                count +=1
+            else:
+                break
+
+        return count
 
     def save_window_geometry(self, width, height):
         pass

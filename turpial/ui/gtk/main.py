@@ -897,8 +897,8 @@ class Main(Base, Singleton, gtk.Window):
                     content_obj.path, pix.get_width(), pix.get_height())
                 del pix
             elif content_obj.is_video():
-                #TODO Video stuff
-                pass
+                cmd = "update_videoview('%s',%s,%s);" % (
+                    content_obj.path, content_obj.info['width'], content_obj.info['height'])
             self.container.execute(cmd)
 
     # ------------------------------------------------------------

@@ -622,6 +622,7 @@ function show_imageview(img_url) {
     if (img_url == undefined) {
         //Show the loading progress
     } else {
+        $('#mediacontentview').html('<img id="imageview" src="" style="display: none;">');
         $('#imageview').attr('src', img_url);
         imageview_w = $('#imageview').width();
         imageview_h = $('#imageview').height();
@@ -631,6 +632,7 @@ function show_imageview(img_url) {
 
 function update_imageview(img_url, orig_w, orig_h) {
     console.log('img_url (update_imageview): ' + img_url);
+    $('#mediacontentview').html('<img id="imageview" src="" style="display: none;">');
     $('#progress-box-imageview').hide();
     var imageview = $('#imageview');
     imageview.attr('src', img_url);
@@ -642,7 +644,16 @@ function update_imageview(img_url, orig_w, orig_h) {
     //resize_imageview(orig_w, orig_h);
 }
 
+function update_videoview(img_url, orig_w, orig_h) {
+    console.log('img_url (update_imageview): ' + img_url);
+    $('#mediacontentview').html('<iframe src="' + img_url +'" width="' + orig_w + '" height="' + orig_h + '">');
+    $('#progress-box-imageview').hide();
+    resize_imageview(orig_w, orig_h);
+    //resize_imageview(orig_w, orig_h);
+}
+
 function hide_imageview() {
+    $('#mediacontentview').html('<img id="imageview" src="" style="display: none;">');
     $('#imageview-window').fadeOut(400, function() {
         var imageview = $('#imageview');
         imageview.attr('src', '');

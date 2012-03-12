@@ -111,7 +111,7 @@
         <div id="imageview-window" name="" style="display: none;">
             <div id="imageview-frame">
                 <div id="imageview-close"><a href="javascript:hide_imageview()"><% $close %></a></div>
-                <img id="imageview" src="" style="display: none;">
+                <div id="mediacontentview"><img id="imageview" src="" style="display: none;"></div>
                 <div id="progress-box-imageview">
                     <% rimg "dark-loader.gif", 16, 16 %>
                     <label id="progress-msg-imageview"><% $loading %></label>

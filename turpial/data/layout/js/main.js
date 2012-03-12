@@ -768,8 +768,11 @@ function update_status() {
 }
 
 function quote_status(account_id, username, text) {
+    // To clean the message
+    var message = text.replace('&gt;', '>');
+    message = message.replace('&lt;', '<');
     //console.log(account_id + ',' + username + ',' + text);
-    var rt = "RT @" + username + ": " + text;
+    var rt = "RT @" + username + ": " + message;
     show_update_box(rt);
 }
 

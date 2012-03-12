@@ -930,7 +930,7 @@ class Main(Base, Singleton, gtk.Window):
     def update_column(self, arg, data):
         column, notif, max_ = data
         self.log.debug('Updated column %s' % column.id_)
-        
+
         if arg.code > 0:
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             self.show_notice(arg.errmsg, 'error')
@@ -939,8 +939,10 @@ class Main(Base, Singleton, gtk.Window):
         element = "#list-%s" % column.id_
         extra = "stop_updating_column('" + column.id_ + "');"
         self.container.update_element(element, page, extra)
-        
+
         # Notifications
+        # FIX: Do not store an array with statuses objects, find a way to store
+        # maybe just ids
         count = self.get_new_statuses(self.columns[column.id_], arg.items)
         if count != 0:
             if notif and self.core.show_notifications_in_updates():

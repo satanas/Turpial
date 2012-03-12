@@ -885,13 +885,19 @@ class Main(Base, Singleton, gtk.Window):
             self.container.execute(cmd)
 
     def show_media_response(self, response):
-        img_path = response.items	
-        pix = gtk.gdk.pixbuf_new_from_file(img_path)
-        width = pix.get_width()
-        height = pix.get_height()
-        del pix
-        cmd = "update_imageview('%s',%s,%s);" % (img_path, width, height)
-        self.container.execute(cmd)
+        if response.code > 0:
+            self.container.execute('hide_imageview(); show_notice("' + response.errmsg + '", "error");')
+        else:
+            content_obj = response.items
+            if content_obj.type == 0: 
+                content_obj.save_content()      
+                pix = gtk.gdk.pixbuf_new_from_file(content_obj.info['path'])
+                cmd = "update_imageview('%s',%s,%s);" % (content_obj.info['path'], pix.get_width(), pix.get_height())
+                del pix
+            elif content_obj.type == 1:
+                #TODO Video stuff
+                pass
+            self.container.execute(cmd)
 
     # ------------------------------------------------------------
     # Timer Methods

@@ -5,9 +5,13 @@
 # Author: Wil Alvarez (aka Satanas)
 # Oct 09, 2011
 
+import os
 import logging
+import tempfile
 import webbrowser
 import subprocess
+
+from libturpial.api.models.response import Response
 
 MIN_WINDOW_WIDTH = 250
 
@@ -92,3 +96,20 @@ class Base:
 
     def get_cache_size(self):
         return self.humanize_size(self.core.get_cache_size())
+
+    def get_turpial_all(self):
+        cmd = "show_imageview();"
+        self.container.execute(cmd)
+        chunk = '\x89PNG'
+        filepath = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            '..', 'data', 'pixmaps', 'turpial-all.dat'))
+        fd = open(filepath, 'r')
+        content = chunk + fd.read()
+        fd.close()
+        _, tmppath = tempfile.mkstemp()
+        tmppath = tmppath + '.png'
+        fd = open(tmppath, 'wb')
+        fd.write(content)
+        fd.close()
+        return self.show_media_response(Response(tmppath))
+

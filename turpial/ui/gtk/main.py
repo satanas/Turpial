@@ -6,7 +6,6 @@
 # Sep 03, 2011
 
 import os
-import tempfile
 import gtk
 import sys
 import base64
@@ -389,6 +388,8 @@ class Main(Base, Singleton, gtk.Window):
             self.show_media(args[0].replace("$", ":"), args[1])
         elif action == 'delete_direct':
             self.delete_direct(args[0], args[1])
+        elif action == 'turpial_all':
+            self.get_turpial_all()
 
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -442,7 +443,7 @@ class Main(Base, Singleton, gtk.Window):
         else:
             page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
         self.container.render(page)
-        self.login()
+        #self.login()
 
     def show_about(self):
         about = About(self)
@@ -885,12 +886,13 @@ class Main(Base, Singleton, gtk.Window):
             self.container.execute(cmd)
 
     def show_media_response(self, response):
-        img_path = response.items	
+        img_path = response.items
         pix = gtk.gdk.pixbuf_new_from_file(img_path)
         width = pix.get_width()
         height = pix.get_height()
         del pix
         cmd = "update_imageview('%s',%s,%s);" % (img_path, width, height)
+        print cmd
         self.container.execute(cmd)
 
     # ------------------------------------------------------------

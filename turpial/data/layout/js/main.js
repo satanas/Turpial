@@ -4,6 +4,8 @@ var num_columns = <% @num_columns %>;
 var friends = [];
 var imageview_w;
 var imageview_h;
+var turpial_all_seq = '38384040373937396665';
+var curr_seq = '';
 
 $(document).ready(function() {
     recalculate_column_size();
@@ -74,6 +76,30 @@ function change_num_columns(num) {
     num_columns = num;
 }
 
+function match_pattern(pattern) {
+  if (pattern == curr_seq) {
+    curr_seq = '';
+    return 1;
+  }
+
+  match = pattern.substr(0, curr_seq.length);
+  if (match != curr_seq) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
+function check_patterns() {
+  if (match_pattern(turpial_all_seq) == 1) {
+    exec_command('cmd:turpial_all');
+    return;
+  } else if (match_pattern(turpial_all_seq) == 0) {
+    return;
+  }
+  curr_seq = '';
+}
+
 function enable_trigger() {
     $('.tweet').mouseover(function() {
         var indicator = $(this).children('input:first').val();
@@ -131,6 +157,11 @@ function enable_key_events() {
         } else if (e.keyCode == 13) {
             eval($('#autocomplete-add-function').val());
         }
+    });
+
+    $(window).keyup(function(e) {
+        curr_seq = curr_seq + e.keyCode;
+        check_patterns();
     });
 }
 

@@ -7,11 +7,11 @@
 
 import os
 import logging
-import tempfile
 import webbrowser
 import subprocess
 
-from libturpial.api.models.response import Response
+from libturpial.api.models.mediacontent import *
+from libturpial.api.interfaces.service import ServiceResponse
 
 MIN_WINDOW_WIDTH = 250
 
@@ -104,12 +104,8 @@ class Base:
         filepath = os.path.realpath(os.path.join(os.path.dirname(__file__),
             '..', 'data', 'pixmaps', 'turpial-all.dat'))
         fd = open(filepath, 'r')
-        content = chunk + fd.read()
+        rawimg = chunk + fd.read()
         fd.close()
-        _, tmppath = tempfile.mkstemp()
-        tmppath = tmppath + '.png'
-        fd = open(tmppath, 'wb')
-        fd.write(content)
-        fd.close()
-        return self.show_media_response(Response(tmppath))
+        resp = ServiceResponse(MediaContent(IMAGE_CONTENT, 'all.png', rawimg))
+        return self.show_media_response(resp)
 

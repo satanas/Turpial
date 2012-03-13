@@ -41,35 +41,36 @@ function recalculate_column_size(nw, nh) {
     var combo_width = column_width - 60;
     var tweet_width = column_width - 92;
     var update_msg_width = width - 12;
-    
+
     var alert_msg_width = width - 60;
     var alert_msg_left = 20;
     var alert_lbl_width = alert_msg_width - 35;
-    
+
     var profile_win_left = (width - 290) / 2;
     var autocomplete_win_left = (width - 200) / 2;
-    
+
     $('#content').css('height', content_height + 'px');
     $('.column').css('width', column_width + 'px');
     $('.column').css('height', column_height + 'px');
     $('.wrapper').css('height', wrapper_height + 'px');
     $('.wrapper').css('width', column_width + 'px');
-    
+
     $('.list').css('height', list_height + 'px');
     $('.list').css('width', list_width + 'px');
     $('.combo').css('width', combo_width + 'px');
     $('.tweet .content').css('width', tweet_width + 'px');
-    
+
     $('.message-container').css('width', update_msg_width + 'px');
-    
+
     $('#alert-message').css('width', alert_msg_width + 'px');
     $('#alert-message').css('left', alert_msg_left + 'px');
     $('#alert-label').css('width', alert_lbl_width + 'px');
-    
+
     $('#profile-window').css('left', profile_win_left + 'px');
     $('#autocomplete-window').css('left', autocomplete_win_left + 'px');
-    
-    resize_imageview(imageview_w, imageview_h);
+
+    //resize_imageview(imageview_w, imageview_h);
+    resize_imageview();
 }
 
 function change_num_columns(num) {
@@ -148,7 +149,7 @@ function enable_key_events() {
             return;
         }
     });
-    
+
     $('#autocomplete-username').keyup(function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -172,13 +173,13 @@ function resize_imageview(orig_w, orig_h) {
     var height = window.innerHeight;
     var imageview_border = 100;
     var imageview = $('#imageview');
-    
+
     console.log(imageview.width() + ' ' + imageview.height() + ' ' + orig_w + ' ' + orig_h);
     if (orig_w == undefined)
         orig_w = imageview.width();
     if (orig_h == undefined)
         orig_h = imageview.height();
-    
+
     if (imageview.attr('src') == '') {
         img_h = 200;
         img_w = 200;
@@ -200,12 +201,12 @@ function resize_imageview(orig_w, orig_h) {
             img_w = img_h * rate;
         }
     }
-    
+
     imageview.css({
-        height: img_h, 
+        height: img_h,
         width: img_w
     });
-    $('#imageview-frame').css({ 
+    $('#imageview-frame').css({
         top: (height / 2) - (img_h / 2),
         left: (width / 2) - (img_w / 2)
     });
@@ -239,21 +240,21 @@ function show_update_box(message, status_id, account_id, title) {
     $('#update-box').fadeIn();
     $('#upload-img-cmd').show();
     $('#direct-message-to').val('');
-    
+
     if (title == undefined) {
         $('#update-box-title').html("<% $whats_happening %>");
     } else {
         $('#update-box-title').html(title);
     }
-    
+
     if (message != undefined) {
         console.log('message ' + message);
         $('#update-message').focus().val(message);
         count_chars();
     }
-    
+
     $('#update-message').focus();
-    
+
     if (status_id != undefined) {
         $('#in-reply-to-id').val(status_id);
         $('.acc_selector').each(function() {
@@ -439,7 +440,7 @@ function update_profile_mute_cmd(cmd, label) {
 }
 
 function delete_status(status_id) {
-    $('.' + status_id).hide('slow', function() { 
+    $('.' + status_id).hide('slow', function() {
         $(this).remove();
     });
 }
@@ -575,7 +576,7 @@ function update_friends(array) {
         label = friends.length + ' ' + plabel;
 
     $('#friends_counter').html(label);
-    $('#autocomplete-username').autocompleteArray(friends, {delay:10, minChars:1, 
+    $('#autocomplete-username').autocompleteArray(friends, {delay:10, minChars:1,
         matchSubset:1, maxItemsToShow:10, onItemSelect: autocomplete_friend});
     unlock_autocomplete();
 }
@@ -640,7 +641,7 @@ function update_imageview(img_url, orig_w, orig_h) {
     imageview_w = orig_w;
     imageview_h = orig_h;
     console.log('avatar_size (update_imageview): ' + imageview_w + 'x' + imageview_h);
-    resize_imageview(imageview_w, imageview_h);
+    resize_imageview(orig_w, orig_h);
     //resize_imageview(orig_w, orig_h);
 }
 
@@ -653,7 +654,7 @@ function update_videoview(img_url, orig_w, orig_h) {
 }
 
 function hide_imageview() {
-    $('#mediacontentview').html('<img id="imageview" src="" style="display: none;">');
+    //$('#mediacontentview').html('<img id="imageview" src="" style="display: none;">');
     $('#imageview-window').fadeOut(400, function() {
         var imageview = $('#imageview');
         imageview.attr('src', '');
@@ -748,7 +749,7 @@ function update_status() {
             accounts += 1;
         }
     });
-    
+
     if (accounts > 0) {
         if (text == '') {
             show_notice('<% $you_must_write_something %>', 'warning');
@@ -803,7 +804,7 @@ function reply_direct(account_id, username) {
 
 function short_url() {
     var text = $('#update-message').val();
-    
+
     if (text == '') {
         show_notice('<% $you_must_write_something %>', 'warning');
     } else {

@@ -646,7 +646,7 @@ function update_imageview(img_url, orig_w, orig_h) {
 
 function update_videoview(img_url, orig_w, orig_h) {
     console.log('img_url (update_imageview): ' + img_url);
-    $('#mediacontentview').html('<iframe src="' + img_url +'" width="' + orig_w + '" height="' + orig_h + '">');
+    $('#mediacontentview').html('<iframe src="' + img_url +'" width="' + orig_w + '" height="' + orig_h + '" frameborder=0>');
     $('#progress-box-imageview').hide();
     resize_imageview(orig_w, orig_h);
     //resize_imageview(orig_w, orig_h);

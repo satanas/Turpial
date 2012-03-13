@@ -896,7 +896,7 @@ class Main(Base, Singleton, gtk.Window):
                 cmd = "update_imageview('%s',%s,%s);" % (
                     content_obj.path, pix.get_width(), pix.get_height())
                 del pix
-            elif content_obj.is_video():
+            elif content_obj.is_video() or content_obj.is_map():
                 cmd = "update_videoview('%s',%s,%s);" % (
                     content_obj.path, content_obj.info['width'], content_obj.info['height'])
             self.container.execute(cmd)

@@ -19,7 +19,7 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     enable_key_events();
-    $('#imageview').click(function() {
+    $('#imageview-window').click(function() {
         hide_imageview();
     });
 });

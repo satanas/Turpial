@@ -174,7 +174,7 @@ function resize_imageview(orig_w, orig_h) {
     var imageview_border = 100;
     var imageview = $('#imageview');
 
-    console.log(imageview.width() + ' ' + imageview.height() + ' ' + orig_w + ' ' + orig_h);
+    console.log('im_w:' + imageview.width() + ' im_h:' + imageview.height() + ' orig_w:' + orig_w + ' orig_h:' + orig_h + ' width:' + width + ' height:' + height);
     if (orig_w == undefined)
         orig_w = imageview.width();
     if (orig_h == undefined)
@@ -184,7 +184,24 @@ function resize_imageview(orig_w, orig_h) {
         img_h = 200;
         img_w = 200;
     } else {
+        var wrate = width / height;
         var rate = orig_w / orig_h;
+        if (wrate >= 1) {
+            var temp_h = height - imageview_border;
+            if (temp_h > orig_h)
+                img_h = orig_h;
+            else
+                img_h = temp_h;
+            img_w = img_h * rate;
+        } else {
+            var temp_w = width - imageview_border;
+            if (temp_w > orig_w)
+                img_w = orig_w;
+            else
+                img_w = temp_w;
+            img_h = img_w / rate;
+        }
+        /*
         if (rate >= 1) {
             var temp_w = width - imageview_border;
             if (temp_w > orig_w)
@@ -199,8 +216,9 @@ function resize_imageview(orig_w, orig_h) {
             else
                 img_h = temp_h;
             img_w = img_h * rate;
-        }
+        }*/
     }
+    console.log('img_w: ' + img_w + ' img_h: ' + img_h);
 
     imageview.css({
         height: img_h,

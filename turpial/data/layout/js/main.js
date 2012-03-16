@@ -585,26 +585,26 @@ function update_friends(array) {
 
 function select_friend(value) {
     var username = null;
-    if (username == undefined) {
+    if (value == undefined) {
         username = $('#autocomplete-username').val();
     } else {
         username = value;
     }
     var message = $('#update-message');
-    var index = $('#autocomplete-index').val();
+    var index = parseInt($('#autocomplete-index').val());
     var text = message.val();
-    var prevtext = text.substr(0, index + 1);
-    var nexttext = text.substr(index + 1, text.length);
-    /*
-    if (nexttext.substr(0) != ' ')
+    var prevtext = text.substring(0, index + 1);
+    var nexttext = text.substring(index + 1, text.length);
+
+    if (nexttext.charAt(0) != ' ')
         username += ' '
-    */
+
     var newtext = prevtext + username + nexttext;
     message.val(newtext);
     close_autocomplete_window();
-    message.focus();
-    message.setCursorPosition(index + 2 + username.length);
     count_chars();
+    message.focus();
+    message.setCursorPosition(index + username.length + 1);
 }
 
 function select_friend_for_direct() {

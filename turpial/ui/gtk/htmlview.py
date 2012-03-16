@@ -17,16 +17,16 @@ class HtmlView(gtk.VBox, gobject.GObject):
         "load-started": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
         "load-finished": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
     }
-    
+
     def __init__(self, coding='utf-8'):
         gobject.GObject.__init__(self)
         gtk.VBox.__init__(self, False)
-        
+
         self.coding = coding
         self.uri = 'file://' + os.path.dirname(__file__)
         self.settings = webkit.WebSettings()
         self.settings.set_property('enable-default-context-menu', False)
-        
+
         self.settings.enable_java_applet = False
         self.settings.enable_plugins = False
         self.settings.enable_page_cache = False
@@ -37,25 +37,26 @@ class HtmlView(gtk.VBox, gobject.GObject):
         self.settings.enable_xss_auditor = False
         self.settings.enable_dns_prefetching = False
         self.settings.resizable_text_areas = False
-        
+        self.settings.web_security_enabled = False
+
         self.view = webkit.WebView()
         self.view.set_settings(self.settings)
         self.view.connect('load-started', self.__started)
         self.view.connect('load-finished', self.__finished)
         self.view.connect('console-message', self.__console_message)
         self.view.connect('navigation-policy-decision-requested', self.__process)
-        
+
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll.set_shadow_type(gtk.SHADOW_IN)
         scroll.add(self.view)
-        
+
         self.pack_start(scroll, True, True, 0)
-    
+
     def __console_message(self, view, message, line, source_id, data=None):
         print "%s <%s:%i>" % (message, source_id, line)
         return True
-    
+
     def __process(self, view, frame, request, action, policy, data=None):
         url = request.get_uri()
         if url is None:
@@ -67,20 +68,20 @@ class HtmlView(gtk.VBox, gobject.GObject):
             policy.ignore()
             self.emit('link-request', url[5:])
         policy.use()
-    
+
     def __started(self, widget, frame):
         self.emit('load-started')
-    
+
     def __finished(self, widget, frame):
         self.emit('load-finished')
-    
+
     def load(self, url):
         gobject.idle_add(self.view.load_uri, url)
-        
+
     def render(self, html):
-        gobject.idle_add(self.view.load_string, html, "text/html", self.coding, 
+        gobject.idle_add(self.view.load_string, html, "text/html", self.coding,
             self.uri)
-    
+
     def update_element(self, id_, html, extra=''):
         html = html.replace('"', '\\"')
         script = "$('%s').html(\"%s\"); %s" % (id_, html, extra)
@@ -92,21 +93,21 @@ class HtmlView(gtk.VBox, gobject.GObject):
     def remove_element(self, id_):
         script = "$('%s').remove();" % (id_)
         self.execute(script)
-        
+
     def append_element(self, id_, html, extra=''):
         html = html.replace('"', '\\"')
         script = "$('%s').append(\"%s\"); %s" % (id_, html, extra)
         self.execute(script)
-    
+
     def prepend_element(self, id_, html, extra=''):
         html = html.replace('"', '\\"')
         script = "$('%s').prepend(\"%s\"); %s" % (id_, html, extra)
         self.execute(script)
-        
+
     def execute(self, script, sanitize=False):
         script = script.replace('\n', ' ')
         self.view.execute_script(script)
-    
+
     def stop(self):
         self.view.stop_loading()
 

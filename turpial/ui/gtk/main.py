@@ -747,9 +747,9 @@ class Main(Base, Singleton, gtk.Window):
         else:
             profile = self.htmlparser.profile(response.items)
             profile = profile.replace('"', '\\"')
+            profile = profile.replace('\r\n', '')
+            profile = profile.replace('\n', '')
             cmd = 'update_profile_window2("%s");' % (profile)
-        print '*' * 10
-        print cmd
         self.container.execute(cmd)
 
     def report_spam_response(self, response):

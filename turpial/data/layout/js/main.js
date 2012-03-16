@@ -459,10 +459,8 @@ function show_profile_window(account_id, username) {
 }
 
 function update_profile_window2(profile) {
-    console.log(profile);
     $('#progress-box-profile-window').hide();
-    $('#profile-window-content').html(profile).slideDown();
-    console.log('out');
+    $('#profile-window-content').html(profile);
 }
 
 function send_direct_from_profile(account_id, username) {

@@ -6,6 +6,10 @@ var imageview_w;
 var imageview_h;
 var turpial_all_seq = '38384040373937396665';
 var curr_seq = '';
+var ctrlPressed = false;
+
+// Shortcuts
+var lKey = 76;
 
 $(document).ready(function() {
     recalculate_column_size();
@@ -154,6 +158,8 @@ function enable_key_events() {
         e.stopPropagation();
         if (e.keyCode == 27) {
             close_autocomplete_window();
+        } else if (ctrlPressed && e.keyCode == lKey) {
+            load_friends();
         } else if (e.keyCode == 13) {
             eval($('#autocomplete-add-function').val());
         }
@@ -162,7 +168,16 @@ function enable_key_events() {
     $(window).keyup(function(e) {
         curr_seq = curr_seq + e.keyCode;
         check_patterns();
+
+        // Handle the ctrl key release event
+        if (e.keyCode == 17) ctrlPressed = false;
     });
+
+    $(window).keydown(function(e) {
+        // Handle the ctrl key press event
+        if (e.keyCode == 17) ctrlPressed = true;
+    });
+
 }
 
 function resize_imageview(orig_w, orig_h) {

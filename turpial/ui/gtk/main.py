@@ -72,10 +72,6 @@ class Main(Base, Singleton, gtk.Window):
         self.minimize = 'on'
 
         self.timers = {}
-        self.interval1 = -1
-        self.interval2 = -1
-        self.interval3 = -1
-
         self.updating = {}
         self.columns = {}
 
@@ -317,10 +313,10 @@ class Main(Base, Singleton, gtk.Window):
         #if (self.timer1 != home_interval):
         if self.timers.has_key(column.id_):
             gobject.source_remove(self.timers[column.id_])
-        self.interval1 = self.core.get_update_interval()
-        self.timers[column.id_] = gobject.timeout_add(self.interval1 * 60 * 1000,
+        interval = self.core.get_update_interval()
+        self.timers[column.id_] = gobject.timeout_add(interval * 60 * 1000,
             self.download_stream, column)
-        self.log.debug('--Created timer for %s every %i min' % (column.id_, self.interval1))
+        self.log.debug('--Created timer for %s every %i min' % (column.id_, interval))
 
     def __remove_timer(self, column_id):
         if self.timers.has_key(column_id):

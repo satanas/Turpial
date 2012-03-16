@@ -69,7 +69,6 @@ function recalculate_column_size(nw, nh) {
     $('#profile-window').css('left', profile_win_left + 'px');
     $('#autocomplete-window').css('left', autocomplete_win_left + 'px');
 
-    //resize_imageview(imageview_w, imageview_h);
     resize_imageview();
 }
 
@@ -174,7 +173,7 @@ function resize_imageview(orig_w, orig_h) {
     var imageview_border = 100;
     var imageview = $('#imageview');
 
-    console.log('im_w:' + imageview.width() + ' im_h:' + imageview.height() + ' orig_w:' + orig_w + ' orig_h:' + orig_h + ' width:' + width + ' height:' + height);
+    //console.log('im_w:' + imageview.width() + ' im_h:' + imageview.height() + ' orig_w:' + orig_w + ' orig_h:' + orig_h + ' width:' + width + ' height:' + height);
     if (orig_w == undefined)
         orig_w = imageview.width();
     if (orig_h == undefined)
@@ -201,24 +200,8 @@ function resize_imageview(orig_w, orig_h) {
                 img_w = temp_w;
             img_h = img_w / rate;
         }
-        /*
-        if (rate >= 1) {
-            var temp_w = width - imageview_border;
-            if (temp_w > orig_w)
-                img_w = orig_w;
-            else
-                img_w = temp_w;
-            img_h = img_w / rate;
-        } else {
-            var temp_h = height - imageview_border;
-            if (temp_h > orig_h)
-                img_h = orig_h;
-            else
-                img_h = temp_h;
-            img_w = img_h * rate;
-        }*/
     }
-    console.log('img_w: ' + img_w + ' img_h: ' + img_h);
+    //console.log('img_w: ' + img_w + ' img_h: ' + img_h);
 
     imageview.css({
         height: img_h,
@@ -271,8 +254,6 @@ function show_update_box(message, status_id, account_id, title) {
         count_chars();
     }
 
-    $('#update-message').focus();
-
     if (status_id != undefined) {
         $('#in-reply-to-id').val(status_id);
         $('.acc_selector').each(function() {
@@ -280,6 +261,11 @@ function show_update_box(message, status_id, account_id, title) {
             $(this).attr('checked', false);
         });
         $('#acc-selector-' + account_id).attr('checked', true);
+    }
+
+    $('#update-message').focus();
+    if ((message != undefined) && (status_id == undefined) && (account_id == undefined)) {
+        $('#update-message').setCursorPosition(0);
     }
 }
 

@@ -1,2 +1,31 @@
-v2.x (Mmm DD, 2011):
-    + [Issue|Imprv|Other] #XXX: Description
+v1.7.6-a1 (Mar 18, 2012):
+    * Bug #308: Improved URL detection
+    * Bug #504: Content menu doesn't show in secondary columns
+    * Bug #506: Change the menu for direct statuses
+    * Feature #66: Open images in a embedded window
+    * Feature #116: Preferences dialog (with advance options)
+    * Feature #117: Vista de tweets usando WebKit
+    * Feature #118: Broadcasting when update status
+    * Feature #190: Dialog to send DMs
+    * Feature #211: Undo feature support (ctlr + z)
+    * Feature #224: Show profile image at real size when user click it
+    * Feature #226: Autoshort URL
+    * Feature #260: Add favorites as columns
+    * Feature #313: Configuration for having only one instance of Turpial
+    * Feature #325: Embedded profiles visualization
+    * Feature #330: New dialog for username autocomplete
+    * Feature #334: Improved the conversations dialog
+    * Feature #358: Support to handle as columns as the user wants
+    * Feature #468: Ubuntu integration
+    * Feature #473: Add/remove favorites
+    * Feature #474: Implement retweet
+    * Feature #475: Update status, make replies and quotes
+    * Feature #477: Add public timeline to columns
+    * Feature #484: Undo retweet
+    * Feature #485: Go on the top of the tweet list
+    * Feature #487: Delete statuses
+    * Feature #488: Implement block and report as spam features
+    * Feature #489: Implement mute/unmute features
+    * Feature #491: Implement follow/unfollow feature (just from profile dialog)
+    * Feature #497: Implement notifications (visual and sound)
+    * Feature #513: Implement support for the openmedia module

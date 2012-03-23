@@ -166,7 +166,7 @@ class Main(Base, Singleton, gtk.Window):
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
 
-    def __show_add_column_menu(self, widget):
+    def __show_column_menu(self, widget):
         menu = gtk.Menu()
 
         search = gtk.MenuItem(i18n.get('search'))
@@ -235,6 +235,32 @@ class Main(Base, Singleton, gtk.Window):
 
     def __add_column(self, widget, column_id):
         self.save_column(column_id)
+
+
+    def __show_profile_menu(self, widget):
+        menu = gtk.Menu()
+        accounts = self.get_all_accounts()
+
+        for acc in accounts:
+            name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
+            item = gtk.MenuItem(name)
+            item.connect('activate', self.__show_profile, acc.id_, acc.username)
+            menu.append(item)
+
+        menu.append(gtk.SeparatorMenuItem())
+
+        search = gtk.MenuItem(i18n.get('search'))
+        search_menu = gtk.Menu()
+        search_menu.append(gtk.MenuItem(i18n.get('twitter')))
+        search_menu.append(gtk.MenuItem(i18n.get('identica')))
+        search.set_submenu(search_menu)
+
+        menu.append(search)
+        menu.show_all()
+        menu.popup(None, None, None, 0, gtk.get_current_event_time())
+
+    def __show_profile(self, widget, acc_id, username):
+        self.show_profile(acc_id, username)
 
     def __close(self, widget, event=None):
         if self.core.minimize_on_close():
@@ -332,8 +358,10 @@ class Main(Base, Singleton, gtk.Window):
             self.show_preferences()
         elif action == 'accounts_manager':
             self.accountsdlg.show()
-        elif action == 'add_column':
-            self.__show_add_column_menu(widget)
+        elif action == 'columns_menu':
+            self.__show_column_menu(widget)
+        elif action == 'profiles_menu':
+            self.__show_profile_menu(widget)
         elif action == 'update_column':
             self.refresh_column(args[0])
         elif action == 'delete_column':
@@ -553,6 +581,7 @@ class Main(Base, Singleton, gtk.Window):
             self.delete_status_response, status_id)
 
     def show_profile(self, account_id, username):
+        self.container.execute('show_profile_modal()')
         self.worker.register(self.core.get_user_profile, (account_id, username),
             self.show_profile_response)
 

@@ -466,6 +466,12 @@ function delete_status(status_id) {
 
 /* Profile Window */
 
+function show_profile_modal(){
+    $('#modal').fadeIn();
+    $('#profile-window').fadeIn();
+    $('#progress-box-profile-window').fadeIn();
+}
+
 function show_profile_window(account_id, username) {
     $('#modal').fadeIn();
     $('#profile-window').fadeIn();

@@ -240,8 +240,14 @@ class Main(Base, Singleton, gtk.Window):
     def __show_profile_menu(self, widget):
         menu = gtk.Menu()
         accounts = self.get_all_accounts()
+        twitter_acc = None
+        identica_acc = None
 
         for acc in accounts:
+            if acc.protocol_id == 'twitter' and twitter_acc is None:
+                twitter_acc = acc.id_
+            if acc.protocol_id == 'identica' and identica_acc is None:
+                identica_acc = acc.id_
             name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
             item = gtk.MenuItem(name)
             item.connect('activate', self.__show_profile, acc.id_, acc.username)
@@ -249,10 +255,16 @@ class Main(Base, Singleton, gtk.Window):
 
         menu.append(gtk.SeparatorMenuItem())
 
+        tsearch = gtk.MenuItem(i18n.get('twitter'))
+        tsearch.connect('activate', self.__search_profile, twitter_acc)
+
+        isearch = gtk.MenuItem(i18n.get('identica'))
+        isearch.connect('activate', self.__search_profile, identica_acc)
+
         search = gtk.MenuItem(i18n.get('search'))
         search_menu = gtk.Menu()
-        search_menu.append(gtk.MenuItem(i18n.get('twitter')))
-        search_menu.append(gtk.MenuItem(i18n.get('identica')))
+        search_menu.append(tsearch)
+        search_menu.append(isearch)
         search.set_submenu(search_menu)
 
         menu.append(search)
@@ -261,6 +273,10 @@ class Main(Base, Singleton, gtk.Window):
 
     def __show_profile(self, widget, acc_id, username):
         self.show_profile(acc_id, username)
+
+    def __search_profile(self, widget, acc_id):
+        cmd = "show_autocomplete_for_profile('%s')" % acc_id
+        self.container.execute(cmd)
 
     def __close(self, widget, event=None):
         if self.core.minimize_on_close():

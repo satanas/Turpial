@@ -626,7 +626,7 @@ class Main(Base, Singleton, gtk.Window):
         cmd = "lock_profile('%s');" % (i18n.get('unfollowing_user'))
         self.container.execute(cmd)
 
-        self.worker.register(self.core.follow, (account_id, username),
+        self.worker.register(self.core.unfollow, (account_id, username),
             self.follow_response, False)
 
     def mute(self, username):

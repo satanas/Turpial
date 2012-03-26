@@ -466,6 +466,12 @@ function delete_status(status_id) {
 
 /* Profile Window */
 
+function show_profile_modal(){
+    $('#modal').fadeIn();
+    $('#profile-window').fadeIn();
+    $('#progress-box-profile-window').fadeIn();
+}
+
 function show_profile_window(account_id, username) {
     $('#modal').fadeIn();
     $('#profile-window').fadeIn();
@@ -537,6 +543,10 @@ function show_autocomplete_for_status(index) {
 
 function show_autocomplete_for_direct() {
     build_autocomplete_dialog('<% $select_user %>', 'select_friend_for_direct();');
+}
+
+function show_autocomplete_for_profile(account_id) {
+    build_autocomplete_dialog('<% $select_user %>', 'select_friend_for_profile("' + account_id + '");');
 }
 
 function close_autocomplete_window() {
@@ -625,6 +635,12 @@ function select_friend(value) {
 function select_friend_for_direct() {
     close_autocomplete_window();
     show_update_box_for_direct('', $('#autocomplete-username').val());
+}
+
+function select_friend_for_profile(account_id) {
+    close_autocomplete_window();
+    console.log(account_id);
+    show_profile_window(account_id, $('#autocomplete-username').val());
 }
 
 function autocomplete_friend(value) {

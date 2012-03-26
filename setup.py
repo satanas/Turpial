@@ -18,13 +18,6 @@ Turpial is a light, fast and beautiful microblogging client for GNU/Linux,
 written in Python and fully functional
 """
 
-class build(_build):
-    sub_commands = [('compile_catalog', None), ] + _build.sub_commands
-
-    def run(self):
-        """Run all sub-commands"""
-        _build.run(self)
-
 # TODO: Maybe find some better ways to do this
 # looking distutils's copy_tree method
 data_files=[
@@ -74,13 +67,6 @@ setup(name="turpial",
         'console_scripts': [
             'turpial = turpial.main:Turpial',
         ],
-      },
-      cmdclass={
-        'build': build,
-        'compile_catalog': babel.compile_catalog,
-        'extract_messages': babel.extract_messages,
-        'init_catalog': babel.init_catalog,
-        'update_catalog': babel.update_catalog,
       },
       data_files=data_files,
 )

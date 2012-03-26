@@ -17,9 +17,9 @@ from turpial.ui.qt.account_form import AccountForm
 
 log = logging.getLogger('PyQt4')
 
-class Accounts(QtGui.QDialog):
+class AccountsDialog(QtGui.QDialog):
     def __init__(self, parent):
-        super(Accounts,self).__init__()
+        super(AccountsDialog,self).__init__()
         
         # Main tools
         self.mainwin = parent

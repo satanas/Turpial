@@ -26,7 +26,7 @@ PARTIAL_PATTERN = re.compile('(<% partial [\'"](.*?)[\'"] %>)')
 I18N_PATTERN = re.compile('(<% \$(.*?) %>)')
 
 class HtmlParser:
-    def __init__(self):
+    def __init__(self,*args):
         self.scripts = []
         self.styles = []
         self.partials = {}

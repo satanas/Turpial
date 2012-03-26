@@ -74,9 +74,11 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
 
         self.container = HtmlView()
-        self.setCentralWidget(self.container)
-        self.container.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        self.container.page().linkClicked.connect(self.__action_request)
+        self.setCentralWidget(self.container.view)
+#        self.container.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+#        self.container.page().linkClicked.connect(self.__action_request)
+        self.container.action_request.connect(self.__action_request)
+        self.container.link_request.connect(self.__link_request)
 
 #        self.container.connect('action-request', self.__action_request)
 #        self.container.connect('link-request', self.__link_request)
@@ -350,7 +352,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
     def __action_request(self, url):
 #    def __action_request(self, widget, url):
-        action, args = self.htmlparser.parse_command(url.toString())
+        action, args = self.htmlparser.parse_command(url)
         print action, args
         if action == 'about':
             self.show_about()
@@ -359,7 +361,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         elif action == 'accounts_manager':
             self.accountsdlg.show()
         elif action == 'add_column':
-            self.__show_add_column_menu(widget)
+            self.__show_add_column_menu()
         elif action == 'update_column':
             self.refresh_column(args[0])
         elif action == 'delete_column':

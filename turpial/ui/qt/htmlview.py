@@ -10,12 +10,21 @@ import os
 #import webkit
 #import gobject
 from PyQt4 import QtWebKit
+from PyQt4.QtCore import QObject,pyqtSignal
+from PyQt4.QtWebKit import QWebPage
 
-class HtmlView(QtWebKit.QWebView):
+class HtmlView(QObject):
+
+    action_request = pyqtSignal(str)
+    link_request = pyqtSignal(str)
     def __init__(self, coding='utf-8'):
         super(HtmlView,self).__init__()
         self.coding = coding
         self.uri = 'file://' + os.path.dirname(__file__)
+        self.view = QtWebKit.QWebView()
+        self.view.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.view.page().linkClicked.connect(self.__process)
+        
 #        self.settings = webkit.WebSettings()
 #        self.settings.set_property('enable-default-context-menu', False)
 
@@ -49,17 +58,23 @@ class HtmlView(QtWebKit.QWebView):
         print "%s <%s:%i>" % (message, source_id, line)
         return True
 
-    def __process(self, view, frame, request, action, policy, data=None):
-        url = request.get_uri()
+    def __process(self, url):
+        print "entrando __process"
+        url = str(url.toString())
         if url is None:
             pass
         elif url.startswith('cmd:'):
-            policy.ignore()
-            self.emit('action-request', url[4:])
+            print "a emitir action"
+            #policy.ignore()
+            #self.emit('action-request', url[4:])
+            self.action_request.emit(url[4:])
+
         elif url.startswith('link:'):
-            policy.ignore()
-            self.emit('link-request', url[5:])
-        policy.use()
+            print "a emitir link"
+            #policy.ignore()
+            #self.emit('link-request', url[5:])
+            self.link_request.emit(url[4:])
+        #policy.use()
 
     def __started(self, widget, frame):
         self.emit('load-started')
@@ -73,7 +88,7 @@ class HtmlView(QtWebKit.QWebView):
     def render(self, html):
         #gobject.idle_add(self.view.load_string, html, "text/html", self.coding,
             #self.uri)
-        self.setHtml(html)
+        self.view.setHtml(html)
 
     def update_element(self, id_, html, extra=''):
         html = html.replace('"', '\\"')

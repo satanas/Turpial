@@ -32,11 +32,11 @@ class AccountsDialog(QtGui.QDialog):
         self.finished.connect(self.__close)
         
         self.container = HtmlView(self)
-        self.container.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        self.container.page().linkClicked.connect(self.__action_request)
+        self.container.view.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.container.view.page().linkClicked.connect(self.__action_request)
         self.layout = QtGui.QVBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
-        self.layout.addWidget(self.container)
+        self.layout.addWidget(self.container.view)
         self.setLayout(self.layout)
 
         self.showed = False

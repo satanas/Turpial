@@ -28,7 +28,7 @@ class HtmlView(gtk.VBox, gobject.GObject):
         self.settings.set_property('enable-default-context-menu', False)
 
         self.settings.enable_java_applet = False
-        self.settings.enable_plugins = False
+        self.settings.enable_plugins = True
         self.settings.enable_page_cache = False
         self.settings.enable_offline_web_application_cache = False
         self.settings.enable_html5_local_storage = False

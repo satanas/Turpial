@@ -932,6 +932,7 @@ class Main(Base, Singleton, gtk.Window):
         else:
             content_obj = response.response
             if content_obj.is_image():
+                print "content_obj", content_obj.path
                 content_obj.save_content()
                 pix = gtk.gdk.pixbuf_new_from_file(content_obj.path)
                 cmd = "update_imageview('%s',%s,%s);" % (

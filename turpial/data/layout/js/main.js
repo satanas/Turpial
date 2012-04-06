@@ -23,9 +23,6 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     enable_key_events();
-    $('#imageview-window').click(function() {
-        hide_imageview();
-    });
 });
 
 function recalculate_column_size(nw, nh) {

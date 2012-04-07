@@ -78,8 +78,8 @@ class AccountsDialog(QtGui.QDialog):
             #self.form = AccountForm(self.mainwin, self)
         elif action == "save_account":
             self.mainwin.save_account(args[0], args[1], args[2])
-            #print args 
-            #self.args = args
+            print args 
+            self.args = args
  
         elif action == "delete_account":
             self.mainwin.delete_account(args[0])
@@ -119,7 +119,7 @@ class AccountsDialog(QtGui.QDialog):
             for each in code[0].attributeNames():
                 print "attribute:",each
             print "dir code: ",code[0].toPlainText()
-            self.mainwin.__oauth_callback(code[0].toPlainText(),)
+            self.mainwin.__oauth_callback(code[0].toPlainText(),self.args[1]+"-"+self.args[2])
 
     
     def update(self):

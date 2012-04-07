@@ -192,16 +192,33 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
 
-    def __show_add_column_menu(self, widget):
-        menu = gtk.Menu()
 
-        search = gtk.MenuItem(i18n.get('search'))
-        search_menu = gtk.Menu()
-        search_menu.append(gtk.MenuItem(i18n.get('twitter')))
-        search_menu.append(gtk.MenuItem(i18n.get('identica')))
-        search.set_submenu(search_menu)
+    def __show_add_column_menu2(self):
+        menu = QtGui.QMenu()
 
-        empty = True
+        sub_menu = QtGui.QMenu("Sub Menu")
+
+        for i in ["a", "b", "c"]: #or your dict
+            sub_menu.addAction(i,aja) #it is just a regular QMenu
+
+        menu.addMenu(sub_menu)
+
+        menu.show()
+
+
+    def __show_add_column_menu(self):
+        #menu = gtk.Menu()
+        menu = QtGui.QMenu("yay") 
+
+        #search = gtk.MenuItem(i18n.get('search'))
+        #search = QtGui.MenuItem('search')
+        #search_menu = gtk.Menu()
+        #search_menu = QtGui.QMenu()
+        #search_menu.append(gtk.MenuItem(i18n.get('twitter')))
+        #search_menu.append(gtk.MenuItem(i18n.get('identica')))
+        #search.set_submenu(search_menu)
+
+        #empty = True
         twitter_public_acc = None
         identica_public_acc = None
         accounts = self.get_all_accounts()
@@ -214,52 +231,62 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             if acc.protocol_id == 'identica' and identica_public_acc is None:
                 identica_public_acc = acc.id_
             name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
-            temp = gtk.MenuItem(name)
+            #temp = gtk.MenuItem(name)
+
+            temp = QtGui.QMenu(name)
+
             if acc.logged_in:
-                temp_menu = gtk.Menu()
+                #temp_menu = gtk.Menu()
+                temp_menu = QtGui.QMenu()
                 for key, col in columns[acc.id_].iteritems():
                     item = gtk.MenuItem(key)
-                    if col.id_ != "":
-                        item.set_sensitive(False)
-                    item.connect('activate', self.__add_column, col.build_id())
-                    temp_menu.append(item)
-                temp.set_submenu(temp_menu)
+                    #if col.id_ != "":
+                    #    item.set_sensitive(False)
+                    temp.addAction(key,self.__add_column,col.build_id())
+                    #item.connect('activate', self.__add_column, col.build_id())
+                    #temp_menu.append(item)
+                #temp.set_submenu(temp_menu)
             else:
-                temp.set_sensitive(False)
-            menu.append(temp)
+                pass
+                #temp.set_sensitive(False)
+            menu.addMenu(temp)
             empty = False
 
-        public_tl = gtk.MenuItem(i18n.get('public_timeline'))
-        public_tl_menu = gtk.Menu()
-        public_tl.set_submenu(public_tl_menu)
+        public_tl = QtGui.QMenu(i18n.get('public_timeline'))
+        public_tl_menu = QtGui.QMenu("menu")
 
         if twitter_public_acc:
             public_acc = twitter_public_acc + '-public'
-            twitter_public_tl = gtk.MenuItem(i18n.get('twitter'))
-            twitter_public_tl.connect('activate', self.__add_column, public_acc)
-            public_tl_menu.append(twitter_public_tl)
-            for reg in reg_columns:
-                if twitter_public_acc == reg.account_id and reg.column_name == 'public':
-                    twitter_public_tl.set_sensitive(False)
+            #twitter_public_tl = gtk.MenuItem(i18n.get('twitter'))
+            #twitter_public_tl.connect('activate', self.__add_column, public_acc)
+            public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
+            #for reg in reg_columns:
+            #    if twitter_public_acc == reg.account_id and reg.column_name == 'public':
+            #        twitter_public_tl.set_sensitive(False)
 
         if identica_public_acc:
             public_acc = identica_public_acc + '-public'
-            identica_public_tl = gtk.MenuItem(i18n.get('identica'))
-            identica_public_tl.connect('activate', self.__add_column, public_acc)
-            public_tl_menu.append(identica_public_tl)
-            for reg in reg_columns:
-                if identica_public_acc == reg.account_id and reg.column_name == 'public':
-                    identica_public_tl.set_sensitive(False)
+            #identica_public_tl = gtk.MenuItem(i18n.get('identica'))
+            #identica_public_tl.connect('activate', self.__add_column, public_acc)
+            #public_tl_menu.append(identica_public_tl)
+            public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
+            #for reg in reg_columns:
+            #    if identica_public_acc == reg.account_id and reg.column_name == 'public':
+            #        identica_public_tl.set_sensitive(False)
 
-        if not empty:
-            menu.append(gtk.SeparatorMenuItem())
 
-        menu.append(public_tl)
-        menu.append(search)
-        menu.show_all()
-        menu.popup(None, None, None, 0, gtk.get_current_event_time())
+        public_tl.addMenu(public_tl_menu)
 
-    def __add_column(self, widget, column_id):
+        #if not empty:
+        #    menu.append(gtk.SeparatorMenuItem())
+
+        menu.addMenu(public_tl)
+        #menu.append(search)
+        menu.show()
+        print "aqui deberia mostrar el menu"
+        #menu.popup(None, None, None, 0, gtk.get_current_event_time())
+
+    def __add_column(self, column_id):
         self.save_column(column_id)
 
     def __close(self, widget, event=None):
@@ -306,7 +333,10 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         else:
             self.__auth_callback(arg, account_id, False)
 
-    def __oauth_callback(self, widget, verifier, account_id):
+    def _AccountsDialog__oauth_callback(self, verifier, account_id):
+        self.__oauth_callback(verifier,account_id)
+
+    def __oauth_callback(self, verifier, account_id):
         #self.form.set_loading_message(i18n.get('authorizing'))
         self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
         rtn = self.core.authorize_oauth_token(account_id, verifier)
@@ -380,7 +410,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             print "entra bien aqui"
             self.accountsdlg.show()
         elif action == 'add_column':
-            self.__show_add_column_menu()
+            self.__show_add_column_menu2()
         elif action == 'update_column':
             self.refresh_column(args[0])
         elif action == 'delete_column':
@@ -528,6 +558,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         if username == "" or username == None:
             username = "%s" % len(self.core.all_accounts());
         account_id = self.core.register_account(username, protocol_id, password)
+        self.account_id = account_id
         print "lanzando el worker de save_account"
         rtn = self.core.login(account_id)
         self.__login_callback(rtn,account_id)

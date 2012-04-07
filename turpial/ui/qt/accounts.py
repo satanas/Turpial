@@ -119,7 +119,9 @@ class AccountsDialog(QtGui.QDialog):
             for each in code[0].attributeNames():
                 print "attribute:",each
             print "dir code: ",code[0].toPlainText()
-            self.mainwin.__oauth_callback(code[0].toPlainText(),self.args[1]+"-"+self.args[2])
+
+            self.resize(365,325)
+            self.mainwin.__oauth_callback(code[0].toPlainText(),self.mainwin.account_id)
 
     
     def update(self):

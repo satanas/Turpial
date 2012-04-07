@@ -33,7 +33,7 @@ from turpial.ui.qt.worker import Worker
 from turpial.ui.qt.htmlview import HtmlView
 #from turpial.notification import Notification
 #from turpial.ui.gtk.indicator import Indicators
-#from turpial.ui.gtk.oauthwin import OAuthWindow
+from turpial.ui.qt.oauthwin import OAuthWindow
 #from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.qt.accounts import AccountsDialog
 #from turpial.ui.gtk.preferences import Preferences
@@ -114,6 +114,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         # Persistent dialogs
         self.accountsdlg = AccountsDialog(self)
+        self.accountsdlg.update()
 
 #        self.__create_trayicon()
 #        self.show_all()
@@ -272,12 +273,15 @@ class Main(Base, Singleton, QtGui.QMainWindow):
     def __timeout_callback(self, funct, arg, user_data):
         if user_data:
             #gobject.timeout_add(200, funct, arg, user_data)
+            funct(arg,user_data)
             pass
         else:
             #gobject.timeout_add(200, funct, arg)
+            funct(arg)
             pass
 
     def __login_callback(self, arg, account_id):
+        print "en __login_callback"
         if arg.code > 0:
             msg = arg.errmsg
             self.show_notice(msg, 'error')
@@ -286,16 +290,27 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         auth_obj = arg.items
         if auth_obj.must_auth():
-            oauthwin = OAuthWindow(self, self.accountsdlg.form, account_id)
-            oauthwin.connect('response', self.__oauth_callback)
-            oauthwin.connect('cancel', self.__cancel_callback)
-            oauthwin.open(auth_obj.url)
+            print "Creando OAuthWindow"
+            print "debe abrir",auth_obj.url
+            #oauthwin = OAuthWindow(self, self.accountsdlg.form, account_id)
+            #oauthwin = OAuthWindow(self, self.accountsdlg.form, account_id)
+            #authwin = AuthWindow(self, account_id)
+            #authwin.show()
+            self.accountsdlg.show_auth_win(auth_obj.url)
+#            print "arg1:",self.accountsdlg.form
+#            print "arg2:",account_id
+#pasaraQT            oauthwin.connect('response', self.__oauth_callback)
+#aQT            oauthwin.connect('cancel', self.__cancel_callback)
+           # oauthwin.open(auth_obj.url)
+#            oauthwin.show()
         else:
             self.__auth_callback(arg, account_id, False)
 
     def __oauth_callback(self, widget, verifier, account_id):
         #self.form.set_loading_message(i18n.get('authorizing'))
         self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
+        rtn = self.core.authorize_oauth_token(account_id, verifier)
+        self.__auth_callback(rtn,account_id)
 
     def __cancel_callback(self, widget, reason, account_id):
         self.delete_account(account_id)
@@ -307,7 +322,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             self.show_notice(msg, 'error')
             self.accountsdlg.cancel_login(msg)
         else:
-            self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
+#            self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
+            rtn = self.core.auth(account_id)
+            self.__done_callback(rtn,(account_id,register))
 
     def __done_callback(self, arg, userdata):
         (account_id, register) = userdata
@@ -327,8 +344,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             if response.code > 0:
                 self.show_notice(response.errmsg, 'error')
             else:
-                if self.core.show_notifications_in_login():
-                    self.notify.login(response.items)
+                pass
+                #if self.core.show_notifications_in_login():
+                    #self.notify.login(response.items)
 
             for col in self.get_registered_columns():
                 if col.account_id == account_id:
@@ -359,6 +377,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         elif action == 'preferences':
             self.show_preferences()
         elif action == 'accounts_manager':
+            print "entra bien aqui"
             self.accountsdlg.show()
         elif action == 'add_column':
             self.__show_add_column_menu()
@@ -453,12 +472,13 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             sys.exit(0)
 
     def main_loop(self):
-        try:
-            gtk.gdk.threads_enter()
-            gtk.main()
-            gtk.gdk.threads_leave()
-        except Exception:
-            sys.exit(0)
+        sys.exit(self.app.exec_())
+        #try:
+        #    gtk.gdk.threads_enter()
+        #    gtk.main()
+        #    gtk.gdk.threads_leave()
+        #except Exception:
+        #    sys.exit(0)
 
     def show_main(self):
         reg_columns = self.get_registered_columns()
@@ -489,7 +509,11 @@ class Main(Base, Singleton, QtGui.QMainWindow):
     def single_login(self, acc):
         self.core.change_login_status(acc, LoginStatus.IN_PROGRESS)
         self.accountsdlg.update()
-        self.worker.register(self.core.login, (acc), self.__login_callback, acc)
+        #self.worker.register(self.core.login, (acc), self.__login_callback, acc)
+        rtn = self.core.login(acc)
+        self.__login_callback(rtn,acc)
+        print "sigue en single_login"
+
 
     def delete_account(self, account_id):
         reg_columns = self.get_registered_columns()
@@ -500,10 +524,15 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.accountsdlg.update()
 
     def save_account(self, username, protocol_id, password):
+        print "en save_account"
         if username == "" or username == None:
             username = "%s" % len(self.core.all_accounts());
         account_id = self.core.register_account(username, protocol_id, password)
-        self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
+        print "lanzando el worker de save_account"
+        rtn = self.core.login(account_id)
+        self.__login_callback(rtn,account_id)
+#        self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
+        print "otro worker lanzado"
 
     def save_column(self, column_id):
         column = self.core.register_column(column_id)
@@ -941,9 +970,11 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         num_statuses = self.core.get_max_statuses_per_column()
         self.container.execute("start_updating_column('" + column.id_ + "');")
-        self.worker.register(self.core.get_column_statuses, (column.account_id,
-            column.column_name, num_statuses), self.update_column, 
-            (column, notif, num_statuses))
+#        self.worker.register(self.core.get_column_statuses, (column.account_id,
+#            column.column_name, num_statuses), self.update_column, 
+#            (column, notif, num_statuses))
+        rtn = self.core.get_column_statuses(column.account_id,column.column_name,num_statuses)
+        self.update_column(rtn,column, notif, num_statuses)
         return True
 
     def refresh_column(self, column_id):

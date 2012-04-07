@@ -2,8 +2,9 @@ var timeout = null;
 var reset = null;
 
 function exec_command(cmd) {
-    document.getElementById("query").src = cmd;
+    fireToPython.send(cmd)
     window.location = cmd;
+    //document.getElementById("query").src = cmd;
 }
 
 function show_notice(message, type) {

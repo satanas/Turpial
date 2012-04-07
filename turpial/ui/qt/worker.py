@@ -35,12 +35,21 @@ class Worker(threading.Thread):
             
             (funct, args, callback, user_data) = req
             
+            print "worker lanzando funcion"
             if type(args) == tuple:
                 rtn = funct(*args)
             elif args:
                 rtn = funct(args)
             else:
                 rtn = funct()
+            print "worker ha terminado"
             
             if callback:
+                print "si tiene callback"
                 self.tcallback(callback, rtn, user_data)
+                print rtn
+                print user_data
+                print callback
+                print "callback llamado"
+
+

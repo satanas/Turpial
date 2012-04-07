@@ -34,6 +34,7 @@ function block_account_controls(block) {
 }
 
 function save_account() {
+    alert("uno")
     block_account_controls(true);
     var user = $('#user').val();
     var passwd = $('#passwd').val();

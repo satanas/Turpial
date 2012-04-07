@@ -10,13 +10,33 @@ import os
 #import webkit
 #import gobject
 from PyQt4 import QtWebKit
-from PyQt4.QtCore import QObject,pyqtSignal
+from PyQt4.QtCore import QObject,pyqtSignal,QUrl
+from PyQt4 import QtCore
 from PyQt4.QtWebKit import QWebPage
+
+class FireTrigger(QObject):
+    def __init__(self,signal):
+        super(FireTrigger,self).__init__()
+        self.signal = signal 
+
+    @QtCore.pyqtSlot(str)  
+    def send(self, msg):  
+        """Open a message box and display the specified message."""  
+        print "Llego aqui!! y dijo: ",msg
+        self.signal.emit(msg)
 
 class HtmlView(QObject):
 
     action_request = pyqtSignal(str)
     link_request = pyqtSignal(str)
+    process_request = pyqtSignal(str)
+    load_finished = pyqtSignal()
+
+    def enable(self):
+        fireToPython = FireTrigger(self.process_request)
+        self.view.page().mainFrame().addToJavaScriptWindowObject("fireToPython", fireToPython) 
+
+
     def __init__(self, coding='utf-8'):
         super(HtmlView,self).__init__()
         self.coding = coding
@@ -24,6 +44,11 @@ class HtmlView(QObject):
         self.view = QtWebKit.QWebView()
         self.view.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.view.page().linkClicked.connect(self.__process)
+        self.view.page().loadFinished.connect(self.__loadFinished)
+        self.process_request.connect(self.__process)
+
+        fireToPython = FireTrigger(self.process_request)
+        self.view.page().mainFrame().addToJavaScriptWindowObject("fireToPython", fireToPython) 
         
 #        self.settings = webkit.WebSettings()
 #        self.settings.set_property('enable-default-context-menu', False)
@@ -58,9 +83,21 @@ class HtmlView(QObject):
         print "%s <%s:%i>" % (message, source_id, line)
         return True
 
+    def __loadFinished(self):
+        self.load_finished.emit()
+
     def __process(self, url):
         print "entrando __process"
-        url = str(url.toString())
+        try:
+            url = str(url.toString())
+        except:
+            url = str(url)
+
+        if len(url) == 0:
+            print "sin url!"
+            url = self.view.page().mainFrame().documentElement().findAll('#query')[0].attribute("src")
+            print "ahora con ",url
+
         if url is None:
             pass
         elif url.startswith('cmd:'):
@@ -74,6 +111,9 @@ class HtmlView(QObject):
             #policy.ignore()
             #self.emit('link-request', url[5:])
             self.link_request.emit(url[4:])
+        else:
+            print "else emitir ",url
+            self.link_request.emit(url[4:])
         #policy.use()
 
     def __started(self, widget, frame):
@@ -83,12 +123,17 @@ class HtmlView(QObject):
         self.emit('load-finished')
 
     def load(self, url):
-        gobject.idle_add(self.view.load_uri, url)
+        #gobject.idle_add(self.view.load_uri, url)
+        print "mandando a cargar dentro del htmlview",url
+        self.view.load(QUrl(url))
 
     def render(self, html):
         #gobject.idle_add(self.view.load_string, html, "text/html", self.coding,
             #self.uri)
         self.view.setHtml(html)
+        self.enable()
+        #self.view.setHtml("Holaa")
+        #self.view.load(QUrl("https://www.google.com/"))
 
     def update_element(self, id_, html, extra=''):
         html = html.replace('"', '\\"')

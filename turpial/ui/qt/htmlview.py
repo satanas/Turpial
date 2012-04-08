@@ -101,13 +101,13 @@ class HtmlView(QObject):
         if url is None:
             pass
         elif url.startswith('cmd:'):
-            print "a emitir action"
+            print "a emitir action: ",url[4:]
             #policy.ignore()
             #self.emit('action-request', url[4:])
             self.action_request.emit(url[4:])
 
         elif url.startswith('link:'):
-            print "a emitir link"
+            print "a emitir link: ",url[4:]
             #policy.ignore()
             #self.emit('link-request', url[5:])
             self.link_request.emit(url[4:])

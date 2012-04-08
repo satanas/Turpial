@@ -11,6 +11,7 @@ from PyQt4.QtWebKit import *
 import logging
 from PyQt4.QtCore import QUrl
 from PyQt4.QtCore import QVariant
+from PyQt4.QtCore import QThread 
 from PyQt4.QtCore import QPropertyAnimation 
 
 from turpial.ui.lang import i18n
@@ -24,6 +25,7 @@ class AccountsDialog(QtGui.QDialog):
     def __init__(self, parent):
         super(AccountsDialog,self).__init__()
         #gtk.Window.__init__(self)
+        self.moveToThread(QThread())
         
         self.mainwin = parent
         self.htmlparser = HtmlParser()
@@ -80,7 +82,7 @@ class AccountsDialog(QtGui.QDialog):
             self.mainwin.save_account(args[0], args[1], args[2])
             print args 
             self.args = args
- 
+
         elif action == "delete_account":
             self.mainwin.delete_account(args[0])
         elif action == "login":
@@ -122,10 +124,13 @@ class AccountsDialog(QtGui.QDialog):
 
             self.resize(365,325)
             self.mainwin.__oauth_callback(code[0].toPlainText(),self.mainwin.account_id)
+            self.container.action_request.connect(self.__action_request)
+            self.container.link_request.connect(self.__action_request)
 
     
     def update(self):
         if self.showed:
+            self.resize(365,325)
             page = self.htmlparser.accounts(self.mainwin.get_all_accounts())
             #page = self.htmlparser.account_form(self.mainwin.get_protocols_list())
             #self.container.view.load(QUrl("http://www.google.com/"))
@@ -155,6 +160,7 @@ class AccountsDialog(QtGui.QDialog):
             self.update()
             #self.show_all()
             self.show()
+            self.resize(365,325)
     
     def quit(self):
         self.destroy()

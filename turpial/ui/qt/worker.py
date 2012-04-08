@@ -6,13 +6,18 @@
 # Nov 18, 2011
 
 import Queue
-import threading
+#import threading
+from PyQt4 import QtCore
 
-class Worker(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.setDaemon(False)
+#class Worker(threading.Thread):
+class Worker(QtCore.QThread):
+    def __init__(self, emitter):
+        # threading.Thread.__init__(self)
+        #QtCore.QThread.__init__(self)
+        super(Worker,self).__init__()
+        #self.setDaemon(False)
         self.queue = Queue.Queue()
+        self.emitter = emitter
         self.exit_ = False 
     
     def set_timeout_callback(self, tcallback):
@@ -46,7 +51,8 @@ class Worker(threading.Thread):
             
             if callback:
                 print "si tiene callback"
-                self.tcallback(callback, rtn, user_data)
+                self.emitter.emit([callback, rtn, user_data])
+                print "finalizando callback"
                 print rtn
                 print user_data
                 print callback

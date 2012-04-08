@@ -16,6 +16,7 @@ import logging
 # PyQt4 Support:
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtWebKit import *
+from PyQt4.QtCore import pyqtSignal
 
 from xml.sax.saxutils import unescape
 
@@ -25,6 +26,7 @@ from turpial.ui.base import *
 from turpial.ui.lang import i18n
 from turpial.ui.sound import Sound
 from turpial.ui.html import HtmlParser
+
 #from turpial.ui.gtk.about import About
 from turpial.singleton import Singleton
 #from turpial.ui.gtk.worker import Worker
@@ -48,6 +50,9 @@ def aja():
         print "yay!"
 
 class Main(Base, Singleton, QtGui.QMainWindow):
+
+    emitter = pyqtSignal(list)
+
     def __init__(self, core):
         Singleton.__init__(self)
         Base.__init__(self, core)
@@ -110,8 +115,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         self.openstatuses = {}
 
-        self.worker = Worker()
-        self.worker.set_timeout_callback(self.__timeout_callback)
+        self.worker = Worker(self.emitter)
+        self.emitter.connect(self.__timeout_callback)
+        #self.worker.set_timeout_callback(self.__timeout_callback)
         self.worker.start()
 #        self.unitylauncher = UnityLauncher("turpial.desktop");
 
@@ -300,7 +306,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             self.main_quit(widget)
         return True
 
-    def __timeout_callback(self, funct, arg, user_data):
+    def __timeout_callback(self, l):
+        funct, arg, user_data = l
+        print "en __timeout_callback: ",funct,arg,user_data
         if user_data:
             #gobject.timeout_add(200, funct, arg, user_data)
             funct(arg,user_data)
@@ -326,6 +334,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             #oauthwin = OAuthWindow(self, self.accountsdlg.form, account_id)
             #authwin = AuthWindow(self, account_id)
             #authwin.show()
+            print "opciones de self.accountsdlg: ",dir(self.accountsdlg)
+            self.accountsdlg.show()
             self.accountsdlg.show_auth_win(auth_obj.url)
 #            print "arg1:",self.accountsdlg.form
 #            print "arg2:",account_id
@@ -341,25 +351,28 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
     def __oauth_callback(self, verifier, account_id):
         #self.form.set_loading_message(i18n.get('authorizing'))
-        #self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
-        rtn = self.core.authorize_oauth_token(account_id, verifier)
-        self.__auth_callback(rtn,account_id)
+        self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
+        #rtn = self.core.authorize_oauth_token(account_id, verifier)
+        #self.__auth_callback(rtn,account_id)
 
     def __cancel_callback(self, widget, reason, account_id):
         self.delete_account(account_id)
         self.accountsdlg.cancel_login(i18n.get(reason))
 
     def __auth_callback(self, arg, account_id, register = True):
+        print "en auth callback"
         if arg.code > 0:
             msg = arg.errmsg
             self.show_notice(msg, 'error')
             self.accountsdlg.cancel_login(msg)
         else:
-#            self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
-            rtn = self.core.auth(account_id)
-            self.__done_callback(rtn,(account_id,register))
+            print "metiendo a __donde_callback al register"
+            self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
+            #rtn = self.core.auth(account_id)
+            #self.__done_callback(rtn,(account_id,register))
 
     def __done_callback(self, arg, userdata):
+        print "en done callback"
         (account_id, register) = userdata
         if arg.code > 0:
             self.core.change_login_status(account_id, LoginStatus.NONE)
@@ -428,7 +441,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         elif action == 'unfav_status':
             self.unfav_status(args[0], args[1])
         elif action == 'update_status':
-            self.update_status(args[0], args[1])
+            self.update_status(str(args[0]), str(args[1]))
         elif action == 'reply_status':
             self.reply_status(args[0], args[1], args[2])
         elif action == 'delete_status':
@@ -544,9 +557,12 @@ class Main(Base, Singleton, QtGui.QMainWindow):
     def single_login(self, acc):
         self.core.change_login_status(acc, LoginStatus.IN_PROGRESS)
         self.accountsdlg.update()
-        #self.worker.register(self.core.login, (acc), self.__login_callback, acc)
-        rtn = self.core.login(acc)
-        self.__login_callback(rtn,acc)
+        print "single_login a registrar worker"
+        self.worker.register(self.core.login, (acc), self.__login_callback, acc)
+        #rtn = self.core.login(acc)
+        #print "lanzando a __login_callback manualmente"
+        #self.__login_callback(rtn,acc)
+        #print "termino __login_callback manualmente"
         print "sigue en single_login"
 
 
@@ -565,9 +581,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         account_id = self.core.register_account(username, protocol_id, password)
         self.account_id = account_id
         print "lanzando el worker de save_account"
-        rtn = self.core.login(account_id)
-        self.__login_callback(rtn,account_id)
-#        self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
+        #rtn = self.core.login(account_id)
+        #self.__login_callback(rtn,account_id)
+        self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
         print "otro worker lanzado"
 
     def save_column(self, column_id):
@@ -1006,11 +1022,11 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         num_statuses = self.core.get_max_statuses_per_column()
         self.container.execute("start_updating_column('" + column.id_ + "');")
-#        self.worker.register(self.core.get_column_statuses, (column.account_id,
-#            column.column_name, num_statuses), self.update_column, 
-#            (column, notif, num_statuses))
-        rtn = self.core.get_column_statuses(column.account_id,column.column_name,num_statuses)
-        self.update_column(rtn, (column, notif, num_statuses))
+        self.worker.register(self.core.get_column_statuses, (column.account_id,
+            column.column_name, num_statuses), self.update_column, 
+            (column, notif, num_statuses))
+#        rtn = self.core.get_column_statuses(column.account_id,column.column_name,num_statuses)
+#        self.update_column(rtn, (column, notif, num_statuses))
         return True
 
     def refresh_column(self, column_id):

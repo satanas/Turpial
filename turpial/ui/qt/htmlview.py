@@ -159,7 +159,9 @@ class HtmlView(QObject):
 
     def execute(self, script, sanitize=False):
         script = script.replace('\n', ' ')
-        self.view.execute_script(script)
+        frame = self.view.page().currentFrame()
+        frame.evaluateJavaScript(script)
+        #self.view.execute_script(script)
 
     def stop(self):
         self.view.stop_loading()

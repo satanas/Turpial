@@ -1010,7 +1010,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 #            column.column_name, num_statuses), self.update_column, 
 #            (column, notif, num_statuses))
         rtn = self.core.get_column_statuses(column.account_id,column.column_name,num_statuses)
-        self.update_column(rtn,column, notif, num_statuses)
+        self.update_column(rtn, (column, notif, num_statuses))
         return True
 
     def refresh_column(self, column_id):
@@ -1034,6 +1034,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         # Notifications
         # FIX: Do not store an array with statuses objects, find a way to store
         # maybe just ids
+        '''
         count = self.get_new_statuses(self.columns[column.id_], arg.items)
         if count != 0:
             if notif and self.core.show_notifications_in_updates():
@@ -1046,6 +1047,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
                 self.unitylauncher.set_count_visible(True)
             else:
                 self.unitylauncher.set_count_visible(False)
+        '''
         self.columns[column.id_] = arg.items
         self.updating[column.id_] = False
 

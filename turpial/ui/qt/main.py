@@ -44,6 +44,9 @@ from turpial.ui.qt.accounts import AccountsDialog
 
 # TODO: Improve all splits for accounts_id with a common function
 
+def aja():
+        print "yay!"
+
 class Main(Base, Singleton, QtGui.QMainWindow):
     def __init__(self, core):
         Singleton.__init__(self)
@@ -338,7 +341,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
     def __oauth_callback(self, verifier, account_id):
         #self.form.set_loading_message(i18n.get('authorizing'))
-        self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
+        #self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
         rtn = self.core.authorize_oauth_token(account_id, verifier)
         self.__auth_callback(rtn,account_id)
 
@@ -386,16 +389,17 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
     def __add_timer(self, column):
         #if (self.timer1 != home_interval):
-        if self.timers.has_key(column.id_):
-            gobject.source_remove(self.timers[column.id_])
+        ##if self.timers.has_key(column.id_):
+            ##gobject.source_remove(self.timers[column.id_])
         interval = self.core.get_update_interval()
-        self.timers[column.id_] = gobject.timeout_add(interval * 60 * 1000,
-            self.download_stream, column)
+        #self.timers[column.id_] = gobject.timeout_add(interval * 60 * 1000,
+            #self.download_stream, column)
+        self.download_stream(column)
         self.log.debug('--Created timer for %s every %i min' % (column.id_, interval))
 
     def __remove_timer(self, column_id):
         if self.timers.has_key(column_id):
-            gobject.source_remove(self.timers[column_id])
+            ##gobject.source_remove(self.timers[column_id])
             self.log.debug('--Removed timer for %s' % column_id)
 
     def __action_request(self, url):
@@ -530,8 +534,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.container.execute(cmd)
 
     def login(self):
-        if self.core.play_sounds_in_notification():
-            self.sound.login()
+        #if self.core.play_sounds_in_notification():
+        #    self.sound.login()
+        print "hace login"
 
         for acc in self.get_accounts_list():
             self.single_login(acc)

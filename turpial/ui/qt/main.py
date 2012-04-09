@@ -49,6 +49,15 @@ from turpial.ui.qt.accounts import AccountsDialog
 def aja():
         print "yay!"
 
+class TimerExecution(object):
+    def __init__(self,function,arg):
+        self.function = function
+        self.arg = arg
+
+    def execute(self):
+        self.function(self.arg)
+        return True
+
 class Main(Base, Singleton, QtGui.QMainWindow):
 
     emitter = pyqtSignal(list)
@@ -70,7 +79,10 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.htmlparser = HtmlParser()
 #        self.set_title('Turpial')
         self.setWindowTitle('Turpial')
-        self.resize(310, 480)
+
+        columns = self.get_all_columns()
+
+        self.resize(310*len(columns), 480)
 #        self.set_default_size(310, 480)
 #        self.set_icon(self.load_image('turpial.svg', True))
 #        self.set_position(gtk.WIN_POS_CENTER)
@@ -104,6 +116,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.minimize = 'on'
 
         self.timers = {}
+        self.alltimers = []
         self.updating = {}
         self.columns = {}
 
@@ -402,13 +415,23 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
     def __add_timer(self, column):
         #if (self.timer1 != home_interval):
-        ##if self.timers.has_key(column.id_):
+            #if self.timers.has_key(column.id_):
             ##gobject.source_remove(self.timers[column.id_])
         interval = self.core.get_update_interval()
+        self.log.debug('--Creating timer for %s every %i min' % (column.id_, interval))
+        self.timer = TimerExecution(self.download_stream,column) 
+        self.ctimer = QtCore.QTimer()
+        self.ctimer.timeout.connect(self.timer.execute)
+        self.ctimer.start(int(interval*1000*60))
+        self.alltimers.append(self.ctimer)
+        print "existing timers: "
+        for each in self.alltimers:
+            print each, each.isActive()
+
         #self.timers[column.id_] = gobject.timeout_add(interval * 60 * 1000,
             #self.download_stream, column)
-        self.download_stream(column)
-        self.log.debug('--Created timer for %s every %i min' % (column.id_, interval))
+        #        self.download_stream(column)
+        self.log.debug('--Created timer for %s every %i min (%f) msec' % (column.id_, interval,interval*1000*60))
 
     def __remove_timer(self, column_id):
         if self.timers.has_key(column_id):
@@ -419,6 +442,11 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 #    def __action_request(self, widget, url):
         action, args = self.htmlparser.parse_command(url)
         print action, args
+        new = []
+        for each in args:
+            new.append(str(each))
+        args = new
+
         if action == 'about':
             self.show_about()
         elif action == 'preferences':

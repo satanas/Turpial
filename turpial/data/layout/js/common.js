@@ -4,8 +4,8 @@ var reset = null;
 function exec_command(cmd) {
     if(typeof fireToPython.send == 'function') {
 	    fireToPython.send(cmd)
-	    window.location = cmd;
     }
+    window.location = cmd;
 }
 
 function show_notice(message, type) {

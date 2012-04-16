@@ -58,6 +58,30 @@ class TimerExecution(object):
         self.function(self.arg)
         return True
 
+
+class function_caller(object):
+    def __init__(self,func,arg):
+        print "inicializando",func,arg
+        self.func = func
+        self.arg = arg
+
+    def call(self):
+        print "ejecutando call"
+        self.func(self.arg)
+
+class function_caller2(object):
+    def __init__(self,func,arg1,arg2):
+        print "inicializando caller2",func,arg1,arg2
+        self.func = func
+        self.arg1 = arg1
+        self.arg2 = arg1
+
+    def call(self):
+        print "ejecutando call"
+        self.func(self.arg1,self.arg2)
+
+
+
 class Main(Base, Singleton, QtGui.QMainWindow):
 
     emitter = pyqtSignal(list)
@@ -82,7 +106,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         columns = self.get_all_columns()
 
-        self.resize(310*len(columns), 480)
+        self.resize(310, 480)
 #        self.set_default_size(310, 480)
 #        self.set_icon(self.load_image('turpial.svg', True))
 #        self.set_position(gtk.WIN_POS_CENTER)
@@ -116,6 +140,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.minimize = 'on'
 
         self.timers = {}
+        self.newtimers = [] 
         self.alltimers = []
         self.updating = {}
         self.columns = {}
@@ -216,21 +241,22 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
 
     def __show_add_column_menu2(self):
-        menu = QtGui.QMenu()
+        print "en funcion"
+        self.menu = QtGui.QMenu()
 
-        sub_menu = QtGui.QMenu("Sub Menu")
+        self.sub_menu = QtGui.QMenu("Sub Menu")
 
         for i in ["a", "b", "c"]: #or your dict
-            sub_menu.addAction(i,aja) #it is just a regular QMenu
+            self.sub_menu.addAction(i,aja) #it is just a regular QMenu
 
-        menu.addMenu(sub_menu)
+        self.menu.addMenu(self.sub_menu)
 
-        menu.show()
+        self.menu.popup(QtGui.QCursor.pos())
 
 
     def __show_add_column_menu(self):
         #menu = gtk.Menu()
-        menu = QtGui.QMenu("yay") 
+        self.menu = QtGui.QMenu("yay") 
 
         #search = gtk.MenuItem(i18n.get('search'))
         #search = QtGui.MenuItem('search')
@@ -246,6 +272,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         accounts = self.get_all_accounts()
         columns = self.get_all_columns()
         reg_columns = self.get_registered_columns()
+        self.functions = []
+        self.temps = []
 
         for acc in accounts:
             if acc.protocol_id == 'twitter' and twitter_public_acc is None:
@@ -255,33 +283,37 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
             #temp = gtk.MenuItem(name)
 
-            temp = QtGui.QMenu(name)
+            self.temp = QtGui.QMenu(name)
+            self.temps.append(self.temp)
 
             if acc.logged_in:
                 #temp_menu = gtk.Menu()
                 temp_menu = QtGui.QMenu()
                 for key, col in columns[acc.id_].iteritems():
-                    item = gtk.MenuItem(key)
+                    #item = gtk.MenuItem(key)
                     #if col.id_ != "":
                     #    item.set_sensitive(False)
-                    temp.addAction(key,self.__add_column,col.build_id())
+                    f = function_caller(self.__add_column,col.build_id())
+                    self.functions.append(f)
+                    self.temp.addAction(key,self.functions[-1].call)
+                    #self.temp.addAction(key,self.save_column,col.build_id())
                     #item.connect('activate', self.__add_column, col.build_id())
                     #temp_menu.append(item)
                 #temp.set_submenu(temp_menu)
             else:
                 pass
                 #temp.set_sensitive(False)
-            menu.addMenu(temp)
+            self.menu.addMenu(self.temps[-1])
             empty = False
 
-        public_tl = QtGui.QMenu(i18n.get('public_timeline'))
-        public_tl_menu = QtGui.QMenu("menu")
+        self.public_tl = QtGui.QMenu(i18n.get('public_timeline'))
+        self.public_tl_menu = QtGui.QMenu("menu")
 
         if twitter_public_acc:
             public_acc = twitter_public_acc + '-public'
             #twitter_public_tl = gtk.MenuItem(i18n.get('twitter'))
             #twitter_public_tl.connect('activate', self.__add_column, public_acc)
-            public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
+            self.public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
             #for reg in reg_columns:
             #    if twitter_public_acc == reg.account_id and reg.column_name == 'public':
             #        twitter_public_tl.set_sensitive(False)
@@ -291,25 +323,26 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             #identica_public_tl = gtk.MenuItem(i18n.get('identica'))
             #identica_public_tl.connect('activate', self.__add_column, public_acc)
             #public_tl_menu.append(identica_public_tl)
-            public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
+            self.public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
             #for reg in reg_columns:
             #    if identica_public_acc == reg.account_id and reg.column_name == 'public':
             #        identica_public_tl.set_sensitive(False)
 
 
-        public_tl.addMenu(public_tl_menu)
+        self.public_tl.addMenu(self.public_tl_menu)
 
         #if not empty:
         #    menu.append(gtk.SeparatorMenuItem())
 
-        menu.addMenu(public_tl)
+        self.menu.addMenu(self.public_tl)
         #menu.append(search)
-        menu.show()
+        #menu.show()
+        self.menu.popup(QtGui.QCursor.pos())
         print "aqui deberia mostrar el menu"
         #menu.popup(None, None, None, 0, gtk.get_current_event_time())
 
-    def __add_column(self, column_id):
-        self.save_column(column_id)
+    def __add_column(self,column_id):
+        return self.save_column(column_id)
 
     def __close(self, widget, event=None):
         if self.core.minimize_on_close():
@@ -421,7 +454,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.log.debug('--Creating timer for %s every %i min' % (column.id_, interval))
         self.timer = TimerExecution(self.download_stream,column) 
         self.ctimer = QtCore.QTimer()
-        self.ctimer.timeout.connect(self.timer.execute)
+        self.newtimers.append(self.timer)
+        self.ctimer.timeout.connect(self.newtimers[-1].execute)
         self.ctimer.start(int(interval*1000*60))
         self.alltimers.append(self.ctimer)
         print "existing timers: "
@@ -458,8 +492,13 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             self.__show_add_column_menu2()
         elif action == 'update_column':
             self.refresh_column(args[0])
+        elif action == 'columns_menu':
+            print "Mostrar Menú"
+            self.__show_add_column_menu()
         elif action == 'delete_column':
             self.delete_column(args[0])
+        elif action == 'profiles_menu':
+            self.__show_profile_menu()
         elif action == 'repeat_status':
             self.repeat_status(args[0], args[1])
         elif action == 'unrepeat_status':
@@ -617,14 +656,23 @@ class Main(Base, Singleton, QtGui.QMainWindow):
     def save_column(self, column_id):
         column = self.core.register_column(column_id)
         reg_columns = self.get_registered_columns()
+        local_var = self.core.all_registered_columns()
+        num = len(local_var)
+        print self.geometry().x() * num
+        print self.geometry().y()
+
         if len(reg_columns) == 1:
             page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
             self.container.render(page)
         else:
+            self.resize(300*num,480)
             content = self.htmlparser.render_column(column)
             self.container.append_element('#content', content, 'add_column();')
+
         self.download_stream(column)
         self.__add_timer(column)
+
+
 
     def delete_column(self, column_id):
         self.core.unregister_column(column_id)
@@ -769,6 +817,57 @@ class Main(Base, Singleton, QtGui.QMainWindow):
     def profile_image(self, account, user):
         self.worker.register(self.core.get_profile_image, (account, user),
             self.profile_image_response)
+
+    def __show_profile_menu(self):
+        #menu = gtk.Menu()
+        self.menu = QtGui.QMenu()
+        accounts = self.get_all_accounts()
+        twitter_acc = None
+        identica_acc = None
+        self.profiles_functions = []
+
+        for acc in accounts:
+            if acc.protocol_id == 'twitter' and twitter_acc is None:
+                twitter_acc = acc.id_
+            if acc.protocol_id == 'identica' and identica_acc is None:
+                identica_acc = acc.id_
+            name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
+            #item = gtk.MenuItem(name)
+            #item.connect('activate', self.__show_profile, acc.id_, acc.username)
+            self.profiles_functions.append(function_caller2(self.show_profile,acc.id_,acc.username))
+            #menu.append(item)
+            self.menu.addAction(name,self.profiles_functions[-1].call)
+            #menu.addMenu(item)
+
+        #menu.append(gtk.SeparatorMenuItem())
+
+        self.search = QtGui.QMenu("search")
+
+        #tsearch = gtk.MenuItem(i18n.get('twitter'))
+        #tsearch.connect('activate', self.__search_profile, twitter_acc)
+        self.profiles_functions.append(function_caller(self.search_profile,twitter_acc))
+        self.search.addAction(i18n.get('twitter'),self.profiles_functions[-1].call)
+
+        #isearch = gtk.MenuItem(i18n.get('identica'))
+        #isearch.connect('activate', self.__search_profile, identica_acc)
+        self.profiles_functions.append(function_caller(self.search_profile,identica_acc))
+        self.search.addAction(i18n.get('identica'),self.profiles_functions[-1].call)
+
+        #search = gtk.MenuItem(i18n.get('search'))
+        #search_menu = gtk.Menu()
+        #search_menu.append(tsearch)
+        #search_menu.append(isearch)
+        #search.set_submenu(search_menu)
+
+        #menu.append(search)
+        self.menu.addMenu(self.search)
+        #menu.show_all()
+        #menu.popup(None, None, None, 0, gtk.get_current_event_time())
+        self.menu.popup(QtGui.QCursor.pos())
+
+    def search_profile(self, acc_id):
+        cmd = "show_autocomplete_for_profile('%s')" % acc_id
+        self.container.execute(cmd)
 
     def show_media(self, url, account_id): 
         cmd = "show_imageview();"
@@ -1039,6 +1138,10 @@ class Main(Base, Singleton, QtGui.QMainWindow):
     # ------------------------------------------------------------
 
     def download_stream(self, column, notif=True):
+        for each in self.alltimers:
+            print each, each.isActive()
+
+
         if self.updating.has_key(column.id_):
             if self.updating[column.id_]:
                 return True

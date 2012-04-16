@@ -17,7 +17,7 @@
             <div id="dock">
                 <div class="button" title="<% $about %>"><a href="cmd:about"><% img "dock-about.png" %></a></div>
                 <div class="button" title="<% $preferences %>"><a href="cmd:preferences"><% img "dock-preferences.png" %></a></div>
-                <div class="button" title="<% $columns %>"><a href="cmd:columns_menu"><% img "dock-add.png" %></a></div>
+                <div class="button" title="<% $columns %>"><a href="cmd:columns_menu"><% img "dock-preferences2.png" %></a></div>
                 <div class="button" title="<% $accounts %>"><a href="cmd:accounts_manager"><% img "dock-accounts.png" %></a></div>
                 <div class="button" title="<% $follow %>"><a href="cmd:profiles_menu"><% img "dock-profile.png" %></a></div>
                 <div class="button" title="<% $direct_messages %>"><a href="javascript: show_autocomplete_for_direct()"><% img "dock-message.png" %></a></div>

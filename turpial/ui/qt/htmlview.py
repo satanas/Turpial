@@ -130,6 +130,7 @@ class HtmlView(QObject):
     def render(self, html):
         #gobject.idle_add(self.view.load_string, html, "text/html", self.coding,
             #self.uri)
+        #print html
         self.view.setHtml(html)
         self.enable()
         #self.view.setHtml("Holaa")

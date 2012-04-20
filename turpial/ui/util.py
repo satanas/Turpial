@@ -51,5 +51,5 @@ def available_interfaces():
     return ', '.join(INTERFACES.keys())
 
 def default_interface():
-    return INTERFACES['gtk']
+    return INTERFACES['gtk','qt']
 

@@ -7,13 +7,19 @@
 
 import re
 import os
+import sys
 import urllib
 
 from turpial.ui.lang import i18n
 from libturpial.common import ARG_SEP, LoginStatus
 from libturpial.api.services.showmedia import utils as showmediautils
 
-DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+if getattr(sys, 'frozen', None):
+    DATA_DIR = os.path.realpath(os.path.join(sys._MEIPASS))
+else:
+    DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+
+print "   !!!!! DATA_DIR !!!!!!! ",DATA_DIR
 IMAGES_DIR = os.path.join(DATA_DIR, 'pixmaps')
 LAYOUT_DIR = os.path.join(DATA_DIR, 'layout')
 JS_LAYOUT_DIR = os.path.join(LAYOUT_DIR, 'js')

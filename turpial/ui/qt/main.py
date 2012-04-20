@@ -6,11 +6,9 @@
 # Sep 03, 2011
 
 import os
-import gtk
 import sys
 import base64
 import urllib
-#import gobject
 import logging
 
 # PyQt4 Support:
@@ -586,7 +584,10 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             sys.exit(0)
 
     def main_loop(self):
-        sys.exit(self.app.exec_())
+        #sys.exit(self.app.exec_())
+        print "en MAIN LOOP"
+        self.app.exec_()
+        self.app.quit()
         #try:
         #    gtk.gdk.threads_enter()
         #    gtk.main()

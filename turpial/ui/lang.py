@@ -28,6 +28,7 @@ STRINGS = {
     'welcome': _('Welcome to Turpial!'),
     'no_active_accounts': _('You have no active accounts. Please register your \
 accounts and add some columns'),
+    'no_registered_accounts': _('No registered accounts'),
     'about': _('About'),
     'preferences': _('Preferences'),
     'update_status': _('Update status'),
@@ -61,8 +62,10 @@ accounts and add some columns'),
     'exit': _('Exit'),
     'user': _('User'),
     'password': _('Password'),
+    'user_and_password': _('User and password'),
     'protocol': _('Protocol'),
     'close': _('Close'),
+    'signin': _('Sign In'),
     'save': _('Save'),
     'ok': _('Ok'),
     'cancel': _('Cancel'),
@@ -164,8 +167,10 @@ one account at once"),
     'delete_all_images_in_cache': _('Delete all images in cache'),
     'restore_config_warning': _('This action will close Turpial and will \
 delete your current config (you must start Turpial again). Do you want to \
-continue?')
-
+continue?'),
+    'view_my_profile': _('View my profile'),
+    'search_profile_in': ('Search profile in'),
+    'profiles': ('Profiles'),
 }
 
 class i18n:

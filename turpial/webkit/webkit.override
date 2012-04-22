@@ -1,0 +1,312 @@
+/* -*- Mode: C; c-basic-offset: 4 -*- */
+/*
+ Copyright (C) 2006, Red Hat, Inc.
+ Copyright (C) 2007, One Laptop Per Child
+ Copyright (C) 2009, Jan Michael Alonzo <jmalonzo@gmail.com>
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+%%
+headers
+#include <Python.h>
+#define NO_IMPORT_PYGOBJECT
+#define NO_IMPORT_PYGTK
+#include <pygtk/pygtk.h>
+#include <pygobject.h>
+#include <webkit/webkit.h>
+#include <JavaScriptCore/JSContextRef.h>
+
+#include "javascriptcore/javascriptcore_types.h"
+%%
+body
+static PyObject *
+_helper_wrap_gobject_glist (GList *list)
+{
+    PyObject *py_list;
+    GList *tmp;
+
+    if ((py_list = PyList_New(0)) == NULL) {
+        return NULL;
+    }
+    for (tmp = list; tmp != NULL; tmp = tmp->next) {
+        PyObject *py_obj = pygobject_new(G_OBJECT(tmp->data));
+
+        if (py_obj == NULL) {
+            Py_DECREF(py_list);
+            return NULL;
+        }
+
+        PyList_Append(py_list, py_obj);
+        Py_DECREF(py_obj);
+    }
+
+    return py_list;
+}
+%%
+modulename webkit
+%%
+import gtk.Container as PyGtkContainer_Type
+import gobject.GObject as PyGObject_Type
+import gtk.PrintOperation as PyGtkPrintOperation_Type
+%%
+ignore-glob
+  *_get_type
+  _*
+%%
+ignore
+  webkit_network_request_get_type
+  webkit_web_back_forward_list_get_type
+  webkit_web_frame_get_type
+  webkit_web_history_item_get_type
+  webkit_web_inspector_get_type
+  webkit_web_view_get_type
+  webkit_web_settings_get_type
+  webkit_download_get_type
+  webkit_network_response_get_type
+  webkit_security_origin_get_type
+  webkit_web_database_get_type
+  webkit_web_resource_new
+%%
+override webkit_web_frame_get_global_context noargs
+static PyObject *
+_wrap_webkit_web_frame_get_global_context (PyGObject *self)
+{
+    JSGlobalContextRef ref;
+
+    ref = webkit_web_frame_get_global_context (WEBKIT_WEB_FRAME (self->obj));
+
+    return wrap_JSGlobalContextRef (ref);
+}
+%%
+override webkit_web_back_forward_list_get_back_list_with_limit kwargs
+static PyObject *
+_wrap_webkit_web_back_forward_list_get_back_list_with_limit (PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "limit", NULL };
+
+    GList *list;
+    int limit;
+    
+    if (! PyArg_ParseTupleAndKeywords (args, kwargs, "i:WebBackForwardList.get_back_list_with_limit", kwlist, &limit))
+        return NULL;
+    
+    list = webkit_web_back_forward_list_get_back_list_with_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj),
+                                                                 limit);
+    return _helper_wrap_gobject_glist (list);
+}
+%%
+override webkit_web_back_forward_list_get_forward_list_with_limit kwargs
+static PyObject *
+_wrap_webkit_web_back_forward_list_get_forward_list_with_limit (PyGObject *self,
+                                                                PyObject *args,
+                                                                PyObject *kwargs)
+{
+    static char *kwlist[] = { "limit", NULL };
+
+    GList *list;
+    int limit;
+    
+    if (! PyArg_ParseTupleAndKeywords (args, kwargs, "i:WebBackForwardList.get_forward_list_with_limit", kwlist, &limit))
+        return NULL;
+
+    list = webkit_web_back_forward_list_get_forward_list_with_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj),
+                                                                    limit);
+    return _helper_wrap_gobject_glist (list);
+}
+%%
+override webkit_security_origin_get_all_web_databases noargs
+static PyObject *
+_wrap_webkit_security_origin_get_all_web_databases (PyGObject *self)
+{
+    GList *list;
+
+    list = webkit_security_origin_get_all_web_databases(WEBKIT_SECURITY_ORIGIN(self->obj));
+
+    return _helper_wrap_gobject_glist (list);
+}
+%%
+override webkit_web_navigation_action_set_reason kwargs
+static PyObject *
+_wrap_webkit_web_navigation_action_set_reason(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "reason", NULL };
+    PyObject *py_reason;
+    WebKitWebNavigationReason reason = 0;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O:WebKitWebNavigationAction.set_reason",
+                                     kwlist, &py_reason))
+        return NULL;
+
+    pyg_enum_get_value(WEBKIT_TYPE_WEB_NAVIGATION_REASON, py_reason, (gint*) &reason);
+
+    webkit_web_navigation_action_set_reason(WEBKIT_WEB_NAVIGATION_ACTION(self->obj), reason);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override webkit_web_navigation_action_get_reason noargs
+static PyObject *
+_wrap_webkit_web_navigation_action_get_reason(PyGObject *self)
+{
+    WebKitWebNavigationReason reason;
+
+    reason = webkit_web_navigation_action_get_reason(WEBKIT_WEB_NAVIGATION_ACTION(self->obj));
+
+    return Py_BuildValue("N", pyg_enum_from_gtype(WEBKIT_TYPE_WEB_NAVIGATION_REASON, reason));
+}
+%%
+override webkit_download_get_status noargs
+static PyObject *
+_wrap_webkit_download_get_status(PyGObject *self)
+{
+    WebKitDownloadStatus status;
+
+    status = webkit_download_get_status(WEBKIT_DOWNLOAD(self->obj));
+
+    return Py_BuildValue("N", pyg_enum_from_gtype(WEBKIT_TYPE_DOWNLOAD_STATUS, status));
+}
+%%
+override webkit_web_view_get_load_status noargs
+static PyObject *
+_wrap_webkit_web_view_get_load_status(PyGObject *self)
+{
+    WebKitLoadStatus status;
+
+    status = webkit_web_view_get_load_status(WEBKIT_WEB_VIEW(self->obj));
+
+    return Py_BuildValue("N", pyg_enum_from_gtype(WEBKIT_TYPE_LOAD_STATUS, status));
+    
+}
+%%
+new-constructor WEBKIT_TYPE_HISTORY_ITEM
+%%
+override webkit_web_history_item_new kwargs
+static int
+_wrap_webkit_web_history_item_new(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = {"uri", "title", NULL};
+    gchar *uri = NULL;
+    gchar *title = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|zz:WebHistoryItem.__init__",
+                                    kwlist, &uri, &title))
+        return -1;
+
+
+    if (uri)
+        self->obj = (GObject *)webkit_web_history_item_new_with_data(uri, title);
+    else
+        self->obj = (GObject *)webkit_web_history_item_new();
+
+    if (!self->obj) {
+        PyErr_SetString(PyExc_RuntimeError,
+                        "count not create WebHistoryItem object");
+        return -1;
+    }
+    pygobject_register_wrapper((PyObject *)self);
+    return 0;
+}
+%%
+new-constructor WEBKIT_TYPE_NETWORK_RESPONSE
+%%
+override webkit_network_response_new kwargs
+static int
+_wrap_webkit_network_response_new(PyGObject *self, PyObject* args, PyObject *kwargs)
+{
+    static char *kwlist[] = {"uri", NULL };
+    gchar* uri = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|z:NetworkResponse.__init__",
+                                     kwlist, &uri))
+        return -1;
+
+    if (uri)
+        self->obj = G_OBJECT(webkit_network_response_new(uri));
+    else
+        self->obj = G_OBJECT(webkit_network_response_new("about:blank"));
+
+    if (!self->obj) {
+        PyErr_SetString(PyExc_RuntimeError,
+                        "cannot create NetworkResponse object");
+        return -1;
+    }
+    pygobject_register_wrapper((PyObject *)self);
+    return 0;
+}
+%%
+new-constructor WEBKIT_TYPE_NETWORK_REQUEST
+%%
+override webkit_network_request_new kwargs
+static int
+_wrap_webkit_network_request_new(PyGObject *self, PyObject* args, PyObject *kwargs)
+{
+    static char *kwlist[] = {"uri", NULL };
+    gchar* uri = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|z:NetworkRequest.__init__",
+                                     kwlist, &uri))
+        return -1;
+
+    if (uri)
+        self->obj = G_OBJECT(webkit_network_request_new(uri));
+    else
+        self->obj = G_OBJECT(webkit_network_request_new("about:blank"));
+
+    if (!self->obj) {
+        PyErr_SetString(PyExc_RuntimeError,
+                        "cannot create NetworkRequest object");
+        return -1;
+    }
+    pygobject_register_wrapper((PyObject *)self);
+    return 0;
+}
+%%
+override webkit_web_resource_get_data noargs
+static PyObject *
+_wrap_webkit_web_resource_get_data(PyGObject *self)
+{
+    PyObject *ret;
+    GString *data;
+
+    data = webkit_web_resource_get_data(WEBKIT_WEB_RESOURCE(self->obj));
+
+    if (data == NULL) {
+        Py_INCREF(Py_None);
+        return (Py_None);
+    }
+
+    return Py_BuildValue("s#", data->str, data->len);
+}
+%%
+override webkit_web_data_source_get_data noargs
+static PyObject *
+_wrap_webkit_web_data_source_get_data(PyGObject *self)
+{
+    PyObject *ret;
+    GString *data;
+
+    data = webkit_web_data_source_get_data(WEBKIT_WEB_DATA_SOURCE(self->obj));
+
+    if (data == NULL) {
+        Py_INCREF(Py_None);
+        return (Py_None);
+    }
+
+    return Py_BuildValue("s#", data->str, data->len);
+}
+
+

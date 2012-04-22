@@ -1,0 +1,214 @@
+;; -*- scheme -*-
+;; PyWebKitGtk - Python bindings to WebKit/GTK+
+;;
+;; Copyright (C) 2009  Jan Michael Alonzo <jmalonzo@gmail.com>
+;; 
+;; This library is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU Library General Public
+;; License as published by the Free Software Foundation; either
+;; version 2 of the License, or (at your option) any later version.
+;; 
+;; This library is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; Library General Public License for more details.
+;; 
+;; You should have received a copy of the GNU Library General Public
+;; License along with this library; if not, write to the Free Software
+;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+;;
+
+; object definitions ...
+(define-object WebInspector
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitWebInspector")
+  (gtype-id "WEBKIT_TYPE_WEB_INSPECTOR")
+)
+
+(define-object WindowFeatures
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitWebWindowFeatures")
+  (gtype-id "WEBKIT_TYPE_WEB_WINDOW_FEATURES")
+)
+
+(define-object WebNavigationAction
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitWebNavigationAction")
+  (gtype-id "WEBKIT_TYPE_WEB_NAVIGATION_ACTION")
+)
+
+(define-object WebPolicyDecision
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitWebPolicyDecision")
+  (gtype-id "WEBKIT_TYPE_WEB_POLICY_DECISION")
+)
+
+(define-object Download
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitDownload")
+  (gtype-id "WEBKIT_TYPE_DOWNLOAD")
+)
+
+(define-object NetworkResponse
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitNetworkResponse")
+  (gtype-id "WEBKIT_TYPE_NETWORK_RESPONSE")
+)
+
+(define-object SecurityOrigin
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitSecurityOrigin")
+  (gtype-id "WEBKIT_TYPE_SECURITY_ORIGIN")
+)
+
+(define-object WebDatabase
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitWebDatabase")
+  (gtype-id "WEBKIT_TYPE_WEB_DATABASE")
+)
+
+(define-object WebResource
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitWebResource")
+  (gtype-id "WEBKIT_TYPE_WEB_RESOURCE")
+)
+
+(define-object WebDataSource
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitWebDataSource")
+  (gtype-id "WEBKIT_TYPE_WEB_DATA_SOURCE")
+)
+
+(define-enum DownloadStatus
+  (in-module "WebKit")
+  (c-name "WebKitDownloadStatus")
+  (gtype-id "WEBKIT_TYPE_DOWNLOAD_STATUS")
+  (values
+   '("error" "WEBKIT_DOWNLOAD_STATUS_ERROR")
+   '("created" "WEBKIT_DOWNLOAD_STATUS_CREATED")
+   '("started" "WEBKIT_DOWNLOAD_STATUS_STARTED")
+   '("cancelled" "WEBKIT_DOWNLOAD_STATUS_CANCELLED")
+   '("finished" "WEBKIT_DOWNLOAD_STATUS_FINISHED")
+   )
+)
+
+(define-enum DownloadError
+  (in-module "WebKit")
+  (c-name "WebKitDownloadError")
+  (gtype-id "WEBKIT_TYPE_DOWNLOAD_ERROR")
+  (values
+   '("cancelled-by-user" "WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER")
+   '("destination" "WEBKIT_DOWNLOAD_ERROR_DESTINATION")
+   '("network" "WEBKIT_DOWNLOAD_ERROR_NETWORK")
+   )
+)
+
+(define-enum WebNavigationReason
+  (in-module "WebKit")
+  (c-name "WebKitWebNavigationReason")
+  (gtype-id "WEBKIT_TYPE_WEB_NAVIGATION_REASON")
+  (values
+   '("link-clicked" "WEBKIT_WEB_NAVIGATION_REASON_LINK_CLICKED")
+   '("form-submitted" "WEBKIT_WEB_NAVIGATION_REASON_FORM_SUBMITTED")
+   '("back-forward" "WEBKIT_WEB_NAVIGATION_REASON_BACK_FORWARD")
+   '("reload" "WEBKIT_WEB_NAVIGATION_REASON_RELOAD")
+   '("form-resubmitted" "WEBKIT_WEB_NAVIGATION_REASON_FORM_RESUBMITTED")
+   '("other" "WEBKIT_WEB_NAVIGATION_REASON_OTHER")
+   )
+)
+
+(define-enum NetworkError
+  (in-module "WebKit")
+  (c-name "WebKitNetworkError")
+  (gtype-id "WEBKIT_TYPE_NETWORK_ERROR")
+  (values
+   '("failed" "WEBKIT_NETWORK_ERROR_FAILED")
+   '("transport" "WEBKIT_NETWORK_ERROR_TRANSPORT")
+   '("unknown-protocol" "WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL")
+   '("cancelled" "WEBKIT_NETWORK_ERROR_CANCELLED")
+   '("file-does-not-exist" "WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST")
+   )
+)
+
+(define-enum PolicyError
+  (in-module "WebKit")
+  (c-name "WebKitPolicyError")
+  (gtype-id "WEBKIT_TYPE_POLICY_ERROR")
+  (values
+   '("failed" "WEBKIT_POLICY_ERROR_FAILED")
+   '("cannot-show-mime-type" "WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE")
+   '("cannot-show-url" "WEBKIT_POLICY_ERROR_CANNOT_SHOW_URL")
+   '("frame-load-interrupted-by-policy-change" "WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE")
+   '("cannot-use-restricted-port" "WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT")
+   )
+)
+
+(define-enum PluginError
+  (in-module "WebKit")
+  (c-name "WebKitPluginError")
+  (gtype-id "WEBKIT_TYPE_PLUGIN_ERROR")
+  (values
+   '("failed" "WEBKIT_PLUGIN_ERROR_FAILED")
+   '("cannot-find-plugin" "WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN")
+   '("cannot-load-plugin" "WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN")
+   '("java-unavailable" "WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE")
+   '("connection-cancelled" "WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED")
+   '("will-handle-load" "WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD")
+   )
+)
+
+(define-enum LoadStatus
+  (in-module "WebKit")
+  (c-name "WebKitLoadStatus")
+  (gtype-id "WEBKIT_TYPE_LOAD_STATUS")
+  (values
+   '("provisional" "WEBKIT_LOAD_PROVISIONAL")
+   '("committed" "WEBKIT_LOAD_COMMITTED")
+   '("finished" "WEBKIT_LOAD_FINISHED")
+   '("first-visually-non-empty-layout" "WEBKIT_LOAD_FIRST_VISUALLY_NON_EMPTY_LAYOUT")
+   )
+)
+
+(define-enum EditingBehavior
+  (in-module "WebKit")
+  (c-name "WebKitEditingBehavior")
+  (gtype-id "WEBKIT_TYPE_EDITING_BEHAVIOR")
+  (values
+   '("mac" "WEBKIT_EDITING_BEHAVIOR_MAC")
+   '("windows" "WEBKIT_EDITING_BEHAVIOR_WINDOWS")
+   )
+)
+
+(define-enum NavigationResponse
+  (in-module "WebKit")
+  (c-name "WebKitNavigationResponse")
+  (gtype-id "WEBKIT_TYPE_NAVIGATION_RESPONSE")
+  (values
+   '("accept" "WEBKIT_NAVIGATION_RESPONSE_ACCEPT")
+   '("ignore" "WEBKIT_NAVIGATION_RESPONSE_IGNORE")
+   '("download" "WEBKIT_NAVIGATION_RESPONSE_DOWNLOAD")
+   )
+)
+
+(define-enum WebViewTargetInfo
+  (in-module "WebKit")
+  (c-name "WebKitWebViewTargetInfo")
+  (gtype-id "WEBKIT_TYPE_WEB_VIEW_TARGET_INFO")
+  (values
+   '("html" "WEBKIT_WEB_VIEW_TARGET_INFO_HTML")
+   '("text" "WEBKIT_WEB_VIEW_TARGET_INFO_TEXT")
+   '("image" "WEBKIT_WEB_VIEW_TARGET_INFO_IMAGE")
+   '("uri-list" "WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST")
+   '("netscape-url" "WEBKIT_WEB_VIEW_TARGET_INFO_NETSCAPE_URL")
+   )
+)

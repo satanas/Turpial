@@ -1,0 +1,85 @@
+;; -*- scheme -*-
+;; PyWebKitGtk - Python bindings to WebKit/GTK+
+;;
+;; Copyright (C) 2009  Jan Michael Alonzo <jmalonzo@gmail.com>
+;; 
+;; This library is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU Library General Public
+;; License as published by the Free Software Foundation; either
+;; version 2 of the License, or (at your option) any later version.
+;; 
+;; This library is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; Library General Public License for more details.
+;; 
+;; You should have received a copy of the GNU Library General Public
+;; License along with this library; if not, write to the Free Software
+;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+;;
+
+
+; object definitions ...
+(define-object WebView
+  (in-module "WebKit")
+  (parent "GtkContainer")
+  (c-name "WebKitWebView")
+  (gtype-id "WEBKIT_TYPE_WEB_VIEW")
+)
+
+(define-object WebFrame
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitWebFrame")
+  (gtype-id "WEBKIT_TYPE_WEB_FRAME")
+)
+
+(define-object WebHistoryItem
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitWebHistoryItem")
+  (gtype-id "WEBKIT_TYPE_WEB_HISTORY_ITEM")
+)
+
+(define-object WebBackForwardList
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitWebBackForwardList")
+  (gtype-id "WEBKIT_TYPE_WEB_BACK_FORWARD_LIST")
+)
+
+(define-object WebSettings
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitWebSettings")
+  (gtype-id "WEBKIT_TYPE_WEB_SETTINGS")
+)
+
+(define-object NetworkRequest
+  (in-module "WebKit")
+  (parent "GObject")
+  (c-name "WebKitNetworkRequest")
+  (gtype-id "WEBKIT_TYPE_NETWORK_REQUEST")
+)
+
+;; Enumerations and flags ...
+(define-enum NavigationResponse
+  (in-module "WebKit")
+  (c-name "WebKitNavigationResponse")
+  (gtype-id "WEBKIT_TYPE_NAVIGATION_RESPONSE")
+  (values
+   '("accept" "WEBKIT_NAVIGATION_RESPONSE_ACCEPT")
+   '("ignore" "WEBKIT_NAVIGATION_RESPONSE_IGNORE")
+   '("download" "WEBKIT_NAVIGATION_RESPONSE_DOWNLOAD")
+   )
+)
+
+(define-enum WebViewTargetInfo
+  (in-module "WebKit")
+  (c-name "WebKitWebViewTargetInfo")
+  (gtype-id "WEBKIT_TYPE_WEB_VIEW_TARGET_INFO")
+  (values
+   '("html" "WEBKIT_WEB_VIEW_TARGET_INFO_HTML")
+   '("text" "WEBKIT_WEB_VIEW_TARGET_INFO_TEXT")
+   )
+)

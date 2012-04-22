@@ -17,19 +17,23 @@
             <div id="dock">
                 <div class="button" title="<% $about %>"><a href="cmd:about"><% img "dock-about.png" %></a></div>
                 <div class="button" title="<% $preferences %>"><a href="cmd:preferences"><% img "dock-preferences.png" %></a></div>
+<<<<<<< HEAD
                 <div class="button" title="<% $columns %>"><a href="cmd:columns_menu"><% img "dock-preferences2.png" %></a></div>
+=======
+>>>>>>> 3c121cfa2082dcfb62bad7e7f2f8682950f08c00
                 <div class="button" title="<% $accounts %>"><a href="cmd:accounts_manager"><% img "dock-accounts.png" %></a></div>
-                <div class="button" title="<% $follow %>"><a href="cmd:profiles_menu"><% img "dock-profile.png" %></a></div>
+                <div class="button" title="<% $profiles %>"><a href="cmd:profiles_menu"><% img "dock-profile.png" %></a></div>
+                <div class="button" title="<% $columns %>"><a href="cmd:columns_menu"><% img "dock-add.png" %></a></div>
                 <div class="button" title="<% $direct_messages %>"><a href="javascript: show_autocomplete_for_direct()"><% img "dock-message.png" %></a></div>
                 <div class="button" title="<% $update_status %>"><a href="javascript: show_update_box()"><% img "dock-update.png" %></a></div>
                 <div class="clearfix"></div>
             </div>
         </div>
         <div class="clearfix"></div>
-        
+
         <!-- Modality -->
         <div id="modal" style="display: none;"><div class="background"></div></div>
-        
+
         <!-- Updatebox -->
         <div id="update-box" name="" style="display: none;">
             <div class="titlebar">
@@ -59,7 +63,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Profile window -->
         <div id="profile-window" name="" style="display: none;">
             <input id="indicator-profile-window" type="hidden" value="" />
@@ -75,7 +79,7 @@
             <div id="profile-window-content"></div>
             <div class="clearfix"></div>
         </div>
-        
+
         <!-- Autocomplete window -->
         <div id="autocomplete-window" name="" style="display: none;">
             <input id="indicator-autocomplete-window" type="hidden" value="" />
@@ -106,7 +110,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Imageview window -->
         <div id="imageview-window" name="" style="display: none;">
             <div id="imageview-frame">

@@ -225,17 +225,19 @@ class Main(Base, Singleton, gtk.Window):
                 if identica_public_acc == reg.account_id and reg.column_name == 'public':
                     identica_public_tl.set_sensitive(False)
 
-        if not empty:
+        if empty:
+            empty_menu = gtk.MenuItem(i18n.get('no_registered_accounts'))
+            empty_menu.set_sensitive(False)
+            menu.append(empty_menu)
+        else:
             menu.append(gtk.SeparatorMenuItem())
-
-        menu.append(public_tl)
-        menu.append(search)
+            menu.append(public_tl)
+            menu.append(search)
         menu.show_all()
         menu.popup(None, None, None, 0, gtk.get_current_event_time())
 
     def __add_column(self, widget, column_id):
         self.save_column(column_id)
-
 
     def __show_profile_menu(self, widget):
         menu = gtk.Menu()
@@ -243,6 +245,9 @@ class Main(Base, Singleton, gtk.Window):
         twitter_acc = None
         identica_acc = None
 
+
+        profile = gtk.MenuItem(i18n.get('view_my_profile'))
+        profile_menu = gtk.Menu()
         for acc in accounts:
             if acc.protocol_id == 'twitter' and twitter_acc is None:
                 twitter_acc = acc.id_
@@ -251,7 +256,9 @@ class Main(Base, Singleton, gtk.Window):
             name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
             item = gtk.MenuItem(name)
             item.connect('activate', self.__show_profile, acc.id_, acc.username)
-            menu.append(item)
+            profile_menu.append(item)
+        profile.set_submenu(profile_menu)
+        menu.append(profile)
 
         menu.append(gtk.SeparatorMenuItem())
 
@@ -261,7 +268,7 @@ class Main(Base, Singleton, gtk.Window):
         isearch = gtk.MenuItem(i18n.get('identica'))
         isearch.connect('activate', self.__search_profile, identica_acc)
 
-        search = gtk.MenuItem(i18n.get('search'))
+        search = gtk.MenuItem(i18n.get('search_profile_in'))
         search_menu = gtk.Menu()
         search_menu.append(tsearch)
         search_menu.append(isearch)
@@ -299,6 +306,7 @@ class Main(Base, Singleton, gtk.Window):
             self.accountsdlg.cancel_login(msg)
             return
 
+        self.accountsdlg.status_message(i18n.get('authenticating'))
         auth_obj = arg.items
         if auth_obj.must_auth():
             oauthwin = OAuthWindow(self, self.accountsdlg.form, account_id)
@@ -309,11 +317,11 @@ class Main(Base, Singleton, gtk.Window):
             self.__auth_callback(arg, account_id, False)
 
     def __oauth_callback(self, widget, verifier, account_id):
-        #self.form.set_loading_message(i18n.get('authorizing'))
+        self.accountsdlg.status_message(i18n.get('authorizing'))
         self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
 
     def __cancel_callback(self, widget, reason, account_id):
-        self.delete_account(account_id)
+        #self.delete_account(account_id)
         self.accountsdlg.cancel_login(i18n.get(reason))
 
     def __auth_callback(self, arg, account_id, register = True):
@@ -513,7 +521,7 @@ class Main(Base, Singleton, gtk.Window):
             if col.account_id == account_id:
                 self.delete_column(col.id_)
         self.core.unregister_account(account_id, True)
-        self.accountsdlg.update()
+        self.accountsdlg.done_delete()
 
     def save_account(self, username, protocol_id, password):
         if username == "" or username == None:
@@ -626,7 +634,7 @@ class Main(Base, Singleton, gtk.Window):
         cmd = "lock_profile('%s');" % (i18n.get('unfollowing_user'))
         self.container.execute(cmd)
 
-        self.worker.register(self.core.follow, (account_id, username),
+        self.worker.register(self.core.unfollow, (account_id, username),
             self.follow_response, False)
 
     def mute(self, username):
@@ -932,6 +940,7 @@ class Main(Base, Singleton, gtk.Window):
         else:
             content_obj = response.response
             if content_obj.is_image():
+                print "content_obj", content_obj.path
                 content_obj.save_content()
                 pix = gtk.gdk.pixbuf_new_from_file(content_obj.path)
                 cmd = "update_imageview('%s',%s,%s);" % (

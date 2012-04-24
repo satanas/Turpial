@@ -380,6 +380,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             #authwin.show()
             print "opciones de self.accountsdlg: ",dir(self.accountsdlg)
             self.accountsdlg.show()
+            self.accountsdlg.set_account_id(account_id)
             self.accountsdlg.show_auth_win(auth_obj.url)
 #            print "arg1:",self.accountsdlg.form
 #            print "arg2:",account_id
@@ -418,6 +419,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
     def __done_callback(self, arg, userdata):
         print "en done callback"
         (account_id, register) = userdata
+
         if arg.code > 0:
             self.core.change_login_status(account_id, LoginStatus.NONE)
             msg = arg.errmsg
@@ -442,6 +444,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
                 if col.account_id == account_id:
                     self.download_stream(col, True)
                     self.__add_timer(col)
+
 
 
     def __add_timer(self, column):
@@ -605,7 +608,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.login()
 
     def show_about(self):
-        about = About(self)
+        self.accountsdlg.show()
+        self.accountsdlg.show_about_win()
 
     def show_preferences(self):
         pref = Preferences(self)

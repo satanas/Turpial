@@ -88,6 +88,19 @@ class AccountsDialog(QtGui.QDialog):
         elif action == "login":
             self.mainwin.single_login(args[0])
 
+    def set_account_id(self,account_id):
+        self.account_id = account_id
+
+
+    def show_about_win(self):
+            print "entrando a save_account para abrir google de prueba" 
+            self.setWindowTitle("About")
+            self.resize(400,270)
+            #self.authwin = AuthForm(self.mainwin,self)
+
+            #self.layout.removeItem(self.layout.itemAt(1))
+            page = self.htmlparser.about()
+            self.container.view.setHtml(page)
 
     def show_auth_win(self,url):
             print "entrando a save_account para abrir google de prueba" 
@@ -122,8 +135,9 @@ class AccountsDialog(QtGui.QDialog):
                 print "attribute:",each
             print "dir code: ",code[0].toPlainText()
 
-            self.resize(365,325)
-            self.mainwin.__oauth_callback(code[0].toPlainText(),self.mainwin.account_id)
+            self.resize(370,330)
+            self.mainwin.__oauth_callback(code[0].toPlainText(),self.account_id)
+            print self.account_id
             self.container.action_request.connect(self.__action_request)
             self.container.link_request.connect(self.__action_request)
 

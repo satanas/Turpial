@@ -10,6 +10,7 @@ import os
 import sys
 import urllib
 
+from turpial import VERSION
 from turpial.ui.lang import i18n
 from libturpial.common import ARG_SEP, LoginStatus
 from libturpial.api.services.showmedia import utils as showmediautils
@@ -36,10 +37,20 @@ class HtmlParser:
         self.scripts = []
         self.styles = []
         self.partials = {}
+        self.arch = open("salida.html",'w')
 
     def __url_quote(self, text):
         ntext = text.encode('utf-8').replace('\\\\', '\\')
         return urllib.quote(ntext)
+
+    def open_template(self, res):
+        filepath = os.path.realpath(os.path.join(LAYOUT_DIR, res + '.template'))
+        fd = open(filepath, 'r')
+        resource = fd.read()
+        fd.close()
+        return resource
+
+
 
     def __open_template(self, res):
         filepath = os.path.realpath(os.path.join(LAYOUT_DIR, res + '.template'))
@@ -356,6 +367,11 @@ class HtmlParser:
         self.app_layout = self.app_layout.replace('<% @accounts %>', acc_list)
         return self.__render()
 
+    def about(self):
+        self.__load_layout('about')
+        self.app_layout = self.app_layout.replace('<% VERSION  %>', VERSION)
+        return self.__render()
+
     def account_form(self, plist, user='', pwd='', prot=''):
         self.__load_layout('account_form')
 
@@ -419,6 +435,7 @@ class HtmlParser:
         col = col.replace('<% @column_id %>', column.id_)
         col = col.replace('<% @column_content %>', col_content)
         page = self.__parse_tags(col)
+
         return page
 
     def status(self, status, ignore_reply=False):

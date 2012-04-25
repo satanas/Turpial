@@ -9,7 +9,7 @@
 import sys
 import logging
 
-from optparse import OptionParser
+from optparse import OptionParser, SUPPRESS_HELP
 
 from turpial import VERSION
 from turpial.ui import util
@@ -20,7 +20,7 @@ from libturpial.config import AppConfig
 
 class Turpial:
     def __init__(self):
-        parser = OptionParser()
+        parser = OptParser()
         parser.add_option('-d', '--debug', dest='debug', action='store_true',
             help='show debug info in shell during execution', default=False)
         parser.add_option('-i', '--interface', dest='interface',
@@ -30,8 +30,14 @@ class Turpial:
             help='clean all bytecodes', default=False)
         parser.add_option('--version', dest='version', action='store_true',
             help='show the version of Turpial and exit', default=False)
+        parser.add_option('-s', dest='mac', action='store_true', default=False,
+            help=SUPPRESS_HELP)
 
         (options, args) = parser.parse_args()
+
+        if not options.mac and parser.failed:
+            parser.print_help()
+            sys.exit(-2)
 
         self.interface = options.interface
         self.version = "Turpial v%s with libturpial v%s" % (VERSION, LIBVERSION)
@@ -69,6 +75,18 @@ class Turpial:
         except KeyboardInterrupt:
             self.log.debug('Intercepted Keyboard Interrupt')
             self.ui.main_quit()
+
+class OptParser(OptionParser):
+    def __init__(self):
+        OptionParser.__init__(self)
+        self.failed = False
+
+    def error(self, error):
+        print error
+        self.failed = True
+
+    def exit(self):
+        pass
 
 if __name__ == '__main__':
     t = Turpial()

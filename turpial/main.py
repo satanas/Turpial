@@ -33,39 +33,6 @@ from PyQt4.QtCore import *
 import sys
 import os
 
-class Test(QWidget):
-    def __init__(self):
-        QWidget.__init__(self)
-        btn = QPushButton("hi")
-        layout = QHBoxLayout()
-        layout.addWidget(btn)
-        self.setLayout(layout)
-        btn.clicked.connect(self._p)
-        self._printDirs()
-
-    def _p(self):
-        print "Hi!"
-
-    def _printDirs(self):
-        print "DIRS"
-        print "QCoreApplication.applicationDirPath()", QCoreApplication.applicationDirPath()
-        print "os.getcwd()", os.getcwd()
-        print "os.path.dirname(sys.executable)", os.path.dirname(sys.executable)
-        print "sys.path", sys.path
-        print "sys.frozen", hasattr(sys, "frozen")
-        print "os.curdir", os.curdir
-
-if __name__ == "__mmain__":
-    print "start"
-    app = QApplication(sys.argv)
-    test = Test()
-    test.show()
-    test.raise_()
-    app.exec_()
-    print "end"
-    app.quit()
-
-
 class Turpial:
     def __init__(self):
         parser = OptParser()
@@ -80,10 +47,11 @@ class Turpial:
             help='show the version of Turpial and exit', default=False)
         parser.add_option('-s', dest='mac', action='store_true', default=False,
             help=SUPPRESS_HELP)
+        parser.add_option('-p', dest='mac', action='store_true', default=False,
+            help=SUPPRESS_HELP)
+
 
         (options, args) = parser.parse_args()
-        print "optiones",options
-        print "args",args
 
         if not options.mac and parser.failed:
             parser.print_help()
@@ -111,7 +79,6 @@ class Turpial:
 
         # TODO: Override with any configurated value
         if options.interface in util.INTERFACES.keys():
-            print "asignando valor a self.ui, ",options.interface
             self.ui = util.INTERFACES[options.interface](self.core)
         else:
             print "'%s' is not a valid interface. Availables interfaces are %s" % (
@@ -120,14 +87,11 @@ class Turpial:
 
         self.log.debug('Starting %s' % self.version)
 
-        print "show_main() principal"
         self.ui.show_main()
         try:
-            print "main_loop() principal"
             self.ui.main_loop()
         except KeyboardInterrupt:
             self.log.debug('Intercepted Keyboard Interrupt')
-            print "main_quit() principal"
             self.ui.main_quit()
 
 class OptParser(OptionParser):

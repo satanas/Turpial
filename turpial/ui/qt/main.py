@@ -111,39 +111,28 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
 #        self.sound = Sound()
 #        self.notify = Notification()
-#        self.indicator = Indicators()
-#        self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
-#        self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
 
         self.openstatuses = {}
 
         self.worker = Worker(self.emitter)
         self.emitter.connect(self.__timeout_callback)
-        #self.worker.set_timeout_callback(self.__timeout_callback)
         self.worker.start()
-#        self.unitylauncher = UnityLauncher("turpial.desktop");
 
         # Persistent dialogs
         self.accountsdlg = AccountsDialog(self)
         self.accountsdlg.update()
 
-#        self.__create_trayicon()
-#        self.show_all()
         self.show()
 
     def __size_request(self, widget, rectangle):
-        ##print rectangle.width, rectangle.height, self.max_columns
         width = rectangle.width
         columns = len(self.core.all_registered_columns())
         preferred_width = MIN_WINDOW_WIDTH * columns
         if width < preferred_width:
             width = preferred_width
-        ##print width, rectangle.width, preferred_width
-        #self.set_default_size(width, rectangle.height)
         self.save_window_geometry(width, rectangle.height)
 
     def __link_request(self, url):
-    #def __link_request(self, widget, url):
         self.open_url(url.toString())
     def __create_trayicon(self):
         if gtk.check_version(2, 10, 0) is not None:
@@ -203,32 +192,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
 
-
-    def __show_add_column_menu2(self):
-        print "en funcion"
-        self.menu = QtGui.QMenu()
-
-        self.sub_menu = QtGui.QMenu("Sub Menu")
-
-        for i in ["a", "b", "c"]: #or your dict
-            self.sub_menu.addAction(i,aja) #it is just a regular QMenu
-
-        self.menu.addMenu(self.sub_menu)
-
-        self.menu.popup(QtGui.QCursor.pos())
-
-
     def __show_add_column_menu(self):
-        #menu = gtk.Menu()
         self.menu = QtGui.QMenu("yay") 
-
-        #search = gtk.MenuItem(i18n.get('search'))
-        #search = QtGui.MenuItem('search')
-        #search_menu = gtk.Menu()
-        #search_menu = QtGui.QMenu()
-        #search_menu.append(gtk.MenuItem(i18n.get('twitter')))
-        #search_menu.append(gtk.MenuItem(i18n.get('identica')))
-        #search.set_submenu(search_menu)
 
         #empty = True
         twitter_public_acc = None
@@ -245,28 +210,18 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             if acc.protocol_id == 'identica' and identica_public_acc is None:
                 identica_public_acc = acc.id_
             name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
-            #temp = gtk.MenuItem(name)
 
             self.temp = QtGui.QMenu(name)
             self.temps.append(self.temp)
 
             if acc.logged_in:
-                #temp_menu = gtk.Menu()
                 temp_menu = QtGui.QMenu()
                 for key, col in columns[acc.id_].iteritems():
-                    #item = gtk.MenuItem(key)
-                    #if col.id_ != "":
-                    #    item.set_sensitive(False)
                     f = function_caller(self.__add_column,col.build_id())
                     self.functions.append(f)
                     self.temp.addAction(key,self.functions[-1].call)
-                    #self.temp.addAction(key,self.save_column,col.build_id())
-                    #item.connect('activate', self.__add_column, col.build_id())
-                    #temp_menu.append(item)
-                #temp.set_submenu(temp_menu)
             else:
                 pass
-                #temp.set_sensitive(False)
             self.menu.addMenu(self.temps[-1])
             empty = False
 
@@ -275,35 +230,17 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         if twitter_public_acc:
             public_acc = twitter_public_acc + '-public'
-            #twitter_public_tl = gtk.MenuItem(i18n.get('twitter'))
-            #twitter_public_tl.connect('activate', self.__add_column, public_acc)
             self.public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
-            #for reg in reg_columns:
-            #    if twitter_public_acc == reg.account_id and reg.column_name == 'public':
-            #        twitter_public_tl.set_sensitive(False)
 
         if identica_public_acc:
             public_acc = identica_public_acc + '-public'
-            #identica_public_tl = gtk.MenuItem(i18n.get('identica'))
-            #identica_public_tl.connect('activate', self.__add_column, public_acc)
-            #public_tl_menu.append(identica_public_tl)
             self.public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
-            #for reg in reg_columns:
-            #    if identica_public_acc == reg.account_id and reg.column_name == 'public':
-            #        identica_public_tl.set_sensitive(False)
 
 
         self.public_tl.addMenu(self.public_tl_menu)
 
-        #if not empty:
-        #    menu.append(gtk.SeparatorMenuItem())
-
         self.menu.addMenu(self.public_tl)
-        #menu.append(search)
-        #menu.show()
         self.menu.popup(QtGui.QCursor.pos())
-        print "aqui deberia mostrar el menu"
-        #menu.popup(None, None, None, 0, gtk.get_current_event_time())
 
     def __add_column(self,column_id):
         return self.save_column(column_id)
@@ -318,18 +255,14 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
     def __timeout_callback(self, l):
         funct, arg, user_data = l
-        print "en __timeout_callback: ",funct,arg,user_data
         if user_data:
-            #gobject.timeout_add(200, funct, arg, user_data)
             funct(arg,user_data)
             pass
         else:
-            #gobject.timeout_add(200, funct, arg)
             funct(arg)
             pass
 
     def __login_callback(self, arg, account_id):
-        print "en __login_callback"
         if arg.code > 0:
             msg = arg.errmsg
             self.show_notice(msg, 'error')
@@ -338,22 +271,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         auth_obj = arg.items
         if auth_obj.must_auth():
-            print "Creando OAuthWindow"
-            print "debe abrir",auth_obj.url
-            #oauthwin = OAuthWindow(self, self.accountsdlg.form, account_id)
-            #oauthwin = OAuthWindow(self, self.accountsdlg.form, account_id)
-            #authwin = AuthWindow(self, account_id)
-            #authwin.show()
-            print "opciones de self.accountsdlg: ",dir(self.accountsdlg)
             self.accountsdlg.show()
             self.accountsdlg.set_account_id(account_id)
             self.accountsdlg.show_auth_win(auth_obj.url)
-#            print "arg1:",self.accountsdlg.form
-#            print "arg2:",account_id
-#pasaraQT            oauthwin.connect('response', self.__oauth_callback)
-#aQT            oauthwin.connect('cancel', self.__cancel_callback)
-           # oauthwin.open(auth_obj.url)
-#            oauthwin.show()
         else:
             self.__auth_callback(arg, account_id, False)
 
@@ -361,29 +281,21 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.__oauth_callback(verifier,account_id)
 
     def __oauth_callback(self, verifier, account_id):
-        #self.form.set_loading_message(i18n.get('authorizing'))
         self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
-        #rtn = self.core.authorize_oauth_token(account_id, verifier)
-        #self.__auth_callback(rtn,account_id)
 
     def __cancel_callback(self, widget, reason, account_id):
         self.delete_account(account_id)
         self.accountsdlg.cancel_login(i18n.get(reason))
 
     def __auth_callback(self, arg, account_id, register = True):
-        print "en auth callback"
         if arg.code > 0:
             msg = arg.errmsg
             self.show_notice(msg, 'error')
             self.accountsdlg.cancel_login(msg)
         else:
-            print "metiendo a __donde_callback al register"
             self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
-            #rtn = self.core.auth(account_id)
-            #self.__done_callback(rtn,(account_id,register))
 
     def __done_callback(self, arg, userdata):
-        print "en done callback"
         (account_id, register) = userdata
 
         if arg.code > 0:
@@ -403,8 +315,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
                 self.show_notice(response.errmsg, 'error')
             else:
                 pass
-                #if self.core.show_notifications_in_login():
-                    #self.notify.login(response.items)
 
             for col in self.get_registered_columns():
                 if col.account_id == account_id:
@@ -414,9 +324,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
 
     def __add_timer(self, column):
-        #if (self.timer1 != home_interval):
-            #if self.timers.has_key(column.id_):
-            ##gobject.source_remove(self.timers[column.id_])
         interval = self.core.get_update_interval()
         self.log.debug('--Creating timer for %s every %i min' % (column.id_, interval))
         self.timer = TimerExecution(self.download_stream,column) 
@@ -425,24 +332,15 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.ctimer.timeout.connect(self.newtimers[-1].execute)
         self.ctimer.start(int(interval*1000*60))
         self.alltimers.append(self.ctimer)
-        print "existing timers: "
-        for each in self.alltimers:
-            print each, each.isActive()
 
-        #self.timers[column.id_] = gobject.timeout_add(interval * 60 * 1000,
-            #self.download_stream, column)
-        #        self.download_stream(column)
         self.log.debug('--Created timer for %s every %i min (%f) msec' % (column.id_, interval,interval*1000*60))
 
     def __remove_timer(self, column_id):
         if self.timers.has_key(column_id):
-            ##gobject.source_remove(self.timers[column_id])
             self.log.debug('--Removed timer for %s' % column_id)
 
     def __action_request(self, url):
-#    def __action_request(self, widget, url):
         action, args = self.htmlparser.parse_command(url)
-        print action, args
         new = []
         for each in args:
             new.append(str(each))
@@ -453,14 +351,12 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         elif action == 'preferences':
             self.show_preferences()
         elif action == 'accounts_manager':
-            print "entra bien aqui"
             self.accountsdlg.show()
         elif action == 'add_column':
             self.__show_add_column_menu2()
         elif action == 'update_column':
             self.refresh_column(args[0])
         elif action == 'columns_menu':
-            print "Mostrar Menú"
             self.__show_add_column_menu()
         elif action == 'delete_column':
             self.delete_column(args[0])
@@ -553,16 +449,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             sys.exit(0)
 
     def main_loop(self):
-        #sys.exit(self.app.exec_())
-        print "en MAIN LOOP"
         self.app.exec_()
         self.app.quit()
-        #try:
-        #    gtk.gdk.threads_enter()
-        #    gtk.main()
-        #    gtk.gdk.threads_leave()
-        #except Exception:
-        #    sys.exit(0)
 
     def show_main(self):
         reg_columns = self.get_registered_columns()
@@ -585,23 +473,13 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.container.execute(cmd)
 
     def login(self):
-        #if self.core.play_sounds_in_notification():
-        #    self.sound.login()
-        print "hace login"
-
         for acc in self.get_accounts_list():
             self.single_login(acc)
 
     def single_login(self, acc):
         self.core.change_login_status(acc, LoginStatus.IN_PROGRESS)
         self.accountsdlg.update()
-        print "single_login a registrar worker"
         self.worker.register(self.core.login, (acc), self.__login_callback, acc)
-        #rtn = self.core.login(acc)
-        #print "lanzando a __login_callback manualmente"
-        #self.__login_callback(rtn,acc)
-        #print "termino __login_callback manualmente"
-        print "sigue en single_login"
 
 
     def delete_account(self, account_id):
@@ -613,24 +491,17 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.accountsdlg.update()
 
     def save_account(self, username, protocol_id, password):
-        print "en save_account"
         if username == "" or username == None:
             username = "%s" % len(self.core.all_accounts());
         account_id = self.core.register_account(username, protocol_id, password)
         self.account_id = account_id
-        print "lanzando el worker de save_account"
-        #rtn = self.core.login(account_id)
-        #self.__login_callback(rtn,account_id)
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
-        print "otro worker lanzado"
 
     def save_column(self, column_id):
         column = self.core.register_column(column_id)
         reg_columns = self.get_registered_columns()
         local_var = self.core.all_registered_columns()
         num = len(local_var)
-        print self.geometry().x() * num
-        print self.geometry().y()
 
         if len(reg_columns) == 1:
             page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
@@ -642,8 +513,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         self.download_stream(column)
         self.__add_timer(column)
-
-
 
     def delete_column(self, column_id):
         self.core.unregister_column(column_id)
@@ -790,7 +659,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             self.profile_image_response)
 
     def __show_profile_menu(self):
-        #menu = gtk.Menu()
         self.menu = QtGui.QMenu()
         accounts = self.get_all_accounts()
         twitter_acc = None
@@ -803,37 +671,18 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             if acc.protocol_id == 'identica' and identica_acc is None:
                 identica_acc = acc.id_
             name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
-            #item = gtk.MenuItem(name)
-            #item.connect('activate', self.__show_profile, acc.id_, acc.username)
             self.profiles_functions.append(function_caller2(self.show_profile,acc.id_,acc.username))
-            #menu.append(item)
             self.menu.addAction(name,self.profiles_functions[-1].call)
-            #menu.addMenu(item)
-
-        #menu.append(gtk.SeparatorMenuItem())
 
         self.search = QtGui.QMenu("search")
 
-        #tsearch = gtk.MenuItem(i18n.get('twitter'))
-        #tsearch.connect('activate', self.__search_profile, twitter_acc)
         self.profiles_functions.append(function_caller(self.search_profile,twitter_acc))
         self.search.addAction(i18n.get('twitter'),self.profiles_functions[-1].call)
 
-        #isearch = gtk.MenuItem(i18n.get('identica'))
-        #isearch.connect('activate', self.__search_profile, identica_acc)
         self.profiles_functions.append(function_caller(self.search_profile,identica_acc))
         self.search.addAction(i18n.get('identica'),self.profiles_functions[-1].call)
 
-        #search = gtk.MenuItem(i18n.get('search'))
-        #search_menu = gtk.Menu()
-        #search_menu.append(tsearch)
-        #search_menu.append(isearch)
-        #search.set_submenu(search_menu)
-
-        #menu.append(search)
         self.menu.addMenu(self.search)
-        #menu.show_all()
-        #menu.popup(None, None, None, 0, gtk.get_current_event_time())
         self.menu.popup(QtGui.QCursor.pos())
 
     def search_profile(self, acc_id):
@@ -884,8 +733,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
                 cmd += 'append_status_to_timeline("%s", "%s");' % (resp.account_id, html_status)
                 good_acc.append(resp.account_id)
                 column_key = '%s-timeline' % resp.account_id
-                #if self.columns.has_key(column_key):
-                #    self.columns[column_key].append(resp.items)
 
         if error:
             errmsg = i18n.get('error_posting_to') % (', '.join(bad_acc))
@@ -1066,7 +913,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         else:
             new_msg = response.items.replace('"', '\\"')
             cmd = 'set_update_box_message("' + new_msg + '");'
-            print cmd
         self.container.execute(cmd)
 
     def direct_message_response(self, response):

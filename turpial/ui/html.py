@@ -15,12 +15,12 @@ from turpial.ui.lang import i18n
 from libturpial.common import ARG_SEP, LoginStatus
 from libturpial.api.services.showmedia import utils as showmediautils
 
+#pyinstaller compatibility validation
 if getattr(sys, 'frozen', None):
     DATA_DIR = os.path.realpath(os.path.join(sys._MEIPASS))
 else:
     DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
-print "   !!!!! DATA_DIR !!!!!!! ",DATA_DIR
 IMAGES_DIR = os.path.join(DATA_DIR, 'pixmaps')
 LAYOUT_DIR = os.path.join(DATA_DIR, 'layout')
 JS_LAYOUT_DIR = os.path.join(LAYOUT_DIR, 'js')
@@ -458,8 +458,7 @@ class HtmlParser:
             elif count == 1:
                 temp = '1 %s' % i18n.get('person')
             reposted_by = '%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
-        #if status.text.find('\\') > 0:
-        #    print status.text
+
         message = self.__highlight_urls(status, status.text)
         message = self.__highlight_hashtags(status, message)
         message = self.__highlight_groups(status, message)

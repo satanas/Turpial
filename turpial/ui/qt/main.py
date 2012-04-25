@@ -25,22 +25,11 @@ from turpial.ui.lang import i18n
 from turpial.ui.sound import Sound
 from turpial.ui.html import HtmlParser
 
-#from turpial.ui.gtk.about import About
 from turpial.singleton import Singleton
-#from turpial.ui.gtk.worker import Worker
 from turpial.ui.qt.worker import Worker
-#from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.qt.htmlview import HtmlView
-#from turpial.notification import Notification
-#from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.qt.oauthwin import OAuthWindow
-#from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.qt.accounts import AccountsDialog
-#from turpial.ui.gtk.preferences import Preferences
-#from turpial.ui.gtk.unitylauncher import UnityLauncher
-
-#gtk.gdk.set_program_class("Turpial")
-#gtk.gdk.threads_init()
 
 # TODO: Improve all splits for accounts_id with a common function
 
@@ -91,40 +80,17 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.app = QtGui.QApplication(sys.argv)
         QtGui.QMainWindow.__init__(self)
 
-#        super(Main, QtGui.QMainWindow).__init__()
-
-         
-
-#        gtk.Window.__init__(self)
-
         self.log = logging.getLogger('Qt')
         self.htmlparser = HtmlParser()
-#        self.set_title('Turpial')
         self.setWindowTitle('Turpial')
 
         columns = self.get_all_columns()
 
         self.resize(310, 480)
-#        self.set_default_size(310, 480)
-#        self.set_icon(self.load_image('turpial.svg', True))
-#        self.set_position(gtk.WIN_POS_CENTER)
-#        self.set_gravity(gtk.gdk.GRAVITY_STATIC)
-#        self.connect('delete-event', self.__close)
-#        self.connect('key-press-event', self.__on_key_press)
-#        self.connect('focus-in-event', self.__on_focus)
-#        self.connect('size-request', self.__size_request)
-
-
         self.container = HtmlView()
         self.setCentralWidget(self.container.view)
-#        self.container.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-#        self.container.page().linkClicked.connect(self.__action_request)
         self.container.action_request.connect(self.__action_request)
         self.container.link_request.connect(self.__link_request)
-
-#        self.container.connect('action-request', self.__action_request)
-#        self.container.connect('link-request', self.__link_request)
-#        self.add(self.container)
 
         # TODO: Improve the use of this mode
         self.mode = 0

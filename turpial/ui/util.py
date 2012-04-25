@@ -19,20 +19,11 @@ except ImportError, exc:
 INTERFACES = {}
 DEFAULT_INTERFACE = None
 
-# Load cmd
-try:
-    from turpial.ui.cmd.main import Main as _CMD
-    INTERFACES['cmd'] = _CMD
-    DEFAULT_INTERFACE = 'cmd'
-except ImportError, exc:
-    print 'Could not initialize CMD interface.'
-    print exc
-
 # Load gtk
 try:
     from turpial.ui.gtk.main import Main as _GTK
     INTERFACES['gtk'] = _GTK
-    DEFAULT_INTERFACE = 'gtk'
+    DEFAULT_INTERFACE = DEFAULT_INTERFACE or 'gtk'
 except ImportError, exc:
     print 'Could not initialize GTK interface.'
     print exc
@@ -41,15 +32,19 @@ except ImportError, exc:
 try:
     from turpial.ui.qt.main import Main as _QT
     INTERFACES['qt'] = _QT
-    DEFAULT_INTERFACE = 'qt'
-#except ImportError, exc:
-except IOError: 
+    DEFAULT_INTERFACE = DEFAULT_INTERFACE or 'qt'
+except ImportError, exc:
     print 'Could not initialize QT interface.'
+    print exc
+
+# Load cmd
+try:
+    from turpial.ui.cmd.main import Main as _CMD
+    INTERFACES['cmd'] = _CMD
+    DEFAULT_INTERFACE = DEFAULT_INTERFACE or 'cmd'
+except ImportError, exc:
+    print 'Could not initialize CMD interface.'
     print exc
 
 def available_interfaces():
     return ', '.join(INTERFACES.keys())
-
-def default_interface():
-    return INTERFACES['gtk','qt']
-

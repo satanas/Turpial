@@ -10,7 +10,7 @@ import time #quitar, solo aprendiendo pyinstaller
 import sys
 import logging
 
-from optparse import OptionParser
+from optparse import OptionParser, SUPPRESS_HELP
 
 class OptParser(OptionParser):
     def __init__(self):
@@ -68,30 +68,27 @@ if __name__ == "__mmain__":
 
 class Turpial:
     def __init__(self):
-        print str(sys.argv)
-        import ssl
-        #time.sleep(2)
-        print ssl.OPENSSL_VERSION
-        #parser = OptionParser()
         parser = OptParser()
         parser.add_option('-d', '--debug', dest='debug', action='store_true',
             help='show debug info in shell during execution', default=False)
         parser.add_option('-i', '--interface', dest='interface',
             help='select interface to use. Available: %s' % util.available_interfaces(),
-            default='qt')
+            default=util.DEFAULT_INTERFACE)
         parser.add_option('-c', '--clean', dest='clean', action='store_true',
             help='clean all bytecodes', default=False)
         parser.add_option('--version', dest='version', action='store_true',
             help='show the version of Turpial and exit', default=False)
-        parser.add_option('-p','--problem', dest='problem', action='store_true',
-            help='give you an important problem to solve', default=False)
-
+        parser.add_option('-s', dest='mac', action='store_true', default=False,
+            help=SUPPRESS_HELP)
 
         (options, args) = parser.parse_args()
         print "optiones",options
         print "args",args
 
-        self.core = Core()
+        if not options.mac and parser.failed:
+            parser.print_help()
+            sys.exit(-2)
+
         self.interface = options.interface
         self.version = "Turpial v%s with libturpial v%s" % (VERSION, LIBVERSION)
 
@@ -100,6 +97,8 @@ class Turpial:
         else:
             logging.basicConfig(level=logging.INFO)
         self.log = logging.getLogger('Controller')
+
+        self.core = Core()
 
         if options.clean:
             clean_bytecodes(__file__, self.log)
@@ -110,6 +109,7 @@ class Turpial:
             print "Python v%X" % sys.hexversion
             sys.exit(0)
 
+        # TODO: Override with any configurated value
         if options.interface in util.INTERFACES.keys():
             print "asignando valor a self.ui, ",options.interface
             self.ui = util.INTERFACES[options.interface](self.core)
@@ -129,6 +129,18 @@ class Turpial:
             self.log.debug('Intercepted Keyboard Interrupt')
             print "main_quit() principal"
             self.ui.main_quit()
+
+class OptParser(OptionParser):
+    def __init__(self):
+        OptionParser.__init__(self)
+        self.failed = False
+
+    def error(self, error):
+        print error
+        self.failed = True
+
+    def exit(self):
+        pass
 
 if __name__ == '__main__':
     t = Turpial()

@@ -25,7 +25,7 @@ class Turpial:
             help='show debug info in shell during execution', default=False)
         parser.add_option('-i', '--interface', dest='interface',
             help='select interface to use. Available: %s' % util.available_interfaces(),
-            default='gtk')
+            default=util.DEFAULT_INTERFACE)
         parser.add_option('-c', '--clean', dest='clean', action='store_true',
             help='clean all bytecodes', default=False)
         parser.add_option('--version', dest='version', action='store_true',
@@ -33,7 +33,6 @@ class Turpial:
 
         (options, args) = parser.parse_args()
 
-        self.core = Core()
         self.interface = options.interface
         self.version = "Turpial v%s with libturpial v%s" % (VERSION, LIBVERSION)
 
@@ -42,6 +41,8 @@ class Turpial:
         else:
             logging.basicConfig(level=logging.INFO)
         self.log = logging.getLogger('Controller')
+
+        self.core = Core()
 
         if options.clean:
             clean_bytecodes(__file__, self.log)
@@ -52,6 +53,7 @@ class Turpial:
             print "Python v%X" % sys.hexversion
             sys.exit(0)
 
+        # TODO: Override with any configurated value
         if options.interface in util.INTERFACES.keys():
             self.ui = util.INTERFACES[options.interface](self.core)
         else:

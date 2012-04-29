@@ -234,8 +234,8 @@ class AccountsDialog(gtk.Window):
         return False
 
     def done_delete(self):
-        self.update()
         self.__lock(False)
+        self.update()
 
     def status_message(self, message):
         if self.form:

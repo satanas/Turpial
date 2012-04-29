@@ -1,1 +1,1 @@
-VERSION = "1.7.6-a3"
+VERSION = "1.7.6-a4"

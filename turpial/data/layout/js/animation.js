@@ -48,7 +48,7 @@ var ani = {
 	},
 	license: {
 		type:	'top',
-		to:		-18800,
+		to:		-19000,
 		from:	0,
 		step:	-1,
 		delay:	20,

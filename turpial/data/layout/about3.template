@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>$fx - JavaScript animation library</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="javascript,animation,library" />
+	<meta name="description" content="Library for JavaScript animation. Just 3.7Kb" />
+		    <% stylesheets_impress %>
+		
+		        <% javascripts_impress %>
+		
+	
+</head>
+<body onload="startAnimation();">
+	<div id="wrapper">
+		<div id="content">
+			<span class="logo">
+				$fx()<sub>ver 0.1</sub>
+				<sup>3.7 Kb</sup>
+			</span>
+			<h1>JavaScript animation library</h1>
+			<p>
+				A compact, lightweight Javascript Library for animation.
+				<ul>
+					<li>CSS properties (and more!) adjustment along a time line</li>
+					<li>Parallel effect sets and effect chains</li>
+					<li>Extended set of callbacks to adjust behavior</li>
+					<li>Parallax Scrolling</li>
+					<li>Less than 4kb!</li>
+				</ul>
+			</p>
+			<a href="/download.php" class="menu download"><ins>Download</ins></a>
+			<a href="/manuals.php" class="menu docs"><ins>Manuals</ins></a>
+			<br/>
+			<form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="donateButt">
+				<input type="hidden" name="cmd" value="_s-xclick">
+				<input type="hidden" name="hosted_button_id" value="2377064">
+				<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="">
+				<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+			</form>
+		</div>
+		<div id="lines">
+	<span id="l1"></span>
+	<span id="l2"></span>
+	<span id="l3"></span>
+	<span id="l4"></span>
+	<span id="l5"></span>
+	<span id="l6"></span>
+	<span id="l7"></span>
+</div>		<div id="sun"></div>
+		<div id="cloud1"></div>
+		<div id="cloud2"></div>
+		<div id="cloud3"></div>
+		<div id="ground">
+			<div id="gross2"></div>
+			<div id="tree1"></div>
+			<div id="tree2"></div>
+			<div id="tree3"></div>
+			<div id="flowers"></div>
+			<div id="gross1"></div>
+		</div>
+	</div>
+	
+</body>
+</html>

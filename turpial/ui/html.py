@@ -35,7 +35,9 @@ I18N_PATTERN = re.compile('(<% \$(.*?) %>)')
 class HtmlParser:
     def __init__(self,*args):
         self.scripts = []
+        self.scripts_impress = []
         self.styles = []
+        self.styles_impress = []
         self.partials = {}
         self.arch = open("salida.html",'w')
 
@@ -67,8 +69,9 @@ class HtmlParser:
         return resource
 
     def __load_layout(self, res):
-        self.scripts = []
+        self.scripts_impress = []
         self.styles = []
+        self.styles_impress = []
         self.partials = {}
 
         self.app_layout = self.__open_template(res)
@@ -79,10 +82,21 @@ class HtmlParser:
             filepath = os.path.realpath(os.path.join(JS_LAYOUT_DIR, js + '.js'))
             self.scripts.append(filepath)
 
+        for js in ['animation', 'fx-m']:
+            filepath = os.path.realpath(os.path.join(JS_LAYOUT_DIR, js + '.js'))
+            self.scripts_impress.append(filepath)
+
         # Load default css
         for css in ['common', 'jquery.autocomplete']:
             filepath = os.path.realpath(os.path.join(CSS_LAYOUT_DIR, css + '.css'))
             self.styles.append(filepath)
+
+        # Load default css_impress
+        for css in ['general', 'index']:
+            filepath = os.path.realpath(os.path.join(CSS_LAYOUT_DIR, css + '.css'))
+            self.styles_impress.append(filepath)
+
+
 
         js_file = os.path.realpath(os.path.join(LAYOUT_DIR, 'js', res + '.js'))
         if os.path.isfile(js_file):
@@ -314,6 +328,17 @@ class HtmlParser:
         js_tags += '</script>'
         page = page.replace('<% javascripts %>', js_tags)
 
+        js_tags = '<script type="text/javascript">'
+        for js in self.scripts_impress:
+            fd = open(js, 'r')
+            resource = fd.read()
+            fd.close()
+            js_tags += resource + '\n'
+        js_tags += '</script>'
+        page = page.replace('<% javascripts_impress %>', js_tags)
+
+
+
         css_tags = '<style type="text/css">'
         for css in self.styles:
             fd = open(css, 'r')
@@ -322,6 +347,18 @@ class HtmlParser:
             css_tags += resource + '\n'
         css_tags += '</style>'
         page = page.replace('<% stylesheets %>', css_tags)
+
+
+        css_tags = '<style type="text/css">'
+        for css in self.styles_impress:
+            fd = open(css, 'r')
+            resource = fd.read()
+            fd.close()
+            css_tags += resource + '\n'
+        css_tags += '</style>'
+        page = page.replace('<% stylesheets_impress %>', css_tags)
+
+
 
         page = page.replace('<% query %>', self.__query_tag())
 
@@ -368,7 +405,7 @@ class HtmlParser:
         return self.__render()
 
     def about(self):
-        self.__load_layout('about')
+        self.__load_layout('about2')
         self.app_layout = self.app_layout.replace('<% VERSION  %>', VERSION)
         return self.__render()
 

@@ -1,0 +1,80 @@
+html {
+	height: 100%;
+}
+body {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	background: url('<% css_img "bg_background.png" %>') #fff repeat-x;
+	height: 100%;
+}
+
+a {
+	outline: none;
+}
+
+#lines {
+		height: 100%;
+	} 
+	#lines span{
+		display: block;
+		position: absolute;
+		top: 0;
+		height: 100%;
+	}
+		#l1 {
+			left: 0;
+			width: 110px;
+			background: #fff;
+			opacity: 0.1;
+			filter: alpha(opacity=10);
+		}
+		#l2 {
+			left: 25%;
+			width: 55px;
+			background: #769bd6;
+			opacity: 0.1;
+			filter: alpha(opacity=10);
+		}
+		#l3 {
+			left: 29%;
+			width: 10px;
+			background: #3177bc;
+			opacity: 0.1;
+			filter: alpha(opacity=10);
+		}
+		#l4 {
+			left: 33%;
+			width: 135px;
+			background: #5fb8e0;
+			opacity: 0.1;
+			filter: alpha(opacity=10);
+		}
+		#l5 {
+			right: 20%;
+			width: 90px;
+			background: #bdb8d8;
+			opacity: 0.3;
+			filter: alpha(opacity=30);
+		}
+		#l6 {
+			right: 24%;
+			width: 10px;
+			background: #5fb8e0;
+			opacity: 0.2;
+			filter: alpha(opacity=20);
+		}
+		#l7 {
+			right: 6%;
+			width: 140px;
+			background: #b9d2ea;
+			opacity: 0.4;
+			filter: alpha(opacity=40);
+		}
+#adv {
+	position: absolute;
+	left: 10px;
+	top: 10px;
+	width: 468px;
+	height: 15px;
+}

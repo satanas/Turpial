@@ -1,6 +1,6 @@
 include turpial/data/pixmaps/*
 include turpial/data/sounds/*
-include turpia/data/layout/*
+include turpial/data/layout/*
 include turpial.desktop
 include doc/*
 include ChangeLog

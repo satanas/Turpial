@@ -12,6 +12,17 @@ from turpial.ui.lang import i18n
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.waiting import CairoWaiting
 
+DELETE_COOKIES_SCRIPT = """
+function delete_cookies() {
+    var cookies = document.cookie.split(';');
+    for (var i=0; i<cookies.length; i++) {
+        var cookie = cookies[i];
+        console.log(cookie);
+    }
+}
+delete_cookies();
+"""
+
 class OAuthWindow(gtk.Window, gobject.GObject):
     __gsignals__ = {
         "response": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gobject.TYPE_STRING,)),
@@ -53,7 +64,9 @@ class OAuthWindow(gtk.Window, gobject.GObject):
 
         self.pin = gtk.Entry()
         cancel = gtk.Button(stock=gtk.STOCK_CANCEL)
+        cancel.set_size_request(80, 0)
         accept = gtk.Button(stock=gtk.STOCK_OK)
+        accept.set_size_request(80, 0)
 
         hbox = gtk.HBox(False, 0)
         hbox.pack_start(self.pin, True, True, 2)
@@ -65,6 +78,7 @@ class OAuthWindow(gtk.Window, gobject.GObject):
         vbox.pack_start(lblbox, False, False, 2)
         vbox.pack_start(hbox, False, False, 2)
 
+        self.pin.connect('activate', self.__accept)
         cancel.connect('clicked', self.__cancel)
         accept.connect('clicked', self.__accept)
 
@@ -92,6 +106,7 @@ class OAuthWindow(gtk.Window, gobject.GObject):
 
     def open(self, uri):
         print uri
+        self.view.execute(DELETE_COOKIES_SCRIPT);
         self.view.load(uri)
         self.show_all()
 

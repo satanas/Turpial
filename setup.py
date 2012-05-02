@@ -8,9 +8,6 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-from distutils.command.build import build as _build
-from babel.messages import frontend as babel
-
 from turpial import VERSION
 
 LONG_DESCRIPTION = """
@@ -27,15 +24,7 @@ data_files=[
     ('share/applications', ['turpial.desktop']),
     ('share/doc/turpial', ['ChangeLog', 'README.rst']),
 ]
-'''
-pattern = re.compile('turpial/i18n/')
-for root, dirs, files in os.walk(os.path.join('turpial', 'i18n')):
-    for filename in files:
-        if filename.endswith('.mo'):
-            fullpath = os.path.join(root, filename)
-            dest = os.path.join('/', 'usr', 'share', 'locale', re.sub(pattern, '', root))
-            data_files.append((dest, [fullpath]))
-'''
+
 setup(name="turpial",
       version=VERSION,
       description="A light, beautiful and functional microblogging client",
@@ -59,9 +48,8 @@ setup(name="turpial",
       ],
       packages=find_packages(),
       package_data={
-        'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/themes/default/*', 
-            'data/layout/*.template', 'data/layout/*.partial', 
-            'data/layout/js/*', 'data/layout/css/*']
+        'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/layout/*.template',
+        'data/layout/*.partial', 'data/layout/js/*', 'data/layout/css/*']
       },
       entry_points={
         'console_scripts': [

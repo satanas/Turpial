@@ -1,0 +1,616 @@
+;; -*- scheme -*-
+;; PyWebKitGtk - Python bindings to WebKit/GTK+
+;;
+;; Copyright (C) 2009  Jan Michael Alonzo <jmalonzo@gmail.com>
+;; 
+;; This library is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU Library General Public
+;; License as published by the Free Software Foundation; either
+;; version 2 of the License, or (at your option) any later version.
+;; 
+;; This library is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; Library General Public License for more details.
+;; 
+;; You should have received a copy of the GNU Library General Public
+;; License along with this library; if not, write to the Free Software
+;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+;;
+
+
+;; From <webkit/webkitwebview.h>
+
+(define-function webkit_web_view_new
+  (is-constructor-of "WebKitWebView")
+  (c-name "webkit_web_view_new")
+  (caller-owns-return #t)
+  (return-type "GtkWidget*")
+)
+
+(define-method set_maintains_back_forward_list
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_set_maintains_back_forward_list")
+  (parameters
+   '("gboolean" "flag")
+   )
+)
+
+(define-method get_back_forward_list
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_get_back_forward_list")
+  (return-type "WebKitWebBackForwardList*")
+)
+
+(define-method go_to_back_forward_item
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_go_to_back_forward_item")
+  (return-type "gboolean")
+  (parameters
+   '("WebKitWebHistoryItem*" "item")
+   )
+)
+
+(define-method can_go_back
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_can_go_back")
+  (return-type "gboolean")
+)
+
+(define-method can_go_forward
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_can_go_forward")
+  (return-type "gboolean")
+)
+
+(define-method go_back
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_go_back")
+  (return-type "none")
+)
+
+(define-method go_forward
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_go_forward")
+  (return-type "none")
+)
+
+(define-method go_back_or_forward
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_go_back_or_forward")
+  (return-type "none")
+  (parameters
+   '("gint" "steps")
+   )
+)
+
+(define-method stop_loading
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_stop_loading")
+  (return-type "none")
+)
+
+(define-method open
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_open")
+  (return-type "none")
+  (parameters
+   '("const-gchar*" "uri")
+  )
+)
+
+(define-method reload
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_reload")
+  (return-type "none")
+)
+
+(define-method load_html_string
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_load_html_string")
+  (return-type "none")
+  (parameters
+   '("const-gchar*" "content")
+   '("const-gchar*" "base_uri")
+   )
+)
+
+(define-method load_string
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_load_string")
+  (return-type "none")
+  (parameters
+   '("const-gchar*" "content")
+   '("const-gchar*" "content_mimetype")
+   '("const-gchar*" "content_encoding")
+   '("const-gchar*" "base_uri")
+   )
+)
+
+(define-method get_main_frame
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_get_main_frame")
+  (return-type "WebKitWebFrame*")
+)
+
+(define-method get_focused_frame
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_get_focused_frame")
+  (return-type "WebKitWebFrame*")
+)
+
+(define-method execute_script
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_execute_script")
+  (return-type "none")
+  (parameters
+   '("const-gchar*" "script")
+   )
+)
+
+(define-method get_editable
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_get_editable")
+  (return-type "gboolean")
+)
+
+(define-method set_editable
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_set_editable")
+  (return-type "none")
+  (parameters
+   '("gboolean" "flag")
+   )
+)
+
+(define-method search_text
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_search_text")
+  (return-type "gboolean")
+  (parameters
+   ("const-gchar*" "string")
+   ("gboolean" "case_sensitive")
+   ("gboolean" "forward")
+   ("gboolean" "wrap")
+   )
+)
+
+(define-method mark_text_matches
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_mark_text_matches")
+  (return-type "guint")
+  (parameters
+   ("const-gchar*" "string")
+   ("gboolean" "case_sensitive")
+   ("guint" "limit")
+   )
+)
+
+(define-method unmark_text_matches
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_unmark_text_matches")
+  (return-type "none")
+)
+
+(define-method set_highlight_text_matches
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_set_highlight_text_matches")
+  (return-type "none")
+  (parameters
+   ("gboolean" "highlight")
+   )
+)
+
+(define-method can_cut_clipboard
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_can_cut_clipboard")
+  (return-type "gboolean")
+)
+
+(define-method can_copy_clipboard
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_can_copy_clipboard")
+  (return-type "gboolean")
+)
+
+(define-method can_paste_clipboard
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_can_paste_clipboard")
+  (return-type "gboolean")
+)
+
+(define-method copy_clipboard
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_copy_clipboard")
+  (return-type "none")
+)
+
+(define-method cut_clipboard
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_cut_clipboard")
+  (return-type "none")
+)
+
+(define-method paste_clipboard
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_paste_clipboard")
+  (return-type "none")
+)
+
+(define-method delete_selection
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_delete_selection")
+  (return-type "none")
+)
+
+(define-method has_selection
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_has_selection")
+  (return-type "gboolean")
+)
+
+(define-method select_all
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_select_all")
+  (return-type "none")
+)
+
+(define-method get_copy_target_list
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_get_copy_target_list")
+  (return-type "GtkTargetList*")
+)
+
+(define-method get_paste_target_list
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_get_paste_target_list")
+  (return-type "GtkTargetList*")
+)
+
+(define-method set_settings
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_set_settings")
+  (return-type "none")
+  (parameters
+   '("WebKitWebSettings" "settings")
+   )
+)
+
+(define-method get_settings
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_get_settings")
+  (return-type "WebKitWebSettings*")
+)
+
+(define-method get_transparent
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_get_transparent")
+  (return-type "gboolean")
+)
+
+(define-method set_transparent
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_set_transparent")
+  (return-type "none")
+  (parameters
+   '("gboolean" "flag")
+   )
+)
+
+(define-method get_zoom_level
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_get_zoom_level")
+  (return-type "gfloat")
+)
+
+(define-method set_zoom_level
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_set_zoom_level")
+  (return-type "none")
+  (parameters
+   '("gfloat" "zoom_level")
+   )
+)
+
+(define-method zoom_in
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_zoom_in")
+  (return-type "none")
+)
+
+(define-method zoom_out
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_zoom_out")
+  (return-type "none")
+)
+
+(define-method get_full_content_zoom
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_get_full_content_zoom")
+  (return-type "gboolean")
+)
+
+(define-method set_full_content_zoom
+  (of-object "WebKitWebView")
+  (c-name "webkit_web_view_set_full_content_zoom")
+  (return-type "none")
+  (parameters
+   '("gboolean" "full_content_zoom")
+   )
+)
+
+;; From <webkit/webkitwebframe.h>
+
+(define-method get_web_view
+  (of-object "WebKitWebFrame")
+  (c-name "webkit_web_frame_get_web_view")
+  (return-type "WebKitWebView*")
+)
+
+(define-method get_name
+  (of-object "WebKitWebFrame")
+  (c-name "webkit_web_frame_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_title
+  (of-object "WebKitWebFrame")
+  (c-name "webkit_web_frame_get_title")
+  (return-type "const-gchar*")
+)
+
+(define-method get_uri
+  (of-object "WebKitWebFrame")
+  (c-name "webkit_web_frame_get_uri")
+  (return-type "const-gchar*")
+)
+
+(define-method get_parent
+  (of-object "WebKitWebFrame")
+  (c-name "webkit_web_frame_get_parent")
+  (return-type "WebKitWebFrame*")
+)
+
+(define-method load_request
+  (of-object "WebKitWebFrame")
+  (c-name "webkit_web_frame_load_request")
+  (return-type "none")
+  (parameters
+   '("WebKitNetworkRequest*" "request")
+   )
+)
+
+(define-method stop_loading
+  (of-object "WebKitWebFrame")
+  (c-name "webkit_web_frame_stop_loading")
+  (return-type "none")
+)
+
+(define-method reload
+  (of-object "WebKitWebFrame")
+  (c-name "webkit_web_frame_reload")
+  (return-type "none")
+)
+
+(define-method find_frame
+  (of-object "WebKitWebFrame")
+  (c-name "webkit_web_frame_find_frame")
+  (caller-owns-return #f)
+  (return-type "WebKitWebFrame*")
+  (parameters
+   '("const-gchar*" "name")
+   )
+)
+
+(define-method get_global_context
+  (of-object "WebKitWebFrame")
+  (c-name "webkit_web_frame_get_global_context")
+  (return-type "JSGlobalContextRef")
+)
+
+;; From <webkit/webkitknetworkrequest.h>
+
+(define-function webkit_network_request_new
+  (is-constructor-of "WebKitNetworkRequest")
+  (c-name "webkit_network_request_new")
+  (caller-owns-return #t)
+  (return-type "WebKitNetworkRequest*") 
+  (properties
+   '("uri" (argname "uri"))
+   )
+)
+
+(define-method set_uri
+  (of-object "WebKitNetworkRequest")
+  (c-name "webkit_network_request_set_uri")
+  (return-type "none")
+  (parameters
+   '("const-gchar*" "uri")
+   )
+)
+
+(define-method get_uri
+  (of-object "WebKitNetworkRequest")
+  (c-name "webkit_network_request_get_uri")
+  (return-type "const-gchar*")
+)
+
+
+;; From <webkit/webkitwebhistoryitem.h>
+
+(define-function webkit_web_history_item_new
+  (is-constructor-of "WebKitWebHistoryItem")
+  (c-name "webkit_web_history_item_new")
+  (caller-owns-return #t)
+  (return-type "WebKitWebHistoryItem*")
+  (properties
+   '("uri" (argname "uri"))
+   '("title" (argname "title"))
+   )
+)
+
+(define-method get_title
+  (of-object "WebKitWebHistoryItem")
+  (c-name "webkit_web_history_item_get_title")
+  (return-type "const-gchar*")
+)
+
+(define-method get_alternate_title
+  (of-object "WebKitWebHistoryItem")
+  (c-name "webkit_web_history_item_get_alternate_title")
+  (return-type "const-gchar*")
+)
+
+(define-method set_alternate_title
+  (of-object "WebKitWebHistoryItem")
+  (c-name "webkit_web_history_item_set_alternate_title")
+  (parameters
+   '("const-gchar*" "title")
+   )
+)
+
+(define-method get_uri
+  (of-object "WebKitWebHistoryItem")
+  (c-name "webkit_web_history_item_get_uri")
+  (return-type "const-gchar*")
+)
+
+(define-method get_original_uri
+  (of-object "WebKitWebHistoryItem")
+  (c-name "webkit_web_history_item_get_original_uri")
+  (return-type "const-gchar*")
+)
+
+(define-method get_last_visited_time
+  (of-object "WebKitWebHistoryItem")
+  (c-name "webkit_web_history_item_get_last_visited_time")
+  (return-type "gdouble")
+)
+
+
+;; From <webkit/webkitwebbackforwardlist.h>
+
+(define-function webkit_web_back_forward_list_new_with_web_view
+  (is-constructor-of "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_new_with_web_view")
+  (caller-owns-return #t)
+  (return-type "WebKitWebHistoryItem*")
+)
+
+(define-method go_forward
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_go_forward")
+  (return-type "none")
+)
+
+(define-method go_back
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_go_back")
+  (return-type "none")
+)
+
+(define-method contains_item
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_contains_item")
+  (return-type "gboolean")
+  (parameters
+   '("WebKitWebHistoryItem*" "history_item")
+   )
+)
+
+(define-method go_to_item
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_go_to_item")
+  (return-type "none")
+  (parameters
+   '("WebKitWebHistoryItem*" "history_item")
+   )
+)
+
+(define-method get_forward_list_with_limit
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_get_forward_list_with_limit")
+  (return-type "GList*")
+  (parameters
+   '("gint" "limit")
+   )
+)
+
+(define-method get_back_list_with_limit
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_get_back_list_with_limit")
+  (return-type "GList*")
+  (parameters
+   '("gint" "limit")
+   )
+)
+
+(define-method get_back_item
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_get_back_item")
+  (return-type "WebKitWebHistoryItem*")
+)
+
+(define-method get_current_item
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_get_current_item")
+  (return-type "WebKitWebHistoryItem*")
+)
+
+(define-method get_forward_item
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_get_forward_item")
+  (return-type "WebKitWebHistoryItem*")
+)
+
+(define-method get_nth_item
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_get_nth_item")
+  (return-type "WebKitWebHistoryItem*")
+  (parameters
+   '("gint" "index")
+   )
+)
+
+(define-method get_back_length
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_get_back_length")
+  (return-type "gint")
+)
+
+(define-method get_forward_length
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_get_forward_length")
+  (return-type "gint")
+)
+
+(define-method get_limit
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_get_limit")
+  (return-type "gint")
+)
+
+(define-method set_limit
+  (of-object "WebKitWebBackForwardList")
+  (c-name "webkit_web_back_forward_list_set_limit")
+  (return-type "none")
+  (parameters
+   '("gint" "limit")
+   )
+)
+
+;; From <webkit/webkitwebsettings.h>
+
+(define-function webkit_web_settings_new
+  (is-constructor-of "WebKitWebSettings")
+  (c-name "webkit_web_settings_new")
+  (caller-owns-return #t)
+  (return-type "WebKitWebSettings*")
+)
+
+(define-method copy
+  (of-object "WebKitWebSettings")
+  (c-name "webkit_web_settings_copy")
+  (caller-owns-return #f)
+  (return-type "WebKitWebSettings*")
+)

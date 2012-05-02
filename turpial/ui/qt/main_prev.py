@@ -1,149 +1,167 @@
 # -*- coding: utf-8 -*-
 
-# GTK main view for Turpial
+# PyQT main view for Turpial
 #
-# Author: Wil Alvarez (aka Satanas)
-# Sep 03, 2011
+# Author:  Carlos Guerrero (aka guerrerocarlos)
+# Started: Sep 11, 2011
 
 import os
-import sys
-import base64
-import urllib
-import logging
-
-# PyQt4 Support:
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtWebKit import *
-from PyQt4.QtCore import pyqtSignal
+import sys
+import Queue
+import logging
+import threading
 
-from xml.sax.saxutils import unescape
-
-from libturpial.common import *
-
-from turpial.ui.base import *
 from turpial.ui.lang import i18n
-from turpial.ui.sound import Sound
 from turpial.ui.html import HtmlParser
-
-from turpial.singleton import Singleton
-from turpial.ui.qt.worker import Worker
+#from turpial.ui.gtk.about import About
 from turpial.ui.qt.htmlview import HtmlView
-from turpial.ui.qt.oauthwin import OAuthWindow
-from turpial.ui.qt.accounts import AccountsDialog
+from turpial.ui.qt.accounts import Accounts 
+#from turpial.ui.gtk.dialogs.credentials import CredentialsDialog
 
-# TODO: Improve all splits for accounts_id with a common function
+#gtk.gdk.set_program_class("Turpial")
+#gtk.gdk.threads_init()
 
-def aja():
-        print "yay!"
+log = logging.getLogger('Qt')
 
-class TimerExecution(object):
-    def __init__(self,function,arg):
-        self.function = function
-        self.arg = arg
+class Main(QtGui.QMainWindow):
 
-    def execute(self):
-        self.function(self.arg)
-        return True
-
-
-class function_caller(object):
-    def __init__(self,func,arg):
-        print "inicializando",func,arg
-        self.func = func
-        self.arg = arg
-
-    def call(self):
-        print "ejecutando call"
-        self.func(self.arg)
-
-class function_caller2(object):
-    def __init__(self,func,arg1,arg2):
-        print "inicializando caller2",func,arg1,arg2
-        self.func = func
-        self.arg1 = arg1
-        self.arg2 = arg1
-
-    def call(self):
-        print "ejecutando call"
-        self.func(self.arg1,self.arg2)
-
-
-
-class Main(Base, Singleton, QtGui.QMainWindow):
-
-    emitter = pyqtSignal(list)
+    def changeLocation(self):
+        url = QtCore.QUrl.fromUserInput(self.locationEdit.text())
+        self.webView.load(url)
+        self.webView.setFocus()
+ 
 
     def __init__(self, core):
-        Singleton.__init__(self)
-        Base.__init__(self, core)
+        
         import sys
         self.app = QtGui.QApplication(sys.argv)
-        QtGui.QMainWindow.__init__(self)
+        super(Main, self).__init__()
+        self.core = core
 
-        self.log = logging.getLogger('Qt')
         self.htmlparser = HtmlParser()
-        self.setWindowTitle('Turpial')
-
-        columns = self.get_all_columns()
-
         self.resize(310, 480)
-        self.container = HtmlView()
-        self.setCentralWidget(self.container.view)
-        self.container.action_request.connect(self.__action_request)
-        self.container.link_request.connect(self.__link_request)
+        self.setWindowTitle("Turpial")
+        self.container = HtmlView(self)
 
-        # TODO: Improve the use of this mode
+
+        self.setCentralWidget(self.container)
+#        self.container.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+#        self.container.page().linkClicked.connect(self.__link_request)
+#        self.container.page().linkClicked.connect(self.__link_request)
+
+
         self.mode = 0
-
-#        self.screen_width = self.get_screen().get_width()
-        self.screen_width = 310 
-        self.max_columns = self.screen_width / MIN_WINDOW_WIDTH
-
+        
         # Configuration
         self.showed = True
         self.minimize = 'on'
+        self.version = '2.x'
 
-        self.timers = {}
-        self.newtimers = [] 
-        self.alltimers = []
-        self.updating = {}
-        self.columns = {}
-
-#        self.sound = Sound()
-#        self.notify = Notification()
-
-        self.openstatuses = {}
-
-        self.worker = Worker(self.emitter)
-        self.emitter.connect(self.__timeout_callback)
-        self.worker.start()
-
-        # Persistent dialogs
-        self.accountsdlg = AccountsDialog(self)
-        self.accountsdlg.update()
+        self.worker = Worker()
+        #self.worker.start()
+        self.accounts = Accounts(self)
 
         self.show()
+        
+    def main_loop(self):
+        self.app.exec_()
+    
+    def show_main(self):
+        page = self.htmlparser.main([], []) #['satanas82-twitter-timeline', 'satanas-identica-timeline'])
+        self.container.render(page)
 
-    def __size_request(self, widget, rectangle):
-        width = rectangle.width
-        columns = len(self.core.all_registered_columns())
-        preferred_width = MIN_WINDOW_WIDTH * columns
-        if width < preferred_width:
-            width = preferred_width
-        self.save_window_geometry(width, rectangle.height)
+    def __action_request(self, url):
+        url = str(url)
+        
+        action = url.split(':')[1]
+        try:
+            args = url.split(':')[1].split('-%&%-')
+        except IndexError:
+            args = []
+        print url
 
+        print "action: ",action
+        
+        if action == '//about':
+            self.show_about()
+        elif action == '//settings':
+            self.container.execute("alert('hola');")
+        elif action == '//accounts':
+            self.accounts.show_all(self.core.all_accounts())
+        elif action == '//login':
+            acc_login = []
+            for acc in self.core.all_accounts():
+                if acc.id_ in args:
+                    acc.activate(True)
+                    if not acc.is_remembered():
+                        gtk.gdk.threads_enter()
+                        dialog = CredentialsDialog(self, acc.id_)
+                        response = dialog.run()
+                        passwd = dialog.password.get_text()
+                        rem = dialog.remember.get_active()
+                        dialog.destroy()
+                        gtk.gdk.threads_leave()
+                        if response == gtk.RESPONSE_ACCEPT:
+                            acc.update(passwd, rem)
+                            acc_login.append(acc)
+                    else:
+                        acc_login.append(acc)
+                else:
+                    acc.activate(False)
+            
+            # If there is no accounts then cancel_login
+            if len(acc_login) == 0:
+                msg = i18n.get('login_cancelled')
+                self.container.execute("cancel_login('" + msg + "');")
+                return
+            
+            # show main
+            for acc in acc_login:
+                #self.core.login(acc.id_)
+                self.worker.register(self.core.login, (acc.id_), self.__test)
+
+    
+    def __test(self, arg):
+        print 'resp', arg, arg.code, arg.errmsg, arg.items
+        
+        if arg.code > 0:
+            #msg = i18n.get(rtn.errmsg)
+            msg = arg.errmsg
+            self.container.execute("cancel_login('" + msg + "');")
+            return
+        
+        auth_obj = arg.items
+        if auth_obj.must_auth():
+            print "Please visit %s, authorize Turpial and type the pin returned" % auth_obj.url
+            #pin = self.__user_input('Pin: ')
+            #self.core.authorize_oauth_token(acc, pin)
+        
+        self.worker.register(self.core.auth, (auth_obj.account), self.__test2)        
+            
+    def __test2(self, arg):
+        if arg.code > 0:
+            msg = arg.errmsg
+            self.container.execute("cancel_login('" + msg + "');")
+            return
+        else:
+            print 'Logged in with account %s' % arg.items.id_.split('-')[0]
+    
     def __link_request(self, url):
-        self.open_url(url.toString())
+        print 'requested link: %s' % url
+        self.__action_request(url.toString())
+        
     def __create_trayicon(self):
         if gtk.check_version(2, 10, 0) is not None:
-            self.log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
+            log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
             return
-        self.tray = gtk.tusIcon()
+        self.tray = gtk.StatusIcon()
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
         self.tray.set_tooltip('Turpial')
         self.tray.connect("activate", self.__on_trayicon_click)
         self.tray.connect("popup-menu", self.__show_tray_menu)
-
+        
     def __on_trayicon_click(self, widget):
         if self.showed:
             self.showed = False
@@ -151,29 +169,17 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         else:
             self.showed = True
             self.show()
-
-    def __on_main_indicator_clicked(self, indicator):
-        self.showed = True
-        self.show()
-        self.present()
-
-    def __on_indicator_clicked(self, indicator, data):
-        self.indicator.clean()
-        self.__on_main_indicator_clicked(indicator)
-
+            
     def __on_focus(self, widget, event):
-        self.set_urgency_hint(False)
-        self.unitylauncher.set_count_visible(False)
-        self.unitylauncher.set_count(0)
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
-
+    
     def __on_key_press(self, widget, event):
         keyname = gtk.gdk.keyval_name(event.keyval)
         if (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'n':
             self.show_update_box()
             return True
         return False
-
+        
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
         tweet = gtk.MenuItem(i18n.get('tweet'))
@@ -184,286 +190,47 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             menu.append(follow)
             menu.append(gtk.SeparatorMenuItem())
         menu.append(exit_)
-
+        
         exit_.connect('activate', self.main_quit)
         #tweet.connect('activate', self.__show_update_box_from_menu)
         #follow.connect('activate', self.__show_follow_box_from_menu)
-
+        
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
-
-    def __show_add_column_menu(self):
-        self.menu = QtGui.QMenu("yay") 
-
-        #empty = True
-        twitter_public_acc = None
-        identica_public_acc = None
-        accounts = self.get_all_accounts()
-        columns = self.get_all_columns()
-        reg_columns = self.get_registered_columns()
-        self.functions = []
-        self.temps = []
-
-        for acc in accounts:
-            if acc.protocol_id == 'twitter' and twitter_public_acc is None:
-                twitter_public_acc = acc.id_
-            if acc.protocol_id == 'identica' and identica_public_acc is None:
-                identica_public_acc = acc.id_
-            name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
-
-            self.temp = QtGui.QMenu(name)
-            self.temps.append(self.temp)
-
-            if acc.logged_in:
-                temp_menu = QtGui.QMenu()
-                for key, col in columns[acc.id_].iteritems():
-                    f = function_caller(self.__add_column,col.build_id())
-                    self.functions.append(f)
-                    self.temp.addAction(key,self.functions[-1].call)
-            else:
-                pass
-            self.menu.addMenu(self.temps[-1])
-            empty = False
-
-        self.public_tl = QtGui.QMenu(i18n.get('public_timeline'))
-        self.public_tl_menu = QtGui.QMenu("menu")
-
-        if twitter_public_acc:
-            public_acc = twitter_public_acc + '-public'
-            self.public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
-
-        if identica_public_acc:
-            public_acc = identica_public_acc + '-public'
-            self.public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
-
-
-        self.public_tl.addMenu(self.public_tl_menu)
-
-        self.menu.addMenu(self.public_tl)
-        self.menu.popup(QtGui.QCursor.pos())
-
-    def __add_column(self,column_id):
-        return self.save_column(column_id)
-
-    def __close(self, widget, event=None):
-        if self.core.minimize_on_close():
+        
+    def __close(self, event=None):
+        if self.minimize == 'on':
             self.showed = False
             self.hide()
         else:
-            self.main_quit(widget)
+            self.main_quit()
+            sys.exit(0)
         return True
-
-    def __timeout_callback(self, l):
-        funct, arg, user_data = l
-        if user_data:
-            funct(arg,user_data)
-            pass
-        else:
-            funct(arg)
-            pass
-
-    def __login_callback(self, arg, account_id):
-        if arg.code > 0:
-            msg = arg.errmsg
-            self.show_notice(msg, 'error')
-            self.accountsdlg.cancel_login(msg)
-            return
-
-        auth_obj = arg.items
-        if auth_obj.must_auth():
-            self.accountsdlg.show()
-            self.accountsdlg.set_account_id(account_id)
-            self.accountsdlg.show_auth_win(auth_obj.url)
-        else:
-            self.__auth_callback(arg, account_id, False)
-
-    def _AccountsDialog__oauth_callback(self, verifier, account_id):
-        self.__oauth_callback(verifier,account_id)
-
-    def __oauth_callback(self, verifier, account_id):
-        self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
-
-    def __cancel_callback(self, widget, reason, account_id):
-        self.delete_account(account_id)
-        self.accountsdlg.cancel_login(i18n.get(reason))
-
-    def __auth_callback(self, arg, account_id, register = True):
-        if arg.code > 0:
-            msg = arg.errmsg
-            self.show_notice(msg, 'error')
-            self.accountsdlg.cancel_login(msg)
-        else:
-            self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
-
-    def __done_callback(self, arg, userdata):
-        (account_id, register) = userdata
-
-        if arg.code > 0:
-            self.core.change_login_status(account_id, LoginStatus.NONE)
-            msg = arg.errmsg
-            self.accountsdlg.cancel_login(msg)
-            self.show_notice(msg, 'error')
-        else:
-            if register:
-                account_id = self.core.name_as_id(account_id)
-
-            self.accountsdlg.done_login()
-            self.accountsdlg.update()
-
-            response = self.core.get_own_profile(account_id)
-            if response.code > 0:
-                self.show_notice(response.errmsg, 'error')
-            else:
-                pass
-
-            for col in self.get_registered_columns():
-                if col.account_id == account_id:
-                    self.download_stream(col, True)
-                    self.__add_timer(col)
-
-
-
-    def __add_timer(self, column):
-        interval = self.core.get_update_interval()
-        self.log.debug('--Creating timer for %s every %i min' % (column.id_, interval))
-        self.timer = TimerExecution(self.download_stream,column) 
-        self.ctimer = QtCore.QTimer()
-        self.newtimers.append(self.timer)
-        self.ctimer.timeout.connect(self.newtimers[-1].execute)
-        self.ctimer.start(int(interval*1000*60))
-        self.alltimers.append(self.ctimer)
-
-        self.log.debug('--Created timer for %s every %i min (%f) msec' % (column.id_, interval,interval*1000*60))
-
-    def __remove_timer(self, column_id):
-        if self.timers.has_key(column_id):
-            self.log.debug('--Removed timer for %s' % column_id)
-
-    def __action_request(self, url):
-        action, args = self.htmlparser.parse_command(url)
-        new = []
-        for each in args:
-            new.append(str(each))
-        args = new
-
-        if action == 'about':
-            self.show_about()
-        elif action == 'preferences':
-            self.show_preferences()
-        elif action == 'accounts_manager':
-            self.accountsdlg.show()
-        elif action == 'add_column':
-            self.__show_add_column_menu2()
-        elif action == 'update_column':
-            self.refresh_column(args[0])
-        elif action == 'columns_menu':
-            self.__show_add_column_menu()
-        elif action == 'delete_column':
-            self.delete_column(args[0])
-        elif action == 'profiles_menu':
-            self.__show_profile_menu()
-        elif action == 'repeat_status':
-            self.repeat_status(args[0], args[1])
-        elif action == 'unrepeat_status':
-            self.unrepeat_status(args[0], args[1])
-        elif action == 'fav_status':
-            self.fav_status(args[0], args[1])
-        elif action == 'unfav_status':
-            self.unfav_status(args[0], args[1])
-        elif action == 'update_status':
-            self.update_status(str(args[0]), str(args[1]))
-        elif action == 'reply_status':
-            self.reply_status(args[0], args[1], args[2])
-        elif action == 'delete_status':
-            self.delete_status(args[0], args[1])
-        elif action == 'show_profile':
-            self.show_profile(args[0], args[1])
-        elif action == 'report_spam':
-            self.report_spam(args[0], args[1])
-        elif action == 'block':
-            self.block(args[0], args[1])
-        elif action == 'follow':
-            self.follow(args[0], args[1])
-        elif action == 'unfollow':
-            self.unfollow(args[0], args[1])
-        elif action == 'mute':
-            self.mute(args[0])
-        elif action == 'unmute':
-            self.unmute(args[0])
-        elif action == 'load_friends':
-            self.load_friends()
-        elif action == 'showreply':
-            self.showreply(args[0], args[1], args[2])
-        elif action == 'show_conversation':
-            self.show_conversation(args[0], args[1])
-        elif action == 'hide_conversation':
-            self.hide_conversation(args[0])
-        elif action == 'short_urls':
-            self.short_urls(args[0])
-        elif action == 'direct_message':
-            self.direct_message(args[0], args[1], args[2])
-        elif action == 'profile_image':
-            self.profile_image(args[0], args[1])
-        elif action == 'show_media':
-            self.show_media(args[0].replace("$", ":"), args[1])
-        elif action == 'delete_direct':
-            self.delete_direct(args[0], args[1])
-        elif action == 'turpial_all':
-            self.get_turpial_all()
-
-    def get_protocols_list(self):
-        return self.core.list_protocols()
-
-    def get_all_accounts(self):
-        return self.core.all_accounts()
-
-    def get_accounts_list(self):
-        return self.core.list_accounts()
-
-    def get_all_columns(self):
-        return self.core.all_columns()
-
-    def get_registered_columns(self):
-        return self.core.all_registered_columns()
-
-    def load_image(self, path, pixbuf=False):
-        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            '..', '..', 'data', 'pixmaps', path))
-        pix = gtk.gdk.pixbuf_new_from_file(img_path)
-        if pixbuf:
-            return pix
-        avatar = gtk.Image()
-        avatar.set_from_pixbuf(pix)
-        del pix
-        return avatar
-
-    def main_quit(self, widget=None, force=False):
-        self.log.debug('Exiting...')
+        
+    def main_quit(self, widget=None):
+        self.log.debug('Exit')
         self.destroy()
         self.tray = None
         self.worker.quit()
         self.worker.join()
         if widget:
             gtk.main_quit()
-        if force:
+        sys.exit(0)
+        
+    def main_loop_prev(self):
+        try:
+            gtk.gdk.threads_enter()
+            gtk.main()
+            gtk.gdk.threads_leave()
+        except Exception:
             sys.exit(0)
-
-    def main_loop(self):
-        self.app.exec_()
-        self.app.quit()
-
-    def show_main(self):
-        reg_columns = self.get_registered_columns()
-        if len(reg_columns) == 0:
-            page = self.htmlparser.empty()
-        else:
-            page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
+    
+    def show_login(self):
+        page = self.htmlparser.login(self.core.all_accounts())
         self.container.render(page)
-        self.login()
-
+        
     def show_about(self):
-        self.accountsdlg.show()
-        self.accountsdlg.show_about_win()
+        about = About(self)
 
     def show_preferences(self):
         pref = Preferences(self)
@@ -473,6 +240,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.container.execute(cmd)
 
     def login(self):
+        if self.core.play_sounds_in_notification():
+            self.sound.login()
+
         for acc in self.get_accounts_list():
             self.single_login(acc)
 
@@ -480,7 +250,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.core.change_login_status(acc, LoginStatus.IN_PROGRESS)
         self.accountsdlg.update()
         self.worker.register(self.core.login, (acc), self.__login_callback, acc)
-
 
     def delete_account(self, account_id):
         reg_columns = self.get_registered_columns()
@@ -494,23 +263,17 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         if username == "" or username == None:
             username = "%s" % len(self.core.all_accounts());
         account_id = self.core.register_account(username, protocol_id, password)
-        self.account_id = account_id
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
 
     def save_column(self, column_id):
         column = self.core.register_column(column_id)
         reg_columns = self.get_registered_columns()
-        local_var = self.core.all_registered_columns()
-        num = len(local_var)
-
         if len(reg_columns) == 1:
             page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
             self.container.render(page)
         else:
-            self.resize(300*num,480)
             content = self.htmlparser.render_column(column)
             self.container.append_element('#content', content, 'add_column();')
-
         self.download_stream(column)
         self.__add_timer(column)
 
@@ -658,37 +421,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.worker.register(self.core.get_profile_image, (account, user),
             self.profile_image_response)
 
-    def __show_profile_menu(self):
-        self.menu = QtGui.QMenu()
-        accounts = self.get_all_accounts()
-        twitter_acc = None
-        identica_acc = None
-        self.profiles_functions = []
-
-        for acc in accounts:
-            if acc.protocol_id == 'twitter' and twitter_acc is None:
-                twitter_acc = acc.id_
-            if acc.protocol_id == 'identica' and identica_acc is None:
-                identica_acc = acc.id_
-            name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
-            self.profiles_functions.append(function_caller2(self.show_profile,acc.id_,acc.username))
-            self.menu.addAction(name,self.profiles_functions[-1].call)
-
-        self.search = QtGui.QMenu("search")
-
-        self.profiles_functions.append(function_caller(self.search_profile,twitter_acc))
-        self.search.addAction(i18n.get('twitter'),self.profiles_functions[-1].call)
-
-        self.profiles_functions.append(function_caller(self.search_profile,identica_acc))
-        self.search.addAction(i18n.get('identica'),self.profiles_functions[-1].call)
-
-        self.menu.addMenu(self.search)
-        self.menu.popup(QtGui.QCursor.pos())
-
-    def search_profile(self, acc_id):
-        cmd = "show_autocomplete_for_profile('%s')" % acc_id
-        self.container.execute(cmd)
-
     def show_media(self, url, account_id): 
         cmd = "show_imageview();"
         self.container.execute(cmd)
@@ -733,6 +465,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
                 cmd += 'append_status_to_timeline("%s", "%s");' % (resp.account_id, html_status)
                 good_acc.append(resp.account_id)
                 column_key = '%s-timeline' % resp.account_id
+                #if self.columns.has_key(column_key):
+                #    self.columns[column_key].append(resp.items)
 
         if error:
             errmsg = i18n.get('error_posting_to') % (', '.join(bad_acc))
@@ -913,6 +647,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         else:
             new_msg = response.items.replace('"', '\\"')
             cmd = 'set_update_box_message("' + new_msg + '");'
+            print cmd
         self.container.execute(cmd)
 
     def direct_message_response(self, response):
@@ -955,10 +690,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
     # ------------------------------------------------------------
 
     def download_stream(self, column, notif=True):
-        for each in self.alltimers:
-            print each, each.isActive()
-
-
         if self.updating.has_key(column.id_):
             if self.updating[column.id_]:
                 return True
@@ -973,8 +704,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.worker.register(self.core.get_column_statuses, (column.account_id,
             column.column_name, num_statuses), self.update_column, 
             (column, notif, num_statuses))
-#        rtn = self.core.get_column_statuses(column.account_id,column.column_name,num_statuses)
-#        self.update_column(rtn, (column, notif, num_statuses))
         return True
 
     def refresh_column(self, column_id):
@@ -998,7 +727,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         # Notifications
         # FIX: Do not store an array with statuses objects, find a way to store
         # maybe just ids
-        '''
         count = self.get_new_statuses(self.columns[column.id_], arg.items)
         if count != 0:
             if notif and self.core.show_notifications_in_updates():
@@ -1011,7 +739,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
                 self.unitylauncher.set_count_visible(True)
             else:
                 self.unitylauncher.set_count_visible(False)
-        '''
         self.columns[column.id_] = arg.items
         self.updating[column.id_] = False
 

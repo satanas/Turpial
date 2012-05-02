@@ -143,6 +143,7 @@ input[disabled='disabled'], textarea[disabled='disabled'] {
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 
+/*
 ::-webkit-scrollbar {
     background: transparent;
     overflow: visible;
@@ -162,3 +163,4 @@ input[disabled='disabled'], textarea[disabled='disabled'] {
 ::-webkit-scrollbar-corner {
     background: transparent;
 }
+*/

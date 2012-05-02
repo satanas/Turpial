@@ -5,11 +5,19 @@
 #
 # Author: Wil Alvarez (aka Satanas)
 # Oct 7, 2011
+import time #quitar, solo aprendiendo pyinstaller
 
 import sys
 import logging
 
 from optparse import OptionParser, SUPPRESS_HELP
+
+class OptParser(OptionParser):
+    def __init__(self):
+        OptionParser.__init__(self)
+    def error(self, error):
+        pass
+
 
 from turpial import VERSION
 from turpial.ui import util
@@ -17,6 +25,13 @@ from libturpial import VERSION as LIBVERSION
 from libturpial.common.tools import *
 from libturpial.api.core import Core
 from libturpial.config import AppConfig
+
+from PyQt4.Qt import *
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
+
+import sys
+import os
 
 class Turpial:
     def __init__(self):
@@ -32,6 +47,9 @@ class Turpial:
             help='show the version of Turpial and exit', default=False)
         parser.add_option('-s', dest='mac', action='store_true', default=False,
             help=SUPPRESS_HELP)
+        parser.add_option('-p', dest='mac', action='store_true', default=False,
+            help=SUPPRESS_HELP)
+
 
         (options, args) = parser.parse_args()
 
@@ -64,7 +82,7 @@ class Turpial:
             self.ui = util.INTERFACES[options.interface](self.core)
         else:
             print "'%s' is not a valid interface. Availables interfaces are %s" % (
-                options.interface, util.available_interfaces())
+            options.interface, util.available_interfaces())
             sys.exit(-1)
 
         self.log.debug('Starting %s' % self.version)

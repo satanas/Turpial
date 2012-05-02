@@ -2,7 +2,9 @@ var timeout = null;
 var reset = null;
 
 function exec_command(cmd) {
-    document.getElementById("query").src = cmd;
+    if(typeof fireToPython.send == 'function') {
+	    fireToPython.send(cmd)
+    }
     window.location = cmd;
 }
 

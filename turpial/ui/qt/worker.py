@@ -1,25 +1,25 @@
 # -*- coding: utf-8 -*-
 
-# PyQt Worker for Turpial
+# GTK Worker for Turpial
 #
-# Author: Carlos Guerrero
-# Nov 19, 2011
+# Author: Wil Alvarez (aka Satanas)
+# Nov 18, 2011
 
 import Queue
-import threading
+from PyQt4 import QtCore
 
-class Worker(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.setDaemon(False)
+class Worker(QtCore.QThread):
+    def __init__(self, emitter):
+        super(Worker,self).__init__()
         self.queue = Queue.Queue()
+        self.emitter = emitter
         self.exit_ = False 
     
     def set_timeout_callback(self, tcallback):
         self.tcallback = tcallback
         
-    def register(self, funct, args, callback):
-        self.queue.put((funct, args, callback))
+    def register(self, funct, args, callback, user_data=None):
+        self.queue.put((funct, args, callback, user_data))
     
     def quit(self):
         self.exit_ = True
@@ -33,13 +33,16 @@ class Worker(threading.Thread):
             except:
                 continue
             
-            (funct, args, callback) = req
+            (funct, args, callback, user_data) = req
             
             if type(args) == tuple:
                 rtn = funct(*args)
-            else:
+            elif args:
                 rtn = funct(args)
+            else:
+                rtn = funct()
             
             if callback:
-                #callback(rtn)
-                self.tcallback(callback, rtn)
+                self.emitter.emit([callback, rtn, user_data])
+
+

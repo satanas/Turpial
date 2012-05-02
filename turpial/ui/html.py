@@ -7,13 +7,20 @@
 
 import re
 import os
+import sys
 import urllib
 
+from turpial import VERSION
 from turpial.ui.lang import i18n
 from libturpial.common import ARG_SEP, LoginStatus
 from libturpial.api.services.showmedia import utils as showmediautils
 
-DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+#pyinstaller compatibility validation
+if getattr(sys, 'frozen', None):
+    DATA_DIR = os.path.realpath(os.path.join(sys._MEIPASS))
+else:
+    DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+
 IMAGES_DIR = os.path.join(DATA_DIR, 'pixmaps')
 LAYOUT_DIR = os.path.join(DATA_DIR, 'layout')
 JS_LAYOUT_DIR = os.path.join(LAYOUT_DIR, 'js')
@@ -26,14 +33,26 @@ PARTIAL_PATTERN = re.compile('(<% partial [\'"](.*?)[\'"] %>)')
 I18N_PATTERN = re.compile('(<% \$(.*?) %>)')
 
 class HtmlParser:
-    def __init__(self):
+    def __init__(self,*args):
         self.scripts = []
+        self.scripts_impress = []
         self.styles = []
+        self.styles_impress = []
         self.partials = {}
+        self.arch = open("salida.html",'w')
 
     def __url_quote(self, text):
         ntext = text.encode('utf-8').replace('\\\\', '\\')
         return urllib.quote(ntext)
+
+    def open_template(self, res):
+        filepath = os.path.realpath(os.path.join(LAYOUT_DIR, res + '.template'))
+        fd = open(filepath, 'r')
+        resource = fd.read()
+        fd.close()
+        return resource
+
+
 
     def __open_template(self, res):
         filepath = os.path.realpath(os.path.join(LAYOUT_DIR, res + '.template'))
@@ -50,8 +69,9 @@ class HtmlParser:
         return resource
 
     def __load_layout(self, res):
-        self.scripts = []
+        self.scripts_impress = []
         self.styles = []
+        self.styles_impress = []
         self.partials = {}
 
         self.app_layout = self.__open_template(res)
@@ -62,10 +82,21 @@ class HtmlParser:
             filepath = os.path.realpath(os.path.join(JS_LAYOUT_DIR, js + '.js'))
             self.scripts.append(filepath)
 
+        for js in ['animation', 'fx-m']:
+            filepath = os.path.realpath(os.path.join(JS_LAYOUT_DIR, js + '.js'))
+            self.scripts_impress.append(filepath)
+
         # Load default css
         for css in ['common', 'jquery.autocomplete']:
             filepath = os.path.realpath(os.path.join(CSS_LAYOUT_DIR, css + '.css'))
             self.styles.append(filepath)
+
+        # Load default css_impress
+        for css in ['general', 'index']:
+            filepath = os.path.realpath(os.path.join(CSS_LAYOUT_DIR, css + '.css'))
+            self.styles_impress.append(filepath)
+
+
 
         js_file = os.path.realpath(os.path.join(LAYOUT_DIR, 'js', res + '.js'))
         if os.path.isfile(js_file):
@@ -297,6 +328,17 @@ class HtmlParser:
         js_tags += '</script>'
         page = page.replace('<% javascripts %>', js_tags)
 
+        js_tags = '<script type="text/javascript">'
+        for js in self.scripts_impress:
+            fd = open(js, 'r')
+            resource = fd.read()
+            fd.close()
+            js_tags += resource + '\n'
+        js_tags += '</script>'
+        page = page.replace('<% javascripts_impress %>', js_tags)
+
+
+
         css_tags = '<style type="text/css">'
         for css in self.styles:
             fd = open(css, 'r')
@@ -305,6 +347,18 @@ class HtmlParser:
             css_tags += resource + '\n'
         css_tags += '</style>'
         page = page.replace('<% stylesheets %>', css_tags)
+
+
+        css_tags = '<style type="text/css">'
+        for css in self.styles_impress:
+            fd = open(css, 'r')
+            resource = fd.read()
+            fd.close()
+            css_tags += resource + '\n'
+        css_tags += '</style>'
+        page = page.replace('<% stylesheets_impress %>', css_tags)
+
+
 
         page = page.replace('<% query %>', self.__query_tag())
 
@@ -348,6 +402,11 @@ class HtmlParser:
         self.__load_layout('accounts')
         acc_list = self.render_account_list(accounts)
         self.app_layout = self.app_layout.replace('<% @accounts %>', acc_list)
+        return self.__render()
+
+    def about(self):
+        self.__load_layout('about2')
+        self.app_layout = self.app_layout.replace('<% VERSION  %>', VERSION)
         return self.__render()
 
     def account_form(self, plist, user='', pwd='', prot=''):
@@ -413,6 +472,7 @@ class HtmlParser:
         col = col.replace('<% @column_id %>', column.id_)
         col = col.replace('<% @column_content %>', col_content)
         page = self.__parse_tags(col)
+
         return page
 
     def status(self, status, ignore_reply=False):
@@ -435,8 +495,7 @@ class HtmlParser:
             elif count == 1:
                 temp = '1 %s' % i18n.get('person')
             reposted_by = '%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
-        #if status.text.find('\\') > 0:
-        #    print status.text
+
         message = self.__highlight_urls(status, status.text)
         message = self.__highlight_hashtags(status, message)
         message = self.__highlight_groups(status, message)

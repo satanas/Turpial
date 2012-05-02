@@ -1,120 +1,211 @@
 # -*- coding: utf-8 -*-
 
-# PyQT account manager view for Turpial
+# GTK account manager for Turpial
 #
-# Author:  Carlos Guerrero (aka guerrerocarlos)
-# Started: Sep 11, 2011
+# Author: Wil Alvarez (aka Satanas)
+# Nov 13, 2011
 
 from PyQt4 import QtGui
 from PyQt4.QtWebKit import *
+#import gtk
 import logging
+from PyQt4.QtCore import QUrl
+from PyQt4.QtCore import QVariant
+from PyQt4.QtCore import QThread 
+from PyQt4.QtCore import QPropertyAnimation 
 
+from turpial.ui.lang import i18n
 from turpial.ui.html import HtmlParser
-from turpial.ui.qt.worker import Worker
 from turpial.ui.qt.htmlview import HtmlView
-#from turpial.ui.gtk.oauthwin import OAuthWindow
-from turpial.ui.qt.account_form import AccountForm
+from turpial.ui.qt.htmlview import FireTrigger 
 
-log = logging.getLogger('PyQt4')
+log = logging.getLogger('Qt-AccountsDialog')
 
-class Accounts(QtGui.QDialog):
+class AccountsDialog(QtGui.QDialog):
     def __init__(self, parent):
-        super(Accounts,self).__init__()
+        super(AccountsDialog,self).__init__()
+        self.moveToThread(QThread())
         
-        # Main tools
         self.mainwin = parent
-        self.core = parent.core
-        self.worker = None  
-        
-        self.htmlparser = HtmlParser(None)
+        self.htmlparser = HtmlParser()
         self.setWindowTitle("Account Manager")
-        self.resize(410,350)
-        self.finished.connect(self.__close)
+        self.resize(365,325)
         
-        self.container = HtmlView(self)
-        self.container.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        self.container.page().linkClicked.connect(self.__action_request)
+        self.container = HtmlView()
+        self.container.action_request.connect(self.__action_request)
+        self.container.link_request.connect(self.__action_request)
+
         self.layout = QtGui.QVBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
-        self.layout.addWidget(self.container)
+        self.layout.addWidget(self.container.view)
         self.setLayout(self.layout)
 
         self.showed = False
+        self.showed = True 
         self.form = None
-        self.acc_id = None
-        
-    def show_all(self, accounts):
-        self.showed = True
-        if not self.worker:
-            self.worker = Worker()
-            self.worker.set_timeout_callback(self.__timeout_callback)
-            self.worker.start()
-        page = self.htmlparser.accounts(accounts)
-        self.container.setHtml(page)
-        self.show()
     
-    def __close(self, event=None):
+    def __close(self, widget, event=None):
         self.showed = False
         self.hide()
         return True
+
+    def __action_request(self, url):
+        action, args = self.htmlparser.parse_command(url)
+        
+        if action == "close":
+            self.__close(widget)
+        elif action == "new_account":
+            self.setWindowTitle("Create Account")
+            self.resize(290,200)
+            page = self.htmlparser.account_form(self.mainwin.get_protocols_list())
+            self.container.render(page)
+
+        elif action == "save_account":
+            self.mainwin.save_account(args[0], args[1], args[2])
+            self.args = args
+
+        elif action == "delete_account":
+            self.mainwin.delete_account(args[0])
+        elif action == "login":
+            self.mainwin.single_login(args[0])
+
+    def set_account_id(self,account_id):
+        self.account_id = account_id
+
+
+    def show_about_win(self):
+            self.setWindowTitle("About")
+            self.resize(400,270)
+
+            page = self.htmlparser.about()
+            self.container.view.setHtml(page)
+
+    def show_auth_win(self,url):
+            self.setWindowTitle("Auth Window")
+            self.resize(800,600)
+
+            self.layout.removeItem(self.layout.itemAt(0))
+            self.container.view
+            self.container = HtmlView()
+            self.layout.addWidget(self.container.view)
+            self.container.view.load(QUrl(url))
+            self.container.load_finished.connect(self.read_code)
+
+    def read_code(self):
+        code = self.container.view.page().mainFrame().documentElement().findAll('code')
+        if len(code) > 0:
+            for each in code[0].attributeNames():
+                print "attribute:",each
+
+            self.resize(370,330)
+            self.mainwin.__oauth_callback(code[0].toPlainText(),self.account_id)
+            self.container.action_request.connect(self.__action_request)
+            self.container.link_request.connect(self.__action_request)
+
+    
+    def update(self):
+        if self.showed:
+            self.resize(365,325)
+            page = self.htmlparser.accounts(self.mainwin.get_all_accounts())
+            self.container.view.setHtml(page)
+    
+    def cancel_login(self, message):
+        if self.form:
+            self.form.cancel(message)
+            return True
+        self.update()
+        return False
+    
+    def done_login(self):
+        if self.form:
+            self.form.done()
+            return True
+        return False
+    
+    def show_now(self):
+        if self.showed:
+            pass
+        else:
+            self.showed = True
+            self.update()
+            self.show()
+            self.resize(365,325)
+    
+    def quit(self):
+        self.destroy()
+
+class AccountForm(QtGui.QDialog):
+    def __init__(self, mainwin, parent, user=None, pwd=None, protocol=None):
+        super(AccountForm,self).__init__()
+        
+        self.mainwin = mainwin
+        self.htmlparser = HtmlParser()
+        self.setWindowTitle("Create Account")
+        self.resize(290,200)
+        
+        self.container = HtmlView()
+
+        self.container.action_request.connect(self.__action_request)
+        self.container.link_request.connect(self.__action_request)
+
+        self.layout = QtGui.QVBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.addWidget(self.container.view)
+        self.setLayout(self.layout)
+        
+        page = self.htmlparser.account_form(self.mainwin.get_protocols_list())
+        self.container.render(page)
+        self.show()
+        self.working = False
+        
+    def __close(self, widget, event=None):
+        if not self.working:
+            self.destroy()
+            return False
+        else:
+            return True
     
     def __action_request(self, url):
-        url = url.toString()
-        action = url.split(':')[1]
-        try:
-            args = url.split(':')[1].split('-%&%-')
-        except IndexError:
-            args = []
+        action, args = self.htmlparser.parse_command(url)
         
-        if action == "//close":
-            self.__close()
-        elif action == "//new_account":
-            self.form = AccountForm(self, self.core.list_protocols())
-        elif action == "//delete_account":
-            self.delete_account(args[0])
-        
-    def __login_callback(self, arg):
-        print 'resp', arg, arg.code, arg.errmsg, arg.items
-        
-        if arg.code > 0:
-            #msg = i18n.get(rtn.errmsg)
-            msg = arg.errmsg
-            self.form.cancel_login(msg)
-            return
-        
-        auth_obj = arg.items
-        if auth_obj.must_auth():
-            oauthwin = OAuthWindow(self)
-            oauthwin.connect('response', self.__oauth_callback)
-            oauthwin.connect('cancel', self.__cancel_callback)
-            oauthwin.open(auth_obj.url)
+        if action == "close":
+            self.__close(widget)
+        elif action == "save_account":
+            self.working = True
+            self.authwin = AuthForm(self.mainwin,self)
+            self.authwin.show()
     
-    def __cancel_callback(self):
+    def cancel(self, message):
+        self.working = False
+        self.container.execute("cancel_login('" + message + "');")
+    
+    def set_loading_message(self, message):
         pass
         
-    def __oauth_callback(self, verifier):
-        self.worker.register(self.core.authorize_oauth_token, (self.acc_id, verifier), self.__auth_callback)  
-    
-    def __auth_callback(self):
-        self.worker.register(self.core.auth, (self.acc_id), self.__done_callback)
+    def done(self):
+        self.working = False
+        self.destroy()
 
-    def __timeout_callback(self, funct, arg):
-        pass
+
+
+class AuthForm(QtGui.QDialog):
+    def __init__(self, mainwin, parent, user=None, pwd=None, protocol=None):
+        super(AuthForm,self).__init__()
         
-    def __done_callback(self, arg):
-        if arg.code > 0:
-            msg = arg.errmsg
-            self.form.cancel_login(msg)
-        else:
-            self.form.done_login()
-            page = self.htmlparser.render_account_list(self.core.all_accounts())
-            self.container.update_element("list", page)
+        self.mainwin = mainwin
+        self.htmlparser = HtmlParser()
+        self.setWindowTitle("Create Account")
+        self.resize(490,200)
         
-    def delete_account(self, account_id):
-        self.core.unregister_account(account_id, True)
-        page = self.htmlparser.render_account_list(self.core.all_accounts())
-        self.container.update_element("list", page)
+        self.container = HtmlView()
+
+        self.layout = QtGui.QVBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.addWidget(self.container.view)
+        self.setLayout(self.layout)
         
-    def save_account(self, username, protocol_id, password):
-        self.acc_id = self.core.register_account(username, protocol_id, password, True)
-        self.worker.register(self.core.login, (self.acc_id), self.__login_callback)
+        self.container.view.load(QUrl("http://www.google.com"))
+        self.show()
+        
+    def load(self,url):
+        self.container.view.load(QUrl(url))

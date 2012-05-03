@@ -39,7 +39,6 @@ class HtmlParser:
         self.styles = []
         self.styles_impress = []
         self.partials = {}
-        self.arch = open("salida.html",'w')
 
     def __url_quote(self, text):
         ntext = text.encode('utf-8').replace('\\\\', '\\')

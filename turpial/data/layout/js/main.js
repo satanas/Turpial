@@ -847,3 +847,6 @@ function show_avatar(account_id, username) {
     show_imageview();
     exec_command('cmd:profile_image:' + account_id + arg_sep + username);
 }
+
+
+jQuery(document).bind('keydown', 'Ctrl+n',function (evt){show_update_box(); return false; });

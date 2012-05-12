@@ -77,7 +77,7 @@ class HtmlParser:
 
         # Load default js
 
-        for js in ['jquery', 'jquery.autocomplete', 'common']:
+        for js in ['jquery', 'jquery.hotkeys', 'jquery.autocomplete', 'common']:
             filepath = os.path.realpath(os.path.join(JS_LAYOUT_DIR, js + '.js'))
             self.scripts.append(filepath)
 

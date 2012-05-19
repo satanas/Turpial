@@ -54,7 +54,7 @@ class Preferences(gtk.Window):
         notebook.append_page(self.services, gtk.Label(i18n.get('services')))
         notebook.append_page(self.browser, gtk.Label(i18n.get('web_browser')))
         notebook.append_page(self.filtered, gtk.Label(i18n.get('filters')))
-        notebook.append_page(self.proxy, gtk.Label(i18n.get('proxy')))
+        #notebook.append_page(self.proxy, gtk.Label(i18n.get('proxy')))
         notebook.append_page(self.advanced, gtk.Label(i18n.get('advanced')))
 
         vbox = gtk.VBox()

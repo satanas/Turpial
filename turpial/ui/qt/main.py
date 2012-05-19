@@ -318,10 +318,14 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             else:
                 pass
 
-            for col in self.get_registered_columns():
+            registered_var = self.get_registered_columns()
+                
+            for col in registered_var:
                 if col.account_id == account_id:
                     self.download_stream(col, True)
                     self.__add_timer(col)
+            self.resize(300*len(registered_var),480)
+
 
 
 

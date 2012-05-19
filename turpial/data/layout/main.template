@@ -45,7 +45,7 @@
                 <div id="buttonbox-update">
                     <a href="javascript: update_status();" class="action" title="<% $update_status %>">Submit</a>
                     <a href="javascript: short_url();" class="action" title="<% $short_urls %>">Short</a>
-                    <a href="#" class="action" id="upload-img-cmd" title="<% $upload_image %>">Image</a>
+                    <!-- <a href="#" class="action" id="upload-img-cmd" title="<% $upload_image %>">Image</a> -->
                     <div class="clearfix"></div>
                 </div>
                 <div class="progress-box" id="progress-box-updatebox" style="display: none;">

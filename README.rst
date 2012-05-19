@@ -1,8 +1,8 @@
 Turpial
 =======
 
-**Summary:** A microblogging client written in Python. Lightweight, functional 
-and beautiful
+**Summary:** Turpial is a light, fast and beautiful microblogging client 
+written in Python
 
 *Turpial* is an alternative client for microblogging with multiple interfaces.
 At the moment it supports Twitter and Identi.ca and works with Gtk and Qt 

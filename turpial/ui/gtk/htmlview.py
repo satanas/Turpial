@@ -41,10 +41,16 @@ class HtmlView(gtk.VBox, gobject.GObject):
 
         self.view = webkit.WebView()
         self.view.set_settings(self.settings)
+
+        #Added new properties in this way cause 'from' is recognized as a key word
+        self.view.get_settings().set_property('enable-universal-access-from-file-uris', True)
+        self.view.get_settings().set_property('enable-file-access-from-file-uris', True)
+
         self.view.connect('load-started', self.__started)
         self.view.connect('load-finished', self.__finished)
         self.view.connect('console-message', self.__console_message)
         self.view.connect('navigation-policy-decision-requested', self.__process)
+        self.view.connect('new-window-policy-decision-requested', self.__on_new_window_requested);
 
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -52,6 +58,9 @@ class HtmlView(gtk.VBox, gobject.GObject):
         scroll.add(self.view)
 
         self.pack_start(scroll, True, True, 0)
+
+    def __on_new_window_requested(self, view, frame, request, decision, u_data):
+        self.emit('link-request', request.get_uri())
 
     def __console_message(self, view, message, line, source_id, data=None):
         print "%s <%s:%i>" % (message, source_id, line)

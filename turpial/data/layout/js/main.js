@@ -7,6 +7,7 @@ var imageview_h;
 var turpial_all_seq = '38384040373937396665';
 var curr_seq = '';
 var ctrlPressed = false;
+var scrollbar_width = 13;
 
 // Shortcuts
 var lKey = 76;
@@ -33,14 +34,14 @@ function recalculate_column_size(nw, nh) {
     if (nh != undefined)
         height = nh;
 
-    var content_height = height - 23;
-    var column_width = (width / num_columns) - 1;
+    var content_height = height - 25;
+    var column_width = (width / num_columns) - 2;
     var column_height = content_height;
     var wrapper_height = height - 32;
-    var list_width = column_width - 11;
+    var list_width = column_width - scrollbar_width;
     var list_height = column_height - 35;
     var combo_width = column_width - 60;
-    var tweet_width = column_width - 92;
+    var tweet_width = column_width - 98;
     var update_msg_width = width - 12;
 
     var alert_msg_width = width - 60;
@@ -846,4 +847,8 @@ function short_url() {
 function show_avatar(account_id, username) {
     show_imageview();
     exec_command('cmd:profile_image:' + account_id + arg_sep + username);
+}
+
+function remove_statuses(column_id, number) {
+  
 }

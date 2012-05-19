@@ -963,12 +963,13 @@ class Main(Base, Singleton, gtk.Window):
             self.updating[column.id_] = True
 
         if not self.columns.has_key(column.id_):
-            self.columns[column.id_] = None
+            self.columns[column.id_] = {'items': None, 'last_id': None}
 
+        last_id = self.columns[column.id_]['last_id']
         num_statuses = self.core.get_max_statuses_per_column()
         self.container.execute("start_updating_column('" + column.id_ + "');")
         self.worker.register(self.core.get_column_statuses, (column.account_id,
-            column.column_name, num_statuses), self.update_column, 
+            column.column_name, num_statuses, last_id), self.update_column, 
             (column, notif, num_statuses))
         return True
 
@@ -978,6 +979,7 @@ class Main(Base, Singleton, gtk.Window):
                 self.download_stream(col)
 
     def update_column(self, arg, data):
+        # TODO: Armar todo el arreglo de self.columns, hacer prepend y remover del html los últimos
         column, notif, max_ = data
         self.log.debug('Updated column %s' % column.id_)
 
@@ -987,13 +989,14 @@ class Main(Base, Singleton, gtk.Window):
             return
         page = self.htmlparser.statuses(arg.items)
         element = "#list-%s" % column.id_
-        extra = "stop_updating_column('" + column.id_ + "');"
-        self.container.update_element(element, page, extra)
+        extra = "stop_updating_column('" + column.id_ + "'); remove_statuses('" + column.id_ + "', " + str(len(arg.items)) + ");"
+        #self.container.update_element(element, page, extra)
+        self.container.prepend_element(element, page, extra)
 
         # Notifications
         # FIX: Do not store an array with statuses objects, find a way to store
         # maybe just ids
-        count = self.get_new_statuses(self.columns[column.id_], arg.items)
+        count = self.get_new_statuses(self.columns[column.id_]['items'], arg.items)
         if count != 0:
             if notif and self.core.show_notifications_in_updates():
                 self.notify.updates(column, count)
@@ -1005,7 +1008,8 @@ class Main(Base, Singleton, gtk.Window):
                 self.unitylauncher.set_count_visible(True)
             else:
                 self.unitylauncher.set_count_visible(False)
-        self.columns[column.id_] = arg.items
+        self.columns[column.id_]['items'] = arg.items
+        self.columns[column.id_]['last_id'] = arg.items[0].id_
         self.updating[column.id_] = False
 
         self.restore_open_tweets()

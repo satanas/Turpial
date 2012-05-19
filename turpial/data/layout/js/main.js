@@ -685,7 +685,7 @@ function update_videoview(img_url, orig_w, orig_h) {
 }
 
 function hide_imageview() {
-    //$('#mediacontentview').html('<img id="imageview" src="" style="display: none;">');
+    $('#mediacontentview').html('<img id="imageview" src="" style="display: none;">');
     $('#imageview-window').fadeOut(400, function() {
         var imageview = $('#imageview');
         imageview.attr('src', '');

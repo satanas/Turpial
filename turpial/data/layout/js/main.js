@@ -589,7 +589,7 @@ function load_friends() {
     exec_command('cmd:load_friends');
 }
 
-function update_friends(array) {
+function update_friends(array, skip_unlock) {
     friends = array;
     var label = '';
     var plabel = "<% $friends %>";
@@ -603,7 +603,9 @@ function update_friends(array) {
     $('#friends_counter').html(label);
     $('#autocomplete-username').autocompleteArray(friends, {delay:10, minChars:1,
         matchSubset:1, maxItemsToShow:10, onItemSelect: autocomplete_friend});
-    unlock_autocomplete();
+    if ((skip_unlock == undefined) || (skip_unlock == false)) {
+        unlock_autocomplete();
+    }
 }
 
 function select_friend(value) {

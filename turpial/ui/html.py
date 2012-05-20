@@ -44,15 +44,6 @@ class HtmlParser:
         ntext = text.encode('utf-8').replace('\\\\', '\\')
         return urllib.quote(ntext)
 
-    def open_template(self, res):
-        filepath = os.path.realpath(os.path.join(LAYOUT_DIR, res + '.template'))
-        fd = open(filepath, 'r')
-        resource = fd.read()
-        fd.close()
-        return resource
-
-
-
     def __open_template(self, res):
         filepath = os.path.realpath(os.path.join(LAYOUT_DIR, res + '.template'))
         fd = open(filepath, 'r')
@@ -94,8 +85,6 @@ class HtmlParser:
         for css in ['general', 'index']:
             filepath = os.path.realpath(os.path.join(CSS_LAYOUT_DIR, css + '.css'))
             self.styles_impress.append(filepath)
-
-
 
         js_file = os.path.realpath(os.path.join(LAYOUT_DIR, 'js', res + '.js'))
         if os.path.isfile(js_file):
@@ -336,8 +325,6 @@ class HtmlParser:
         js_tags += '</script>'
         page = page.replace('<% javascripts_impress %>', js_tags)
 
-
-
         css_tags = '<style type="text/css">'
         for css in self.styles:
             fd = open(css, 'r')
@@ -347,7 +334,6 @@ class HtmlParser:
         css_tags += '</style>'
         page = page.replace('<% stylesheets %>', css_tags)
 
-
         css_tags = '<style type="text/css">'
         for css in self.styles_impress:
             fd = open(css, 'r')
@@ -355,9 +341,8 @@ class HtmlParser:
             fd.close()
             css_tags += resource + '\n'
         css_tags += '</style>'
+
         page = page.replace('<% stylesheets_impress %>', css_tags)
-
-
 
         page = page.replace('<% query %>', self.__query_tag())
 

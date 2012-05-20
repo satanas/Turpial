@@ -510,6 +510,9 @@ class Main(Base, Singleton, gtk.Window):
         for acc in self.get_accounts_list():
             self.single_login(acc)
 
+
+        self.worker.register(self.core.load_all_friends_list, (), self.load_all_friends_response)
+
     def single_login(self, acc):
         self.core.change_login_status(acc, LoginStatus.IN_PROGRESS)
         self.accountsdlg.update()
@@ -878,6 +881,12 @@ class Main(Base, Singleton, gtk.Window):
             friends = self.htmlparser.js_string_array(users)
             cmd = "show_notice('%s', 'info'); update_friends(%s);" % (
                 i18n.get('friends_loaded_successfully'), friends)
+        self.container.execute(cmd)
+
+    def load_all_friends_response(self, users):
+        friends = self.htmlparser.js_string_array(users)
+        cmd = "update_friends(%s);" % friends
+        #cmd = "show_notice('hola', 'info');"
         self.container.execute(cmd)
 
     def show_conversation_response(self, response, status_id):

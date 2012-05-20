@@ -979,7 +979,6 @@ class Main(Base, Singleton, gtk.Window):
                 self.download_stream(col)
 
     def update_column(self, arg, data):
-        # TODO: Remove last tweets from html
         column, notif, max_ = data
         self.log.debug('Updated column %s' % column.id_)
 
@@ -989,7 +988,9 @@ class Main(Base, Singleton, gtk.Window):
             return
         page = self.htmlparser.statuses(arg.items)
         element = "#list-%s" % column.id_
-        extra = "stop_updating_column('" + column.id_ + "'); remove_statuses('" + column.id_ + "', " + str(len(arg.items)) + ");"
+        extra = "stop_updating_column('" + column.id_ + "');";
+        if column.size != 0:
+            extra += "remove_statuses('" + column.id_ + "', " + str(len(arg.items)) + ");";
         self.container.prepend_element(element, page, extra)
 
         # Notifications
@@ -1006,6 +1007,7 @@ class Main(Base, Singleton, gtk.Window):
             else:
                 self.unitylauncher.set_count_visible(False)
             self.columns[column.id_]['last_id'] = arg.items[0].id_
+        column.inc_size(count)
         self.updating[column.id_] = False
 
         self.restore_open_tweets()

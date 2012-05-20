@@ -850,7 +850,13 @@ function show_avatar(account_id, username) {
 }
 
 function remove_statuses(column_id, number) {
-  
+    $($('#list-' + column_id + " .tweet").get().reverse()).each(function(index) {
+        if(number != 0)
+        {
+            $("." + $(this).attr("class").replace(" ", ".")).remove();
+            number--;
+        }
+    });
 }
 
 jQuery(document).bind('keydown', 'Ctrl+n',function (evt){show_update_box(); return false; });

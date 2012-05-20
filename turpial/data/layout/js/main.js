@@ -849,4 +849,28 @@ function show_avatar(account_id, username) {
 }
 
 
+
+function show_about() {
+    exec_command('cmd:about:');
+}
+
+function show_accounts() {
+    exec_command('cmd:accounts_manager:');
+}
+
+
+function show_preferences() {
+    exec_command('cmd:preferences:');
+}
+
+
+
+
+
+
+
 jQuery(document).bind('keydown', 'Ctrl+n',function (evt){show_update_box(); return false; });
+jQuery(document).bind('keydown', 'Ctrl+d',function (evt){show_autocomplete_for_direct(); return false; });
+jQuery(document).bind('keydown', 'Ctrl+a',function (evt){show_about(); return false; });
+jQuery(document).bind('keydown', 'Ctrl+c',function (evt){show_accounts(); return false; });
+jQuery(document).bind('keydown', 'Ctrl+p',function (evt){show_preferences(); return false; });

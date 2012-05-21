@@ -1,3 +1,0 @@
-<div id="column-<% @column_id %>" class="column">
-    <% @column_content %>
-</div>

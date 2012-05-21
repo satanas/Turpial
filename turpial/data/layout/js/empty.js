@@ -18,7 +18,7 @@ function recalculate_column_size(nw, nh) {
     var column_height = content_height;
     var wrapper_height = column_height;
     var list_width = column_width - 11;
-    var list_height = column_height - 13;
+    var list_height = column_height - 13; /* for the margins of the empty list*/
     var empty_logo_top = list_height / 5;
 
     $('#content').css('height', content_height + 'px');

@@ -1,27 +1,24 @@
 #container {
-    height: 100%;
     background-color: #000;
-    float: left;
     margin: 0;
     padding: 0;
 }
 
 #content {
-    height: 100%;
     width: 100%;
     background-color: #f2f1f0;
-    float: left;
+    height: auto;
+    table-layout: fixed;
+    border-collapse: collapse;
 }
 
 .column {
-    float: left;
-    height: 100%;
+    height: auto;
 }
 
 .header {
-    float: left;
-    height: 22px;
-    width: 100%;
+    height: 24px;
+    width: auto;
     background-color: #000;
     color: #ebebeb;
     text-align: left;
@@ -71,11 +68,8 @@
 }
 
 .wrapper {
-    float: left;
     width: 100%;
     height: 100%;
-    /*border: 1px solid #ccc;
-    border-width: 0 0 0 0px;*/
 }
 
 .list {

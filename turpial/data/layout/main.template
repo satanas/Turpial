@@ -10,9 +10,15 @@
             <span class="close">x</span>
             <label id="alert-label" class="overflow"></label>
         </div>
-        <div id="content">
-            <% @content %>
-        </div>
+        <!-- Yeah! A dirty and ugly table, but is the only way to guarrantee the width of columns -->
+        <table id="content">
+            <thead>
+                <tr id="headers"><% @headers %></tr>
+            </thead>
+            <tbody>
+                <tr id="columns"><% @columns %></tr>
+            </tbody>
+        </table>
         <div id="dock-container">
             <div id="dock">
                 <div class="button" title="<% $about %>"><a href="cmd:about"><% img "dock-about.png" %></a></div>

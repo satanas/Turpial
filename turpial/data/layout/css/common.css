@@ -1,9 +1,8 @@
-html {
+html, body {
     height: 100%;
 }
 
 body {
-    height: 100%;
     margin: 0;
     padding: 0;
     font-family: 'Lucida Grande', Verdana, Helvetica, sans-serif !important;
@@ -77,9 +76,11 @@ input[disabled='disabled'], textarea[disabled='disabled'] {
 
 #dock-container {
     height: 22px;
-    background: url('<% css_img "anchor.png" %>') no-repeat bottom right;
-    float: right;
-    width: 182px;
+    background: #000 url('<% css_img "anchor.png" %>') no-repeat bottom right;
+    position: absolute;
+    float:right;
+    bottom: 0px;
+    width: 100%;
 }
 
 #dock {

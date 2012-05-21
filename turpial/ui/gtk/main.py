@@ -54,7 +54,7 @@ class Main(Base, Singleton, gtk.Window):
         self.connect('delete-event', self.__close)
         self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
-        self.connect('size-request', self.__size_request)
+        #self.connect('size-request', self.__size_request)
 
         self.container = HtmlView()
         self.container.connect('action-request', self.__action_request)
@@ -523,6 +523,7 @@ class Main(Base, Singleton, gtk.Window):
         for col in reg_columns:
             if col.account_id == account_id:
                 self.delete_column(col.id_)
+                del self.columns[col.id_]
         self.core.unregister_account(account_id, True)
         self.accountsdlg.done_delete()
 
@@ -539,13 +540,16 @@ class Main(Base, Singleton, gtk.Window):
             page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
             self.container.render(page)
         else:
-            content = self.htmlparser.render_column(column)
-            self.container.append_element('#content', content, 'add_column();')
+            hdr, col = self.htmlparser.render_column(column)
+            hdr = hdr.replace('"', '\\"')
+            col = col.replace('"', '\\"')
+            self.container.execute('add_column("%s","%s");' % (hdr, col))
         self.download_stream(column)
         self.__add_timer(column)
 
     def delete_column(self, column_id):
         self.core.unregister_column(column_id)
+        del self.columns[column_id]
         reg_columns = self.get_registered_columns()
         if len(reg_columns) == 0:
             page = self.htmlparser.empty()

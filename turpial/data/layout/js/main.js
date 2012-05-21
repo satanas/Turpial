@@ -7,7 +7,8 @@ var imageview_h;
 var turpial_all_seq = '38384040373937396665';
 var curr_seq = '';
 var ctrlPressed = false;
-var scrollbar_width = 13;
+var scrollbar_width = 23;
+var min_column_size = 250;
 
 // Shortcuts
 var lKey = 76;
@@ -34,13 +35,11 @@ function recalculate_column_size(nw, nh) {
     if (nh != undefined)
         height = nh;
 
-    var content_height = height - 25;
-    var column_width = (width / num_columns) - 2;
-    var column_height = content_height;
-    var wrapper_height = height - 32;
-    var list_width = column_width - scrollbar_width;
+    var column_width = Math.floor(width / num_columns) - 2;
+    var column_height = height - 25;
+    var list_width = column_width - 10; // margin 2 x 5px
     var list_height = column_height - 35;
-    var combo_width = column_width - 60;
+    var combo_width = column_width - 100;
     var tweet_width = column_width - 98;
     var update_msg_width = width - 12;
 
@@ -48,20 +47,14 @@ function recalculate_column_size(nw, nh) {
     var alert_msg_left = 20;
     var alert_lbl_width = alert_msg_width - 35;
 
-    var profile_win_left = (width - 290) / 2;
-    var autocomplete_win_left = (width - 200) / 2;
+    var profile_win_left = Math.floor((width - 290) / 2);
+    var autocomplete_win_left = Math.floor((width - 200) / 2);
 
-    $('#content').css('height', content_height + 'px');
     $('.column').css('width', column_width + 'px');
-    $('.column').css('height', column_height + 'px');
-    $('.wrapper').css('height', wrapper_height + 'px');
-    $('.wrapper').css('width', column_width + 'px');
-
     $('.list').css('height', list_height + 'px');
     $('.list').css('width', list_width + 'px');
-    $('.combo').css('width', combo_width + 'px');
+    $('.header-label').css('width', combo_width + 'px');
     $('.tweet .content').css('width', tweet_width + 'px');
-
     $('.message-container').css('width', update_msg_width + 'px');
 
     $('#alert-message').css('width', alert_msg_width + 'px');
@@ -228,13 +221,16 @@ function resize_imageview(orig_w, orig_h) {
 
 /* Columns */
 
-function add_column() {
+function add_column(header, column) {
+    $('#headers').append(header);
+    $('#columns').append(column);
     num_columns++;
     recalculate_column_size();
 }
 
 function remove_column(column_id) {
     $('#column-' + column_id).remove();
+    $('#header-' + column_id).remove();
     num_columns--;
     recalculate_column_size();
 }

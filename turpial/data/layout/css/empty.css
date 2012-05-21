@@ -1,27 +1,26 @@
 #container {
-    height: 100%;
     background-color: #000;
-    float: left;
     margin: 0;
     padding: 0;
 }
 
 #content {
-    float: left;
-    height: 100%;
     width: 100%;
     background-color: #f2f1f0;
+    height: auto;
+    padding-top: 22px;
+    margin-top: -22px;
 }
 
 .column {
     float: left;
-    height: 100%;
+    height: auto;
 }
 
 .empty-wrapper {
     float: left;
     width: 100%;
-    height: 100%;
+    height: auto;
     border: 1px solid #ccc;
     border-width: 0 0 0 0px;
 }
@@ -32,7 +31,7 @@
     margin: 5px;
     border: 1px solid #ccc;
     width: 100%;
-    height: 100%;
+    height: auto;
     overflow-y: auto;
 }
 

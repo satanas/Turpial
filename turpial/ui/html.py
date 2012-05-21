@@ -77,7 +77,7 @@ class HtmlParser:
             self.scripts_impress.append(filepath)
 
         # Load default css
-        for css in ['common', 'jquery.autocomplete']:
+        for css in ['common', 'jquery.autocomplete', 'grids-min']:
             filepath = os.path.realpath(os.path.join(CSS_LAYOUT_DIR, css + '.css'))
             self.styles.append(filepath)
 
@@ -304,7 +304,7 @@ class HtmlParser:
             page = page.replace(text[0], i18n.get(text[1]))
         return page
 
-    def __render(self):
+    def __render(self, tofile=True):
         page = self.app_layout
 
         js_tags = '<script type="text/javascript">'
@@ -347,9 +347,10 @@ class HtmlParser:
         page = page.replace('<% query %>', self.__query_tag())
 
         page = self.__parse_tags(page)
-        fd = open('/tmp/pupu', 'w')
-        fd.write(page)
-        fd.close()
+        if tofile:
+            fd = open('/tmp/output.html', 'w')
+            fd.write(page)
+            fd.close()
         return page
 
     def js_string_array(self, array):
@@ -369,17 +370,25 @@ class HtmlParser:
 
     def main(self, accounts, columns):
         self.__load_layout('main')
-        content = ''
+        hdr_content = ''
+        col_content = ''
         for column in columns:
-            content += self.render_column(column)
+            hdr, col = self.render_column(column)
+            hdr_content += hdr
+            col_content += col
         acc_buttons = self.__account_buttons(accounts)
-        self.app_layout = self.app_layout.replace('<% @content %>', content)
+        self.app_layout = self.app_layout.replace('<% @headers %>', hdr_content)
+        self.app_layout = self.app_layout.replace('<% @columns %>', col_content)
         self.app_layout = self.app_layout.replace('<% @account_buttons %>', acc_buttons)
 
-        page = self.__render()
+        page = self.__render(tofile=False)
         # TODO: Look for a better way of handle javascript code from python
         page = page.replace('<% @arg_sep %>', ARG_SEP)
         page = page.replace('<% @num_columns %>', str(len(columns)))
+
+        fd = open('/tmp/output.html', 'w')
+        fd.write(page)
+        fd.close()
         return page
 
     def accounts(self, accounts):
@@ -447,17 +456,17 @@ class HtmlParser:
         else:
             label = "%s :: %s" % (column.account_id.split('-')[0], column.column_name)
 
+        col_header = self.__open_partial('column_header')
+        col_header = col_header.replace('<% @column_label %>', label)
+        col_header = col_header.replace('<% @column_id %>', column.id_)
+        col_header = col_header.replace('@protocol_img', protocol_img)
+
         col_content = self.__open_partial('column_content')
         col_content = col_content.replace('<% @column_id %>', column.id_)
-        col_content = col_content.replace('<% @column_label %>', label)
-        col_content = col_content.replace('@protocol_img', protocol_img)
 
-        col = self.__open_partial('column')
-        col = col.replace('<% @column_id %>', column.id_)
-        col = col.replace('<% @column_content %>', col_content)
-        page = self.__parse_tags(col)
-
-        return page
+        header = self.__parse_tags(col_header)
+        column = self.__parse_tags(col_content)
+        return header, column
 
     def status(self, status, ignore_reply=False):
         timestamp = status.datetime

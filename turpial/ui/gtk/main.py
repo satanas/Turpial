@@ -999,6 +999,15 @@ class Main(Base, Singleton, gtk.Window):
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             self.show_notice(arg.errmsg, 'error')
             return
+        
+        # Remove duplicate elements
+        if column.size != 0:
+            status_ids = []
+            for status in arg.items:
+                status_ids.append(status.id_)
+            self.container.execute("remove_duplicate('" + column.id_ + "', " + str(status_ids) + ");")
+
+        #Show new statuses
         page = self.htmlparser.statuses(arg.items)
         element = "#list-%s" % column.id_
         extra = "stop_updating_column('" + column.id_ + "');";

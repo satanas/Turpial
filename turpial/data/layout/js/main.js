@@ -857,4 +857,9 @@ function remove_statuses(column_id, number) {
     });
 }
 
+function remove_duplicate(column_id, status_ids) {
+    for(i in status_ids)
+        $('#list-' + column_id + " .tweet." + status_ids[i]).remove()
+}
+
 jQuery(document).bind('keydown', 'Ctrl+n',function (evt){show_update_box(); return false; });

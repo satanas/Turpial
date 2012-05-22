@@ -46,10 +46,14 @@ class UnityLauncher(object):
         self.callbacks = {}
         self.bus = dbus.SessionBus(mainloop=self.dbus_loop)
         self.service = self.bus.get_object(BUS_NAME, CONTROLLER_OBJ_PATH)
-        self.service.connect_to_signal("launchSignal", self.onSignalReceived)
+        self.service.connect_to_signal("buttonPressed", self.onButtonPressed)
+        self.service.connect_to_signal("checkChanged", self.onCheckChanged)
 
-    def onSignalReceived(self, label_selected):
+    def onButtonPressed(self, label_selected):
         self.callbacks[label_selected]()
+
+    def onCheckChanged(self, label_selected, value):
+        self.callbacks[label_selected](value)
 
     def set_count(self, count):
         self.count = count
@@ -65,8 +69,12 @@ class UnityLauncher(object):
     def set_count_visible(self, visible):
         self.service.set_count_visible(visible)
 
-    def add_quicklist_item(self, callback, label, visible):
-        self.service.add_quicklist_item(label, visible)
+    def add_quicklist_button(self, callback, label, visible):
+        self.service.add_quicklist_button(label, visible)
+        self.callbacks[label] = callback
+
+    def add_quicklist_checkbox(self, callback, label, visible, status):
+        self.service.add_quicklist_checkbox(label, visible, status)
         self.callbacks[label] = callback
 
     def quit(self):

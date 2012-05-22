@@ -34,24 +34,48 @@ class TurpialUnity(dbus.service.Object):
         self.launcher.set_property("count_visible", visible)
         
     @dbus.service.method(BUS_NAME)
-    def add_quicklist_item(self, label, visible):
+    def add_quicklist_button(self, label, visible):
 
-        def _windowQuit(arg1, arg2, arg3):
-            self.launchSignal(label)
+        def _pressCallback(arg1, arg2, arg3):
+            self.buttonPressed(label)
 
         item = Dbusmenu.Menuitem.new()
         item.property_set(Dbusmenu.MENUITEM_PROP_LABEL, label)
         item.property_set_bool(Dbusmenu.MENUITEM_PROP_VISIBLE, visible)
-        item.connect("item-activated", _windowQuit, None)
+        item.connect("item-activated", _pressCallback, None)
         self.ql.child_append(item)
         self.launcher.set_property("quicklist", self.ql)
+
+    @dbus.service.method(BUS_NAME)
+    def add_quicklist_checkbox(self, label, visible, status):
+
+        def _check_callback(menuitem, a, b):
+            if menuitem.property_get_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE) == Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED:
+                menuitem.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_UNCHECKED)
+                self.checkChanged(label, False)
+            else:
+                menuitem.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED)
+                self.checkChanged(label, True)
+
+        check = Dbusmenu.Menuitem.new ()
+        check.property_set (Dbusmenu.MENUITEM_PROP_LABEL, label)
+        check.property_set (Dbusmenu.MENUITEM_PROP_TOGGLE_TYPE, Dbusmenu.MENUITEM_TOGGLE_CHECK)
+        check.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED)
+        check.property_set_bool (Dbusmenu.MENUITEM_PROP_VISIBLE, visible)
+        check.connect (Dbusmenu.MENUITEM_SIGNAL_ITEM_ACTIVATED, _check_callback, None)
+        self.ql.child_append(check)
+        self.launcher.set_property("quicklist", self.ql)
+
 
     @dbus.service.method(BUS_NAME)
     def quit(self):
         self.loop.quit()
 
     @dbus.service.signal(BUS_NAME)
-    def launchSignal(self, signal):
+    def buttonPressed(self, signal):
+        pass
+
+    def checkChanged(self, signal, value):
         pass
 
  

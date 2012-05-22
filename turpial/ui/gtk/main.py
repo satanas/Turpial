@@ -91,10 +91,11 @@ class Main(Base, Singleton, gtk.Window):
         self.accountsdlg = AccountsDialog(self)
         self.__create_trayicon()
 
-        # Unity integration
+        # Unity integration, launch typing turpial_unity.sh
         self.unitylauncher = UnityLauncherFactory().create();
-        self.unitylauncher.add_quicklist_item(self.show_update_box, "New tweet", True)
-        self.unitylauncher.add_quicklist_item(self.main_quit, "Close Turpial", True)
+        self.unitylauncher.add_quicklist_button(self.show_update_box, "Nuovo Tweet", True)
+        self.unitylauncher.add_quicklist_checkbox(self.sound.disable, "Suoni", True, False)
+        self.unitylauncher.add_quicklist_button(self.main_quit, "Esci", True)
 
         self.show_all()
 

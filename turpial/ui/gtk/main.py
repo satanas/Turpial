@@ -30,7 +30,7 @@ from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.gtk.preferences import Preferences
-from turpial.ui.gtk.unitylauncher import UnityLauncher
+from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 
 gtk.gdk.set_program_class("Turpial")
 gtk.gdk.threads_init()
@@ -86,7 +86,8 @@ class Main(Base, Singleton, gtk.Window):
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__timeout_callback)
         self.worker.start()
-        self.unitylauncher = UnityLauncher("turpial.desktop");
+        self.unitylauncher = UnityLauncherFactory().create();
+        self.unitylauncher.add_quicklist_item(self.main_quit, "Close Turpial", True)
 
         # Persistent dialogs
         self.accountsdlg = AccountsDialog(self)
@@ -288,7 +289,7 @@ class Main(Base, Singleton, gtk.Window):
     def __close(self, widget, event=None):
         if self.core.minimize_on_close():
             self.showed = False
-            self.hide()
+            self.iconify()
         else:
             self.main_quit(widget)
         return True
@@ -471,6 +472,7 @@ class Main(Base, Singleton, gtk.Window):
         self.tray = None
         self.worker.quit()
         self.worker.join()
+        self.unitylauncher.quit()
         if widget:
             gtk.main_quit()
         if force:

@@ -93,9 +93,9 @@ class Main(Base, Singleton, gtk.Window):
 
         # Unity integration, launch typing turpial_unity.sh
         self.unitylauncher = UnityLauncherFactory().create();
-        self.unitylauncher.add_quicklist_button(self.show_update_box, "Nuovo Tweet", True)
-        self.unitylauncher.add_quicklist_checkbox(self.sound.disable, "Suoni", True, False)
-        self.unitylauncher.add_quicklist_button(self.main_quit, "Esci", True)
+        self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('unity_menu_newtweet'), True)
+        self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('unity_menu_sounds'), True, self.sound._disable)
+        self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('unity_menu_exit'), True)
 
         self.show_all()
 

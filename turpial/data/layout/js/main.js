@@ -848,18 +848,21 @@ function show_avatar(account_id, username) {
 }
 
 function remove_statuses(column_id, number) {
+    var max = parseInt(number);
+    var count = 0;
     $($('#list-' + column_id + " .tweet").get().reverse()).each(function(index) {
-        if(number != 0)
-        {
+        if (count < max) {
+            console.log('Removiendo status: .' + $(this).attr("class").replace(" ", ".") + ' - ' + count + ' de ' + number);
             $("." + $(this).attr("class").replace(" ", ".")).remove();
-            number--;
+            count++;
         }
     });
 }
 
 function remove_duplicate(column_id, status_ids) {
     for(i in status_ids)
-        $('#list-' + column_id + " .tweet." + status_ids[i]).remove()
+        console.log('Removiendo status duplicado: #list-' + column_id + " .tweet ." + status_ids[i]);
+        $('#list-' + column_id + " .tweet ." + status_ids[i]).remove()
 }
 
 function show_about() {

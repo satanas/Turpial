@@ -86,14 +86,23 @@ class Main(Base, Singleton, gtk.Window):
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__timeout_callback)
         self.worker.start()
-        self.unitylauncher = UnityLauncherFactory().create();
-        self.unitylauncher.add_quicklist_item(self.main_quit, "Close Turpial", True)
 
         # Persistent dialogs
         self.accountsdlg = AccountsDialog(self)
-
         self.__create_trayicon()
+
+        # Unity integration
+        self.unitylauncher = UnityLauncherFactory().create();
+        self.unitylauncher.add_quicklist_item(self.show_update_box, "New tweet", True)
+        self.unitylauncher.add_quicklist_item(self.main_quit, "Close Turpial", True)
+
         self.show_all()
+
+    def show_update_box(self):
+        self.deiconify()
+        self.show()
+        self.present()
+        self.container.execute("show_update_box()")
 
     def __size_request(self, widget, rectangle):
         ##print rectangle.width, rectangle.height, self.max_columns

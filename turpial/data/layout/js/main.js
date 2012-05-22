@@ -862,7 +862,7 @@ function remove_statuses(column_id, number) {
 function remove_duplicate(column_id, status_ids) {
     for(i in status_ids)
         console.log('Removiendo status duplicado: #list-' + column_id + " .tweet ." + status_ids[i]);
-        $('#list-' + column_id + " .tweet ." + status_ids[i]).remove()
+        $('#list-' + column_id + " .tweet." + status_ids[i]).remove()
 }
 
 function show_about() {

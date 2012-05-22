@@ -999,7 +999,7 @@ class Main(Base, Singleton, gtk.Window):
             self.container.execute("stop_updating_column('" + column.id_ + "');")
             self.show_notice(arg.errmsg, 'error')
             return
-        
+
         # Remove duplicate elements
         if column.size != 0:
             status_ids = []

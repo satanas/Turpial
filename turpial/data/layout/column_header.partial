@@ -1,8 +1,7 @@
 <td id="header-<% @column_id %>" class="header">
-    <a href="javascript: reset_column('<% @column_id %>');" style="color: #FFFFFF">
-    <div class="combo">
+    <div class="combo" style="cursor: hand" onclick="reset_column('<% @column_id %>')">
         <% img "@protocol_img" %>
-        <label class="header-label overflow"><% @column_label %></label>
+        <label class="header-label overflow" style="cursor: hand"><% @column_label %></label>
         <div class="clearfix"></div>
     </div>
     <div id="header-buttons-<% @column_id %>" class="buttons" style="display: none">
@@ -13,5 +12,4 @@
         <% img "dark-loader.gif" %>
     </div>
     <div class="clearfix"></div>
-    </a>
 </td>

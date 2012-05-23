@@ -99,11 +99,14 @@ class Main(Base, Singleton, gtk.Window):
 
         self.show_all()
 
-    def show_update_box(self):
+    def show_update_box(self, widget=None):
         self.deiconify()
         self.show()
         self.present()
         self.container.execute("show_update_box()")
+
+    def disable_sound(self, widget=None):
+        self.sound.disable(not widget.get_active())
 
     def __size_request(self, widget, rectangle):
         ##print rectangle.width, rectangle.height, self.max_columns
@@ -161,18 +164,18 @@ class Main(Base, Singleton, gtk.Window):
 
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
-        tweet = gtk.MenuItem(i18n.get('tweet'))
-        follow = gtk.MenuItem(i18n.get('follow'))
-        exit_ = gtk.MenuItem(i18n.get('exit'))
-        if self.mode == 2:
-            menu.append(tweet)
-            menu.append(follow)
-            menu.append(gtk.SeparatorMenuItem())
+        tweet = gtk.MenuItem(i18n.get('unity_menu_newtweet'))
+        sound_ = gtk.CheckMenuItem(i18n.get('unity_menu_sounds'))
+        sound_.set_active(not self.sound._disable)
+        exit_ = gtk.MenuItem(i18n.get('unity_menu_exit'))
+        menu.append(tweet)
+        menu.append(sound_)
+        menu.append(gtk.SeparatorMenuItem())
         menu.append(exit_)
 
+        tweet.connect('activate', self.show_update_box)
+        sound_.connect('toggled', self.disable_sound)
         exit_.connect('activate', self.main_quit)
-        #tweet.connect('activate', self.__show_update_box_from_menu)
-        #follow.connect('activate', self.__show_follow_box_from_menu)
 
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)

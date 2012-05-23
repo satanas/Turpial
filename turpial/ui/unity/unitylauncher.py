@@ -5,9 +5,13 @@
 # Author: Andrea Stagi (aka 4ndreaSt4gi)
 # Feb 22, 2012
 
-import dbus, dbus.service
-from dbus.mainloop.glib import DBusGMainLoop
-import gobject, signal, time, sys
+try:
+    import dbus, dbus.service
+    from dbus.mainloop.glib import DBusGMainLoop
+    import gobject, signal, time, sys
+    import_success = True
+except ImportError:
+    import_success = False
 
 BUS_NAME = "org.turpial.ve"
 CONTROLLER_OBJ_PATH = "/org/turpial/ve/turpialunity"
@@ -32,7 +36,10 @@ class NoneUnityDBusController(object):
     def set_count_visible(self, visible):
         pass
 
-    def add_quicklist_item(self, callback, label, visible):
+    def add_quicklist_button(self, callback, label, visible):
+        pass
+
+    def add_quicklist_checkbox(self, callback, label, visible, status):
         pass
 
     def quit(self):
@@ -84,6 +91,8 @@ class UnityLauncher(object):
 class UnityLauncherFactory:
 
     def create(self):
+        if not import_success:
+            return NoneUnityDBusController()
         try:
             return UnityLauncher()
         except dbus.exceptions.DBusException:

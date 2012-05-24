@@ -1005,14 +1005,16 @@ class Main(Base, Singleton, gtk.Window):
             status_ids = []
             for status in arg.items:
                 status_ids.append(status.id_)
-            self.container.execute("remove_duplicate('" + column.id_ + "', " + str(status_ids) + ");")
+            js_array = self.htmlparser.js_string_array(status_ids)
+            self.container.execute("remove_duplicates('" + column.id_ + "', " + js_array + ");")
 
         #Show new statuses
         page = self.htmlparser.statuses(arg.items)
         element = "#list-%s" % column.id_
         extra = "stop_updating_column('" + column.id_ + "');";
+        max_statuses = self.core.get_max_statuses_per_column()
         if column.size != 0:
-            extra += "remove_statuses('" + column.id_ + "', " + str(len(arg.items)) + ");";
+            extra += "remove_statuses('" + column.id_ + "', " + str(len(arg.items)) + ", " + str(max_statuses) + ");";
         self.container.prepend_element(element, page, extra)
 
         # Notifications

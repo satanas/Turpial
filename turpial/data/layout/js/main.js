@@ -847,22 +847,31 @@ function show_avatar(account_id, username) {
     exec_command('cmd:profile_image:' + account_id + arg_sep + username);
 }
 
-function remove_statuses(column_id, number) {
+function remove_statuses(column_id, number, max_statuses) {
     var max = parseInt(number);
     var count = 0;
+    var statuses = $('#list-' + column_id + " .tweet").get();
+    console.log(statuses.length + ' statuses in column ' + column_id);
+    // Don't remove if there is remaining space
+    if ((statuses.length + number) <= max_statuses)
+        return;
+
     $($('#list-' + column_id + " .tweet").get().reverse()).each(function(index) {
         if (count < max) {
-            console.log('Removiendo status: .' + $(this).attr("class").replace(" ", ".") + ' - ' + count + ' de ' + number);
             $("." + $(this).attr("class").replace(" ", ".")).remove();
             count++;
+            console.log('Removing status: .' + $(this).attr("class").replace(" ", ".") + ' - ' + count + ' de ' + number);
         }
     });
 }
 
-function remove_duplicate(column_id, status_ids) {
-    for(i in status_ids)
-        console.log('Removiendo status duplicado: #list-' + column_id + " .tweet ." + status_ids[i]);
-        $('#list-' + column_id + " .tweet." + status_ids[i]).remove()
+function remove_duplicates(column_id, status_ids) {
+    for(i in status_ids) {
+        if ($('#list-' + column_id + " .tweet." + status_ids[i]).length > 0) {
+            console.log('Removing duplicated status: #list-' + column_id + " .tweet." + status_ids[i]);
+            $('#list-' + column_id + " .tweet." + status_ids[i]).remove();
+        }
+    }
 }
 
 function show_about() {

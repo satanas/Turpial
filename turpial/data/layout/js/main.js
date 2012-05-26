@@ -848,21 +848,28 @@ function show_avatar(account_id, username) {
 }
 
 function remove_statuses(column_id, number, max_statuses) {
+    console.log(column_id + ' ' + number + ' ' + max_statuses);
     var max = parseInt(number);
-    var count = 0;
+    var count = 1;
     var statuses = $('#list-' + column_id + " .tweet").get();
     console.log(statuses.length + ' statuses in column ' + column_id);
-    // Don't remove if there is remaining space
+    // Don't remove if there is left space for more tweets
     if ((statuses.length + number) <= max_statuses)
         return;
 
-    $($('#list-' + column_id + " .tweet").get().reverse()).each(function(index) {
+    /*$($('#list-' + column_id + " .tweet").get().reverse()).each(function(index) {
         if (count < max) {
             $("." + $(this).attr("class").replace(" ", ".")).remove();
             count++;
             console.log('Removing status: .' + $(this).attr("class").replace(" ", ".") + ' - ' + count + ' de ' + number);
         }
-    });
+    });*/
+    for (var i = 1; i < max; i++) {
+        var tweet = $('#list-' + column_id + ' .tweet:last-child');
+        var t_id = tweet.attr('class');
+        tweet.remove();
+        console.log('Removing status: #list-' + column_id + ' ' + t_id + ' (' + i + ' de ' + max + ')');
+    }
 }
 
 function remove_duplicates(column_id, status_ids) {

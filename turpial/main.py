@@ -5,33 +5,22 @@
 #
 # Author: Wil Alvarez (aka Satanas)
 # Oct 7, 2011
-import time #quitar, solo aprendiendo pyinstaller
 
+import os
 import sys
 import logging
 
 from optparse import OptionParser, SUPPRESS_HELP
 
-class OptParser(OptionParser):
-    def __init__(self):
-        OptionParser.__init__(self)
-    def error(self, error):
-        pass
-
-
 from turpial import VERSION
 from turpial.ui import util
-from libturpial import VERSION as LIBVERSION
-from libturpial.common.tools import *
 from libturpial.api.core import Core
+from libturpial.common.tools import *
 from libturpial.config import AppConfig
+from libturpial import VERSION as LIBVERSION
 
-#from PyQt4.Qt import *
-#from PyQt4.QtGui import *
-#from PyQt4.QtCore import *
+LOG_FMT = logging.Formatter('[%(asctime)s] [%(name)s::%(levelname)s] %(message)s', '%Y%m%d-%H:%M')
 
-import sys
-import os
 
 class Turpial:
     def __init__(self):
@@ -65,6 +54,9 @@ class Turpial:
         else:
             logging.basicConfig(level=logging.INFO)
         self.log = logging.getLogger('Controller')
+        #handler = logging.StreamHandler()
+        #handler.setFormatter(LOG_FMT)
+        #self.log.addHandler(handler)
 
         self.core = Core()
 

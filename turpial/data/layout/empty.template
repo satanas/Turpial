@@ -5,8 +5,8 @@
 </head>
 <body>
     <% query %>
-    <div id="container" class="yui3-g">
-        <div id="content" class="yui3-u-1">
+    <div id="container">
+        <div id="content">
             <div id="column-empty" class="column">
                 <div id="wrapper-empty" class="empty-wrapper">
                     <div id="list-empty" class="empty-list">
@@ -16,7 +16,7 @@
                 </div>
             </div>
         </div>
-        <div id="dock-container" class="yui3-u">
+        <div id="dock-container">
             <div id="dock">
                 <div class="button" title="<% $about %>"><a href="cmd:about"><% img "dock-about.png" %></a></div>
                 <div class="button" title="<% $preferences %>"><a href="cmd:preferences"><% img "dock-preferences.png" %></a></div>

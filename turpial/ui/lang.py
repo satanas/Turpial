@@ -171,6 +171,9 @@ continue?'),
     'view_my_profile': _('View my profile'),
     'search_profile_in': ('Search profile in'),
     'profiles': ('Profiles'),
+    'unity_menu_exit': ('Exit'),
+    'unity_menu_sounds': ('Sounds'),
+    'unity_menu_newtweet': ('New tweet')
 }
 
 class i18n:

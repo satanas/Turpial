@@ -30,7 +30,7 @@ from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.gtk.preferences import Preferences
-from turpial.ui.gtk.unitylauncher import UnityLauncher
+from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 
 gtk.gdk.set_program_class("Turpial")
 gtk.gdk.threads_init()
@@ -86,13 +86,27 @@ class Main(Base, Singleton, gtk.Window):
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__timeout_callback)
         self.worker.start()
-        self.unitylauncher = UnityLauncher("turpial.desktop");
 
         # Persistent dialogs
         self.accountsdlg = AccountsDialog(self)
-
         self.__create_trayicon()
+
+        # Unity integration, launch typing turpial_unity.sh
+        self.unitylauncher = UnityLauncherFactory().create();
+        self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('unity_menu_newtweet'), True)
+        self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('unity_menu_sounds'), True, self.sound._disable)
+        self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('unity_menu_exit'), True)
+
         self.show_all()
+
+    def show_update_box(self, widget=None):
+        self.deiconify()
+        self.show()
+        self.present()
+        self.container.execute("show_update_box()")
+
+    def disable_sound(self, widget=None):
+        self.sound.disable(not widget.get_active())
 
     def __size_request(self, widget, rectangle):
         ##print rectangle.width, rectangle.height, self.max_columns
@@ -150,18 +164,18 @@ class Main(Base, Singleton, gtk.Window):
 
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
-        tweet = gtk.MenuItem(i18n.get('tweet'))
-        follow = gtk.MenuItem(i18n.get('follow'))
-        exit_ = gtk.MenuItem(i18n.get('exit'))
-        if self.mode == 2:
-            menu.append(tweet)
-            menu.append(follow)
-            menu.append(gtk.SeparatorMenuItem())
+        tweet = gtk.MenuItem(i18n.get('unity_menu_newtweet'))
+        sound_ = gtk.CheckMenuItem(i18n.get('unity_menu_sounds'))
+        sound_.set_active(not self.sound._disable)
+        exit_ = gtk.MenuItem(i18n.get('unity_menu_exit'))
+        menu.append(tweet)
+        menu.append(sound_)
+        menu.append(gtk.SeparatorMenuItem())
         menu.append(exit_)
 
+        tweet.connect('activate', self.show_update_box)
+        sound_.connect('toggled', self.disable_sound)
         exit_.connect('activate', self.main_quit)
-        #tweet.connect('activate', self.__show_update_box_from_menu)
-        #follow.connect('activate', self.__show_follow_box_from_menu)
 
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
@@ -288,7 +302,7 @@ class Main(Base, Singleton, gtk.Window):
     def __close(self, widget, event=None):
         if self.core.minimize_on_close():
             self.showed = False
-            self.hide()
+            self.iconify()
         else:
             self.main_quit(widget)
         return True
@@ -471,6 +485,7 @@ class Main(Base, Singleton, gtk.Window):
         self.tray = None
         self.worker.quit()
         self.worker.join()
+        self.unitylauncher.quit()
         if widget:
             gtk.main_quit()
         if force:

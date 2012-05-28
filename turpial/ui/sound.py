@@ -20,8 +20,8 @@ class Sound:
     def __init__(self, disable=False):
         logging.basicConfig(level=logging.DEBUG)
         self.log = logging.getLogger('Sound')
-        self.disable = disable
-        if self.disable:
+        self._disable = disable
+        if self._disable:
             self.log.debug('Disabled. No sounds')
             return
             
@@ -45,7 +45,7 @@ class Sound:
             self.log.debug('%s. %s' % (err, debug))
         
     def disable(self, value):
-        self.disable = value
+        self._disable = value
     
     def login(self):
         self.play('cambur_pinton.ogg')
@@ -64,7 +64,7 @@ class Sound:
     # ------------------------------------------------------------
     
     def play(self, filename):
-        if self.disable:
+        if self._disable:
             return
         
         filepath = os.path.realpath(os.path.join(os.path.dirname(__file__),

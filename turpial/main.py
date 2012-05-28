@@ -18,7 +18,6 @@ from libturpial.api.core import Core
 from libturpial.common.tools import *
 from libturpial.config import AppConfig
 from libturpial import VERSION as LIBVERSION
-from turpial.ui.unity.daemon import TurpialUnityDaemon
 
 LOG_FMT = logging.Formatter('[%(asctime)s] [%(name)s::%(levelname)s] %(message)s', '%Y%m%d-%H:%M')
 
@@ -100,13 +99,4 @@ class OptParser(OptionParser):
         pass
 
 if __name__ == '__main__':
-    try:
-        daemon = TurpialUnityDaemon('/tmp/turpial-unity-daemon.pid')
-        daemon.start()
-    except:
-        pass
-
     t = Turpial()
-
-    if daemon is not None:
-        daemon.stop()

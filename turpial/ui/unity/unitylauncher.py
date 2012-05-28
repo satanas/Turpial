@@ -42,6 +42,9 @@ class NoneUnityDBusController(object):
     def add_quicklist_checkbox(self, callback, label, visible, status):
         pass
 
+    def is_supported(self):
+        return False
+
     def quit(self):
         pass
 
@@ -83,6 +86,9 @@ class UnityLauncher(object):
     def add_quicklist_checkbox(self, callback, label, visible, status):
         self.service.add_quicklist_checkbox(label, visible, status)
         self.callbacks[label] = callback
+
+    def is_supported(self):
+        return True
 
     def quit(self):
         self.service.quit()

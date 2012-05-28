@@ -9,11 +9,13 @@
 import os
 import sys
 import logging
+import subprocess
 
 from optparse import OptionParser, SUPPRESS_HELP
 
 from turpial import VERSION
 from turpial.ui import util
+
 from libturpial.api.core import Core
 from libturpial.common.tools import *
 from libturpial.config import AppConfig
@@ -99,4 +101,6 @@ class OptParser(OptionParser):
         pass
 
 if __name__ == '__main__':
+    subprocess.call(['turpial-unity-daemon', 'start'])
     t = Turpial()
+    subprocess.call(['turpial-unity-daemon', 'stop'])

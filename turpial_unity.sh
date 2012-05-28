@@ -4,7 +4,6 @@
 # Description: launches Turpial in Ubuntu with Unity support
 # License: GPL v3
 
-sudo chmod +x ./turpial/ui/unity/daemon.py
-./turpial/ui/unity/daemon.py start
+python ./turpial/ui/unity/daemon.py start
 turpial
-./turpial/ui/unity/daemon.py stop
+python ./turpial/ui/unity/daemon.py stop

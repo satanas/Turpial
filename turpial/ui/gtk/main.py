@@ -491,7 +491,7 @@ class Main(Base, Singleton, gtk.Window):
         else:
             page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
         self.container.render(page)
-        #self.login()
+        self.login()
 
     def show_about(self):
         about = About(self)
@@ -1005,8 +1005,9 @@ class Main(Base, Singleton, gtk.Window):
             status_ids = []
             for status in arg.items:
                 status_ids.append(status.id_)
-            js_array = self.htmlparser.js_string_array(status_ids)
-            self.container.execute("remove_duplicates('" + column.id_ + "', " + js_array + ");")
+            if status_ids:
+                js_array = self.htmlparser.js_string_array(status_ids)
+                self.container.execute("remove_duplicates('" + column.id_ + "', " + js_array + ");")
 
         #Show new statuses
         page = self.htmlparser.statuses(arg.items)

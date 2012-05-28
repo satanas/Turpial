@@ -15,7 +15,6 @@ from optparse import OptionParser, SUPPRESS_HELP
 
 from turpial import VERSION
 from turpial.ui import util
-from turpial.ui.unity import UNITY_SUPPORT
 
 from libturpial.api.core import Core
 from libturpial.common.tools import *
@@ -102,8 +101,6 @@ class OptParser(OptionParser):
         pass
 
 if __name__ == '__main__':
-    if UNITY_SUPPORT:
-        subprocess.call(['turpial-unity-daemon', 'start'])
+    subprocess.call(['turpial-unity-daemon', 'start'])
     t = Turpial()
-    if UNITY_SUPPORT:
-        subprocess.call(['turpial-unity-daemon', 'stop'])
+    subprocess.call(['turpial-unity-daemon', 'stop'])

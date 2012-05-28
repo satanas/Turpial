@@ -7,16 +7,20 @@
 # Author: Andrea Stagi (aka 4ndreaSt4gi)
 # May 22, 2012
 
+try:
+    import dbus
+    import dbus.service
+    from dbus.mainloop.glib import DBusGMainLoop
+    from gi.repository import Unity, GObject, Dbusmenu
+    UNITY_SUPPORT = True
+except Exception, e:
+    print 'Could not load all modules for Unity support: %s' % e
+    UNITY_SUPPORT = False
+
 import os
 import sys
-import time
-import dbus
 import atexit
-import dbus.service
-
 from signal import SIGTERM
-from dbus.mainloop.glib import DBusGMainLoop
-from gi.repository import Unity, GObject, Dbusmenu
 
 BUS_NAME = "org.turpial.ve"
 CONTROLLER_OBJ_PATH = "/org/turpial/ve/turpialunity"

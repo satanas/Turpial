@@ -6,9 +6,8 @@
 # Feb 22, 2012
 
 try:
-    import dbus, dbus.service
+    import dbus
     from dbus.mainloop.glib import DBusGMainLoop
-    import gobject, signal, time, sys
     import_success = True
 except ImportError:
     import_success = False
@@ -42,13 +41,16 @@ class NoneUnityDBusController(object):
     def add_quicklist_checkbox(self, callback, label, visible, status):
         pass
 
+    def is_supported(self):
+        return False
+
     def quit(self):
         pass
 
 class UnityLauncher(object):
 
     def __init__ (self):
-        self.dbus_loop =DBusGMainLoop(set_as_default=True)
+        self.dbus_loop = DBusGMainLoop(set_as_default=True)
         self.count = 0
         self.callbacks = {}
         self.bus = dbus.SessionBus(mainloop=self.dbus_loop)
@@ -83,6 +85,9 @@ class UnityLauncher(object):
     def add_quicklist_checkbox(self, callback, label, visible, status):
         self.service.add_quicklist_checkbox(label, visible, status)
         self.callbacks[label] = callback
+
+    def is_supported(self):
+        return True
 
     def quit(self):
         self.service.quit()

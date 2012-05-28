@@ -302,7 +302,10 @@ class Main(Base, Singleton, gtk.Window):
     def __close(self, widget, event=None):
         if self.core.minimize_on_close():
             self.showed = False
-            self.iconify()
+            if self.unitylauncher.is_supported():
+                self.iconify()
+            else:
+                self.hide()
         else:
             self.main_quit(widget)
         return True

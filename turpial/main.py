@@ -9,16 +9,18 @@
 import os
 import sys
 import logging
+import subprocess
 
 from optparse import OptionParser, SUPPRESS_HELP
 
 from turpial import VERSION
 from turpial.ui import util
+from turpial.ui.unity import UNITY_SUPPORT
+
 from libturpial.api.core import Core
 from libturpial.common.tools import *
 from libturpial.config import AppConfig
 from libturpial import VERSION as LIBVERSION
-from turpial.ui.unity.daemon import TurpialUnityDaemon
 
 LOG_FMT = logging.Formatter('[%(asctime)s] [%(name)s::%(levelname)s] %(message)s', '%Y%m%d-%H:%M')
 
@@ -100,13 +102,8 @@ class OptParser(OptionParser):
         pass
 
 if __name__ == '__main__':
-    try:
-        daemon = TurpialUnityDaemon('/tmp/turpial-unity-daemon.pid')
-        daemon.start()
-    except:
-        pass
-
+    if UNITY_SUPPORT:
+        subprocess.call(['turpial-unity-daemon', 'start'])
     t = Turpial()
-
-    if daemon is not None:
-        daemon.stop()
+    if UNITY_SUPPORT:
+        subprocess.call(['turpial-unity-daemon', 'stop'])

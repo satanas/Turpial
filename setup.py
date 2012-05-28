@@ -54,6 +54,7 @@ setup(name="turpial",
     entry_points={
       'console_scripts': [
           'turpial = turpial.main:Turpial',
+          'turpial-unity-daemon = turpial.ui.unity.daemon:main',
       ],
     },
     data_files=data_files,

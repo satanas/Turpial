@@ -10,20 +10,13 @@
 import os
 import sys
 import time
+import dbus
+import atexit
+import dbus.service
 
-UNITY_SUPPORT = False
-try:
-    import dbus
-    import atexit
-    import dbus.service
-
-    from signal import SIGTERM
-    from dbus.mainloop.glib import DBusGMainLoop
-    from gi.repository import Unity, GObject, Dbusmenu
-    UNITY_SUPPORT = True
-except Exception, e:
-    print 'Could not load all modules for Unity support: %s' % e
-
+from signal import SIGTERM
+from dbus.mainloop.glib import DBusGMainLoop
+from gi.repository import Unity, GObject, Dbusmenu
 
 BUS_NAME = "org.turpial.ve"
 CONTROLLER_OBJ_PATH = "/org/turpial/ve/turpialunity"
@@ -229,3 +222,27 @@ class TurpialUnityDaemon(Daemon):
         self.service = TurpialUnity(loop)
         loop.run()
 
+def main():
+    if len(sys.argv) != 2:
+        print "Usage: %s start|stop|restart" % sys.argv[0]
+        sys.exit(2)
+
+    try:
+        daemon = TurpialUnityDaemon('/tmp/turpial-unity-daemon.pid')
+    except Exception, e:
+        print "Error running the Unity Daemon: %s" % e
+        sys.exit(-1)
+
+    cmd = sys.argv[1]
+    if cmd == 'start':
+        daemon.start()
+    elif cmd == 'stop':
+        daemon.stop()
+    elif cmd == 'restart':
+        daemon.restart()
+    else:
+        print "Unknown command"
+        sys.exit(2)
+
+if __name__ == '__main__':
+    main()

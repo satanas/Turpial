@@ -9,9 +9,7 @@
 
 try:
     import dbus
-    import atexit
     import dbus.service
-    from signal import SIGTERM
     from dbus.mainloop.glib import DBusGMainLoop
     from gi.repository import Unity, GObject, Dbusmenu
     UNITY_SUPPORT = True
@@ -20,6 +18,9 @@ except Exception, e:
     UNITY_SUPPORT = False
 
 import os
+import sys
+import atexit
+from signal import SIGTERM
 
 BUS_NAME = "org.turpial.ve"
 CONTROLLER_OBJ_PATH = "/org/turpial/ve/turpialunity"

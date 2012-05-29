@@ -39,7 +39,10 @@ class HtmlView(gtk.VBox, gobject.GObject):
         self.settings.set_property('enable-html5-local-storage', False)
         self.settings.set_property('enable-html5-database', False)
         self.settings.set_property('enable-xss-auditor', False)
-        self.settings.set_property('enable-dns-prefetching', False)
+        try:
+            self.settings.set_property('enable-dns-prefetching', False)
+        except TypeError:
+            pass
         self.settings.set_property('enable-caret-browsing', False)
         self.settings.set_property('resizable-text-areas', False)
         self.settings.web_security_enabled = False

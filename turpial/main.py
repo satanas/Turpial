@@ -100,7 +100,10 @@ class OptParser(OptionParser):
     def exit(self):
         pass
 
-if __name__ == '__main__':
+def main():
     subprocess.call(['turpial-unity-daemon', 'start'])
     t = Turpial()
     subprocess.call(['turpial-unity-daemon', 'stop'])
+
+if __name__ == '__main__':
+    main()

@@ -99,15 +99,6 @@ class Main(Base, Singleton, gtk.Window):
 
         self.show_all()
 
-    def show_update_box(self, widget=None):
-        self.deiconify()
-        self.show()
-        self.present()
-        self.container.execute("show_update_box()")
-
-    def disable_sound(self, widget=None):
-        self.sound.disable(not widget.get_active())
-
     def __size_request(self, widget, rectangle):
         ##print rectangle.width, rectangle.height, self.max_columns
         width = rectangle.width
@@ -164,16 +155,25 @@ class Main(Base, Singleton, gtk.Window):
 
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
-        tweet = gtk.MenuItem(i18n.get('unity_menu_newtweet'))
-        sound_ = gtk.CheckMenuItem(i18n.get('unity_menu_sounds'))
+        tweet = gtk.MenuItem(i18n.get('new_tweet'))
+        direct = gtk.MenuItem(i18n.get('direct_message'))
+        accounts = gtk.MenuItem(i18n.get('accounts'))
+        prefs = gtk.MenuItem(i18n.get('preferences'))
+        sound_ = gtk.CheckMenuItem(i18n.get('enable_sounds'))
         sound_.set_active(not self.sound._disable)
-        exit_ = gtk.MenuItem(i18n.get('unity_menu_exit'))
+        exit_ = gtk.MenuItem(i18n.get('exit'))
         menu.append(tweet)
+        menu.append(direct)
+        menu.append(accounts)
+        menu.append(prefs)
         menu.append(sound_)
         menu.append(gtk.SeparatorMenuItem())
         menu.append(exit_)
 
         tweet.connect('activate', self.show_update_box)
+        direct.connect('activate', self.show_update_box_for_direct)
+        accounts.connect('activate', self.show_accounts_dialog)
+        prefs.connect('activate', self.show_preferences)
         sound_.connect('toggled', self.disable_sound)
         exit_.connect('activate', self.main_quit)
 
@@ -514,8 +514,27 @@ class Main(Base, Singleton, gtk.Window):
     def show_about(self):
         about = About(self)
 
-    def show_preferences(self):
+    def show_preferences(self, widget=None):
         pref = Preferences(self)
+
+    def show_accounts_dialog(self, widget=None):
+        self.accountsdlg.show()
+
+    def show_update_box(self, widget=None):
+        self.deiconify()
+        self.show()
+        self.present()
+        self.container.execute("show_update_box()")
+
+    def show_update_box_for_direct(self, widget=None):
+        self.deiconify()
+        self.show()
+        self.present()
+        self.container.execute("show_autocomplete_for_direct()")
+
+    def disable_sound(self, widget=None):
+        self.sound.disable(not widget.get_active())
+
 
     def show_notice(self, msg, type_):
         cmd = 'show_notice("%s", "%s");' % (msg, type_)

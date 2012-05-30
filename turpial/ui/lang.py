@@ -150,6 +150,7 @@ text box below and click OK:'),
     'friends_loaded_successfully': _('Friends loaded successfully'),
     'shorting_urls': _('Shorting URLs...'),
     'direct_messages': _('Direct Messages'),
+    'direct_message': _('Direct Message'),
     'select_user': _('Select user'),
     'send_message_to': _('Send message to'),
     'can_send_message_to_one_account': _("Wait! I just can send messages to \
@@ -170,10 +171,8 @@ delete your current config (you must start Turpial again). Do you want to \
 continue?'),
     'view_my_profile': _('View my profile'),
     'search_profile_in': ('Search profile in'),
-    'profiles': ('Profiles'),
-    'unity_menu_exit': ('Exit'),
-    'unity_menu_sounds': ('Sounds'),
-    'unity_menu_newtweet': ('New tweet')
+    'profiles': _('Profiles'),
+    'enable_sounds': _('Enable sounds'),
 }
 
 class i18n:

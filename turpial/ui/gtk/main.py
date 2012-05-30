@@ -522,12 +522,11 @@ class Main(Base, Singleton, gtk.Window):
         self.container.execute(cmd)
 
     def login(self):
-        if self.core.play_sounds_in_notification():
+        if self.core.play_sounds_in_login():
             self.sound.login()
 
         for acc in self.get_accounts_list():
             self.single_login(acc)
-
 
         self.worker.register(self.core.load_all_friends_list, (), self.load_all_friends_response)
 
@@ -1041,7 +1040,7 @@ class Main(Base, Singleton, gtk.Window):
         if count != 0:
             if notif and self.core.show_notifications_in_updates():
                 self.notify.updates(column, count)
-            if self.core.play_sounds_in_notification():
+            if self.core.play_sounds_in_updates():
                 self.sound.updates()
             if not self.is_active():
                 self.set_urgency_hint(True)

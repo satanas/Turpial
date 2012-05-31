@@ -79,7 +79,8 @@ class HtmlView(gtk.VBox, gobject.GObject):
         self.emit('link-request', request.get_uri())
 
     def __console_message(self, view, message, line, source_id, data=None):
-        print "%s <%s:%i>" % (message, source_id, line)
+        #print "%s <%s:%i>" % (message, source_id, line)
+        print "%s" % message
         return True
 
     def __process(self, view, frame, request, action, policy, data=None):

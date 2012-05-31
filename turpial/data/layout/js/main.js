@@ -857,13 +857,6 @@ function remove_statuses(column_id, number, max_statuses) {
     if ((statuses.length + number) <= max_statuses)
         return;
 
-    /*$($('#list-' + column_id + " .tweet").get().reverse()).each(function(index) {
-        if (count < max) {
-            $("." + $(this).attr("class").replace(" ", ".")).remove();
-            count++;
-            console.log('Removing status: .' + $(this).attr("class").replace(" ", ".") + ' - ' + count + ' de ' + number);
-        }
-    });*/
     for (var i = 1; i < max; i++) {
         var tweet = $('#list-' + column_id + ' .tweet:last-child');
         var t_id = tweet.attr('class');
@@ -873,7 +866,7 @@ function remove_statuses(column_id, number, max_statuses) {
 }
 
 function remove_duplicates(column_id, status_ids) {
-    for(i in status_ids) {
+    for (var i = 0; i < status_ids.length; i++) {
         if ($('#list-' + column_id + " .tweet." + status_ids[i]).length > 0) {
             console.log('Removing duplicated status: #list-' + column_id + " .tweet." + status_ids[i]);
             $('#list-' + column_id + " .tweet." + status_ids[i]).remove();

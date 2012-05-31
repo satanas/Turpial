@@ -857,7 +857,7 @@ function remove_statuses(column_id, number, max_statuses) {
     if ((statuses.length + number) <= max_statuses)
         return;
 
-    for (var i = 1; i < max; i++) {
+    for (var i = 1; i <= max; i++) {
         var tweet = $('#list-' + column_id + ' .tweet:last-child');
         var t_id = tweet.attr('class');
         tweet.remove();

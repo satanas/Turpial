@@ -20,6 +20,7 @@ except Exception, e:
 import os
 import sys
 import atexit
+import time
 from signal import SIGTERM
 
 BUS_NAME = "org.turpial.ve"
@@ -175,7 +176,6 @@ class TurpialUnity(dbus.service.Object):
         item.property_set_bool(Dbusmenu.MENUITEM_PROP_VISIBLE, visible)
         item.connect("item-activated", _pressCallback, None)
         self.ql.child_append(item)
-        self.launcher.set_property("quicklist", self.ql)
 
     @dbus.service.method(BUS_NAME)
     def add_quicklist_checkbox(self, label, visible, status):
@@ -191,12 +191,21 @@ class TurpialUnity(dbus.service.Object):
         check = Dbusmenu.Menuitem.new ()
         check.property_set (Dbusmenu.MENUITEM_PROP_LABEL, label)
         check.property_set (Dbusmenu.MENUITEM_PROP_TOGGLE_TYPE, Dbusmenu.MENUITEM_TOGGLE_CHECK)
-        check.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED)
-        check.property_set_bool (Dbusmenu.MENUITEM_PROP_VISIBLE, visible)
+        if status:
+            check.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_UNCHECKED)
+        else:
+            check.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED)
         check.connect (Dbusmenu.MENUITEM_SIGNAL_ITEM_ACTIVATED, _check_callback, None)
+        check.property_set_bool (Dbusmenu.MENUITEM_PROP_VISIBLE, visible)
         self.ql.child_append(check)
+
+    @dbus.service.method(BUS_NAME)
+    def show_menu(self):
         self.launcher.set_property("quicklist", self.ql)
 
+    @dbus.service.method(BUS_NAME)
+    def clean_quicklist(self):
+        pass
 
     @dbus.service.method(BUS_NAME)
     def quit(self):
@@ -213,7 +222,7 @@ class TurpialUnity(dbus.service.Object):
 class TurpialUnityDaemon(Daemon):
 
     def __init__(self, path):
-        Daemon.__init__(self, path)
+        Daemon.__init__(self, path, stderr="/home/andrea/w/daemon")
         self.mainloop = None
         self.service = None
 
@@ -222,9 +231,9 @@ class TurpialUnityDaemon(Daemon):
 
     def run(self):
         DBusGMainLoop(set_as_default=True)
-        loop = GObject.MainLoop()
-        self.service = TurpialUnity(loop)
-        loop.run()
+        self.mainloop = GObject.MainLoop()
+        self.service = TurpialUnity(self.mainloop)
+        self.mainloop.run()
 
 def main():
     if len(sys.argv) != 2:

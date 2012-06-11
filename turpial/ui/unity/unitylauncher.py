@@ -44,6 +44,9 @@ class NoneUnityDBusController(object):
     def is_supported(self):
         return False
 
+    def show_menu(self):
+        pass
+
     def quit(self):
         pass
 
@@ -88,6 +91,9 @@ class UnityLauncher(object):
 
     def is_supported(self):
         return True
+
+    def show_menu(self):
+        self.service.show_menu()
 
     def quit(self):
         self.service.quit()

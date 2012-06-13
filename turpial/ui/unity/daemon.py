@@ -192,9 +192,9 @@ class TurpialUnity(dbus.service.Object):
         check.property_set (Dbusmenu.MENUITEM_PROP_LABEL, label)
         check.property_set (Dbusmenu.MENUITEM_PROP_TOGGLE_TYPE, Dbusmenu.MENUITEM_TOGGLE_CHECK)
         if status:
-            check.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_UNCHECKED)
-        else:
             check.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED)
+        else:
+            check.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_UNCHECKED)
         check.connect (Dbusmenu.MENUITEM_SIGNAL_ITEM_ACTIVATED, _check_callback, None)
         check.property_set_bool (Dbusmenu.MENUITEM_PROP_VISIBLE, visible)
         self.ql.child_append(check)

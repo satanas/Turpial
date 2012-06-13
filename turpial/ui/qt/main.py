@@ -80,7 +80,22 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         Base.__init__(self, core)
         import sys
         self.app = QtGui.QApplication(sys.argv)
+        self.focus = False
         QtGui.QMainWindow.__init__(self)
+
+        class eventFilter(QtCore.QObject):
+            def __init__(self, parent):
+                super(eventFilter, self).__init__(parent)
+            def eventFilter(self, object, event):
+                if event.type() == 24:
+                    object.__manage_focus(event, True)
+                if event.type() == 25:
+                    object.__manage_focus(event, False)
+                return False
+
+        self.filter = eventFilter(self)
+        self.installEventFilter(self.filter)
+
 
         self.log = logging.getLogger('Qt')
         self.htmlparser = HtmlParser()
@@ -201,11 +216,12 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.indicator.clean()
         self.__on_main_indicator_clicked(indicator)
 
-    def __on_focus(self, widget, event):
-        self.set_urgency_hint(False)
+    def _eventFilter__manage_focus(self, event, focus):
+        self.focus = focus
+        if not self.focus:
+            return
         self.unitylauncher.set_count_visible(False)
         self.unitylauncher.set_count(0)
-        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
 
     def __on_key_press(self, widget, event):
         keyname = gtk.gdk.keyval_name(event.keyval)
@@ -1025,6 +1041,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         for col in self.get_registered_columns():
             if col.build_id() == column_id:
                 self.download_stream(col)
+
+    def hasFocus(self):
+        return self.focus
 
     def update_column(self, arg, data):
         column, notif, max_ = data

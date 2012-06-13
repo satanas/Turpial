@@ -91,11 +91,15 @@ class Main(Base, Singleton, gtk.Window):
         self.accountsdlg = AccountsDialog(self)
         self.__create_trayicon()
 
-        # Unity integration, launch typing turpial_unity.sh
+        # Unity integration
         self.unitylauncher = UnityLauncherFactory().create();
-        self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('unity_menu_newtweet'), True)
-        self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('unity_menu_sounds'), True, self.sound._disable)
-        self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('unity_menu_exit'), True)
+        self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('new_tweet'), True)
+        self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('enable_sounds'), True, not self.sound._disable)
+        self.unitylauncher.add_quicklist_button(self.show_update_box_for_direct, i18n.get('direct_message'), True)
+        self.unitylauncher.add_quicklist_button(self.show_accounts_dialog, i18n.get('accounts'), True)
+        self.unitylauncher.add_quicklist_button(self.show_preferences, i18n.get('preferences'), True)
+        self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('exit'), True)
+        self.unitylauncher.show_menu()
 
         self.show_all()
 
@@ -141,9 +145,12 @@ class Main(Base, Singleton, gtk.Window):
         self.__on_main_indicator_clicked(indicator)
 
     def __on_focus(self, widget, event):
-        self.set_urgency_hint(False)
-        self.unitylauncher.set_count_visible(False)
-        self.unitylauncher.set_count(0)
+        try:
+            self.set_urgency_hint(False)
+            self.unitylauncher.set_count_visible(False)
+            self.unitylauncher.set_count(0)
+        except Exception:
+            pass
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
 
     def __on_key_press(self, widget, event):
@@ -484,11 +491,11 @@ class Main(Base, Singleton, gtk.Window):
 
     def main_quit(self, widget=None, force=False):
         self.log.debug('Exiting...')
+        self.unitylauncher.quit()
         self.destroy()
         self.tray = None
         self.worker.quit()
         self.worker.join()
-        self.unitylauncher.quit()
         if widget:
             gtk.main_quit()
         if force:

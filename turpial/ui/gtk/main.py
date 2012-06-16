@@ -759,7 +759,8 @@ class Main(Base, Singleton, gtk.Window):
         else:
             html_status = self.htmlparser.single_status(response.items)
             id_ = '#list-%s-timeline' % account_id
-            self.container.prepend_element(id_, html_status, 'done_update_box(true);')
+            #self.container.prepend_element(id_, html_status, 'done_update_box(true);')
+            self.container.execute('done_update_box(true);')
             column_key = '%s-timeline' % account_id
             #if self.columns.has_key(column_key):
             #    self.columns[column_key].append(response.items)
@@ -777,7 +778,7 @@ class Main(Base, Singleton, gtk.Window):
             else:
                 html_status = self.htmlparser.status(resp.items)
                 html_status = html_status.replace('"', '\\"')
-                cmd += 'append_status_to_timeline("%s", "%s");' % (resp.account_id, html_status)
+                #cmd += 'append_status_to_timeline("%s", "%s");' % (resp.account_id, html_status)
                 good_acc.append(resp.account_id)
                 column_key = '%s-timeline' % resp.account_id
                 #if self.columns.has_key(column_key):
@@ -1044,6 +1045,7 @@ class Main(Base, Singleton, gtk.Window):
             return
 
         # Remove duplicate elements
+        """
         if column.size != 0:
             status_ids = []
             for status in arg.items:
@@ -1051,6 +1053,7 @@ class Main(Base, Singleton, gtk.Window):
             if status_ids:
                 js_array = self.htmlparser.js_string_array(status_ids)
                 self.container.execute("remove_duplicates('" + column.id_ + "', " + js_array + ");")
+        """
 
         #Show new statuses
         page = self.htmlparser.statuses(arg.items)

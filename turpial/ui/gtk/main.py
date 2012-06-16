@@ -30,7 +30,7 @@ from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.gtk.preferences import Preferences
-from turpial.ui.gtk.unitylauncher import UnityLauncher
+from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 
 gtk.gdk.set_program_class("Turpial")
 gtk.gdk.threads_init()
@@ -86,12 +86,21 @@ class Main(Base, Singleton, gtk.Window):
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__timeout_callback)
         self.worker.start()
-        self.unitylauncher = UnityLauncher("turpial.desktop");
 
         # Persistent dialogs
         self.accountsdlg = AccountsDialog(self)
-
         self.__create_trayicon()
+
+        # Unity integration
+        self.unitylauncher = UnityLauncherFactory().create();
+        self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('new_tweet'), True)
+        self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('enable_sounds'), True, not self.sound._disable)
+        self.unitylauncher.add_quicklist_button(self.show_update_box_for_direct, i18n.get('direct_message'), True)
+        self.unitylauncher.add_quicklist_button(self.show_accounts_dialog, i18n.get('accounts'), True)
+        self.unitylauncher.add_quicklist_button(self.show_preferences, i18n.get('preferences'), True)
+        self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('exit'), True)
+        self.unitylauncher.show_menu()
+
         self.show_all()
 
     def __size_request(self, widget, rectangle):
@@ -136,9 +145,12 @@ class Main(Base, Singleton, gtk.Window):
         self.__on_main_indicator_clicked(indicator)
 
     def __on_focus(self, widget, event):
-        self.set_urgency_hint(False)
-        self.unitylauncher.set_count_visible(False)
-        self.unitylauncher.set_count(0)
+        try:
+            self.set_urgency_hint(False)
+            self.unitylauncher.set_count_visible(False)
+            self.unitylauncher.set_count(0)
+        except Exception:
+            pass
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
 
     def __on_key_press(self, widget, event):
@@ -150,18 +162,27 @@ class Main(Base, Singleton, gtk.Window):
 
     def __show_tray_menu(self, widget, button, activate_time):
         menu = gtk.Menu()
-        tweet = gtk.MenuItem(i18n.get('tweet'))
-        follow = gtk.MenuItem(i18n.get('follow'))
+        tweet = gtk.MenuItem(i18n.get('new_tweet'))
+        direct = gtk.MenuItem(i18n.get('direct_message'))
+        accounts = gtk.MenuItem(i18n.get('accounts'))
+        prefs = gtk.MenuItem(i18n.get('preferences'))
+        sound_ = gtk.CheckMenuItem(i18n.get('enable_sounds'))
+        sound_.set_active(not self.sound._disable)
         exit_ = gtk.MenuItem(i18n.get('exit'))
-        if self.mode == 2:
-            menu.append(tweet)
-            menu.append(follow)
-            menu.append(gtk.SeparatorMenuItem())
+        menu.append(tweet)
+        menu.append(direct)
+        menu.append(accounts)
+        menu.append(prefs)
+        menu.append(sound_)
+        menu.append(gtk.SeparatorMenuItem())
         menu.append(exit_)
 
+        tweet.connect('activate', self.show_update_box)
+        direct.connect('activate', self.show_update_box_for_direct)
+        accounts.connect('activate', self.show_accounts_dialog)
+        prefs.connect('activate', self.show_preferences)
+        sound_.connect('toggled', self.disable_sound)
         exit_.connect('activate', self.main_quit)
-        #tweet.connect('activate', self.__show_update_box_from_menu)
-        #follow.connect('activate', self.__show_follow_box_from_menu)
 
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
@@ -288,7 +309,10 @@ class Main(Base, Singleton, gtk.Window):
     def __close(self, widget, event=None):
         if self.core.minimize_on_close():
             self.showed = False
-            self.hide()
+            if self.unitylauncher.is_supported():
+                self.iconify()
+            else:
+                self.hide()
         else:
             self.main_quit(widget)
         return True
@@ -467,6 +491,7 @@ class Main(Base, Singleton, gtk.Window):
 
     def main_quit(self, widget=None, force=False):
         self.log.debug('Exiting...')
+        self.unitylauncher.quit()
         self.destroy()
         self.tray = None
         self.worker.quit()
@@ -496,20 +521,38 @@ class Main(Base, Singleton, gtk.Window):
     def show_about(self):
         about = About(self)
 
-    def show_preferences(self):
+    def show_preferences(self, widget=None):
         pref = Preferences(self)
+
+    def show_accounts_dialog(self, widget=None):
+        self.accountsdlg.show()
+
+    def show_update_box(self, widget=None):
+        self.deiconify()
+        self.show()
+        self.present()
+        self.container.execute("show_update_box()")
+
+    def show_update_box_for_direct(self, widget=None):
+        self.deiconify()
+        self.show()
+        self.present()
+        self.container.execute("show_autocomplete_for_direct()")
+
+    def disable_sound(self, widget=None):
+        self.sound.disable(not widget.get_active())
+
 
     def show_notice(self, msg, type_):
         cmd = 'show_notice("%s", "%s");' % (msg, type_)
         self.container.execute(cmd)
 
     def login(self):
-        if self.core.play_sounds_in_notification():
+        if self.core.play_sounds_in_login():
             self.sound.login()
 
         for acc in self.get_accounts_list():
             self.single_login(acc)
-
 
         self.worker.register(self.core.load_all_friends_list, (), self.load_all_friends_response)
 
@@ -716,7 +759,8 @@ class Main(Base, Singleton, gtk.Window):
         else:
             html_status = self.htmlparser.single_status(response.items)
             id_ = '#list-%s-timeline' % account_id
-            self.container.prepend_element(id_, html_status, 'done_update_box(true);')
+            #self.container.prepend_element(id_, html_status, 'done_update_box(true);')
+            self.container.execute('done_update_box(true);')
             column_key = '%s-timeline' % account_id
             #if self.columns.has_key(column_key):
             #    self.columns[column_key].append(response.items)
@@ -734,7 +778,7 @@ class Main(Base, Singleton, gtk.Window):
             else:
                 html_status = self.htmlparser.status(resp.items)
                 html_status = html_status.replace('"', '\\"')
-                cmd += 'append_status_to_timeline("%s", "%s");' % (resp.account_id, html_status)
+                #cmd += 'append_status_to_timeline("%s", "%s");' % (resp.account_id, html_status)
                 good_acc.append(resp.account_id)
                 column_key = '%s-timeline' % resp.account_id
                 #if self.columns.has_key(column_key):
@@ -1001,18 +1045,23 @@ class Main(Base, Singleton, gtk.Window):
             return
 
         # Remove duplicate elements
+        """
         if column.size != 0:
             status_ids = []
             for status in arg.items:
                 status_ids.append(status.id_)
-            self.container.execute("remove_duplicate('" + column.id_ + "', " + str(status_ids) + ");")
+            if status_ids:
+                js_array = self.htmlparser.js_string_array(status_ids)
+                self.container.execute("remove_duplicates('" + column.id_ + "', " + js_array + ");")
+        """
 
         #Show new statuses
         page = self.htmlparser.statuses(arg.items)
         element = "#list-%s" % column.id_
         extra = "stop_updating_column('" + column.id_ + "');";
+        max_statuses = self.core.get_max_statuses_per_column()
         if column.size != 0:
-            extra += "remove_statuses('" + column.id_ + "', " + str(len(arg.items)) + ");";
+            extra += "remove_statuses('" + column.id_ + "', " + str(len(arg.items)) + ", " + str(max_statuses) + ");";
         self.container.prepend_element(element, page, extra)
 
         # Notifications
@@ -1020,7 +1069,7 @@ class Main(Base, Singleton, gtk.Window):
         if count != 0:
             if notif and self.core.show_notifications_in_updates():
                 self.notify.updates(column, count)
-            if self.core.play_sounds_in_notification():
+            if self.core.play_sounds_in_updates():
                 self.sound.updates()
             if not self.is_active():
                 self.set_urgency_hint(True)

@@ -365,6 +365,12 @@
     margin: 3px 0 5px 0;
 }
 
+.checkbox span {
+    position: relative; 
+    top: -1px; 
+    margin-right: 1px;
+}
+
 .acc_selector {
     margin: 0;
     padding: 0;

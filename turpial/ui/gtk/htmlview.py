@@ -10,6 +10,8 @@ import gtk
 import webkit
 import gobject
 
+from turpial.ui.gtk.inspector import TurpialInspector
+
 class HtmlView(gtk.VBox, gobject.GObject):
     __gsignals__ = {
         "action-request": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
@@ -24,20 +26,31 @@ class HtmlView(gtk.VBox, gobject.GObject):
 
         self.coding = coding
         self.uri = 'file://' + os.path.dirname(__file__)
-        self.settings = webkit.WebSettings()
-        self.settings.set_property('enable-default-context-menu', False)
 
-        self.settings.enable_java_applet = False
-        self.settings.enable_plugins = True
-        self.settings.enable_page_cache = False
-        self.settings.enable_offline_web_application_cache = False
-        self.settings.enable_html5_local_storage = False
-        self.settings.enable_html5_database = False
-        self.settings.enable_default_context_menu = False
-        self.settings.enable_xss_auditor = False
-        self.settings.enable_dns_prefetching = False
-        self.settings.resizable_text_areas = False
+        self.settings = webkit.WebSettings()
+
+        self.settings.set_property('enable-default-context-menu', True)
+        self.settings.set_property('enable-developer-extras', True)
+        self.settings.set_property('enable-plugins', True)
+        self.settings.set_property('enable-java_applet', False)
+        self.settings.set_property('enable-page-cache', True)
+        self.settings.set_property('enable-file-access-from-file-uris', True)
+        self.settings.set_property('enable-offline-web-application_cache', False)
+        self.settings.set_property('enable-html5-local-storage', False)
+        self.settings.set_property('enable-html5-database', False)
+        self.settings.set_property('enable-xss-auditor', False)
+        try:
+            self.settings.set_property('enable-dns-prefetching', False)
+        except TypeError:
+            pass
+        self.settings.set_property('enable-caret-browsing', False)
+        self.settings.set_property('resizable-text-areas', False)
         self.settings.web_security_enabled = False
+
+        try:
+            self.settings.set_property('enable-accelerated-compositing', True)
+        except TypeError:
+            print "No support for accelerated compositing"
 
         self.view = webkit.WebView()
         self.view.set_settings(self.settings)
@@ -59,11 +72,15 @@ class HtmlView(gtk.VBox, gobject.GObject):
 
         self.pack_start(scroll, True, True, 0)
 
+        inspector = self.view.get_web_inspector()
+        self.inspector = TurpialInspector(inspector)
+
     def __on_new_window_requested(self, view, frame, request, decision, u_data):
         self.emit('link-request', request.get_uri())
 
     def __console_message(self, view, message, line, source_id, data=None):
-        print "%s <%s:%i>" % (message, source_id, line)
+        #print "%s <%s:%i>" % (message, source_id, line)
+        print "%s" % message
         return True
 
     def __process(self, view, frame, request, action, policy, data=None):

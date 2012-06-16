@@ -2,7 +2,7 @@
 
 # GTK main view for Turpial
 #
-# Author: Wil Alvarez (aka Satanas)
+# Author: Carlos Guerrero and Andrea Stagi
 # Sep 03, 2011
 
 import os
@@ -30,6 +30,8 @@ from turpial.ui.qt.worker import Worker
 from turpial.ui.qt.htmlview import HtmlView
 from turpial.ui.qt.oauthwin import OAuthWindow
 from turpial.ui.qt.accounts import AccountsDialog
+
+from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 
 # TODO: Improve all splits for accounts_id with a common function
 
@@ -78,11 +80,28 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         Base.__init__(self, core)
         import sys
         self.app = QtGui.QApplication(sys.argv)
+        self.focus = False
         QtGui.QMainWindow.__init__(self)
+
+        class eventFilter(QtCore.QObject):
+            def __init__(self, parent):
+                super(eventFilter, self).__init__(parent)
+            def eventFilter(self, object, event):
+                if event.type() == 24:
+                    object.__manage_focus(event, True)
+                if event.type() == 25:
+                    object.__manage_focus(event, False)
+                return False
+
+        self.filter = eventFilter(self)
+        self.installEventFilter(self.filter)
+
 
         self.log = logging.getLogger('Qt')
         self.htmlparser = HtmlParser()
         self.setWindowTitle('Turpial')
+
+        self.ignore_quit = True
 
         columns = self.get_all_columns()
 
@@ -109,7 +128,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.updating = {}
         self.columns = {}
 
-#        self.sound = Sound()
+        self.sound = Sound()
 #        self.notify = Notification()
 
         self.openstatuses = {}
@@ -118,11 +137,45 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.emitter.connect(self.__timeout_callback)
         self.worker.start()
 
+        # Unity integration
+        self.unitylauncher = UnityLauncherFactory().create();
+        self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('new_tweet'), True)
+        self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('enable_sounds'), True, not self.sound._disable)
+        self.unitylauncher.add_quicklist_button(self.show_update_box_for_direct, i18n.get('direct_message'), True)
+        self.unitylauncher.add_quicklist_button(self.show_accounts_dialog, i18n.get('accounts'), True)
+        self.unitylauncher.add_quicklist_button(self.show_preferences, i18n.get('preferences'), True)
+        self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('exit'), True)
+        self.unitylauncher.show_menu()
+
         # Persistent dialogs
         self.accountsdlg = AccountsDialog(self)
         self.accountsdlg.update()
 
         self.show()
+
+    def closeEvent(self, event):
+        if self.unitylauncher.is_supported():
+            self.showMinimized()
+        else:
+            self.hide()
+        print self.ignore_quit
+        if self.ignore_quit:
+            event.ignore()
+
+    def show_about(self):
+        about = About(self)
+
+    def show_preferences(self, widget=None):
+        pref = Preferences(self)
+
+    def show_accounts_dialog(self, widget=None):
+        self.accountsdlg.show()
+
+    def show_update_box(self, widget=None):
+        self.container.execute("show_update_box()")
+
+    def show_update_box_for_direct(self, widget=None):
+        self.container.execute("show_autocomplete_for_direct()")
 
     def __size_request(self, widget, rectangle):
         width = rectangle.width
@@ -163,11 +216,12 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.indicator.clean()
         self.__on_main_indicator_clicked(indicator)
 
-    def __on_focus(self, widget, event):
-        self.set_urgency_hint(False)
+    def _eventFilter__manage_focus(self, event, focus):
+        self.focus = focus
+        if not self.focus:
+            return
         self.unitylauncher.set_count_visible(False)
         self.unitylauncher.set_count(0)
-        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
 
     def __on_key_press(self, widget, event):
         keyname = gtk.gdk.keyval_name(event.keyval)
@@ -250,7 +304,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
     def __close(self, widget, event=None):
         if self.core.minimize_on_close():
             self.showed = False
-            self.hide()
         else:
             self.main_quit(widget)
         return True
@@ -444,15 +497,13 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         return avatar
 
     def main_quit(self, widget=None, force=False):
+        print "Exiting..."
         self.log.debug('Exiting...')
-        self.destroy()
+        self.unitylauncher.quit()
         self.tray = None
+        self.ignore_quit = False
         self.worker.quit()
-        self.worker.join()
-        if widget:
-            gtk.main_quit()
-        if force:
-            sys.exit(0)
+        self.destroy()
 
     def main_loop(self):
         self.app.exec_()
@@ -479,6 +530,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.container.execute(cmd)
 
     def login(self):
+        if self.core.play_sounds_in_login():
+            self.sound.login()
+
         for acc in self.get_accounts_list():
             self.single_login(acc)
 
@@ -988,6 +1042,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             if col.build_id() == column_id:
                 self.download_stream(col)
 
+    def hasFocus(self):
+        return self.focus
+
     def update_column(self, arg, data):
         column, notif, max_ = data
         self.log.debug('Updated column %s' % column.id_)
@@ -1000,6 +1057,18 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         element = "#list-%s" % column.id_
         extra = "stop_updating_column('" + column.id_ + "');"
         self.container.update_element(element, page, extra)
+
+        # Notifications
+        count = len(arg.items)
+        if count != 0:
+            if self.core.play_sounds_in_updates():
+                self.sound.updates()
+            if not self.hasFocus():
+                self.sizeHint()
+                self.unitylauncher.increment_count(count)
+                self.unitylauncher.set_count_visible(True)
+            else:
+                self.unitylauncher.set_count_visible(False)
 
         # Notifications
         # FIX: Do not store an array with statuses objects, find a way to store

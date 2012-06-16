@@ -847,22 +847,31 @@ function show_avatar(account_id, username) {
     exec_command('cmd:profile_image:' + account_id + arg_sep + username);
 }
 
-function remove_statuses(column_id, number) {
+function remove_statuses(column_id, number, max_statuses) {
+    console.log(column_id + ' ' + number + ' ' + max_statuses);
     var max = parseInt(number);
-    var count = 0;
-    $($('#list-' + column_id + " .tweet").get().reverse()).each(function(index) {
-        if (count < max) {
-            console.log('Removiendo status: .' + $(this).attr("class").replace(" ", ".") + ' - ' + count + ' de ' + number);
-            $("." + $(this).attr("class").replace(" ", ".")).remove();
-            count++;
-        }
-    });
+    var count = 1;
+    var statuses = $('#list-' + column_id + " .tweet").get();
+    console.log(statuses.length + ' statuses in column ' + column_id);
+    // Don't remove if there is left space for more tweets
+    if ((statuses.length + number) <= max_statuses)
+        return;
+
+    for (var i = 1; i <= max; i++) {
+        var tweet = $('#list-' + column_id + ' .tweet:last-child');
+        var t_id = tweet.attr('class');
+        tweet.remove();
+        console.log('Removing status: #list-' + column_id + ' ' + t_id + ' (' + i + ' de ' + max + ')');
+    }
 }
 
-function remove_duplicate(column_id, status_ids) {
-    for(i in status_ids)
-        console.log('Removiendo status duplicado: #list-' + column_id + " .tweet ." + status_ids[i]);
-        $('#list-' + column_id + " .tweet ." + status_ids[i]).remove()
+function remove_duplicates(column_id, status_ids) {
+    for (var i = 0; i < status_ids.length; i++) {
+        if ($('#list-' + column_id + " .tweet." + status_ids[i]).length > 0) {
+            console.log('Removing duplicated status: #list-' + column_id + " .tweet." + status_ids[i]);
+            $('#list-' + column_id + " .tweet." + status_ids[i]).remove();
+        }
+    }
 }
 
 function show_about() {
@@ -880,6 +889,6 @@ function show_preferences() {
 
 jQuery(document).bind('keydown', 'Ctrl+n',function (evt){show_update_box(); return false; });
 jQuery(document).bind('keydown', 'Ctrl+d',function (evt){show_autocomplete_for_direct(); return false; });
-jQuery(document).bind('keydown', 'Ctrl+a',function (evt){show_about(); return false; });
-jQuery(document).bind('keydown', 'Ctrl+c',function (evt){show_accounts(); return false; });
+jQuery(document).bind('keydown', 'Ctrl+b',function (evt){show_about(); return false; });
+jQuery(document).bind('keydown', 'Ctrl+a',function (evt){show_accounts(); return false; });
 jQuery(document).bind('keydown', 'Ctrl+p',function (evt){show_preferences(); return false; });

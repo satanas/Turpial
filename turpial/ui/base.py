@@ -48,8 +48,10 @@ class Base:
         '''Open a URL in the configured web browser'''
         browser = self.core.get_default_browser()
         if browser != '':
+            cmd = browser.split(' ')
+            cmd.append(url)
             self.log.debug('Opening URL %s with %s' % (url, browser))
-            subprocess.Popen([browser, url])
+            subprocess.Popen(cmd)
         else:
             #if not url.startswith('http'):
             #    url = 'http://' + url

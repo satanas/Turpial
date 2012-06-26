@@ -18,19 +18,21 @@
     <% rimg "light-loader.gif", 16, 16 %>
 </div>
 
+<div style="height: 18px; float: left;"><a href="">Profile</a> | <a href="">Tweets</a></div>
+
 <div class="body">
     <% @bio_icon %>
     <label><% $bio %></label>
     <div class="clearfix"></div>
     <p><% @bio %></p>
     <div class="clearfix"></div>
-    
+
     <% @location_icon %>
     <label><% $location %></label>
     <div class="clearfix"></div>
     <p><% @location %></p>
     <div class="clearfix"></div>
-    
+
     <% @web_icon %>
     <label><% $web %></label>
     <div class="clearfix"></div>

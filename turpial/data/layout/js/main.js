@@ -1,13 +1,13 @@
-var arg_sep = '<% @arg_sep %>';
-var maxcharlimit = 140;
+var ARG_SEP = '<% @arg_sep %>';
+var MAXCHARLIMIT = 140;
 var NUM_COLUMNS = <% @num_columns %>;
-var friends = [];
-var imageview_w;
-var imageview_h;
-var turpial_all_seq = '38384040373937396665';
-var curr_seq = '';
-var ctrlPressed = false;
-var scrollbar_width = 23;
+var FRIENDS = [];
+var IMAGEVIEW_W;
+var IMAGEVIEW_H;
+var TURPIAL_ALL_SEQ = '38384040373937396665';
+var CURR_SEQ = '';
+var CTRL_PRESSED = false;
+//var SCROLLBAR_WIDTH = 23;
 var MIN_COLUMN_SIZE = 250
 var COLUMN_OFFSET = 0
 var VISIBLE_COLUMNS = 1
@@ -76,13 +76,13 @@ function change_num_columns(num) {
 }
 
 function match_pattern(pattern) {
-  if (pattern == curr_seq) {
-    curr_seq = '';
+  if (pattern == CURR_SEQ) {
+    CURR_SEQ = '';
     return 1;
   }
 
-  match = pattern.substr(0, curr_seq.length);
-  if (match != curr_seq) {
+  match = pattern.substr(0, CURR_SEQ.length);
+  if (match != CURR_SEQ) {
     return -1;
   } else {
     return 0;
@@ -90,13 +90,13 @@ function match_pattern(pattern) {
 }
 
 function check_patterns() {
-  if (match_pattern(turpial_all_seq) == 1) {
+  if (match_pattern(TURPIAL_ALL_SEQ) == 1) {
     exec_command('cmd:turpial_all');
     return;
-  } else if (match_pattern(turpial_all_seq) == 0) {
+  } else if (match_pattern(TURPIAL_ALL_SEQ) == 0) {
     return;
   }
-  curr_seq = '';
+  CURR_SEQ = '';
 }
 
 function enable_trigger() {
@@ -153,7 +153,7 @@ function enable_key_events() {
         e.stopPropagation();
         if (e.keyCode == 27) {
             close_autocomplete_window();
-        } else if (ctrlPressed && e.keyCode == lKey) {
+        } else if (CTRL_PRESSED && e.keyCode == lKey) {
             load_friends();
         } else if (e.keyCode == 13) {
             eval($('#autocomplete-add-function').val());
@@ -161,16 +161,16 @@ function enable_key_events() {
     });
 
     $(window).keyup(function(e) {
-        curr_seq = curr_seq + e.keyCode;
+        CURR_SEQ = CURR_SEQ + e.keyCode;
         check_patterns();
 
         // Handle the ctrl key release event
-        if (e.keyCode == 17) ctrlPressed = false;
+        if (e.keyCode == 17) CTRL_PRESSED = false;
     });
 
     $(window).keydown(function(e) {
         // Handle the ctrl key press event
-        if (e.keyCode == 17) ctrlPressed = true;
+        if (e.keyCode == 17) CTRL_PRESSED = true;
     });
 
 }
@@ -387,7 +387,7 @@ function unlock_update_box() {
 }
 
 function count_chars() {
-    var count = maxcharlimit - $('#update-message').val().length;
+    var count = MAXCHARLIMIT - $('#update-message').val().length;
     $('#char-counter').html(count);
     if (count < 10) {
         $('#char-counter').addClass('maxchar');
@@ -488,7 +488,7 @@ function show_profile_window(account_id, username) {
     $('#modal').fadeIn();
     $('#profile-window').fadeIn();
     $('#progress-box-profile-window').fadeIn();
-    exec_command('cmd:show_profile:' + account_id + arg_sep + username);
+    exec_command('cmd:show_profile:' + account_id + ARG_SEP + username);
 }
 
 function update_profile_window2(profile) {
@@ -604,18 +604,18 @@ function load_friends() {
 }
 
 function update_friends(array, skip_unlock) {
-    friends = array;
+    FRIENDS = array;
     var label = '';
     var plabel = "<% $friends %>";
     var slabel = "<% $friend %>";
 
-    if (friends.length == 1)
-        label = friends.length + ' ' + slabel;
+    if (FRIENDS.length == 1)
+        label = FRIENDS.length + ' ' + slabel;
     else
-        label = friends.length + ' ' + plabel;
+        label = FRIENDS.length + ' ' + plabel;
 
     $('#friends_counter').html(label);
-    $('#autocomplete-username').autocompleteArray(friends, {delay:10, minChars:1,
+    $('#autocomplete-username').autocompleteArray(FRIENDS, {delay:10, minChars:1,
         matchSubset:1, maxItemsToShow:10, onItemSelect: autocomplete_friend});
     if ((skip_unlock == undefined) || (skip_unlock == false)) {
         unlock_autocomplete();
@@ -672,9 +672,9 @@ function show_imageview(img_url) {
     } else {
         $('#mediacontentview').html('<img id="imageview" src="" style="display: none;">');
         $('#imageview').attr('src', img_url);
-        imageview_w = $('#imageview').width();
-        imageview_h = $('#imageview').height();
-        console.log('avatar_size (show_imageview): ' + imageview_w + 'x' + imageview_h);
+        IMAGEVIEW_W = $('#imageview').width();
+        IMAGEVIEW_H = $('#imageview').height();
+        console.log('avatar_size (show_imageview): ' + IMAGEVIEW_W + 'x' + IMAGEVIEW_H);
     }
 }
 
@@ -685,9 +685,9 @@ function update_imageview(img_url, orig_w, orig_h) {
     var imageview = $('#imageview');
     imageview.attr('src', img_url);
     imageview.show();
-    imageview_w = orig_w;
-    imageview_h = orig_h;
-    console.log('avatar_size (update_imageview): ' + imageview_w + 'x' + imageview_h);
+    IMAGEVIEW_W = orig_w;
+    IMAGEVIEW_H = orig_h;
+    console.log('avatar_size (update_imageview): ' + IMAGEVIEW_W + 'x' + IMAGEVIEW_H);
     resize_imageview(orig_w, orig_h);
     //resize_imageview(orig_w, orig_h);
 }
@@ -800,7 +800,7 @@ function update_status() {
     if (accounts > 0) {
         if (text == '') {
             show_notice('<% $you_must_write_something %>', 'warning');
-        } else if (text.length > maxcharlimit) {
+        } else if (text.length > MAXCHARLIMIT) {
             show_notice('<% $message_like_testament %>', 'warning');
         } else {
             if (direct_message_to != '') {
@@ -809,15 +809,15 @@ function update_status() {
                     show_notice('<% $can_send_message_to_one_account %>', 'warning');
                 } else {
                     lock_update_box('<% $sending_message %>');
-                    exec_command('cmd:direct_message:' + selected + arg_sep + direct_message_to + arg_sep + packstr(text));
+                    exec_command('cmd:direct_message:' + selected + ARG_SEP + direct_message_to + ARG_SEP + packstr(text));
                 }
             } else {
                 /* Regular status */
                 lock_update_box('<% $updating_status %>');
                 if (in_reply_to_id == ''){
-                    exec_command('cmd:update_status:' + selected + arg_sep + packstr(text));
+                    exec_command('cmd:update_status:' + selected + ARG_SEP + packstr(text));
                 } else {
-                    exec_command('cmd:reply_status:' + selected + arg_sep + in_reply_to_id + arg_sep + packstr(text));
+                    exec_command('cmd:reply_status:' + selected + ARG_SEP + in_reply_to_id + ARG_SEP + packstr(text));
                 }
             }
         }
@@ -862,7 +862,7 @@ function short_url() {
 
 function show_avatar(account_id, username) {
     show_imageview();
-    exec_command('cmd:profile_image:' + account_id + arg_sep + username);
+    exec_command('cmd:profile_image:' + account_id + ARG_SEP + username);
 }
 
 function remove_statuses(column_id, number, max_statuses) {

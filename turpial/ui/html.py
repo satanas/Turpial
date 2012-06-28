@@ -557,6 +557,10 @@ class HtmlParser:
         section = section.replace('<% @posts %>', str(profile.statuses_count))
         section = section.replace('<% @favorites %>', str(profile.favorites_count))
         section = section.replace('<% @menu %>', self.__build_profile_menu(profile))
+        recent = ''
+        for status in profile.recent_updates:
+            recent += self.status(status)
+        section = section.replace('<% @recent_updates %>', recent)
         page = self.__parse_tags(section)
         #print page
         return page

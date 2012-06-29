@@ -27,6 +27,7 @@ $(document).ready(function() {
         recalculate_column_size();
     });
     enable_key_events();
+    enable_click_events()
 });
 
 function recalculate_column_size(nw, nh) {
@@ -173,6 +174,18 @@ function enable_key_events() {
         if (e.keyCode == 17) CTRL_PRESSED = true;
     });
 
+}
+
+function enable_click_events() {
+    $('#show-profile-details-action').click(function(){
+        $('#profile-statuses').hide()
+        $('#profile-details').show()
+    })
+
+    $('#show-profile-statuses-action').click(function(){
+        $('#profile-details').hide()
+        $('#profile-statuses').show()
+    })
 }
 
 function resize_imageview(orig_w, orig_h) {

@@ -12,14 +12,13 @@
 
 <div class="options" id="profile-options">
     <% @menu %>
+    <div style="height: 18px; float: left; font-size: 11px; margin-top:6px;">
+        <a href="#" id="show-profile-details-action">Profile</a> | <a href="#" id="show-profile-statuses-action">Tweets</a>
+    </div>
 </div>
 <div class="progress-box" id="progress-box-profile-options" style="display: none;">
     <label id="progress-msg-profile-options">Loading...</label>
     <% rimg "light-loader.gif", 16, 16 %>
-</div>
-
-<div style="height: 18px; float: left; font-size: 11px;">
-    <a href="#" id="show-profile-details-action">Profile</a> | <a href="#" id="show-profile-statuses-action">Tweets</a>
 </div>
 
 <div id="profile-details">
@@ -62,7 +61,9 @@
         </div>
     </div>
 </div>
-<div id="profile-statuses" style="display: none">
-    <% @recent_updates %>
+<div id="profile-statuses" style="display: none;">
+    <div id="profile-statuses-list">
+        <% @recent_updates %>
+    </div>
 </div>
 <div class="clearfix"></div>

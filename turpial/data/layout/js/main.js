@@ -101,13 +101,13 @@ function check_patterns() {
 }
 
 function enable_trigger() {
-    $('.tweet').mouseover(function() {
+    $('.tweet').on( "mouseover", function() {
         var indicator = $(this).children('input:first').val();
         if (indicator != "") return;
         $(this).children('.options').children(':nth-child(1)').show();
     });
 
-    $('.tweet').mouseleave(function() {
+    $('.tweet').on("mouseleave", function() {
         $(this).children('.options').children(':nth-child(1)').hide();
     });
 }
@@ -274,9 +274,19 @@ function update_column(column_id, statuses) {
     stop_updating_column(column_id);
 }
 
+/* Modality */
+
+function close_modal_dialogs() {
+    $('#update-box').hide()
+    $('#profile-window').hide()
+    $('#autocomplete-window').hide()
+    $('#imageview-window').hide()
+}
+
 /* Updatebox */
 
 function show_update_box(message, status_id, account_id, title) {
+    close_modal_dialogs()
     $('#modal').fadeIn();
     $('#update-box').fadeIn();
     $('#upload-img-cmd').show();
@@ -310,6 +320,7 @@ function show_update_box(message, status_id, account_id, title) {
 }
 
 function show_update_box_for_direct(account_id, username) {
+    close_modal_dialogs()
     $('#modal').fadeIn();
     $('#update-box').fadeIn();
     $('#upload-img-cmd').hide();
@@ -492,12 +503,14 @@ function delete_status(status_id) {
 /* Profile Window */
 
 function show_profile_modal(){
+    close_modal_dialogs()
     $('#modal').fadeIn();
     $('#profile-window').fadeIn();
     $('#progress-box-profile-window').fadeIn();
 }
 
 function show_profile_window(account_id, username) {
+    close_modal_dialogs()
     $('#modal').fadeIn();
     $('#profile-window').fadeIn();
     $('#progress-box-profile-window').fadeIn();
@@ -505,8 +518,10 @@ function show_profile_window(account_id, username) {
 }
 
 function update_profile_window2(profile) {
-    $('#progress-box-profile-window').hide();
-    $('#profile-window-content').html(profile);
+    $('#progress-box-profile-window').hide()
+    $('#profile-window-content').html(profile)
+    enable_click_events()
+    enable_trigger()
 }
 
 function send_direct_from_profile(account_id, username) {
@@ -551,6 +566,7 @@ function unlock_profile() {
 /* Autocomplete */
 
 function build_autocomplete_dialog(title, addcmd, index) {
+    close_modal_dialogs()
     $('#modal').fadeIn();
     $('#modal').css('z-index', 101);
     if (index != undefined)
@@ -678,6 +694,7 @@ function autocomplete_friend(value) {
 
 function show_imageview(img_url) {
     console.log('img_url (show_imageview): ' + img_url);
+    close_modal_dialogs()
     $('#modal').fadeIn();
     $('#imageview-window').fadeIn();
     if (img_url == undefined) {

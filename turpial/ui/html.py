@@ -468,7 +468,7 @@ class HtmlParser:
         column = self.__parse_tags(col_content)
         return header, column
 
-    def status(self, status, ignore_reply=False):
+    def status(self, status, ignore_reply=False, profile_status=False):
         timestamp = status.datetime
         if status.source:
             if status.source.url:
@@ -501,7 +501,12 @@ class HtmlParser:
 
         args = ARG_SEP.join([status.account_id, status.id_])
 
-        section = self.__open_partial('status')
+        # Decide what template to use
+        if profile_status:
+            section = self.__open_partial('profile_status')
+        else:
+            section = self.__open_partial('status')
+
         section = section.replace('<% @status_id %>', status.id_)
         section = section.replace('<% @status_display_id %>', status.display_id)
         if status.in_reply_to_id:
@@ -559,7 +564,7 @@ class HtmlParser:
         section = section.replace('<% @menu %>', self.__build_profile_menu(profile))
         recent = ''
         for status in profile.recent_updates:
-            recent += self.status(status)
+            recent += self.status(status, profile_status=True)
         section = section.replace('<% @recent_updates %>', recent)
         page = self.__parse_tags(section)
         #print page

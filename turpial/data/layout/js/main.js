@@ -277,10 +277,11 @@ function update_column(column_id, statuses) {
 /* Modality */
 
 function close_modal_dialogs() {
-    $('#update-box').hide()
-    $('#profile-window').hide()
-    $('#autocomplete-window').hide()
-    $('#imageview-window').hide()
+    close_update_box()
+    close_autocomplete_window()
+    close_profile_window()
+    // TODO: Change name to "close_"
+    hide_imageview()
 }
 
 /* Updatebox */

@@ -274,6 +274,18 @@ function update_column(column_id, statuses) {
     stop_updating_column(column_id);
 }
 
+/* Modality */
+
+/* This method should be called when something in the profile window can
+break the modal layout */
+function close_modal_dialogs() {
+        
+    if ($('#imageview-window').length) {
+        // TODO: Change name to "close_"
+        hide_imageview()
+    }
+}
+
 /* Updatebox */
 
 function show_update_box(message, status_id, account_id, title) {
@@ -327,12 +339,20 @@ function show_update_box_for_direct(account_id, username) {
     $('#acc-selector-' + account_id).attr('checked', true);
 }
 
-function close_update_box() {
+function close_update_box(keep_modal, fade) {
     var status = $('#update-box').attr('name');
     if (status != '') return;
     hide_notice();
-    $('#update-box').fadeOut(400, reset_update_box);
-    $('#modal').fadeOut(400);
+
+
+    if ((fade == undefined) || (fade == true)) {
+        $('#update-box').fadeOut(400, reset_update_box)
+    } else {
+        $('#update-box').hide()
+        reset_update_box()
+    }
+    if ((keep_modal == undefined) || (keep_modal == false))
+        $('#modal').fadeOut(400);
 }
 
 function done_update_box(recalculate) {
@@ -491,13 +511,11 @@ function delete_status(status_id) {
 
 /* Profile Window */
 
-function show_profile_modal(){
-    $('#modal').fadeIn();
-    $('#profile-window').fadeIn();
-    $('#progress-box-profile-window').fadeIn();
-}
-
 function show_profile_window(account_id, username) {
+    console.log('show_profile_window')
+    if ($('#profile-window-content').is(':visible')) {
+        close_profile_window(true, false)
+    }
     $('#modal').fadeIn();
     $('#profile-window').fadeIn();
     $('#progress-box-profile-window').fadeIn();
@@ -523,11 +541,18 @@ function profile_window_error(message) {
     show_notice(message, 'error');
 }
 
-function close_profile_window(keep_modal) {
+function close_profile_window(keep_modal, fade) {
     if ($('#indicator-profile-window').val() != '')
         return;
     hide_notice();
-    $('#profile-window').fadeOut(400, reset_profile_window);
+    if ((fade == undefined) || (fade == true)) {
+        console.log('Closing with fade')
+        $('#profile-window').fadeOut(400, reset_profile_window)
+    } else {
+        console.log('Closing without fade')
+        $('#profile-window').hide()
+        reset_profile_window()
+    }
     if ((keep_modal == undefined) || (keep_modal == false))
         $('#modal').fadeOut(400);
 }
@@ -576,13 +601,22 @@ function show_autocomplete_for_profile(account_id) {
     build_autocomplete_dialog('<% $select_user %>', 'select_friend_for_profile("' + account_id + '");');
 }
 
-function close_autocomplete_window() {
+function close_autocomplete_window(keep_modal, fade) {
     var status = $('#autocomplete-window').attr('name');
     if (status != '') return;
-    $('#autocomplete-window').fadeOut(400, reset_autocomplete_window);
-    if (!$('#update-box').is(":visible")) {
-        $('#modal').fadeOut(400);
+
+    if ((fade == undefined) || (fade == true)) {
+        $('#autocomplete-window').fadeOut(400, reset_autocomplete_window)
+    } else {
+        $('#autocomplete-window').hide()
+        reset_autocomplete_window()
     }
+
+    if (!$('#update-box').is(":visible"))
+        $('#modal').fadeOut(400)
+    else if ((keep_modal == undefined) || (keep_modal == false))
+        $('#modal').fadeOut(400);
+
 }
 
 function reset_autocomplete_window() {
@@ -679,6 +713,10 @@ function autocomplete_friend(value) {
 /* Images */
 
 function show_imageview(img_url) {
+    close_update_box(true, false)
+    close_autocomplete_window(true, false)
+    close_profile_window(true, false)
+
     console.log('img_url (show_imageview): ' + img_url);
     $('#modal').fadeIn();
     $('#imageview-window').fadeIn();

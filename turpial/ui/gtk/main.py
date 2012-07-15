@@ -655,7 +655,7 @@ class Main(Base, Singleton, gtk.Window):
             self.delete_status_response, status_id)
 
     def show_profile(self, account_id, username):
-        self.container.execute('show_profile_modal()')
+        #self.container.execute('show_profile_modal()')
         self.worker.register(self.core.get_user_profile, (account_id, username),
             self.show_profile_response)
 

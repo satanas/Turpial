@@ -215,9 +215,11 @@ class HtmlParser:
             # Repeat
             cmd = ARG_SEP.join([status.account_id, status.id_])
             if status.retweeted:
-                menu += "<a name='repeat-cmd' href='cmd:unrepeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('-retweet'))
+                menu += """<a name='repeat-cmd' href="javascript:show_confirm_window('%s', '%s', 'cmd:unrepeat_status:%s')" class='action'>%s</a>""" % (
+                        i18n.get('confirm_undo_retweet'), i18n.get('do_you_want_to_undo_retweet'), cmd, i18n.get('-retweet'))
             else:
-                menu += "<a name='repeat-cmd' href='cmd:repeat_status:%s' class='action'>%s</a>" % (cmd, i18n.get('+retweet'))
+                menu += """<a name='repeat-cmd' href="javascript:show_confirm_window('%s', '%s', 'cmd:repeat_status:%s')" class='action'>%s</a>""" % (
+                        i18n.get('confirm_retweet'), i18n.get('do_you_want_to_retweet'), cmd, i18n.get('+retweet'))
 
             # Fav
             args = ARG_SEP.join([status.account_id, status.id_])
@@ -234,13 +236,16 @@ class HtmlParser:
 
             # Delete
             cmd = ARG_SEP.join([status.account_id, status.id_])
-            menu += "<a href='cmd:delete_direct:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))
+            menu += """<a href="javascript:show_confirm_window('%s', '%s', 'cmd:delete_direct:%s')" class='action'>%s</a>""" % (
+                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_direct_message'), cmd, i18n.get('delete'))
         elif status.is_own and not status.is_direct():
             cmd = ARG_SEP.join([status.account_id, status.id_])
-            menu += "<a href='cmd:delete_status:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))
+            menu += """<a href="javascript:show_confirm_window('%s', '%s', 'cmd:delete_status:%s')" class='action'>%s</a>""" % (
+                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_status'), cmd, i18n.get('delete'))
         elif status.is_own and status.is_direct():
             cmd = ARG_SEP.join([status.account_id, status.id_])
-            menu += "<a href='cmd:delete_direct:%s' class='action'>%s</a>" % (cmd, i18n.get('delete'))
+            menu += """<a href="javascript:show_confirm_window('%s', '%s', 'cmd:delete_direct:%s')" class='action'>%s</a>""" % (
+                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_direct_message'), cmd, i18n.get('delete'))
         return menu
 
     def __build_profile_menu(self, profile):
@@ -255,7 +260,9 @@ class HtmlParser:
         # Follow
         cmd = ARG_SEP.join([profile.account_id, profile.username])
         if profile.following:
-            menu += "<a id='profile-follow-cmd' href='cmd:unfollow:%s' class='action'>%s</a>" % (cmd, i18n.get('unfollow'))
+            label = i18n.get('do_you_want_to_unfollow_user') % profile.username
+            menu += """<a id='profile-follow-cmd' href="javascript:show_confirm_window('%s', '%s', 'cmd:unfollow:%s')" class='action'>%s</a>""" % (
+                    i18n.get('confirm_unfollow'), label, cmd, i18n.get('unfollow'))
         elif profile.follow_request:
             menu += "<span class='action'>%s</span>" % (i18n.get('requested'))
         else:

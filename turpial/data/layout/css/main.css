@@ -633,3 +633,29 @@
     font-size: 11px;
     color: #fff !important;
 }
+
+/*** Confirm window stuffs ***/
+#confirm-window {
+    position: absolute;
+    z-index: 100;
+    background-color: #f2f1f0;
+    top: 100px;
+    left: 10px;
+    width: 290px;
+    margin: 0 auto;
+    border: 1px solid #999;
+}
+
+#confirm-window-message {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+#confirm-window-buttons {
+    text-align: center;
+    margin: 5px 10px 5px 0;
+}
+
+.confirm-btn {
+
+}

@@ -28,6 +28,7 @@ $(document).ready(function() {
     });
     enable_key_events();
     enable_click_events()
+
 });
 
 function recalculate_column_size(nw, nh) {
@@ -67,6 +68,7 @@ function recalculate_column_size(nw, nh) {
     $('#alert-label').css('width', alert_lbl_width + 'px');
 
     $('#profile-window').css('left', profile_win_left + 'px');
+    $('#confirm-window').css('left', profile_win_left + 'px');
     $('#autocomplete-window').css('left', autocomplete_win_left + 'px');
 
     resize_imageview();
@@ -279,7 +281,6 @@ function update_column(column_id, statuses) {
 /* This method should be called when something in the profile window can
 break the modal layout */
 function close_modal_dialogs() {
-        
     if ($('#imageview-window').length) {
         // TODO: Change name to "close_"
         hide_imageview()
@@ -612,6 +613,7 @@ function close_autocomplete_window(keep_modal, fade) {
         reset_autocomplete_window()
     }
 
+    console.log($('#update-box').is(":visible") + ' ' + keep_modal)
     if (!$('#update-box').is(":visible"))
         $('#modal').fadeOut(400)
     else if ((keep_modal == undefined) || (keep_modal == false))
@@ -689,25 +691,25 @@ function select_friend(value) {
 
     var newtext = prevtext + username + nexttext;
     message.val(newtext);
-    close_autocomplete_window();
+    close_autocomplete_window(true);
     count_chars();
     message.focus();
     message.setCursorPosition(index + username.length + 1);
 }
 
 function select_friend_for_direct() {
-    close_autocomplete_window();
-    show_update_box_for_direct('', $('#autocomplete-username').val());
+    close_autocomplete_window(true)
+    show_update_box_for_direct('', $('#autocomplete-username').val())
 }
 
 function select_friend_for_profile(account_id) {
-    close_autocomplete_window();
-    console.log(account_id);
-    show_profile_window(account_id, $('#autocomplete-username').val());
+    close_autocomplete_window(true)
+    console.log(account_id)
+    show_profile_window(account_id, $('#autocomplete-username').val())
 }
 
 function autocomplete_friend(value) {
-    eval($('#autocomplete-add-function').val());
+    eval($('#autocomplete-add-function').val())
 }
 
 /* Images */
@@ -766,6 +768,46 @@ function hide_imageview() {
         $('#modal').fadeOut(400);
     });
 }
+
+/* Confirm window */
+
+function show_confirm_window(title, message, cmd) {
+    close_update_box(true, false)
+    close_autocomplete_window(true, false)
+    close_profile_window(true, false)
+
+    console.log('confirm action: ' + title + ' ' + message + ' ' + cmd);
+    $('#modal').fadeIn();
+    $('#confirm-window').fadeIn();
+
+    $('#confirm-window-cmd').val(cmd)
+    $('#confirm-window-title').html(title)
+    $('#confirm-window-message').html(message)
+}
+
+function reset_confirm_window() {
+}
+
+function execute_confirm_window() {
+    var cmd = $('#confirm-window-cmd').val()
+    console.log('Confirmed command: ' + cmd)
+    close_confirm_window()
+    exec_command(cmd)
+}
+
+function close_confirm_window(keep_modal, fade) {
+    if ((fade == undefined) || (fade == true)) {
+        console.log('Closing with fade')
+        $('#confirm-window').fadeOut(400, reset_confirm_window)
+    } else {
+        console.log('Closing without fade')
+        $('#confirm-window').hide()
+        reset_confirm_window()
+    }
+    if ((keep_modal == undefined) || (keep_modal == false))
+        $('#modal').fadeOut(400);
+}
+
 
 /* Callbacks */
 

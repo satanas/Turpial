@@ -123,7 +123,27 @@
                     <label id="progress-msg-imageview"><% $loading %></label>
                 </div>
             </div>
-        <div/>
+        </div>
+
+        <!-- Confirm window -->
+        <div id="confirm-window" name="" style="display: none;">
+            <input id="confirm-window-cmd" type="hidden" value="" />
+            <div class="titlebar">
+                <label id="confirm-window-title" class="text"><% $confirm_action %></label>
+                <a href="javascript: close_confirm_window()" class="close" title="<% $close %>"><% img "action-delete.png" %></a>
+                <div class="clearfix"></div>
+            </div>
+            <div id="confirm-window-content">
+                <div id="confirm-window-message"></div>
+                <div id="confirm-window-buttons">
+                    <a id="confirm-accept-cmd" href="javascript: execute_confirm_window()" class="action confirm-btn" title="<% $accept %>"><% $accept %></a>
+                    <a id="confirm-cancel-cmd" href="javascript: close_confirm_window()" class="action confirm-btn" title="<% $cancel %>"><% $cancel %></a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
     </div>
 </body>
 </html>

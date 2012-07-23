@@ -197,27 +197,27 @@
     display: block;
 }
 
-.tweet .content .message {
+.tweet .content .message, .tweet .profile-content .message {
     font-size: 12px;
     cursor: default;
     word-wrap: break-word;
 }
 
-.tweet .content .timestamp, .tweet .content .repost {
+.tweet .content .timestamp, .tweet .content .repost, .tweet .profile-content .timestamp, .tweet .profile-content .repost {
     font-size: 11px;
     color: #999;
     cursor: default;
 }
-    
-.tweet .content .timestamp {
+
+.tweet .content .timestamp, .tweet .profile-content .timestamp {
     margin-top: 5px;
 }
 
-.tweet .content .timestamp a {
+.tweet .content .timestamp a, .tweet .profile-content .timestamp a {
     color: #666;
 }
 
-.tweet .content .timestamp a:hover {
+.tweet .content .timestamp a:hover, .tweet .profile-content .timestamp a:hover {
     color: #333;
 }
 
@@ -447,15 +447,15 @@
     display: block;
 }
 
-#profile-window .options {
+#profile-options {
     float: left;
-    height: 22px;
+    height: 34px;
     padding: 0 8px;
     width: 274px;
     border-bottom: 1px solid #ccc;
 }
 
-#profile-window .options span {
+#profile-options span {
     color: #666;
 }
 
@@ -529,6 +529,16 @@
     color: #333;
     font-size: 10px;
     display: block;
+}
+
+#profile-statuses-list {
+    color: #000;
+    margin: 5px;
+    padding: 0;
+    overflow-y: auto;
+    width: 280px;
+    max-height: 250px;
+    font-size: 12px;
 }
 
 /*** Autocomplete window stuffs ***/
@@ -622,4 +632,30 @@
 #progress-box-imageview label {
     font-size: 11px;
     color: #fff !important;
+}
+
+/*** Confirm window stuffs ***/
+#confirm-window {
+    position: absolute;
+    z-index: 100;
+    background-color: #f2f1f0;
+    top: 100px;
+    left: 10px;
+    width: 290px;
+    margin: 0 auto;
+    border: 1px solid #999;
+}
+
+#confirm-window-message {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+#confirm-window-buttons {
+    text-align: center;
+    margin: 5px 10px 5px 0;
+}
+
+.confirm-btn {
+
 }

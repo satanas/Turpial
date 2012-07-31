@@ -650,8 +650,8 @@ function unlock_autocomplete() {
 }
 
 function load_friends() {
-    lock_autocomplete();
-    exec_command('cmd:load_friends');
+    lock_autocomplete()
+    exec_command('cmd:load_friends')
 }
 
 function update_friends(array, skip_unlock) {

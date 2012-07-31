@@ -1,9 +1,12 @@
 $(document).ready(function() {
-    recalculate_column_size();
+    recalculate_column_size()
     $(window).resize(function() {
-        recalculate_column_size();
-    });
-});
+        recalculate_column_size()
+    })
+})
+
+function update_friends() {
+}
 
 function recalculate_column_size(nw, nh) {
     var width = window.innerWidth;

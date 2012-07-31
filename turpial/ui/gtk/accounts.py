@@ -359,7 +359,7 @@ class AccountForm(gtk.Window):
     def __on_sign_in(self, widget):
         self.working = True
         username = self.username.get_text()
-        passwd = self.username.get_text()
+        passwd = self.password.get_text()
         model = self.protocol.get_model()
         pindex = self.protocol.get_active()
         protocol = model[pindex][1]

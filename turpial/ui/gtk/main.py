@@ -552,7 +552,6 @@ class Main(Base, Singleton, gtk.Window):
             self.sound.login()
 
         for acc in self.get_accounts_list():
-            print 'akslkdlkasdakd'
             self.single_login(acc)
 
         self.worker.register(self.core.load_all_friends_list, (), self.load_all_friends_response)

@@ -86,7 +86,9 @@
 /*** Tweet stuffs ***/
 
 .tweet {
-    padding-bottom: 5px;
+    padding: 5px 0px;
+    border-bottom: 1px solid #eee;
+    position: relative;
 }
 
 .tweet .content-divider {
@@ -145,6 +147,7 @@
     width: 48px;
     height: 48px;
     margin: 5px;
+    position: relative;
 }
 
 .tweet .icon img {
@@ -170,6 +173,7 @@
 .tweet .content .mark {
     float: left;
     display: block;
+    position: relative;
 }
 
 .tweet .content .repost_mark {
@@ -229,6 +233,12 @@
     float: right;
     height: 16px;
     margin-top: 3px;
+    position: absolute;
+    right: 0px;
+    bottom: 2px;
+    z-index: 10;
+    padding-left: 30px:
+    background: -webkit-gradient(linear, 10% 100%, 0% 100%, from(rgba(255,255,255,1)), to(rgba(255,255,255,0.1)), color-stop(1,#fff));
 }
 
 /*** Modal stuffs ***/
@@ -240,7 +250,7 @@
     left:0px;
     z-index: 99;
 }
-    
+
 #modal .background {
     opacity: 0.50;
     background-color: #424242;

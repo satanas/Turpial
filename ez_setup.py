@@ -12,7 +12,7 @@ mirror, or use an alternate download directory, you can do so by supplying
 the appropriate options to ``use_setuptools()``.
 
 This file can also be run as a script to install or upgrade setuptools.
-"""
+"""https://github.com/textmate/textmate
 import sys
 DEFAULT_VERSION = "0.6c11"
 DEFAULT_URL     = "http://pypi.python.org/packages/%s/s/setuptools/" % sys.version[:3]

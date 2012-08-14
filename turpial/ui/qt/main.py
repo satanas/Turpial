@@ -35,11 +35,9 @@ from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 
 # TODO: Improve all splits for accounts_id with a common function
 
-def aja():
-        print "yay!"
 
 class TimerExecution(object):
-    def __init__(self,function,arg):
+    def __init__(self, function, arg):
         self.function = function
         self.arg = arg
 
@@ -193,7 +191,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         if gtk.check_version(2, 10, 0) is not None:
             self.log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
             return
-        self.tray = gtk.tusIcon()
+        self.tray = gtk.StatusIcon()
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
         self.tray.set_tooltip('Turpial')
         self.tray.connect("activate", self.__on_trayicon_click)
@@ -413,14 +411,14 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             self.accountsdlg.show()
         elif action == 'add_column':
             self.__show_add_column_menu2()
+        elif action == 'profiles_menu':
+            self.__show_profile_menu()
         elif action == 'update_column':
             self.refresh_column(args[0])
         elif action == 'columns_menu':
             self.__show_add_column_menu()
         elif action == 'delete_column':
             self.delete_column(args[0])
-        elif action == 'profiles_menu':
-            self.__show_profile_menu()
         elif action == 'repeat_status':
             self.repeat_status(args[0], args[1])
         elif action == 'unrepeat_status':
@@ -488,12 +486,15 @@ class Main(Base, Singleton, QtGui.QMainWindow):
     def load_image(self, path, pixbuf=False):
         img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
             '..', '..', 'data', 'pixmaps', path))
-        pix = gtk.gdk.pixbuf_new_from_file(img_path)
-        if pixbuf:
-            return pix
-        avatar = gtk.Image()
-        avatar.set_from_pixbuf(pix)
-        del pix
+        #pix = gtk.gdk.pixbuf_new_from_file(img_path)
+        #pix_file = QtCore.QFile(img_path) 
+        #pix = pix_file.readAll() 
+        #if pixbuf:
+        #    return pix
+        #avatar = QtGui.QImage(pic)
+        avatar = QtGui.QPixmap(img_path)
+        #avatar.fromData(pix)
+        #del pix
         return avatar
 
     def main_quit(self, widget=None, force=False):
@@ -530,8 +531,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.container.execute(cmd)
 
     def login(self):
-        if self.core.play_sounds_in_login():
-            self.sound.login()
+        #if self.core.play_sounds_in_login():
+        #    self.sound.login()
 
         for acc in self.get_accounts_list():
             self.single_login(acc)
@@ -941,6 +942,12 @@ class Main(Base, Singleton, QtGui.QMainWindow):
                 i18n.get('friends_loaded_successfully'), friends)
         self.container.execute(cmd)
 
+    def load_all_friends_response(self, users):
+        friends = self.htmlparser.js_string_array(users)
+        cmd = "update_friends(%s);" % friends
+        #cmd = "show_notice('hola', 'info');"
+        self.container.execute(cmd)
+
     def show_conversation_response(self, response, status_id):
         statuses = response.items
         statuses.reverse()
@@ -988,8 +995,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             self.container.execute('hide_imageview(); show_notice("' + response.errmsg + '", "error");')
         else:
             pix = self.load_image(response.items, True)
-            width = pix.get_width()
-            height = pix.get_height()
+            width = pix.width()
+            height = pix.height()
             del pix
             cmd = "update_imageview('%s',%s,%s);" % (response.items, width, height)
             self.container.execute(cmd)
@@ -1001,7 +1008,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             content_obj = response.response
             if content_obj.is_image():
                 content_obj.save_content()
-                pix = gtk.gdk.pixbuf_new_from_file(content_obj.path)
+                #pix = gtk.gdk.pixbuf_new_from_file(content_obj.path)
+                pix = QtGui.QPixmap(content_obj.path) 
                 cmd = "update_imageview('%s',%s,%s);" % (
                     content_obj.path, pix.get_width(), pix.get_height())
                 del pix
@@ -1026,12 +1034,13 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             self.updating[column.id_] = True
 
         if not self.columns.has_key(column.id_):
-            self.columns[column.id_] = None
+            self.columns[column.id_] = {'last_id': None}
 
+        last_id = self.columns[column.id_]['last_id']
         num_statuses = self.core.get_max_statuses_per_column()
         self.container.execute("start_updating_column('" + column.id_ + "');")
         self.worker.register(self.core.get_column_statuses, (column.account_id,
-            column.column_name, num_statuses), self.update_column, 
+            column.column_name, num_statuses, last_id), self.update_column, 
             (column, notif, num_statuses))
 #        rtn = self.core.get_column_statuses(column.account_id,column.column_name,num_statuses)
 #        self.update_column(rtn, (column, notif, num_statuses))
@@ -1055,14 +1064,15 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             return
         page = self.htmlparser.statuses(arg.items)
         element = "#list-%s" % column.id_
-        extra = "stop_updating_column('" + column.id_ + "');"
-        self.container.update_element(element, page, extra)
+        extra = "stop_updating_column('" + column.id_ + "');";
+        max_statuses = self.core.get_max_statuses_per_column()
+        if column.size != 0:
+            extra += "remove_statuses('" + column.id_ + "', " + str(len(arg.items)) + ", " + str(max_statuses) + ");";
+        self.container.prepend_element(element, page, extra)
 
         # Notifications
         count = len(arg.items)
         if count != 0:
-            if self.core.play_sounds_in_updates():
-                self.sound.updates()
             if not self.hasFocus():
                 self.sizeHint()
                 self.unitylauncher.increment_count(count)
@@ -1078,7 +1088,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         if count != 0:
             if notif and self.core.show_notifications_in_updates():
                 self.notify.updates(column, count)
-            if self.core.play_sounds_in_notification():
+            if self.core.play_sounds_in_updates():
                 self.sound.updates()
             if not self.is_active():
                 self.set_urgency_hint(True)

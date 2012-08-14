@@ -566,7 +566,6 @@ class Main(Base, Singleton, gtk.Window):
         for col in reg_columns:
             if col.account_id == account_id:
                 self.delete_column(col.id_)
-                del self.columns[col.id_]
         self.core.unregister_account(account_id, True)
         self.accountsdlg.done_delete()
 
@@ -934,7 +933,6 @@ class Main(Base, Singleton, gtk.Window):
     def load_all_friends_response(self, users):
         friends = self.htmlparser.js_string_array(users)
         cmd = "update_friends(%s);" % friends
-        #cmd = "show_notice('hola', 'info');"
         self.container.execute(cmd)
 
     def show_conversation_response(self, response, status_id):

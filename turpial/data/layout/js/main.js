@@ -650,8 +650,8 @@ function unlock_autocomplete() {
 }
 
 function load_friends() {
-    lock_autocomplete();
-    exec_command('cmd:load_friends');
+    lock_autocomplete()
+    exec_command('cmd:load_friends')
 }
 
 function update_friends(array, skip_unlock) {
@@ -931,12 +931,14 @@ function quote_status(account_id, username, text) {
 }
 
 function reply_status(account_id, status_id, title, mentions) {
-    //console.log(account_id + ',' + status_id + ',' + mentions);
+    //console.log(account_id + ',' + status_id + ',' + mentions)
     var msg = "";
     for (var i=0; i < mentions.length; i++) {
-        msg += "@" + mentions[i] + " ";
+        if (msg.indexOf(mentions[i]) < 0) {
+            msg += "@" + mentions[i] + " "
+        }
     }
-    show_update_box(msg, status_id, account_id, title);
+    show_update_box(msg, status_id, account_id, title)
 }
 
 function reply_direct(account_id, username) {

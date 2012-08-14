@@ -59,6 +59,7 @@ class HtmlParser:
         return resource
 
     def __load_layout(self, res):
+        self.scripts = []
         self.scripts_impress = []
         self.styles = []
         self.styles_impress = []

@@ -299,6 +299,15 @@ class Main(Base, Singleton, gtk.Window):
         menu.show_all()
         menu.popup(None, None, None, 0, gtk.get_current_event_time())
 
+    def __show_repeat_menu(self, widget):
+        menu = gtk.Menu()
+
+        menu.append(gtk.MenuItem(i18n.get('retweet')))
+        menu.append(gtk.MenuItem(i18n.get('quote')))
+
+        menu.show_all()
+        menu.popup(None, None, None, 0, gtk.get_current_event_time())
+
     def __show_profile(self, widget, acc_id, username):
         self.show_profile(acc_id, username)
 
@@ -410,6 +419,8 @@ class Main(Base, Singleton, gtk.Window):
             self.__show_column_menu(widget)
         elif action == 'profiles_menu':
             self.__show_profile_menu(widget)
+        elif action == 'repeat_menu':
+            self.__show_repeat_menu(widget)
         elif action == 'update_column':
             self.refresh_column(args[0])
         elif action == 'delete_column':

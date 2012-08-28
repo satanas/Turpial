@@ -16,8 +16,8 @@
             <label class="name"><% @username %></label>
             <% @protected %>
             <% @verified %>
+            <div name="fav-icon" style="display: none;"><% @favorite %></div>
             <div name="repeat-icon" style="<% @retweeted_visible %>"><% @retweeted %></div>
-            <div name="fav-icon" style="<% @fav_visible %>"><% @favorite %></div>
             <div class="clearfix"></div>
         </div>
         <div class="message"><% @message %></div>

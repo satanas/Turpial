@@ -95,7 +95,7 @@ class HtmlParser:
         if os.path.isfile(css_file):
             self.styles.append(css_file)
 
-    def __image_tag(self, filename, base=True, width=None, height=None, class_=None, visible=True):
+    def __image_tag(self, filename, base=True, width=None, height=None, class_=None, visible=True, tooltip=''):
         if base:
             filepath = os.path.realpath(os.path.join(IMAGES_DIR, filename))
         else:
@@ -109,10 +109,14 @@ class HtmlParser:
         if not visible:
             visible_tag = "style='display: none;'"
 
+        tooltip_tag = ''
+        if tooltip:
+            tooltip_tag = """ title="%s" alt="%s" """ % (tooltip, tooltip)
+
         if width and height:
-            return "<img src='file://%s' width='%s' height='%s' %s %s/>" % (filepath, width, height, class_tag, visible_tag)
+            return "<img src='file://%s' width='%s' height='%s' %s %s %s/>" % (filepath, width, height, class_tag, visible_tag, tooltip_tag)
         else:
-            return "<img src='file://%s' %s %s/>" % (filepath, class_tag, visible_tag)
+            return "<img src='file://%s' %s %s %s/>" % (filepath, class_tag, visible_tag, tooltip_tag)
 
     def __query_tag(self):
         return "<img style='display:none;' id='query' src='' alt='' />"
@@ -135,8 +139,11 @@ class HtmlParser:
         else:
             return ''
 
-    def __favorite_tag(self):
-        return self.__image_tag("mark-favorite.png", 16, 16, class_='star')
+    def __favorite_tag(self, favorite):
+        if favorite:
+            return self.__image_tag("action-fav.png", 16, 16, class_='star')
+        else:
+            return self.__image_tag("action-unfav.png", 16, 16, class_='star')
 
     def __retweeted_tag(self):
         return self.__image_tag("mark-retweeted.png", 16, 16, class_='retweeted')
@@ -207,13 +214,22 @@ class HtmlParser:
             str_mentions = '[\'' + '\',\''.join(mentions) + '\']'
             title = i18n.get('in_reply_to').capitalize() + " " + mentions[0]
             cmd = "'%s','%s','%s',%s" % (status.account_id, status.id_, title, str_mentions)
-            menu += "<a href=\"javascript: reply_status(%s)\" class='action'>%s</a>" % (cmd, i18n.get('reply'))
-
-            # Quote
-            cmd = "'%s','%s','%s'" % (status.account_id, status.username, self.__url_quote(status.text))
-            menu += "<a href=\"javascript: quote_status(%s)\" class='action'>%s</a>" % (cmd, i18n.get('quote'))
+            menu += "<a href=\"javascript: reply_status(%s)\" class='action'>%s</a>" % (cmd, self.__image_tag('action-reply.png',
+                tooltip=i18n.get('reply')))
 
             # Repeat
+            args = ARG_SEP.join([status.account_id, status.id_, status.username, self.__url_quote(status.text)])
+            menu += "<a href='cmd:repeat_menu:%s' class='action'>%s</a>" % (args, self.__image_tag('action-repeat.png',
+                tooltip=i18n.get('repeat')))
+
+            # Conversation
+            if status.in_reply_to_user:
+                args = ARG_SEP.join([status.account_id, status.id_, '%s' % status.in_reply_to_id])
+                menu += """<a href='cmd:show_conversation:%s' class='action'>%s</a>""" % (args, self.__image_tag('action-conversation.png',
+                    tooltip=i18n.get('conversation')))
+
+            # Repeat
+            '''
             cmd = ARG_SEP.join([status.account_id, status.id_])
             if status.retweeted:
                 menu += """<a name='repeat-cmd' href="javascript:show_confirm_window('%s', '%s', 'cmd:unrepeat_status:%s')" class='action'>%s</a>""" % (
@@ -221,32 +237,40 @@ class HtmlParser:
             else:
                 menu += """<a name='repeat-cmd' href="javascript:show_confirm_window('%s', '%s', 'cmd:repeat_status:%s')" class='action'>%s</a>""" % (
                         i18n.get('confirm_retweet'), i18n.get('do_you_want_to_retweet'), cmd, i18n.get('+retweet'))
-
+            '''
             # Fav
+            '''
             args = ARG_SEP.join([status.account_id, status.id_])
             if status.is_favorite:
                 cmd = "cmd:unfav_status:%s" % args
-                menu += "<a name='fav-cmd' href='%s' class='action'>%s</a>" % (cmd, i18n.get('-fav'))
+                menu += "<a name='fav-cmd' href='%s' class='action'>%s</a>" % (cmd, self.__image_tag('action-unfav.png',
+                    tooltip=i18n.get('-fav')))
             else:
                 cmd = "cmd:fav_status:%s" % args
-                menu += "<a name='fav-cmd' href='%s' class='action'>%s</a>" % (cmd, i18n.get('+fav'))
+                menu += "<a name='fav-cmd' href='%s' class='action'>%s</a>" % (cmd, self.__image_tag('action-fav.png',
+                    tooltip=i18n.get('+fav')))
+            '''
         elif not status.is_own and status.is_direct():
             # Reply
             cmd = "'%s','%s'" % (status.account_id, status.username)
-            menu += "<a href=\"javascript: reply_direct(%s)\" class='action'>%s</a>" % (cmd, i18n.get('reply'))
+            menu += "<a href=\"javascript: reply_direct(%s)\" class='action'>%s</a>" % (cmd, self.__image_tag('action-reply.png',
+                tooltip=i18n.get('reply')))
 
             # Delete
             cmd = ARG_SEP.join([status.account_id, status.id_])
             menu += """<a href="javascript:show_confirm_window('%s', '%s', 'cmd:delete_direct:%s')" class='action'>%s</a>""" % (
-                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_direct_message'), cmd, i18n.get('delete'))
+                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_direct_message'), cmd, self.__image_tag('action-delete.png',
+                    tooltip=i18n.get('delete')))
         elif status.is_own and not status.is_direct():
             cmd = ARG_SEP.join([status.account_id, status.id_])
             menu += """<a href="javascript:show_confirm_window('%s', '%s', 'cmd:delete_status:%s')" class='action'>%s</a>""" % (
-                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_status'), cmd, i18n.get('delete'))
+                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_status'), cmd, self.__image_tag('action-delete.png',
+                    tooltip=i18n.get('delete')))
         elif status.is_own and status.is_direct():
             cmd = ARG_SEP.join([status.account_id, status.id_])
             menu += """<a href="javascript:show_confirm_window('%s', '%s', 'cmd:delete_direct:%s')" class='action'>%s</a>""" % (
-                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_direct_message'), cmd, i18n.get('delete'))
+                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_direct_message'), cmd, self.__image_tag('action-delete.png',
+                    tooltip=i18n.get('delete')))
         return menu
 
     def __build_profile_menu(self, profile):
@@ -485,8 +509,7 @@ class HtmlParser:
                 timestamp += ' %s %s' % (i18n.get('from'), status.source.name)
 
         if status.in_reply_to_user and not ignore_reply:
-            args = ARG_SEP.join([status.account_id, status.id_, '%s' % status.in_reply_to_id])
-            timestamp += ' <a href="cmd:show_conversation:%s">%s %s</a>' % (args, i18n.get('in_reply_to'), status.in_reply_to_user)
+            timestamp += ' %s %s' % (i18n.get('in_reply_to'), status.in_reply_to_user)
 
         reposted_by = ''
         if status.reposted_by:
@@ -532,8 +555,7 @@ class HtmlParser:
         section = section.replace('<% @verified %>', self.__verified_tag(status.is_verified))
         section = section.replace('<% @protected %>', self.__protected_tag(status.is_protected))
         section = section.replace('<% @reposted %>', self.__reposted_tag(status.reposted_by))
-        section = section.replace('<% @fav_visible %>', self.__favorite_visible(status))
-        section = section.replace('<% @favorite %>', self.__favorite_tag())
+        section = section.replace('<% @favorite %>', self.__favorite_tag(status.is_favorite))
         section = section.replace('<% @retweeted_visible %>', self.__retweeted_visible(status))
         section = section.replace('<% @retweeted %>', self.__retweeted_tag())
         section = section.replace('<% @menu %>', menu)

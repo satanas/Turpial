@@ -46,7 +46,7 @@ function recalculate_column_size(nw, nh) {
     var list_width = column_width - 10; // margin 2 x 5px
     var list_height = column_height - 35;
     var combo_width = column_width - 100;
-    var tweet_width = column_width - 98;
+    var tweet_width = column_width - 85;
     var update_msg_width = width - 12;
 
     var alert_msg_width = width - 60;
@@ -107,10 +107,12 @@ function enable_trigger() {
         var indicator = $(this).children('input:first').val();
         if (indicator != "") return;
         $(this).children('.options').children(':nth-child(1)').show();
+        $(this).find('div[name="fav-icon"]').show();
     });
 
     $('.tweet').on("mouseleave", function() {
         $(this).children('.options').children(':nth-child(1)').hide();
+        $(this).find('div[name="fav-icon"]').hide();
     });
 }
 

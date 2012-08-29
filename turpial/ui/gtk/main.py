@@ -299,14 +299,29 @@ class Main(Base, Singleton, gtk.Window):
         menu.show_all()
         menu.popup(None, None, None, 0, gtk.get_current_event_time())
 
-    def __show_repeat_menu(self, widget):
+    def __show_repeat_menu(self, widget, args):
         menu = gtk.Menu()
 
-        menu.append(gtk.MenuItem(i18n.get('retweet')))
-        menu.append(gtk.MenuItem(i18n.get('quote')))
+        retweet = gtk.MenuItem(i18n.get('retweet'))
+        retweet.connect('activate', self.__perform_retweet, args)
+        quote = gtk.MenuItem(i18n.get('quote'))
+        quote.connect('activate', self.__perform_quote, args)
+
+        menu.append(retweet)
+        menu.append(quote)
 
         menu.show_all()
         menu.popup(None, None, None, 0, gtk.get_current_event_time())
+
+    def __perform_retweet(self, widget, args):
+        cmd = ARG_SEP.join([args[0], args[1]])
+        cmd2 = "show_confirm_window('%s', '%s', 'cmd:repeat_status:%s')" % (
+            i18n.get('confirm_retweet'), i18n.get('do_you_want_to_retweet'), cmd)
+        self.container.execute(cmd2)
+
+    def __perform_quote(self, widget, args):
+        cmd = "quote_status('%s','%s','%s')" % (args[0], args[2], args[3])
+        self.container.execute(cmd)
 
     def __show_profile(self, widget, acc_id, username):
         self.show_profile(acc_id, username)
@@ -420,7 +435,7 @@ class Main(Base, Singleton, gtk.Window):
         elif action == 'profiles_menu':
             self.__show_profile_menu(widget)
         elif action == 'repeat_menu':
-            self.__show_repeat_menu(widget)
+            self.__show_repeat_menu(widget, args)
         elif action == 'update_column':
             self.refresh_column(args[0])
         elif action == 'delete_column':

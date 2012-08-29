@@ -5,13 +5,8 @@
 # Author: Wil Alvarez (aka Satanas)
 # Sep 03, 2011
 
-import os
 import gtk
-import sys
-import base64
-import urllib
 import gobject
-import logging
 
 from turpial.ui.base import *
 

@@ -5,12 +5,6 @@
 # Author: Carlos Guerrero and Andrea Stagi
 # Sep 03, 2011
 
-import os
-import sys
-import base64
-import urllib
-import logging
-
 # PyQt4 Support:
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtWebKit import *

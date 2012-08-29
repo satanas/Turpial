@@ -6,6 +6,9 @@
 # Oct 09, 2011
 
 import os
+import sys
+import base64
+import urllib
 import logging
 import webbrowser
 import subprocess

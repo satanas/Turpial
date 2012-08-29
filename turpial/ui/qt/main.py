@@ -16,22 +16,13 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtWebKit import *
 from PyQt4.QtCore import pyqtSignal
 
-from xml.sax.saxutils import unescape
-
-from libturpial.common import *
-
 from turpial.ui.base import *
-from turpial.ui.lang import i18n
-from turpial.ui.sound import Sound
-from turpial.ui.html import HtmlParser
 
-from turpial.singleton import Singleton
 from turpial.ui.qt.worker import Worker
 from turpial.ui.qt.htmlview import HtmlView
 from turpial.ui.qt.oauthwin import OAuthWindow
 from turpial.ui.qt.accounts import AccountsDialog
 
-from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 
 # TODO: Improve all splits for accounts_id with a common function
 

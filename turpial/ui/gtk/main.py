@@ -13,15 +13,9 @@ import urllib
 import gobject
 import logging
 
-from xml.sax.saxutils import unescape
-
-from libturpial.common import *
-
 from turpial.ui.base import *
-from turpial.ui.lang import i18n
-from turpial.ui.html import HtmlParser
+
 from turpial.ui.gtk.about import About
-from turpial.singleton import Singleton
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.indicator import Indicators

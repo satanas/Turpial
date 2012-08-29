@@ -10,15 +10,19 @@ import logging
 import webbrowser
 import subprocess
 
+from xml.sax.saxutils import unescape
+
+from libturpial.common import *
+from libturpial.common import LoginStatus
 from libturpial.api.models.mediacontent import *
 from libturpial.api.interfaces.service import ServiceResponse
 
 from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 from turpial.ui.lang import i18n
+from turpial.ui.html import HtmlParser
+from turpial.singleton import Singleton
 from turpial.ui.sound import Sound
 from turpial.notification import Notification
-
-from libturpial.common import LoginStatus
 
 MIN_WINDOW_WIDTH = 250
 

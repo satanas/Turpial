@@ -68,6 +68,7 @@ class Base:
                 return "%.2f KB" % (size / 1024.0)
         else:
             return "%.2f B" % size
+
     # ------------------------------------------------------------
     # Common methods to all interfaces
     # ------------------------------------------------------------
@@ -107,11 +108,11 @@ class Base:
         elif action == 'accounts_manager':
             self.accountsdlg.show()
         elif action == 'columns_menu':
-            self.__show_column_menu(widget)
+            self.show_column_menu()
         elif action == 'profiles_menu':
-            self.__show_profile_menu(widget)
+            self.show_profile_menu()
         elif action == 'repeat_menu':
-            self.__show_repeat_menu(widget, args)
+            self.show_repeat_menu(args)
         elif action == 'update_column':
             self.refresh_column(args[0])
         elif action == 'delete_column':

@@ -264,12 +264,12 @@ class HtmlParser:
         elif status.is_own and not status.is_direct():
             cmd = ARG_SEP.join([status.account_id, status.id_])
             menu += """<a href="javascript:show_confirm_window('%s', '%s', 'cmd:delete_status:%s')" class='action'>%s</a>""" % (
-                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_status'), cmd, self.__image_tag('action-delete.png',
+                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_status'), cmd, self.__image_tag('action-clear.png',
                     tooltip=i18n.get('delete')))
         elif status.is_own and status.is_direct():
             cmd = ARG_SEP.join([status.account_id, status.id_])
             menu += """<a href="javascript:show_confirm_window('%s', '%s', 'cmd:delete_direct:%s')" class='action'>%s</a>""" % (
-                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_direct_message'), cmd, self.__image_tag('action-delete.png',
+                    i18n.get('confirm_delete'), i18n.get('do_you_want_to_delete_direct_message'), cmd, self.__image_tag('action-clear.png',
                     tooltip=i18n.get('delete')))
         return menu
 
@@ -520,6 +520,15 @@ class HtmlParser:
                 temp = '1 %s' % i18n.get('person')
             reposted_by = '%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
 
+        args = ARG_SEP.join([status.account_id, status.id_])
+        tmp_cmd = "<a name='fav-cmd' href='%s' class='action'>%s</a>"
+        if status.is_favorite:
+            cmd = "cmd:unfav_status:%s" % args
+            fav_cmd = tmp_cmd % (cmd, self.__image_tag('action-unfav.png', tooltip=i18n.get('-fav')))
+        else:
+            cmd = "cmd:fav_status:%s" % args
+            fav_cmd = tmp_cmd % (cmd, self.__image_tag('action-fav.png', tooltip=i18n.get('+fav')))
+
         message = self.__highlight_urls(status, status.text)
         message = self.__highlight_hashtags(status, message)
         message = self.__highlight_groups(status, message)
@@ -555,7 +564,7 @@ class HtmlParser:
         section = section.replace('<% @verified %>', self.__verified_tag(status.is_verified))
         section = section.replace('<% @protected %>', self.__protected_tag(status.is_protected))
         section = section.replace('<% @reposted %>', self.__reposted_tag(status.reposted_by))
-        section = section.replace('<% @favorite %>', self.__favorite_tag(status.is_favorite))
+        section = section.replace('<% @favorite_cmd %>', fav_cmd)
         section = section.replace('<% @retweeted_visible %>', self.__retweeted_visible(status))
         section = section.replace('<% @retweeted %>', self.__retweeted_tag())
         section = section.replace('<% @menu %>', menu)

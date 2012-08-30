@@ -164,7 +164,7 @@ class Main(Base, Singleton, gtk.Window):
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
 
-    def __show_column_menu(self, widget):
+    def show_column_menu(self):
         menu = gtk.Menu()
 
         search = gtk.MenuItem(i18n.get('search'))
@@ -237,7 +237,7 @@ class Main(Base, Singleton, gtk.Window):
     def __add_column(self, widget, column_id):
         self.save_column(column_id)
 
-    def __show_profile_menu(self, widget):
+    def show_profile_menu(self):
         menu = gtk.Menu()
         accounts = self.get_all_accounts()
         twitter_acc = None
@@ -276,7 +276,7 @@ class Main(Base, Singleton, gtk.Window):
         menu.show_all()
         menu.popup(None, None, None, 0, gtk.get_current_event_time())
 
-    def __show_repeat_menu(self, widget, args):
+    def show_repeat_menu(self, args):
         menu = gtk.Menu()
 
         retweet = gtk.MenuItem(i18n.get('retweet'))

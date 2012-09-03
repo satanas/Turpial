@@ -26,6 +26,7 @@ from turpial.singleton import Singleton
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.notification import Notification
+from turpial.ui.gtk.imageview import ImageView
 from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.accounts import AccountsDialog
@@ -89,6 +90,7 @@ class Main(Base, Singleton, gtk.Window):
 
         # Persistent dialogs
         self.accountsdlg = AccountsDialog(self)
+        self.imageview = ImageView(self)
         self.__create_trayicon()
 
         # Unity integration
@@ -732,12 +734,12 @@ class Main(Base, Singleton, gtk.Window):
             self.direct_message_response)
 
     def profile_image(self, account, user):
+        self.imageview.loading()
         self.worker.register(self.core.get_profile_image, (account, user),
             self.profile_image_response)
 
     def show_media(self, url, account_id): 
-        cmd = "show_imageview();"
-        self.container.execute(cmd)
+        self.imageview.loading()
         self.worker.register(self.core.get_media_content, (url, account_id),
             self.show_media_response)
 
@@ -980,31 +982,20 @@ class Main(Base, Singleton, gtk.Window):
 
     def profile_image_response(self, response):
         if response.code > 0:
-            self.container.execute('hide_imageview(); show_notice("' + response.errmsg + '", "error");')
+            self.imageview.error(response.errmsg)
         else:
-            pix = self.load_image(response.items, True)
-            width = pix.get_width()
-            height = pix.get_height()
-            del pix
-            cmd = "update_imageview('%s',%s,%s);" % (response.items, width, height)
-            self.container.execute(cmd)
+            self.imageview.update(response.items)
 
     def show_media_response(self, response):
         if response.err:
-            self.container.execute('hide_imageview(); show_notice("' + response.errmsg + '", "error");')
+            self.imageview.error(response.errmsg)
         else:
             content_obj = response.response
             if content_obj.is_image():
-                print "content_obj", content_obj.path
                 content_obj.save_content()
-                pix = gtk.gdk.pixbuf_new_from_file(content_obj.path)
-                cmd = "update_imageview('%s',%s,%s);" % (
-                    content_obj.path, pix.get_width(), pix.get_height())
-                del pix
+                self.imageview.update(content_obj.path)
             elif content_obj.is_video() or content_obj.is_map():
-                cmd = "update_videoview('%s',%s,%s);" % (
-                    content_obj.path, content_obj.info['width'], content_obj.info['height'])
-            self.container.execute(cmd)
+                self.imageview.error('Media not supported yet')
 
     # ------------------------------------------------------------
     # Timer Methods

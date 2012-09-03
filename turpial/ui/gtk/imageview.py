@@ -61,11 +61,7 @@ class ImageView(gtk.Window):
         del pix
         self.last_size = self.get_size()
 
-    def __clear(self, update=False):
-        #if self.status == self.STATUS_LOADING:
-        #    self.remove(self.loading_msg)
-        #elif self.status == self.STATUS_LOADED:
-        #    self.remove(self.box)
+    def __clear(self):
         current_child = self.get_child()
         if current_child:
             self.remove(current_child)
@@ -82,7 +78,7 @@ class ImageView(gtk.Window):
         self.show_all()
 
     def update(self, url):
-        self.__clear(update=True)
+        self.__clear()
         self.add(self.box)
 
         # Picture information. This will not change until the next update
@@ -105,5 +101,5 @@ class ImageView(gtk.Window):
     def quit(self, widget, event):
         self.hide()
         self.__clear()
-        self.last_size = (0, 0)
+        self.last_size = (300, 300)
         return True

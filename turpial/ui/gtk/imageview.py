@@ -62,10 +62,13 @@ class ImageView(gtk.Window):
         self.last_size = self.get_size()
 
     def __clear(self, update=False):
-        if self.status == self.STATUS_LOADING:
-            self.remove(self.loading_msg)
-        elif self.status == self.STATUS_LOADED:
-            self.remove(self.box)
+        #if self.status == self.STATUS_LOADING:
+        #    self.remove(self.loading_msg)
+        #elif self.status == self.STATUS_LOADED:
+        #    self.remove(self.box)
+        current_child = self.get_child()
+        if current_child:
+            self.remove(current_child)
 
         del self.pixbuf
         self.pixbuf = None
@@ -102,3 +105,5 @@ class ImageView(gtk.Window):
     def quit(self, widget, event):
         self.hide()
         self.__clear()
+        self.last_size = (0, 0)
+        return True

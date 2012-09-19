@@ -70,8 +70,6 @@ function recalculate_column_size(nw, nh) {
     $('#profile-window').css('left', profile_win_left + 'px');
     $('#confirm-window').css('left', profile_win_left + 'px');
     $('#autocomplete-window').css('left', autocomplete_win_left + 'px');
-
-    resize_imageview();
 }
 
 function change_num_columns(num) {
@@ -192,54 +190,6 @@ function enable_click_events() {
     })
 }
 
-function resize_imageview(orig_w, orig_h) {
-    var img_w = 0;
-    var img_h = 0;
-    var width = window.innerWidth;
-    var height = window.innerHeight;
-    var imageview_border = 100;
-    var imageview = $('#imageview');
-
-    //console.log('im_w:' + imageview.width() + ' im_h:' + imageview.height() + ' orig_w:' + orig_w + ' orig_h:' + orig_h + ' width:' + width + ' height:' + height);
-    if (orig_w == undefined)
-        orig_w = imageview.width();
-    if (orig_h == undefined)
-        orig_h = imageview.height();
-
-    if (imageview.attr('src') == '') {
-        img_h = 200;
-        img_w = 200;
-    } else {
-        var wrate = width / height;
-        var rate = orig_w / orig_h;
-        if (wrate >= 1) {
-            var temp_h = height - imageview_border;
-            if (temp_h > orig_h)
-                img_h = orig_h;
-            else
-                img_h = temp_h;
-            img_w = img_h * rate;
-        } else {
-            var temp_w = width - imageview_border;
-            if (temp_w > orig_w)
-                img_w = orig_w;
-            else
-                img_w = temp_w;
-            img_h = img_w / rate;
-        }
-    }
-    //console.log('img_w: ' + img_w + ' img_h: ' + img_h);
-
-    imageview.css({
-        height: img_h,
-        width: img_w
-    });
-    $('#imageview-frame').css({
-        top: (height / 2) - (img_h / 2),
-        left: (width / 2) - (img_w / 2)
-    });
-}
-
 function autoadjust_size() {
     var width = window.innerWidth
     VISIBLE_COLUMNS = parseInt(width / MIN_COLUMN_SIZE)
@@ -283,10 +233,6 @@ function update_column(column_id, statuses) {
 /* This method should be called when something in the profile window can
 break the modal layout */
 function close_modal_dialogs() {
-    if ($('#imageview-window').length) {
-        // TODO: Change name to "close_"
-        hide_imageview()
-    }
 }
 
 /* Updatebox */
@@ -714,63 +660,6 @@ function autocomplete_friend(value) {
     eval($('#autocomplete-add-function').val())
 }
 
-/* Images */
-
-function show_imageview(img_url) {
-    close_update_box(true, false)
-    close_autocomplete_window(true, false)
-    close_profile_window(true, false)
-
-    console.log('img_url (show_imageview): ' + img_url);
-    $('#modal').fadeIn();
-    $('#imageview-window').fadeIn();
-    if (img_url == undefined) {
-        //Show the loading progress
-    } else {
-        $('#mediacontentview').html('<img id="imageview" src="" style="display: none;">');
-        $('#imageview').attr('src', img_url);
-        IMAGEVIEW_W = $('#imageview').width();
-        IMAGEVIEW_H = $('#imageview').height();
-        console.log('avatar_size (show_imageview): ' + IMAGEVIEW_W + 'x' + IMAGEVIEW_H);
-    }
-}
-
-function update_imageview(img_url, orig_w, orig_h) {
-    console.log('img_url (update_imageview): ' + img_url);
-    $('#mediacontentview').html('<img id="imageview" src="" style="display: none;">');
-    $('#progress-box-imageview').hide();
-    var imageview = $('#imageview');
-    imageview.attr('src', img_url);
-    imageview.show();
-    IMAGEVIEW_W = orig_w;
-    IMAGEVIEW_H = orig_h;
-    console.log('avatar_size (update_imageview): ' + IMAGEVIEW_W + 'x' + IMAGEVIEW_H);
-    resize_imageview(orig_w, orig_h);
-    //resize_imageview(orig_w, orig_h);
-}
-
-function update_videoview(img_url, orig_w, orig_h) {
-    console.log('img_url (update_imageview): ' + img_url);
-    $('#mediacontentview').html('<iframe src="' + img_url +'" width="' + orig_w + '" height="' + orig_h + '" frameborder=0>');
-    $('#progress-box-imageview').hide();
-    resize_imageview(orig_w, orig_h);
-    //resize_imageview(orig_w, orig_h);
-}
-
-function hide_imageview() {
-    $('#mediacontentview').html('<img id="imageview" src="" style="display: none;">');
-    $('#imageview-window').fadeOut(400, function() {
-        var imageview = $('#imageview');
-        imageview.attr('src', '');
-        imageview.css('width', '200px');
-        imageview.css('height', '200px');
-        imageview.hide();
-        resize_imageview();
-        $('#progress-box-imageview').show();
-        $('#modal').fadeOut(400);
-    });
-}
-
 /* Confirm window */
 
 function show_confirm_window(title, message, cmd) {
@@ -960,7 +849,6 @@ function short_url() {
 }
 
 function show_avatar(account_id, username) {
-    show_imageview();
     exec_command('cmd:profile_image:' + account_id + ARG_SEP + username);
 }
 

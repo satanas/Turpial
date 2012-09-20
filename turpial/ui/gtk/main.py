@@ -13,7 +13,6 @@ from turpial.ui.base import *
 from turpial.ui.gtk.about import About
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
-from turpial.notification import Notification
 from turpial.ui.gtk.imageview import ImageView
 from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
@@ -25,9 +24,8 @@ gtk.gdk.threads_init()
 
 # TODO: Improve all splits for accounts_id with a common function
 
-class Main(Base, Singleton, gtk.Window):
+class Main(Base, gtk.Window):
     def __init__(self, core):
-        Singleton.__init__(self)
         Base.__init__(self, core)
         gtk.Window.__init__(self)
 

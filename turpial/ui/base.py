@@ -29,9 +29,10 @@ from turpial.notification import Notification
 
 MIN_WINDOW_WIDTH = 250
 
-class Base:
+class Base(Singleton):
     '''Parent class for every UI interface'''
     def __init__(self, core):
+        Singleton.__init__(self, 'turpial.pid')
         self.core = core
         self.log = logging.getLogger('UI')
         self.log.debug('Started')

@@ -16,12 +16,11 @@ if detect_os() == OS_LINUX:
     import fcntl
 
 class Singleton:
-    def __init__(self):
+    def __init__(self, pid_name='turpial.pid'):
         self.fd = None
         self.log = logging.getLogger('Sys')
-        self.filepath = os.path.abspath(os.path.join(tempfile.gettempdir(), 
-            'turpial.pid'))
-        
+        self.filepath = os.path.abspath(os.path.join(tempfile.gettempdir(), pid_name))
+
         if detect_os() == OS_LINUX:
             self.fd = open(self.filepath, 'w')
             try:
@@ -38,13 +37,13 @@ class Singleton:
             except OSError, err:
                 if err.errno == 13:
                     self.__exit()
-    
+
     def __del__(self):
         if detect_os() == OS_WINDOWS:
             if self.fd:
                 os.close(self.fd)
                 os.unlink(self.filepath)
-    
+
     def __exit(self):
         self.log.error("Another instance is already running")
         sys.exit(-1)

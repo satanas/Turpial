@@ -19,8 +19,9 @@ except Exception, e:
 
 import os
 import sys
-import atexit
 import time
+import atexit
+import tempfile
 from signal import SIGTERM
 
 BUS_NAME = "org.turpial.ve"
@@ -220,9 +221,10 @@ class TurpialUnity(dbus.service.Object):
 
 
 class TurpialUnityDaemon(Daemon):
-
-    def __init__(self, path):
-        Daemon.__init__(self, path, stderr="/home/andrea/w/daemon")
+    def __init__(self):
+        pid_path = os.path.abspath(os.path.join(tempfile.gettempdir(), 'turpial-daemon.pid'))
+        stderr_path = os.path.abspath(os.path.join(tempfile.gettempdir(), 'turpial-daemon.log'))
+        Daemon.__init__(self, pid_path, stderr=stderr_path)
         self.mainloop = None
         self.service = None
 
@@ -241,7 +243,7 @@ def main():
         sys.exit(2)
 
     try:
-        daemon = TurpialUnityDaemon('/tmp/turpial-unity-daemon.pid')
+        daemon = TurpialUnityDaemon()
     except Exception, e:
         print "Error running the Unity Daemon: %s" % e
         sys.exit(-1)

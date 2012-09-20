@@ -585,6 +585,7 @@ class HtmlParser:
         if profile.location:
             location = profile.location
         section = self.__open_partial('profile')
+        section = section.replace('<% @account_id %>', profile.account_id)
         section = section.replace('<% @avatar %>', profile.avatar)
         section = section.replace('<% @fullname %>', profile.fullname)
         section = section.replace('<% @username %>', profile.username)

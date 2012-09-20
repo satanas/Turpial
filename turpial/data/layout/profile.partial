@@ -1,5 +1,5 @@
 <div class="top">
-    <div id="profile-avatar" class="icon"><img src="<% @avatar %>" width="48" height="48" /></div>
+    <div id="profile-avatar" class="icon"><a href="javascript:show_avatar('<% @account_id %>', '<% @username %>')"><img src="<% @avatar %>" width="48" height="48" /></a></div>
     <div class="info">
         <label class="name overflow"><% @fullname %></label>
         <% @protected %>

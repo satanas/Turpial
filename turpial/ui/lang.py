@@ -157,7 +157,7 @@ text box below and click OK:'),
 one account at once"),
     'sending_message': _('Sending message...'),
     'direct_message_sent_successfully': _('Direct message sent successfully'),
-    'turpial_image_viewer': _("Turpial Image Viewer"),
+    'image_preview': _("Image Preview"),
     'general': _('General'),
     'notifications': _('Notifications'),
     'services': _('Services'),
@@ -182,6 +182,7 @@ continue?'),
     'do_you_want_to_delete_direct_message': _('Do you want to delete this direct message?'),
     'confirm_unfollow': _('Confirm Unfollow'),
     'do_you_want_to_unfollow_user': _('Do you want to unfollow @%s?'),
+    'error_loading_image': _('Error loading image'),
 }
 
 class i18n:

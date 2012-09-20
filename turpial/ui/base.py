@@ -579,12 +579,12 @@ class Base:
             self.direct_message_response)
 
     def profile_image(self, account, user):
+        self.imageview.loading()
         self.worker.register(self.core.get_profile_image, (account, user),
             self.profile_image_response)
 
     def show_media(self, url, account_id): 
-        cmd = "show_imageview();"
-        self.container.execute(cmd)
+        self.imageview.loading()
         self.worker.register(self.core.get_media_content, (url, account_id),
             self.show_media_response)
 

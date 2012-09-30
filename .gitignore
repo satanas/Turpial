@@ -11,3 +11,4 @@ turpial/.DS_Store
 turpial/data/.DS_Store
 turpial/data/pixmaps/.DS_Store
 *.DS_Store
+setuptools*

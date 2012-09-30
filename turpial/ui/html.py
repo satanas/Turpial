@@ -228,28 +228,6 @@ class HtmlParser:
                 menu += """<a href='cmd:show_conversation:%s' class='action'>%s</a>""" % (args, self.__image_tag('action-conversation.png',
                     tooltip=i18n.get('conversation')))
 
-            # Repeat
-            '''
-            cmd = ARG_SEP.join([status.account_id, status.id_])
-            if status.retweeted:
-                menu += """<a name='repeat-cmd' href="javascript:show_confirm_window('%s', '%s', 'cmd:unrepeat_status:%s')" class='action'>%s</a>""" % (
-                        i18n.get('confirm_undo_retweet'), i18n.get('do_you_want_to_undo_retweet'), cmd, i18n.get('-retweet'))
-            else:
-                menu += """<a name='repeat-cmd' href="javascript:show_confirm_window('%s', '%s', 'cmd:repeat_status:%s')" class='action'>%s</a>""" % (
-                        i18n.get('confirm_retweet'), i18n.get('do_you_want_to_retweet'), cmd, i18n.get('+retweet'))
-            '''
-            # Fav
-            '''
-            args = ARG_SEP.join([status.account_id, status.id_])
-            if status.is_favorite:
-                cmd = "cmd:unfav_status:%s" % args
-                menu += "<a name='fav-cmd' href='%s' class='action'>%s</a>" % (cmd, self.__image_tag('action-unfav.png',
-                    tooltip=i18n.get('-fav')))
-            else:
-                cmd = "cmd:fav_status:%s" % args
-                menu += "<a name='fav-cmd' href='%s' class='action'>%s</a>" % (cmd, self.__image_tag('action-fav.png',
-                    tooltip=i18n.get('+fav')))
-            '''
         elif not status.is_own and status.is_direct():
             # Reply
             cmd = "'%s','%s'" % (status.account_id, status.username)

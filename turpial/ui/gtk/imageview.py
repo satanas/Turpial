@@ -72,6 +72,7 @@ class ImageView(gtk.Window):
 
     def loading(self):
         self.__clear()
+        self.resize(300, 300)
         self.loading_msg.set_label(i18n.get('loading'))
         self.add(self.loading_msg)
         self.status = self.STATUS_LOADING
@@ -89,7 +90,8 @@ class ImageView(gtk.Window):
         self.pix_rate = self.pix_width / self.pix_height
 
         self.status = self.STATUS_LOADED
-        self.__resize(self)
+        #self.__resize(self)
+        self.resize(self.pix_width, self.pix_height)
         self.show_all()
         self.present()
 

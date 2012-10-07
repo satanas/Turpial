@@ -243,14 +243,15 @@ class Base(Singleton):
         else:
             status = response.items
             args = ARG_SEP.join([status.account_id, status.id_])
+            tmp_cmd = "<a name='fav-cmd' href='%s' class='action'>%s</a>"
             if fav:
-                newcmd = "cmd:unfav_status:%s" % args
-                cmd = "update_favorite_mark('%s', '%s', '%s', true);" % (status.id_,
-                    newcmd, i18n.get('-fav'))
+                fav_cmd = "cmd:unfav_status:%s" % args
+                full_cmd = tmp_cmd % (fav_cmd, self.__image_tag('action-fav.png', tooltip=i18n.get('-fav')))
+                cmd = "update_favorite_mark('%s', '%s', true);" % (status.id_, full_cmd)
             else:
-                newcmd = "cmd:fav_status:%s" % args
-                cmd = "update_favorite_mark('%s', '%s', '%s', false);" % (status.id_,
-                    newcmd, i18n.get('+fav'))
+                fav_cmd = "cmd:fav_status:%s" % args
+                full_cmd = tmp_cmd % (fav_cmd, self.__image_tag('action-unfav.png', tooltip=i18n.get('+fav')))
+                cmd = "update_favorite_mark('%s', '%s', false);" % (status.id_, full_cmd)
         cmd += "unlock_status('%s');" % (status_id)
         self.container.execute(cmd)
 

@@ -1,5 +1,6 @@
 <div class="tweet <% @status_id %>">
     <input name="indicator" type="hidden" value="" />
+    <input name="is_fav" type="hidden" value="<% @is_fav %>" />
     <div id="replycontainer-<% @status_replyto_id %>" class="replylist" style="display: none;">
         <div id="replystatus-<% @status_replyto_id %>" >
         </div>
@@ -16,8 +17,8 @@
             <label class="name"><% @username %></label>
             <% @protected %>
             <% @verified %>
+            <div name="fav-icon"><% @favorite_cmd %></div>
             <div name="repeat-icon" style="<% @retweeted_visible %>"><% @retweeted %></div>
-            <div name="fav-icon" style="<% @fav_visible %>"><% @favorite %></div>
             <div class="clearfix"></div>
         </div>
         <div class="message"><% @message %></div>

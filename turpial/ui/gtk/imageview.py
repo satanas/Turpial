@@ -18,7 +18,7 @@ class ImageView(gtk.Window):
         gtk.Window.__init__(self)
 
         self.mainwin = baseui
-        self.set_title(i18n.get('Image Preview'))
+        self.set_title(i18n.get('image_preview'))
         self.set_size_request(100, 100)
         self.set_default_size(300, 300)
         self.set_transient_for(baseui)
@@ -26,7 +26,7 @@ class ImageView(gtk.Window):
         self.connect('delete-event', self.quit)
         self.connect('size-allocate', self.__resize)
 
-        self.loading_msg = gtk.Label('Loading...')
+        self.loading_msg = gtk.Label()
         self.loading_msg.set_alignment(0.5, 0.5)
 
         self.image = gtk.Image()
@@ -72,6 +72,8 @@ class ImageView(gtk.Window):
 
     def loading(self):
         self.__clear()
+        self.resize(300, 300)
+        self.loading_msg.set_label(i18n.get('loading'))
         self.add(self.loading_msg)
         self.status = self.STATUS_LOADING
         self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
@@ -88,7 +90,8 @@ class ImageView(gtk.Window):
         self.pix_rate = self.pix_width / self.pix_height
 
         self.status = self.STATUS_LOADED
-        self.__resize(self)
+        #self.__resize(self)
+        self.resize(self.pix_width, self.pix_height)
         self.show_all()
         self.present()
 
@@ -96,7 +99,7 @@ class ImageView(gtk.Window):
         if error:
             self.loading_msg.set_label(error)
         else:
-            self.loading_msg.set_label('Error loading image')
+            self.loading_msg.set_label(i18n.get('error_loading_image'))
 
     def quit(self, widget, event):
         self.hide()

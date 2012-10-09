@@ -24,9 +24,8 @@ gtk.gdk.threads_init()
 
 # TODO: Improve all splits for accounts_id with a common function
 
-class Main(Base, Singleton, gtk.Window):
+class Main(Base, gtk.Window):
     def __init__(self, core):
-        Singleton.__init__(self)
         Base.__init__(self, core)
         gtk.Window.__init__(self)
 
@@ -166,7 +165,7 @@ class Main(Base, Singleton, gtk.Window):
         menu.show_all()
         menu.popup(None, None, None, button, activate_time)
 
-    def __show_column_menu(self, widget):
+    def show_column_menu(self):
         menu = gtk.Menu()
 
         search = gtk.MenuItem(i18n.get('search'))
@@ -239,7 +238,7 @@ class Main(Base, Singleton, gtk.Window):
     def __add_column(self, widget, column_id):
         self.save_column(column_id)
 
-    def __show_profile_menu(self, widget):
+    def show_profile_menu(self):
         menu = gtk.Menu()
         accounts = self.get_all_accounts()
         twitter_acc = None
@@ -277,6 +276,30 @@ class Main(Base, Singleton, gtk.Window):
         menu.append(search)
         menu.show_all()
         menu.popup(None, None, None, 0, gtk.get_current_event_time())
+
+    def show_repeat_menu(self, args):
+        menu = gtk.Menu()
+
+        retweet = gtk.MenuItem(i18n.get('retweet'))
+        retweet.connect('activate', self.__perform_retweet, args)
+        quote = gtk.MenuItem(i18n.get('quote'))
+        quote.connect('activate', self.__perform_quote, args)
+
+        menu.append(retweet)
+        menu.append(quote)
+
+        menu.show_all()
+        menu.popup(None, None, None, 0, gtk.get_current_event_time())
+
+    def __perform_retweet(self, widget, args):
+        cmd = ARG_SEP.join([args[0], args[1]])
+        cmd2 = "show_confirm_window('%s', '%s', 'cmd:repeat_status:%s')" % (
+            i18n.get('confirm_retweet'), i18n.get('do_you_want_to_retweet'), cmd)
+        self.container.execute(cmd2)
+
+    def __perform_quote(self, widget, args):
+        cmd = "quote_status('%s','%s','%s')" % (args[0], args[2], args[3])
+        self.container.execute(cmd)
 
     def __show_profile(self, widget, acc_id, username):
         self.show_profile(acc_id, username)

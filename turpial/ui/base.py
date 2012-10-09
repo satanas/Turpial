@@ -29,9 +29,10 @@ from turpial.notification import Notification
 
 MIN_WINDOW_WIDTH = 250
 
-class Base:
+class Base(Singleton):
     '''Parent class for every UI interface'''
     def __init__(self, core):
+        Singleton.__init__(self, 'turpial.pid')
         self.core = core
         self.log = logging.getLogger('UI')
         self.log.debug('Started')
@@ -68,6 +69,7 @@ class Base:
                 return "%.2f KB" % (size / 1024.0)
         else:
             return "%.2f B" % size
+
     # ------------------------------------------------------------
     # Common methods to all interfaces
     # ------------------------------------------------------------
@@ -107,9 +109,11 @@ class Base:
         elif action == 'accounts_manager':
             self.accountsdlg.show()
         elif action == 'columns_menu':
-            self.__show_column_menu(widget)
+            self.show_column_menu()
         elif action == 'profiles_menu':
-            self.__show_profile_menu(widget)
+            self.show_profile_menu()
+        elif action == 'repeat_menu':
+            self.show_repeat_menu(args)
         elif action == 'update_column':
             self.refresh_column(args[0])
         elif action == 'delete_column':
@@ -576,12 +580,12 @@ class Base:
             self.direct_message_response)
 
     def profile_image(self, account, user):
+        self.imageview.loading()
         self.worker.register(self.core.get_profile_image, (account, user),
             self.profile_image_response)
 
     def show_media(self, url, account_id): 
-        cmd = "show_imageview();"
-        self.container.execute(cmd)
+        self.imageview.loading()
         self.worker.register(self.core.get_media_content, (url, account_id),
             self.show_media_response)
 

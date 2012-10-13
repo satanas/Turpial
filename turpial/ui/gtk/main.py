@@ -38,7 +38,7 @@ class Main(Base, Gtk.Window):
         self.set_default_size(310, 480)
         self.set_icon(self.load_image('turpial.svg', True))
         self.set_position(Gtk.WindowPosition.CENTER)
-        #self.set_gravity(Gtk.Gdk.GRAVITY_STATIC)
+        self.set_gravity(Gdk.Gravity.STATIC)
         self.connect('delete-event', self.__on_close)
         #self.connect('key-press-event', self.__on_key_press)
         #self.connect('focus-in-event', self.__on_focus)
@@ -68,9 +68,6 @@ class Main(Base, Gtk.Window):
         self.__create_trayicon()
 
         self.show_all()
-        self.imageview.loading()
-        self.imageview.error('asjdlkasjdkajd')
-        #self.imageview.update('/tmp/mario-peach.jpg')
 
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():

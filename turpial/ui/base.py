@@ -20,12 +20,13 @@ from libturpial.common import LoginStatus
 from libturpial.api.models.mediacontent import *
 from libturpial.api.interfaces.service import ServiceResponse
 
-from turpial.ui.unity.unitylauncher import UnityLauncherFactory
+from turpial import VERSION
 from turpial.ui.lang import i18n
 from turpial.ui.html import HtmlParser
 from turpial.singleton import Singleton
 from turpial.ui.sound import Sound
 from turpial.notification import Notification
+from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 
 MIN_WINDOW_WIDTH = 250
 
@@ -41,13 +42,13 @@ class Base(Singleton):
 
         # Unity integration
         self.unitylauncher = UnityLauncherFactory().create();
-        self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('new_tweet'), True)
-        self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('enable_sounds'), True, not self.sound._disable)
-        self.unitylauncher.add_quicklist_button(self.show_update_box_for_direct, i18n.get('direct_message'), True)
-        self.unitylauncher.add_quicklist_button(self.show_accounts_dialog, i18n.get('accounts'), True)
-        self.unitylauncher.add_quicklist_button(self.show_preferences, i18n.get('preferences'), True)
-        self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('exit'), True)
-        self.unitylauncher.show_menu()
+        #self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('new_tweet'), True)
+        #self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('enable_sounds'), True, not self.sound._disable)
+        #self.unitylauncher.add_quicklist_button(self.show_update_box_for_direct, i18n.get('direct_message'), True)
+        #self.unitylauncher.add_quicklist_button(self.show_accounts_dialog, i18n.get('accounts'), True)
+        #self.unitylauncher.add_quicklist_button(self.show_preferences, i18n.get('preferences'), True)
+        #self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('exit'), True)
+        #self.unitylauncher.show_menu()
 
         self.notify = Notification()
 
@@ -92,6 +93,7 @@ class Base(Singleton):
     def disable_sound(self, widget=None):
         self.sound.disable(not widget.get_active())
 
+    '''
     def show_notice(self, msg, type_):
         cmd = 'show_notice("%s", "%s");' % (msg, type_)
         self.container.execute(cmd)
@@ -401,7 +403,7 @@ class Base(Singleton):
             cmd = "show_notice('%s', 'info'); done_update_box_with_direct();" % (
                 i18n.get('direct_message_sent_successfully'))
             self.container.execute(cmd)
-
+    '''
     #---------------------------------------------------------------------------
 
     def single_login(self, acc):

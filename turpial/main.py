@@ -13,13 +13,13 @@ import subprocess
 
 from optparse import OptionParser, SUPPRESS_HELP
 
-from turpial import VERSION
+from turpial import DESC
 from turpial.ui import util
 
 from libturpial.api.core import Core
 from libturpial.common.tools import *
 from libturpial.config import AppConfig
-from libturpial import VERSION as LIBVERSION
+from libturpial import VERSION as LIBTURPIAL_VERSION
 
 LOG_FMT = logging.Formatter('[%(asctime)s] [%(name)s::%(levelname)s] %(message)s', '%Y%m%d-%H:%M')
 
@@ -49,7 +49,6 @@ class Turpial:
             sys.exit(-2)
 
         self.interface = options.interface
-        self.version = "Turpial v%s with libturpial v%s" % (VERSION, LIBVERSION)
 
         if options.debug or options.clean:
             logging.basicConfig(level=logging.DEBUG)
@@ -66,11 +65,6 @@ class Turpial:
             clean_bytecodes(__file__, self.log)
             sys.exit(0)
 
-        if options.version:
-            print self.version
-            print "Python v%X" % sys.hexversion
-            sys.exit(0)
-
         # TODO: Override with any configurated value
         if options.interface in util.INTERFACES.keys():
             self.ui = util.INTERFACES[options.interface](self.core)
@@ -79,7 +73,14 @@ class Turpial:
             options.interface, util.available_interfaces())
             sys.exit(-1)
 
-        self.log.debug('Starting %s' % self.version)
+        if options.version:
+            print DESC
+            print "libturpial v%s" % LIBTURPIAL_VERSION
+            print "Python v%X" % sys.hexversion
+            sys.exit(0)
+
+
+        self.log.debug('Starting %s' % DESC)
 
         self.ui.show_main()
         try:

@@ -19,7 +19,7 @@ except ImportError, exc:
 INTERFACES = {}
 DEFAULT_INTERFACE = None
 
-# Load gtk
+# Load gtk3
 try:
     from turpial.ui.gtk.main import Main as _GTK
     INTERFACES['gtk'] = _GTK

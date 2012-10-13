@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# GTK main view for Turpial
+# GTK3 main view for Turpial
 #
 # Author: Wil Alvarez (aka Satanas)
-# Sep 03, 2011
+# OCt 11, 2012
 
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import GdkPixbuf
 
+from turpial import DESC
 from turpial.ui.base import *
-
 from turpial.ui.gtk.about import About
+
+'''
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.imageview import ImageView
@@ -18,40 +20,28 @@ from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.gtk.preferences import Preferences
+'''
 
-gtk.gdk.set_program_class("Turpial")
-gtk.gdk.threads_init()
+#gtk.gdk.set_program_class("Turpial")
+#gtk.gdk.threads_init()
 
 # TODO: Improve all splits for accounts_id with a common function
-
-class Main(Base, gtk.Window):
+class Main(Base, Gtk.Window):
     def __init__(self, core):
         Base.__init__(self, core)
-        gtk.Window.__init__(self)
+        Gtk.Window.__init__(self)
 
         self.log = logging.getLogger('Gtk')
-        self.htmlparser = HtmlParser()
-        self.set_title('Turpial')
+        self.set_title(DESC)
         self.set_size_request(310, 480)
         self.set_default_size(310, 480)
         self.set_icon(self.load_image('turpial.svg', True))
-        self.set_position(gtk.WIN_POS_CENTER)
-        self.set_gravity(gtk.gdk.GRAVITY_STATIC)
-        self.connect('delete-event', self.__close)
-        self.connect('key-press-event', self.__on_key_press)
-        self.connect('focus-in-event', self.__on_focus)
+        #self.set_position(Gtk.WIN_POS_CENTER)
+        #self.set_gravity(Gtk.Gdk.GRAVITY_STATIC)
+        self.connect('delete-event', self.__on_close)
+        #self.connect('key-press-event', self.__on_key_press)
+        #self.connect('focus-in-event', self.__on_focus)
         #self.connect('size-request', self.__size_request)
-
-        self.container = HtmlView()
-        self.container.connect('action-request', self._action_request)
-        self.container.connect('link-request', self._link_request)
-        self.add(self.container)
-
-        # TODO: Improve the use of this mode
-        self.mode = 0
-
-        self.screen_width = self.get_screen().get_width()
-        self.max_columns = self.screen_width / MIN_WINDOW_WIDTH
 
         # Configuration
         self.showed = True
@@ -61,41 +51,42 @@ class Main(Base, gtk.Window):
         self.updating = {}
         self.columns = {}
 
-        self.indicator = Indicators()
-        self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
-        self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
+        #self.indicator = Indicators()
+        #self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
+        #self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
 
         self.openstatuses = {}
 
-        self.worker = Worker()
-        self.worker.set_timeout_callback(self.__timeout_callback)
-        self.worker.start()
+        #self.worker = Worker()
+        #self.worker.set_timeout_callback(self.__timeout_callback)
+        #self.worker.start()
 
         # Persistent dialogs
-        self.accountsdlg = AccountsDialog(self)
-        self.imageview = ImageView(self)
+        ##self.accountsdlg = AccountsDialog(self)
+        ##self.imageview = ImageView(self)
         self.__create_trayicon()
 
         self.show_all()
+        self.show_about()
 
-    def __size_request(self, widget, rectangle):
-        ##print rectangle.width, rectangle.height, self.max_columns
-        width = rectangle.width
-        columns = len(self.core.all_registered_columns())
-        preferred_width = MIN_WINDOW_WIDTH * columns
-        if width < preferred_width:
-            width = preferred_width
-        ##print width, rectangle.width, preferred_width
-        #self.set_default_size(width, rectangle.height)
-        self.save_window_geometry(width, rectangle.height)
+    def __on_close(self, widget, event=None):
+        if self.core.minimize_on_close():
+            self.showed = False
+            if self.unitylauncher.is_supported():
+                self.iconify()
+            else:
+                self.hide()
+        else:
+            self.main_quit(widget)
+        return True
 
+    #================================================================
+    # Tray icon
+    #================================================================
     def __create_trayicon(self):
-        if gtk.check_version(2, 10, 0) is not None:
-            self.log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
-            return
-        self.tray = gtk.StatusIcon()
+        self.tray = Gtk.StatusIcon()
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
-        self.tray.set_tooltip('Turpial')
+        self.tray.set_tooltip_text(DESC)
         self.tray.connect("activate", self.__on_trayicon_click)
         self.tray.connect("popup-menu", self.__show_tray_menu)
 
@@ -106,6 +97,35 @@ class Main(Base, gtk.Window):
         else:
             self.showed = True
             self.show()
+
+    def __show_tray_menu(self, widget, button, activate_time):
+        menu = Gtk.Menu()
+        tweet = Gtk.MenuItem(i18n.get('new_tweet'))
+        direct = Gtk.MenuItem(i18n.get('direct_message'))
+        accounts = Gtk.MenuItem(i18n.get('accounts'))
+        prefs = Gtk.MenuItem(i18n.get('preferences'))
+        sound_ = Gtk.CheckMenuItem(i18n.get('enable_sounds'))
+        sound_.set_active(not self.sound._disable)
+        exit_ = Gtk.MenuItem(i18n.get('exit'))
+        menu.append(tweet)
+        menu.append(direct)
+        menu.append(accounts)
+        menu.append(prefs)
+        menu.append(sound_)
+        menu.append(Gtk.SeparatorMenuItem())
+        menu.append(exit_)
+
+        #tweet.connect('activate', self.show_update_box)
+        #direct.connect('activate', self.show_update_box_for_direct)
+        #accounts.connect('activate', self.show_accounts_dialog)
+        #prefs.connect('activate', self.show_preferences)
+        #sound_.connect('toggled', self.disable_sound)
+        exit_.connect('activate', self.main_quit)
+        menu.show_all()
+        menu.popup(None, None, None, None, button, activate_time)
+        print 'showiaosjdalkd'
+        return True
+
 
     def __on_main_indicator_clicked(self, indicator):
         self.showed = True
@@ -125,6 +145,66 @@ class Main(Base, gtk.Window):
             pass
         self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
 
+
+    def load_image(self, path, pixbuf=False):
+        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            '..', '..', 'data', 'pixmaps', path))
+        pix = GdkPixbuf.Pixbuf.new_from_file(img_path)
+        if pixbuf:
+            return pix
+        avatar = Gtk.Image()
+        avatar.set_from_pixbuf(pix)
+        del pix
+        return avatar
+
+    def main_quit(self, widget=None, force=False):
+        self.log.debug('Exiting...')
+        self.unitylauncher.quit()
+        self.destroy()
+        self.tray = None
+        #self.worker.quit()
+        #self.worker.join()
+        if widget:
+            Gtk.main_quit()
+        if force:
+            sys.exit(0)
+
+    def main_loop(self):
+        try:
+            #gtk.gdk.threads_enter()
+            Gtk.main()
+            #gtk.gdk.threads_leave()
+        except Exception:
+            sys.exit(0)
+
+    def show_main(self):
+        #reg_columns = self.get_registered_columns()
+        #if len(reg_columns) == 0:
+        #    page = self.htmlparser.empty()
+        #else:
+        #    page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
+        #self.container.render(page)
+        #self.login()
+        pass
+
+    def show_about(self):
+        about = About(self)
+
+
+"""
+class Main2(Base, gtk.Window):
+    def __size_request(self, widget, rectangle):
+        ##print rectangle.width, rectangle.height, self.max_columns
+        width = rectangle.width
+        columns = len(self.core.all_registered_columns())
+        preferred_width = MIN_WINDOW_WIDTH * columns
+        if width < preferred_width:
+            width = preferred_width
+        ##print width, rectangle.width, preferred_width
+        #self.set_default_size(width, rectangle.height)
+        self.save_window_geometry(width, rectangle.height)
+
+
     def __on_key_press(self, widget, event):
         keyname = gtk.gdk.keyval_name(event.keyval)
         if (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'n':
@@ -137,33 +217,6 @@ class Main(Base, gtk.Window):
 
     def _action_request(self, widget, url):
         self.on_action_request(url)
-
-    def __show_tray_menu(self, widget, button, activate_time):
-        menu = gtk.Menu()
-        tweet = gtk.MenuItem(i18n.get('new_tweet'))
-        direct = gtk.MenuItem(i18n.get('direct_message'))
-        accounts = gtk.MenuItem(i18n.get('accounts'))
-        prefs = gtk.MenuItem(i18n.get('preferences'))
-        sound_ = gtk.CheckMenuItem(i18n.get('enable_sounds'))
-        sound_.set_active(not self.sound._disable)
-        exit_ = gtk.MenuItem(i18n.get('exit'))
-        menu.append(tweet)
-        menu.append(direct)
-        menu.append(accounts)
-        menu.append(prefs)
-        menu.append(sound_)
-        menu.append(gtk.SeparatorMenuItem())
-        menu.append(exit_)
-
-        tweet.connect('activate', self.show_update_box)
-        direct.connect('activate', self.show_update_box_for_direct)
-        accounts.connect('activate', self.show_accounts_dialog)
-        prefs.connect('activate', self.show_preferences)
-        sound_.connect('toggled', self.disable_sound)
-        exit_.connect('activate', self.main_quit)
-
-        menu.show_all()
-        menu.popup(None, None, None, button, activate_time)
 
     def show_column_menu(self):
         menu = gtk.Menu()
@@ -399,49 +452,6 @@ class Main(Base, gtk.Window):
             gobject.source_remove(self.timers[column_id])
             self.log.debug('--Removed timer for %s' % column_id)
 
-    def load_image(self, path, pixbuf=False):
-        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            '..', '..', 'data', 'pixmaps', path))
-        pix = gtk.gdk.pixbuf_new_from_file(img_path)
-        if pixbuf:
-            return pix
-        avatar = gtk.Image()
-        avatar.set_from_pixbuf(pix)
-        del pix
-        return avatar
-
-    def main_quit(self, widget=None, force=False):
-        self.log.debug('Exiting...')
-        self.unitylauncher.quit()
-        self.destroy()
-        self.tray = None
-        self.worker.quit()
-        self.worker.join()
-        if widget:
-            gtk.main_quit()
-        if force:
-            sys.exit(0)
-
-    def main_loop(self):
-        try:
-            gtk.gdk.threads_enter()
-            gtk.main()
-            gtk.gdk.threads_leave()
-        except Exception:
-            sys.exit(0)
-
-    def show_main(self):
-        reg_columns = self.get_registered_columns()
-        if len(reg_columns) == 0:
-            page = self.htmlparser.empty()
-        else:
-            page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
-        self.container.render(page)
-        self.login()
-
-    def show_about(self):
-        about = About(self)
-
     def show_preferences(self, widget=None):
         pref = Preferences(self)
 
@@ -516,4 +526,4 @@ class Main(Base, gtk.Window):
         for col in self.get_registered_columns():
             if col.build_id() == column_id:
                 self.download_stream(col)
-
+"""

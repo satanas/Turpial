@@ -183,6 +183,7 @@ continue?'),
     'confirm_unfollow': _('Confirm Unfollow'),
     'do_you_want_to_unfollow_user': _('Do you want to unfollow @%s?'),
     'error_loading_image': _('Error loading image'),
+    'credentials_could_not_be_empty': _('Credentials could not be empty'),
 }
 
 class i18n:

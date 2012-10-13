@@ -189,7 +189,6 @@ class AccountsDialog(Gtk.Window):
             self.btn_login.set_sensitive(False)
             self.btn_delete.set_sensitive(False)
             for acc in self.mainwin.get_all_accounts():
-                print acc
                 empty = False
                 imagename = "%s.png" % acc.protocol_id
                 pix = self.mainwin.load_image(imagename, True)
@@ -260,11 +259,11 @@ class AccountsDialog(Gtk.Window):
 
     def quit(self):
         self.destroy()
-'''
-# Actualizar lista después de agregar cuenta
-class AccountForm(gtk.Window):
+
+# Update list after add account
+class AccountForm(Gtk.Window):
     def __init__(self, mainwin, parent, user=None, pwd=None, protocol=None):
-        gtk.Window.__init__(self)
+        Gtk.Window.__init__(self)
 
         self.mainwin = mainwin
         self.set_transient_for(parent)
@@ -272,56 +271,61 @@ class AccountForm(gtk.Window):
         self.set_title(i18n.get('create_account'))
         self.set_size_request(290, 200)
         self.set_resizable(False)
-        self.set_position(gtk.WIN_POS_CENTER)
-        self.set_gravity(gtk.gdk.GRAVITY_STATIC)
+        self.set_position(Gtk.WindowPosition.CENTER)
+        self.set_gravity(Gdk.Gravity.STATIC)
         self.connect('delete-event', self.__close)
         self.connect('key-press-event', self.__key_pressed)
 
-        plabel = gtk.Label(i18n.get('protocol'))
+        plabel = Gtk.Label(i18n.get('protocol'))
         plabel.set_alignment(0, 0.5)
 
-        plist = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
+        plist = Gtk.ListStore(GdkPixbuf.Pixbuf, str, str)
         for p in self.mainwin.get_protocols_list():
             image = '%s.png' % p
             t_icon = self.mainwin.load_image(image, True)
             plist.append([t_icon, p, p])
 
-        self.protocol = gtk.ComboBox(plist)
-        icon_cell = gtk.CellRendererPixbuf()
-        txt_cell = gtk.CellRendererText()
-        self.protocol.pack_start(icon_cell, False)
-        self.protocol.pack_start(txt_cell, False)
-        self.protocol.add_attribute(icon_cell, 'pixbuf', 0)
-        self.protocol.add_attribute(txt_cell, 'markup', 1)
+        self.protocol = Gtk.ComboBox()
+        self.protocol.set_model(plist)
+        icon = Gtk.CellRendererPixbuf()
+        txt = Gtk.CellRendererText()
+        self.protocol.pack_start(icon, False)
+        self.protocol.pack_start(txt, False)
+        self.protocol.add_attribute(icon, 'pixbuf', 0)
+        self.protocol.add_attribute(txt, 'markup', 1)
 
-        self.username = gtk.Entry()
-        user_box = gtk.HBox(False)
-        user_box.pack_start(self.username, True, True)
+        self.username = Gtk.Entry()
+        user_box = Gtk.HBox(False)
+        user_box.pack_start(self.username, True, True, 0)
 
-        self.password = gtk.Entry()
+        self.password = Gtk.Entry()
         self.password.set_visibility(False)
-        pass_box = gtk.HBox(True)
-        pass_box.pack_start(self.password, True, True)
+        pass_box = Gtk.HBox(True)
+        pass_box.pack_start(self.password, True, True, 0)
 
-        self.cred_label = gtk.Label(i18n.get('user_and_password'))
+        self.cred_label = Gtk.Label(i18n.get('user_and_password'))
         self.cred_label.set_alignment(0, 0.5)
 
-        cred_box = gtk.VBox(False)
-        cred_box.pack_start(self.cred_label, False, False)
-        cred_box.pack_start(user_box, False, False)
-        cred_box.pack_start(pass_box, False, False)
+        cred_box = Gtk.VBox(False)
+        cred_box.pack_start(self.cred_label, False, False, 0)
+        cred_box.pack_start(user_box, False, False, 0)
+        cred_box.pack_start(pass_box, False, False, 0)
 
-        self.btn_signin = gtk.Button(i18n.get('signin'))
+        self.btn_signin = Gtk.Button(i18n.get('signin'))
 
-        self.waiting_label = gtk.Label()
+        self.spinner = Gtk.Spinner()
+        self.waiting_label = Gtk.Label()
+        waiting_box = Gtk.HBox()
+        waiting_box.pack_start(self.spinner, False, False, 10)
+        waiting_box.pack_start(self.waiting_label, True, False, 0)
 
-        vbox = gtk.VBox(False)
+        vbox = Gtk.VBox(False)
         vbox.set_border_width(12)
-        vbox.pack_start(plabel, False, False)
-        vbox.pack_start(self.protocol, False, False)
-        vbox.pack_start(gtk.EventBox(), False, False, 6)
-        vbox.pack_start(cred_box, True, True)
-        vbox.pack_start(self.waiting_label, False, False)
+        vbox.pack_start(plabel, False, False, 0)
+        vbox.pack_start(self.protocol, False, False, 0)
+        vbox.pack_start(Gtk.EventBox(), False, False, 6)
+        vbox.pack_start(cred_box, True, True, 0)
+        vbox.pack_start(waiting_box, False, False, 0)
         vbox.pack_start(self.btn_signin, False, False, 6)
 
         self.add(vbox)
@@ -333,6 +337,7 @@ class AccountForm(gtk.Window):
 
         self.protocol.set_active(0)
         self.working = False
+        self.spinner.hide()
 
     def __close(self, widget, event=None):
         if not self.working:
@@ -342,7 +347,7 @@ class AccountForm(gtk.Window):
             return True
 
     def __key_pressed(self, widget, event):
-        keyname = gtk.gdk.keyval_name(event.keyval)
+        keyname = Gdk.keyval_name(event.keyval)
         if keyname == 'Escape':
             self.__close(widget)
 
@@ -373,8 +378,16 @@ class AccountForm(gtk.Window):
         pindex = self.protocol.get_active()
         protocol = model[pindex][1]
 
+        # Validate
+        if protocol == 'identica':
+            if username == '' or passwd == '':
+                self.waiting_label.set_text(i18n.get('credentials_could_not_be_empty'))
+                return True
+
         self.__lock()
         self.waiting_label.set_text(i18n.get('connecting'))
+        self.spinner.show()
+        self.spinner.start()
         self.mainwin.save_account(username, protocol, passwd)
 
     def __lock(self):
@@ -393,6 +406,8 @@ class AccountForm(gtk.Window):
         self.working = False
         self.__unlock()
         self.waiting_label.set_text(message)
+        self.spinner.stop()
+        self.spinner.hide()
 
     def set_loading_message(self, message):
         self.waiting_label.set_text(message)
@@ -400,4 +415,3 @@ class AccountForm(gtk.Window):
     def done(self):
         self.working = False
         self.destroy()
-'''

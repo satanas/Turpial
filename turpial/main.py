@@ -59,11 +59,11 @@ class Turpial:
         #handler.setFormatter(LOG_FMT)
         #self.log.addHandler(handler)
 
-        self.core = Core()
-
         if options.clean:
             clean_bytecodes(__file__, self.log)
             sys.exit(0)
+
+        self.core = Core()
 
         # TODO: Override with any configurated value
         if options.interface in util.INTERFACES.keys():

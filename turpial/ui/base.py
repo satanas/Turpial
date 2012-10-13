@@ -403,7 +403,7 @@ class Base(Singleton):
             cmd = "show_notice('%s', 'info'); done_update_box_with_direct();" % (
                 i18n.get('direct_message_sent_successfully'))
             self.container.execute(cmd)
-    '''
+
     #---------------------------------------------------------------------------
 
     def single_login(self, acc):
@@ -654,7 +654,7 @@ class Base(Singleton):
                 html_status += self.htmlparser.status(rep_status, True)
             cmd = "show_replies_to_status('%s', false)" % status
             self.container.update_element(id_, html_status, cmd)
-
+    '''
 
 
     def open_url(self, url):

@@ -5,13 +5,13 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 13, 2011
 
-import gobject
 import logging
 
 from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
 
 from turpial.ui.lang import i18n
-from turpial.ui.html import HtmlParser
 from libturpial.common import LoginStatus
 
 log = logging.getLogger('Gtk')
@@ -26,8 +26,8 @@ class AccountsDialog(Gtk.Window):
         self.set_resizable(False)
         self.set_icon(self.mainwin.load_image('turpial.png', True))
         self.set_transient_for(parent)
-        self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-        self.set_gravity(gtk.gdk.GRAVITY_STATIC)
+        self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
+        self.set_gravity(Gdk.Gravity.STATIC)
         self.connect('delete-event', self.__close)
         self.connect('key-press-event', self.__key_pressed)
 

@@ -3,14 +3,12 @@
 """ Widget to make the OAuth dance from Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
-# Mar 16, 2010
 
-import gtk
+from gi.repository import Gtk
 import gobject
 
 from turpial.ui.lang import i18n
 from turpial.ui.gtk.htmlview import HtmlView
-from turpial.ui.gtk.waiting import CairoWaiting
 
 DELETE_COOKIES_SCRIPT = """
 function delete_cookies() {
@@ -23,7 +21,7 @@ function delete_cookies() {
 delete_cookies();
 """
 
-class OAuthWindow(gtk.Window, gobject.GObject):
+class OAuthWindow(Gtk.Window, gobject.GObject):
     __gsignals__ = {
         "response": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gobject.TYPE_STRING,)),
         "cancel": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gobject.TYPE_STRING,)),
@@ -31,7 +29,7 @@ class OAuthWindow(gtk.Window, gobject.GObject):
 
     def __init__(self, mainwin, parent, account_id):
         gobject.GObject.__init__(self)
-        gtk.Window.__init__(self)
+        Gtk.Window.__init__(self)
 
         self.account_id = account_id
         self.mainwin = mainwin
@@ -39,14 +37,14 @@ class OAuthWindow(gtk.Window, gobject.GObject):
         self.set_default_size(800, 450)
         self.set_transient_for(parent)
         self.set_modal(True)
-        self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         self.connect('delete-event', self.__cancel)
 
         self.view = HtmlView()
         self.view.connect('load-started', self.__started)
         self.view.connect('load-finished', self.__finished)
 
-        self.label = gtk.Label()
+        self.label = Gtk.Label()
         self.label.set_use_markup(True)
         self.label.set_alignment(0, 0)
         self.label.set_markup(i18n.get('authorize_turpial'))
@@ -62,18 +60,18 @@ class OAuthWindow(gtk.Window, gobject.GObject):
         lblbox.pack_start(waiting_box, True, True, 2)
         #lblbox.pack_start(self.waiting, False, False, 2)
 
-        self.pin = gtk.Entry()
-        cancel = gtk.Button(stock=gtk.STOCK_CANCEL)
+        self.pin = Gtk.Entry()
+        cancel = Gtk.Button(stock=Gtk.STOCK_CANCEL)
         cancel.set_size_request(80, 0)
-        accept = gtk.Button(stock=gtk.STOCK_OK)
+        accept = Gtk.Button(stock=Gtk.STOCK_OK)
         accept.set_size_request(80, 0)
 
-        hbox = gtk.HBox(False, 0)
+        hbox = Gtk.HBox(False, 0)
         hbox.pack_start(self.pin, True, True, 2)
         hbox.pack_start(cancel, False, False, 2)
         hbox.pack_start(accept, False, False, 2)
 
-        vbox = gtk.VBox(False, 5)
+        vbox = Gtk.VBox(False, 5)
         vbox.pack_start(self.view, True, True, 0)
         vbox.pack_start(lblbox, False, False, 2)
         vbox.pack_start(hbox, False, False, 2)

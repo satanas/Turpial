@@ -13,9 +13,9 @@ from turpial import DESC
 from turpial.ui.base import *
 from turpial.ui.gtk.about import About
 from turpial.ui.gtk.imageview import ImageView
+from turpial.ui.gtk.accounts import AccountsDialog
 
 '''
-from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.indicator import Indicators
@@ -63,11 +63,12 @@ class Main(Base, Gtk.Window):
         #self.worker.start()
 
         # Persistent dialogs
-        ##self.accountsdlg = AccountsDialog(self)
+        self.accounts_dialog = AccountsDialog(self)
         self.imageview = ImageView(self)
         self.__create_trayicon()
 
         self.show_all()
+        self.show_accounts_dialog()
 
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():
@@ -195,7 +196,7 @@ class Main(Base, Gtk.Window):
         about = About(self)
 
     def show_accounts_dialog(self, widget=None):
-        self.accountsdlg.show()
+        self.accounts_dialog.show()
 
 
 """

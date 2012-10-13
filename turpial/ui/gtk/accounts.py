@@ -9,7 +9,7 @@ import logging
 
 from gi.repository import Gtk
 from gi.repository import Gdk
-from gi.repository import GObject
+from gi.repository import GdkPixbuf
 
 from turpial.ui.lang import i18n
 from libturpial.common import LoginStatus
@@ -31,83 +31,78 @@ class AccountsDialog(Gtk.Window):
         self.connect('delete-event', self.__close)
         self.connect('key-press-event', self.__key_pressed)
 
-        self.model = gtk.ListStore(gtk.gdk.Pixbuf, str, gtk.gdk.Pixbuf, str,
-            gobject.TYPE_PYOBJECT)
-        self.model.set_sort_column_id(1, gtk.SORT_DESCENDING)
+        self.model = Gtk.ListStore(GdkPixbuf.Pixbuf, str, GdkPixbuf.Pixbuf, str, object)
+        self.model.set_sort_column_id(1, Gtk.SortType.DESCENDING)
 
-        cell_icon = gtk.CellRendererPixbuf()
-        cell_icon.set_property('yalign', 0.5)
-        cell_icon.set_property('xalign', 0.5)
-        cell_icon.set_padding(7,7)
+        icon = Gtk.CellRendererPixbuf()
+        icon.set_property('yalign', 0.5)
+        icon.set_property('xalign', 0.5)
+        icon.set_padding(7,7)
 
-        cell_tweet = gtk.CellRendererText()
-        cell_tweet.set_property('wrap-width', 260)
-        cell_tweet.set_property('yalign', 0.5)
-        cell_tweet.set_property('xalign', 0)
+        account = Gtk.CellRendererText()
+        account.set_property('wrap-width', 260)
+        account.set_property('yalign', 0.5)
+        account.set_property('xalign', 0)
 
-        cell_status = gtk.CellRendererPixbuf()
-        cell_status.set_property('yalign', 0.5)
-        cell_status.set_property('xalign', 0.5)
-        cell_status.set_padding(7,7)
+        status = Gtk.CellRendererPixbuf()
+        status.set_property('yalign', 0.5)
+        status.set_property('xalign', 0.5)
+        status.set_padding(7,7)
 
-        column = gtk.TreeViewColumn('accounts')
+        column = Gtk.TreeViewColumn('accounts')
         column.set_alignment(0.0)
-        column.pack_start(cell_icon, False)
-        column.pack_start(cell_tweet, True)
-        column.pack_start(cell_status, False)
-        column.set_attributes(cell_tweet, markup=1)
-        column.set_attributes(cell_icon, pixbuf=0)
-        column.set_attributes(cell_status, pixbuf=2)
+        column.pack_start(icon, False)
+        column.pack_start(account, True)
+        column.pack_start(status, False)
+        column.add_attribute(account, 'markup', 1)
+        column.add_attribute(icon, 'pixbuf', 0)
+        column.add_attribute(status, 'pixbuf', 2)
 
-        self.acc_list = gtk.TreeView()
+        self.acc_list = Gtk.TreeView()
         self.acc_list.set_headers_visible(False)
-        self.acc_list.set_events(gtk.gdk.POINTER_MOTION_MASK)
+        #self.acc_list.set_events(gtk.gdk.POINTER_MOTION_MASK)
         self.acc_list.set_level_indentation(0)
-        self.acc_list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
+        self.acc_list.set_resize_mode(Gtk.ResizeMode.IMMEDIATE)
         self.acc_list.set_model(self.model)
         self.acc_list.set_tooltip_column(0)
         self.acc_list.append_column(column)
         self.acc_list.connect("query-tooltip", self.__tooltip_query)
-        self.acc_list.connect("cursor-changed", self.__on_select)
+        ###self.acc_list.connect("cursor-changed", self.__on_select)
+
+        select = self.acc_list.get_selection()
+        select.connect('changed', self.__on_select)
         #self.acc_list.connect("button-release-event", self.__on_click)
         #self.click_handler = self.list.connect("cursor-changed", self.__on_select)
 
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        scroll.set_shadow_type(gtk.SHADOW_IN)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
+        scroll.set_shadow_type(Gtk.ShadowType.IN)
         scroll.add(self.acc_list)
 
-        self.btn_add = gtk.Button(i18n.get('add'))
-        self.btn_login = gtk.Button(i18n.get('login'))
+        self.btn_add = Gtk.Button(i18n.get('add'))
+        self.btn_login = Gtk.Button(i18n.get('login'))
         self.btn_login.set_sensitive(False)
-        self.btn_delete = gtk.Button(i18n.get('delete'))
+        self.btn_delete = Gtk.Button(i18n.get('delete'))
 
         self.btn_add.connect('clicked', self.__on_add)
         self.btn_delete.connect('clicked', self.__on_delete)
         self.btn_login.connect('clicked', self.__on_login)
 
-        box_button = gtk.HButtonBox()
+        box_button = Gtk.HButtonBox()
         box_button.set_spacing(6)
-        box_button.set_layout(gtk.BUTTONBOX_END)
-        box_button.pack_start(self.btn_login)
-        box_button.pack_start(self.btn_delete)
-        box_button.pack_start(self.btn_add)
+        box_button.set_layout(Gtk.ButtonBoxStyle.END)
+        box_button.pack_start(self.btn_login, False, False, 0)
+        box_button.pack_start(self.btn_delete, False, False, 0)
+        box_button.pack_start(self.btn_add, False, False, 0)
 
-        vbox = gtk.VBox(False)
+        vbox = Gtk.VBox(False)
         vbox.set_border_width(6)
-        vbox.pack_start(scroll, True, True)
+        vbox.pack_start(scroll, True, True, 0)
         vbox.pack_start(box_button, False, False, 6)
         self.add(vbox)
 
         self.showed = False
         self.form = None
-
-    def __get_selected(self):
-        model, row = self.acc_list.get_selection().get_selected()
-        if (row is None):
-            return None
-        acc = model.get_value(row, 4)
-        return acc
 
     def __close(self, widget, event=None):
         self.showed = False
@@ -115,9 +110,21 @@ class AccountsDialog(Gtk.Window):
         return True
 
     def __key_pressed(self, widget, event):
-        keyname = gtk.gdk.keyval_name(event.keyval)
+        keyname = Gdk.keyval_name(event.keyval)
         if keyname == 'Escape':
             self.__close(widget)
+
+    def __get_selected(self):
+        select = self.acc_list.get_selection()
+        if select is None:
+            return None
+
+        model, row = select.get_selected()
+        if row is None:
+            return None
+
+        acc = model.get_value(row, 4)
+        return acc
 
     def __tooltip_query(self, treeview, x, y, mode, tooltip):
         path = treeview.get_path_at_pos(x, y)
@@ -182,6 +189,7 @@ class AccountsDialog(Gtk.Window):
             self.btn_login.set_sensitive(False)
             self.btn_delete.set_sensitive(False)
             for acc in self.mainwin.get_all_accounts():
+                print acc
                 empty = False
                 imagename = "%s.png" % acc.protocol_id
                 pix = self.mainwin.load_image(imagename, True)
@@ -252,7 +260,7 @@ class AccountsDialog(Gtk.Window):
 
     def quit(self):
         self.destroy()
-
+'''
 # Actualizar lista después de agregar cuenta
 class AccountForm(gtk.Window):
     def __init__(self, mainwin, parent, user=None, pwd=None, protocol=None):
@@ -392,4 +400,4 @@ class AccountForm(gtk.Window):
     def done(self):
         self.working = False
         self.destroy()
-
+'''

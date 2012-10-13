@@ -3,7 +3,6 @@
 # GTK account manager for Turpial
 #
 # Author: Wil Alvarez (aka Satanas)
-# Nov 13, 2011
 
 import logging
 

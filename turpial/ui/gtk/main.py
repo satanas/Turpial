@@ -13,13 +13,13 @@ from turpial import DESC
 from turpial.ui.base import *
 from turpial.ui.gtk.about import About
 from turpial.ui.gtk.imageview import ImageView
+from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.accounts import AccountsDialog
 
 '''
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
 from turpial.ui.gtk.indicator import Indicators
-from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.preferences import Preferences
 '''
 
@@ -68,7 +68,6 @@ class Main(Base, Gtk.Window):
         self.__create_trayicon()
 
         self.show_all()
-        self.show_accounts_dialog()
 
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():
@@ -379,13 +378,13 @@ class Main2(Base, gtk.Window):
         if arg.code > 0:
             msg = arg.errmsg
             self.show_notice(msg, 'error')
-            self.accountsdlg.cancel_login(msg)
+            self.accounts_dialog.cancel_login(msg)
             return
 
-        self.accountsdlg.status_message(i18n.get('authenticating'))
+        self.accounts_dialog.status_message(i18n.get('authenticating'))
         auth_obj = arg.items
         if auth_obj.must_auth():
-            oauthwin = OAuthWindow(self, self.accountsdlg.form, account_id)
+            oauthwin = OAuthWindow(self, self.accounts_dialog.form, account_id)
             oauthwin.connect('response', self.__oauth_callback)
             oauthwin.connect('cancel', self.__cancel_callback)
             oauthwin.open(auth_obj.url)
@@ -393,18 +392,18 @@ class Main2(Base, gtk.Window):
             self.__auth_callback(arg, account_id, False)
 
     def __oauth_callback(self, widget, verifier, account_id):
-        self.accountsdlg.status_message(i18n.get('authorizing'))
+        self.accounts_dialog.status_message(i18n.get('authorizing'))
         self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
 
     def __cancel_callback(self, widget, reason, account_id):
         #self.delete_account(account_id)
-        self.accountsdlg.cancel_login(i18n.get(reason))
+        self.accounts_dialog.cancel_login(i18n.get(reason))
 
     def __auth_callback(self, arg, account_id, register = True):
         if arg.code > 0:
             msg = arg.errmsg
             self.show_notice(msg, 'error')
-            self.accountsdlg.cancel_login(msg)
+            self.accounts_dialog.cancel_login(msg)
         else:
             self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
 
@@ -413,14 +412,14 @@ class Main2(Base, gtk.Window):
         if arg.code > 0:
             self.core.change_login_status(account_id, LoginStatus.NONE)
             msg = arg.errmsg
-            self.accountsdlg.cancel_login(msg)
+            self.accounts_dialog.cancel_login(msg)
             self.show_notice(msg, 'error')
         else:
             if register:
                 account_id = self.core.name_as_id(account_id)
 
-            self.accountsdlg.done_login()
-            self.accountsdlg.update()
+            self.accounts_dialog.done_login()
+            self.accounts_dialog.update()
 
             response = self.core.get_own_profile(account_id)
             if response.code > 0:

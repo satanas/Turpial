@@ -5,7 +5,7 @@
 # Author: Wil Alvarez (aka Satanas)
 
 from gi.repository import Gtk
-import gobject
+from gi.repository import GObject
 
 from turpial.ui.lang import i18n
 from turpial.ui.gtk.htmlview import HtmlView
@@ -21,14 +21,13 @@ function delete_cookies() {
 delete_cookies();
 """
 
-class OAuthWindow(Gtk.Window, gobject.GObject):
+class OAuthWindow(Gtk.Window):
     __gsignals__ = {
-        "response": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gobject.TYPE_STRING,)),
-        "cancel": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gobject.TYPE_STRING,)),
+        "response": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, (GObject.TYPE_STRING, GObject.TYPE_STRING,)),
+        "cancel": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, (GObject.TYPE_STRING, GObject.TYPE_STRING,)),
     }
 
     def __init__(self, mainwin, parent, account_id):
-        gobject.GObject.__init__(self)
         Gtk.Window.__init__(self)
 
         self.account_id = account_id
@@ -49,22 +48,24 @@ class OAuthWindow(Gtk.Window, gobject.GObject):
         self.label.set_alignment(0, 0)
         self.label.set_markup(i18n.get('authorize_turpial'))
 
-        self.waiting_label = gtk.Label()
+        self.waiting_label = Gtk.Label()
         self.waiting_label.set_use_markup(True)
-        #self.waiting = CairoWaiting(self.mainwin)
-        waiting_box = gtk.Alignment(xalign=1.0)
-        waiting_box.add(self.waiting_label)
+        self.waiting_label.set_alignment(1.0, 0.0)
 
-        lblbox = gtk.HBox(False, 2)
+        self.spinner = Gtk.Spinner()
+
+        lblbox = Gtk.HBox(False, 2)
         lblbox.pack_start(self.label, True, True, 2)
-        lblbox.pack_start(waiting_box, True, True, 2)
-        #lblbox.pack_start(self.waiting, False, False, 2)
+        lblbox.pack_start(self.waiting_label, True, True, 2)
+        lblbox.pack_start(self.spinner, False, False, 2)
 
         self.pin = Gtk.Entry()
         cancel = Gtk.Button(stock=Gtk.STOCK_CANCEL)
         cancel.set_size_request(80, 0)
         accept = Gtk.Button(stock=Gtk.STOCK_OK)
         accept.set_size_request(80, 0)
+        accept.set_can_default(True)
+        accept.grab_default()
 
         hbox = Gtk.HBox(False, 0)
         hbox.pack_start(self.pin, True, True, 2)
@@ -81,6 +82,7 @@ class OAuthWindow(Gtk.Window, gobject.GObject):
         accept.connect('clicked', self.__accept)
 
         self.add(vbox)
+        self.show_all()
 
     def __cancel(self, widget, event=None):
         self.quit()
@@ -88,25 +90,24 @@ class OAuthWindow(Gtk.Window, gobject.GObject):
     def __accept(self, widget):
         verifier = self.pin.get_text()
         if verifier == '':
-            self.emit('cancel', 'invalid_pin', self.account_id)
-            self.destroy()
             return
 
         self.quit(verifier)
 
     def __started(self, widget):
-        #self.waiting.start()
+        self.spinner.start()
         self.waiting_label.set_markup(i18n.get('loading'))
 
     def __finished(self, widget):
-        #self.waiting.stop()
+        self.spinner.stop()
+        self.spinner.hide()
         self.waiting_label.set_markup('')
 
     def open(self, uri):
-        print uri
         self.view.execute(DELETE_COOKIES_SCRIPT);
         self.view.load(uri)
         self.show_all()
+        self.__started(None)
 
     def quit(self, response=None):
         self.view.stop()
@@ -116,4 +117,4 @@ class OAuthWindow(Gtk.Window, gobject.GObject):
             self.emit('cancel', 'login_cancelled', self.account_id)
         self.destroy()
 
-gobject.type_register(OAuthWindow)
+GObject.type_register(OAuthWindow)

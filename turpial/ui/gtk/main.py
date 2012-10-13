@@ -17,7 +17,7 @@ from turpial.ui.gtk.imageview import ImageView
 from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.accounts import AccountsDialog
-from turpial.ui.gtk.preferences import Preferences
+from turpial.ui.gtk.preferences.window import PreferencesWindow
 
 
 #gtk.gdk.set_program_class("Turpial")
@@ -65,7 +65,7 @@ class Main(Base, Gtk.Window):
         self.__create_trayicon()
 
         self.show_all()
-        pref = Preferences(self)
+        pref = PreferencesWindow(self)
 
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():

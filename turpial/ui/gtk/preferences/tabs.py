@@ -1,258 +1,21 @@
 # -*- coding: utf-8 -*-
 
-""" Preferences dialog for Turpial"""
+""" Preferences tabs for Turpial"""
 #
 # Author: Wil Alvarez (aka Satanas)
-# March 2, 2012
 
 import subprocess
 
-from gi.repository import Gtk
 
 from turpial.ui.lang import i18n
+from turpial.ui.gtk.preferences.widgets import *
 
 from libturpial.api.services.shorturl import URL_SERVICES
 from libturpial.api.services.uploadpic import PIC_SERVICES
 
-class Preferences(Gtk.Window):
-    def __init__(self, parent=None, mode='user'):
-        Gtk.Window.__init__(self, Gtk.WindowType.TOPLEVEL)
-
-        self.mainwin = parent
-        self.current = parent.get_config()
-        self.set_default_size(450, 400)
-        self.set_title(i18n.get('preferences'))
-        self.set_border_width(6)
-        self.set_transient_for(parent)
-        self.set_modal(True)
-        self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
-
-        btn_save = Gtk.Button(i18n.get('save'))
-        btn_close = Gtk.Button(i18n.get('close'))
-
-        box_button = Gtk.HButtonBox()
-        box_button.set_spacing(6)
-        box_button.set_layout(Gtk.ButtonBoxStyle.END)
-        box_button.pack_start(btn_close, False, False, 0)
-        box_button.pack_start(btn_save, False, False, 0)
-
-        notebook = Gtk.Notebook()
-        notebook.set_scrollable(True)
-        notebook.set_border_width(3)
-        notebook.set_properties('tab-pos', Gtk.PositionType.LEFT)
-
-        # Tabs
-        #self.general = GeneralTab(self.current['General'])
-        #self.notif = NotificationsTab(self.current['Notifications'], self.current['Sounds'])
-        #self.services = ServicesTab(self.current['Services'])
-        #self.browser = BrowserTab(self.mainwin, self.current['Browser'])
-        #self.filtered = FilterTab(self.mainwin)
-        #self.proxy = ProxyTab(self.current['Proxy'])
-        #self.advanced = AdvancedTab(self.mainwin, self.current['Advanced'])
-
-        #notebook.append_page(self.general, Gtk.Label(i18n.get('general')))
-        #notebook.append_page(self.notif, Gtk.Label(i18n.get('notifications')))
-        #notebook.append_page(self.services, Gtk.Label(i18n.get('services')))
-        #notebook.append_page(self.browser, Gtk.Label(i18n.get('web_browser')))
-        #notebook.append_page(self.filtered, Gtk.Label(i18n.get('filters')))
-        ##notebook.append_page(self.proxy, Gtk.Label(i18n.get('proxy')))
-        #notebook.append_page(self.advanced, Gtk.Label(i18n.get('advanced')))
-
-        vbox = Gtk.VBox()
-        #vbox.set_spacing(4)
-        vbox.pack_start(notebook, True, True, 0)
-        vbox.pack_start(box_button, False, False, 0)
-
-        btn_close.connect('clicked', self.__close)
-        btn_save.connect('clicked', self.__save)
-        self.connect('delete-event', self.__close)
-
-        self.add(vbox)
-        self.show_all()
-
-    def __close(self, widget, event=None):
-        self.destroy()
-
-    def __save(self, widget):
-        general = self.general.get_config()
-        notif, sounds = self.notif.get_config()
-        services = self.services.get_config()
-        browser = self.browser.get_config()
-        proxy = self.proxy.get_config()
-        advanced = self.advanced.get_config()
-
-        new_config = {
-            'General': general,
-            'Notifications': notif,
-            'Sounds': sounds,
-            'Services': services,
-            'Browser': browser,
-            'Proxy': proxy,
-            'Advanced': advanced,
-        }
-
-        self.mainwin.save_config(new_config)
-        self.mainwin.save_filters(self.filtered.get_filters())
-        self.destroy()
-
-class PreferencesTab(Gtk.VBox):
-    def __init__(self, desc, current=None):
-        Gtk.VBox.__init__(self, False)
-
-        self.current = current
-        description = Gtk.Label()
-        description.set_line_wrap(True)
-        description.set_use_markup(True)
-        description.set_markup(desc)
-        description.set_justify(Gtk.Justification.JUSTIFY_FILL)
-
-        desc_align = Gtk.Alignment(xalign=0.0, yalign=0.0)
-        desc_align.set_padding(0, 5, 10, 10)
-        desc_align.add(description)
-
-        self.container = Gtk.VBox(False, 2)
-        hbox = Gtk.HBox(False, 10)
-        hbox.pack_start(self.container, True, True, 10)
-
-        self.pack_start(desc_align, False, False, 5)
-        self.pack_start(hbox, True, True, 0)
-
-    def add_child(self, child, expand=True, fill=True, padding=0):
-        self.container.pack_start(child, expand, fill, padding)
-
-    def get_config(self):
-        raise NotImplemented
-
-class TitleLabel(Gtk.Alignment):
-    def __init__(self, text, padding=0):
-        Gtk.Alignment.__init__(self, xalign=0.0, yalign=0.0)
-        caption ="<b>%s</b>" % text
-        label = Gtk.Label()
-        label.set_line_wrap(True)
-        label.set_use_markup(True)
-        label.set_markup(caption)
-        label.set_justify(Gtk.Justification.JUSTIFY_FILL)
-
-        self.set_padding(10, 0, padding, 0)
-        self.add(label)
-
-class CheckBox(Gtk.Alignment):
-    def __init__(self, title, is_active, tooltip, padding=0):
-        Gtk.Alignment.__init__(self)
-        self.set_padding(0, 0, padding, 0)
-
-        self.checkbtn = Gtk.CheckButton(title)
-        self.checkbtn.set_active(is_active)
-        try:
-            self.checkbtn.set_has_tooltip(True)
-            self.checkbtn.set_tooltip_text(tooltip)
-        except Exception:
-            pass
-        self.add(self.checkbtn)
-
-    def get_active(self):
-        return self.checkbtn.get_active()
-
-class ComboBox(Gtk.HBox):
-    def __init__(self, caption, array, current):
-        Gtk.HBox.__init__(self, False)
-        i = 0
-        default = -1
-        lbl = Gtk.Label(caption)
-        lbl.set_alignment(0.0, 0.5)
-        self.combo = Gtk.combo_box_new_text()
-        self.combo.set_size_request(180, -1)
-        for key, v in array.iteritems():
-            self.combo.append_text(key)
-            if key == current:
-                default = i
-            i += 1
-        self.combo.set_active(default)
-
-        self.pack_start(self.combo, False, False, 5)
-        self.pack_start(lbl, True, True, 5)
-
-    def get_active_text(self):
-        return self.combo.get_active_text()
-
-class FormField(Gtk.HBox):
-    def __init__(self, caption, current, password=False):
-        Gtk.HBox.__init__(self, False)
-        lbl = Gtk.Label(caption)
-        lbl.set_alignment(0.0, 0.5)
-        self.entry = Gtk.Entry()
-        if password:
-            self.entry.set_visibility(False)
-        self.entry.set_size_request(180, -1)
-        self.entry.set_text(current)
-
-        self.pack_start(self.entry, False, False, 2)
-        self.pack_start(lbl, True, True, 5)
-
-    def get_text(self):
-        return self.entry.get_text()
-
-class ProxyField(Gtk.HBox):
-    def __init__(self, caption, server, port):
-        Gtk.HBox.__init__(self, False)
-        lbl = Gtk.Label(caption)
-        lbl.set_alignment(0.0, 0.5)
-        self.server = Gtk.Entry()
-        self.server.set_size_request(130, -1)
-        self.server.set_text(server)
-
-        self.port = Gtk.Entry()
-        self.port.set_size_request(50, -1)
-        self.port.set_text(port)
-
-        self.pack_start(self.server, False, False, 2)
-        self.pack_start(self.port, False, False, 2)
-        self.pack_start(lbl, True, True, 5)
-
-    def get_proxy(self):
-        return self.server.get_text(), self.port.get_text()
-
-class HSeparator(Gtk.HBox):
-    def __init__(self, spacing=15):
-        Gtk.HBox.__init__(self, False)
-        self.set_size_request(-1, spacing)
-
-class TimeScroll(Gtk.HBox):
-    def __init__(self, caption='', val=5, min=1, max=60, step=3, page=6, size=0,
-        lbl_size=150, unit=''):
-        Gtk.HBox.__init__(self, False)
-
-        self.value = val
-        self.unit = unit
-        self.caption = caption
-
-        self.label = Gtk.Label()
-        self.label.set_size_request(lbl_size, -1)
-        self.label.set_alignment(xalign=0.0, yalign=0.5)
-        self.label.set_use_markup(True)
-
-        adj = Gtk.Adjustment(val, min, max, step, page, size)
-        scale = Gtk.HScale()
-        scale.set_draw_value(False)
-        scale.set_adjustment(adj)
-        scale.set_property('value-pos', Gtk.POS_RIGHT)
-
-        self.pack_start(scale, True, True, 3)
-        self.pack_start(self.label, False, False, 3)
-
-        self.show_all()
-        self.__on_change(scale)
-        scale.connect('value-changed', self.__on_change)
-
-    def __on_change(self, widget):
-        self.value = widget.get_value()
-        label = "%s <span foreground='#999999'>%i %s</span>" % (self.caption,
-            self.value, self.unit)
-        self.label.set_markup(label)
-"""
-class GeneralTab(PreferencesTab):
+class GeneralTab(GenericTab):
     def __init__(self, current):
-        PreferencesTab.__init__(
+        GenericTab.__init__(
             self,
             _('Adjust update frequency for columns'),
             current
@@ -291,9 +54,9 @@ class GeneralTab(PreferencesTab):
             'statuses': int(self.tweets.value),
         }
 
-class NotificationsTab(PreferencesTab):
+class NotificationsTab(GenericTab):
     def __init__(self, notif, sounds):
-        PreferencesTab.__init__(
+        GenericTab.__init__(
             self,
             _('Select the notifications you want to receive from Turpial'),
             None
@@ -347,19 +110,16 @@ class NotificationsTab(PreferencesTab):
             'updates': supdates,
         }
 
-class ServicesTab(PreferencesTab):
+class ServicesTab(GenericTab):
     def __init__(self, current):
-        PreferencesTab.__init__(
+        GenericTab.__init__(
             self,
-            _('Select your preferred services '
-              'to shorten URLs and to upload images'),
+            _('Select your preferred services to shorten URLs and to upload images'),
             current
         )
 
-        self.shorten = ComboBox(_('Shorten URL'), URL_SERVICES,
-            self.current['shorten-url'])
-        self.upload = ComboBox(_('Upload images'), PIC_SERVICES,
-            self.current['upload-pic'])
+        self.shorten = ComboBox(_('Shorten URL'), URL_SERVICES, self.current['shorten-url'])
+        self.upload = ComboBox(_('Upload images'), PIC_SERVICES, self.current['upload-pic'])
 
         self.add_child(self.shorten, False, False, 2)
         self.add_child(self.upload, False, False, 2)
@@ -371,9 +131,9 @@ class ServicesTab(PreferencesTab):
             'upload-pic': self.upload.get_active_text(),
         }
 
-class FilterTab(PreferencesTab):
+class FilterTab(GenericTab):
     def __init__(self, parent):
-        PreferencesTab.__init__(
+        GenericTab.__init__(
             self, 
             _("Filter out anything that bothers you")
         )
@@ -400,26 +160,25 @@ class FilterTab(PreferencesTab):
         input_box.pack_start(self.del_button, False, False, 0)
 
         self.model = Gtk.ListStore(str)
-        self.list = Gtk.TreeView()
-        self.list.set_headers_visible(False)
-        self.list.set_events(Gtk.gdk.POINTER_MOTION_MASK)
-        self.list.set_level_indentation(0)
-        self.list.set_rules_hint(True)
-        self.list.set_resize_mode(Gtk.RESIZE_IMMEDIATE)
-        self.list.set_model(self.model)
-        self.list.connect('cursor-changed', self.__cursor_changed)
+        self._list = Gtk.TreeView()
+        self._list.set_headers_visible(False)
+        self._list.set_level_indentation(0)
+        self._list.set_rules_hint(True)
+        self._list.set_resize_mode(Gtk.ResizeMode.IMMEDIATE)
+        self._list.set_model(self.model)
+        self._list.connect('cursor-changed', self.__cursor_changed)
 
         column = Gtk.TreeViewColumn('')
         column.set_alignment(0.0)
-        cell_term = Gtk.CellRendererText()
-        column.pack_start(cell_term, True)
-        column.set_attributes(cell_term, markup=0)
-        self.list.append_column(column)
+        term = Gtk.CellRendererText()
+        column.pack_start(term, True)
+        column.add_attribute(term, 'markup', 0)
+        self._list.append_column(column)
 
         scroll = Gtk.ScrolledWindow()
-        scroll.set_policy(Gtk.POLICY_NEVER, Gtk.POLICY_AUTOMATIC)
-        scroll.set_shadow_type(Gtk.SHADOW_IN)
-        scroll.add(self.list)
+        scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
+        scroll.set_shadow_type(Gtk.ShadowType.IN)
+        scroll.add(self._list)
 
         for filtered_item in self.filtered:
             self.model.append([filtered_item])
@@ -444,7 +203,7 @@ class FilterTab(PreferencesTab):
         self.term_input.grab_focus()
 
     def __remove_filter(self, widget):
-        model, term = self.list.get_selection().get_selected()
+        model, term = self._list.get_selection().get_selected()
         if term:
             str_term = self.model.get_value(term, 0)
             self.model.remove(term)
@@ -457,9 +216,9 @@ class FilterTab(PreferencesTab):
         self.model.foreach(self.__process)
         return self.filtered
 
-class BrowserTab(PreferencesTab):
+class BrowserTab(GenericTab):
     def __init__(self, parent, current):
-        PreferencesTab.__init__(
+        GenericTab.__init__(
             self,
             _('Setup your favorite web browser to open all links'),
             current
@@ -467,10 +226,8 @@ class BrowserTab(PreferencesTab):
 
         self.mainwin = parent
 
-        chk_default = Gtk.RadioButton(None,
-            _('Default web browser'))
-        chk_other = Gtk.RadioButton(chk_default,
-            _('Choose another web browser'))
+        chk_default = Gtk.RadioButton.new_with_label_from_widget(None, _('Default web browser'))
+        chk_other = Gtk.RadioButton.new_with_label_from_widget(chk_default, _('Choose another web browser'))
 
         cmd_lbl = Gtk.Label(_('Command'))
         cmd_lbl.set_size_request(90, -1)
@@ -485,9 +242,9 @@ class BrowserTab(PreferencesTab):
 
         buttons_box = Gtk.HButtonBox()
         buttons_box.set_spacing(6)
-        buttons_box.set_layout(Gtk.BUTTONBOX_END)
-        buttons_box.pack_start(btn_test)
-        buttons_box.pack_start(btn_browse)
+        buttons_box.set_layout(Gtk.ButtonBoxStyle.END)
+        buttons_box.pack_start(btn_test, False, False, 0)
+        buttons_box.pack_start(btn_browse, False, False, 0)
 
         self.other_vbox = Gtk.VBox(False, 2)
         self.other_vbox.pack_start(cmd_box, False, False, 2)
@@ -540,9 +297,9 @@ class BrowserTab(PreferencesTab):
             'cmd': self.command.get_text()
         }
 
-class AdvancedTab(PreferencesTab):
+class AdvancedTab(GenericTab):
     def __init__(self, mainwin, current):
-        PreferencesTab.__init__(
+        GenericTab.__init__(
             self,
             _('Advanced options. Use it only if you know what you do'),
             current
@@ -569,10 +326,10 @@ class AdvancedTab(PreferencesTab):
         self.configbtn.connect('clicked', self.__restore_default_config)
 
         table = Gtk.Table(2, 2, False)
-        table.attach(self.cachebtn, 0, 1, 0, 1, Gtk.EXPAND|Gtk.FILL)
-        table.attach(self.cachelbl, 1, 2, 0, 1, Gtk.EXPAND|Gtk.FILL, xpadding=5)
-        table.attach(self.configbtn, 0, 1, 1, 2, Gtk.EXPAND|Gtk.FILL)
-        table.attach(configlbl, 1, 2, 1, 2, Gtk.EXPAND|Gtk.FILL, xpadding=5)
+        table.attach(self.cachebtn, 0, 1, 0, 1, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL)
+        table.attach(self.cachelbl, 1, 2, 0, 1, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL, xpadding=5)
+        table.attach(self.configbtn, 0, 1, 1, 2, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL)
+        table.attach(configlbl, 1, 2, 1, 2, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL, xpadding=5)
 
         timeout = int(self.current['socket-timeout'])
         show_avatars = True if self.current['show-user-avatars'] == 'on' else False
@@ -619,9 +376,9 @@ class AdvancedTab(PreferencesTab):
             'show-user-avatars': show_avatars,
         }
 
-class ProxyTab(PreferencesTab):
+class ProxyTab(GenericTab):
     def __init__(self, current):
-        PreferencesTab.__init__(
+        GenericTab.__init__(
             self,
             _('Proxy settings for Turpial (Need Restart)'),
             current
@@ -646,5 +403,4 @@ class ProxyTab(PreferencesTab):
             'server': server,
             'port': port,
         }
-"""
 

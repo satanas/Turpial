@@ -11,14 +11,14 @@ from gi.repository import GdkPixbuf
 from turpial import DESC
 from turpial.ui.base import *
 from turpial.ui.gtk.about import About
+from turpial.ui.gtk.imageview import ImageView
 
 '''
+from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.htmlview import HtmlView
-from turpial.ui.gtk.imageview import ImageView
 from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
-from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.gtk.preferences import Preferences
 '''
 
@@ -36,7 +36,7 @@ class Main(Base, Gtk.Window):
         self.set_size_request(310, 480)
         self.set_default_size(310, 480)
         self.set_icon(self.load_image('turpial.svg', True))
-        #self.set_position(Gtk.WIN_POS_CENTER)
+        self.set_position(Gtk.WindowPosition.CENTER)
         #self.set_gravity(Gtk.Gdk.GRAVITY_STATIC)
         self.connect('delete-event', self.__on_close)
         #self.connect('key-press-event', self.__on_key_press)
@@ -63,11 +63,11 @@ class Main(Base, Gtk.Window):
 
         # Persistent dialogs
         ##self.accountsdlg = AccountsDialog(self)
-        ##self.imageview = ImageView(self)
+        self.imageview = ImageView(self)
         self.__create_trayicon()
 
         self.show_all()
-        self.show_about()
+        self.imageview.loading()
 
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():
@@ -157,6 +157,18 @@ class Main(Base, Gtk.Window):
         del pix
         return avatar
 
+    #================================================================
+    # Overrided methods
+    #================================================================
+
+    def main_loop(self):
+        try:
+            #gtk.gdk.threads_enter()
+            Gtk.main()
+            #gtk.gdk.threads_leave()
+        except Exception:
+            sys.exit(0)
+
     def main_quit(self, widget=None, force=False):
         self.log.debug('Exiting...')
         self.unitylauncher.quit()
@@ -167,14 +179,6 @@ class Main(Base, Gtk.Window):
         if widget:
             Gtk.main_quit()
         if force:
-            sys.exit(0)
-
-    def main_loop(self):
-        try:
-            #gtk.gdk.threads_enter()
-            Gtk.main()
-            #gtk.gdk.threads_leave()
-        except Exception:
             sys.exit(0)
 
     def show_main(self):
@@ -189,6 +193,9 @@ class Main(Base, Gtk.Window):
 
     def show_about(self):
         about = About(self)
+
+    def show_accounts_dialog(self, widget=None):
+        self.accountsdlg.show()
 
 
 """
@@ -361,17 +368,6 @@ class Main2(Base, gtk.Window):
         cmd = "show_autocomplete_for_profile('%s')" % acc_id
         self.container.execute(cmd)
 
-    def __close(self, widget, event=None):
-        if self.core.minimize_on_close():
-            self.showed = False
-            if self.unitylauncher.is_supported():
-                self.iconify()
-            else:
-                self.hide()
-        else:
-            self.main_quit(widget)
-        return True
-
     def __timeout_callback(self, funct, arg, user_data):
         if user_data:
             gobject.timeout_add(200, funct, arg, user_data)
@@ -454,9 +450,6 @@ class Main2(Base, gtk.Window):
 
     def show_preferences(self, widget=None):
         pref = Preferences(self)
-
-    def show_accounts_dialog(self, widget=None):
-        self.accountsdlg.show()
 
     def show_update_box(self, widget=None):
         self.deiconify()

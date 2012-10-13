@@ -5,9 +5,10 @@
 # Author: Wil Alvarez (aka Satanas)
 # Nov 13, 2011
 
-import gtk
 import gobject
 import logging
+
+from gi.repository import Gtk
 
 from turpial.ui.lang import i18n
 from turpial.ui.html import HtmlParser
@@ -15,9 +16,9 @@ from libturpial.common import LoginStatus
 
 log = logging.getLogger('Gtk')
 
-class AccountsDialog(gtk.Window):
+class AccountsDialog(Gtk.Window):
     def __init__(self, parent):
-        gtk.Window.__init__(self)
+        Gtk.Window.__init__(self)
 
         self.mainwin = parent
         self.set_title(i18n.get('accounts'))

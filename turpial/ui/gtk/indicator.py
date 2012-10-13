@@ -3,11 +3,11 @@
 """ Indicator module for Turpial """
 #
 # Author: Wil Alvarez (aka Satanas)
-# Jan 24, 2012
 
 import os
-import gobject
 import logging
+
+from gi.repository import GObject
 
 from turpial.ui.lang import i18n
 
@@ -21,14 +21,13 @@ except ImportError, exc:
     log.info('Could not import Indicate module. Support for indicators disabled')
     INDICATOR = False
 
-class Indicators(gobject.GObject):
+class Indicators:
     __gsignals__ = {
-        "main-clicked": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
-        "indicator-clicked": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
-            (gobject.TYPE_PYOBJECT, )),
+        "main-clicked": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, ()),
+        "indicator-clicked": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT, )),
     }
+
     def __init__(self, disable=False):
-        gobject.GObject.__init__(self)
         self.indicators = {}
         self.activate()
         self.disable = disable
@@ -91,4 +90,4 @@ class Indicators(gobject.GObject):
             print indicator
             indicator.hide()
 
-gobject.type_register(Indicators)
+GObject.type_register(Indicators)

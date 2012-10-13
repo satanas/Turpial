@@ -6,6 +6,7 @@
 # OCt 11, 2012
 
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 
 from turpial import DESC
@@ -68,6 +69,8 @@ class Main(Base, Gtk.Window):
 
         self.show_all()
         self.imageview.loading()
+        self.imageview.error('asjdlkasjdkajd')
+        #self.imageview.update('/tmp/mario-peach.jpg')
 
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():
@@ -163,9 +166,9 @@ class Main(Base, Gtk.Window):
 
     def main_loop(self):
         try:
-            #gtk.gdk.threads_enter()
+            Gdk.threads_enter()
             Gtk.main()
-            #gtk.gdk.threads_leave()
+            Gdk.threads_leave()
         except Exception:
             sys.exit(0)
 

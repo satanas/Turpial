@@ -6,6 +6,8 @@
 # Aug 31, 2012
 
 from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 
 from turpial.ui.lang import i18n
 
@@ -26,21 +28,16 @@ class ImageView(Gtk.Window):
         self.connect('delete-event', self.quit)
         self.connect('size-allocate', self.__resize)
 
-        self.loading_msg = Gtk.Label()
-        self.loading_msg.set_alignment(0.5, 0.5)
+        self.error_msg = Gtk.Label()
+        self.error_msg.set_alignment(0.5, 0.5)
 
         self.spinner = Gtk.Spinner()
         self.spinner.set_size_request(96, 96)
 
-        box = Gtk.Box(spacing=10)
-        box.set_orientation(Gtk.Orientation.VERTICAL)
-        box.pack_start(self.spinner, False, False, 0)
-        box.pack_start(self.loading_msg, False, False, 0)
-
-        self.loading_box = Gtk.Alignment()
-        self.loading_box.set_property('xalign', 0.5)
-        self.loading_box.set_property('yalign', 0.5)
-        self.loading_box.add(box)
+        self.loading_box = Gtk.Box(spacing=0)
+        self.loading_box.set_orientation(Gtk.Orientation.VERTICAL)
+        self.loading_box.pack_start(self.spinner, True, False, 0)
+        self.loading_box.pack_start(self.error_msg, True,True, 0)
 
         self.image = Gtk.Image()
         scroll = Gtk.ScrolledWindow()
@@ -49,7 +46,7 @@ class ImageView(Gtk.Window):
 
         self.image_box = Gtk.EventBox()
         self.image_box.add(scroll)
-        #self.box.modify_bg(Gtk.STATE_NORMAL, gtk.gdk.Color())
+        #self.image_box.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(0, 0, 0))
 
         self.last_size = (0, 0)
         self.status = self.STATUS_IDLE
@@ -69,7 +66,7 @@ class ImageView(Gtk.Window):
         scale = min(float(win_width)/self.pix_width, float(win_height)/self.pix_height)
         new_width = int(scale * self.pix_width)
         new_height = int(scale * self.pix_height)
-        pix = self.pixbuf.scale_simple(new_width, new_height, gtk.gdk.INTERP_BILINEAR)
+        pix = self.pixbuf.scale_simple(new_width, new_height, GdkPixbuf.InterpType.BILINEAR)
         self.image.set_from_pixbuf(pix)
         del pix
         self.last_size = self.get_size()
@@ -82,19 +79,20 @@ class ImageView(Gtk.Window):
         del self.pixbuf
         self.pixbuf = None
         self.status = self.STATUS_IDLE
+        self.error_msg.hide()
 
     def loading(self):
         self.__clear()
+        self.spinner.start()
         self.resize(300, 300)
-        self.loading_msg.set_label(i18n.get('loading'))
         self.add(self.loading_box)
         self.status = self.STATUS_LOADING
         self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
-        self.spinner.start()
         self.show_all()
 
     def update(self, url):
         self.__clear()
+        self.spinner.stop()
         self.add(self.image_box)
 
         # Picture information. This will not change until the next update
@@ -104,17 +102,17 @@ class ImageView(Gtk.Window):
         self.pix_rate = self.pix_width / self.pix_height
 
         self.status = self.STATUS_LOADED
-        self.spinner.stop()
         self.resize(self.pix_width, self.pix_height)
         self.show_all()
         self.present()
 
     def error(self, error=''):
         if error:
-            self.loading_msg.set_label(error)
+            self.error_msg.set_label(error)
         else:
-            self.loading_msg.set_label(i18n.get('error_loading_image'))
+            self.error_msg.set_label(i18n.get('error_loading_image'))
         self.spinner.stop()
+        self.spinner.hide()
 
     def quit(self, widget, event):
         self.hide()

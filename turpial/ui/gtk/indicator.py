@@ -21,13 +21,14 @@ except ImportError, exc:
     log.info('Could not import Indicate module. Support for indicators disabled')
     INDICATOR = False
 
-class Indicators:
+class Indicators(GObject.GObject):
     __gsignals__ = {
         "main-clicked": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, ()),
         "indicator-clicked": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT, )),
     }
 
     def __init__(self, disable=False):
+        GObject.GObject.__init__(self)
         self.indicators = {}
         self.activate()
         self.disable = disable
@@ -39,6 +40,7 @@ class Indicators:
 
         if disable:
             log.debug('Module disabled')
+            return
 
         desktop_file = os.path.join(os.getcwd(), "turpial.desktop")
 

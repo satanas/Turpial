@@ -5,16 +5,18 @@
 # Author: Wil Alvarez (aka Satanas)
 # March 2, 2012
 
-import gtk
 import subprocess
 
-from turpial.ui.lang import i18n
-from libturpial.api.services.uploadpic import PIC_SERVICES
-from libturpial.api.services.shorturl import URL_SERVICES
+from gi.repository import Gtk
 
-class Preferences(gtk.Window):
+from turpial.ui.lang import i18n
+
+from libturpial.api.services.shorturl import URL_SERVICES
+from libturpial.api.services.uploadpic import PIC_SERVICES
+
+class Preferences(Gtk.Window):
     def __init__(self, parent=None, mode='user'):
-        gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
+        Gtk.Window.__init__(self, Gtk.WindowType.TOPLEVEL)
 
         self.mainwin = parent
         self.current = parent.get_config()
@@ -23,44 +25,43 @@ class Preferences(gtk.Window):
         self.set_border_width(6)
         self.set_transient_for(parent)
         self.set_modal(True)
-        self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
 
-        btn_save = gtk.Button(i18n.get('save'))
-        btn_close = gtk.Button(i18n.get('close'))
+        btn_save = Gtk.Button(i18n.get('save'))
+        btn_close = Gtk.Button(i18n.get('close'))
 
-        box_button = gtk.HButtonBox()
+        box_button = Gtk.HButtonBox()
         box_button.set_spacing(6)
-        box_button.set_layout(gtk.BUTTONBOX_END)
-        box_button.pack_start(btn_close)
-        box_button.pack_start(btn_save)
+        box_button.set_layout(Gtk.ButtonBoxStyle.END)
+        box_button.pack_start(btn_close, False, False, 0)
+        box_button.pack_start(btn_save, False, False, 0)
 
-        notebook = gtk.Notebook()
+        notebook = Gtk.Notebook()
         notebook.set_scrollable(True)
         notebook.set_border_width(3)
-        notebook.set_properties('tab-pos', gtk.POS_LEFT)
+        notebook.set_properties('tab-pos', Gtk.PositionType.LEFT)
 
         # Tabs
-        self.general = GeneralTab(self.current['General'])
-        self.notif = NotificationsTab(self.current['Notifications'],
-            self.current['Sounds'])
-        self.services = ServicesTab(self.current['Services'])
-        self.browser = BrowserTab(self.mainwin, self.current['Browser'])
-        self.filtered = FilterTab(self.mainwin)
-        self.proxy = ProxyTab(self.current['Proxy'])
-        self.advanced = AdvancedTab(self.mainwin, self.current['Advanced'])
+        #self.general = GeneralTab(self.current['General'])
+        #self.notif = NotificationsTab(self.current['Notifications'], self.current['Sounds'])
+        #self.services = ServicesTab(self.current['Services'])
+        #self.browser = BrowserTab(self.mainwin, self.current['Browser'])
+        #self.filtered = FilterTab(self.mainwin)
+        #self.proxy = ProxyTab(self.current['Proxy'])
+        #self.advanced = AdvancedTab(self.mainwin, self.current['Advanced'])
 
-        notebook.append_page(self.general, gtk.Label(i18n.get('general')))
-        notebook.append_page(self.notif, gtk.Label(i18n.get('notifications')))
-        notebook.append_page(self.services, gtk.Label(i18n.get('services')))
-        notebook.append_page(self.browser, gtk.Label(i18n.get('web_browser')))
-        notebook.append_page(self.filtered, gtk.Label(i18n.get('filters')))
-        #notebook.append_page(self.proxy, gtk.Label(i18n.get('proxy')))
-        notebook.append_page(self.advanced, gtk.Label(i18n.get('advanced')))
+        #notebook.append_page(self.general, Gtk.Label(i18n.get('general')))
+        #notebook.append_page(self.notif, Gtk.Label(i18n.get('notifications')))
+        #notebook.append_page(self.services, Gtk.Label(i18n.get('services')))
+        #notebook.append_page(self.browser, Gtk.Label(i18n.get('web_browser')))
+        #notebook.append_page(self.filtered, Gtk.Label(i18n.get('filters')))
+        ##notebook.append_page(self.proxy, Gtk.Label(i18n.get('proxy')))
+        #notebook.append_page(self.advanced, Gtk.Label(i18n.get('advanced')))
 
-        vbox = gtk.VBox()
+        vbox = Gtk.VBox()
         #vbox.set_spacing(4)
-        vbox.pack_start(notebook, True, True)
-        vbox.pack_start(box_button, False, False)
+        vbox.pack_start(notebook, True, True, 0)
+        vbox.pack_start(box_button, False, False, 0)
 
         btn_close.connect('clicked', self.__close)
         btn_save.connect('clicked', self.__save)
@@ -79,7 +80,7 @@ class Preferences(gtk.Window):
         browser = self.browser.get_config()
         proxy = self.proxy.get_config()
         advanced = self.advanced.get_config()
-        print advanced
+
         new_config = {
             'General': general,
             'Notifications': notif,
@@ -94,27 +95,27 @@ class Preferences(gtk.Window):
         self.mainwin.save_filters(self.filtered.get_filters())
         self.destroy()
 
-class PreferencesTab(gtk.VBox):
+class PreferencesTab(Gtk.VBox):
     def __init__(self, desc, current=None):
-        gtk.VBox.__init__(self, False)
+        Gtk.VBox.__init__(self, False)
 
         self.current = current
-        description = gtk.Label()
+        description = Gtk.Label()
         description.set_line_wrap(True)
         description.set_use_markup(True)
         description.set_markup(desc)
-        description.set_justify(gtk.JUSTIFY_FILL)
+        description.set_justify(Gtk.Justification.JUSTIFY_FILL)
 
-        desc_align = gtk.Alignment(xalign=0.0, yalign=0.0)
+        desc_align = Gtk.Alignment(xalign=0.0, yalign=0.0)
         desc_align.set_padding(0, 5, 10, 10)
         desc_align.add(description)
 
-        self.container = gtk.VBox(False, 2)
-        hbox = gtk.HBox(False, 10)
+        self.container = Gtk.VBox(False, 2)
+        hbox = Gtk.HBox(False, 10)
         hbox.pack_start(self.container, True, True, 10)
 
         self.pack_start(desc_align, False, False, 5)
-        self.pack_start(hbox, True, True)
+        self.pack_start(hbox, True, True, 0)
 
     def add_child(self, child, expand=True, fill=True, padding=0):
         self.container.pack_start(child, expand, fill, padding)
@@ -122,25 +123,25 @@ class PreferencesTab(gtk.VBox):
     def get_config(self):
         raise NotImplemented
 
-class TitleLabel(gtk.Alignment):
+class TitleLabel(Gtk.Alignment):
     def __init__(self, text, padding=0):
-        gtk.Alignment.__init__(self, xalign=0.0, yalign=0.0)
+        Gtk.Alignment.__init__(self, xalign=0.0, yalign=0.0)
         caption ="<b>%s</b>" % text
-        label = gtk.Label()
+        label = Gtk.Label()
         label.set_line_wrap(True)
         label.set_use_markup(True)
         label.set_markup(caption)
-        label.set_justify(gtk.JUSTIFY_FILL)
+        label.set_justify(Gtk.Justification.JUSTIFY_FILL)
 
         self.set_padding(10, 0, padding, 0)
         self.add(label)
 
-class CheckBox(gtk.Alignment):
+class CheckBox(Gtk.Alignment):
     def __init__(self, title, is_active, tooltip, padding=0):
-        gtk.Alignment.__init__(self)
+        Gtk.Alignment.__init__(self)
         self.set_padding(0, 0, padding, 0)
 
-        self.checkbtn = gtk.CheckButton(title)
+        self.checkbtn = Gtk.CheckButton(title)
         self.checkbtn.set_active(is_active)
         try:
             self.checkbtn.set_has_tooltip(True)
@@ -152,14 +153,14 @@ class CheckBox(gtk.Alignment):
     def get_active(self):
         return self.checkbtn.get_active()
 
-class ComboBox(gtk.HBox):
+class ComboBox(Gtk.HBox):
     def __init__(self, caption, array, current):
-        gtk.HBox.__init__(self, False)
+        Gtk.HBox.__init__(self, False)
         i = 0
         default = -1
-        lbl = gtk.Label(caption)
+        lbl = Gtk.Label(caption)
         lbl.set_alignment(0.0, 0.5)
-        self.combo = gtk.combo_box_new_text()
+        self.combo = Gtk.combo_box_new_text()
         self.combo.set_size_request(180, -1)
         for key, v in array.iteritems():
             self.combo.append_text(key)
@@ -174,12 +175,12 @@ class ComboBox(gtk.HBox):
     def get_active_text(self):
         return self.combo.get_active_text()
 
-class FormField(gtk.HBox):
+class FormField(Gtk.HBox):
     def __init__(self, caption, current, password=False):
-        gtk.HBox.__init__(self, False)
-        lbl = gtk.Label(caption)
+        Gtk.HBox.__init__(self, False)
+        lbl = Gtk.Label(caption)
         lbl.set_alignment(0.0, 0.5)
-        self.entry = gtk.Entry()
+        self.entry = Gtk.Entry()
         if password:
             self.entry.set_visibility(False)
         self.entry.set_size_request(180, -1)
@@ -191,16 +192,16 @@ class FormField(gtk.HBox):
     def get_text(self):
         return self.entry.get_text()
 
-class ProxyField(gtk.HBox):
+class ProxyField(Gtk.HBox):
     def __init__(self, caption, server, port):
-        gtk.HBox.__init__(self, False)
-        lbl = gtk.Label(caption)
+        Gtk.HBox.__init__(self, False)
+        lbl = Gtk.Label(caption)
         lbl.set_alignment(0.0, 0.5)
-        self.server = gtk.Entry()
+        self.server = Gtk.Entry()
         self.server.set_size_request(130, -1)
         self.server.set_text(server)
 
-        self.port = gtk.Entry()
+        self.port = Gtk.Entry()
         self.port.set_size_request(50, -1)
         self.port.set_text(port)
 
@@ -211,30 +212,30 @@ class ProxyField(gtk.HBox):
     def get_proxy(self):
         return self.server.get_text(), self.port.get_text()
 
-class HSeparator(gtk.HBox):
+class HSeparator(Gtk.HBox):
     def __init__(self, spacing=15):
-        gtk.HBox.__init__(self, False)
+        Gtk.HBox.__init__(self, False)
         self.set_size_request(-1, spacing)
 
-class TimeScroll(gtk.HBox):
+class TimeScroll(Gtk.HBox):
     def __init__(self, caption='', val=5, min=1, max=60, step=3, page=6, size=0,
         lbl_size=150, unit=''):
-        gtk.HBox.__init__(self, False)
+        Gtk.HBox.__init__(self, False)
 
         self.value = val
         self.unit = unit
         self.caption = caption
 
-        self.label = gtk.Label()
+        self.label = Gtk.Label()
         self.label.set_size_request(lbl_size, -1)
         self.label.set_alignment(xalign=0.0, yalign=0.5)
         self.label.set_use_markup(True)
 
-        adj = gtk.Adjustment(val, min, max, step, page, size)
-        scale = gtk.HScale()
+        adj = Gtk.Adjustment(val, min, max, step, page, size)
+        scale = Gtk.HScale()
         scale.set_draw_value(False)
         scale.set_adjustment(adj)
-        scale.set_property('value-pos', gtk.POS_RIGHT)
+        scale.set_property('value-pos', Gtk.POS_RIGHT)
 
         self.pack_start(scale, True, True, 3)
         self.pack_start(self.label, False, False, 3)
@@ -248,7 +249,7 @@ class TimeScroll(gtk.HBox):
         label = "%s <span foreground='#999999'>%i %s</span>" % (self.caption,
             self.value, self.unit)
         self.label.set_markup(label)
-
+"""
 class GeneralTab(PreferencesTab):
     def __init__(self, current):
         PreferencesTab.__init__(
@@ -382,42 +383,42 @@ class FilterTab(PreferencesTab):
         self.filtered = self.mainwin.get_filters()
         self.updated_filtered = set(self.filtered)
 
-        self.term_input = gtk.Entry()
+        self.term_input = Gtk.Entry()
         self.term_input.connect('activate', self.__add_filter)
 
-        add_button = gtk.Button(stock=gtk.STOCK_ADD)
+        add_button = Gtk.Button(stock=Gtk.STOCK_ADD)
         add_button.set_size_request(80, -1)
         add_button.connect("clicked", self.__add_filter)
-        self.del_button = gtk.Button(stock=gtk.STOCK_DELETE)
+        self.del_button = Gtk.Button(stock=Gtk.STOCK_DELETE)
         self.del_button.set_size_request(80, -1)
         self.del_button.set_sensitive(False)
         self.del_button.connect("clicked", self.__remove_filter)
 
-        input_box = gtk.HBox()
+        input_box = Gtk.HBox()
         input_box.pack_start(self.term_input, True, True, 2)
         input_box.pack_start(add_button, False, False, 0)
         input_box.pack_start(self.del_button, False, False, 0)
 
-        self.model = gtk.ListStore(str)
-        self.list = gtk.TreeView()
+        self.model = Gtk.ListStore(str)
+        self.list = Gtk.TreeView()
         self.list.set_headers_visible(False)
-        self.list.set_events(gtk.gdk.POINTER_MOTION_MASK)
+        self.list.set_events(Gtk.gdk.POINTER_MOTION_MASK)
         self.list.set_level_indentation(0)
         self.list.set_rules_hint(True)
-        self.list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
+        self.list.set_resize_mode(Gtk.RESIZE_IMMEDIATE)
         self.list.set_model(self.model)
         self.list.connect('cursor-changed', self.__cursor_changed)
 
-        column = gtk.TreeViewColumn('')
+        column = Gtk.TreeViewColumn('')
         column.set_alignment(0.0)
-        cell_term = gtk.CellRendererText()
+        cell_term = Gtk.CellRendererText()
         column.pack_start(cell_term, True)
         column.set_attributes(cell_term, markup=0)
         self.list.append_column(column)
 
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        scroll.set_shadow_type(gtk.SHADOW_IN)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.POLICY_NEVER, Gtk.POLICY_AUTOMATIC)
+        scroll.set_shadow_type(Gtk.SHADOW_IN)
         scroll.add(self.list)
 
         for filtered_item in self.filtered:
@@ -466,29 +467,29 @@ class BrowserTab(PreferencesTab):
 
         self.mainwin = parent
 
-        chk_default = gtk.RadioButton(None,
+        chk_default = Gtk.RadioButton(None,
             _('Default web browser'))
-        chk_other = gtk.RadioButton(chk_default,
+        chk_other = Gtk.RadioButton(chk_default,
             _('Choose another web browser'))
 
-        cmd_lbl = gtk.Label(_('Command'))
+        cmd_lbl = Gtk.Label(_('Command'))
         cmd_lbl.set_size_request(90, -1)
         cmd_lbl.set_alignment(1.0, 0.5)
-        self.command = gtk.Entry()
-        btn_test = gtk.Button(_('Test'))
-        btn_browse = gtk.Button(_('Browse'))
+        self.command = Gtk.Entry()
+        btn_test = Gtk.Button(_('Test'))
+        btn_browse = Gtk.Button(_('Browse'))
 
-        cmd_box = gtk.HBox(False)
+        cmd_box = Gtk.HBox(False)
         cmd_box.pack_start(cmd_lbl, False, False, 3)
         cmd_box.pack_start(self.command, True, True, 3)
 
-        buttons_box = gtk.HButtonBox()
+        buttons_box = Gtk.HButtonBox()
         buttons_box.set_spacing(6)
-        buttons_box.set_layout(gtk.BUTTONBOX_END)
+        buttons_box.set_layout(Gtk.BUTTONBOX_END)
         buttons_box.pack_start(btn_test)
         buttons_box.pack_start(btn_browse)
 
-        self.other_vbox = gtk.VBox(False, 2)
+        self.other_vbox = Gtk.VBox(False, 2)
         self.other_vbox.pack_start(cmd_box, False, False, 2)
         self.other_vbox.pack_start(buttons_box, False, False, 2)
         self.other_vbox.set_sensitive(False)
@@ -515,15 +516,15 @@ class BrowserTab(PreferencesTab):
             subprocess.Popen([cmd, 'http://turpial.org.ve/'])
 
     def __browse(self, widget):
-        dia = gtk.FileChooserDialog(
+        dia = Gtk.FileChooserDialog(
             title = _('Select the full path of your web browser'),
             parent=self.mainwin,
-            action=gtk.FILE_CHOOSER_ACTION_OPEN,
-            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                gtk.STOCK_OK, gtk.RESPONSE_OK))
+            action=Gtk.FILE_CHOOSER_ACTION_OPEN,
+            buttons=(Gtk.STOCK_CANCEL, Gtk.RESPONSE_CANCEL,
+                Gtk.STOCK_OK, Gtk.RESPONSE_OK))
         resp = dia.run()
 
-        if resp == gtk.RESPONSE_OK:
+        if resp == Gtk.RESPONSE_OK:
             self.command.set_text(dia.get_filename())
         dia.destroy()
 
@@ -551,27 +552,27 @@ class AdvancedTab(PreferencesTab):
         label = "%s <span foreground='#999999'>%s</span>" % (
             i18n.get('delete_all_images_in_cache'),
             cache_size)
-        self.cachelbl = gtk.Label()
+        self.cachelbl = Gtk.Label()
         self.cachelbl.set_use_markup(True)
         self.cachelbl.set_markup(label)
         self.cachelbl.set_alignment(0.0, 0.5)
-        self.cachebtn = gtk.Button(_('Clean cache'))
+        self.cachebtn = Gtk.Button(_('Clean cache'))
         self.cachebtn.set_size_request(110, -1)
         self.cachebtn.connect('clicked', self.__clean_cache)
         if cache_size == '0 B':
             self.cachebtn.set_sensitive(False)
 
-        configlbl = gtk.Label(_('Restore config to default'))
+        configlbl = Gtk.Label(_('Restore config to default'))
         configlbl.set_alignment(0.0, 0.5)
-        self.configbtn = gtk.Button(_('Restore config'))
+        self.configbtn = Gtk.Button(_('Restore config'))
         self.configbtn.set_size_request(110, -1)
         self.configbtn.connect('clicked', self.__restore_default_config)
 
-        table = gtk.Table(2, 2, False)
-        table.attach(self.cachebtn, 0, 1, 0, 1, gtk.EXPAND|gtk.FILL)
-        table.attach(self.cachelbl, 1, 2, 0, 1, gtk.EXPAND|gtk.FILL, xpadding=5)
-        table.attach(self.configbtn, 0, 1, 1, 2, gtk.EXPAND|gtk.FILL)
-        table.attach(configlbl, 1, 2, 1, 2, gtk.EXPAND|gtk.FILL, xpadding=5)
+        table = Gtk.Table(2, 2, False)
+        table.attach(self.cachebtn, 0, 1, 0, 1, Gtk.EXPAND|Gtk.FILL)
+        table.attach(self.cachelbl, 1, 2, 0, 1, Gtk.EXPAND|Gtk.FILL, xpadding=5)
+        table.attach(self.configbtn, 0, 1, 1, 2, Gtk.EXPAND|Gtk.FILL)
+        table.attach(configlbl, 1, 2, 1, 2, Gtk.EXPAND|Gtk.FILL, xpadding=5)
 
         timeout = int(self.current['socket-timeout'])
         show_avatars = True if self.current['show-user-avatars'] == 'on' else False
@@ -599,13 +600,13 @@ class AdvancedTab(PreferencesTab):
         self.cachelbl.set_markup(label)
 
     def __restore_default_config(self, widget):
-        message = gtk.MessageDialog(self.mainwin, gtk.DIALOG_MODAL |
-            gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_YES_NO)
+        message = Gtk.MessageDialog(self.mainwin, Gtk.DIALOG_MODAL |
+            Gtk.DIALOG_DESTROY_WITH_PARENT, Gtk.MESSAGE_QUESTION,
+            Gtk.BUTTONS_YES_NO)
         message.set_markup(i18n.get('restore_config_warning'))
         response = message.run()
         message.destroy()
-        if response == gtk.RESPONSE_YES:
+        if response == Gtk.RESPONSE_YES:
             self.mainwin.restore_default_config()
             self.configbtn.set_sensitive(False)
             self.mainwin.main_quit(force=True)
@@ -645,3 +646,5 @@ class ProxyTab(PreferencesTab):
             'server': server,
             'port': port,
         }
+"""
+

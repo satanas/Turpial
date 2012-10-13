@@ -12,16 +12,13 @@ from gi.repository import GdkPixbuf
 from turpial import DESC
 from turpial.ui.base import *
 from turpial.ui.gtk.about import About
+from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.imageview import ImageView
+from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.oauthwin import OAuthWindow
 from turpial.ui.gtk.accounts import AccountsDialog
-
-'''
-from turpial.ui.gtk.worker import Worker
-from turpial.ui.gtk.htmlview import HtmlView
-from turpial.ui.gtk.indicator import Indicators
 from turpial.ui.gtk.preferences import Preferences
-'''
+
 
 #gtk.gdk.set_program_class("Turpial")
 #gtk.gdk.threads_init()
@@ -52,9 +49,9 @@ class Main(Base, Gtk.Window):
         self.updating = {}
         self.columns = {}
 
-        #self.indicator = Indicators()
-        #self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
-        #self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
+        self.indicator = Indicators()
+        self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
+        self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
 
         self.openstatuses = {}
 
@@ -68,6 +65,7 @@ class Main(Base, Gtk.Window):
         self.__create_trayicon()
 
         self.show_all()
+        pref = Preferences(self)
 
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():

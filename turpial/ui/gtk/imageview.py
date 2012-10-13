@@ -40,13 +40,13 @@ class ImageView(Gtk.Window):
         self.loading_box.pack_start(self.error_msg, True,True, 0)
 
         self.image = Gtk.Image()
-        scroll = Gtk.ScrolledWindow()
-        scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
-        scroll.add(self.image)
+        self.image_box = Gtk.ScrolledWindow()
+        self.image_box.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
 
-        self.image_box = Gtk.EventBox()
-        self.image_box.add(scroll)
-        #self.image_box.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(0, 0, 0))
+        image_box = Gtk.EventBox()
+        image_box.add(self.image)
+        image_box.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(0, 0, 0))
+        self.image_box.add_with_viewport(image_box)
 
         self.last_size = (0, 0)
         self.status = self.STATUS_IDLE
@@ -90,13 +90,13 @@ class ImageView(Gtk.Window):
         self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         self.show_all()
 
-    def update(self, url):
+    def update(self, path):
         self.__clear()
         self.spinner.stop()
         self.add(self.image_box)
 
         # Picture information. This will not change until the next update
-        self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(url)
+        self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
         self.pix_width = self.pixbuf.get_width()
         self.pix_height = self.pixbuf.get_height()
         self.pix_rate = self.pix_width / self.pix_height

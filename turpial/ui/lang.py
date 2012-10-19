@@ -185,6 +185,8 @@ continue?'),
     'do_you_want_to_unfollow_user': _('Do you want to unfollow @%s?'),
     'error_loading_image': _('Error loading image'),
     'credentials_could_not_be_empty': _('Credentials could not be empty'),
+    'file_not_found': _("File not found"),
+    'about_description': _('Microblogging client written in Python')
 }
 
 class i18n:

@@ -11,16 +11,17 @@ from gi.repository import Gtk
 
 from turpial import NAME
 from turpial import VERSION
+from turpial.ui.lang import i18n
 
-class About:
+class AboutDialog(Gtk.AboutDialog):
     def __init__(self, parent=None):
-        about = Gtk.AboutDialog()
-        about.set_logo(parent.load_image('turpial.png', True))
-        about.set_name(NAME)
-        about.set_version(VERSION)
-        about.set_copyright('Copyright (C) 2009 - 2012 Wil Alvarez')
-        about.set_comments(_('Microblogging client written in Python'))
-        about.set_website('http://turpial.org.ve')
+        Gtk.AboutDialog.__init__(self)
+        self.set_logo(parent.load_image('turpial.png', True))
+        self.set_name(NAME)
+        self.set_version(VERSION)
+        self.set_copyright('Copyright (C) 2009 - 2012 Wil Alvarez')
+        self.set_comments(i18n.get('about_description'))
+        self.set_website('http://turpial.org.ve')
 
         try:
             path = os.path.realpath(os.path.join(os.path.dirname(__file__), 
@@ -37,7 +38,7 @@ class About:
             license += 'License along with\nthis script (see license); if not, write to '
             license += 'the Free Software\nFoundation, Inc., 59 Temple Place, Suite 330, '
             license += 'Boston, MA  02111-1307  USA'
-        about.set_license(license)
+        self.set_license(license)
         authors = []
         try:
             path = os.path.realpath(os.path.join(os.path.dirname(__file__), 
@@ -47,20 +48,31 @@ class About:
                 authors.append(line.strip('\n'))
             f.close()
         except Exception, msg:
-            authors = [_("File 'AUTHORS' not found")]
-        about.set_authors(authors)
+            authors = [i18n.get('file_not_found')]
+        self.set_authors(authors)
 
-        about.connect("response", self.__response)
-        about.connect("close", self.__close)
-        about.connect("delete_event", self.__close)
+        self.connect("response", self.__response)
+        self.connect("close", self.__close)
+        self.connect("delete_event", self.__close)
 
-        about.show()
+        self.showed = False
 
     def __response(self, dialog, response, *args):
         if response < 0:
-            dialog.destroy()
+            dialog.hide()
             dialog.emit_stop_by_name('response')
 
     def __close(self, widget, event=None):
-        widget.destroy()
+        self.showed = False
+        self.hide()
         return True
+
+    def show(self):
+        if self.showed:
+            self.present()
+        else:
+            self.showed = True
+            self.show_all()
+
+    def quit(self):
+        self.destroy()

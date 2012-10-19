@@ -21,7 +21,7 @@ function delete_cookies() {
 delete_cookies();
 """
 
-class OAuthWindow(Gtk.Window):
+class OAuthDialog(Gtk.Window):
     __gsignals__ = {
         "response": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, (GObject.TYPE_STRING, GObject.TYPE_STRING,)),
         "cancel": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, (GObject.TYPE_STRING, GObject.TYPE_STRING,)),
@@ -116,5 +116,3 @@ class OAuthWindow(Gtk.Window):
         else:
             self.emit('cancel', 'login_cancelled', self.account_id)
         self.destroy()
-
-GObject.type_register(OAuthWindow)

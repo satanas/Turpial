@@ -3,7 +3,6 @@
 # GTK3 main view for Turpial
 #
 # Author: Wil Alvarez (aka Satanas)
-# OCt 11, 2012
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -11,13 +10,16 @@ from gi.repository import GdkPixbuf
 
 from turpial import DESC
 from turpial.ui.base import *
-from turpial.ui.gtk.about import About
+from turpial.ui.gtk.dock import Dock
 from turpial.ui.gtk.worker import Worker
+from turpial.ui.gtk.container import Container
 from turpial.ui.gtk.imageview import ImageView
 from turpial.ui.gtk.indicator import Indicators
-from turpial.ui.gtk.oauthwin import OAuthWindow
+
+from turpial.ui.gtk.about import AboutDialog
+from turpial.ui.gtk.oauth import OAuthDialog
 from turpial.ui.gtk.accounts import AccountsDialog
-from turpial.ui.gtk.preferences.window import PreferencesWindow
+from turpial.ui.gtk.preferences import PreferencesDialog
 
 
 #gtk.gdk.set_program_class("Turpial")
@@ -60,12 +62,21 @@ class Main(Base, Gtk.Window):
         #self.worker.start()
 
         # Persistent dialogs
+        self.about_dialog = AboutDialog(self)
         self.accounts_dialog = AccountsDialog(self)
+        self.preferences_dialog = PreferencesDialog(self)
+
         self.imageview = ImageView(self)
         self.__create_trayicon()
 
-        self.show_all()
-        pref = PreferencesWindow(self)
+        self.dock = Dock(self)
+        self._container = Container(self)
+
+        vbox = Gtk.VBox()
+        vbox.pack_start(self._container, True, True, 0)
+        vbox.pack_start(self.dock, False, False, 0)
+        self.add(vbox)
+        #self.show_all()
 
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():
@@ -180,20 +191,33 @@ class Main(Base, Gtk.Window):
             sys.exit(0)
 
     def show_main(self):
-        #reg_columns = self.get_registered_columns()
-        #if len(reg_columns) == 0:
-        #    page = self.htmlparser.empty()
-        #else:
-        #    page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
-        #self.container.render(page)
         #self.login()
+        self.update_container()
+        self.show_all()
         pass
 
-    def show_about(self):
-        about = About(self)
+    #================================================================
+    # Own methods
+    #================================================================
 
-    def show_accounts_dialog(self, widget=None):
+    def show_about_dialog(self, data=None):
+        self.about_dialog.show()
+
+    def show_accounts_dialog(self, data=None):
         self.accounts_dialog.show()
+
+    def show_preferences_dialog(self, data=None):
+        self.preferences_dialog.show()
+
+    def update_container(self):
+        columns = self.get_registered_columns()
+        columns = []
+        if len(columns) == 0:
+            self._container.empty_columns()
+            self.dock.empty_menu()
+        else:
+            self._container.render_columns(self.get_accounts_list(), columns)
+            self.dock.render_menu()
 
 
 """
@@ -382,7 +406,7 @@ class Main2(Base, gtk.Window):
         self.accounts_dialog.status_message(i18n.get('authenticating'))
         auth_obj = arg.items
         if auth_obj.must_auth():
-            oauthwin = OAuthWindow(self, self.accounts_dialog.form, account_id)
+            oauthwin = OAuthDialog(self, self.accounts_dialog.form, account_id)
             oauthwin.connect('response', self.__oauth_callback)
             oauthwin.connect('cancel', self.__cancel_callback)
             oauthwin.open(auth_obj.url)

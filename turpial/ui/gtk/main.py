@@ -192,8 +192,8 @@ class Main(Base, Gtk.Window):
 
     def show_main(self):
         #self.login()
-        self.update_container()
         self.show_all()
+        self.update_container()
         pass
 
     #================================================================

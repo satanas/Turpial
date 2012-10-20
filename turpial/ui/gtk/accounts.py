@@ -231,7 +231,7 @@ class AccountsDialog(Gtk.Window):
                 for acc_id in self.base.get_accounts_list():
                     if acc_id not in curr_acc:
                         self.base.delete_account(acc_id)
-            self.form.cancel(message)
+            self.form.cancel('<span foreground="red">' + message + '</span>')
         self.update()
 
     def done_login(self):
@@ -314,6 +314,7 @@ class AccountForm(Gtk.Window):
 
         self.spinner = Gtk.Spinner()
         self.waiting_label = Gtk.Label()
+        self.waiting_label.set_use_markup(True)
         waiting_box = Gtk.HBox()
         waiting_box.pack_start(self.spinner, False, False, 10)
         waiting_box.pack_start(self.waiting_label, True, False, 0)
@@ -404,7 +405,7 @@ class AccountForm(Gtk.Window):
     def cancel(self, message):
         self.working = False
         self.__unlock()
-        self.waiting_label.set_text(message)
+        self.waiting_label.set_markup(message)
         self.spinner.stop()
         self.spinner.hide()
 

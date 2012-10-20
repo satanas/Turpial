@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 # GTK3 dock for Turpial
-#
-# Author: Wil Alvarez (aka Satanas)
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -59,3 +57,6 @@ class DockButton(Gtk.Button):
         self.set_image(base.load_image(image))
         self.set_relief(Gtk.ReliefStyle.NONE)
         self.set_tooltip_text(tooltip)
+        self.set_size_request(24, 24)
+        #self.btn_updates.set_default_size(24, 24)
+

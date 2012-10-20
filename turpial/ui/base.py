@@ -71,9 +71,9 @@ class Base(Singleton):
         else:
             return "%.2f B" % size
 
-    # ------------------------------------------------------------
+    #================================================================
     # Common methods to all interfaces
-    # ------------------------------------------------------------
+    #================================================================
 
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -92,6 +92,43 @@ class Base(Singleton):
 
     def disable_sound(self, widget=None):
         self.sound.disable(not widget.get_active())
+
+    def save_account(self, username, protocol_id, password):
+        if username == "" or username == None:
+            username = "%s" % len(self.core.all_accounts())
+        account_id = self.core.register_account(username, protocol_id, password)
+        self.after_save_account(account_id)
+
+    def delete_account(self, account_id):
+        # FIXME: Implement try/except
+        for col in self.get_registered_columns():
+            if col.account_id == account_id:
+                self.delete_column(col.id_)
+        self.core.unregister_account(account_id, True)
+        self.after_delete_account(True)
+
+    def delete_column(self, column_id):
+        self.core.unregister_column(column_id)
+        if self.columns.has_key(column_id):
+            del self.columns[column_id]
+        self.after_delete_column(column_id)
+
+    def single_login(self, account_id):
+        self.core.change_login_status(account_id, LoginStatus.IN_PROGRESS)
+        self.do_login(account_id)
+
+    #================================================================
+    # Hooks to be implemented on each interface
+    #================================================================
+
+    def after_save_account(self, account_id, err_msg=None):
+        raise NotImplemented
+
+    def after_delete_account(self, deleted, err_msg=None):
+        raise NotImplemented
+
+    def after_delete_column(self, column_id, err_msg=None):
+        raise NotImplemented
 
     '''
     def show_notice(self, msg, type_):
@@ -406,24 +443,6 @@ class Base(Singleton):
 
     #---------------------------------------------------------------------------
 
-    def single_login(self, acc):
-        self.core.change_login_status(acc, LoginStatus.IN_PROGRESS)
-        self.accountsdlg.update()
-        self.worker.register(self.core.login, (acc), self._login_callback, acc)
-
-    def delete_account(self, account_id):
-        reg_columns = self.get_registered_columns()
-        for col in reg_columns:
-            if col.account_id == account_id:
-                self.delete_column(col.id_)
-        self.core.unregister_account(account_id, True)
-        self.accountsdlg.done_delete()
-
-    def save_account(self, username, protocol_id, password):
-        if username == "" or username == None:
-            username = "%s" % len(self.core.all_accounts());
-        account_id = self.core.register_account(username, protocol_id, password)
-        self.worker.register(self.core.login, (account_id), self._login_callback, account_id)
 
     def save_column(self, column_id):
         column = self.core.register_column(column_id)
@@ -438,17 +457,6 @@ class Base(Singleton):
             self.container.execute('add_column("%s","%s");' % (hdr, col))
         self.download_stream(column)
         self.__add_timer(column)
-
-    def delete_column(self, column_id):
-        self.core.unregister_column(column_id)
-        del self.columns[column_id]
-        reg_columns = self.get_registered_columns()
-        if len(reg_columns) == 0:
-            page = self.htmlparser.empty()
-            self.container.render(page)
-        else:
-            self.container.execute('remove_column("' + column_id + '");')
-        self.__remove_timer(column_id)
 
     def repeat_status(self, account_id, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('retweeting'))

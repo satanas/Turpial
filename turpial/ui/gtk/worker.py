@@ -9,6 +9,7 @@ import Queue
 import threading
 
 class Worker(threading.Thread):
+    TIMEOUT = 200
     def __init__(self):
         threading.Thread.__init__(self)
         self.setDaemon(False)

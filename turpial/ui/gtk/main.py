@@ -6,6 +6,7 @@
 
 from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
 from turpial import DESC
@@ -23,7 +24,8 @@ from turpial.ui.gtk.preferences import PreferencesDialog
 
 
 #gtk.gdk.set_program_class("Turpial")
-#gtk.gdk.threads_init()
+
+GObject.threads_init()
 
 # TODO: Improve all splits for accounts_id with a common function
 class Main(Base, Gtk.Window):
@@ -57,9 +59,9 @@ class Main(Base, Gtk.Window):
 
         self.openstatuses = {}
 
-        #self.worker = Worker()
-        #self.worker.set_timeout_callback(self.__timeout_callback)
-        #self.worker.start()
+        self.worker = Worker()
+        self.worker.set_timeout_callback(self.__worker_timeout_callback)
+        self.worker.start()
 
         # Persistent dialogs
         self.about_dialog = AboutDialog(self)
@@ -76,7 +78,6 @@ class Main(Base, Gtk.Window):
         vbox.pack_start(self._container, True, True, 0)
         vbox.pack_start(self.dock, False, False, 0)
         self.add(vbox)
-        #self.show_all()
 
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():
@@ -183,8 +184,8 @@ class Main(Base, Gtk.Window):
         self.unitylauncher.quit()
         self.destroy()
         self.tray = None
-        #self.worker.quit()
-        #self.worker.join()
+        self.worker.quit()
+        self.worker.join()
         if widget:
             Gtk.main_quit()
         if force:
@@ -195,6 +196,26 @@ class Main(Base, Gtk.Window):
         self.show_all()
         self.update_container()
         pass
+
+    #================================================================
+    # Hooks definitions
+    #================================================================
+
+    def after_delete_account(self, deleted, err_msg=None):
+        self.accounts_dialog.done_delete()
+
+    def after_save_account(self, account_id, err_msg=None):
+        self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
+
+    def after_delete_column(self, column_id, err_msg=None):
+        self.update_container()
+        #self.__remove_column(column_id)
+        #self.__remove_timer(column_id)
+
+    def do_login(self, account_id):
+        self.accounts_dialog.update()
+        self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
+
 
     #================================================================
     # Own methods
@@ -218,6 +239,72 @@ class Main(Base, Gtk.Window):
         else:
             self._container.render_columns(self.get_accounts_list(), columns)
             self.dock.render_menu()
+
+    def __login_callback(self, arg, account_id):
+        if arg.code > 0:
+            # FIXME: Implemente notice
+            # self.show_notice(arg.errmsg, 'error')
+            self.accounts_dialog.cancel_login(arr.errmsg)
+            return
+
+        self.accounts_dialog.status_message(i18n.get('authenticating'))
+        auth_obj = arg.items
+        if auth_obj.must_auth():
+            oauthwin = OAuthDialog(self, self.accounts_dialog.form, account_id)
+            oauthwin.connect('response', self.__oauth_callback)
+            oauthwin.connect('cancel', self.__cancel_callback)
+            oauthwin.open(auth_obj.url)
+        else:
+            self.__auth_callback(arg, account_id, False)
+
+    def __oauth_callback(self, widget, verifier, account_id):
+        self.accounts_dialog.status_message(i18n.get('authorizing'))
+        self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
+
+    def __cancel_callback(self, widget, reason, account_id):
+        self.delete_account(account_id)
+        self.accounts_dialog.cancel_login(i18n.get(reason))
+
+    def __auth_callback(self, arg, account_id, register = True):
+        if arg.code > 0:
+            # FIXME: Implemente notice
+            #self.show_notice(msg, 'error')
+            self.accounts_dialog.cancel_login(arg.errmsg)
+        else:
+            self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
+
+    def __done_callback(self, arg, userdata):
+        (account_id, register) = userdata
+        if arg.code > 0:
+            self.core.change_login_status(account_id, LoginStatus.NONE)
+            self.accounts_dialog.cancel_login(arg.errmsg)
+            #self.show_notice(msg, 'error')
+        else:
+            if register:
+                account_id = self.core.name_as_id(account_id)
+
+            self.accounts_dialog.done_login()
+            self.accounts_dialog.update()
+
+            response = self.core.get_own_profile(account_id)
+            if response.code > 0:
+                #self.show_notice(response.errmsg, 'error')
+                pass
+            else:
+                if self.core.show_notifications_in_login():
+                    self.notify.login(response.items)
+
+            for col in self.get_registered_columns():
+                if col.account_id == account_id:
+                    pass
+                    #self.download_stream(col, True)
+                    #self.__add_timer(col)
+
+    def __worker_timeout_callback(self, funct, arg, user_data):
+        if user_data:
+            GObject.timeout_add(Worker.TIMEOUT, funct, arg, user_data)
+        else:
+            GObject.timeout_add(Worker.TIMEOUT, funct, arg)
 
 
 """
@@ -390,70 +477,8 @@ class Main2(Base, gtk.Window):
         cmd = "show_autocomplete_for_profile('%s')" % acc_id
         self.container.execute(cmd)
 
-    def __timeout_callback(self, funct, arg, user_data):
-        if user_data:
-            gobject.timeout_add(200, funct, arg, user_data)
-        else:
-            gobject.timeout_add(200, funct, arg)
 
-    def _login_callback(self, arg, account_id):
-        if arg.code > 0:
-            msg = arg.errmsg
-            self.show_notice(msg, 'error')
-            self.accounts_dialog.cancel_login(msg)
-            return
 
-        self.accounts_dialog.status_message(i18n.get('authenticating'))
-        auth_obj = arg.items
-        if auth_obj.must_auth():
-            oauthwin = OAuthDialog(self, self.accounts_dialog.form, account_id)
-            oauthwin.connect('response', self.__oauth_callback)
-            oauthwin.connect('cancel', self.__cancel_callback)
-            oauthwin.open(auth_obj.url)
-        else:
-            self.__auth_callback(arg, account_id, False)
-
-    def __oauth_callback(self, widget, verifier, account_id):
-        self.accounts_dialog.status_message(i18n.get('authorizing'))
-        self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
-
-    def __cancel_callback(self, widget, reason, account_id):
-        #self.delete_account(account_id)
-        self.accounts_dialog.cancel_login(i18n.get(reason))
-
-    def __auth_callback(self, arg, account_id, register = True):
-        if arg.code > 0:
-            msg = arg.errmsg
-            self.show_notice(msg, 'error')
-            self.accounts_dialog.cancel_login(msg)
-        else:
-            self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
-
-    def __done_callback(self, arg, userdata):
-        (account_id, register) = userdata
-        if arg.code > 0:
-            self.core.change_login_status(account_id, LoginStatus.NONE)
-            msg = arg.errmsg
-            self.accounts_dialog.cancel_login(msg)
-            self.show_notice(msg, 'error')
-        else:
-            if register:
-                account_id = self.core.name_as_id(account_id)
-
-            self.accounts_dialog.done_login()
-            self.accounts_dialog.update()
-
-            response = self.core.get_own_profile(account_id)
-            if response.code > 0:
-                self.show_notice(response.errmsg, 'error')
-            else:
-                if self.core.show_notifications_in_login():
-                    self.notify.login(response.items)
-
-            for col in self.get_registered_columns():
-                if col.account_id == account_id:
-                    self.download_stream(col, True)
-                    self.__add_timer(col)
 
 
     def __add_timer(self, column):

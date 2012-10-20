@@ -16,15 +16,15 @@ from libturpial.common import LoginStatus
 log = logging.getLogger('Gtk')
 
 class AccountsDialog(Gtk.Window):
-    def __init__(self, parent):
+    def __init__(self, base):
         Gtk.Window.__init__(self)
 
-        self.mainwin = parent
+        self.base = base
         self.set_title(i18n.get('accounts'))
         self.set_size_request(360, 320)
         self.set_resizable(False)
-        self.set_icon(self.mainwin.load_image('turpial.png', True))
-        self.set_transient_for(parent)
+        self.set_icon(self.base.load_image('turpial.png', True))
+        self.set_transient_for(base)
         self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         self.set_gravity(Gdk.Gravity.STATIC)
         self.connect('delete-event', self.__close)
@@ -161,18 +161,18 @@ class AccountsDialog(Gtk.Window):
         if acc is None:
             return
         self.__lock(True)
-        self.mainwin.delete_account(acc.id_)
+        self.base.delete_account(acc.id_)
 
     def __on_login(self, widget):
         acc = self.__get_selected()
         if acc is None:
             return
-        self.mainwin.single_login(acc.id_)
+        self.base.single_login(acc.id_)
         self.btn_login.set_label(i18n.get('in_progress'))
         self.btn_login.set_sensitive(False)
 
     def __on_add(self, widget):
-        self.form = AccountForm(self.mainwin, self)
+        self.form = AccountForm(self.base, self)
 
     def __lock(self, value):
         value = not value
@@ -187,22 +187,22 @@ class AccountsDialog(Gtk.Window):
             empty = True
             self.btn_login.set_sensitive(False)
             self.btn_delete.set_sensitive(False)
-            for acc in self.mainwin.get_all_accounts():
+            for acc in self.base.get_all_accounts():
                 empty = False
                 imagename = "%s.png" % acc.protocol_id
-                pix = self.mainwin.load_image(imagename, True)
+                pix = self.base.load_image(imagename, True)
                 username = "<span size='large'><b>%s</b></span>" % acc.username
                 status = ''
                 status_pix = None
                 if acc.logged_in == LoginStatus.NONE:
                     status = i18n.get('disconnected')
-                    status_pix = self.mainwin.load_image('mark-disconnected.png', True)
+                    status_pix = self.base.load_image('mark-disconnected.png', True)
                 elif acc.logged_in == LoginStatus.IN_PROGRESS:
                     status = i18n.get('connecting...')
-                    status_pix = self.mainwin.load_image('mark-connecting.png', True)
+                    status_pix = self.base.load_image('mark-connecting.png', True)
                 elif acc.logged_in == LoginStatus.DONE:
                     status = i18n.get('connected')
-                    status_pix = self.mainwin.load_image('mark-connected.png', True)
+                    status_pix = self.base.load_image('mark-connected.png', True)
 
                 self.model.append([pix, username, status_pix, status, acc])
                 del pix
@@ -220,7 +220,7 @@ class AccountsDialog(Gtk.Window):
             # throught the model and see which ones are registered but are not
             # in the model
             if iter_ is None:
-                self.mainwin.delete_account(self.mainwin.get_accounts_list()[0])
+                self.base.delete_account(self.base.get_accounts_list()[0])
             else:
                 curr_acc = []
                 while iter_:
@@ -228,9 +228,9 @@ class AccountsDialog(Gtk.Window):
                     curr_acc.append(acc.id_)
                     iter_ = self.model.iter_next(iter_)
 
-                for acc_id in self.mainwin.get_accounts_list():
+                for acc_id in self.base.get_accounts_list():
                     if acc_id not in curr_acc:
-                        self.mainwin.delete_account(acc_id)
+                        self.base.delete_account(acc_id)
             self.form.cancel(message)
         self.update()
 
@@ -261,10 +261,10 @@ class AccountsDialog(Gtk.Window):
 
 # Update list after add account
 class AccountForm(Gtk.Window):
-    def __init__(self, mainwin, parent, user=None, pwd=None, protocol=None):
+    def __init__(self, base, parent, user=None, pwd=None, protocol=None):
         Gtk.Window.__init__(self)
 
-        self.mainwin = mainwin
+        self.base = base
         self.set_transient_for(parent)
         self.set_modal(True)
         self.set_title(i18n.get('create_account'))
@@ -279,9 +279,9 @@ class AccountForm(Gtk.Window):
         plabel.set_alignment(0, 0.5)
 
         plist = Gtk.ListStore(GdkPixbuf.Pixbuf, str, str)
-        for p in self.mainwin.get_protocols_list():
+        for p in self.base.get_protocols_list():
             image = '%s.png' % p
-            t_icon = self.mainwin.load_image(image, True)
+            t_icon = self.base.load_image(image, True)
             plist.append([t_icon, p, p])
 
         self.protocol = Gtk.ComboBox()
@@ -387,7 +387,7 @@ class AccountForm(Gtk.Window):
         self.waiting_label.set_text(i18n.get('connecting'))
         self.spinner.show()
         self.spinner.start()
-        self.mainwin.save_account(username, protocol, passwd)
+        self.base.save_account(username, protocol, passwd)
 
     def __lock(self):
         self.username.set_sensitive(False)

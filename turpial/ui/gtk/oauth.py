@@ -33,7 +33,7 @@ class OAuthDialog(Gtk.Window):
         self.account_id = account_id
         self.mainwin = mainwin
         self.set_title(i18n.get('secure_auth'))
-        self.set_default_size(800, 450)
+        self.set_default_size(800, 550)
         self.set_transient_for(parent)
         self.set_modal(True)
         self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
@@ -76,6 +76,7 @@ class OAuthDialog(Gtk.Window):
         vbox.pack_start(self.view, True, True, 0)
         vbox.pack_start(lblbox, False, False, 2)
         vbox.pack_start(hbox, False, False, 2)
+        vbox.set_property('margin', 10)
 
         self.pin.connect('activate', self.__accept)
         cancel.connect('clicked', self.__cancel)
@@ -116,3 +117,4 @@ class OAuthDialog(Gtk.Window):
         else:
             self.emit('cancel', 'login_cancelled', self.account_id)
         self.destroy()
+

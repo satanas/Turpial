@@ -15,7 +15,7 @@ class Container(Gtk.VBox):
         self.base = base
         self.child = None
 
-    def empty_columns(self):
+    def empty(self):
         if self.child:
             self.remove(self.child)
 
@@ -43,5 +43,5 @@ class Container(Gtk.VBox):
         self.add(self.child)
         self.show_all()
 
-    def render_columns(self, accounts, columns):
+    def normal(self, accounts, columns):
         pass

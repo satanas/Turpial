@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 # GTK3 main view for Turpial
-#
-# Author: Wil Alvarez (aka Satanas)
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -12,16 +10,17 @@ from gi.repository import GdkPixbuf
 from turpial import DESC
 from turpial.ui.base import *
 from turpial.ui.gtk.dock import Dock
+from turpial.ui.gtk.tray import TrayIcon
 from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.container import Container
 from turpial.ui.gtk.imageview import ImageView
 from turpial.ui.gtk.indicator import Indicators
 
+# Dialogs
 from turpial.ui.gtk.about import AboutDialog
 from turpial.ui.gtk.oauth import OAuthDialog
 from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.gtk.preferences import PreferencesDialog
-
 
 #gtk.gdk.set_program_class("Turpial")
 
@@ -69,7 +68,10 @@ class Main(Base, Gtk.Window):
         self.preferences_dialog = PreferencesDialog(self)
 
         self.imageview = ImageView(self)
-        self.__create_trayicon()
+
+        self.tray = TrayIcon(self)
+        self.tray.connect("activate", self.__on_tray_click)
+        self.tray.connect("popup-menu", self.__show_tray_menu)
 
         self.dock = Dock(self)
         self._container = Container(self)
@@ -93,14 +95,8 @@ class Main(Base, Gtk.Window):
     #================================================================
     # Tray icon
     #================================================================
-    def __create_trayicon(self):
-        self.tray = Gtk.StatusIcon()
-        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
-        self.tray.set_tooltip_text(DESC)
-        self.tray.connect("activate", self.__on_trayicon_click)
-        self.tray.connect("popup-menu", self.__show_tray_menu)
 
-    def __on_trayicon_click(self, widget):
+    def __on_tray_click(self, widget):
         if self.showed:
             self.showed = False
             self.hide()
@@ -109,32 +105,7 @@ class Main(Base, Gtk.Window):
             self.show()
 
     def __show_tray_menu(self, widget, button, activate_time):
-        menu = Gtk.Menu()
-        tweet = Gtk.MenuItem(i18n.get('new_tweet'))
-        direct = Gtk.MenuItem(i18n.get('direct_message'))
-        accounts = Gtk.MenuItem(i18n.get('accounts'))
-        prefs = Gtk.MenuItem(i18n.get('preferences'))
-        sound_ = Gtk.CheckMenuItem(i18n.get('enable_sounds'))
-        sound_.set_active(not self.sound._disable)
-        exit_ = Gtk.MenuItem(i18n.get('exit'))
-        menu.append(tweet)
-        menu.append(direct)
-        menu.append(accounts)
-        menu.append(prefs)
-        menu.append(sound_)
-        menu.append(Gtk.SeparatorMenuItem())
-        menu.append(exit_)
-
-        #tweet.connect('activate', self.show_update_box)
-        #direct.connect('activate', self.show_update_box_for_direct)
-        #accounts.connect('activate', self.show_accounts_dialog)
-        #prefs.connect('activate', self.show_preferences)
-        #sound_.connect('toggled', self.disable_sound)
-        exit_.connect('activate', self.main_quit)
-        menu.show_all()
-        menu.popup(None, None, None, None, button, activate_time)
-        print 'showiaosjdalkd'
-        return True
+        return self.tray.popup(button, activate_time)
 
 
     def __on_main_indicator_clicked(self, indicator):
@@ -234,11 +205,13 @@ class Main(Base, Gtk.Window):
         columns = self.get_registered_columns()
         columns = []
         if len(columns) == 0:
-            self._container.empty_columns()
-            self.dock.empty_menu()
+            self._container.empty()
+            self.dock.empty()
+            self.tray.empty()
         else:
-            self._container.render_columns(self.get_accounts_list(), columns)
-            self.dock.render_menu()
+            self._container.normal(self.get_accounts_list(), columns)
+            self.dock.normal()
+            self.tray.normal()
 
     def __login_callback(self, arg, account_id):
         if arg.code > 0:

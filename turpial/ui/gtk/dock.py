@@ -41,12 +41,12 @@ class Dock(Gtk.EventBox):
 
         self.add(align)
 
-    def empty_menu(self):
+    def empty(self):
         self.btn_updates.hide()
         self.btn_profiles.hide()
         self.btn_messages.hide()
 
-    def render_menu(self):
+    def normal(self):
         self.btn_updates.show()
         self.btn_profiles.show()
         self.btn_messages.show()

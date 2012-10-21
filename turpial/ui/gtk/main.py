@@ -189,14 +189,20 @@ class Main(Base, Gtk.Window):
         del pix
         return avatar
 
-    def show_about_dialog(self, data=None):
+    def show_about_dialog(self, widget=None):
         self.about_dialog.show()
 
-    def show_accounts_dialog(self, data=None):
+    def show_accounts_dialog(self, widget=None):
         self.accounts_dialog.show()
 
-    def show_preferences_dialog(self, data=None):
+    def show_preferences_dialog(self, widget=None):
         self.preferences_dialog.show()
+
+    def show_search_dialog(self, widget=None):
+        pass
+
+    def show_update_box(self, widget=None, direct=False):
+        pass
 
     def add_column(self, widget, column_id):
         self.save_column(column_id)
@@ -204,7 +210,6 @@ class Main(Base, Gtk.Window):
 
     def update_container(self):
         columns = self.get_registered_columns()
-        columns = []
         if len(columns) == 0:
             self._container.empty()
             self.dock.empty()

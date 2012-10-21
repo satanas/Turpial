@@ -18,26 +18,27 @@ class Dock(Gtk.EventBox):
         self.column_menu = None
         self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(0, 0, 0))
 
-        self.btn_updates = DockButton(base, 'dock-update.png', i18n.get('update_status'))
-        self.btn_messages = DockButton(base, 'dock-message.png', i18n.get('direct_messages'))
-        self.btn_search = DockButton(base, 'dock-find.png', i18n.get('search'))
-        self.btn_columns = DockButton(base, 'dock-add.png', i18n.get('columns'))
-        self.btn_profiles = DockButton(base, 'dock-profile.png', i18n.get('profiles'))
+        self.btn_updates = DockButton(base, 'dock-updates.png', i18n.get('update_status'))
+        self.btn_messages = DockButton(base, 'dock-messages.png', i18n.get('direct_messages'))
+        self.btn_search = DockButton(base, 'dock-search.png', i18n.get('search'))
+        self.btn_columns = DockButton(base, 'dock-columns.png', i18n.get('columns'))
         self.btn_accounts = DockButton(base, 'dock-accounts.png', i18n.get('accounts'))
         self.btn_preferences = DockButton(base, 'dock-preferences.png', i18n.get('preferences'))
         self.btn_about = DockButton(base, 'dock-about.png', i18n.get('about'))
 
+        self.btn_updates.connect('clicked', self.base.show_update_box)
+        self.btn_messages.connect('clicked', self.base.show_update_box, True)
+        self.btn_search.connect('clicked', self.base.show_search_dialog)
         self.btn_columns.connect('clicked', self.show_columns_menu)
-        self.btn_accounts.connect('clicked', base.show_accounts_dialog)
-        self.btn_preferences.connect('clicked', base.show_preferences_dialog)
-        self.btn_about.connect('clicked', base.show_about_dialog)
+        self.btn_accounts.connect('clicked', self.base.show_accounts_dialog)
+        self.btn_preferences.connect('clicked', self.base.show_preferences_dialog)
+        self.btn_about.connect('clicked', self.base.show_about_dialog)
 
         box = Gtk.HBox()
         box.pack_end(self.btn_updates, False, False, 0)
         box.pack_end(self.btn_messages, False, False, 0)
         box.pack_end(self.btn_search, False, False, 0)
         box.pack_end(self.btn_columns, False, False, 0)
-        box.pack_end(self.btn_profiles, False, False, 0)
         box.pack_end(self.btn_accounts, False, False, 0)
         box.pack_end(self.btn_preferences, False, False, 0)
         box.pack_end(self.btn_about, False, False, 0)
@@ -50,28 +51,22 @@ class Dock(Gtk.EventBox):
 
     def empty(self):
         self.btn_updates.hide()
-        self.btn_profiles.hide()
         self.btn_messages.hide()
+        self.btn_search.hide()
 
     def normal(self):
         self.btn_updates.show()
-        self.btn_profiles.show()
         self.btn_messages.show()
+        self.btn_search.show()
 
     def show_columns_menu(self, widget):
         self.menu = Gtk.Menu()
 
         empty = True
-        #twitter_public_acc = None
-        #identica_public_acc = None
         columns = self.base.get_all_columns()
         reg_columns = self.base.get_registered_columns()
 
         for acc in self.base.get_all_accounts():
-            #if acc.protocol_id == ProtocolType.TWITTER and twitter_public_acc is None:
-            #    twitter_public_acc = acc.id_
-            #if acc.protocol_id == 'identica' and identica_public_acc is None:
-            #    identica_public_acc = acc.id_
             name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
             temp = Gtk.MenuItem(name)
             if acc.logged_in:
@@ -83,7 +78,13 @@ class Dock(Gtk.EventBox):
                         item.set_sensitive(False)
                     item.connect('activate', self.base.add_column, col.build_id())
                     temp_menu.append(item)
+                # Add public timeline
+                public_tl = Gtk.MenuItem(i18n.get('public_timeline').lower())
+                item.connect('activate', self.base.add_column, acc.id_ + '-public')
+                temp_menu.append(public_tl)
+
                 temp.set_submenu(temp_menu)
+
                 # Add view profile item
                 temp_menu.append(Gtk.SeparatorMenuItem())
                 item = Gtk.MenuItem(i18n.get('view_profile'))
@@ -94,35 +95,12 @@ class Dock(Gtk.EventBox):
             self.menu.append(temp)
             empty = False
 
-        #public_tl = Gtk.MenuItem(i18n.get('public_timeline'))
-        #public_tl_menu = Gtk.Menu()
-        #public_tl.set_submenu(public_tl_menu)
-
-        #if twitter_public_acc:
-        #    public_acc = twitter_public_acc + '-public'
-        #    twitter_public_tl = Gtk.MenuItem(i18n.get('twitter'))
-        #    twitter_public_tl.connect('activate', self.__add_column, public_acc)
-        #    public_tl_menu.append(twitter_public_tl)
-        #    for reg in reg_columns:
-        #        if twitter_public_acc == reg.account_id and reg.column_name == 'public':
-        #            twitter_public_tl.set_sensitive(False)
-
-        #if identica_public_acc:
-        #    public_acc = identica_public_acc + '-public'
-        #    identica_public_tl = Gtk.MenuItem(i18n.get('identica'))
-        #    identica_public_tl.connect('activate', self.__add_column, public_acc)
-        #    public_tl_menu.append(identica_public_tl)
-        #    for reg in reg_columns:
-        #        if identica_public_acc == reg.account_id and reg.column_name == 'public':
-        #            identica_public_tl.set_sensitive(False)
-
         if empty:
             empty_menu = Gtk.MenuItem(i18n.get('no_registered_accounts'))
             empty_menu.set_sensitive(False)
             self.menu.append(empty_menu)
         else:
             self.menu.append(Gtk.SeparatorMenuItem())
-            #menu.append(public_tl)
         self.menu.show_all()
         self.menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
 

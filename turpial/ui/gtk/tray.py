@@ -44,7 +44,7 @@ class TrayIcon(Gtk.StatusIcon):
         tweet = Gtk.MenuItem(i18n.get('new_tweet'))
         tweet.connect('activate', self.base.show_update_box)
         direct = Gtk.MenuItem(i18n.get('direct_message'))
-        direct.connect('activate', self.base.show_update_box_for_direct)
+        direct.connect('activate', self.base.show_update_box, True)
 
         self.menu.append(tweet)
         self.menu.append(direct)

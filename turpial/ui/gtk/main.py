@@ -41,7 +41,7 @@ class Main(Base, Gtk.Window):
         self.set_gravity(Gdk.Gravity.STATIC)
         self.connect('delete-event', self.__on_close)
         #self.connect('key-press-event', self.__on_key_press)
-        #self.connect('focus-in-event', self.__on_focus)
+        self.connect('focus-in-event', self.__on_focus)
         #self.connect('size-request', self.__size_request)
 
         # Configuration
@@ -107,7 +107,6 @@ class Main(Base, Gtk.Window):
     def __show_tray_menu(self, widget, button, activate_time):
         return self.tray.popup(button, activate_time)
 
-
     def __on_main_indicator_clicked(self, indicator):
         self.showed = True
         self.show()
@@ -124,19 +123,7 @@ class Main(Base, Gtk.Window):
             self.unitylauncher.set_count(0)
         except Exception:
             pass
-        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
-
-
-    def load_image(self, path, pixbuf=False):
-        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            '..', '..', 'data', 'pixmaps', path))
-        pix = GdkPixbuf.Pixbuf.new_from_file(img_path)
-        if pixbuf:
-            return pix
-        avatar = Gtk.Image()
-        avatar.set_from_pixbuf(pix)
-        del pix
-        return avatar
+        self.tray.clear()
 
     #================================================================
     # Overrided methods
@@ -187,10 +174,20 @@ class Main(Base, Gtk.Window):
         self.accounts_dialog.update()
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
 
-
     #================================================================
     # Own methods
     #================================================================
+
+    def load_image(self, path, pixbuf=False):
+        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+            '..', '..', 'data', 'pixmaps', path))
+        pix = GdkPixbuf.Pixbuf.new_from_file(img_path)
+        if pixbuf:
+            return pix
+        avatar = Gtk.Image()
+        avatar.set_from_pixbuf(pix)
+        del pix
+        return avatar
 
     def show_about_dialog(self, data=None):
         self.about_dialog.show()
@@ -200,6 +197,10 @@ class Main(Base, Gtk.Window):
 
     def show_preferences_dialog(self, data=None):
         self.preferences_dialog.show()
+
+    def add_column(self, widget, column_id):
+        self.save_column(column_id)
+
 
     def update_container(self):
         columns = self.get_registered_columns()
@@ -212,6 +213,10 @@ class Main(Base, Gtk.Window):
             self._container.normal(self.get_accounts_list(), columns)
             self.dock.normal()
             self.tray.normal()
+
+    #================================================================
+    # Callbacks
+    #================================================================
 
     def __login_callback(self, arg, account_id):
         if arg.code > 0:
@@ -307,78 +312,6 @@ class Main2(Base, gtk.Window):
     def _action_request(self, widget, url):
         self.on_action_request(url)
 
-    def show_column_menu(self):
-        menu = gtk.Menu()
-
-        search = gtk.MenuItem(i18n.get('search'))
-        search_menu = gtk.Menu()
-        search_menu.append(gtk.MenuItem(i18n.get('twitter')))
-        search_menu.append(gtk.MenuItem(i18n.get('identica')))
-        search.set_submenu(search_menu)
-
-        empty = True
-        twitter_public_acc = None
-        identica_public_acc = None
-        accounts = self.get_all_accounts()
-        columns = self.get_all_columns()
-        reg_columns = self.get_registered_columns()
-
-        for acc in accounts:
-            if acc.protocol_id == 'twitter' and twitter_public_acc is None:
-                twitter_public_acc = acc.id_
-            if acc.protocol_id == 'identica' and identica_public_acc is None:
-                identica_public_acc = acc.id_
-            name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
-            temp = gtk.MenuItem(name)
-            if acc.logged_in:
-                temp_menu = gtk.Menu()
-                for key, col in columns[acc.id_].iteritems():
-                    item = gtk.MenuItem(key)
-                    if col.id_ != "":
-                        item.set_sensitive(False)
-                    item.connect('activate', self.__add_column, col.build_id())
-                    temp_menu.append(item)
-                temp.set_submenu(temp_menu)
-            else:
-                temp.set_sensitive(False)
-            menu.append(temp)
-            empty = False
-
-        public_tl = gtk.MenuItem(i18n.get('public_timeline'))
-        public_tl_menu = gtk.Menu()
-        public_tl.set_submenu(public_tl_menu)
-
-        if twitter_public_acc:
-            public_acc = twitter_public_acc + '-public'
-            twitter_public_tl = gtk.MenuItem(i18n.get('twitter'))
-            twitter_public_tl.connect('activate', self.__add_column, public_acc)
-            public_tl_menu.append(twitter_public_tl)
-            for reg in reg_columns:
-                if twitter_public_acc == reg.account_id and reg.column_name == 'public':
-                    twitter_public_tl.set_sensitive(False)
-
-        if identica_public_acc:
-            public_acc = identica_public_acc + '-public'
-            identica_public_tl = gtk.MenuItem(i18n.get('identica'))
-            identica_public_tl.connect('activate', self.__add_column, public_acc)
-            public_tl_menu.append(identica_public_tl)
-            for reg in reg_columns:
-                if identica_public_acc == reg.account_id and reg.column_name == 'public':
-                    identica_public_tl.set_sensitive(False)
-
-        if empty:
-            empty_menu = gtk.MenuItem(i18n.get('no_registered_accounts'))
-            empty_menu.set_sensitive(False)
-            menu.append(empty_menu)
-        else:
-            menu.append(gtk.SeparatorMenuItem())
-            menu.append(public_tl)
-            menu.append(search)
-        menu.show_all()
-        menu.popup(None, None, None, 0, gtk.get_current_event_time())
-
-    def __add_column(self, widget, column_id):
-        self.save_column(column_id)
 
     def show_profile_menu(self):
         menu = gtk.Menu()

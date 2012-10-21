@@ -170,7 +170,7 @@ one account at once"),
     'restore_config_warning': _('This action will close Turpial and will \
 delete your current config (you must start Turpial again). Do you want to \
 continue?'),
-    'view_my_profile': _('View my profile'),
+    'view_profile': _('View profile'),
     'search_profile_in': ('Search profile in'),
     'profiles': _('Profiles'),
     'enable_sounds': _('Enable sounds'),

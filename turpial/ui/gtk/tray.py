@@ -56,3 +56,11 @@ class TrayIcon(Gtk.StatusIcon):
         self.menu.popup(None, None, None, None, button, activate_time)
         return True
 
+    # Change the tray icon image to indicate updates
+    def notify(self):
+        self.set_from_pixbuf(self.base.load_image('turpial-tray-update.png', True))
+
+    # Clear the tray icon image
+    def clear(self):
+        self.set_from_pixbuf(self.base.load_image('turpial-tray.png', True))
+

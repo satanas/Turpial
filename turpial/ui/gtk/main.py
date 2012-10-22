@@ -150,10 +150,17 @@ class Main(Base, Gtk.Window):
             sys.exit(0)
 
     def show_main(self):
-        #self.login()
+        self.start()
         self.show_all()
         self.update_container()
+
+    def show_notice(self, message, type_):
         pass
+
+    def login(self, account_id):
+        self.accounts_dialog.update()
+        self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
+
 
     #================================================================
     # Hooks definitions
@@ -170,9 +177,9 @@ class Main(Base, Gtk.Window):
         #self.__remove_column(column_id)
         #self.__remove_timer(column_id)
 
-    def do_login(self, account_id):
-        self.accounts_dialog.update()
-        self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
+    def after_login(self):
+        #self.worker.register(self.core.load_all_friends_list, (), self.load_all_friends_response)
+        pass
 
     #================================================================
     # Own methods
@@ -207,6 +214,32 @@ class Main(Base, Gtk.Window):
     def add_column(self, widget, column_id):
         self.save_column(column_id)
 
+    def update_column(self, arg, data):
+        self.log.debug('Updated column %s' % column.id_)
+
+        if arg.code > 0:
+            self.container.stop_updating(column.id_, arg.errmsg, 'error')
+            return
+
+        column, notif, max_ = data
+        self.container.update(column.id_, arg.items)
+
+        # Notifications
+        # FIXME
+        #count = len(arg.items)
+        #if count != 0:
+        #    if notif and self.core.show_notifications_in_updates():
+        #        self.notify.updates(column, count)
+        #    if self.core.play_sounds_in_updates():
+        #        self.sound.updates()
+        #    if not self.is_active():
+        #        self.unitylauncher.increment_count(count)
+        #        self.unitylauncher.set_count_visible(True)
+        #    else:
+        #        self.unitylauncher.set_count_visible(False)
+        #column.inc_size(count)
+
+        # self.restore_open_tweets() ???
 
     def update_container(self):
         columns = self.get_registered_columns()
@@ -279,8 +312,7 @@ class Main(Base, Gtk.Window):
 
             for col in self.get_registered_columns():
                 if col.account_id == account_id:
-                    pass
-                    #self.download_stream(col, True)
+                    self.download_stream(col, True)
                     #self.__add_timer(col)
 
     def __worker_timeout_callback(self, funct, arg, user_data):
@@ -288,6 +320,27 @@ class Main(Base, Gtk.Window):
             GObject.timeout_add(Worker.TIMEOUT, funct, arg, user_data)
         else:
             GObject.timeout_add(Worker.TIMEOUT, funct, arg)
+
+    #================================================================
+    # Timer Methods
+    #================================================================
+
+    def download_stream(self, column, notif=True):
+        if self._container.is_updating(column.id_):
+            return True
+
+        last_id = self._container.start_updating(column.id_)
+        count = self.core.get_max_statuses_per_column()
+
+        self.worker.register(self.core.get_column_statuses, (column.account_id,
+            column.column_name, count, last_id), self.update_column,
+            (column, notif, count))
+        return True
+
+    def refresh_column(self, column_id):
+        for col in self.get_registered_columns():
+            if col.build_id() == column_id:
+                self.download_stream(col)
 
 
 """
@@ -421,15 +474,6 @@ class Main2(Base, gtk.Window):
         self.present()
         self.container.execute("show_autocomplete_for_direct()")
 
-    def login(self):
-        if self.core.play_sounds_in_login():
-            self.sound.login()
-
-        for acc in self.get_accounts_list():
-            self.single_login(acc)
-
-        self.worker.register(self.core.load_all_friends_list, (), self.load_all_friends_response)
-
     # ------------------------------------------------------------
     # Callbacks
     # ------------------------------------------------------------
@@ -451,30 +495,4 @@ class Main2(Base, gtk.Window):
             elif content_obj.is_video() or content_obj.is_map():
                 self.imageview.error('Media not supported yet')
 
-    # ------------------------------------------------------------
-    # Timer Methods
-    # ------------------------------------------------------------
-
-    def download_stream(self, column, notif=True):
-        if self.updating.has_key(column.id_):
-            if self.updating[column.id_]:
-                return True
-        else:
-            self.updating[column.id_] = True
-
-        if not self.columns.has_key(column.id_):
-            self.columns[column.id_] = {'last_id': None}
-
-        last_id = self.columns[column.id_]['last_id']
-        num_statuses = self.core.get_max_statuses_per_column()
-        self.container.execute("start_updating_column('" + column.id_ + "');")
-        self.worker.register(self.core.get_column_statuses, (column.account_id,
-            column.column_name, num_statuses, last_id), self.update_column, 
-            (column, notif, num_statuses))
-        return True
-
-    def refresh_column(self, column_id):
-        for col in self.get_registered_columns():
-            if col.build_id() == column_id:
-                self.download_stream(col)
 """

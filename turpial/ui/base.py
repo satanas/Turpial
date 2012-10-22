@@ -113,9 +113,15 @@ class Base(Singleton):
             del self.columns[column_id]
         self.after_delete_column(column_id)
 
-    def single_login(self, account_id):
-        self.core.change_login_status(account_id, LoginStatus.IN_PROGRESS)
-        self.do_login(account_id)
+    def start(self):
+        #if self.core.play_sounds_in_login():
+        #    self.sound.login()
+
+        for account_id in self.get_accounts_list():
+            self.core.change_login_status(account_id, LoginStatus.IN_PROGRESS)
+            self.login(account_id)
+
+        self.after_login()
 
     #================================================================
     # Hooks to be implemented on each interface
@@ -130,10 +136,29 @@ class Base(Singleton):
     def after_delete_column(self, column_id, err_msg=None):
         raise NotImplemented
 
+    def after_login(self):
+        raise NotImplemented
+
+    #================================================================
+    # Methods to override
+    #================================================================
+
+    def main_loop(self):
+        raise NotImplemented
+
+    def main_quit(self, widget=None, force=False):
+        raise NotImplemented
+
+    def show_main(self):
+        raise NotImplemented
+
+    def login(self, account):
+        raise NotImplemented
+
+    def show_notice(self, message, type_):
+        raise NotImplemented
+
     '''
-    def show_notice(self, msg, type_):
-        cmd = 'show_notice("%s", "%s");' % (msg, type_)
-        self.container.execute(cmd)
 
     def on_link_request(self, url):
         self.open_url(url)
@@ -607,52 +632,6 @@ class Base(Singleton):
         self.worker.register(self.core.destroy_direct, (account, status_id),
             self.delete_status_response, status_id)
 
-    def update_column(self, arg, data):
-        column, notif, max_ = data
-        self.log.debug('Updated column %s' % column.id_)
-
-        if arg.code > 0:
-            self.container.execute("stop_updating_column('" + column.id_ + "');")
-            self.show_notice(arg.errmsg, 'error')
-            return
-
-        # Remove duplicate elements
-        """
-        if column.size != 0:
-            status_ids = []
-            for status in arg.items:
-                status_ids.append(status.id_)
-            if status_ids:
-                js_array = self.htmlparser.js_string_array(status_ids)
-                self.container.execute("remove_duplicates('" + column.id_ + "', " + js_array + ");")
-        """
-
-        #Show new statuses
-        page = self.htmlparser.statuses(arg.items)
-        element = "#list-%s" % column.id_
-        extra = "stop_updating_column('" + column.id_ + "');";
-        max_statuses = self.core.get_max_statuses_per_column()
-        if column.size != 0:
-            extra += "remove_statuses('" + column.id_ + "', " + str(len(arg.items)) + ", " + str(max_statuses) + ");";
-        self.container.prepend_element(element, page, extra)
-
-        # Notifications
-        count = len(arg.items)
-        if count != 0:
-            if notif and self.core.show_notifications_in_updates():
-                self.notify.updates(column, count)
-            if self.core.play_sounds_in_updates():
-                self.sound.updates()
-            if not self.is_active():
-                self.unitylauncher.increment_count(count)
-                self.unitylauncher.set_count_visible(True)
-            else:
-                self.unitylauncher.set_count_visible(False)
-            self.columns[column.id_]['last_id'] = arg.items[0].id_
-        column.inc_size(count)
-        self.updating[column.id_] = False
-
-        self.restore_open_tweets()
 
     def restore_open_tweets(self):
         for status in self.openstatuses:

@@ -7,6 +7,7 @@ from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 
 from turpial.ui.lang import i18n
+from turpial.ui.gtk.column import StatusesColumn
 
 class Container(Gtk.VBox):
     def __init__(self, base):
@@ -14,6 +15,8 @@ class Container(Gtk.VBox):
 
         self.base = base
         self.child = None
+        self.columns = {}
+        #self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(0, 0, 0))
 
     def empty(self):
         if self.child:
@@ -44,4 +47,31 @@ class Container(Gtk.VBox):
         self.show_all()
 
     def normal(self, accounts, columns):
-        pass
+        self.columns = {}
+
+        box = Gtk.HBox()
+
+        for col in columns:
+            self.columns[col.id_] = StatusesColumn(self.base, col)
+            box.pack_start(self.columns[col.id_], True, True, 0)
+
+        self.child = Gtk.ScrolledWindow()
+        self.child.add_with_viewport(box)
+
+        self.add(self.child)
+        self.show_all()
+
+    def start_updating(self, column_id):
+        return self.columns[column_id].start_updating()
+
+    def stop_updating(self, column_id, errmsg=None, errtype=None):
+        self.columns[column_id].stop_updating()
+        if errmsg:
+            self.base.show_notice(errmsg, errtype)
+
+    def is_updating(self, column_id):
+        return self.columns[column_id].updating
+
+    def update(self, column_id, statuses):
+        self.columns[column_id].update(statuses)
+        self.stop_updating(self, column_id)

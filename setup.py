@@ -31,6 +31,7 @@ data_files=[
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
     ('share/applications', ['turpial.desktop']),
     ('share/doc/turpial', ['ChangeLog', 'README.rst', 'AUTHORS', 'COPYING', 'TRANSLATORS', 'THANKS']),
+
 ]
 
 setup(name="turpial",

@@ -17,11 +17,10 @@ Turpial is a light, fast and beautiful microblogging client written in Python
 # TODO: Maybe find some better ways to do this
 # looking distutils's copy_tree method
 data_files=[
-    ('./', ['AUTHORS', 'COPYING']),
     ('share/icons/scalable/apps', ['turpial/data/pixmaps/turpial.svg']),
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
     ('share/applications', ['turpial.desktop']),
-    ('share/doc/turpial', ['ChangeLog', 'README.rst']),
+    ('share/doc/turpial', ['AUTHORS', 'COPYING', 'ChangeLog', 'README.rst']),
 ]
 
 setup(name="turpial",

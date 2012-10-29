@@ -32,13 +32,9 @@ class StatusWidget(Gtk.VBox):
         avatar_box.set_property('yalign', 0.0)
 
         self.favorite_mark = Gtk.Image()
-        self.favorite_mark.set_from_pixbuf(self.base.load_image('mark-favorite.png', True))
         self.protected_mark = Gtk.Image()
-        self.protected_mark.set_from_pixbuf(self.base.load_image('mark-protected.png', True))
         self.verified_mark = Gtk.Image()
-        self.verified_mark.set_from_pixbuf(self.base.load_image('mark-verified.png', True))
         self.reposted_mark = Gtk.Image()
-        self.reposted_mark.set_from_pixbuf(self.base.load_image('mark-reposted.png', True))
 
         self.username = MarkupLabel()
         self.status_text = MarkupLabel()
@@ -88,6 +84,12 @@ class StatusWidget(Gtk.VBox):
         self.add(box)
         self.show_all()
 
+        # After showing all widgets we set the marks
+        self.set_favorite_mark(status.is_favorite)
+        self.set_protected_mark(status.is_protected)
+        self.set_verified_mark(status.is_verified)
+        self.set_reposted_mark(status.reposted_by)
+
     def __highlight_urls(self, status, text):
         for url in status.entities['urls']:
             if url.url == None:
@@ -125,4 +127,25 @@ class StatusWidget(Gtk.VBox):
         return text
 
     def set_favorite_mark(self, value):
-        pass
+        if value:
+            self.favorite_mark.set_from_pixbuf(self.base.load_image('mark-favorite.png', True))
+        else:
+            self.favorite_mark.set_from_pixbuf(None)
+
+    def set_protected_mark(self, value):
+        if value:
+            self.protected_mark.set_from_pixbuf(self.base.load_image('mark-protected.png', True))
+        else:
+            self.protected_mark.set_from_pixbuf(None)
+
+    def set_reposted_mark(self, value):
+        if value:
+            self.reposted_mark.set_from_pixbuf(self.base.load_image('mark-reposted.png', True))
+        else:
+            self.reposted_mark.set_from_pixbuf(None)
+
+    def set_verified_mark(self, value):
+        if value:
+            self.verified_mark.set_from_pixbuf(self.base.load_image('mark-verified.png', True))
+        else:
+            self.verified_mark.set_from_pixbuf(None)

@@ -22,7 +22,7 @@ from libturpial.api.interfaces.service import ServiceResponse
 
 from turpial import VERSION
 from turpial.ui.lang import i18n
-from turpial.ui.html import HtmlParser
+#from turpial.ui.html import HtmlParser
 from turpial.singleton import Singleton
 from turpial.ui.sound import Sound
 from turpial.notification import Notification
@@ -92,6 +92,12 @@ class Base(Singleton):
 
     def disable_sound(self, widget=None):
         self.sound.disable(not widget.get_active())
+
+    def get_color_scheme(self, key):
+        color = {
+            'links': '#ff6633',
+        }
+        return color[key]
 
     def save_account(self, username, protocol_id, password):
         if username == "" or username == None:

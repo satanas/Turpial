@@ -215,14 +215,14 @@ class Main(Base, Gtk.Window):
         self.save_column(column_id)
 
     def update_column(self, arg, data):
+        column, notif, max_ = data
         self.log.debug('Updated column %s' % column.id_)
 
         if arg.code > 0:
-            self.container.stop_updating(column.id_, arg.errmsg, 'error')
+            self._container.stop_updating(column.id_, arg.errmsg, 'error')
             return
 
-        column, notif, max_ = data
-        self.container.update(column.id_, arg.items)
+        self._container.update(column.id_, arg.items)
 
         # Notifications
         # FIXME

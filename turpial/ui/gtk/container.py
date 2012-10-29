@@ -74,4 +74,4 @@ class Container(Gtk.VBox):
 
     def update(self, column_id, statuses):
         self.columns[column_id].update(statuses)
-        self.stop_updating(self, column_id)
+        self.stop_updating(column_id)

@@ -8,6 +8,9 @@ from gi.repository import Pango
 from gi.repository import GdkPixbuf
 
 from turpial.ui.lang import i18n
+from turpial.ui.gtk.status import StatusWidget
+
+from libturpial.api.services.showmedia import utils as showmediautils
 
 ICON_MARGIN = 5
 
@@ -65,67 +68,9 @@ class StatusesColumn(Gtk.VBox):
 
         # Content
         #============================================================
-
-        self.model = Gtk.ListStore(
-            str, # id_
-            str, # display_id
-            str, # in_reply_to_id
-            GdkPixbuf.Pixbuf, # avatar
-            str, # account_id
-            str, # username
-            str, # pango_message
-            str, # clean_message
-            str, # datetime
-            str, # reposted_by
-            str, # client
-            bool, # favorite?
-            bool, # verified?
-            bool, # protected?
-            bool, # own?
-            bool, # new?
-            str, # status type
-            str, # protocol
-            int, # timestamp
-            Gdk.Color, # color
-        )
-
-        self.model.append([
-            '1','1','1',
-            None,
-            '1','username','hola mundo','hola mundo','123','123','123',
-            False,False,False,False,False,
-            'asd','asd',0,None])
-        self.model.set_sort_column_id(18, Gtk.SortType.DESCENDING)
-
-        avatar = Gtk.CellRendererPixbuf()
-        avatar.set_property('yalign', 0)
-
-        status = Gtk.CellRendererText()
-        status.set_property('wrap-mode', Pango.WrapMode.WORD_CHAR)
-        status.set_property('wrap-width', 260)
-        status.set_property('yalign', 0)
-        status.set_property('xalign', 0)
-
-        column = Gtk.TreeViewColumn('statuss')
-        column.set_alignment(0.0)
-        column.pack_start(avatar, False)
-        column.pack_start(status, True)
-        column.add_attribute(status, 'markup', 6)
-        column.add_attribute(status, 'cell_background_gdk', 19)
-        column.add_attribute(avatar, 'pixbuf', 3)
-        column.add_attribute(avatar, 'cell_background_gdk', 19)
-
-        self._list = Gtk.TreeView()
-        self._list.set_headers_visible(False)
-        self._list.set_level_indentation(0)
-        self._list.set_resize_mode(Gtk.ResizeMode.IMMEDIATE)
-        self._list.set_model(self.model)
-        self._list.append_column(column)
-        #self._list.connect("button-release-event", self.__on_click)
-        #self.click_handler = self._list.connect("cursor-changed", self.__on_select)
-
+        self._list = Gtk.VBox()
         scroll = Gtk.ScrolledWindow()
-        scroll.add(self._list)
+        scroll.add_with_viewport(self._list)
         scroll.set_margin_top(ICON_MARGIN)
         scroll.set_margin_right(ICON_MARGIN)
         scroll.set_margin_bottom(ICON_MARGIN)
@@ -136,6 +81,10 @@ class StatusesColumn(Gtk.VBox):
 
         self.pack_start(header, False, False, 0)
         self.pack_start(content, True, True, 0)
+
+    def __add_status(self, status):
+        s = StatusWidget(self.base, status)
+        self._list2.pack_start(s, False, False, 0)
 
     def show(self):
         self.show_all()
@@ -157,7 +106,10 @@ class StatusesColumn(Gtk.VBox):
         self.updating = False
 
     def update(self, statuses):
-        self._list.disconnect(self.click_handler)
+        for status in statuses:
+            self.__add_status(status)
+        #self._list.disconnect(self.click_handler)
+
         #self.mark_all_as_read()
         #self.__set_last_time()
 
@@ -172,3 +124,4 @@ class StatusesColumn(Gtk.VBox):
 
         self.last_id = statuses[0].id_
         #self.click_handler = self.list.connect("cursor-changed", self.__on_select)
+

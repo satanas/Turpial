@@ -84,7 +84,7 @@ class StatusesColumn(Gtk.VBox):
 
     def __add_status(self, status):
         s = StatusWidget(self.base, status)
-        self._list2.pack_start(s, False, False, 0)
+        self._list.pack_start(s, False, False, 0)
 
     def show(self):
         self.show_all()

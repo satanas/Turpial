@@ -21,6 +21,7 @@ class Dock(Gtk.EventBox):
         self.btn_updates = DockButton(base, 'dock-updates.png', i18n.get('update_status'))
         self.btn_messages = DockButton(base, 'dock-messages.png', i18n.get('direct_messages'))
         self.btn_search = DockButton(base, 'dock-search.png', i18n.get('search'))
+        self.btn_stats = DockButton(base, 'dock-stats.png', i18n.get('statistics'))
         self.btn_columns = DockButton(base, 'dock-columns.png', i18n.get('columns'))
         self.btn_accounts = DockButton(base, 'dock-accounts.png', i18n.get('accounts'))
         self.btn_preferences = DockButton(base, 'dock-preferences.png', i18n.get('preferences'))
@@ -37,9 +38,10 @@ class Dock(Gtk.EventBox):
         box = Gtk.HBox()
         box.pack_end(self.btn_updates, False, False, 0)
         box.pack_end(self.btn_messages, False, False, 0)
-        box.pack_end(self.btn_search, False, False, 0)
         box.pack_end(self.btn_columns, False, False, 0)
         box.pack_end(self.btn_accounts, False, False, 0)
+        box.pack_end(self.btn_search, False, False, 0)
+        box.pack_end(self.btn_stats, False, False, 0)
         box.pack_end(self.btn_preferences, False, False, 0)
         box.pack_end(self.btn_about, False, False, 0)
 
@@ -53,11 +55,13 @@ class Dock(Gtk.EventBox):
         self.btn_updates.hide()
         self.btn_messages.hide()
         self.btn_search.hide()
+        self.btn_stats.hide()
 
     def normal(self):
         self.btn_updates.show()
         self.btn_messages.show()
         self.btn_search.show()
+        self.btn_stats.show()
 
     def show_columns_menu(self, widget):
         self.menu = Gtk.Menu()

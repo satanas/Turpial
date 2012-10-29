@@ -34,8 +34,8 @@ class Main(Base, Gtk.Window):
 
         self.log = logging.getLogger('Gtk')
         self.set_title(DESC)
-        self.set_size_request(310, 480)
-        self.set_default_size(310, 480)
+        self.set_size_request(250, 480)
+        self.set_default_size(300, 480)
         self.set_icon(self.load_image('turpial.svg', True))
         self.set_position(Gtk.WindowPosition.CENTER)
         self.set_gravity(Gdk.Gravity.STATIC)

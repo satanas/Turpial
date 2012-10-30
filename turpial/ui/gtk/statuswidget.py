@@ -5,7 +5,6 @@
 import re
 
 from gi.repository import Gtk
-from gi.repository import Gdk
 from gi.repository import Pango
 from gi.repository import GdkPixbuf
 
@@ -21,7 +20,6 @@ class StatusWidget(Gtk.VBox):
         Gtk.VBox.__init__(self)
 
         self.base = base
-        #self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(0, 0, 0))
         self.set_margin_bottom(self.OUTTER_BOTTOM_MARGIN)
 
         self.avatar = Gtk.Image()
@@ -49,7 +47,7 @@ class StatusWidget(Gtk.VBox):
         )
         self.username.set_markup(user)
 
-        pango_text = '<span size="9000">%s</span>' % status.text
+        pango_text = '<span size="9000">%s</span>' % self.__escape_text(status.text)
         pango_text = self.__highlight_urls(status, status.text)
         pango_text = self.__highlight_hashtags(status, pango_text)
         pango_text = self.__highlight_groups(status, pango_text)
@@ -129,6 +127,12 @@ class StatusWidget(Gtk.VBox):
         elif url.startswith('profile'):
             print "Opening profile"
         return True
+
+    def __escape_text(self, text):
+        text = text.replace('&', '&amp;')
+        text = text.replace('<', '&lt;')
+        text = text.replace('>', '&gt;')
+        return text
 
     def set_favorite_mark(self, value):
         if value:

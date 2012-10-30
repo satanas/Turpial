@@ -149,38 +149,38 @@ class Base(Singleton):
     #================================================================
 
     def after_save_account(self, account_id, err_msg=None):
-        raise NotImplemented
+        raise NotImplementedError
 
     def after_delete_account(self, deleted, err_msg=None):
-        raise NotImplemented
+        raise NotImplementedError
 
     def after_delete_column(self, column_id, err_msg=None):
-        raise NotImplemented
+        raise NotImplementedError
 
     def after_login(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     #================================================================
     # Methods to override
     #================================================================
 
     def main_loop(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def main_quit(self, widget=None, force=False):
-        raise NotImplemented
+        raise NotImplementedError
 
     def show_main(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def show_notice(self, message, type_):
-        raise NotImplemented
+        raise NotImplementedError
 
     def show_media(self, url):
-        raise NotImplemented
+        raise NotImplementedError
 
     def login(self, account):
-        raise NotImplemented
+        raise NotImplementedError
 
 
     '''

@@ -10,7 +10,6 @@ from gi.repository import GdkPixbuf
 from turpial.ui.lang import i18n
 from turpial.ui.gtk.statuswidget import StatusWidget
 
-from libturpial.api.services.showmedia import utils as showmediautils
 
 ICON_MARGIN = 5
 

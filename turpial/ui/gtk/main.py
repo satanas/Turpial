@@ -157,6 +157,11 @@ class Main(Base, Gtk.Window):
     def show_notice(self, message, type_):
         pass
 
+    def show_media(self, url):
+        self.imageview.loading()
+        self.worker.register(self.core.get_media_content, (url, None),
+            self.__show_media_callback)
+
     def login(self, account_id):
         self.accounts_dialog.update()
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
@@ -314,6 +319,17 @@ class Main(Base, Gtk.Window):
                 if col.account_id == account_id:
                     self.download_stream(col, True)
                     #self.__add_timer(col)
+
+    def __show_media_callback(self, response):
+        if response.err:
+            self.imageview.error(response.errmsg)
+        else:
+            content_obj = response.response
+            if content_obj.is_image():
+                content_obj.save_content()
+                self.imageview.update(content_obj.path)
+            elif content_obj.is_video() or content_obj.is_map():
+                self.imageview.error('Media not supported yet')
 
     def __worker_timeout_callback(self, funct, arg, user_data):
         if user_data:
@@ -484,15 +500,6 @@ class Main2(Base, gtk.Window):
         else:
             self.imageview.update(response.items)
 
-    def show_media_response(self, response):
-        if response.err:
-            self.imageview.error(response.errmsg)
-        else:
-            content_obj = response.response
-            if content_obj.is_image():
-                content_obj.save_content()
-                self.imageview.update(content_obj.path)
-            elif content_obj.is_video() or content_obj.is_map():
-                self.imageview.error('Media not supported yet')
+
 
 """

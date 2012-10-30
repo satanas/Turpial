@@ -19,6 +19,7 @@ from libturpial.common import *
 from libturpial.common import LoginStatus
 from libturpial.api.models.mediacontent import *
 from libturpial.api.interfaces.service import ServiceResponse
+from libturpial.api.services.showmedia import utils as showmediautils
 
 from turpial import VERSION
 from turpial.ui.lang import i18n
@@ -129,6 +130,20 @@ class Base(Singleton):
 
         self.after_login()
 
+    def open_url(self, url):
+        browser = self.core.get_default_browser()
+
+        if showmediautils.is_service_supported(url):
+            self.show_media(url)
+        elif browser != '':
+            cmd = browser.split(' ')
+            cmd.append(url)
+            self.log.debug('Opening URL %s with %s' % (url, browser))
+            subprocess.Popen(cmd)
+        else:
+            self.log.debug('Opening URL %s with default browser' % url)
+            webbrowser.open(url)
+
     #================================================================
     # Hooks to be implemented on each interface
     #================================================================
@@ -158,11 +173,15 @@ class Base(Singleton):
     def show_main(self):
         raise NotImplemented
 
+    def show_notice(self, message, type_):
+        raise NotImplemented
+
+    def show_media(self, url):
+        raise NotImplemented
+
     def login(self, account):
         raise NotImplemented
 
-    def show_notice(self, message, type_):
-        raise NotImplemented
 
     '''
 
@@ -648,21 +667,7 @@ class Base(Singleton):
             cmd = "show_replies_to_status('%s', false)" % status
             self.container.update_element(id_, html_status, cmd)
     '''
-
-
-    def open_url(self, url):
-        '''Open a URL in the configured web browser'''
-        browser = self.core.get_default_browser()
-        if browser != '':
-            cmd = browser.split(' ')
-            cmd.append(url)
-            self.log.debug('Opening URL %s with %s' % (url, browser))
-            subprocess.Popen(cmd)
-        else:
-            #if not url.startswith('http'):
-            #    url = 'http://' + url
-            self.log.debug('Opening URL %s with default browser' % url)
-            webbrowser.open(url)
+ 
 
     def get_new_statuses(self, current, last):
         if not current:

@@ -38,6 +38,7 @@ class StatusWidget(Gtk.VBox):
 
         self.username = MarkupLabel()
         self.status_text = MarkupLabel()
+        self.status_text.connect('activate-link', self.__open_url)
         self.footer = MarkupLabel()
 
         # Setting user image
@@ -95,14 +96,6 @@ class StatusWidget(Gtk.VBox):
             if url.url == None:
                 url.url = url.search_for
             cad = "<a href='%s'>%s</a>" % (url.url, url.display_text)
-            print cad
-            #if not showmediautils.is_service_supported(url.url):
-            #    cad = '<a href="%s" title="%s">%s</a>' % (url.url, url.url,
-            #        url.display_text)
-            #else:
-            #    pars = ARG_SEP.join([url.url.replace(":", "$"), status.account_id])
-            #    cad = '<a href="%s" title="%s">%s</a>' % (pars, url.url,
-            #        url.display_text)
             text = text.replace(url.search_for, cad)
         return text
 
@@ -125,6 +118,17 @@ class StatusWidget(Gtk.VBox):
             pattern = re.compile(h.search_for, re.IGNORECASE)
             text = pattern.sub(cad, text)
         return text
+
+    def __open_url(self, widget, url):
+        if url.startswith('http'):
+            self.base.open_url(url)
+        elif url.startswith('hashtag'):
+            print "Opening hashtag"
+        elif url.startswith('groups'):
+            print "Opening groups"
+        elif url.startswith('profile'):
+            print "Opening profile"
+        return True
 
     def set_favorite_mark(self, value):
         if value:

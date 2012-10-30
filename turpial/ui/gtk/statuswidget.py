@@ -128,12 +128,6 @@ class StatusWidget(Gtk.VBox):
             print "Opening profile"
         return True
 
-    def __escape_text(self, text):
-        text = text.replace('&', '&amp;')
-        text = text.replace('<', '&lt;')
-        text = text.replace('>', '&gt;')
-        return text
-
     def set_favorite_mark(self, value):
         if value:
             self.favorite_mark.set_from_pixbuf(self.base.load_image('mark-favorite.png', True))

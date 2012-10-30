@@ -19,6 +19,7 @@ from turpial.ui.gtk.indicator import Indicators
 # Dialogs
 from turpial.ui.gtk.about import AboutDialog
 from turpial.ui.gtk.oauth import OAuthDialog
+from turpial.ui.gtk.updatebox import UpdateBox
 from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.gtk.preferences import PreferencesDialog
 
@@ -65,6 +66,7 @@ class Main(Base, Gtk.Window):
         # Persistent dialogs
         self.about_dialog = AboutDialog(self)
         self.accounts_dialog = AccountsDialog(self)
+        self.update_box = UpdateBox(self)
         self.preferences_dialog = PreferencesDialog(self)
 
         self.imageview = ImageView(self)
@@ -163,6 +165,7 @@ class Main(Base, Gtk.Window):
             self.__show_media_callback)
 
     def login(self, account_id):
+        return
         self.accounts_dialog.update()
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
 
@@ -214,7 +217,7 @@ class Main(Base, Gtk.Window):
         pass
 
     def show_update_box(self, widget=None, direct=False):
-        pass
+        self.update_box.show()
 
     def add_column(self, widget, column_id):
         self.save_column(column_id)

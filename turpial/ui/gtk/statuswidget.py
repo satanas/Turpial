@@ -9,6 +9,7 @@ from gi.repository import Pango
 from gi.repository import GdkPixbuf
 
 from turpial.ui.lang import i18n
+from turpial.ui.gtk.common import *
 from turpial.ui.gtk.markuplabel import MarkupLabel
 
 
@@ -47,7 +48,7 @@ class StatusWidget(Gtk.VBox):
         )
         self.username.set_markup(user)
 
-        pango_text = '<span size="9000">%s</span>' % self.__escape_text(status.text)
+        pango_text = '<span size="9000">%s</span>' % escape_text_for_markup(status.text)
         pango_text = self.__highlight_urls(status, status.text)
         pango_text = self.__highlight_hashtags(status, pango_text)
         pango_text = self.__highlight_groups(status, pango_text)

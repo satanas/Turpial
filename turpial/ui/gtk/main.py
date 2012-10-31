@@ -217,7 +217,7 @@ class Main(Base, Gtk.Window):
         pass
 
     def show_update_box(self, widget=None, direct=False):
-        self.update_box.show()
+        self.update_box.show_for_direct('satanas82-twitter', 'zeitan')
 
     def add_column(self, widget, column_id):
         self.save_column(column_id)

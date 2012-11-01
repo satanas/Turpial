@@ -165,7 +165,6 @@ class Main(Base, Gtk.Window):
             self.__show_media_callback)
 
     def login(self, account_id):
-        return
         self.accounts_dialog.update()
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
 
@@ -180,9 +179,18 @@ class Main(Base, Gtk.Window):
     def after_save_account(self, account_id, err_msg=None):
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
 
+    def after_save_column(self, column, err_msg=None):
+        self._container.add_column(column)
+        self.dock.normal()
+        self.tray.normal()
+        self.download_stream(column)
+        #self.__add_timer(column)
+
     def after_delete_column(self, column_id, err_msg=None):
-        self.update_container()
-        #self.__remove_column(column_id)
+        self._container.remove_column(column_id)
+        if len(self.get_registered_columns()) == 0:
+            self.dock.empty()
+            self.tray.empty()
         #self.__remove_timer(column_id)
 
     def after_login(self):
@@ -219,9 +227,6 @@ class Main(Base, Gtk.Window):
     def show_update_box(self, widget=None, direct=False):
         self.update_box.show_for_direct('satanas82-twitter', 'zeitan')
 
-    def add_column(self, widget, column_id):
-        self.save_column(column_id)
-
     def update_column(self, arg, data):
         column, notif, max_ = data
         self.log.debug('Updated column %s' % column.id_)
@@ -230,7 +235,7 @@ class Main(Base, Gtk.Window):
             self._container.stop_updating(column.id_, arg.errmsg, 'error')
             return
 
-        self._container.update(column.id_, arg.items)
+        self._container.update_column(column.id_, arg.items)
 
         # Notifications
         # FIXME
@@ -477,9 +482,6 @@ class Main2(Base, gtk.Window):
         if self.timers.has_key(column_id):
             gobject.source_remove(self.timers[column_id])
             self.log.debug('--Removed timer for %s' % column_id)
-
-    def show_preferences(self, widget=None):
-        pref = Preferences(self)
 
     def show_update_box(self, widget=None):
         self.deiconify()

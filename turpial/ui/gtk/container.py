@@ -72,6 +72,25 @@ class Container(Gtk.VBox):
     def is_updating(self, column_id):
         return self.columns[column_id].updating
 
-    def update(self, column_id, statuses):
+    def update_column(self, column_id, statuses):
         self.columns[column_id].update(statuses)
         self.stop_updating(column_id)
+
+    def add_column(self, column):
+        if len(self.columns) > 1:
+            self.columns[column.id_] = StatusesColumn(self.base, column)
+            hbox = self.child.get_children()[0].get_child()
+            hbox.pack_start(self.columns[column.id_], True, True, 0)
+        else:
+            self.remove(self.child)
+            accounts = self.base.get_accounts_list()
+            columns = self.base.get_registered_columns()
+            self.normal(accounts, columns)
+        self.show_all()
+
+    def remove_column(self, column_id):
+        hbox = self.child.get_children()[0].get_child()
+        hbox.remove(self.columns[column_id])
+        del self.columns[column_id]
+        if len(self.columns) == 0:
+            self.empty()

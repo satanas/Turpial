@@ -100,6 +100,10 @@ class Base(Singleton):
         }
         return color[key]
 
+    def save_column(self, widget, column_id):
+        column = self.core.register_column(column_id)
+        self.after_save_column(column)
+
     def save_account(self, username, protocol_id, password):
         if username == "" or username == None:
             username = "%s" % len(self.core.all_accounts())
@@ -113,6 +117,10 @@ class Base(Singleton):
                 self.delete_column(col.id_)
         self.core.unregister_account(account_id, True)
         self.after_delete_account(True)
+
+    def save_column(self, column_id):
+        column = self.core.register_column(column_id)
+        self.after_save_column(column)
 
     def delete_column(self, column_id):
         self.core.unregister_column(column_id)
@@ -152,6 +160,9 @@ class Base(Singleton):
         raise NotImplementedError
 
     def after_delete_account(self, deleted, err_msg=None):
+        raise NotImplementedError
+
+    def after_save_column(self, column_id, err_msg=None):
         raise NotImplementedError
 
     def after_delete_column(self, column_id, err_msg=None):
@@ -493,21 +504,7 @@ class Base(Singleton):
 
     #---------------------------------------------------------------------------
 
-
-    def save_column(self, column_id):
-        column = self.core.register_column(column_id)
-        reg_columns = self.get_registered_columns()
-        if len(reg_columns) == 1:
-            page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
-            self.container.render(page)
-        else:
-            hdr, col = self.htmlparser.render_column(column)
-            hdr = hdr.replace('"', '\\"')
-            col = col.replace('"', '\\"')
-            self.container.execute('add_column("%s","%s");' % (hdr, col))
-        self.download_stream(column)
-        self.__add_timer(column)
-
+ 
     def repeat_status(self, account_id, status_id):
         cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('retweeting'))
         self.container.execute(cmd)

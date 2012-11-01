@@ -46,6 +46,7 @@ class StatusesColumn(Gtk.VBox):
         btn_close.set_image(self.base.load_image('action-delete.png'))
         btn_close.set_relief(Gtk.ReliefStyle.NONE)
         btn_close.set_tooltip_text(i18n.get('delete_column'))
+        btn_close.connect('clicked', self.__delete_column, column.id_)
 
         self.btn_refresh = Gtk.Button()
         self.btn_refresh.set_image(self.base.load_image('action-refresh.png'))
@@ -80,6 +81,9 @@ class StatusesColumn(Gtk.VBox):
 
         self.pack_start(header, False, False, 0)
         self.pack_start(content, True, True, 0)
+
+    def __delete_column(self, widget, column_id):
+        self.base.delete_column(column_id)
 
     def __add_status(self, status):
         s = StatusWidget(self.base, status)
@@ -123,4 +127,3 @@ class StatusesColumn(Gtk.VBox):
 
         self.last_id = statuses[0].id_
         #self.click_handler = self.list.connect("cursor-changed", self.__on_select)
-

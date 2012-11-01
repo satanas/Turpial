@@ -51,6 +51,9 @@ class Dock(Gtk.EventBox):
 
         self.add(align)
 
+    def __save_column(self, widget, column_id):
+        self.base.save_column(column_id)
+
     def empty(self):
         self.btn_updates.hide()
         self.btn_messages.hide()
@@ -80,11 +83,11 @@ class Dock(Gtk.EventBox):
                     item = Gtk.MenuItem(key)
                     if col.id_ != "":
                         item.set_sensitive(False)
-                    item.connect('activate', self.base.add_column, col.build_id())
+                    item.connect('activate', self.__save_column, col.build_id())
                     temp_menu.append(item)
                 # Add public timeline
                 public_tl = Gtk.MenuItem(i18n.get('public_timeline').lower())
-                item.connect('activate', self.base.add_column, acc.id_ + '-public')
+                public_tl.connect('activate', self.__save_column, acc.id_ + '-public')
                 temp_menu.append(public_tl)
 
                 temp.set_submenu(temp_menu)
@@ -92,7 +95,7 @@ class Dock(Gtk.EventBox):
                 # Add view profile item
                 temp_menu.append(Gtk.SeparatorMenuItem())
                 item = Gtk.MenuItem(i18n.get('view_profile'))
-                item.connect('activate', self.base.add_column, acc.id_)
+                item.connect('activate', self.__save_column, acc.id_)
                 temp_menu.append(item)
             else:
                 temp.set_sensitive(False)

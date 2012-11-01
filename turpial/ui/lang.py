@@ -27,8 +27,10 @@ STRINGS = {
     'identica': 'Identi.ca',
     'welcome': _('Welcome to Turpial!'),
     'no_active_accounts': _('You have no active accounts. Please register your \
-accounts and add some columns'),
+accounts and then add some columns'),
     'no_registered_accounts': _('No registered accounts'),
+    'no_registered_columns': _('Oh! You have accounts registered, now add some \
+columns'),
     'about': _('About'),
     'preferences': _('Preferences'),
     'update_status': _('Update status'),

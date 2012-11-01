@@ -35,7 +35,10 @@ class Container(Gtk.VBox):
         no_accounts.set_use_markup(True)
         no_accounts.set_line_wrap(True)
         no_accounts.set_justify(Gtk.Justification.CENTER)
-        no_accounts.set_markup(i18n.get('no_active_accounts'))
+        if len(self.base.get_accounts_list()) > 0:
+            no_accounts.set_markup(i18n.get('no_registered_columns'))
+        else:
+            no_accounts.set_markup(i18n.get('no_active_accounts'))
 
         self.child = Gtk.VBox()
         self.child.pack_start(placeholder, False, False, 40)

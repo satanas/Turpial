@@ -109,7 +109,7 @@ text box below and click OK:'),
     'send_with': _("Send with:"),
     'select_account_to_post': _("Select accounts to post"),
     'you_must_write_something': _("Hey! You must write something to post"),
-    'message_like_testament': _("That message looks like a testament!"),
+    'message_looks_like_testament': _("That message looks like a testament!"),
     'updating_status': _("Updating status..."),
     'error_posting_to': _("Error posting to %s"),
     'manual_update': _("Manual Update"),
@@ -188,7 +188,8 @@ continue?'),
     'error_loading_image': _('Error loading image'),
     'credentials_could_not_be_empty': _('Credentials could not be empty'),
     'file_not_found': _("File not found"),
-    'about_description': _('Microblogging client written in Python')
+    'about_description': _('Microblogging client written in Python'),
+    'i_couldnt_update_status': _("Oh oh... I couldn't update your status"),
 }
 
 class i18n:

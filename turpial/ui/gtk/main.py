@@ -2,6 +2,8 @@
 
 # GTK3 main view for Turpial
 
+import os
+
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
@@ -33,9 +35,12 @@ class Main(Base, Gtk.Window):
         Base.__init__(self, core)
         Gtk.Window.__init__(self)
 
+        self.images_path = os.path.realpath(os.path.join(
+            os.path.dirname(__file__), '..', '..', 'data', 'pixmaps'))
+
         self.log = logging.getLogger('Gtk')
         self.set_title(DESC)
-        self.set_size_request(250, 480)
+        self.set_size_request(250, 250)
         self.set_default_size(300, 480)
         self.set_icon(self.load_image('turpial.svg', True))
         self.set_position(Gtk.WindowPosition.CENTER)
@@ -165,6 +170,7 @@ class Main(Base, Gtk.Window):
             self.__show_media_callback)
 
     def login(self, account_id):
+        #return
         self.accounts_dialog.update()
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
 
@@ -197,13 +203,41 @@ class Main(Base, Gtk.Window):
         #self.worker.register(self.core.load_all_friends_list, (), self.load_all_friends_response)
         pass
 
+    def after_update_status(self, response, account_id):
+        if response.code > 0:
+            self.update_box.update_error(response.errmsg)
+        else:
+            self.update_box.done()
+
+    def after_broadcast_status(self, response):
+        bad_acc = []
+        good_acc = []
+        error = False
+        for resp in response:
+            if resp.code > 0:
+                error = True
+                protocol = i18n.get(resp.account_id.split('-')[1])
+                bad_acc.append("%s (%s)" % (resp.account_id.split('-')[0], protocol))
+            else:
+                good_acc.append(resp.account_id)
+
+        if error:
+            self.update_box.broadcast_error(good_acc, bad_acc)
+        else:
+            self.update_box.done()
+
+    def after_direct_message(self, response):
+        if response.code > 0:
+            self.update_box.update_error(response.errmsg)
+        else:
+            self.update_box.done()
+
     #================================================================
     # Own methods
     #================================================================
 
-    def load_image(self, path, pixbuf=False):
-        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            '..', '..', 'data', 'pixmaps', path))
+    def load_image(self, filename, pixbuf=False):
+        img_path = os.path.join(self.images_path, filename)
         pix = GdkPixbuf.Pixbuf.new_from_file(img_path)
         if pixbuf:
             return pix
@@ -225,7 +259,7 @@ class Main(Base, Gtk.Window):
         pass
 
     def show_update_box(self, widget=None, direct=False):
-        self.update_box.show_for_direct('satanas82-twitter', 'zeitan')
+        self.update_box.show()
 
     def update_column(self, arg, data):
         column, notif, max_ = data

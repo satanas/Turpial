@@ -85,12 +85,11 @@ class UpdateBox(Gtk.Window):
         #self.connect('key-press-event', self.__detect_shortcut)
         _buffer.connect('changed', self.__count_chars)
         self.connect('delete-event', self.__unclose)
-        self.btn_upload.connect('clicked', self.__release)
-        self.btn_short.connect('clicked', self.__release)
+        #self.btn_upload.connect('clicked', self.__release)
+        #self.btn_short.connect('clicked', self.__release)
         self.btn_update.connect('clicked', self.__update_callback)
         #self.btn_url.connect('clicked', self.short_url)
         #self.btn_url.set_sensitive(False)
-        #self.toolbox.connect('activate', self.show_options)
         #self.update_text.connect('mykeypress', self.__on_key_pressed)
 
         if SPELLING:
@@ -103,31 +102,21 @@ class UpdateBox(Gtk.Window):
             # FIXME: Usar el log
             print 'DEBUG:UI:Can\'t load Gtkspell'
 
-        self.__reset_internal_var()
+        self.__reset()
         self.__count_chars()
 
     def __unclose(self, widget, event=None):
         if not self.blocked:
-            self.__done()
+            self.done()
         return True
 
-    def __reset_internal_var(self):
+    def __reset(self):
         self._account_id = None
         self._in_reply_id = None
         self._in_reply_user = None
         self._message = None
         self._direct_message_to = None
         self.message.set_markup('')
-
-    def __release(self, widget):
-        self.release()
-
-    def __done(self, widget=None, event=None):
-        _buffer = self.update_text.get_buffer()
-        _buffer.set_text('')
-        self.__reset_internal_var()
-        self.hide()
-        return True
 
     def __count_chars(self, widget=None):
         _buffer = self.update_text.get_buffer()
@@ -137,20 +126,36 @@ class UpdateBox(Gtk.Window):
     def __update_callback(self, widget):
         _buffer = self.update_text.get_buffer()
         start, end = _buffer.get_bounds()
-        tweet = _buffer.get_text(start, end, False)
-        #if tweet == '':
-        #    self.waiting.stop(error=True)
-        #    self.lblerror.set_markup("<span size='small'>%s</span>" %
-        #        _('Hey!... you must write something'))
-        #    return
-        #elif _buffer.get_char_count() > 140:
-        #    self.waiting.stop(error=True)
-        #    self.lblerror.set_markup("<span size='small'>%s</span>" %
-        #        _('Hey!... that message looks like a testament'))
-        #    return
+        status = _buffer.get_text(start, end, False)
+        accounts = []
+        for key, chk in self.accounts.iteritems():
+            if chk.get_active():
+                accounts.append(key)
 
-        #self.base.request_update_status(tweet, self.in_reply_id)
-        self.block(i18n.get('updating_status'))
+        # Validate basic variables
+        if len(accounts) == 0:
+            self.message.set_error_text(i18n.get('select_account_to_post'))
+            return
+
+        if status == '':
+            self.message.set_error_text(i18n.get('you_must_write_something'))
+            return
+
+        if len(status) > MAX_CHAR:
+            self.message.set_error_text(i18n.get('message_looks_like_testament'))
+            return
+
+        # Send direct message
+        if self._direct_message_to:
+            if len(accounts) > 1:
+                self.message.set_error_text(i18n.get('can_send_message_to_one_account'))
+            else:
+                self.lock(i18n.get('sending_message'))
+                self.base.direct_message(accounts[0], self._direct_message_to, status)
+        # Send regular status
+        else:
+            self.lock(i18n.get('updating_status'))
+            self.base.update_status(accounts, status, self._in_reply_id)
 
     def __show(self, message=None, status_id=None, account_id=None, reply_id=None, reply_user=None, ):
         # Check for new accounts
@@ -179,7 +184,7 @@ class UpdateBox(Gtk.Window):
             self.accounts[self._account_id].set_active(True)
 
         self.show_all()
-        self.release()
+        self.unlock()
         self.__count_chars()
 
     def show(self):
@@ -211,38 +216,58 @@ class UpdateBox(Gtk.Window):
         self._direct_message_to = username
         self.__show()
 
+    def done(self, widget=None, event=None):
+        _buffer = self.update_text.get_buffer()
+        _buffer.set_text('')
+        self.__reset()
+        self.hide()
+        return True
+
     def clear(self, widget):
         self.update_text.get_buffer().set_text('')
         self._direct_message_to = None
 
-    def block(self, msg):
+    def lock(self, msg):
         self.blocked = True
         self.update_text.set_sensitive(False)
         self.btn_update.set_sensitive(False)
-        for key, account in self.accounts.iteritems():
-            account.set_sensitive(False)
         self.spinner.start()
         self.spinner.show()
         self.message.set_markup(msg)
 
-    def release(self, msg=None):
+        for key, account in self.accounts.iteritems():
+            account.set_sensitive(False)
+
+    def unlock(self, msg=None):
         self.blocked = False
         self.update_text.set_sensitive(True)
         self.btn_update.set_sensitive(True)
-        if not self._account_id:
-            for key, account in self.accounts.iteritems():
-                account.set_sensitive(True)
         self.spinner.stop()
         self.spinner.hide()
 
-        #if not msg:
-        #    msg = _('Oh oh... I couldn\'t send the tweet')
+        if not self._account_id:
+            for key, account in self.accounts.iteritems():
+                account.set_sensitive(True)
+
         if msg:
-            self.message.set_markup(msg)
-        else:
-            self.message.set_markup('')
+            if msg != 'Unknown error':
+                self.message.set_error_text(msg)
+            else:
+                self.message.set_error_text(i18n.get('i_couldnt_update_status'))
 
         self.set_focus(self.update_text)
+
+
+    def update_error(self, msg=None):
+        self.unlock(msg)
+
+    def broadcast_error(self, posted_accounts, err_accounts):
+        errmsg = i18n.get('error_posting_to') % (', '.join(err_accounts))
+        self.unlock(errmsg)
+        for account_id in posted_accounts:
+            self.accounts[account_id].set_sensitive(False)
+            self.accounts[account_id].set_active(False)
+
 
     """
 

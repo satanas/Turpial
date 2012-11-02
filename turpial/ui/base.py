@@ -152,24 +152,45 @@ class Base(Singleton):
             self.log.debug('Opening URL %s with default browser' % url)
             webbrowser.open(url)
 
+    def update_status(self, accounts, message, in_reply_to=None):
+        if len(accounts) > 1:
+            self.worker.register(self.core.broadcast_status, (accounts, message),
+                self.after_broadcast_status)
+        else:
+            self.worker.register(self.core.update_status, (accounts[0],
+                message, in_reply_to), self.after_update_status, accounts[0])
+
+    def direct_message(self, account, user, message):
+        self.worker.register(self.core.send_direct, (account, user, message),
+            self.after_direct_message)
+
     #================================================================
-    # Hooks to be implemented on each interface
+    # Hooks that can be implemented on each interface (optionals)
     #================================================================
 
     def after_save_account(self, account_id, err_msg=None):
-        raise NotImplementedError
+        pass
 
     def after_delete_account(self, deleted, err_msg=None):
-        raise NotImplementedError
+        pass
 
     def after_save_column(self, column_id, err_msg=None):
-        raise NotImplementedError
+        pass
 
     def after_delete_column(self, column_id, err_msg=None):
-        raise NotImplementedError
+        pass
 
     def after_login(self):
-        raise NotImplementedError
+        pass
+
+    def after_update_status(self, response, account_id):
+        pass
+
+    def after_broadcast_status(self, response):
+        pass
+
+    def after_direct_message(self, response):
+        pass
 
     #================================================================
     # Methods to override
@@ -273,45 +294,6 @@ class Base(Singleton):
 
     def _login_callback(self, arg, account_id):
         pass
-
-    def update_status_response(self, response, account_id):
-        if response.code > 0:
-            self.container.execute('update_status_error("' + response.errmsg + '");')
-        else:
-            html_status = self.htmlparser.single_status(response.items)
-            id_ = '#list-%s-timeline' % account_id
-            #self.container.prepend_element(id_, html_status, 'done_update_box(true);')
-            self.container.execute('done_update_box(true);')
-            column_key = '%s-timeline' % account_id
-            #if self.columns.has_key(column_key):
-            #    self.columns[column_key].append(response.items)
-
-    def broadcast_status_response(self, responses):
-        cmd = ''
-        bad_acc = []
-        good_acc = []
-        error = False
-        for resp in responses:
-            if resp.code > 0:
-                error = True
-                pr_name = i18n.get(resp.account_id.split('-')[1])
-                bad_acc.append("%s (%s)" % (resp.account_id.split('-')[0], pr_name))
-            else:
-                html_status = self.htmlparser.status(resp.items)
-                html_status = html_status.replace('"', '\\"')
-                #cmd += 'append_status_to_timeline("%s", "%s");' % (resp.account_id, html_status)
-                good_acc.append(resp.account_id)
-                column_key = '%s-timeline' % resp.account_id
-                #if self.columns.has_key(column_key):
-                #    self.columns[column_key].append(resp.items)
-
-        if error:
-            errmsg = i18n.get('error_posting_to') % (', '.join(bad_acc))
-            accounts = '["' + '","'.join(good_acc) + '"]'
-            cmd += 'broadcast_status_error(' + accounts + ', "' + errmsg + '");'
-        else:
-            cmd += 'done_update_box();'
-        self.container.execute(cmd)
 
 
     def repeat_response(self, response, user_data):
@@ -494,14 +476,6 @@ class Base(Singleton):
             print cmd
         self.container.execute(cmd)
 
-    def direct_message_response(self, response):
-        if response.code > 0:
-            self.container.execute('update_status_error("' + response.errmsg + '");')
-        else:
-            cmd = "show_notice('%s', 'info'); done_update_box_with_direct();" % (
-                i18n.get('direct_message_sent_successfully'))
-            self.container.execute(cmd)
-
     #---------------------------------------------------------------------------
 
  
@@ -532,20 +506,6 @@ class Base(Singleton):
 
         self.worker.register(self.core.unmark_favorite, (account_id, status_id),
             self.fav_response, (False, status_id))
-
-    def update_status(self, account, text):
-        message = base64.b64decode(text)
-        accounts = []
-        for acc in account.split('|'):
-            accounts.append(acc)
-
-        if len(accounts) > 1:
-            self.worker.register(self.core.broadcast_status, (accounts, message),
-                self.broadcast_status_response)
-        else:
-            self.worker.register(self.core.update_status, (accounts[0], message),
-                self.update_status_response, accounts[0])
-
 
     def reply_status(self, account, status_id, text):
         message = base64.b64decode(text)
@@ -631,11 +591,6 @@ class Base(Singleton):
         message = base64.b64decode(text)
         self.worker.register(self.core.autoshort_url, (message),
             self.short_url_response)
-
-    def direct_message(self, account, user, text):
-        message = base64.b64decode(text)
-        self.worker.register(self.core.send_direct, (account, user, message),
-            self.direct_message_response)
 
     def profile_image(self, account, user):
         self.imageview.loading()

@@ -44,20 +44,29 @@ class UpdateBox(Gtk.Window):
         self.btn_update = Gtk.Button(i18n.get('update'))
         self.btn_update.set_tooltip_text(i18n.get('update_status') + ' (Ctrl + Enter)')
 
-        self.btn_short = Gtk.Button(i18n.get('short'))
+        self.btn_short = Gtk.Button()
+        self.btn_short.set_image(self.base.load_image('action-shorten.png'))
         self.btn_short.set_tooltip_text(i18n.get('short_urls'))
 
-        self.btn_upload = Gtk.Button(i18n.get('image'))
+        self.btn_upload = Gtk.Button()
+        self.btn_upload.set_image(self.base.load_image('action-upload.png'))
         self.btn_upload.set_tooltip_text(i18n.get('upload_image'))
 
         self.spinner = Gtk.Spinner()
         self.message = MarkupLabel(xalign=1)
 
+        opt_box = Gtk.HBox()
+        opt_box.pack_start(self.btn_upload, False, False, 1)
+        opt_box.pack_start(self.btn_short, False, False, 1)
+
+        opt_align = Gtk.Alignment()
+        opt_align.set(0, -1, -1, -1)
+        opt_align.add(opt_box)
+
         box = Gtk.HBox()
+        box.pack_start(opt_align, False, False, 0)
         box.pack_start(self.message, True, True, 0)
         box.pack_start(self.spinner, False, False, 5)
-        box.pack_start(self.btn_upload, False, False, 2)
-        box.pack_start(self.btn_short, False, False, 2)
         box.pack_start(self.btn_update, False, False, 2)
         buttonbox = Gtk.Alignment()
         buttonbox.set_property('xalign', 1)

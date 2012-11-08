@@ -232,6 +232,24 @@ class Main(Base, Gtk.Window):
         else:
             self.update_box.done()
 
+    def after_repeat(self, response, action):
+        """ Method used for repeat and unrepeat statuses """
+        pass
+
+    def after_favorite(self, response, action):
+        # TODO: Check for errors
+        if action == self.ACTION_FAVORITE:
+            self._container.mark_status_favorite(response.items)
+        else:
+            self._container.unmark_status_favorite(response.items)
+
+    def after_repeat(self, response, action):
+        # TODO: Check for errors
+        if action == self.ACTION_REPEAT:
+            self._container.mark_status_repeat(response.items)
+        else:
+            self._container.unmark_status_repeat(response.items)
+
     #================================================================
     # Own methods
     #================================================================
@@ -260,6 +278,27 @@ class Main(Base, Gtk.Window):
 
     def show_update_box(self, widget=None, direct=False):
         self.update_box.show()
+
+    def show_update_box_for_reply(self, in_reply_id, account_id, in_reply_user):
+        self.update_box.show_for_reply(in_reply_id, account_id, in_reply_user)
+
+    def show_update_box_for_quote(self, message):
+        self.update_box.show_for_quote(message)
+
+    def confirm_repeat_status(self, status):
+        # TODO: Confirm
+        self.repeat_status(status)
+
+    def confirm_unrepeat_status(self, status):
+        # TODO: Confirm
+        self.unrepeat_status(status)
+
+    def confirm_favorite_status(self, status):
+        self.favorite_status(status)
+
+    def confirm_unfavorite_status(self, status):
+        self.unfavorite_status(status)
+
 
     def update_column(self, arg, data):
         column, notif, max_ = data

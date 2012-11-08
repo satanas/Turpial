@@ -19,7 +19,5 @@ class MarkupLabel(Gtk.Label):
 
     def set_error_text(self, text):
         text = escape_text_for_markup(text)
-        self.set_markup("<span size='small' foreground='#ff0000'>%s</span>" % text)
+        self.set_markup("<span foreground='#ff0000'>%s</span>" % text) # size='small'
 
-    def set_markup(self, text):
-        Gtk.Label.set_markup(self, text)

@@ -21,6 +21,8 @@ from turpial.ui.gtk.markuplabel import MarkupLabel
 MAX_CHAR = 140
 
 class UpdateBox(Gtk.Window):
+    CURSOR_START = 0
+    CURSOR_END = -1
     def __init__(self, base):
         Gtk.Window.__init__(self)
 
@@ -157,6 +159,19 @@ class UpdateBox(Gtk.Window):
             self.lock(i18n.get('updating_status'))
             self.base.update_status(accounts, status, self._in_reply_id)
 
+    def __move_cursor(self, position):
+        _buffer = self.update_text.get_buffer()
+        start_iter = _buffer.get_start_iter()
+        end_iter = _buffer.get_end_iter()
+        length = len(_buffer.get_text(start_iter, end_iter, False))
+
+        if position == self.CURSOR_START:
+            _buffer.place_cursor(start_iter)
+        elif position == self.CURSOR_END:
+            _buffer.place_cursor(end_iter)
+        else:
+            pass
+
     def __show(self, message=None, status_id=None, account_id=None, reply_id=None, reply_user=None, ):
         # Check for new accounts
         for account in self.base.get_all_accounts():
@@ -195,13 +210,16 @@ class UpdateBox(Gtk.Window):
         self.title_caption = i18n.get('update_status')
         self._message = message
         self.__show()
+        self.__move_cursor(self.CURSOR_START)
 
     def show_for_reply(self, in_reply_id, account_id, in_reply_user):
-        self.title_caption = "%s @%s" % (i18n.get('in_reply_to'), in_reply_user)
+        self.title_caption = i18n.get('reply_status')
         self._in_reply_id = in_reply_id
         self._in_reply_user = in_reply_user
         self._account_id = account_id
+        self._message = "%s " % (in_reply_user)
         self.__show()
+        self.__move_cursor(self.CURSOR_END)
 
     def show_for_direct(self,account_id, username):
         self.title_caption = "%s @%s" % (i18n.get('send_message_to'), username)

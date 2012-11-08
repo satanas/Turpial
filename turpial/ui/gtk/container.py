@@ -97,3 +97,19 @@ class Container(Gtk.VBox):
         del self.columns[column_id]
         if len(self.columns) == 0:
             self.empty()
+
+    def mark_status_favorite(self, status):
+        for key, column in self.columns.iteritems():
+            column.mark_favorite(status)
+
+    def unmark_status_favorite(self, status):
+        for key, column in self.columns.iteritems():
+            column.unmark_favorite(status)
+
+    def mark_status_repeat(self, status):
+        for key, column in self.columns.iteritems():
+            column.mark_repeat(status)
+
+    def unmark_status_repeat(self, status):
+        for key, column in self.columns.iteritems():
+            column.unmark_repeat(status)

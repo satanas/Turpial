@@ -5,11 +5,15 @@
 import re
 
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import Pango
+from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
 from turpial.ui.lang import i18n
 from turpial.ui.gtk.common import *
+from turpial.ui.gtk.statusmenu import StatusMenu
+from turpial.ui.gtk.imagebutton import ImageButton
 from turpial.ui.gtk.markuplabel import MarkupLabel
 
 
@@ -21,7 +25,17 @@ class StatusWidget(Gtk.VBox):
         Gtk.VBox.__init__(self)
 
         self.base = base
+        self.status = status
         self.set_margin_bottom(self.OUTTER_BOTTOM_MARGIN)
+
+        # Variables to control work in progress over the status
+        self.in_progress = {
+            StatusProgress.FAVING:  False,
+            StatusProgress.UNFAVING: False,
+            StatusProgress.RETWEETING: False,
+            StatusProgress.UNRETWEETING: False,
+            StatusProgress.DELETING: False,
+        }
 
         self.avatar = Gtk.Image()
         self.avatar.set_margin_right(self.AVATAR_MARGIN)
@@ -30,10 +44,11 @@ class StatusWidget(Gtk.VBox):
         avatar_box.set_property('xalign', 0.5)
         avatar_box.set_property('yalign', 0.0)
 
-        self.favorite_mark = Gtk.Image()
+        self.favorited_mark = Gtk.Image()
         self.protected_mark = Gtk.Image()
         self.verified_mark = Gtk.Image()
         self.reposted_mark = Gtk.Image()
+        self.repeated_mark = Gtk.Image()
 
         self.username = MarkupLabel()
         self.status_text = MarkupLabel()
@@ -70,7 +85,8 @@ class StatusWidget(Gtk.VBox):
         header.pack_start(self.username, False, False, 0)
         header.pack_start(self.verified_mark, False, False, 0)
         header.pack_start(self.protected_mark, False, False, 0)
-        header.pack_start(self.favorite_mark, False, False, 0)
+        header.pack_start(self.favorited_mark, False, False, 0)
+        header.pack_start(self.repeated_mark, False, False, 0)
 
         content = Gtk.VBox()
         content.pack_start(header, False, False, 0)
@@ -85,16 +101,27 @@ class StatusWidget(Gtk.VBox):
         self.show_all()
 
         # After showing all widgets we set the marks
-        self.set_favorite_mark(status.is_favorite)
-        self.set_protected_mark(status.is_protected)
-        self.set_verified_mark(status.is_verified)
+        self.set_favorited_mark(status.favorited)
+        self.set_protected_mark(status.protected)
+        self.set_verified_mark(status.verified)
+        self.set_repeated_mark(status.retweeted)
         self.set_reposted_mark(status.reposted_by)
+
+        self.status_text.connect('button-release-event', self.__menu)
+        self.footer.connect('button-release-event', self.__menu)
+
+    def __menu(self, widget, event=None, data=None):
+        if event.button != 3:
+            return
+        self.menu = StatusMenu(self.base, self.status, self.in_progress)
+        self.menu.show_all()
+        self.menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
 
     def __highlight_urls(self, status, text):
         for url in status.entities['urls']:
             if url.url == None:
                 url.url = url.search_for
-            cad = "<a href='%s'>%s</a>" % (url.url, url.display_text)
+            cad = "<a href='%s'>%s</a>" % (url.url, escape_text_for_markup(url.display_text))
             text = text.replace(url.search_for, cad)
         return text
 
@@ -129,11 +156,23 @@ class StatusWidget(Gtk.VBox):
             print "Opening profile"
         return True
 
-    def set_favorite_mark(self, value):
+    def update(self, status):
+        self.status = status
+        # render again
+
+    def set_favorited_mark(self, value):
         if value:
-            self.favorite_mark.set_from_pixbuf(self.base.load_image('mark-favorite.png', True))
+            self.favorited_mark.set_from_pixbuf(self.base.load_image('mark-favorite.png', True))
         else:
-            self.favorite_mark.set_from_pixbuf(None)
+            self.favorited_mark.set_from_pixbuf(None)
+        self.status.favorited = value
+
+    def set_repeated_mark(self, value):
+        if value:
+            self.repeated_mark.set_from_pixbuf(self.base.load_image('mark-repeated.png', True))
+        else:
+            self.repeated_mark.set_from_pixbuf(None)
+        self.status.repeated = value
 
     def set_protected_mark(self, value):
         if value:
@@ -141,14 +180,16 @@ class StatusWidget(Gtk.VBox):
         else:
             self.protected_mark.set_from_pixbuf(None)
 
-    def set_reposted_mark(self, value):
-        if value:
-            self.reposted_mark.set_from_pixbuf(self.base.load_image('mark-reposted.png', True))
-        else:
-            self.reposted_mark.set_from_pixbuf(None)
 
     def set_verified_mark(self, value):
         if value:
             self.verified_mark.set_from_pixbuf(self.base.load_image('mark-verified.png', True))
         else:
             self.verified_mark.set_from_pixbuf(None)
+
+    def set_reposted_mark(self, value):
+        if value:
+            self.reposted_mark.set_from_pixbuf(self.base.load_image('mark-reposted.png', True))
+        else:
+            self.reposted_mark.set_from_pixbuf(None)
+

@@ -89,11 +89,32 @@ class StatusesColumn(Gtk.VBox):
         s = StatusWidget(self.base, status)
         self._list.pack_start(s, False, False, 0)
 
+    def __mark_favorite(self, child, status):
+        if child.status.id_ != status.id_:
+            return
+        child.set_favorited_mark(True)
+
+    def __unmark_favorite(self, child, status):
+        if child.status.id_ != status.id_:
+            return
+        child.set_favorited_mark(False)
+
+    def __mark_repeat(self, child, status):
+        if child.status.id_ != status.id_:
+            return
+        child.set_repeated_mark(True)
+
+    def __unmark_repeat(self, child, status):
+        if child.status.id_ != status.id_:
+            return
+        child.set_repeated_mark(False)
+
     def show(self):
         self.show_all()
         self.spinner.hide()
 
     def clear(self):
+        # TODO: Fix or reimplement
         self.model.clear()
 
     def start_updating(self):
@@ -127,3 +148,15 @@ class StatusesColumn(Gtk.VBox):
 
         self.last_id = statuses[0].id_
         #self.click_handler = self.list.connect("cursor-changed", self.__on_select)
+
+    def mark_favorite(self, status):
+        self._list.foreach(self.__mark_favorite, status)
+
+    def unmark_favorite(self, status):
+        self._list.foreach(self.__unmark_favorite, status)
+
+    def mark_repeat(self, status):
+        self._list.foreach(self.__mark_repeat, status)
+
+    def unmark_repeat(self, status):
+        self._list.foreach(self.__unmark_repeat, status)

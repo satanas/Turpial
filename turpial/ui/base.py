@@ -16,7 +16,6 @@ import subprocess
 from xml.sax.saxutils import unescape
 
 from libturpial.common import *
-from libturpial.common import LoginStatus
 from libturpial.api.models.mediacontent import *
 from libturpial.api.interfaces.service import ServiceResponse
 from libturpial.api.services.showmedia import utils as showmediautils
@@ -32,6 +31,11 @@ from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 MIN_WINDOW_WIDTH = 250
 
 class Base(Singleton):
+    ACTION_REPEAT = 'repeat'
+    ACTION_UNREPEAT = 'unrepeat'
+    ACTION_FAVORITE = 'favorite'
+    ACTION_UNFAVORITE = 'unfavorite'
+
     '''Parent class for every UI interface'''
     def __init__(self, core):
         Singleton.__init__(self, 'turpial.pid')
@@ -164,6 +168,23 @@ class Base(Singleton):
         self.worker.register(self.core.send_direct, (account, user, message),
             self.after_direct_message)
 
+    def repeat_status(self, status):
+        self.worker.register(self.core.repeat_status, (status.account_id, status.id_),
+            self.after_repeat, (self.ACTION_REPEAT))
+
+    def unrepeat_status(self, status):
+        self.worker.register(self.core.unrepeat_status, (status.account_id, status.id_),
+            self.after_repeat, (self.ACTION_UNREPEAT))
+
+    def favorite_status(self, status):
+        self.worker.register(self.core.mark_favorite, (status.account_id, status.id_),
+            self.after_favorite, (self.ACTION_FAVORITE))
+
+    def unfavorite_status(self, status):
+        self.worker.register(self.core.unmark_favorite, (status.account_id, status.id_),
+            self.after_favorite, (self.ACTION_UNFAVORITE))
+
+
     #================================================================
     # Hooks that can be implemented on each interface (optionals)
     #================================================================
@@ -191,6 +212,15 @@ class Base(Singleton):
 
     def after_direct_message(self, response):
         pass
+
+    def after_repeat(self, response, action):
+        """ Method used for repeat and unrepeat statuses """
+        pass
+
+    def after_favorite(self, response, action):
+        """ Method used for favorite and unfavorite statuses """
+        pass
+
 
     #================================================================
     # Methods to override
@@ -477,35 +507,6 @@ class Base(Singleton):
         self.container.execute(cmd)
 
     #---------------------------------------------------------------------------
-
- 
-    def repeat_status(self, account_id, status_id):
-        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('retweeting'))
-        self.container.execute(cmd)
-
-        self.worker.register(self.core.repeat_status, (account_id, status_id),
-            self.repeat_response, (True, status_id))
-
-    def unrepeat_status(self, account_id, status_id):
-        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('unretweeting'))
-        self.container.execute(cmd)
-
-        self.worker.register(self.core.unrepeat_status, (account_id, status_id),
-                self.repeat_response, (False, status_id))
-
-    def fav_status(self, account_id, status_id):
-        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('adding_to_fav'))
-        self.container.execute(cmd)
-
-        self.worker.register(self.core.mark_favorite, (account_id, status_id),
-            self.fav_response, (True, status_id))
-
-    def unfav_status(self, account_id, status_id):
-        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('removing_from_fav'))
-        self.container.execute(cmd)
-
-        self.worker.register(self.core.unmark_favorite, (account_id, status_id),
-            self.fav_response, (False, status_id))
 
     def reply_status(self, account, status_id, text):
         message = base64.b64decode(text)

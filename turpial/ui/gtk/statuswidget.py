@@ -121,7 +121,7 @@ class StatusWidget(Gtk.VBox):
         for url in status.entities['urls']:
             if url.url == None:
                 url.url = url.search_for
-            cad = "<a href='%s'>%s</a>" % (url.url, escape_text_for_markup(url.display_text))
+            cad = "<a href='%s'>%s</a>" % (escape_text_for_markup(url.url), escape_text_for_markup(url.display_text))
             text = text.replace(url.search_for, cad)
         return text
 

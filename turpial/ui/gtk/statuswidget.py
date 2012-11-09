@@ -51,6 +51,7 @@ class StatusWidget(Gtk.VBox):
         self.repeated_mark = Gtk.Image()
 
         self.username = MarkupLabel()
+        self.username.set_ellipsize(Pango.EllipsizeMode.END)
         self.status_text = MarkupLabel()
         self.status_text.connect('activate-link', self.__open_url)
         self.footer = MarkupLabel()
@@ -80,13 +81,20 @@ class StatusWidget(Gtk.VBox):
         footer += '</span>'
         self.footer.set_markup(footer)
 
+        starbox = Gtk.HBox()
+        starbox.pack_start(self.repeated_mark, False, False, 2)
+        starbox.pack_start(self.favorited_mark, False, False, 2)
+
+        staralign = Gtk.Alignment()
+        staralign.set(1, -1, -1, -1)
+        staralign.add(starbox)
+
         header = Gtk.HBox()
-        header.pack_start(self.reposted_mark, False, False, 0)
-        header.pack_start(self.username, False, False, 0)
-        header.pack_start(self.verified_mark, False, False, 0)
+        header.pack_start(self.reposted_mark, False, False, 2)
+        header.pack_start(self.username, False, False, 2)
+        header.pack_start(self.verified_mark, False, False, 2)
         header.pack_start(self.protected_mark, False, False, 0)
-        header.pack_start(self.favorited_mark, False, False, 0)
-        header.pack_start(self.repeated_mark, False, False, 0)
+        header.pack_start(staralign, True, True, 0)
 
         content = Gtk.VBox()
         content.pack_start(header, False, False, 0)

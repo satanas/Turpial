@@ -41,8 +41,7 @@ class StatusWidget(Gtk.VBox):
         self.avatar.set_margin_right(self.AVATAR_MARGIN)
         avatar_box = Gtk.Alignment()
         avatar_box.add(self.avatar)
-        avatar_box.set_property('xalign', 0.5)
-        avatar_box.set_property('yalign', 0.0)
+        avatar_box.set(0.5, 0, -1, -1)
 
         self.favorited_mark = Gtk.Image()
         self.protected_mark = Gtk.Image()

@@ -109,6 +109,11 @@ class StatusesColumn(Gtk.VBox):
             return
         child.set_repeated_mark(False)
 
+    def __delete_status(self, child, status):
+        if child.status.id_ != status.id_:
+            return
+        self._list.remove(child)
+
     def show(self):
         self.show_all()
         self.spinner.hide()
@@ -160,3 +165,6 @@ class StatusesColumn(Gtk.VBox):
 
     def unmark_repeat(self, status):
         self._list.foreach(self.__unmark_repeat, status)
+
+    def delete_status(self, status):
+        self._list.foreach(self.__delete_status, status)

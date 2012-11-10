@@ -232,10 +232,6 @@ class Main(Base, Gtk.Window):
         else:
             self.update_box.done()
 
-    def after_repeat(self, response, action):
-        """ Method used for repeat and unrepeat statuses """
-        pass
-
     def after_favorite(self, response, action):
         # TODO: Check for errors
         if action == self.ACTION_FAVORITE:
@@ -249,6 +245,15 @@ class Main(Base, Gtk.Window):
             self._container.mark_status_repeat(response.items)
         else:
             self._container.unmark_status_repeat(response.items)
+
+    def after_delete_status(self, response):
+        if response.code > 0:
+            # show notice
+            # unlock status
+            pass
+        else:
+            self._container.delete_status(response.items)
+
 
     #================================================================
     # Own methods

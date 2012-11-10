@@ -99,6 +99,7 @@ class Container(Gtk.VBox):
             self.empty()
 
     def mark_status_favorite(self, status):
+        # TODO: Optimize this function. Map?
         for key, column in self.columns.iteritems():
             column.mark_favorite(status)
 
@@ -113,3 +114,8 @@ class Container(Gtk.VBox):
     def unmark_status_repeat(self, status):
         for key, column in self.columns.iteritems():
             column.unmark_repeat(status)
+
+    def delete_status(self, status):
+        for key, column in self.columns.iteritems():
+            column.delete_status(status)
+

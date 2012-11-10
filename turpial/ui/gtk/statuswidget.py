@@ -17,16 +17,17 @@ from turpial.ui.gtk.imagebutton import ImageButton
 from turpial.ui.gtk.markuplabel import MarkupLabel
 
 
-class StatusWidget(Gtk.VBox):
+class StatusWidget(Gtk.EventBox):
     OUTTER_BOTTOM_MARGIN = 5
     AVATAR_MARGIN = 5
 
     def __init__(self, base, status):
-        Gtk.VBox.__init__(self)
+        Gtk.EventBox.__init__(self)
 
         self.base = base
         self.status = status
         self.set_margin_bottom(self.OUTTER_BOTTOM_MARGIN)
+        self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(65535, 65535, 65535))
 
         # Variables to control work in progress over the status
         self.in_progress = {
@@ -64,7 +65,7 @@ class StatusWidget(Gtk.VBox):
         self.username.set_markup(user)
 
         pango_text = '<span size="9000">%s</span>' % escape_text_for_markup(status.text)
-        pango_text = self.__highlight_urls(status, status.text)
+        pango_text = self.__highlight_urls(status, pango_text)
         pango_text = self.__highlight_hashtags(status, pango_text)
         pango_text = self.__highlight_groups(status, pango_text)
         pango_text = self.__highlight_mentions(status, pango_text)
@@ -104,7 +105,9 @@ class StatusWidget(Gtk.VBox):
         box.pack_start(avatar_box, False, False, 0)
         box.pack_start(content, True, True, 0)
 
-        self.add(box)
+        bbox = Gtk.VBox()
+        bbox.pack_start(box, True, True, 0)
+        self.add(bbox)
         self.show_all()
 
         # After showing all widgets we set the marks
@@ -114,12 +117,11 @@ class StatusWidget(Gtk.VBox):
         self.set_repeated_mark(status.retweeted)
         self.set_reposted_mark(status.reposted_by)
 
-        self.status_text.connect('button-release-event', self.__menu)
-        self.footer.connect('button-release-event', self.__menu)
+        self.connect('button-release-event', self.__menu)
 
     def __menu(self, widget, event=None, data=None):
         if event.button != 3:
-            return
+            return False
         self.menu = StatusMenu(self.base, self.status, self.in_progress)
         self.menu.show_all()
         self.menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())

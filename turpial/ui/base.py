@@ -184,6 +184,10 @@ class Base(Singleton):
         self.worker.register(self.core.unmark_favorite, (status.account_id, status.id_),
             self.after_favorite, (self.ACTION_UNFAVORITE))
 
+    def delete_status(self, status):
+        self.worker.register(self.core.destroy_status, (status.account_id, status.id_),
+            self.after_delete_status)
+
 
     #================================================================
     # Hooks that can be implemented on each interface (optionals)
@@ -219,6 +223,9 @@ class Base(Singleton):
 
     def after_favorite(self, response, action):
         """ Method used for favorite and unfavorite statuses """
+        pass
+
+    def after_delete_status(self, response):
         pass
 
 
@@ -512,13 +519,6 @@ class Base(Singleton):
         message = base64.b64decode(text)
         self.worker.register(self.core.update_status, (account, message, status_id),
             self.update_status_response, account)
-
-    def delete_status(self, account, status_id):
-        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('deleting'))
-        self.container.execute(cmd)
-
-        self.worker.register(self.core.destroy_status, (account, status_id),
-            self.delete_status_response, status_id)
 
     def show_profile(self, account_id, username):
         #self.container.execute('show_profile_modal()')

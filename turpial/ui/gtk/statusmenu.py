@@ -84,11 +84,13 @@ class StatusMenu(Gtk.Menu):
     def __delete_item(self, status):
         if status.is_own:
             delete = Gtk.MenuItem(i18n.get('delete'))
+            delete.connect('activate', self.__on_delete, status)
             self.append(delete)
 
-    def __delete_item(self, status):
+    def __delete_message_item(self, status):
         if status.is_own:
             delete = Gtk.MenuItem(i18n.get('delete'))
+            delete.connect('activate', self.__on_delete_message, status)
             self.append(delete)
 
     def __delete_direct_message_item(self, status):
@@ -115,6 +117,12 @@ class StatusMenu(Gtk.Menu):
 
     def __on_unfavorite(self, widget, status):
         self.base.confirm_unfavorite_status(status)
+
+    def __on_delete(self, widget, status):
+        self.base.delete_status(status)
+
+    def __on_delete_message(self, widget, status):
+        pass
 
     # Methods to build menu
 

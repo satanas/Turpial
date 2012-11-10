@@ -118,7 +118,7 @@ class UpdateBox(Gtk.Window):
 
     def __unclose(self, widget, event=None):
         if not self.blocked:
-            self.done()
+            self.base.show_confirm_dialog(i18n.get('do_you_want_to_discard_message'), self.done)
         return True
 
     def __reset(self):
@@ -210,6 +210,9 @@ class UpdateBox(Gtk.Window):
         self.show_all()
         self.unlock()
         self.__count_chars()
+
+    def close(self):
+        self.__unclose(None)
 
     def show(self):
         self.title_caption = i18n.get('whats_happening')

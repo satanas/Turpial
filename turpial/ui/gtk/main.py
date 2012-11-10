@@ -170,7 +170,6 @@ class Main(Base, Gtk.Window):
             self.__show_media_callback)
 
     def login(self, account_id):
-        #self.show_confirm_dialog('hola mundo', None, None)
         #return
         self.accounts_dialog.update()
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)

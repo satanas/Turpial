@@ -170,6 +170,7 @@ class Main(Base, Gtk.Window):
             self.__show_media_callback)
 
     def login(self, account_id):
+        #self.show_confirm_dialog('hola mundo', None, None)
         #return
         self.accounts_dialog.update()
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
@@ -290,13 +291,21 @@ class Main(Base, Gtk.Window):
     def show_update_box_for_quote(self, message):
         self.update_box.show_for_quote(message)
 
+    def show_confirm_dialog(self, message, callback, *args):
+        dialog = Gtk.MessageDialog(self, Gtk.DialogFlags.MODAL,
+            Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, message)
+        response = dialog.run()
+        dialog.destroy()
+        if response == Gtk.ResponseType.YES:
+            callback(*args)
+
     def confirm_repeat_status(self, status):
-        # TODO: Confirm
-        self.repeat_status(status)
+        self.show_confirm_dialog(i18n.get('do_you_want_to_repeat_status'),
+            self.repeat_status, status)
 
     def confirm_unrepeat_status(self, status):
-        # TODO: Confirm
-        self.unrepeat_status(status)
+        self.show_confirm_dialog(i18n.get('do_you_want_to_undo_repeat_status'),
+            self.unrepeat_status, status)
 
     def confirm_favorite_status(self, status):
         self.favorite_status(status)
@@ -304,6 +313,9 @@ class Main(Base, Gtk.Window):
     def confirm_unfavorite_status(self, status):
         self.unfavorite_status(status)
 
+    def confirm_delete_status(self, status):
+        self.show_confirm_dialog(i18n.get('do_you_want_to_delete_status'),
+            self.delete_status, status)
 
     def update_column(self, arg, data):
         column, notif, max_ = data

@@ -119,7 +119,7 @@ class StatusMenu(Gtk.Menu):
         self.base.confirm_unfavorite_status(status)
 
     def __on_delete(self, widget, status):
-        self.base.delete_status(status)
+        self.base.confirm_delete_status(status)
 
     def __on_delete_message(self, widget, status):
         pass

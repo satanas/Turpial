@@ -119,6 +119,11 @@ class StatusWidget(Gtk.EventBox):
 
         self.connect('button-release-event', self.__menu)
 
+        self.base.download_user_avatar(status.account_id, status.avatar, self.update_avatar)
+
+    def update_avatar(self, filepath):
+        self.avatar.set_from_file(filepath)
+
     def __menu(self, widget, event=None, data=None):
         if event.button != 3:
             return False

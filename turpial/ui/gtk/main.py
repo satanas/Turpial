@@ -3,6 +3,7 @@
 # GTK3 main view for Turpial
 
 import os
+import urllib2
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -67,6 +68,10 @@ class Main(Base, Gtk.Window):
         self.worker = Worker()
         self.worker.set_timeout_callback(self.__worker_timeout_callback)
         self.worker.start()
+
+        self.avatars_worker = Worker()
+        self.avatars_worker.set_timeout_callback(self.__worker_timeout_callback)
+        self.avatars_worker.start()
 
         # Persistent dialogs
         self.about_dialog = AboutDialog(self)
@@ -151,6 +156,8 @@ class Main(Base, Gtk.Window):
         self.tray = None
         self.worker.quit()
         self.worker.join()
+        self.avatars_worker.quit()
+        self.avatars_worker.join()
         if widget:
             Gtk.main_quit()
         if force:
@@ -353,6 +360,24 @@ class Main(Base, Gtk.Window):
             self._container.normal(self.get_accounts_list(), columns)
             self.dock.normal()
             self.tray.normal()
+
+    def download_user_avatar(self, account_id, url, callback):
+        basename = '/tmp/' + account_id + '_' + os.path.basename(url)
+        if os.path.isfile(basename):
+            return callback(basename)
+        else:
+            self.worker.register(self.test, (basename, url),
+                callback)
+
+
+    def test(self, basename, url):
+        handle = urllib2.urlopen(url)
+        content = handle.read()
+        fp = open(basename, 'w')
+        fp.write(content)
+        fp.close()
+        return basename
+
 
     #================================================================
     # Callbacks

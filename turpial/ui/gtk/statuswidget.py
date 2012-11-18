@@ -43,6 +43,7 @@ class StatusWidget(Gtk.EventBox):
         avatar_box = Gtk.Alignment()
         avatar_box.add(self.avatar)
         avatar_box.set(0.5, 0, -1, -1)
+        avatar_box.connect('button-press-event', self.__on_click_avatar)
 
         self.favorited_mark = Gtk.Image()
         self.protected_mark = Gtk.Image()
@@ -117,19 +118,24 @@ class StatusWidget(Gtk.EventBox):
         self.set_repeated_mark(status.retweeted)
         self.set_reposted_mark(status.reposted_by)
 
-        self.connect('button-release-event', self.__menu)
+        self.connect('button-release-event', self.__on_click)
 
-        self.base.download_user_avatar(status.account_id, status.avatar, self.update_avatar)
+        self.base.fetch_user_avatar(status.account_id, status.avatar, self.update_avatar)
 
-    def update_avatar(self, filepath):
-        self.avatar.set_from_file(filepath)
+    def __on_click(self, widget, event=None, data=None):
+        # Capture clicks for avatar
+        if event.x <= 48 and event.y <= 48:
+            self.__on_click_avatar()
+            return True
 
-    def __menu(self, widget, event=None, data=None):
         if event.button != 3:
             return False
         self.menu = StatusMenu(self.base, self.status, self.in_progress)
         self.menu.show_all()
         self.menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
+
+    def __on_click_avatar(self):
+        self.base.show_user_avatar(self.status.account_id, self.status.username)
 
     def __highlight_urls(self, status, text):
         for url in status.entities['urls']:
@@ -174,6 +180,12 @@ class StatusWidget(Gtk.EventBox):
         self.status = status
         # render again
 
+    def update_avatar(self, filepath):
+        pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(filepath, 48, 48, True)
+        self.avatar.set_from_pixbuf(pix)
+        del pix
+
+
     def set_favorited_mark(self, value):
         if value:
             self.favorited_mark.set_from_pixbuf(self.base.load_image('mark-favorite.png', True))
@@ -193,7 +205,6 @@ class StatusWidget(Gtk.EventBox):
             self.protected_mark.set_from_pixbuf(self.base.load_image('mark-protected.png', True))
         else:
             self.protected_mark.set_from_pixbuf(None)
-
 
     def set_verified_mark(self, value):
         if value:

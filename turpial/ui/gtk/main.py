@@ -137,6 +137,15 @@ class Main(Base, Gtk.Window):
             pass
         self.tray.clear()
 
+    def __download_user_avatar(self, basename, url):
+        handle = urllib2.urlopen(url)
+        content = handle.read()
+        fp = open(basename, 'w')
+        fp.write(content)
+        fp.close()
+        return basename
+
+
     #================================================================
     # Overrided methods
     #================================================================
@@ -175,6 +184,11 @@ class Main(Base, Gtk.Window):
         self.imageview.loading()
         self.worker.register(self.core.get_media_content, (url, None),
             self.__show_media_callback)
+
+    def show_user_avatar(self, account_id, user):
+        self.imageview.loading()
+        self.worker.register(self.core.get_profile_image, (account_id, user),
+            self.__show_user_avatar_callback)
 
     def login(self, account_id):
         #return
@@ -361,23 +375,13 @@ class Main(Base, Gtk.Window):
             self.dock.normal()
             self.tray.normal()
 
-    def download_user_avatar(self, account_id, url, callback):
+    def fetch_user_avatar(self, account_id, url, callback):
         basename = '/tmp/' + account_id + '_' + os.path.basename(url)
         if os.path.isfile(basename):
             return callback(basename)
         else:
-            self.worker.register(self.test, (basename, url),
+            self.worker.register(self.__download_user_avatar, (basename, url),
                 callback)
-
-
-    def test(self, basename, url):
-        handle = urllib2.urlopen(url)
-        content = handle.read()
-        fp = open(basename, 'w')
-        fp.write(content)
-        fp.close()
-        return basename
-
 
     #================================================================
     # Callbacks
@@ -452,6 +456,13 @@ class Main(Base, Gtk.Window):
                 self.imageview.update(content_obj.path)
             elif content_obj.is_video() or content_obj.is_map():
                 self.imageview.error('Media not supported yet')
+
+    def __show_user_avatar_callback(self, response):
+        if response.code > 0:
+            self.imageview.error(response.errmsg)
+        else:
+            print response.items
+            self.imageview.update(response.items)
 
     def __worker_timeout_callback(self, funct, arg, user_data):
         if user_data:

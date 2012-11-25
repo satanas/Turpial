@@ -188,6 +188,10 @@ class Base(Singleton):
         self.worker.register(self.core.destroy_status, (status.account_id, status.id_),
             self.after_delete_status)
 
+    def autoshort_url(self, message):
+        self.worker.register(self.core.autoshort_url, (message),
+            self.after_autoshort_url)
+
 
     #================================================================
     # Hooks that can be implemented on each interface (optionals)
@@ -226,6 +230,10 @@ class Base(Singleton):
         pass
 
     def after_delete_status(self, response):
+        pass
+
+
+    def after_autoshort_url(self, response):
         pass
 
 

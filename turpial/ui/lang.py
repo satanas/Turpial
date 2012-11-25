@@ -74,6 +74,7 @@ columns'),
     'signin': _('Sign In'),
     'save': _('Save'),
     'ok': _('Ok'),
+    'update': _('Update'),
     'accept': _('Accept'),
     'cancel': _('Cancel'),
     'search': _('Search'),
@@ -196,6 +197,9 @@ continue?'),
     'file_not_found': _("File not found"),
     'about_description': _('Microblogging client written in Python'),
     'i_couldnt_update_status': _("Oh oh... I couldn't update your status"),
+    'url_already_short': _('URL already short'),
+    'no_url_to_short': _('There are no URLs to short'),
+    'couldnt_shrink_urls': _("Oops... I couldn't shrink all URLs"),
 }
 
 class i18n:

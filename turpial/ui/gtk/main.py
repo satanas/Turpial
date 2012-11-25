@@ -24,6 +24,7 @@ from turpial.ui.gtk.about import AboutDialog
 from turpial.ui.gtk.oauth import OAuthDialog
 from turpial.ui.gtk.updatebox import UpdateBox
 from turpial.ui.gtk.accounts import AccountsDialog
+#from turpial.ui.gtk.profiles import ProfileDialog
 from turpial.ui.gtk.preferences import PreferencesDialog
 
 #gtk.gdk.set_program_class("Turpial")
@@ -76,6 +77,7 @@ class Main(Base, Gtk.Window):
         # Persistent dialogs
         self.about_dialog = AboutDialog(self)
         self.accounts_dialog = AccountsDialog(self)
+        #self.profile_dialog = ProfileDialog(self)
         self.update_box = UpdateBox(self)
         self.preferences_dialog = PreferencesDialog(self)
 
@@ -191,6 +193,7 @@ class Main(Base, Gtk.Window):
             self.__show_user_avatar_callback)
 
     def login(self, account_id):
+        #self.profile_dialog.update('hola')
         #return
         self.accounts_dialog.update()
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
@@ -275,6 +278,8 @@ class Main(Base, Gtk.Window):
         else:
             self._container.delete_status(response.items)
 
+    def after_autoshort_url(self, response):
+        self.update_box.update_after_short_url(response)
 
     #================================================================
     # Own methods
@@ -343,6 +348,7 @@ class Main(Base, Gtk.Window):
 
         if arg.code > 0:
             self._container.stop_updating(column.id_, arg.errmsg, 'error')
+            print arg.errmsg
             return
 
         self._container.update_column(column.id_, arg.items)

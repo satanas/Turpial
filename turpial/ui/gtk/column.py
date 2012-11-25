@@ -52,6 +52,7 @@ class StatusesColumn(Gtk.VBox):
         self.btn_refresh.set_image(self.base.load_image('action-refresh.png'))
         self.btn_refresh.set_relief(Gtk.ReliefStyle.NONE)
         self.btn_refresh.set_tooltip_text(i18n.get('manual_update'))
+        self.btn_refresh.connect('clicked', self.__refresh, column.id_)
 
         self.spinner = Gtk.Spinner()
 
@@ -113,6 +114,9 @@ class StatusesColumn(Gtk.VBox):
         if child.status.id_ != status.id_:
             return
         self._list.remove(child)
+
+    def __refresh(self, widget, column_id):
+        self.base.refresh_column(column_id)
 
     def show(self):
         self.show_all()

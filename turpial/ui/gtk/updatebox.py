@@ -23,6 +23,7 @@ MAX_CHAR = 140
 class UpdateBox(Gtk.Window):
     CURSOR_START = 0
     CURSOR_END = -1
+
     def __init__(self, base):
         Gtk.Window.__init__(self)
 
@@ -118,7 +119,10 @@ class UpdateBox(Gtk.Window):
 
     def __unclose(self, widget, event=None):
         if not self.blocked:
-            self.base.show_confirm_dialog(i18n.get('do_you_want_to_discard_message'), self.done)
+            if self.__count_chars() < 140:
+                self.base.show_confirm_dialog(i18n.get('do_you_want_to_discard_message'), self.done)
+            else:
+                self.done()
         return True
 
     def __reset(self):
@@ -133,6 +137,7 @@ class UpdateBox(Gtk.Window):
         _buffer = self.update_text.get_buffer()
         remain = MAX_CHAR - _buffer.get_char_count()
         self.set_title("%s (%i)" % (self.title_caption, remain))
+        return remain
 
     def __update_callback(self, widget):
         _buffer = self.update_text.get_buffer()

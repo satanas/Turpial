@@ -101,7 +101,7 @@ class StatusMenu(Gtk.Menu):
 
     def __on_reply(self, widget, status):
         self.base.show_update_box_for_reply(status.in_reply_to_id,
-                status.account_id, ' '.join(map(lambda x: '@' + x, status.get_reply_mentions())))
+                status.account_id, ' '.join(map(lambda x: '@' + x, status.get_mentions())))
 
     def __on_quote(self, widget, message):
         self.base.show_update_box_for_quote(message)

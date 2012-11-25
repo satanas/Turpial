@@ -2,6 +2,9 @@
 
 # Common functions or constants for GTK3 in Turpial
 
+OUTTER_BOTTOM_MARGIN = 5
+AVATAR_MARGIN = 5
+
 class StatusProgress:
     FAVING = 'adding_to_fav'
     UNFAVING = 'removing_from_fav'

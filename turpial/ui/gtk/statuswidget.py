@@ -7,7 +7,6 @@ import re
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Pango
-from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
 from turpial.ui.lang import i18n
@@ -17,16 +16,13 @@ from turpial.ui.gtk.imagebutton import ImageButton
 from turpial.ui.gtk.markuplabel import MarkupLabel
 
 
-class StatusWidget(Gtk.EventBox):
-    OUTTER_BOTTOM_MARGIN = 5
-    AVATAR_MARGIN = 5
-
+class StatusWidget(Gtk.EventBox): 
     def __init__(self, base, status):
         Gtk.EventBox.__init__(self)
 
         self.base = base
         self.status = status
-        self.set_margin_bottom(self.OUTTER_BOTTOM_MARGIN)
+        self.set_margin_bottom(OUTTER_BOTTOM_MARGIN)
         self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(65535, 65535, 65535))
 
         # Variables to control work in progress over the status
@@ -39,7 +35,7 @@ class StatusWidget(Gtk.EventBox):
         }
 
         self.avatar = Gtk.Image()
-        self.avatar.set_margin_right(self.AVATAR_MARGIN)
+        self.avatar.set_margin_right(AVATAR_MARGIN)
         avatar_box = Gtk.Alignment()
         avatar_box.add(self.avatar)
         avatar_box.set(0.5, 0, -1, -1)
@@ -124,7 +120,7 @@ class StatusWidget(Gtk.EventBox):
 
     def __on_click(self, widget, event=None, data=None):
         # Capture clicks for avatar
-        if event.x <= 48 and event.y <= 48:
+        if event.x <= 48 and event.y <= 48 and event.button == 1:
             self.__on_click_avatar()
             return True
 

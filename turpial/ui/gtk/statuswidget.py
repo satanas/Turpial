@@ -47,7 +47,7 @@ class StatusWidget(Gtk.EventBox):
         self.reposted_mark = Gtk.Image()
         self.repeated_mark = Gtk.Image()
 
-        self.username = MarkupLabel()
+        self.username = MarkupLabel(act_as_link=True)
         self.username.set_ellipsize(Pango.EllipsizeMode.END)
         self.status_text = MarkupLabel()
         self.status_text.connect('activate-link', self.__open_url)

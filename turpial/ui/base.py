@@ -193,6 +193,14 @@ class Base(Singleton):
             self.after_autoshort_url)
 
 
+    def update_column(self, column, notif=True, last_id=None):
+        count = self.core.get_max_statuses_per_column()
+        print
+        self.worker.register(self.core.get_column_statuses, (column.account_id,
+            column.column_name, count, last_id), self.after_update_column,
+            (column, notif, count))
+
+
     #================================================================
     # Hooks that can be implemented on each interface (optionals)
     #================================================================
@@ -232,8 +240,10 @@ class Base(Singleton):
     def after_delete_status(self, response):
         pass
 
-
     def after_autoshort_url(self, response):
+        pass
+
+    def after_update_column(self, response, data):
         pass
 
 

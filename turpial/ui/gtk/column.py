@@ -23,6 +23,8 @@ class StatusesColumn(Gtk.VBox):
         # Variables that defines column status
         self.last_id = None
         self.updating = False
+        self.menu = None
+        self.column = column
 
         # Header
         #============================================================
@@ -48,11 +50,11 @@ class StatusesColumn(Gtk.VBox):
         btn_close.set_tooltip_text(i18n.get('delete_column'))
         btn_close.connect('clicked', self.__delete_column, column.id_)
 
-        self.btn_refresh = Gtk.Button()
-        self.btn_refresh.set_image(self.base.load_image('action-refresh.png'))
-        self.btn_refresh.set_relief(Gtk.ReliefStyle.NONE)
-        self.btn_refresh.set_tooltip_text(i18n.get('manual_update'))
-        self.btn_refresh.connect('clicked', self.__refresh, column.id_)
+        self.btn_config = Gtk.Button()
+        self.btn_config.set_image(self.base.load_image('action-refresh.png'))
+        self.btn_config.set_relief(Gtk.ReliefStyle.NONE)
+        self.btn_config.set_tooltip_text(i18n.get('manual_update'))
+        self.btn_config.connect('clicked', self.show_config_menu)
 
         self.spinner = Gtk.Spinner()
 
@@ -60,7 +62,7 @@ class StatusesColumn(Gtk.VBox):
         inner_header.pack_start(icon, False, False, 0)
         inner_header.pack_start(label, True, True, 0)
         inner_header.pack_start(btn_close, False, False, 0)
-        inner_header.pack_start(self.btn_refresh, False, False, 0)
+        inner_header.pack_start(self.btn_config, False, False, 0)
         inner_header.pack_start(self.spinner, False, False, 0)
 
         header = Gtk.EventBox()
@@ -85,10 +87,6 @@ class StatusesColumn(Gtk.VBox):
 
     def __delete_column(self, widget, column_id):
         self.base.delete_column(column_id)
-
-    def __add_status(self, status):
-        s = StatusWidget(self.base, status)
-        self._list.pack_start(s, False, False, 0)
 
     def __mark_favorite(self, child, status):
         if child.status.id_ != status.id_:
@@ -119,7 +117,8 @@ class StatusesColumn(Gtk.VBox):
         self.base.refresh_column(column_id)
 
     def show(self):
-        self.show_all()
+        #self.show_all()
+        Gtk.VBox.show_all()
         self.spinner.hide()
 
     def clear(self):
@@ -127,7 +126,7 @@ class StatusesColumn(Gtk.VBox):
         self.model.clear()
 
     def start_updating(self):
-        self.btn_refresh.hide()
+        self.btn_config.hide()
         self.spinner.start()
         self.updating = True
         return self.last_id
@@ -135,12 +134,19 @@ class StatusesColumn(Gtk.VBox):
     def stop_updating(self):
         self.spinner.stop()
         self.spinner.hide()
-        self.btn_refresh.show()
+        self.btn_config.show()
         self.updating = False
 
     def update(self, statuses):
+        empty = bool(self._list.get_children())
+        if not empty:
+            statuses.reverse()
         for status in statuses:
-            self.__add_status(status)
+            s = StatusWidget(self.base, status)
+            if empty:
+                self._list.pack_start(s, False, False, 0)
+            else:
+                self._list.pack_end(s, False, False, 0)
         #self._list.disconnect(self.click_handler)
 
         #self.mark_all_as_read()
@@ -172,3 +178,17 @@ class StatusesColumn(Gtk.VBox):
 
     def delete_status(self, status):
         self._list.foreach(self.__delete_status, status)
+
+    def show_config_menu(self, widget):
+        notif = Gtk.CheckMenuItem(i18n.get('enable_notifications'))
+        sound = Gtk.CheckMenuItem(i18n.get('enable_sounds'))
+        refresh = Gtk.MenuItem(i18n.get('manual_update'))
+        refresh.connect('activate', self.__refresh, self.column.id_)
+
+        self.menu = Gtk.Menu()
+        self.menu.append(notif)
+        self.menu.append(sound)
+        self.menu.append(refresh)
+
+        self.menu.show_all()
+        self.menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())

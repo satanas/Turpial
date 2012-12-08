@@ -237,7 +237,7 @@ class UpdateBox(Gtk.Window):
         self._account_id = account_id
         self._message = "%s " % (in_reply_user)
         self.__show()
-        self.move_cursor(MessageTextView.CURSOR_END)
+        self.update_text.move_cursor(MessageTextView.CURSOR_END)
 
     def show_for_direct(self,account_id, username):
         self.title_caption = "%s @%s" % (i18n.get('send_message_to'), username)

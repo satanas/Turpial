@@ -24,7 +24,7 @@ from turpial.ui.gtk.about import AboutDialog
 from turpial.ui.gtk.oauth import OAuthDialog
 from turpial.ui.gtk.updatebox import UpdateBox
 from turpial.ui.gtk.accounts import AccountsDialog
-#from turpial.ui.gtk.profiles import ProfileDialog
+from turpial.ui.gtk.profiles import ProfileDialog
 from turpial.ui.gtk.preferences import PreferencesDialog
 
 #gtk.gdk.set_program_class("Turpial")
@@ -77,7 +77,7 @@ class Main(Base, Gtk.Window):
         # Persistent dialogs
         self.about_dialog = AboutDialog(self)
         self.accounts_dialog = AccountsDialog(self)
-        #self.profile_dialog = ProfileDialog(self)
+        self.profile_dialog = ProfileDialog(self)
         self.update_box = UpdateBox(self)
         self.preferences_dialog = PreferencesDialog(self)
 
@@ -214,14 +214,14 @@ class Main(Base, Gtk.Window):
         self.dock.normal()
         self.tray.normal()
         self.download_stream(column)
-        #self.__add_timer(column)
+        self.__add_timer(column)
 
     def after_delete_column(self, column_id, err_msg=None):
         self._container.remove_column(column_id)
         if len(self.get_registered_columns()) == 0:
             self.dock.empty()
             self.tray.empty()
-        #self.__remove_timer(column_id)
+        self.__remove_timer(column_id)
 
     def after_login(self):
         #self.worker.register(self.core.load_all_friends_list, (), self.load_all_friends_response)
@@ -278,8 +278,6 @@ class Main(Base, Gtk.Window):
         else:
             self._container.delete_status(response.items)
 
-    def after_autoshort_url(self, response):
-        self.update_box.update_after_short_url(response)
 
     #================================================================
     # Own methods
@@ -351,12 +349,12 @@ class Main(Base, Gtk.Window):
             print arg.errmsg
             return
 
-        self._container.update_column(column.id_, arg.items)
 
         # Notifications
         # FIXME
-        #count = len(arg.items)
-        #if count != 0:
+        count = len(arg.items)
+        if count > 0:
+            self._container.update_column(column.id_, arg.items)
         #    if notif and self.core.show_notifications_in_updates():
         #        self.notify.updates(column, count)
         #    if self.core.play_sounds_in_updates():
@@ -450,7 +448,7 @@ class Main(Base, Gtk.Window):
             for col in self.get_registered_columns():
                 if col.account_id == account_id:
                     self.download_stream(col, True)
-                    #self.__add_timer(col)
+                    self.__add_timer(col)
 
     def __show_media_callback(self, response):
         if response.err:
@@ -479,6 +477,19 @@ class Main(Base, Gtk.Window):
     #================================================================
     # Timer Methods
     #================================================================
+
+    def __add_timer(self, column):
+        self.__remove_timer(column.id_)
+
+        interval = self.core.get_update_interval()
+        self.timers[column.id_] = GObject.timeout_add(interval * 60 * 1000,
+            self.download_stream, column)
+        self.log.debug('--Created timer for %s every %i min' % (column.id_, interval))
+
+    def __remove_timer(self, column_id):
+        if self.timers.has_key(column_id):
+            GObject.source_remove(self.timers[column_id])
+            self.log.debug('--Removed timer for %s' % column_id)
 
     def download_stream(self, column, notif=True):
         if self._container.is_updating(column.id_):
@@ -595,24 +606,6 @@ class Main2(Base, gtk.Window):
     def __search_profile(self, widget, acc_id):
         cmd = "show_autocomplete_for_profile('%s')" % acc_id
         self.container.execute(cmd)
-
-
-
-
-
-    def __add_timer(self, column):
-        #if (self.timer1 != home_interval):
-        if self.timers.has_key(column.id_):
-            gobject.source_remove(self.timers[column.id_])
-        interval = self.core.get_update_interval()
-        self.timers[column.id_] = gobject.timeout_add(interval * 60 * 1000,
-            self.download_stream, column)
-        self.log.debug('--Created timer for %s every %i min' % (column.id_, interval))
-
-    def __remove_timer(self, column_id):
-        if self.timers.has_key(column_id):
-            gobject.source_remove(self.timers[column_id])
-            self.log.debug('--Removed timer for %s' % column_id)
 
     def show_update_box(self, widget=None):
         self.deiconify()

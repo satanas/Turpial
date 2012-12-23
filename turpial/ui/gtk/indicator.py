@@ -16,7 +16,7 @@ log = logging.getLogger('Indicator')
 INDICATOR = True
 
 try:
-    from gi.repository import Indicate
+    from gi.repository import Indicat
 except ImportError, exc:
     log.info('Could not import Indicate module. Support for indicators disabled')
     INDICATOR = False
@@ -44,7 +44,7 @@ class Indicators(GObject.GObject):
 
         desktop_file = os.path.join(os.getcwd(), "turpial.desktop")
 
-        server = indicate.indicate_server_ref_default()
+        server = Indicate.indicate_server_ref_default()
         server.set_type("message.micro")
         server.set_desktop_file(desktop_file)
         server.show()
@@ -79,7 +79,7 @@ class Indicators(GObject.GObject):
             message = "%s :: %s (%s)" % (column.account_id.split('-')[0],
                 column.column_name, i18n.get(column.protocol_id))
 
-            indicator = indicate.Indicator()
+            indicator = Indicate.Indicator()
             indicator.connect("user-display", self.__on_user_display)
             indicator.set_property("name", message)
             indicator.set_property("count", str(count))

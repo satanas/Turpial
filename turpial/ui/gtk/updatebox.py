@@ -33,6 +33,7 @@ class UpdateBox(Gtk.Window):
         self.set_default_size(500, 120)
         self.set_transient_for(base)
         self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
+        self.set_gravity(Gdk.Gravity.STATIC)
 
         self.update_text = MessageTextView()
 

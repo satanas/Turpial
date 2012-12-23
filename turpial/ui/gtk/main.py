@@ -355,6 +355,8 @@ class Main(Base, Gtk.Window):
         count = len(arg.items)
         if count > 0:
             self._container.update_column(column.id_, arg.items)
+        else:
+            self._container.stop_updating(column.id_)
         #    if notif and self.core.show_notifications_in_updates():
         #        self.notify.updates(column, count)
         #    if self.core.play_sounds_in_updates():
@@ -501,134 +503,10 @@ class Main(Base, Gtk.Window):
         self.worker.register(self.core.get_column_statuses, (column.account_id,
             column.column_name, count, last_id), self.update_column,
             (column, notif, count))
+        print 'done.true'
         return True
 
     def refresh_column(self, column_id):
         for col in self.get_registered_columns():
             if col.build_id() == column_id:
                 self.download_stream(col)
-
-
-"""
-class Main2(Base, gtk.Window):
-    def __size_request(self, widget, rectangle):
-        ##print rectangle.width, rectangle.height, self.max_columns
-        width = rectangle.width
-        columns = len(self.core.all_registered_columns())
-        preferred_width = MIN_WINDOW_WIDTH * columns
-        if width < preferred_width:
-            width = preferred_width
-        ##print width, rectangle.width, preferred_width
-        #self.set_default_size(width, rectangle.height)
-        self.save_window_geometry(width, rectangle.height)
-
-
-    def __on_key_press(self, widget, event):
-        keyname = gtk.gdk.keyval_name(event.keyval)
-        if (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'n':
-            self.show_update_box()
-            return True
-        return False
-
-    def _link_request(self, widget, url):
-        self.on_link_request(url)
-
-    def _action_request(self, widget, url):
-        self.on_action_request(url)
-
-
-    def show_profile_menu(self):
-        menu = gtk.Menu()
-        accounts = self.get_all_accounts()
-        twitter_acc = None
-        identica_acc = None
-
-
-        profile = gtk.MenuItem(i18n.get('view_my_profile'))
-        profile_menu = gtk.Menu()
-        for acc in accounts:
-            if acc.protocol_id == 'twitter' and twitter_acc is None:
-                twitter_acc = acc.id_
-            if acc.protocol_id == 'identica' and identica_acc is None:
-                identica_acc = acc.id_
-            name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
-            item = gtk.MenuItem(name)
-            item.connect('activate', self.__show_profile, acc.id_, acc.username)
-            profile_menu.append(item)
-        profile.set_submenu(profile_menu)
-        menu.append(profile)
-
-        menu.append(gtk.SeparatorMenuItem())
-
-        tsearch = gtk.MenuItem(i18n.get('twitter'))
-        tsearch.connect('activate', self.__search_profile, twitter_acc)
-
-        isearch = gtk.MenuItem(i18n.get('identica'))
-        isearch.connect('activate', self.__search_profile, identica_acc)
-
-        search = gtk.MenuItem(i18n.get('search_profile_in'))
-        search_menu = gtk.Menu()
-        search_menu.append(tsearch)
-        search_menu.append(isearch)
-        search.set_submenu(search_menu)
-
-        menu.append(search)
-        menu.show_all()
-        menu.popup(None, None, None, 0, gtk.get_current_event_time())
-
-    def show_repeat_menu(self, args):
-        menu = gtk.Menu()
-
-        retweet = gtk.MenuItem(i18n.get('retweet'))
-        retweet.connect('activate', self.__perform_retweet, args)
-        quote = gtk.MenuItem(i18n.get('quote'))
-        quote.connect('activate', self.__perform_quote, args)
-
-        menu.append(retweet)
-        menu.append(quote)
-
-        menu.show_all()
-        menu.popup(None, None, None, 0, gtk.get_current_event_time())
-
-    def __perform_retweet(self, widget, args):
-        cmd = ARG_SEP.join([args[0], args[1]])
-        cmd2 = "show_confirm_window('%s', '%s', 'cmd:repeat_status:%s')" % (
-            i18n.get('confirm_retweet'), i18n.get('do_you_want_to_retweet'), cmd)
-        self.container.execute(cmd2)
-
-    def __perform_quote(self, widget, args):
-        cmd = "quote_status('%s','%s','%s')" % (args[0], args[2], args[3])
-        self.container.execute(cmd)
-
-    def __show_profile(self, widget, acc_id, username):
-        self.show_profile(acc_id, username)
-
-    def __search_profile(self, widget, acc_id):
-        cmd = "show_autocomplete_for_profile('%s')" % acc_id
-        self.container.execute(cmd)
-
-    def show_update_box(self, widget=None):
-        self.deiconify()
-        self.show()
-        self.present()
-        self.container.execute("show_update_box()")
-
-    def show_update_box_for_direct(self, widget=None):
-        self.deiconify()
-        self.show()
-        self.present()
-        self.container.execute("show_autocomplete_for_direct()")
-
-    # ------------------------------------------------------------
-    # Callbacks
-    # ------------------------------------------------------------
-
-    def profile_image_response(self, response):
-        if response.code > 0:
-            self.imageview.error(response.errmsg)
-        else:
-            self.imageview.update(response.items)
-
-
-
-"""

@@ -111,7 +111,7 @@ class StatusWidget(Gtk.EventBox):
         self.set_favorited_mark(status.favorited)
         self.set_protected_mark(status.protected)
         self.set_verified_mark(status.verified)
-        self.set_repeated_mark(status.retweeted)
+        self.set_repeated_mark(status.repeated)
         self.set_reposted_mark(status.reposted_by)
 
         self.connect('button-release-event', self.__on_click)

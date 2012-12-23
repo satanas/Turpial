@@ -53,8 +53,9 @@ class StatusesColumn(Gtk.VBox):
         self.btn_config = Gtk.Button()
         self.btn_config.set_image(self.base.load_image('action-refresh.png'))
         self.btn_config.set_relief(Gtk.ReliefStyle.NONE)
-        self.btn_config.set_tooltip_text(i18n.get('manual_update'))
+        self.btn_config.set_tooltip_text(i18n.get('column_options'))
         self.btn_config.connect('clicked', self.show_config_menu)
+        self.connect('realize', self.__on_realize)
 
         self.spinner = Gtk.Spinner()
 
@@ -84,6 +85,11 @@ class StatusesColumn(Gtk.VBox):
 
         self.pack_start(header, False, False, 0)
         self.pack_start(content, True, True, 0)
+
+        self.show_all()
+
+        self.btn_config.hide()
+        self.spinner.show()
 
     def __delete_column(self, widget, column_id):
         self.base.delete_column(column_id)
@@ -116,18 +122,21 @@ class StatusesColumn(Gtk.VBox):
     def __refresh(self, widget, column_id):
         self.base.refresh_column(column_id)
 
-    def show(self):
-        #self.show_all()
-        Gtk.VBox.show_all()
-        self.spinner.hide()
+    def __on_realize(self, widget, data=None):
+        # Assuming that this code is only executed the first time you instance
+        # a Status Column
+        self.btn_config.hide()
+        self.spinner.start()
+        self.spinner.show()
 
     def clear(self):
         # TODO: Fix or reimplement
         self.model.clear()
 
     def start_updating(self):
-        self.btn_config.hide()
         self.spinner.start()
+        self.spinner.show()
+        self.btn_config.hide()
         self.updating = True
         return self.last_id
 
@@ -138,16 +147,19 @@ class StatusesColumn(Gtk.VBox):
         self.updating = False
 
     def update(self, statuses):
-        empty = bool(self._list.get_children())
+        children = self._list.get_children()
+        empty = not(bool(children))
         if not empty:
-            statuses.reverse()
+            for i in range(len(statuses)):
+                self._list.remove(children[-1])
+                del(children[-1])
+
+        statuses.reverse()
+
         for status in statuses:
             s = StatusWidget(self.base, status)
-            if empty:
-                self._list.pack_start(s, False, False, 0)
-            else:
-                self._list.pack_end(s, False, False, 0)
-        #self._list.disconnect(self.click_handler)
+            self._list.pack_start(s, False, False, 0)
+            self._list.reorder_child(s, 0)
 
         #self.mark_all_as_read()
         #self.__set_last_time()
@@ -180,14 +192,14 @@ class StatusesColumn(Gtk.VBox):
         self._list.foreach(self.__delete_status, status)
 
     def show_config_menu(self, widget):
-        notif = Gtk.CheckMenuItem(i18n.get('enable_notifications'))
-        sound = Gtk.CheckMenuItem(i18n.get('enable_sounds'))
+        notif = Gtk.CheckMenuItem(i18n.get('notificate'))
+        sound = Gtk.CheckMenuItem(i18n.get('sound'))
         refresh = Gtk.MenuItem(i18n.get('manual_update'))
         refresh.connect('activate', self.__refresh, self.column.id_)
 
         self.menu = Gtk.Menu()
-        self.menu.append(notif)
         self.menu.append(sound)
+        self.menu.append(notif)
         self.menu.append(refresh)
 
         self.menu.show_all()

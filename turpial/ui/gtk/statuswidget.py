@@ -12,7 +12,7 @@ from gi.repository import GdkPixbuf
 from turpial.ui.lang import i18n
 from turpial.ui.gtk.common import *
 from turpial.ui.gtk.statusmenu import StatusMenu
-from turpial.ui.gtk.imagebutton import ImageButton
+#from turpial.ui.gtk.imagebutton import ImageButton
 from turpial.ui.gtk.markuplabel import MarkupLabel
 
 

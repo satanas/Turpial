@@ -15,8 +15,8 @@ log = logging.getLogger('Notify')
 NOTIFY = True
 
 try:
-    import pynotify
-    from glib import GError
+    #import pynotify
+    #from glib import GError
 except ImportError:
     log.debug("pynotify is not installed")
     NOTIFY = False

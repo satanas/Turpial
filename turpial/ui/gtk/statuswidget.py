@@ -182,7 +182,6 @@ class StatusWidget(Gtk.EventBox):
             self.avatar.set_from_pixbuf(pix)
             del pix
 
-
     def set_favorited_mark(self, value):
         if value:
             self.favorited_mark.set_from_pixbuf(self.base.load_image('mark-favorite.png', True))

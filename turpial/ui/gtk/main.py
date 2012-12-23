@@ -340,10 +340,10 @@ class Main(Base, Gtk.Window):
             print arg.errmsg
             return
 
-
         # Notifications
         # FIXME
         count = len(arg.items)
+        print 'Updated %s statuses in %s' % (count, column.id_)
         if count > 0:
             self._container.update_column(column.id_, arg.items)
         else:
@@ -454,7 +454,6 @@ class Main(Base, Gtk.Window):
         if response.code > 0:
             self.imageview.error(response.errmsg)
         else:
-            print response.items
             self.imageview.update(response.items)
 
     def __worker_timeout_callback(self, funct, arg, user_data):
@@ -486,6 +485,7 @@ class Main(Base, Gtk.Window):
 
         last_id = self._container.start_updating(column.id_)
         count = self.core.get_max_statuses_per_column()
+        print 'Updating %s with last_id %s' % (column.id_, last_id)
 
         self.worker.register(self.core.get_column_statuses, (column.account_id,
             column.column_name, count, last_id), self.update_column,

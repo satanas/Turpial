@@ -220,7 +220,10 @@ class AccountsDialog(Gtk.Window):
             # throught the model and see which ones are registered but are not
             # in the model
             if iter_ is None:
-                self.base.delete_account(self.base.get_accounts_list()[0])
+                try:
+                    self.base.delete_account(self.base.get_accounts_list()[0])
+                except:
+                    pass
             else:
                 curr_acc = []
                 while iter_:

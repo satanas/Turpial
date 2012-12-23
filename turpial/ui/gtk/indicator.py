@@ -16,7 +16,8 @@ log = logging.getLogger('Indicator')
 INDICATOR = True
 
 try:
-    from gi.repository import Indicat
+    #from gi.repository import Indicate
+    INDICATOR = False
 except ImportError, exc:
     log.info('Could not import Indicate module. Support for indicators disabled')
     INDICATOR = False

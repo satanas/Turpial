@@ -119,7 +119,7 @@ class UpdateBox(Gtk.Window):
 
     def __on_key_pressed(self, widget, event):
         keyname = Gdk.keyval_name(event.keyval)
-        if keyname == 'Return' and event.state == Gdk.ModifierType.CONTROL_MASK:
+        if keyname == 'Return' and event.state & Gdk.ModifierType.CONTROL_MASK:
             self.__update_callback(widget)
             return True
         elif keyname == 'Escape':

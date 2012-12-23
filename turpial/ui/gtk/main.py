@@ -384,7 +384,7 @@ class Main(Base, Gtk.Window):
         if arg.code > 0:
             # FIXME: Implemente notice
             # self.show_notice(arg.errmsg, 'error')
-            self.accounts_dialog.cancel_login(arr.errmsg)
+            self.accounts_dialog.cancel_login(arg.errmsg)
             return
 
         self.accounts_dialog.status_message(i18n.get('authenticating'))

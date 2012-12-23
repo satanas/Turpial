@@ -77,7 +77,7 @@ class Main(Base, Gtk.Window):
         # Persistent dialogs
         self.about_dialog = AboutDialog(self)
         self.accounts_dialog = AccountsDialog(self)
-        self.profile_dialog = ProfileDialog(self)
+        #self.profile_dialog = ProfileDialog(self)
         self.update_box = UpdateBox(self)
         self.preferences_dialog = PreferencesDialog(self)
 

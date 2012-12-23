@@ -139,15 +139,6 @@ class Main(Base, Gtk.Window):
             pass
         self.tray.clear()
 
-    def __download_user_avatar(self, basename, url):
-        handle = urllib2.urlopen(url)
-        content = handle.read()
-        fp = open(basename, 'w')
-        fp.write(content)
-        fp.close()
-        return basename
-
-
     #================================================================
     # Overrided methods
     #================================================================
@@ -381,13 +372,9 @@ class Main(Base, Gtk.Window):
             self.dock.normal()
             self.tray.normal()
 
-    def fetch_user_avatar(self, account_id, url, callback):
-        basename = '/tmp/' + account_id + '_' + os.path.basename(url)
-        if os.path.isfile(basename):
-            return callback(basename)
-        else:
-            self.worker.register(self.__download_user_avatar, (basename, url),
-                callback)
+    def fetch_status_avatar(self, status, callback):
+        self.worker.register(self.core.get_status_avatar, (status),
+            callback)
 
     #================================================================
     # Callbacks
@@ -503,7 +490,6 @@ class Main(Base, Gtk.Window):
         self.worker.register(self.core.get_column_statuses, (column.account_id,
             column.column_name, count, last_id), self.update_column,
             (column, notif, count))
-        print 'done.true'
         return True
 
     def refresh_column(self, column_id):

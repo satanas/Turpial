@@ -149,8 +149,16 @@ class StatusesColumn(Gtk.VBox):
     def update(self, statuses):
         children = self._list.get_children()
         empty = not(bool(children))
+        to_del = 0
+        num_children = len(children)
+        num_statuses = len(statuses)
+        max_statuses = self.base.get_max_statuses_per_column()
         if not empty:
-            for i in range(len(statuses)):
+            if (num_children + num_statuses) >= max_statuses:
+                to_del = (num_children + num_statuses) - max_statuses
+            else:
+                to_del = num_children
+            for i in range(to_del):
                 self._list.remove(children[-1])
                 del(children[-1])
 

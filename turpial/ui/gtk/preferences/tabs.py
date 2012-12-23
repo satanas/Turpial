@@ -187,8 +187,8 @@ class FilterTab(GenericTab):
         self.add_child(scroll, True, True, 2)
         self.show_all()
 
-    def __process(self, model, path, iter):
-        filtered_item = model.get_value(iter, 0)
+    def __process(self, model, path, iter_):
+        filtered_item = model.get_value(iter_, 0)
         self.filtered.append(filtered_item)
 
     def __cursor_changed(self, widget):
@@ -213,7 +213,7 @@ class FilterTab(GenericTab):
 
     def get_filters(self):
         self.filtered = []
-        self.model.foreach(self.__process)
+        self.model.foreach(self.__process, None)
         return self.filtered
 
 class BrowserTab(GenericTab):

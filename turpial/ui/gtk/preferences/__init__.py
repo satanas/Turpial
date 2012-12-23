@@ -86,7 +86,7 @@ class PreferencesDialog(Gtk.Window):
         notif, sounds = self.notif.get_config()
         services = self.services.get_config()
         browser = self.browser.get_config()
-        proxy = self.proxy.get_config()
+        #proxy = self.proxy.get_config()
         advanced = self.advanced.get_config()
 
         new_config = {
@@ -95,11 +95,11 @@ class PreferencesDialog(Gtk.Window):
             'Sounds': sounds,
             'Services': services,
             'Browser': browser,
-            'Proxy': proxy,
+            #'Proxy': proxy,
             'Advanced': advanced,
         }
 
         self.mainwin.save_config(new_config)
         self.mainwin.save_filters(self.filtered.get_filters())
-        self.destroy()
+        self.hide()
 

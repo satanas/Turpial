@@ -116,7 +116,7 @@ class StatusWidget(Gtk.EventBox):
 
         self.connect('button-release-event', self.__on_click)
 
-        self.base.fetch_user_avatar(status.account_id, status.avatar, self.update_avatar)
+        self.base.fetch_status_avatar(status, self.update_avatar)
 
     def __on_click(self, widget, event=None, data=None):
         # Capture clicks for avatar
@@ -176,10 +176,11 @@ class StatusWidget(Gtk.EventBox):
         self.status = status
         # render again
 
-    def update_avatar(self, filepath):
-        pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(filepath, 48, 48, True)
-        self.avatar.set_from_pixbuf(pix)
-        del pix
+    def update_avatar(self, response):
+        if response.code == 0:
+            pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(response.items, 48, 48, True)
+            self.avatar.set_from_pixbuf(pix)
+            del pix
 
 
     def set_favorited_mark(self, value):

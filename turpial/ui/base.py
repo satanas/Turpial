@@ -95,6 +95,9 @@ class Base(Singleton):
     def get_registered_columns(self):
         return self.core.all_registered_columns()
 
+    def get_max_statuses_per_column(self):
+        return self.core.get_max_statuses_per_column()
+
     def disable_sound(self, widget=None):
         self.sound.disable(not widget.get_active())
 

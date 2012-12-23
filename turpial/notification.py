@@ -17,7 +17,7 @@ NOTIFY = True
 try:
     #import pynotify
     #from glib import GError
-    pass
+    NOTIFY = False
 except ImportError:
     log.debug("pynotify is not installed")
     NOTIFY = False

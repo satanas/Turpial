@@ -162,6 +162,10 @@ class StatusesColumn(Gtk.VBox):
                 self._list.remove(children[-1])
                 del(children[-1])
 
+        # Set last_id before reverse, that way we guarantee that last_id holds
+        # the id for the newest status
+        self.last_id = statuses[0].id_
+
         statuses.reverse()
 
         for status in statuses:
@@ -181,7 +185,6 @@ class StatusesColumn(Gtk.VBox):
         #if self.get_vadjustment().get_value() == 0.0:
         #    self.list.scroll_to_cell((0,))
 
-        self.last_id = statuses[0].id_
         #self.click_handler = self.list.connect("cursor-changed", self.__on_select)
 
     def mark_favorite(self, status):

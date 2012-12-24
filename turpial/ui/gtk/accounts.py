@@ -11,6 +11,8 @@ from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 
 from turpial.ui.lang import i18n
+from turpial.ui.gtk.markuplabel import MarkupLabel
+
 from libturpial.common import LoginStatus
 
 log = logging.getLogger('Gtk')
@@ -316,8 +318,7 @@ class AccountForm(Gtk.Window):
         self.btn_signin = Gtk.Button(i18n.get('signin'))
 
         self.spinner = Gtk.Spinner()
-        self.waiting_label = Gtk.Label()
-        self.waiting_label.set_use_markup(True)
+        self.waiting_label = MarkupLabel(xalign=0.5)
         waiting_box = Gtk.HBox()
         waiting_box.pack_start(self.spinner, False, False, 10)
         waiting_box.pack_start(self.waiting_label, True, False, 0)
@@ -384,7 +385,7 @@ class AccountForm(Gtk.Window):
         # Validate
         if protocol == 'identica':
             if username == '' or passwd == '':
-                self.waiting_label.set_text(i18n.get('credentials_could_not_be_empty'))
+                self.waiting_label.set_error_text(i18n.get('credentials_could_not_be_empty'))
                 return True
 
         self.__lock()
@@ -408,7 +409,7 @@ class AccountForm(Gtk.Window):
     def cancel(self, message):
         self.working = False
         self.__unlock()
-        self.waiting_label.set_markup(message)
+        self.waiting_label.set_error_text(message)
         self.spinner.stop()
         self.spinner.hide()
 

@@ -204,6 +204,9 @@ continue?'),
     'account': _('Account'),
     'criteria': _('Criteria'),
     'search_criteria_tooltip': _('Use hashtags, mentions or any text you want as search criteria'),
+    'this_search_support_advanced_operators': _('This search supports advanced operators like:'),
+    'for_more_information_visit': _('For more information visit'),
+    'twitter_search_documentation': _('Twitter Search Documentation'),
 }
 
 class i18n:

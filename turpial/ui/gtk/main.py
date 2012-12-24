@@ -333,7 +333,6 @@ class Main(Base, Gtk.Window):
 
     def update_column(self, arg, data):
         column, notif, max_ = data
-        self.log.debug('Updated column %s' % column.id_)
 
         if arg.code > 0:
             self._container.stop_updating(column.id_, arg.errmsg, 'error')
@@ -343,10 +342,12 @@ class Main(Base, Gtk.Window):
         # Notifications
         # FIXME
         count = len(arg.items)
-        print 'Updated %s statuses in %s' % (count, column.id_)
+
         if count > 0:
+            self.log.debug('Updated %s statuses in column %s' % (count, column.id_))
             self._container.update_column(column.id_, arg.items)
         else:
+            self.log.debug('Column %s not updated' % column.id_)
             self._container.stop_updating(column.id_)
         #    if notif and self.core.show_notifications_in_updates():
         #        self.notify.updates(column, count)
@@ -485,7 +486,6 @@ class Main(Base, Gtk.Window):
 
         last_id = self._container.start_updating(column.id_)
         count = self.core.get_max_statuses_per_column()
-        print 'Updating %s with last_id %s' % (column.id_, last_id)
 
         self.worker.register(self.core.get_column_statuses, (column.account_id,
             column.column_name, count, last_id), self.update_column,

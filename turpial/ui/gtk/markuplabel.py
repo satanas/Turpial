@@ -18,6 +18,7 @@ class MarkupLabel(Gtk.Label):
         self.set_alignment(xalign, yalign)
         self.set_line_wrap(True)
         self.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.set_single_line_mode(False)
 
     def set_error_text(self, text):
         text = escape_text_for_markup(text)

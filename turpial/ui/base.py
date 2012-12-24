@@ -107,10 +107,6 @@ class Base(Singleton):
         }
         return color[key]
 
-    def save_column(self, widget, column_id):
-        column = self.core.register_column(column_id)
-        self.after_save_column(column)
-
     def save_account(self, username, protocol_id, password):
         if username == "" or username == None:
             username = "%s" % len(self.core.all_accounts())

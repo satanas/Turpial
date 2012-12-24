@@ -57,13 +57,11 @@ class Dock(Gtk.EventBox):
     def empty(self):
         self.btn_updates.hide()
         self.btn_messages.hide()
-        self.btn_search.hide()
         self.btn_stats.hide()
 
     def normal(self):
         self.btn_updates.show()
         self.btn_messages.show()
-        self.btn_search.show()
         self.btn_stats.show()
 
     def show_columns_menu(self, widget):

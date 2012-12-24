@@ -201,6 +201,9 @@ continue?'),
     'url_already_short': _('URL already short'),
     'no_url_to_short': _('There are no URLs to short'),
     'couldnt_shrink_urls': _("Oops... I couldn't shrink all URLs"),
+    'account': _('Account'),
+    'criteria': _('Criteria'),
+    'search_criteria_tooltip': _('Use hashtags, mentions or any text you want as search criteria'),
 }
 
 class i18n:

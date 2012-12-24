@@ -55,7 +55,6 @@ class AboutDialog(Gtk.AboutDialog):
         self.connect("close", self.__close)
         self.connect("delete_event", self.__close)
 
-        self.showed = False
 
     def __response(self, dialog, response, *args):
         if response < 0:
@@ -63,16 +62,8 @@ class AboutDialog(Gtk.AboutDialog):
             dialog.emit_stop_by_name('response')
 
     def __close(self, widget, event=None):
-        self.showed = False
-        self.hide()
+        self.destroy()
         return True
-
-    def show(self):
-        if self.showed:
-            self.present()
-        else:
-            self.showed = True
-            self.show_all()
 
     def quit(self):
         self.destroy()

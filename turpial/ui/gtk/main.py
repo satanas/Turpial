@@ -22,9 +22,9 @@ from turpial.ui.gtk.indicator import Indicators
 # Dialogs
 from turpial.ui.gtk.about import AboutDialog
 from turpial.ui.gtk.oauth import OAuthDialog
+from turpial.ui.gtk.search import SearchDialog
 from turpial.ui.gtk.updatebox import UpdateBox
 from turpial.ui.gtk.accounts import AccountsDialog
-#from turpial.ui.gtk.profiles import ProfileDialog
 from turpial.ui.gtk.preferences import PreferencesDialog
 
 #gtk.gdk.set_program_class("Turpial")
@@ -77,9 +77,7 @@ class Main(Base, Gtk.Window):
         # Persistent dialogs
         self.about_dialog = AboutDialog(self)
         self.accounts_dialog = AccountsDialog(self)
-        #self.profile_dialog = ProfileDialog(self)
         self.update_box = UpdateBox(self)
-        self.preferences_dialog = PreferencesDialog(self)
 
         self.imageview = ImageView(self)
 
@@ -291,10 +289,12 @@ class Main(Base, Gtk.Window):
         self.accounts_dialog.show()
 
     def show_preferences_dialog(self, widget=None):
-        self.preferences_dialog.show()
+        preferences_dialog = PreferencesDialog(self)
+        preferences_dialog.show()
 
     def show_search_dialog(self, widget=None):
-        pass
+        search_dialog = SearchDialog(self)
+        search_dialog.show()
 
     def show_update_box(self, widget=None, direct=False):
         self.update_box.show()

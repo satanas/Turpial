@@ -16,20 +16,26 @@ import subprocess
 from xml.sax.saxutils import unescape
 
 from libturpial.common import *
-from libturpial.common import LoginStatus
 from libturpial.api.models.mediacontent import *
 from libturpial.api.interfaces.service import ServiceResponse
+from libturpial.api.services.showmedia import utils as showmediautils
 
-from turpial.ui.unity.unitylauncher import UnityLauncherFactory
+from turpial import VERSION
 from turpial.ui.lang import i18n
-from turpial.ui.html import HtmlParser
+#from turpial.ui.html import HtmlParser
 from turpial.singleton import Singleton
 from turpial.ui.sound import Sound
 from turpial.notification import Notification
+from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 
 MIN_WINDOW_WIDTH = 250
 
 class Base(Singleton):
+    ACTION_REPEAT = 'repeat'
+    ACTION_UNREPEAT = 'unrepeat'
+    ACTION_FAVORITE = 'favorite'
+    ACTION_UNFAVORITE = 'unfavorite'
+
     '''Parent class for every UI interface'''
     def __init__(self, core):
         Singleton.__init__(self, 'turpial.pid')
@@ -41,13 +47,13 @@ class Base(Singleton):
 
         # Unity integration
         self.unitylauncher = UnityLauncherFactory().create();
-        self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('new_tweet'), True)
-        self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('enable_sounds'), True, not self.sound._disable)
-        self.unitylauncher.add_quicklist_button(self.show_update_box_for_direct, i18n.get('direct_message'), True)
-        self.unitylauncher.add_quicklist_button(self.show_accounts_dialog, i18n.get('accounts'), True)
-        self.unitylauncher.add_quicklist_button(self.show_preferences, i18n.get('preferences'), True)
-        self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('exit'), True)
-        self.unitylauncher.show_menu()
+        #self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('new_tweet'), True)
+        #self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('enable_sounds'), True, not self.sound._disable)
+        #self.unitylauncher.add_quicklist_button(self.show_update_box_for_direct, i18n.get('direct_message'), True)
+        #self.unitylauncher.add_quicklist_button(self.show_accounts_dialog, i18n.get('accounts'), True)
+        #self.unitylauncher.add_quicklist_button(self.show_preferences, i18n.get('preferences'), True)
+        #self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('exit'), True)
+        #self.unitylauncher.show_menu()
 
         self.notify = Notification()
 
@@ -70,9 +76,9 @@ class Base(Singleton):
         else:
             return "%.2f B" % size
 
-    # ------------------------------------------------------------
+    #================================================================
     # Common methods to all interfaces
-    # ------------------------------------------------------------
+    #================================================================
 
     def get_protocols_list(self):
         return self.core.list_protocols()
@@ -89,12 +95,168 @@ class Base(Singleton):
     def get_registered_columns(self):
         return self.core.all_registered_columns()
 
+    def get_max_statuses_per_column(self):
+        return self.core.get_max_statuses_per_column()
+
     def disable_sound(self, widget=None):
         self.sound.disable(not widget.get_active())
 
-    def show_notice(self, msg, type_):
-        cmd = 'show_notice("%s", "%s");' % (msg, type_)
-        self.container.execute(cmd)
+    def get_color_scheme(self, key):
+        color = {
+            'links': '#ff6633',
+        }
+        return color[key]
+
+    def save_account(self, username, protocol_id, password):
+        if username == "" or username == None:
+            username = "%s" % len(self.core.all_accounts())
+        account_id = self.core.register_account(username, protocol_id, password)
+        self.after_save_account(account_id)
+
+    def delete_account(self, account_id):
+        # FIXME: Implement try/except
+        for col in self.get_registered_columns():
+            if col.account_id == account_id:
+                self.delete_column(col.id_)
+        self.core.unregister_account(account_id, True)
+        self.after_delete_account(True)
+
+    def save_column(self, column_id):
+        column = self.core.register_column(column_id)
+        self.after_save_column(column)
+
+    def delete_column(self, column_id):
+        self.core.unregister_column(column_id)
+        if self.columns.has_key(column_id):
+            del self.columns[column_id]
+        self.after_delete_column(column_id)
+
+    def start(self):
+        #if self.core.play_sounds_in_login():
+        #    self.sound.login()
+
+        for account_id in self.get_accounts_list():
+            self.core.change_login_status(account_id, LoginStatus.IN_PROGRESS)
+            self.login(account_id)
+
+        self.after_login()
+
+    def open_url(self, url):
+        browser = self.core.get_default_browser()
+
+        if showmediautils.is_service_supported(url):
+            self.show_media(url)
+        elif browser != '':
+            cmd = browser.split(' ')
+            cmd.append(url)
+            self.log.debug('Opening URL %s with %s' % (url, browser))
+            subprocess.Popen(cmd)
+        else:
+            self.log.debug('Opening URL %s with default browser' % url)
+            webbrowser.open(url)
+
+    def update_status(self, accounts, message, in_reply_to=None):
+        if len(accounts) > 1:
+            self.worker.register(self.core.broadcast_status, (accounts, message),
+                self.after_broadcast_status)
+        else:
+            self.worker.register(self.core.update_status, (accounts[0],
+                message, in_reply_to), self.after_update_status, accounts[0])
+
+    def direct_message(self, account, user, message):
+        self.worker.register(self.core.send_direct, (account, user, message),
+            self.after_direct_message)
+
+    def repeat_status(self, status):
+        self.worker.register(self.core.repeat_status, (status.account_id, status.id_),
+            self.after_repeat, (self.ACTION_REPEAT))
+
+    def unrepeat_status(self, status):
+        self.worker.register(self.core.unrepeat_status, (status.account_id, status.id_),
+            self.after_repeat, (self.ACTION_UNREPEAT))
+
+    def favorite_status(self, status):
+        self.worker.register(self.core.mark_favorite, (status.account_id, status.id_),
+            self.after_favorite, (self.ACTION_FAVORITE))
+
+    def unfavorite_status(self, status):
+        self.worker.register(self.core.unmark_favorite, (status.account_id, status.id_),
+            self.after_favorite, (self.ACTION_UNFAVORITE))
+
+    def delete_status(self, status):
+        self.worker.register(self.core.destroy_status, (status.account_id, status.id_),
+            self.after_delete_status)
+
+    def autoshort_url(self, message):
+        self.worker.register(self.core.autoshort_url, (message),
+            self.after_autoshort_url)
+
+    #================================================================
+    # Hooks that can be implemented on each interface (optionals)
+    #================================================================
+
+    def after_save_account(self, account_id, err_msg=None):
+        pass
+
+    def after_delete_account(self, deleted, err_msg=None):
+        pass
+
+    def after_save_column(self, column_id, err_msg=None):
+        pass
+
+    def after_delete_column(self, column_id, err_msg=None):
+        pass
+
+    def after_login(self):
+        pass
+
+    def after_update_status(self, response, account_id):
+        pass
+
+    def after_broadcast_status(self, response):
+        pass
+
+    def after_direct_message(self, response):
+        pass
+
+    def after_repeat(self, response, action):
+        """ Method used for repeat and unrepeat statuses """
+        pass
+
+    def after_favorite(self, response, action):
+        """ Method used for favorite and unfavorite statuses """
+        pass
+
+    def after_delete_status(self, response):
+        pass
+
+    def after_autoshort_url(self, response):
+        pass
+
+    #================================================================
+    # Methods to override
+    #================================================================
+
+    def main_loop(self):
+        raise NotImplementedError
+
+    def main_quit(self, widget=None, force=False):
+        raise NotImplementedError
+
+    def show_main(self):
+        raise NotImplementedError
+
+    def show_notice(self, message, type_):
+        raise NotImplementedError
+
+    def show_media(self, url):
+        raise NotImplementedError
+
+    def login(self, account):
+        raise NotImplementedError
+
+
+    '''
 
     def on_link_request(self, url):
         self.open_url(url)
@@ -174,45 +336,6 @@ class Base(Singleton):
     def _login_callback(self, arg, account_id):
         pass
 
-    def update_status_response(self, response, account_id):
-        if response.code > 0:
-            self.container.execute('update_status_error("' + response.errmsg + '");')
-        else:
-            html_status = self.htmlparser.single_status(response.items)
-            id_ = '#list-%s-timeline' % account_id
-            #self.container.prepend_element(id_, html_status, 'done_update_box(true);')
-            self.container.execute('done_update_box(true);')
-            column_key = '%s-timeline' % account_id
-            #if self.columns.has_key(column_key):
-            #    self.columns[column_key].append(response.items)
-
-    def broadcast_status_response(self, responses):
-        cmd = ''
-        bad_acc = []
-        good_acc = []
-        error = False
-        for resp in responses:
-            if resp.code > 0:
-                error = True
-                pr_name = i18n.get(resp.account_id.split('-')[1])
-                bad_acc.append("%s (%s)" % (resp.account_id.split('-')[0], pr_name))
-            else:
-                html_status = self.htmlparser.status(resp.items)
-                html_status = html_status.replace('"', '\\"')
-                #cmd += 'append_status_to_timeline("%s", "%s");' % (resp.account_id, html_status)
-                good_acc.append(resp.account_id)
-                column_key = '%s-timeline' % resp.account_id
-                #if self.columns.has_key(column_key):
-                #    self.columns[column_key].append(resp.items)
-
-        if error:
-            errmsg = i18n.get('error_posting_to') % (', '.join(bad_acc))
-            accounts = '["' + '","'.join(good_acc) + '"]'
-            cmd += 'broadcast_status_error(' + accounts + ', "' + errmsg + '");'
-        else:
-            cmd += 'done_update_box();'
-        self.container.execute(cmd)
-
 
     def repeat_response(self, response, user_data):
         cmd = ''
@@ -243,14 +366,15 @@ class Base(Singleton):
         else:
             status = response.items
             args = ARG_SEP.join([status.account_id, status.id_])
+            tmp_cmd = "<a name='fav-cmd' href='%s' class='action'>%s</a>"
             if fav:
-                newcmd = "cmd:unfav_status:%s" % args
-                cmd = "update_favorite_mark('%s', '%s', '%s', true);" % (status.id_,
-                    newcmd, i18n.get('-fav'))
+                fav_cmd = "cmd:unfav_status:%s" % args
+                full_cmd = tmp_cmd % (fav_cmd, self.__image_tag('action-fav.png', tooltip=i18n.get('-fav')))
+                cmd = "update_favorite_mark('%s', '%s', true);" % (status.id_, full_cmd)
             else:
-                newcmd = "cmd:fav_status:%s" % args
-                cmd = "update_favorite_mark('%s', '%s', '%s', false);" % (status.id_,
-                    newcmd, i18n.get('+fav'))
+                fav_cmd = "cmd:fav_status:%s" % args
+                full_cmd = tmp_cmd % (fav_cmd, self.__image_tag('action-unfav.png', tooltip=i18n.get('+fav')))
+                cmd = "update_favorite_mark('%s', '%s', false);" % (status.id_, full_cmd)
         cmd += "unlock_status('%s');" % (status_id)
         self.container.execute(cmd)
 
@@ -393,113 +517,12 @@ class Base(Singleton):
             print cmd
         self.container.execute(cmd)
 
-    def direct_message_response(self, response):
-        if response.code > 0:
-            self.container.execute('update_status_error("' + response.errmsg + '");')
-        else:
-            cmd = "show_notice('%s', 'info'); done_update_box_with_direct();" % (
-                i18n.get('direct_message_sent_successfully'))
-            self.container.execute(cmd)
-
     #---------------------------------------------------------------------------
-
-    def single_login(self, acc):
-        self.core.change_login_status(acc, LoginStatus.IN_PROGRESS)
-        self.accountsdlg.update()
-        self.worker.register(self.core.login, (acc), self._login_callback, acc)
-
-    def delete_account(self, account_id):
-        reg_columns = self.get_registered_columns()
-        for col in reg_columns:
-            if col.account_id == account_id:
-                self.delete_column(col.id_)
-        self.core.unregister_account(account_id, True)
-        self.accountsdlg.done_delete()
-
-    def save_account(self, username, protocol_id, password):
-        if username == "" or username == None:
-            username = "%s" % len(self.core.all_accounts());
-        account_id = self.core.register_account(username, protocol_id, password)
-        self.worker.register(self.core.login, (account_id), self._login_callback, account_id)
-
-    def save_column(self, column_id):
-        column = self.core.register_column(column_id)
-        reg_columns = self.get_registered_columns()
-        if len(reg_columns) == 1:
-            page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
-            self.container.render(page)
-        else:
-            hdr, col = self.htmlparser.render_column(column)
-            hdr = hdr.replace('"', '\\"')
-            col = col.replace('"', '\\"')
-            self.container.execute('add_column("%s","%s");' % (hdr, col))
-        self.download_stream(column)
-        self.__add_timer(column)
-
-    def delete_column(self, column_id):
-        self.core.unregister_column(column_id)
-        del self.columns[column_id]
-        reg_columns = self.get_registered_columns()
-        if len(reg_columns) == 0:
-            page = self.htmlparser.empty()
-            self.container.render(page)
-        else:
-            self.container.execute('remove_column("' + column_id + '");')
-        self.__remove_timer(column_id)
-
-    def repeat_status(self, account_id, status_id):
-        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('retweeting'))
-        self.container.execute(cmd)
-
-        self.worker.register(self.core.repeat_status, (account_id, status_id),
-            self.repeat_response, (True, status_id))
-
-    def unrepeat_status(self, account_id, status_id):
-        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('unretweeting'))
-        self.container.execute(cmd)
-
-        self.worker.register(self.core.unrepeat_status, (account_id, status_id),
-                self.repeat_response, (False, status_id))
-
-    def fav_status(self, account_id, status_id):
-        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('adding_to_fav'))
-        self.container.execute(cmd)
-
-        self.worker.register(self.core.mark_favorite, (account_id, status_id),
-            self.fav_response, (True, status_id))
-
-    def unfav_status(self, account_id, status_id):
-        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('removing_from_fav'))
-        self.container.execute(cmd)
-
-        self.worker.register(self.core.unmark_favorite, (account_id, status_id),
-            self.fav_response, (False, status_id))
-
-    def update_status(self, account, text):
-        message = base64.b64decode(text)
-        accounts = []
-        for acc in account.split('|'):
-            accounts.append(acc)
-
-        if len(accounts) > 1:
-            self.worker.register(self.core.broadcast_status, (accounts, message),
-                self.broadcast_status_response)
-        else:
-            self.worker.register(self.core.update_status, (accounts[0], message),
-                self.update_status_response, accounts[0])
-
 
     def reply_status(self, account, status_id, text):
         message = base64.b64decode(text)
         self.worker.register(self.core.update_status, (account, message, status_id),
             self.update_status_response, account)
-
-    def delete_status(self, account, status_id):
-        cmd = "lock_status('%s', '%s');" % (status_id, i18n.get('deleting'))
-        self.container.execute(cmd)
-
-        self.worker.register(self.core.destroy_status, (account, status_id),
-            self.delete_status_response, status_id)
 
     def show_profile(self, account_id, username):
         #self.container.execute('show_profile_modal()')
@@ -574,11 +597,6 @@ class Base(Singleton):
         self.worker.register(self.core.autoshort_url, (message),
             self.short_url_response)
 
-    def direct_message(self, account, user, text):
-        message = base64.b64decode(text)
-        self.worker.register(self.core.send_direct, (account, user, message),
-            self.direct_message_response)
-
     def profile_image(self, account, user):
         self.imageview.loading()
         self.worker.register(self.core.get_profile_image, (account, user),
@@ -596,52 +614,6 @@ class Base(Singleton):
         self.worker.register(self.core.destroy_direct, (account, status_id),
             self.delete_status_response, status_id)
 
-    def update_column(self, arg, data):
-        column, notif, max_ = data
-        self.log.debug('Updated column %s' % column.id_)
-
-        if arg.code > 0:
-            self.container.execute("stop_updating_column('" + column.id_ + "');")
-            self.show_notice(arg.errmsg, 'error')
-            return
-
-        # Remove duplicate elements
-        """
-        if column.size != 0:
-            status_ids = []
-            for status in arg.items:
-                status_ids.append(status.id_)
-            if status_ids:
-                js_array = self.htmlparser.js_string_array(status_ids)
-                self.container.execute("remove_duplicates('" + column.id_ + "', " + js_array + ");")
-        """
-
-        #Show new statuses
-        page = self.htmlparser.statuses(arg.items)
-        element = "#list-%s" % column.id_
-        extra = "stop_updating_column('" + column.id_ + "');";
-        max_statuses = self.core.get_max_statuses_per_column()
-        if column.size != 0:
-            extra += "remove_statuses('" + column.id_ + "', " + str(len(arg.items)) + ", " + str(max_statuses) + ");";
-        self.container.prepend_element(element, page, extra)
-
-        # Notifications
-        count = len(arg.items)
-        if count != 0:
-            if notif and self.core.show_notifications_in_updates():
-                self.notify.updates(column, count)
-            if self.core.play_sounds_in_updates():
-                self.sound.updates()
-            if not self.is_active():
-                self.unitylauncher.increment_count(count)
-                self.unitylauncher.set_count_visible(True)
-            else:
-                self.unitylauncher.set_count_visible(False)
-            self.columns[column.id_]['last_id'] = arg.items[0].id_
-        column.inc_size(count)
-        self.updating[column.id_] = False
-
-        self.restore_open_tweets()
 
     def restore_open_tweets(self):
         for status in self.openstatuses:
@@ -651,22 +623,8 @@ class Base(Singleton):
                 html_status += self.htmlparser.status(rep_status, True)
             cmd = "show_replies_to_status('%s', false)" % status
             self.container.update_element(id_, html_status, cmd)
-
-
-
-    def open_url(self, url):
-        '''Open a URL in the configured web browser'''
-        browser = self.core.get_default_browser()
-        if browser != '':
-            cmd = browser.split(' ')
-            cmd.append(url)
-            self.log.debug('Opening URL %s with %s' % (url, browser))
-            subprocess.Popen(cmd)
-        else:
-            #if not url.startswith('http'):
-            #    url = 'http://' + url
-            self.log.debug('Opening URL %s with default browser' % url)
-            webbrowser.open(url)
+    '''
+ 
 
     def get_new_statuses(self, current, last):
         if not current:

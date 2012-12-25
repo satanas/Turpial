@@ -19,6 +19,7 @@ class AboutDialog(Gtk.AboutDialog):
         self.set_logo(parent.load_image('turpial.png', True))
         self.set_name(NAME)
         self.set_version(VERSION)
+        self.set_modal(True)
         self.set_copyright('Copyright (C) 2009 - 2012 Wil Alvarez')
         self.set_comments(i18n.get('about_description'))
         self.set_website('http://turpial.org.ve')
@@ -58,7 +59,7 @@ class AboutDialog(Gtk.AboutDialog):
 
     def __response(self, dialog, response, *args):
         if response < 0:
-            dialog.hide()
+            dialog.destroy()
             dialog.emit_stop_by_name('response')
 
     def __close(self, widget, event=None):

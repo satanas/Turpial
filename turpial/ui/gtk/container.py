@@ -4,6 +4,7 @@
 
 from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
 from turpial.ui.lang import i18n
@@ -16,7 +17,13 @@ class Container(Gtk.VBox):
         self.base = base
         self.child = None
         self.columns = {}
-        #self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(0, 0, 0))
+        self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(65535, 65535,65535))
+
+    def __scrolling_right(self):
+        if len(self.columns) > 0:
+            adjustment = self.child.get_hadjustment()
+            max_value = adjustment.get_upper()
+            adjustment.set_value(max_value)
 
     def empty(self):
         if self.child:
@@ -89,7 +96,9 @@ class Container(Gtk.VBox):
             accounts = self.base.get_accounts_list()
             columns = self.base.get_registered_columns()
             self.normal(accounts, columns)
+
         self.show_all()
+        self.scroll()
 
     def remove_column(self, column_id):
         hbox = self.child.get_children()[0].get_child()
@@ -118,4 +127,7 @@ class Container(Gtk.VBox):
     def delete_status(self, status):
         for key, column in self.columns.iteritems():
             column.delete_status(status)
+
+    def scroll(self):
+        GObject.timeout_add(250, self.__scrolling_right)
 

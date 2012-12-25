@@ -76,7 +76,6 @@ class Main(Base, Gtk.Window):
         self.avatars_worker.start()
 
         # Persistent dialogs
-        self.about_dialog = AboutDialog(self)
         self.accounts_dialog = AccountsDialog(self)
         self.update_box = UpdateBox(self)
 
@@ -288,7 +287,8 @@ class Main(Base, Gtk.Window):
         return avatar
 
     def show_about_dialog(self, widget=None):
-        self.about_dialog.show()
+        about_dialog = AboutDialog(self)
+        about_dialog.show()
 
     def show_accounts_dialog(self, widget=None):
         self.accounts_dialog.show()

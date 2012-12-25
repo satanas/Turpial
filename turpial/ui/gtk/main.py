@@ -24,6 +24,7 @@ from turpial.ui.gtk.about import AboutDialog
 from turpial.ui.gtk.oauth import OAuthDialog
 from turpial.ui.gtk.search import SearchDialog
 from turpial.ui.gtk.updatebox import UpdateBox
+from turpial.ui.gtk.profiles import ProfileDialog
 from turpial.ui.gtk.accounts import AccountsDialog
 from turpial.ui.gtk.preferences import PreferencesDialog
 
@@ -92,6 +93,9 @@ class Main(Base, Gtk.Window):
         vbox.pack_start(self._container, True, True, 0)
         vbox.pack_start(self.dock, False, False, 0)
         self.add(vbox)
+
+        #profile_dialog = ProfileDialog(self)
+        #profile_dialog.update('hola')
 
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():
@@ -182,7 +186,6 @@ class Main(Base, Gtk.Window):
             self.__show_user_avatar_callback)
 
     def login(self, account_id):
-        #self.profile_dialog.update('hola')
         #return
         self.accounts_dialog.update()
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
@@ -267,6 +270,8 @@ class Main(Base, Gtk.Window):
         else:
             self._container.delete_status(response.items)
 
+    def after_autoshort_url(self, response):
+        self.update_box.update_after_short_url(response)
 
     #================================================================
     # Own methods

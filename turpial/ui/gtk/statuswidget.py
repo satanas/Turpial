@@ -61,7 +61,9 @@ class StatusWidget(Gtk.EventBox):
         )
         self.username.set_markup(user)
 
-        pango_text = '<span size="9000">%s</span>' % escape_text_for_markup(status.text)
+        text = status.text.replace('&gt;', '>')
+        text = text.replace('&lt;', '<')
+        pango_text = '<span size="9000">%s</span>' % escape_text_for_markup(text)
         pango_text = self.__highlight_urls(status, pango_text)
         pango_text = self.__highlight_hashtags(status, pango_text)
         pango_text = self.__highlight_groups(status, pango_text)

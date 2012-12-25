@@ -2,6 +2,8 @@
 
 # GTK3 widget to implement columns in Turpial
 
+import urllib2
+
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Pango
@@ -30,7 +32,8 @@ class StatusesColumn(Gtk.VBox):
         #============================================================
 
         img = '%s.png' % column.protocol_id
-        caption = "%s :: %s" % (column.account_id.split('-')[0], column.column_name)
+        caption = "%s :: %s" % (column.account_id.split('-')[0],
+            urllib2.unquote(column.column_name))
         icon = Gtk.Image()
         icon.set_from_pixbuf(self.base.load_image(img, True))
         icon.set_margin_top(ICON_MARGIN)

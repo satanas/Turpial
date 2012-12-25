@@ -92,8 +92,8 @@ class AccountsDialog(Gtk.Window):
         box_button = Gtk.HButtonBox()
         box_button.set_spacing(6)
         box_button.set_layout(Gtk.ButtonBoxStyle.END)
-        box_button.pack_start(self.btn_login, False, False, 0)
         box_button.pack_start(self.btn_delete, False, False, 0)
+        box_button.pack_start(self.btn_login, False, False, 0)
         box_button.pack_start(self.btn_add, False, False, 0)
 
         vbox = Gtk.VBox(False)

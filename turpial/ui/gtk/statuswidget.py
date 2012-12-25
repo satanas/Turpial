@@ -61,7 +61,9 @@ class StatusWidget(Gtk.EventBox):
         )
         self.username.set_markup(user)
 
-        pango_text = '<span size="9000">%s</span>' % escape_text_for_markup(status.text)
+        text = status.text.replace('&gt;', '>')
+        text = text.replace('&lt;', '<')
+        pango_text = '<span size="9000">%s</span>' % escape_text_for_markup(text)
         pango_text = self.__highlight_urls(status, pango_text)
         pango_text = self.__highlight_hashtags(status, pango_text)
         pango_text = self.__highlight_groups(status, pango_text)
@@ -143,7 +145,8 @@ class StatusWidget(Gtk.EventBox):
 
     def __highlight_hashtags(self, status, text):
         for h in status.entities['hashtags']:
-            cad = '<a href="hashtags:%s">%s</a>' % (h.url, h.display_text)
+            url = "%s-search:%%23%s" % (self.status.account_id, h.display_text[1:])
+            cad = '<a href="hashtags:%s">%s</a>' % (url, h.display_text)
             text = text.replace(h.search_for, cad)
         return text
 
@@ -165,7 +168,7 @@ class StatusWidget(Gtk.EventBox):
         if url.startswith('http'):
             self.base.open_url(url)
         elif url.startswith('hashtag'):
-            print "Opening hashtag"
+            self.base.save_column(url[9:])
         elif url.startswith('groups'):
             print "Opening groups"
         elif url.startswith('profile'):

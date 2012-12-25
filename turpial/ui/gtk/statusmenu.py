@@ -52,7 +52,7 @@ class StatusMenu(Gtk.Menu):
                     repeat.connect('activate', self.__on_repeat, status)
             elif status.get_protocol_id() == ProtocolType.IDENTICA:
                 qt = "RD @%s %s" % (status.username, status.text)
-                if status.retweeted:
+                if status.repeated:
                     repeat = Gtk.MenuItem(i18n.get('redented'))
                     repeat.connect('activate', self.__on_unrepeat, status)
                 else:

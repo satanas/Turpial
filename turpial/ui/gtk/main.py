@@ -49,13 +49,14 @@ class Main(Base, Gtk.Window):
         self.set_position(Gtk.WindowPosition.CENTER)
         self.set_gravity(Gdk.Gravity.STATIC)
         self.connect('delete-event', self.__on_close)
-        #self.connect('key-press-event', self.__on_key_press)
+        self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
         #self.connect('size-request', self.__size_request)
 
         # Configuration
         self.showed = True
         self.minimize = 'on'
+        self.is_fullscreen = False
 
         self.timers = {}
         self.updating = {}
@@ -106,6 +107,21 @@ class Main(Base, Gtk.Window):
         else:
             self.main_quit(widget)
         return True
+
+    def __on_key_press(self, widget, event):
+        keyname = Gdk.keyval_name(event.keyval)
+        if keyname.upper() == 'F' and event.state & Gdk.ModifierType.CONTROL_MASK:
+            self.__toogle_fullscreen()
+            return True
+        return False
+
+    def __toogle_fullscreen(self):
+        if self.is_fullscreen:
+            self.unfullscreen()
+            self.is_fullscreen = False
+        else:
+            self.fullscreen()
+            self.is_fullscreen = True
 
     #================================================================
     # Tray icon

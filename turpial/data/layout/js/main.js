@@ -110,7 +110,10 @@ function enable_trigger() {
 
     $('.tweet').on("mouseleave", function() {
         $(this).children('.options').children(':nth-child(1)').hide();
-        $(this).find('div[name="fav-icon"]').hide();
+        var is_fav = $(this).children('input[name="is_fav"]').val();
+        if (is_fav == 'false') {
+          $(this).find('div[name="fav-icon"]').hide();
+        }
     });
 }
 
@@ -390,6 +393,8 @@ function lock_status(status_id, message) {
         progressbox.show();
         // progressmsg
         progressbox.children('label:first').html(message);
+        // fav-icon
+        $(this).children('input[name="fav-icon"]').hide();
         // indicator
         $(this).children('input:first').val(message);
     });
@@ -405,20 +410,18 @@ function unlock_status(status_id) {
         progressbox.hide();
         // progressmsg
         progressbox.children('label:first').html('');
+        // fav-icon
+        $(this).children('input[name="fav-icon"]').show();
         // indicator
         $(this).children('input:first').val('');
     });
 }
 
-function update_favorite_mark(status_id, cmd, label, visible) {
+function update_favorite_mark(status_id, cmd, visible) {
     $('.' + status_id).each(function() {
-        // favcmd
-        var favcmd = $(this).find('a[name="fav-cmd"]:first');
-        favcmd.attr('href', cmd);
-        favcmd.html(label);
-
         // favicon
         var favicon = $(this).find('div[name="fav-icon"]');
+        favicon.html(cmd);
         if (visible == true)
             favicon.show();
         else

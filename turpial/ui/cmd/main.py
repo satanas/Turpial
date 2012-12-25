@@ -28,7 +28,7 @@ ARGUMENTS = {
 }
 
 class Main(cmd.Cmd):
-    def __init__(self, core, config):
+    def __init__(self, core):
         cmd.Cmd.__init__(self)
         
         self.log = logging.getLogger('Turpial:CMD')

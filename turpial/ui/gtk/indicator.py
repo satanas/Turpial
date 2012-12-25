@@ -3,11 +3,11 @@
 """ Indicator module for Turpial """
 #
 # Author: Wil Alvarez (aka Satanas)
-# Jan 24, 2012
 
 import os
-import gobject
 import logging
+
+from gi.repository import GObject
 
 from turpial.ui.lang import i18n
 
@@ -16,19 +16,20 @@ log = logging.getLogger('Indicator')
 INDICATOR = True
 
 try:
-    import indicate
+    #from gi.repository import Indicate
+    INDICATOR = False
 except ImportError, exc:
     log.info('Could not import Indicate module. Support for indicators disabled')
     INDICATOR = False
 
-class Indicators(gobject.GObject):
+class Indicators(GObject.GObject):
     __gsignals__ = {
-        "main-clicked": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
-        "indicator-clicked": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
-            (gobject.TYPE_PYOBJECT, )),
+        "main-clicked": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, ()),
+        "indicator-clicked": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT, )),
     }
+
     def __init__(self, disable=False):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.indicators = {}
         self.activate()
         self.disable = disable
@@ -40,10 +41,11 @@ class Indicators(gobject.GObject):
 
         if disable:
             log.debug('Module disabled')
+            return
 
         desktop_file = os.path.join(os.getcwd(), "turpial.desktop")
 
-        server = indicate.indicate_server_ref_default()
+        server = Indicate.indicate_server_ref_default()
         server.set_type("message.micro")
         server.set_desktop_file(desktop_file)
         server.show()
@@ -78,7 +80,7 @@ class Indicators(gobject.GObject):
             message = "%s :: %s (%s)" % (column.account_id.split('-')[0],
                 column.column_name, i18n.get(column.protocol_id))
 
-            indicator = indicate.Indicator()
+            indicator = Indicate.Indicator()
             indicator.connect("user-display", self.__on_user_display)
             indicator.set_property("name", message)
             indicator.set_property("count", str(count))
@@ -91,4 +93,4 @@ class Indicators(gobject.GObject):
             print indicator
             indicator.hide()
 
-gobject.type_register(Indicators)
+GObject.type_register(Indicators)

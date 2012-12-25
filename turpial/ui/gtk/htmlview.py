@@ -3,33 +3,31 @@
 # Widget for HTML view in Turpial
 #
 # Author: Wil Alvarez (aka Satanas)
-# Oct 09, 2011
 
 import os
-import gtk
-import webkit
-import gobject
 
-from turpial.ui.gtk.inspector import TurpialInspector
+from gi.repository import Gtk
+from gi.repository import GLib
+from gi.repository import WebKit
+from gi.repository import GObject
 
-class HtmlView(gtk.VBox, gobject.GObject):
+class HtmlView(Gtk.VBox):
     __gsignals__ = {
-        "action-request": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
-        "link-request": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_STRING, )),
-        "load-started": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
-        "load-finished": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        "action-request": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, (GObject.TYPE_STRING, )),
+        "link-request": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, (GObject.TYPE_STRING, )),
+        "load-started": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, ()),
+        "load-finished": (GObject.SignalFlags.RUN_FIRST, GObject.TYPE_NONE, ()),
     }
 
     def __init__(self, coding='utf-8'):
-        gobject.GObject.__init__(self)
-        gtk.VBox.__init__(self, False)
+        Gtk.VBox.__init__(self, False)
 
         self.coding = coding
         self.uri = 'file://' + os.path.dirname(__file__)
 
-        self.settings = webkit.WebSettings()
+        self.settings = WebKit.WebSettings()
 
-        self.settings.set_property('enable-default-context-menu', True)
+        self.settings.set_property('enable-default-context-menu', False)
         self.settings.set_property('enable-developer-extras', True)
         self.settings.set_property('enable-plugins', True)
         self.settings.set_property('enable-java_applet', False)
@@ -52,12 +50,11 @@ class HtmlView(gtk.VBox, gobject.GObject):
         except TypeError:
             print "No support for accelerated compositing"
 
-        self.view = webkit.WebView()
+        self.view = WebKit.WebView()
         self.view.set_settings(self.settings)
 
         #Added new properties in this way cause 'from' is recognized as a key word
         self.view.get_settings().set_property('enable-universal-access-from-file-uris', True)
-        self.view.get_settings().set_property('enable-file-access-from-file-uris', True)
 
         self.view.connect('load-started', self.__started)
         self.view.connect('load-finished', self.__finished)
@@ -65,15 +62,12 @@ class HtmlView(gtk.VBox, gobject.GObject):
         self.view.connect('navigation-policy-decision-requested', self.__process)
         self.view.connect('new-window-policy-decision-requested', self.__on_new_window_requested);
 
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.set_shadow_type(gtk.SHADOW_IN)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
+        scroll.set_shadow_type(Gtk.ShadowType.IN)
         scroll.add(self.view)
 
         self.pack_start(scroll, True, True, 0)
-
-        inspector = self.view.get_web_inspector()
-        self.inspector = TurpialInspector(inspector)
 
     def __on_new_window_requested(self, view, frame, request, decision, u_data):
         self.emit('link-request', request.get_uri())
@@ -102,39 +96,16 @@ class HtmlView(gtk.VBox, gobject.GObject):
         self.emit('load-finished')
 
     def load(self, url):
-        gobject.idle_add(self.view.load_uri, url)
+        GLib.idle_add(self.view.load_uri, url)
 
     def render(self, html):
-        gobject.idle_add(self.view.load_string, html, "text/html", self.coding,
-            self.uri)
+        GLib.idle_add(self.view.load_string, html, "text/html", self.coding, self.uri)
 
-    def update_element(self, id_, html, extra=''):
-        html = html.replace('"', '\\"')
-        script = "$('%s').html(\"%s\"); %s" % (id_, html, extra)
-        #fd = open('/tmp/traceback', 'w')
-        #fd.write(script)
-        #fd.close()
-        self.execute(script)
-
-    def remove_element(self, id_):
-        script = "$('%s').remove();" % (id_)
-        self.execute(script)
-
-    def append_element(self, id_, html, extra=''):
-        html = html.replace('"', '\\"')
-        script = "$('%s').append(\"%s\"); %s" % (id_, html, extra)
-        self.execute(script)
-
-    def prepend_element(self, id_, html, extra=''):
-        html = html.replace('"', '\\"')
-        script = "$('%s').prepend(\"%s\"); %s" % (id_, html, extra)
-        self.execute(script)
-
-    def execute(self, script, sanitize=False):
+    def execute(self, script):
         script = script.replace('\n', ' ')
         self.view.execute_script(script)
 
     def stop(self):
         self.view.stop_loading()
 
-gobject.type_register(HtmlView)
+GObject.type_register(HtmlView)

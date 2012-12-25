@@ -502,10 +502,14 @@ class HtmlParser:
         tmp_cmd = "<a name='fav-cmd' href='%s' class='action'>%s</a>"
         if status.is_favorite:
             cmd = "cmd:unfav_status:%s" % args
-            fav_cmd = tmp_cmd % (cmd, self.__image_tag('action-unfav.png', tooltip=i18n.get('-fav')))
+            fav_cmd = tmp_cmd % (cmd, self.__image_tag('action-fav.png', tooltip=i18n.get('-fav')))
+            is_fav = 'true'
+            show_fav = ''
         else:
             cmd = "cmd:fav_status:%s" % args
-            fav_cmd = tmp_cmd % (cmd, self.__image_tag('action-fav.png', tooltip=i18n.get('+fav')))
+            fav_cmd = tmp_cmd % (cmd, self.__image_tag('action-unfav.png', tooltip=i18n.get('+fav')))
+            is_fav = 'false'
+            show_fav = 'display: none'
 
         message = self.__highlight_urls(status, status.text)
         message = self.__highlight_hashtags(status, message)
@@ -542,6 +546,8 @@ class HtmlParser:
         section = section.replace('<% @verified %>', self.__verified_tag(status.is_verified))
         section = section.replace('<% @protected %>', self.__protected_tag(status.is_protected))
         section = section.replace('<% @reposted %>', self.__reposted_tag(status.reposted_by))
+        section = section.replace('<% @is_fav %>', is_fav)
+        section = section.replace('<% @show_favorite %>', show_fav)
         section = section.replace('<% @favorite_cmd %>', fav_cmd)
         section = section.replace('<% @retweeted_visible %>', self.__retweeted_visible(status))
         section = section.replace('<% @retweeted %>', self.__retweeted_tag())

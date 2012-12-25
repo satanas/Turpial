@@ -15,6 +15,7 @@ try:
     UNITY_SUPPORT = True
 except Exception, e:
     print 'Could not load all modules for Unity support: %s' % e
+    print 'Disabling Unity support'
     UNITY_SUPPORT = False
 
 import os
@@ -149,75 +150,76 @@ class Daemon:
     def run(self):
         pass
 
-class TurpialUnity(dbus.service.Object):
+if UNITY_SUPPORT:
+    class TurpialUnity(dbus.service.Object):
 
-    def __init__(self, loop):
-        self.loop = loop
-        bus = dbus.service.BusName(BUS_NAME, bus=dbus.SessionBus())
-        dbus.service.Object.__init__(self, bus, CONTROLLER_OBJ_PATH)
-        self.launcher = Unity.LauncherEntry.get_for_desktop_id("turpial.desktop")
-        self.ql = Dbusmenu.Menuitem.new()
+        def __init__(self, loop):
+            self.loop = loop
+            bus = dbus.service.BusName(BUS_NAME, bus=dbus.SessionBus())
+            dbus.service.Object.__init__(self, bus, CONTROLLER_OBJ_PATH)
+            self.launcher = Unity.LauncherEntry.get_for_desktop_id("turpial.desktop")
+            self.ql = Dbusmenu.Menuitem.new()
 
-    @dbus.service.method(BUS_NAME)
-    def set_count(self, count):
-        self.launcher.set_property("count", count)
+        @dbus.service.method(BUS_NAME)
+        def set_count(self, count):
+            self.launcher.set_property("count", count)
 
-    @dbus.service.method(BUS_NAME)
-    def set_count_visible(self, visible):
-        self.launcher.set_property("count_visible", visible)
+        @dbus.service.method(BUS_NAME)
+        def set_count_visible(self, visible):
+            self.launcher.set_property("count_visible", visible)
 
-    @dbus.service.method(BUS_NAME)
-    def add_quicklist_button(self, label, visible):
+        @dbus.service.method(BUS_NAME)
+        def add_quicklist_button(self, label, visible):
 
-        def _pressCallback(arg1, arg2, arg3):
-            self.buttonPressed(label)
+            def _pressCallback(arg1, arg2, arg3):
+                self.buttonPressed(label)
 
-        item = Dbusmenu.Menuitem.new()
-        item.property_set(Dbusmenu.MENUITEM_PROP_LABEL, label)
-        item.property_set_bool(Dbusmenu.MENUITEM_PROP_VISIBLE, visible)
-        item.connect("item-activated", _pressCallback, None)
-        self.ql.child_append(item)
+            item = Dbusmenu.Menuitem.new()
+            item.property_set(Dbusmenu.MENUITEM_PROP_LABEL, label)
+            item.property_set_bool(Dbusmenu.MENUITEM_PROP_VISIBLE, visible)
+            item.connect("item-activated", _pressCallback, None)
+            self.ql.child_append(item)
 
-    @dbus.service.method(BUS_NAME)
-    def add_quicklist_checkbox(self, label, visible, status):
+        @dbus.service.method(BUS_NAME)
+        def add_quicklist_checkbox(self, label, visible, status):
 
-        def _check_callback(menuitem, a, b):
-            if menuitem.property_get_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE) == Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED:
-                menuitem.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_UNCHECKED)
-                self.checkChanged(label, False)
+            def _check_callback(menuitem, a, b):
+                if menuitem.property_get_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE) == Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED:
+                    menuitem.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_UNCHECKED)
+                    self.checkChanged(label, False)
+                else:
+                    menuitem.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED)
+                    self.checkChanged(label, True)
+
+            check = Dbusmenu.Menuitem.new ()
+            check.property_set (Dbusmenu.MENUITEM_PROP_LABEL, label)
+            check.property_set (Dbusmenu.MENUITEM_PROP_TOGGLE_TYPE, Dbusmenu.MENUITEM_TOGGLE_CHECK)
+            if status:
+                check.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED)
             else:
-                menuitem.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED)
-                self.checkChanged(label, True)
+                check.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_UNCHECKED)
+            check.connect (Dbusmenu.MENUITEM_SIGNAL_ITEM_ACTIVATED, _check_callback, None)
+            check.property_set_bool (Dbusmenu.MENUITEM_PROP_VISIBLE, visible)
+            self.ql.child_append(check)
 
-        check = Dbusmenu.Menuitem.new ()
-        check.property_set (Dbusmenu.MENUITEM_PROP_LABEL, label)
-        check.property_set (Dbusmenu.MENUITEM_PROP_TOGGLE_TYPE, Dbusmenu.MENUITEM_TOGGLE_CHECK)
-        if status:
-            check.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED)
-        else:
-            check.property_set_int (Dbusmenu.MENUITEM_PROP_TOGGLE_STATE, Dbusmenu.MENUITEM_TOGGLE_STATE_UNCHECKED)
-        check.connect (Dbusmenu.MENUITEM_SIGNAL_ITEM_ACTIVATED, _check_callback, None)
-        check.property_set_bool (Dbusmenu.MENUITEM_PROP_VISIBLE, visible)
-        self.ql.child_append(check)
+        @dbus.service.method(BUS_NAME)
+        def show_menu(self):
+            self.launcher.set_property("quicklist", self.ql)
 
-    @dbus.service.method(BUS_NAME)
-    def show_menu(self):
-        self.launcher.set_property("quicklist", self.ql)
+        @dbus.service.method(BUS_NAME)
+        def clean_quicklist(self):
+            pass
 
-    @dbus.service.method(BUS_NAME)
-    def clean_quicklist(self):
-        pass
+        @dbus.service.method(BUS_NAME)
+        def quit(self):
+            self.loop.quit()
 
-    @dbus.service.method(BUS_NAME)
-    def quit(self):
-        self.loop.quit()
+        @dbus.service.signal(BUS_NAME)
+        def buttonPressed(self, signal):
+            pass
 
-    @dbus.service.signal(BUS_NAME)
-    def buttonPressed(self, signal):
-        pass
-
-    def checkChanged(self, signal, value):
-        pass
+        def checkChanged(self, signal, value):
+            pass
 
 
 class TurpialUnityDaemon(Daemon):
@@ -243,7 +245,10 @@ def main():
         sys.exit(2)
 
     try:
-        daemon = TurpialUnityDaemon()
+        if UNITY_SUPPORT:
+            daemon = TurpialUnityDaemon()
+        else:
+            sys.exit(-1)
     except Exception, e:
         print "Error running the Unity Daemon: %s" % e
         sys.exit(-1)

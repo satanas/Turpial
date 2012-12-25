@@ -9,21 +9,22 @@ import Queue
 import threading
 
 class Worker(threading.Thread):
+    TIMEOUT = 200
     def __init__(self):
         threading.Thread.__init__(self)
         self.setDaemon(False)
         self.queue = Queue.Queue()
-        self.exit_ = False 
-    
+        self.exit_ = False
+
     def set_timeout_callback(self, tcallback):
         self.tcallback = tcallback
-        
+
     def register(self, funct, args, callback, user_data=None):
         self.queue.put((funct, args, callback, user_data))
-    
+
     def quit(self):
         self.exit_ = True
-        
+
     def run(self):
         while not self.exit_:
             try:
@@ -32,15 +33,15 @@ class Worker(threading.Thread):
                 continue
             except:
                 continue
-            
+
             (funct, args, callback, user_data) = req
-            
+
             if type(args) == tuple:
                 rtn = funct(*args)
             elif args:
                 rtn = funct(args)
             else:
                 rtn = funct()
-            
+
             if callback:
                 self.tcallback(callback, rtn, user_data)

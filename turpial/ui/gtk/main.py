@@ -201,7 +201,7 @@ class Main(Base, Gtk.Window):
             self.__show_user_avatar_callback)
 
     def login(self, account_id):
-        #return
+        return
         self.accounts_dialog.update()
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
 
@@ -303,6 +303,9 @@ class Main(Base, Gtk.Window):
         return avatar
 
     def show_about_dialog(self, widget=None):
+        profile_dialog = ProfileDialog(self)
+        profile_dialog.show('hola')
+        return
         about_dialog = AboutDialog(self)
         about_dialog.show()
 

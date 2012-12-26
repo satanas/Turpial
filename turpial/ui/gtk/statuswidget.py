@@ -168,7 +168,7 @@ class StatusWidget(Gtk.EventBox):
         if url.startswith('http'):
             self.base.open_url(url)
         elif url.startswith('hashtag'):
-            column_id = url.replace('hashtag:', '')
+            column_id = url.replace('hashtags:', '')
             self.base.save_column(column_id)
         elif url.startswith('groups'):
             print "Opening groups"

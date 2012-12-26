@@ -207,6 +207,7 @@ continue?'),
     'this_search_support_advanced_operators': _('This search supports advanced operators like:'),
     'for_more_information_visit': _('For more information visit'),
     'twitter_search_documentation': _('Twitter Search Documentation'),
+    'error_loading_profile': _('Error loading profile'),
 }
 
 class i18n:

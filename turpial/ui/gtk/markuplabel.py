@@ -18,7 +18,6 @@ class MarkupLabel(Gtk.Label):
         self.set_alignment(xalign, yalign)
         self.set_line_wrap(True)
         self.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.set_single_line_mode(False)
 
     def set_error_text(self, text):
         text = escape_text_for_markup(text)
@@ -29,6 +28,6 @@ class MarkupLabel(Gtk.Label):
         self.get_window().set_cursor(handy_cursor)
 
     def show(self):
-        Gtk.Label.show()
+        Gtk.Label.show(self)
         if self.act_as_link:
             self.set_handy_cursor()

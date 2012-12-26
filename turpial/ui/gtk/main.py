@@ -49,13 +49,14 @@ class Main(Base, Gtk.Window):
         self.set_position(Gtk.WindowPosition.CENTER)
         self.set_gravity(Gdk.Gravity.STATIC)
         self.connect('delete-event', self.__on_close)
-        #self.connect('key-press-event', self.__on_key_press)
+        self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
         #self.connect('size-request', self.__size_request)
 
         # Configuration
         self.showed = True
         self.minimize = 'on'
+        self.is_fullscreen = False
 
         self.timers = {}
         self.updating = {}
@@ -77,6 +78,7 @@ class Main(Base, Gtk.Window):
 
         # Persistent dialogs
         self.accounts_dialog = AccountsDialog(self)
+        self.profile_dialog = ProfileDialog(self)
         self.update_box = UpdateBox(self)
 
         self.imageview = ImageView(self)
@@ -93,9 +95,6 @@ class Main(Base, Gtk.Window):
         vbox.pack_start(self.dock, False, False, 0)
         self.add(vbox)
 
-        #profile_dialog = ProfileDialog(self)
-        #profile_dialog.update('hola')
-
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():
             self.showed = False
@@ -106,6 +105,21 @@ class Main(Base, Gtk.Window):
         else:
             self.main_quit(widget)
         return True
+
+    def __on_key_press(self, widget, event):
+        keyname = Gdk.keyval_name(event.keyval)
+        if keyname.upper() == 'F' and event.state & Gdk.ModifierType.CONTROL_MASK:
+            self.__toogle_fullscreen()
+            return True
+        return False
+
+    def __toogle_fullscreen(self):
+        if self.is_fullscreen:
+            self.unfullscreen()
+            self.is_fullscreen = False
+        else:
+            self.fullscreen()
+            self.is_fullscreen = True
 
     #================================================================
     # Tray icon
@@ -183,6 +197,11 @@ class Main(Base, Gtk.Window):
         self.imageview.loading()
         self.worker.register(self.core.get_profile_image, (account_id, user),
             self.__show_user_avatar_callback)
+
+    def show_user_profile(self, account_id, user):
+        self.profile_dialog.loading()
+        self.worker.register(self.core.get_user_profile, (account_id, user),
+            self.__show_user_profile_callback)
 
     def login(self, account_id):
         #return
@@ -461,6 +480,12 @@ class Main(Base, Gtk.Window):
             self.imageview.error(response.errmsg)
         else:
             self.imageview.update(response.items)
+
+    def __show_user_profile_callback(self, response):
+        if response.code > 0:
+            self.profile_dialog.error(response.errmsg)
+        else:
+            self.profile_dialog.update(response.items)
 
     def __worker_timeout_callback(self, funct, arg, user_data):
         if user_data:

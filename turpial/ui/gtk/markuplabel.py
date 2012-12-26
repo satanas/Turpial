@@ -18,23 +18,6 @@ class MarkupLabel(Gtk.Label):
         self.set_alignment(xalign, yalign)
         self.set_line_wrap(True)
         self.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        #self.set_single_line_mode(False)
-
-        self.connect("size-allocate", self.__on_size_allocate)
-
-    def __on_size_allocate(self, widget, rect):
-
-        print self.get_layout().get_width()
-        print self.get_layout().get_height()
-        print self.get_layout().is_wrapped()
-
-        self.get_layout().set_width(rect.width)
-        #self.set_max_width_chars(
-        #self.set_size_request(rect.width, -1)
-        #self.set_size_request(-1, -1)
-
-    #def set_markup(self, text):
-    #    Gtk.Label.set_markup(self, text)
 
     def set_error_text(self, text):
         text = escape_text_for_markup(text)

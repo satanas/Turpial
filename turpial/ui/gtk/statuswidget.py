@@ -168,11 +168,15 @@ class StatusWidget(Gtk.EventBox):
         if url.startswith('http'):
             self.base.open_url(url)
         elif url.startswith('hashtag'):
-            self.base.save_column(url[9:])
+            column_id = url.replace('hashtags:', '')
+            self.base.save_column(column_id)
         elif url.startswith('groups'):
             print "Opening groups"
         elif url.startswith('profile'):
-            print "Opening profile"
+            url = url.replace('profile:', '')
+            account_id = url.split(':')[0]
+            username = url.split(':')[1]
+            self.base.show_user_profile(account_id, username)
         return True
 
     def update(self, status):

@@ -78,6 +78,7 @@ class Main(Base, Gtk.Window):
 
         # Persistent dialogs
         self.accounts_dialog = AccountsDialog(self)
+        self.profile_dialog = ProfileDialog(self)
         self.update_box = UpdateBox(self)
 
         self.imageview = ImageView(self)
@@ -93,9 +94,6 @@ class Main(Base, Gtk.Window):
         vbox.pack_start(self._container, True, True, 0)
         vbox.pack_start(self.dock, False, False, 0)
         self.add(vbox)
-
-        #profile_dialog = ProfileDialog(self)
-        #profile_dialog.update('hola')
 
     def __on_close(self, widget, event=None):
         if self.core.minimize_on_close():
@@ -200,8 +198,13 @@ class Main(Base, Gtk.Window):
         self.worker.register(self.core.get_profile_image, (account_id, user),
             self.__show_user_avatar_callback)
 
+    def show_user_profile(self, account_id, user):
+        self.profile_dialog.loading()
+        self.worker.register(self.core.get_user_profile, (account_id, user),
+            self.__show_user_profile_callback)
+
     def login(self, account_id):
-        return
+        #return
         self.accounts_dialog.update()
         self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
 
@@ -303,9 +306,6 @@ class Main(Base, Gtk.Window):
         return avatar
 
     def show_about_dialog(self, widget=None):
-        profile_dialog = ProfileDialog(self)
-        profile_dialog.show('hola')
-        return
         about_dialog = AboutDialog(self)
         about_dialog.show()
 
@@ -480,6 +480,12 @@ class Main(Base, Gtk.Window):
             self.imageview.error(response.errmsg)
         else:
             self.imageview.update(response.items)
+
+    def __show_user_profile_callback(self, response):
+        if response.code > 0:
+            self.profile_dialog.error(response.errmsg)
+        else:
+            self.profile_dialog.update(response.items)
 
     def __worker_timeout_callback(self, funct, arg, user_data):
         if user_data:

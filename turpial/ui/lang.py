@@ -208,6 +208,7 @@ continue?'),
     'for_more_information_visit': _('For more information visit'),
     'twitter_search_documentation': _('Twitter Search Documentation'),
     'error_loading_profile': _('Error loading profile'),
+    'reply_message_to': _('Reply message to'),
 }
 
 class i18n:

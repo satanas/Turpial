@@ -240,7 +240,7 @@ class UpdateBox(Gtk.Window):
         self.__show()
         self.update_text.move_cursor(MessageTextView.CURSOR_END)
 
-    def show_for_direct(self,account_id, username):
+    def show_for_direct(self, account_id, username):
         self.title_caption = "%s @%s" % (i18n.get('send_message_to'), username)
         self._account_id = account_id
         self._direct_message_to = username

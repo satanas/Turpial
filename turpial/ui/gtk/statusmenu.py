@@ -34,7 +34,7 @@ class StatusMenu(Gtk.Menu):
         if not status.is_own:
             item = Gtk.MenuItem(i18n.get('reply'))
             if direct:
-                pass
+                item.connect('activate', self.__on_reply_direct, status)
             else:
                 item.connect('activate', self.__on_reply, status)
             self.append(item)
@@ -102,6 +102,10 @@ class StatusMenu(Gtk.Menu):
     def __on_reply(self, widget, status):
         self.base.show_update_box_for_reply(status.in_reply_to_id,
                 status.account_id, ' '.join(map(lambda x: '@' + x, status.get_mentions())))
+
+    def __on_reply_direct(self, widget, status):
+        self.base.show_update_box_for_reply_direct(status.in_reply_to_id,
+                status.account_id, ' '.join(map(status.get_mentions()))
 
     def __on_quote(self, widget, message):
         self.base.show_update_box_for_quote(message)

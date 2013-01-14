@@ -326,6 +326,9 @@ class Main(Base, Gtk.Window):
     def show_update_box_for_reply(self, in_reply_id, account_id, in_reply_user):
         self.update_box.show_for_reply(in_reply_id, account_id, in_reply_user)
 
+    def show_update_box_for_reply_direct(self, in_reply_id, account_id, in_reply_user):
+        self.update_box.show_for_reply_direct(in_reply_id, account_id, in_reply_user)
+
     def show_update_box_for_quote(self, message):
         self.update_box.show_for_quote(message)
 

@@ -169,7 +169,7 @@ class AccountsDialog(Gtk.Window):
         acc = self.__get_selected()
         if acc is None:
             return
-        self.base.single_login(acc.id_)
+        self.base.login(acc.id_)
         self.btn_login.set_label(i18n.get('in_progress'))
         self.btn_login.set_sensitive(False)
 

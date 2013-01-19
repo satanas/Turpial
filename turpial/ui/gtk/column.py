@@ -21,6 +21,7 @@ class StatusesColumn(Gtk.VBox):
 
         self.base = base
         self.set_size_request(250, -1)
+        #self.set_double_buffered(True)
 
         # Variables that defines column status
         self.last_id = None
@@ -150,20 +151,23 @@ class StatusesColumn(Gtk.VBox):
         self.updating = False
 
     def update(self, statuses):
-        children = self._list.get_children()
-        empty = not(bool(children))
         to_del = 0
+        children = self._list.get_children()
         num_children = len(children)
         num_statuses = len(statuses)
         max_statuses = self.base.get_max_statuses_per_column()
-        if not empty:
+
+        if num_children > 0:
             if (num_children + num_statuses) >= max_statuses:
                 to_del = (num_children + num_statuses) - max_statuses
             else:
-                to_del = num_children
+                to_del = num_statuses
+
             for i in range(to_del):
                 self._list.remove(children[-1])
                 del(children[-1])
+
+        del children
 
         # Set last_id before reverse, that way we guarantee that last_id holds
         # the id for the newest status
@@ -175,6 +179,7 @@ class StatusesColumn(Gtk.VBox):
             s = StatusWidget(self.base, status)
             self._list.pack_start(s, False, False, 0)
             self._list.reorder_child(s, 0)
+            del s
 
         #self.mark_all_as_read()
         #self.__set_last_time()

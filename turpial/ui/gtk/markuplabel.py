@@ -25,7 +25,9 @@ class MarkupLabel(Gtk.Label):
 
     def set_handy_cursor(self):
         handy_cursor = Gdk.Cursor(Gdk.CursorType.HAND1)
+        print handy_cursor
         self.get_window().set_cursor(handy_cursor)
+        print self.get_window().get_cursor()
 
     def show(self):
         Gtk.Label.show(self)

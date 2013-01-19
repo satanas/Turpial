@@ -49,6 +49,7 @@ class StatusWidget(Gtk.EventBox):
 
         self.username = MarkupLabel(act_as_link=True)
         self.username.set_ellipsize(Pango.EllipsizeMode.END)
+        self.username.connect('button-release-event', self.__on_click_username)
         self.status_text = MarkupLabel()
         self.status_text.connect('activate-link', self.__open_url)
         self.footer = MarkupLabel()
@@ -120,12 +121,15 @@ class StatusWidget(Gtk.EventBox):
 
         self.base.fetch_status_avatar(status, self.update_avatar)
 
+    def __on_click_username(self, widget, event=None):
+        print 'clicked username', widget, event
+
     def __on_click(self, widget, event=None, data=None):
         # Capture clicks for avatar
         if event.x <= 48 and event.y <= 48 and event.button == 1:
             self.__on_click_avatar()
             return True
-
+        print event.x, event.y
         if event.button != 3:
             return False
         self.menu = StatusMenu(self.base, self.status, self.in_progress)

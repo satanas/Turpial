@@ -16,6 +16,7 @@ class Container(Gtk.VBox):
 
         self.base = base
         self.child = None
+        #self.set_double_buffered(True)
         self.columns = {}
         self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(65535, 65535,65535))
 

@@ -16,7 +16,7 @@ from turpial.ui.gtk.statusmenu import StatusMenu
 from turpial.ui.gtk.markuplabel import MarkupLabel
 
 
-class StatusWidget(Gtk.EventBox): 
+class StatusWidget(Gtk.EventBox):
     def __init__(self, base, status):
         Gtk.EventBox.__init__(self)
 
@@ -36,10 +36,9 @@ class StatusWidget(Gtk.EventBox):
 
         self.avatar = Gtk.Image()
         self.avatar.set_margin_right(AVATAR_MARGIN)
-        avatar_box = Gtk.Alignment()
-        avatar_box.add(self.avatar)
-        avatar_box.set(0.5, 0, -1, -1)
-        avatar_box.connect('button-press-event', self.__on_click_avatar)
+        self.avatar_box = Gtk.Alignment()
+        self.avatar_box.add(self.avatar)
+        self.avatar_box.set(0.5, 0, -1, -1)
 
         self.favorited_mark = Gtk.Image()
         self.protected_mark = Gtk.Image()
@@ -49,9 +48,7 @@ class StatusWidget(Gtk.EventBox):
 
         self.username = MarkupLabel(act_as_link=True)
         self.username.set_ellipsize(Pango.EllipsizeMode.END)
-        self.username.connect('button-release-event', self.__on_click_username)
         self.status_text = MarkupLabel()
-        self.status_text.connect('activate-link', self.__open_url)
         self.footer = MarkupLabel()
 
         # Setting user image
@@ -102,7 +99,7 @@ class StatusWidget(Gtk.EventBox):
         content.pack_start(self.footer, False, False, 0)
 
         box = Gtk.HBox()
-        box.pack_start(avatar_box, False, False, 0)
+        box.pack_start(self.avatar_box, False, False, 0)
         box.pack_start(content, True, True, 0)
 
         bbox = Gtk.VBox()
@@ -118,6 +115,9 @@ class StatusWidget(Gtk.EventBox):
         self.set_reposted_mark(status.reposted_by)
 
         self.connect('button-release-event', self.__on_click)
+        self.click_url_handler = self.status_text.connect('activate-link', self.__open_url)
+        self.click_avatar_handler = self.avatar_box.connect('button-press-event', self.__on_click_avatar)
+        self.click_username_handler = self.username.connect('button-release-event', self.__on_click_username)
 
         self.base.fetch_status_avatar(status, self.update_avatar)
 
@@ -182,6 +182,15 @@ class StatusWidget(Gtk.EventBox):
             username = url.split(':')[1]
             self.base.show_user_profile(account_id, username)
         return True
+
+    def __del__(self):
+        print 'garbage collected'
+
+    def release(self):
+        self.avatar_box.disconnect(self.click_avatar_handler)
+        self.username.disconnect(self.click_username_handler)
+        self.status_text.disconnect(self.click_url_handler)
+
 
     def update(self, status):
         self.status = status

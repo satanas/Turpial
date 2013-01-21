@@ -164,10 +164,10 @@ class StatusesColumn(Gtk.VBox):
                 to_del = num_statuses
 
             for i in range(to_del):
+                print '    Deleting: %s' % children[-1].status.text[:30]
+                children[-1].release()
                 self._list.remove(children[-1])
-                del(children[-1])
-
-        del children
+                #del(children[-1])
 
         # Set last_id before reverse, that way we guarantee that last_id holds
         # the id for the newest status
@@ -176,10 +176,17 @@ class StatusesColumn(Gtk.VBox):
         statuses.reverse()
 
         for status in statuses:
+            # This is to avoid insert duplicated statuses
+            if status.id_ in [c.status.id_ for c in children]:
+                print 'Duplicated status. Nothing to do'
+                continue
+
             s = StatusWidget(self.base, status)
+            print '    Adding: %s' % s.status.text[:30]
             self._list.pack_start(s, False, False, 0)
             self._list.reorder_child(s, 0)
-            del s
+
+        print '    %i statuses after update' % len(self._list.get_children())
 
         #self.mark_all_as_read()
         #self.__set_last_time()

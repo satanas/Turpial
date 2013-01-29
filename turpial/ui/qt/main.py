@@ -7,15 +7,15 @@
 
 # PyQt4 Support:
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtWebKit import *
+#from PyQt4.QtWebKit import *
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.base import *
 
 from turpial.ui.qt.worker import Worker
-from turpial.ui.qt.htmlview import HtmlView
+#from turpial.ui.qt.htmlview import HtmlView
 from turpial.ui.qt.oauthwin import OAuthWindow
-from turpial.ui.qt.accounts import AccountsDialog
+#from turpial.ui.qt.accounts import AccountsDialog
 
 
 # TODO: Improve all splits for accounts_id with a common function
@@ -81,7 +81,7 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
 
         self.log = logging.getLogger('Qt')
-        self.htmlparser = HtmlParser()
+        # self.htmlparser = HtmlParser()
         self.setWindowTitle('Turpial')
 
         self.ignore_quit = True
@@ -89,15 +89,15 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         columns = self.get_all_columns()
 
         self.resize(310, 480)
-        self.container = HtmlView()
-        self.setCentralWidget(self.container.view)
-        self.container.action_request.connect(self._action_request)
-        self.container.link_request.connect(self._link_request)
+        #self.container = HtmlView()
+        #self.setCentralWidget(self.container.view)
+        #self.container.action_request.connect(self._action_request)
+        #self.container.link_request.connect(self._link_request)
 
         # TODO: Improve the use of this mode
         self.mode = 0
 
-#        self.screen_width = self.get_screen().get_width()
+        # self.screen_width = self.get_screen().get_width()
         self.screen_width = 310 
         self.max_columns = self.screen_width / MIN_WINDOW_WIDTH
 
@@ -106,13 +106,13 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.minimize = 'on'
 
         self.timers = {}
-        self.newtimers = [] 
+        self.newtimers = []
         self.alltimers = []
         self.updating = {}
         self.columns = {}
 
-        self.sound = Sound()
-#        self.notify = Notification()
+        # self.sound = Sound()
+        # self.notify = Notification()
 
         self.openstatuses = {}
 
@@ -121,8 +121,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.worker.start()
 
         # Persistent dialogs
-        self.accountsdlg = AccountsDialog(self)
-        self.accountsdlg.update()
+        #self.accountsdlg = AccountsDialog(self)
+        #self.accountsdlg.update()
 
         self.show()
 
@@ -142,7 +142,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         pref = Preferences(self)
 
     def show_accounts_dialog(self, widget=None):
-        self.accountsdlg.show()
+        #self.accountsdlg.show()
+        pass
 
     def show_update_box(self, widget=None):
         self.container.execute("show_update_box()")
@@ -308,9 +309,10 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         auth_obj = arg.items
         if auth_obj.must_auth():
-            self.accountsdlg.show()
-            self.accountsdlg.set_account_id(account_id)
-            self.accountsdlg.show_auth_win(auth_obj.url)
+            #self.accountsdlg.show()
+            #self.accountsdlg.set_account_id(account_id)
+            #self.accountsdlg.show_auth_win(auth_obj.url)
+            pass
         else:
             self.__auth_callback(arg, account_id, False)
 
@@ -322,13 +324,13 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
     def __cancel_callback(self, widget, reason, account_id):
         self.delete_account(account_id)
-        self.accountsdlg.cancel_login(i18n.get(reason))
+        #self.accountsdlg.cancel_login(i18n.get(reason))
 
     def __auth_callback(self, arg, account_id, register = True):
         if arg.code > 0:
             msg = arg.errmsg
             self.show_notice(msg, 'error')
-            self.accountsdlg.cancel_login(msg)
+            #self.accountsdlg.cancel_login(msg)
         else:
             self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
 
@@ -338,14 +340,14 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         if arg.code > 0:
             self.core.change_login_status(account_id, LoginStatus.NONE)
             msg = arg.errmsg
-            self.accountsdlg.cancel_login(msg)
+            #self.accountsdlg.cancel_login(msg)
             self.show_notice(msg, 'error')
         else:
             if register:
                 account_id = self.core.name_as_id(account_id)
 
-            self.accountsdlg.done_login()
-            self.accountsdlg.update()
+            #self.accountsdlg.done_login()
+            #self.accountsdlg.update()
 
             response = self.core.get_own_profile(account_id)
             if response.code > 0:
@@ -408,16 +410,17 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
     def show_main(self):
         reg_columns = self.get_registered_columns()
-        if len(reg_columns) == 0:
-            page = self.htmlparser.empty()
-        else:
-            page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
-        self.container.render(page)
+        #if len(reg_columns) == 0:
+        #    page = self.htmlparser.empty()
+        #else:
+        #    page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
+        #self.container.render(page)
         self.login()
 
     def show_about(self):
-        self.accountsdlg.show()
-        self.accountsdlg.show_about_win()
+        #self.accountsdlg.show()
+        #self.accountsdlg.show_about_win()
+        pass
 
     def show_preferences(self):
         pref = Preferences(self)
@@ -428,6 +431,9 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         for acc in self.get_accounts_list():
             self.single_login(acc)
+
+    def single_login(self, account_id):
+        pass
 
     # ------------------------------------------------------------
     # Callbacks

@@ -43,7 +43,9 @@ class Base(Singleton):
         self.log = logging.getLogger('UI')
         self.log.debug('Started')
 
-        self.sound = Sound()
+        self.images_path = os.path.realpath(os.path.join(
+            os.path.dirname(__file__), '..', '..', 'data', 'pixmaps'))
+
 
         # Unity integration
         self.unitylauncher = UnityLauncherFactory().create();
@@ -54,8 +56,6 @@ class Base(Singleton):
         #self.unitylauncher.add_quicklist_button(self.show_preferences, i18n.get('preferences'), True)
         #self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('exit'), True)
         #self.unitylauncher.show_menu()
-
-        self.notify = Notification()
 
     # TODO: Put this in util.py
     def humanize_size(self, size):

@@ -38,9 +38,6 @@ class Main(Base, Gtk.Window):
         Base.__init__(self, core)
         Gtk.Window.__init__(self)
 
-        self.images_path = os.path.realpath(os.path.join(
-            os.path.dirname(__file__), '..', '..', 'data', 'pixmaps'))
-
         self.log = logging.getLogger('Gtk')
         self.set_title(DESC)
         self.set_size_request(250, 250)

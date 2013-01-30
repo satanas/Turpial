@@ -79,10 +79,8 @@ class Main(Base, QtGui.QMainWindow):
         #self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
 
 
-
         self.tray = TrayIcon(self)
-        #self.tray.connect("activate", self.__on_tray_click)
-        #self.tray.connect("popup-menu", self.__show_tray_menu)
+        self.tray.activated.connect(self.__on_tray_click)
 
 
         self.focus = False
@@ -149,7 +147,7 @@ class Main(Base, QtGui.QMainWindow):
     # Tray icon
     #================================================================
 
-    def __on_tray_click(self, widget):
+    def __on_tray_click(self):
         if self.showed:
             self.showed = False
             self.hide()
@@ -164,35 +162,24 @@ class Main(Base, QtGui.QMainWindow):
     def main_loop(self):
         try:
             self.app.exec_()
-            #self.app.quit()
         except Exception:
             sys.exit(0)
 
     def main_quit(self, widget=None, force=False):
         self.log.debug('Exiting...')
         self.unitylauncher.quit()
-        self.destroy()
-        self.tray = None
-        self.worker.quit()
-        self.worker.join()
+        #self.worker.quit()
+        #self.worker.join()
         #self.avatars_worker.quit()
         #self.avatars_worker.join()
-        if widget:
-            self.app.quit()
-        if force:
-            sys.exit(0)
-
+        #if widget:
+        self.app.quit()
+        sys.exit(0)
 
     def show_main(self):
         self.start()
         self.show()
         self.update_container()
-
-    def main_quit(self, widget=None, force=False):
-        self.unitylauncher.quit()
-        self.destroy()
-        self.tray = None
-        self.worker.quit()
 
     def load_image(self, filename, pixbuf=False):
         img_path = os.path.join(self.images_path, filename)

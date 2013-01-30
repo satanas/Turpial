@@ -26,7 +26,7 @@ class TrayIcon(QSystemTrayIcon):
         sounds = self.menu.addAction(i18n.get('enable_sounds'))
         #sound_.set_active(not self.sound._disable)
         self.menu.addSeparator()
-        exit_ = self.menu.addAction(i18n.get('exit'))
+        exit_ = self.menu.addAction(i18n.get('exit'), self.base.main_quit)
 
         #self.menu.append(accounts)
         #self.menu.append(preferences)

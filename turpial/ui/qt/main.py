@@ -157,9 +157,6 @@ class Main(Base, QtGui.QMainWindow):
             self.showed = True
             self.show()
 
-    def __show_tray_menu(self, widget, button, activate_time):
-        return self.tray.popup(button, activate_time)
-
     #================================================================
     # Overrided methods
     #================================================================
@@ -189,6 +186,7 @@ class Main(Base, QtGui.QMainWindow):
     def show_main(self):
         self.start()
         self.show()
+        self.update_container()
 
     def main_quit(self, widget=None, force=False):
         self.unitylauncher.quit()
@@ -202,11 +200,22 @@ class Main(Base, QtGui.QMainWindow):
             return QtGui.QPixmap(img_path)
         return QtGui.QImage(img_path)
 
+    def get_image_path(self, filename):
+        return os.path.join(self.images_path, filename)
 
     def login(self, account_id):
         pass
 
-
+    def update_container(self):
+        columns = self.get_registered_columns()
+        if len(columns) == 0:
+            #self._container.empty()
+            #self.dock.empty()
+            self.tray.empty()
+        else:
+            #self._container.normal(self.get_accounts_list(), columns)
+            #self.dock.normal()
+            self.tray.normal()
 
 
 
@@ -248,16 +257,6 @@ class Main(Base, QtGui.QMainWindow):
         import webbrowser
         webbrowser.open(str(url)[1:])
         #self.open_url(url.toString())
-    def __create_trayicon(self):
-        """if gtk.check_version(2, 10, 0) is not None:
-            self.log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
-            return
-        self.tray = gtk.StatusIcon()
-        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
-        self.tray.set_tooltip('Turpial')
-        self.tray.connect("activate", self.__on_trayicon_click)
-        self.tray.connect("popup-menu", self.__show_tray_menu)"""
-        pass
 
     def __on_trayicon_click(self, widget):
         if self.showed:

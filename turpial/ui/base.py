@@ -44,7 +44,7 @@ class Base(Singleton):
         self.log.debug('Started')
 
         self.images_path = os.path.realpath(os.path.join(
-            os.path.dirname(__file__), '..', '..', 'data', 'pixmaps'))
+            os.path.dirname(__file__), '..', 'data', 'pixmaps'))
 
 
         # Unity integration

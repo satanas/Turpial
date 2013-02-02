@@ -1,5 +1,0 @@
-<td id="column-<% @column_id %>" class="column">
-    <div id="wrapper-<% @column_id %>" class="wrapper">
-        <div id="list-<% @column_id %>" class="list"></div>
-    </div>
-</td>

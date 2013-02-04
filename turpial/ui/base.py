@@ -22,10 +22,7 @@ from libturpial.api.services.showmedia import utils as showmediautils
 
 from turpial import VERSION
 from turpial.ui.lang import i18n
-#from turpial.ui.html import HtmlParser
 from turpial.singleton import Singleton
-from turpial.ui.sound import Sound
-from turpial.notification import Notification
 from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 
 MIN_WINDOW_WIDTH = 250

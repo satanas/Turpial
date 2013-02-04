@@ -14,9 +14,8 @@ from turpial.ui.base import *
 from turpial.ui.qt.tray import TrayIcon
 
 from turpial.ui.qt.worker import Worker
-#from turpial.ui.qt.htmlview import HtmlView
+from turpial.ui.qt.container import Container
 from turpial.ui.qt.oauthwin import OAuthWindow
-#from turpial.ui.qt.accounts import AccountsDialog
 
 
 # TODO: Improve all splits for accounts_id with a common function
@@ -78,11 +77,6 @@ class Main(Base, QtGui.QMainWindow):
         #self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
         #self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
 
-
-        self.tray = TrayIcon(self)
-        self.tray.activated.connect(self.__on_tray_click)
-
-
         self.focus = False
 
         class eventFilter(QtCore.QObject):
@@ -143,6 +137,16 @@ class Main(Base, QtGui.QMainWindow):
         #self.accountsdlg = AccountsDialog(self)
         #self.accountsdlg.update()
 
+        self.tray = TrayIcon(self)
+        self.tray.activated.connect(self.__on_tray_click)
+
+        self._container = Container(self)
+
+        central_widget = QWidget()
+        self._container.add
+        self.setCentralWidget(self._container)
+
+
     #================================================================
     # Tray icon
     #================================================================
@@ -196,10 +200,11 @@ class Main(Base, QtGui.QMainWindow):
     def update_container(self):
         columns = self.get_registered_columns()
         if len(columns) == 0:
-            #self._container.empty()
+            self._container.empty()
             #self.dock.empty()
             self.tray.empty()
         else:
+            self._container.empty()
             #self._container.normal(self.get_accounts_list(), columns)
             #self.dock.normal()
             self.tray.normal()

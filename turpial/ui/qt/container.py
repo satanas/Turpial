@@ -5,7 +5,6 @@
 from PyQt4 import QtGui
 
 from turpial.ui.lang import i18n
-from turpial.ui.gtk.column import StatusesColumn
 
 class Container(QtGui.QVBoxLayout):
     def __init__(self, base):

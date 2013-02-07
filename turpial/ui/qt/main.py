@@ -142,9 +142,9 @@ class Main(Base, QtGui.QMainWindow):
 
         self._container = Container(self)
 
-        central_widget = QWidget()
-        self._container.add
-        self.setCentralWidget(self._container)
+        #central_widget = QWidget()
+        #self._container.add
+        #self.setCentralWidget(self._container)
 
 
     #================================================================

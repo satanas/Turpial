@@ -4,13 +4,16 @@
 
 import urllib2
 
+from xml.sax.saxutils import unescape
+
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Pango
+from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
 from turpial.ui.lang import i18n
-from turpial.ui.gtk.statuswidget import StatusWidget
+from libturpial.common import StatusType
 
 
 ICON_MARGIN = 5
@@ -76,8 +79,61 @@ class StatusesColumn(Gtk.VBox):
 
         # Content
         #============================================================
-        self._list = Gtk.VBox()
+
+        self._list = Gtk.TreeView()
+        self._list.set_headers_visible(False)
+        #self._list.set_events(gtk.gdk.POINTER_MOTION_MASK)
+        self._list.set_level_indentation(0)
+        #self._list.set_resize_mode(gtk.RESIZE_IMMEDIATE)
+
+        self.model = Gtk.ListStore(
+            GdkPixbuf.Pixbuf, # avatar
+            str, # id
+            str, # username
+            str, # pango message
+            str, # datetime
+            str, # client
+            bool, # favorited?
+            bool, # retweeted?
+            bool, # own?
+            bool, # protected?
+            bool, # certified?
+            str, # in_reply_to_id
+            str, # in_reply_to_user
+            str, # retweeted_by
+            Gdk.Color, # color
+            str, # plain text message
+            int, # status type
+            str, # account_id
+            float, # unix timestamp
+        )
+
+        # Sort by unix timestamp
+        self.model.set_sort_column_id(18, Gtk.SortType.DESCENDING)
+
+        cell_avatar = Gtk.CellRendererPixbuf()
+        cell_avatar.set_property('yalign', 0)
+        cell_tweet = Gtk.CellRendererText()
+        cell_tweet.set_property('wrap-mode', Pango.WrapMode.WORD_CHAR)
+        cell_tweet.set_property('wrap-width', 260)
+        cell_tweet.set_property('yalign', 0)
+        cell_tweet.set_property('xalign', 0)
+
+        column = Gtk.TreeViewColumn('tweets')
+        column.set_alignment(0.0)
+        column.pack_start(cell_avatar, False)
+        column.pack_start(cell_tweet, True)
+        column.set_attributes(cell_tweet, markup=3, cell_background_gdk=11)
+        column.set_attributes(cell_avatar, pixbuf=0, cell_background_gdk=11)
+
+
+        self._list.set_model(self.model)
+        self._list.append_column(column)
+        #self._list.connect("button-release-event", self.__on_click)
+        #self.click_handler = self._list.connect("cursor-changed", self.__on_select)
+
         scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         scroll.add_with_viewport(self._list)
         scroll.set_margin_top(ICON_MARGIN)
         scroll.set_margin_right(ICON_MARGIN)
@@ -133,9 +189,56 @@ class StatusesColumn(Gtk.VBox):
         self.spinner.start()
         self.spinner.show()
 
+    def __build_pango_text(self, status):
+        ''' Transform the regular text into pango markup '''
+
+        pango_twt = unescape(status.text)
+        #pango_twt = unescape(status.text)
+        #pango_twt = pango_twt.replace('&quot;', '"')
+        #pango_twt = pango_twt.replace('\r\n', ' ')
+        #pango_twt = pango_twt.replace('\n', ' ')
+
+        #pango_twt = GObject.markup_escape_text(pango_twt)
+
+        user = '<span size="9000" foreground="%s"><b>%s</b></span> ' % (
+            self.base.get_color_scheme('links'), status.username
+        )
+        pango_twt = '<span size="9000">%s</span>' % pango_twt
+        #pango_twt = self.__highlight_hashtags(pango_twt)
+        #pango_twt = self.__highlight_groups(pango_twt)
+        #pango_twt = self.__highlight_mentions(pango_twt)
+        #pango_twt = self.__highlight_urls(urls, pango_twt)
+        pango_twt += '<span size="2000">\n\n</span>'
+
+        try:
+            pango_twt = user + pango_twt
+        except UnicodeDecodeError:
+            clear_txt = ''
+            invalid_chars = []
+            for c in pango_twt:
+                try:
+                    clear_txt += c.encode('ascii')
+                except UnicodeDecodeError:
+                    invalid_chars.append(c)
+                    clear_txt += '?'
+            log.debug('Problema con caracteres inválidos en un tweet: %s' % invalid_chars)
+            pango_twt = clear_txt
+
+        footer = '<span size="small" foreground="#999">%s' % status.datetime
+        if status.source:
+            footer += ' %s %s' % (i18n.get('from'), status.source.name)
+        if status.in_reply_to_user:
+            footer += ' %s %s' % (i18n.get('in_reply_to'), status.in_reply_to_user)
+        if status.reposted_by:
+            footer += '\n%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
+        footer += '</span>'
+        pango_twt += footer
+
+        return pango_twt
+
+
     def clear(self):
-        # TODO: Fix or reimplement
-        self.model.clear()
+        self._list.get_model().clear()
 
     def start_updating(self):
         self.spinner.start()
@@ -152,8 +255,7 @@ class StatusesColumn(Gtk.VBox):
 
     def update(self, statuses):
         to_del = 0
-        children = self._list.get_children()
-        num_children = len(children)
+        num_children = len(self._list)
         num_statuses = len(statuses)
         max_statuses = self.base.get_max_statuses_per_column()
 
@@ -164,11 +266,12 @@ class StatusesColumn(Gtk.VBox):
                 to_del = num_statuses
 
             for i in range(to_del):
-                print '    Deleting: %s' % children[-1].status.text[:30]
-                children[-1].release()
-                self._list.remove(children[-1])
-                #del(children[-1])
+                last = self._list.iter_n_children(None)
+                _iter = self._list.get_iter_from_string(str(last - 1))
+                print '    Deleting: %s' % self._list.get_value(_iter, 15)[:30]
+                self._list.remove(_iter)
 
+        self.clear()
         # Set last_id before reverse, that way we guarantee that last_id holds
         # the id for the newest status
         self.last_id = statuses[0].id_
@@ -177,14 +280,19 @@ class StatusesColumn(Gtk.VBox):
 
         for status in statuses:
             # This is to avoid insert duplicated statuses
-            if status.id_ in [c.status.id_ for c in children]:
-                print 'Duplicated status. Nothing to do'
-                continue
+            #if status.id_ in [c.status.id_ for c in children]:
+            #    print 'Duplicated status. Nothing to do'
+            #    continue
 
-            s = StatusWidget(self.base, status)
-            print '    Adding: %s' % s.status.text[:30]
-            self._list.pack_start(s, False, False, 0)
-            self._list.reorder_child(s, 0)
+            print '    Adding: %s' % status.text[:30]
+            pix = self.base.load_image('unknown.png', True)
+            pango_text = self.__build_pango_text(status)
+
+            row = [pix, str(status.id_), status.username, pango_text, status.datetime, status.source.name,
+                status.favorited, status.repeated, status.is_own, status.protected, status.verified,
+                str(status.in_reply_to_id), status.in_reply_to_user, status.reposted_by, None, status.text,
+                StatusType.NORMAL, status.account_id, status.timestamp]
+            self._list.get_model().append(row)
 
         print '    %i statuses after update' % len(self._list.get_children())
 
@@ -202,20 +310,20 @@ class StatusesColumn(Gtk.VBox):
 
         #self.click_handler = self.list.connect("cursor-changed", self.__on_select)
 
-    def mark_favorite(self, status):
-        self._list.foreach(self.__mark_favorite, status)
+    ###def mark_favorite(self, status):
+    ###    self._list.foreach(self.__mark_favorite, status)
 
-    def unmark_favorite(self, status):
-        self._list.foreach(self.__unmark_favorite, status)
+    ###def unmark_favorite(self, status):
+    ###    self._list.foreach(self.__unmark_favorite, status)
 
-    def mark_repeat(self, status):
-        self._list.foreach(self.__mark_repeat, status)
+    ###def mark_repeat(self, status):
+    ###    self._list.foreach(self.__mark_repeat, status)
 
-    def unmark_repeat(self, status):
-        self._list.foreach(self.__unmark_repeat, status)
+    ###def unmark_repeat(self, status):
+    ###    self._list.foreach(self.__unmark_repeat, status)
 
-    def delete_status(self, status):
-        self._list.foreach(self.__delete_status, status)
+    ###def delete_status(self, status):
+    ###    self._list.foreach(self.__delete_status, status)
 
     def show_config_menu(self, widget):
         notif = Gtk.CheckMenuItem(i18n.get('notificate'))

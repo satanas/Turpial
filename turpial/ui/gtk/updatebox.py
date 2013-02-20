@@ -12,8 +12,8 @@ from turpial.ui.lang import i18n
 
 SPELLING = False
 try:
-    import gtkspell
-    SPELLING = True
+    #import gtkspell
+    SPELLING = False
 except:
     pass
 

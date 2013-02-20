@@ -456,8 +456,9 @@ class Main(Base, Gtk.Window):
                 #self.show_notice(response.errmsg, 'error')
                 pass
             else:
-                if self.core.show_notifications_in_login():
-                    self.notify.login(response.items)
+                pass
+                #if self.core.show_notifications_in_login():
+                #    self.notify.login(response.items)
 
             for col in self.get_registered_columns():
                 if col.account_id == account_id:

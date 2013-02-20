@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" Base class for Turpial sounds"""
-#
-# Author: Wil Alvarez (aka Satanas)
-# Ene 08, 2010
+# Base class for Turpial sounds"""
 
 import os
 import logging

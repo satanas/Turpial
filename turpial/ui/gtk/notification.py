@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" Notification module for Turpial """
-#
-# Author: Wil Alvarez (aka Satanas)
-# Dic 23, 2011
+# Notification module for Turpial """
 
 import os
 import logging

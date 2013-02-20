@@ -38,9 +38,6 @@ class Main(Base, Gtk.Window):
         Base.__init__(self, core)
         Gtk.Window.__init__(self)
 
-        self.images_path = os.path.realpath(os.path.join(
-            os.path.dirname(__file__), '..', '..', 'data', 'pixmaps'))
-
         self.log = logging.getLogger('Gtk')
         self.set_title(DESC)
         self.set_size_request(250, 250)
@@ -326,6 +323,9 @@ class Main(Base, Gtk.Window):
     def show_update_box_for_reply(self, in_reply_id, account_id, in_reply_user):
         self.update_box.show_for_reply(in_reply_id, account_id, in_reply_user)
 
+    def show_update_box_for_reply_direct(self, in_reply_id, account_id, in_reply_user):
+        self.update_box.show_for_reply_direct(in_reply_id, account_id, in_reply_user)
+
     def show_update_box_for_quote(self, message):
         self.update_box.show_for_quote(message)
 
@@ -456,8 +456,9 @@ class Main(Base, Gtk.Window):
                 #self.show_notice(response.errmsg, 'error')
                 pass
             else:
-                if self.core.show_notifications_in_login():
-                    self.notify.login(response.items)
+                pass
+                #if self.core.show_notifications_in_login():
+                #    self.notify.login(response.items)
 
             for col in self.get_registered_columns():
                 if col.account_id == account_id:

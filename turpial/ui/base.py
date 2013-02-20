@@ -22,10 +22,7 @@ from libturpial.api.services.showmedia import utils as showmediautils
 
 from turpial import VERSION
 from turpial.ui.lang import i18n
-#from turpial.ui.html import HtmlParser
 from turpial.singleton import Singleton
-from turpial.ui.sound import Sound
-from turpial.notification import Notification
 from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 
 MIN_WINDOW_WIDTH = 250
@@ -43,7 +40,9 @@ class Base(Singleton):
         self.log = logging.getLogger('UI')
         self.log.debug('Started')
 
-        self.sound = Sound()
+        self.images_path = os.path.realpath(os.path.join(
+            os.path.dirname(__file__), '..', 'data', 'pixmaps'))
+
 
         # Unity integration
         self.unitylauncher = UnityLauncherFactory().create();
@@ -54,8 +53,6 @@ class Base(Singleton):
         #self.unitylauncher.add_quicklist_button(self.show_preferences, i18n.get('preferences'), True)
         #self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('exit'), True)
         #self.unitylauncher.show_menu()
-
-        self.notify = Notification()
 
     # TODO: Put this in util.py
     def humanize_size(self, size):

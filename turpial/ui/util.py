@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # Utilities for Turpial interfaces
-#
-# Author: Wil Alvarez (aka Satanas)
-# Oct 07, 2011
+
+import xml.sax.saxutils as saxutils
 
 from libturpial.common.tools import *
 
@@ -48,3 +47,10 @@ except ImportError, exc:
 
 def available_interfaces():
     return ', '.join(INTERFACES.keys())
+
+def unescape_text(text):
+    text = saxutils.unescape(text)
+    text = text.replace('&quot;', '"')
+    text = text.replace('\r\n', ' ')
+    text = text.replace('\n', ' ')
+    return text

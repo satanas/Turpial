@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 
 # Qt main view for Turpial
-#
-# Author: Carlos Guerrero and Andrea Stagi
-# Sep 03, 2011
+
+import sys
 
 # PyQt4 Support:
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtWebKit import *
+#from PyQt4.QtWebKit import *
 from PyQt4.QtCore import pyqtSignal
 
+from turpial import DESC
 from turpial.ui.base import *
+from turpial.ui.qt.tray import TrayIcon
 
 from turpial.ui.qt.worker import Worker
-from turpial.ui.qt.htmlview import HtmlView
+from turpial.ui.qt.container import Container
 from turpial.ui.qt.oauthwin import OAuthWindow
-from turpial.ui.qt.accounts import AccountsDialog
 
 
 # TODO: Improve all splits for accounts_id with a common function
@@ -54,17 +54,30 @@ class function_caller2(object):
 
 
 
-class Main(Base, Singleton, QtGui.QMainWindow):
+class Main(Base, QtGui.QMainWindow):
 
     emitter = pyqtSignal(list)
 
     def __init__(self, core):
-        Singleton.__init__(self)
-        Base.__init__(self, core)
-        import sys
         self.app = QtGui.QApplication(sys.argv)
-        self.focus = False
+
+        Base.__init__(self, core)
         QtGui.QMainWindow.__init__(self)
+
+        # Configuration
+        self.showed = True
+        self.minimize = 'on'
+        self.is_fullscreen = False
+
+        self.timers = {}
+        self.updating = {}
+        self.columns = {}
+
+        #self.indicator = Indicators()
+        #self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
+        #self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
+
+        self.focus = False
 
         class eventFilter(QtCore.QObject):
             def __init__(self, parent):
@@ -76,12 +89,12 @@ class Main(Base, Singleton, QtGui.QMainWindow):
                     object.__manage_focus(event, False)
                 return False
 
-        self.filter = eventFilter(self)
-        self.installEventFilter(self.filter)
+        #self.filter = eventFilter(self)
+        #self.installEventFilter(self.filter)
 
 
         self.log = logging.getLogger('Qt')
-        self.htmlparser = HtmlParser()
+        # self.htmlparser = HtmlParser()
         self.setWindowTitle('Turpial')
 
         self.ignore_quit = True
@@ -89,16 +102,16 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         columns = self.get_all_columns()
 
         self.resize(310, 480)
-        self.container = HtmlView()
-        self.setCentralWidget(self.container.view)
-        self.container.action_request.connect(self._action_request)
-        self.container.link_request.connect(self._link_request)
+        #self.container = HtmlView()
+        #self.setCentralWidget(self.container.view)
+        #self.container.action_request.connect(self._action_request)
+        #self.container.link_request.connect(self._link_request)
 
         # TODO: Improve the use of this mode
         self.mode = 0
 
-#        self.screen_width = self.get_screen().get_width()
-        self.screen_width = 310 
+        # self.screen_width = self.get_screen().get_width()
+        self.screen_width = 310
         self.max_columns = self.screen_width / MIN_WINDOW_WIDTH
 
         # Configuration
@@ -106,26 +119,99 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         self.minimize = 'on'
 
         self.timers = {}
-        self.newtimers = [] 
+        self.newtimers = []
         self.alltimers = []
         self.updating = {}
         self.columns = {}
 
-        self.sound = Sound()
-#        self.notify = Notification()
+        # self.sound = Sound()
+        # self.notify = Notification()
 
         self.openstatuses = {}
 
-        self.worker = Worker(self.emitter)
-        self.emitter.connect(self.__timeout_callback)
-        self.worker.start()
+        #self.worker = Worker(self.emitter)
+        #self.emitter.connect(self.__timeout_callback)
+        #self.worker.start()
 
         # Persistent dialogs
-        self.accountsdlg = AccountsDialog(self)
-        self.accountsdlg.update()
+        #self.accountsdlg = AccountsDialog(self)
+        #self.accountsdlg.update()
 
+        self.tray = TrayIcon(self)
+        self.tray.activated.connect(self.__on_tray_click)
+
+        self._container = Container(self)
+
+        #central_widget = QWidget()
+        #self._container.add
+        #self.setCentralWidget(self._container)
+
+
+    #================================================================
+    # Tray icon
+    #================================================================
+
+    def __on_tray_click(self):
+        if self.showed:
+            self.showed = False
+            self.hide()
+        else:
+            self.showed = True
+            self.show()
+
+    #================================================================
+    # Overrided methods
+    #================================================================
+
+    def main_loop(self):
+        try:
+            self.app.exec_()
+        except Exception:
+            sys.exit(0)
+
+    def main_quit(self, widget=None, force=False):
+        self.log.debug('Exiting...')
+        self.unitylauncher.quit()
+        #self.worker.quit()
+        #self.worker.join()
+        #self.avatars_worker.quit()
+        #self.avatars_worker.join()
+        #if widget:
+        self.app.quit()
+        sys.exit(0)
+
+    def show_main(self):
+        self.start()
         self.show()
+        self.update_container()
 
+    def load_image(self, filename, pixbuf=False):
+        img_path = os.path.join(self.images_path, filename)
+        if pixbuf:
+            return QtGui.QPixmap(img_path)
+        return QtGui.QImage(img_path)
+
+    def get_image_path(self, filename):
+        return os.path.join(self.images_path, filename)
+
+    def login(self, account_id):
+        pass
+
+    def update_container(self):
+        columns = self.get_registered_columns()
+        if len(columns) == 0:
+            self._container.empty()
+            #self.dock.empty()
+            self.tray.empty()
+        else:
+            self._container.empty()
+            #self._container.normal(self.get_accounts_list(), columns)
+            #self.dock.normal()
+            self.tray.normal()
+
+
+
+'''
     def closeEvent(self, event):
         if self.unitylauncher.is_supported():
             self.showMinimized()
@@ -142,7 +228,8 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         pref = Preferences(self)
 
     def show_accounts_dialog(self, widget=None):
-        self.accountsdlg.show()
+        #self.accountsdlg.show()
+        pass
 
     def show_update_box(self, widget=None):
         self.container.execute("show_update_box()")
@@ -162,16 +249,6 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         import webbrowser
         webbrowser.open(str(url)[1:])
         #self.open_url(url.toString())
-    def __create_trayicon(self):
-        """if gtk.check_version(2, 10, 0) is not None:
-            self.log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
-            return
-        self.tray = gtk.StatusIcon()
-        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
-        self.tray.set_tooltip('Turpial')
-        self.tray.connect("activate", self.__on_trayicon_click)
-        self.tray.connect("popup-menu", self.__show_tray_menu)"""
-        pass
 
     def __on_trayicon_click(self, widget):
         if self.showed:
@@ -308,9 +385,10 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
         auth_obj = arg.items
         if auth_obj.must_auth():
-            self.accountsdlg.show()
-            self.accountsdlg.set_account_id(account_id)
-            self.accountsdlg.show_auth_win(auth_obj.url)
+            #self.accountsdlg.show()
+            #self.accountsdlg.set_account_id(account_id)
+            #self.accountsdlg.show_auth_win(auth_obj.url)
+            pass
         else:
             self.__auth_callback(arg, account_id, False)
 
@@ -322,13 +400,13 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
     def __cancel_callback(self, widget, reason, account_id):
         self.delete_account(account_id)
-        self.accountsdlg.cancel_login(i18n.get(reason))
+        #self.accountsdlg.cancel_login(i18n.get(reason))
 
     def __auth_callback(self, arg, account_id, register = True):
         if arg.code > 0:
             msg = arg.errmsg
             self.show_notice(msg, 'error')
-            self.accountsdlg.cancel_login(msg)
+            #self.accountsdlg.cancel_login(msg)
         else:
             self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
 
@@ -338,14 +416,14 @@ class Main(Base, Singleton, QtGui.QMainWindow):
         if arg.code > 0:
             self.core.change_login_status(account_id, LoginStatus.NONE)
             msg = arg.errmsg
-            self.accountsdlg.cancel_login(msg)
+            #self.accountsdlg.cancel_login(msg)
             self.show_notice(msg, 'error')
         else:
             if register:
                 account_id = self.core.name_as_id(account_id)
 
-            self.accountsdlg.done_login()
-            self.accountsdlg.update()
+            #self.accountsdlg.done_login()
+            #self.accountsdlg.update()
 
             response = self.core.get_own_profile(account_id)
             if response.code > 0:
@@ -379,55 +457,13 @@ class Main(Base, Singleton, QtGui.QMainWindow):
             self.log.debug('--Removed timer for %s' % column_id)
 
 
-    def load_image(self, path, pixbuf=False):
-        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            '..', '..', 'data', 'pixmaps', path))
-        """pix = gtk.gdk.pixbuf_new_from_file(img_path)
-        pix_file = QtCore.QFile(img_path) 
-        pix = pix_file.readAll() 
-        if pixbuf:
-            return pix
-        avatar = QtGui.QImage(pic)
-        avatar.fromData(pix)
-        del pix"""
-        avatar = QtGui.QPixmap(img_path)
-        return avatar
-
-    def main_quit(self, widget=None, force=False):
-        print "Exiting..."
-        self.log.debug('Exiting...')
-        self.unitylauncher.quit()
-        self.tray = None
-        self.ignore_quit = False
-        self.worker.quit()
-        self.destroy()
-
-    def main_loop(self):
-        self.app.exec_()
-        self.app.quit()
-
-    def show_main(self):
-        reg_columns = self.get_registered_columns()
-        if len(reg_columns) == 0:
-            page = self.htmlparser.empty()
-        else:
-            page = self.htmlparser.main(self.get_accounts_list(), reg_columns)
-        self.container.render(page)
-        self.login()
-
     def show_about(self):
-        self.accountsdlg.show()
-        self.accountsdlg.show_about_win()
+        #self.accountsdlg.show()
+        #self.accountsdlg.show_about_win()
+        pass
 
     def show_preferences(self):
         pref = Preferences(self)
-
-    def login(self):
-        #if self.core.play_sounds_in_login():
-        #    self.sound.login()
-
-        for acc in self.get_accounts_list():
-            self.single_login(acc)
 
     # ------------------------------------------------------------
     # Callbacks
@@ -499,4 +535,4 @@ class Main(Base, Singleton, QtGui.QMainWindow):
 
     def is_active(self):
         return self.focus
-
+'''

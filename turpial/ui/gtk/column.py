@@ -193,12 +193,13 @@ class StatusesColumn(Gtk.VBox):
         ''' Transform the regular text into pango markup '''
 
         pango_twt = unescape(status.text)
-        #pango_twt = unescape(status.text)
-        #pango_twt = pango_twt.replace('&quot;', '"')
-        #pango_twt = pango_twt.replace('\r\n', ' ')
-        #pango_twt = pango_twt.replace('\n', ' ')
+        pango_twt = pango_twt.replace('&quot;', '"')
+        pango_twt = pango_twt.replace('\r\n', ' ')
+        pango_twt = pango_twt.replace('\n', ' ')
 
-        #pango_twt = GObject.markup_escape_text(pango_twt)
+        print pango_twt
+
+        pango_twt = GObject.markup_escape_text(pango_twt)
 
         user = '<span size="9000" foreground="%s"><b>%s</b></span> ' % (
             self.base.get_color_scheme('links'), status.username
@@ -284,7 +285,7 @@ class StatusesColumn(Gtk.VBox):
             #    print 'Duplicated status. Nothing to do'
             #    continue
 
-            print '    Adding: %s' % status.text[:30]
+            print '    Adding: %s' % status.text
             pix = self.base.load_image('unknown.png', True)
             pango_text = self.__build_pango_text(status)
 

@@ -3,6 +3,7 @@
 # GTK3 widget to implement statuses in Turpial
 
 import re
+import cairo
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -16,7 +17,7 @@ from turpial.ui.gtk.statusmenu import StatusMenu
 from turpial.ui.gtk.markuplabel import MarkupLabel
 
 
-class StatusWidget(Gtk.EventBox): 
+class StatusWidget(Gtk.EventBox):
     def __init__(self, base, status):
         Gtk.EventBox.__init__(self)
 
@@ -34,12 +35,12 @@ class StatusWidget(Gtk.EventBox):
             StatusProgress.DELETING: False,
         }
 
-        self.avatar = Gtk.Image()
+        #self.avatar = Gtk.Image()
+        self.avatar = Avatar()
         self.avatar.set_margin_right(AVATAR_MARGIN)
-        avatar_box = Gtk.Alignment()
-        avatar_box.add(self.avatar)
-        avatar_box.set(0.5, 0, -1, -1)
-        avatar_box.connect('button-press-event', self.__on_click_avatar)
+        self.avatar_box = Gtk.Alignment()
+        self.avatar_box.add(self.avatar)
+        self.avatar_box.set(0.5, 0, -1, -1)
 
         self.favorited_mark = Gtk.Image()
         self.protected_mark = Gtk.Image()
@@ -50,11 +51,10 @@ class StatusWidget(Gtk.EventBox):
         self.username = MarkupLabel(act_as_link=True)
         self.username.set_ellipsize(Pango.EllipsizeMode.END)
         self.status_text = MarkupLabel()
-        self.status_text.connect('activate-link', self.__open_url)
         self.footer = MarkupLabel()
 
         # Setting user image
-        self.avatar.set_from_pixbuf(self.base.load_image('unknown.png', True))
+        #self.avatar.set_from_pixbuf(self.base.load_image('unknown.png', True))
         # Building the status style
         user = '<span size="9000" foreground="%s"><b>%s</b></span>' % (
             self.base.get_color_scheme('links'), status.username
@@ -101,7 +101,7 @@ class StatusWidget(Gtk.EventBox):
         content.pack_start(self.footer, False, False, 0)
 
         box = Gtk.HBox()
-        box.pack_start(avatar_box, False, False, 0)
+        box.pack_start(self.avatar_box, False, False, 0)
         box.pack_start(content, True, True, 0)
 
         bbox = Gtk.VBox()
@@ -117,15 +117,21 @@ class StatusWidget(Gtk.EventBox):
         self.set_reposted_mark(status.reposted_by)
 
         self.connect('button-release-event', self.__on_click)
+        self.click_url_handler = self.status_text.connect('activate-link', self.__open_url)
+        self.click_avatar_handler = self.avatar_box.connect('button-press-event', self.__on_click_avatar)
+        self.click_username_handler = self.username.connect('button-release-event', self.__on_click_username)
 
         self.base.fetch_status_avatar(status, self.update_avatar)
+
+    def __on_click_username(self, widget, event=None):
+        print 'clicked username', widget, event
 
     def __on_click(self, widget, event=None, data=None):
         # Capture clicks for avatar
         if event.x <= 48 and event.y <= 48 and event.button == 1:
             self.__on_click_avatar()
             return True
-
+        print event.x, event.y
         if event.button != 3:
             return False
         self.menu = StatusMenu(self.base, self.status, self.in_progress)
@@ -168,12 +174,25 @@ class StatusWidget(Gtk.EventBox):
         if url.startswith('http'):
             self.base.open_url(url)
         elif url.startswith('hashtag'):
-            self.base.save_column(url[9:])
+            column_id = url.replace('hashtags:', '')
+            self.base.save_column(column_id)
         elif url.startswith('groups'):
             print "Opening groups"
         elif url.startswith('profile'):
-            print "Opening profile"
+            url = url.replace('profile:', '')
+            account_id = url.split(':')[0]
+            username = url.split(':')[1]
+            self.base.show_user_profile(account_id, username)
         return True
+
+    def __del__(self):
+        print 'garbage collected'
+
+    def release(self):
+        self.avatar_box.disconnect(self.click_avatar_handler)
+        self.username.disconnect(self.click_username_handler)
+        self.status_text.disconnect(self.click_url_handler)
+
 
     def update(self, status):
         self.status = status
@@ -181,9 +200,10 @@ class StatusWidget(Gtk.EventBox):
 
     def update_avatar(self, response):
         if response.code == 0:
-            pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(response.items, 48, 48, True)
-            self.avatar.set_from_pixbuf(pix)
-            del pix
+            #pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(response.items, 48, 48, True)
+            #self.avatar.set_from_pixbuf(pix)
+            #del pix
+            self.avatar.set_image(response.items)
 
     def set_favorited_mark(self, value):
         if value:
@@ -217,3 +237,27 @@ class StatusWidget(Gtk.EventBox):
         else:
             self.reposted_mark.set_from_pixbuf(None)
 
+class Avatar(Gtk.DrawingArea):
+    SIZE = 48
+    def __init__(self):
+        Gtk.DrawingArea.__init__(self)
+        self.image = None
+        self.connect('draw', self.__on_draw)
+
+    def set_image(self, filename):
+        print filename
+        self.image = cairo.ImageSurface.create_from_png(filename)
+
+    def __on_draw(self, widget, cr):
+        if not self.image:
+            return
+        img_height = self.image.get_height()
+        img_width = self.image.get_width()
+        width_ratio = float(self.SIZE) / float(img_width)
+        height_ratio = float(self.SIZE) / float(img_height)
+        scale_xy = min(height_ratio, width_ratio)
+        cr.save()
+        cr.scale(scale_xy, scale_xy)
+        cr.set_source_surface(self.image)
+        cr.paint()
+        cr.restore()

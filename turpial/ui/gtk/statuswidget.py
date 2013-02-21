@@ -35,8 +35,8 @@ class StatusWidget(Gtk.EventBox):
             StatusProgress.DELETING: False,
         }
 
-        #self.avatar = Gtk.Image()
-        self.avatar = Avatar()
+        self.avatar = Gtk.Image()
+        #self.avatar = Avatar()
         self.avatar.set_margin_right(AVATAR_MARGIN)
         self.avatar_box = Gtk.Alignment()
         self.avatar_box.add(self.avatar)
@@ -54,7 +54,7 @@ class StatusWidget(Gtk.EventBox):
         #self.footer = MarkupLabel()
 
         # Setting user image
-        #self.avatar.set_from_pixbuf(self.base.load_image('unknown.png', True))
+        self.avatar.set_from_pixbuf(self.base.load_image('unknown.png', True))
         # Building the status style
         user = '<span size="9000" foreground="%s"><b>%s</b></span>' % (
             self.base.get_color_scheme('links'), status.username
@@ -201,10 +201,10 @@ class StatusWidget(Gtk.EventBox):
 
     def update_avatar(self, response):
         if response.code == 0:
-            #pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(response.items, 48, 48, True)
-            #self.avatar.set_from_pixbuf(pix)
-            #del pix
-            self.avatar.set_image(response.items)
+            pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(response.items, 48, 48, True)
+            self.avatar.set_from_pixbuf(pix)
+            del pix
+            #self.avatar.set_image(response.items)
 
     def set_favorited_mark(self, value):
         if value:

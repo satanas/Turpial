@@ -51,7 +51,7 @@ class StatusWidget(Gtk.EventBox):
         self.username = MarkupLabel(act_as_link=True)
         self.username.set_ellipsize(Pango.EllipsizeMode.END)
         self.status_text = MarkupLabel()
-        self.footer = MarkupLabel()
+        #self.footer = MarkupLabel()
 
         # Setting user image
         #self.avatar.set_from_pixbuf(self.base.load_image('unknown.png', True))
@@ -68,17 +68,18 @@ class StatusWidget(Gtk.EventBox):
         pango_text = self.__highlight_hashtags(status, pango_text)
         pango_text = self.__highlight_groups(status, pango_text)
         pango_text = self.__highlight_mentions(status, pango_text)
-        self.status_text.set_markup(pango_text)
 
-        footer = '<span size="small" foreground="#999">%s' % status.datetime
-        if status.source:
-            footer += ' %s %s' % (_('from'), status.source.name)
+        footer = '<span size="7000" foreground="#999">%s' % status.datetime
+        #if status.source:
+        #    footer += ' %s %s' % (_('from'), status.source.name)
         if status.in_reply_to_user:
             footer += ' %s %s' % (_('in reply to'), status.in_reply_to_user)
         if status.reposted_by:
             footer += '\n%s %s' % (_('Retweeted by'), status.reposted_by)
         footer += '</span>'
-        self.footer.set_markup(footer)
+        #self.footer.set_markup(footer)
+        pango_text += footer
+        self.status_text.set_markup(pango_text)
 
         starbox = Gtk.HBox()
         starbox.pack_start(self.repeated_mark, False, False, 2)
@@ -98,7 +99,7 @@ class StatusWidget(Gtk.EventBox):
         content = Gtk.VBox()
         content.pack_start(header, False, False, 0)
         content.pack_start(self.status_text, True, True, 0)
-        content.pack_start(self.footer, False, False, 0)
+        #content.pack_start(self.footer, False, False, 0)
 
         box = Gtk.HBox()
         box.pack_start(self.avatar_box, False, False, 0)
@@ -256,8 +257,8 @@ class Avatar(Gtk.DrawingArea):
         width_ratio = float(self.SIZE) / float(img_width)
         height_ratio = float(self.SIZE) / float(img_height)
         scale_xy = min(height_ratio, width_ratio)
-        cr.save()
+        #cr.save()
         cr.scale(scale_xy, scale_xy)
         cr.set_source_surface(self.image)
         cr.paint()
-        cr.restore()
+        #cr.restore()

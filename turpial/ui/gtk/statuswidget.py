@@ -246,7 +246,8 @@ class Avatar(Gtk.DrawingArea):
         self.connect('draw', self.__on_draw)
 
     def set_image(self, filename):
-        print filename
+        pass
+        #print filename
         #self.image = cairo.ImageSurface.create_from_png(filename)
 
     def __on_draw(self, widget, cr):

@@ -44,4 +44,8 @@ class Worker(threading.Thread):
                 rtn = funct()
 
             if callback:
-                self.tcallback(callback, rtn, user_data)
+                #self.tcallback(callback, rtn, user_data)
+                if user_data:
+                    callback(rtn, user_data)
+                else:
+                    callback(rtn)

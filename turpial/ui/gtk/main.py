@@ -71,9 +71,9 @@ class Main(Base, Gtk.Window):
         self.worker.set_timeout_callback(self.__worker_timeout_callback)
         self.worker.start()
 
-        self.avatars_worker = Worker()
-        self.avatars_worker.set_timeout_callback(self.__worker_timeout_callback)
-        self.avatars_worker.start()
+        #self.avatars_worker = Worker()
+        #self.avatars_worker.set_timeout_callback(self.__worker_timeout_callback)
+        #self.avatars_worker.start()
 
         # Persistent dialogs
         self.accounts_dialog = AccountsDialog(self)
@@ -159,8 +159,8 @@ class Main(Base, Gtk.Window):
         self.tray = None
         self.worker.quit()
         self.worker.join()
-        self.avatars_worker.quit()
-        self.avatars_worker.join()
+        #self.avatars_worker.quit()
+        #self.avatars_worker.join()
         if widget:
             Gtk.main_quit()
         if force:

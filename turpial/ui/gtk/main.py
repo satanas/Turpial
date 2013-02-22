@@ -337,6 +337,7 @@ class Main(Base, Gtk.Window):
             self.delete_status, status)
 
     def update_column(self, arg, data):
+        self.log.debug('Updating askdñlaklñaksd')
         column, notif, max_ = data
 
         if arg.code > 0:
@@ -492,6 +493,7 @@ class Main(Base, Gtk.Window):
         last_id = self._container.start_updating(column.id_)
         count = self.core.get_max_statuses_per_column()
 
+        self.log.debug('Downloading %s ********' % column)
         self.worker.register(self.core.get_column_statuses, (column.account_id,
             column.column_name, count, last_id), self.update_column,
             (column, notif, count))

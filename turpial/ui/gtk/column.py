@@ -164,6 +164,7 @@ class StatusesColumn(Gtk.VBox):
             for i in range(to_del):
                 self._list.remove(children[-1])
                 del(children[-1])
+                children = self._list.get_children()
 
         # Set last_id before reverse, that way we guarantee that last_id holds
         # the id for the newest status

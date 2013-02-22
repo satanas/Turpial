@@ -35,8 +35,8 @@ class StatusWidget(Gtk.EventBox):
             StatusProgress.DELETING: False,
         }
 
-        self.avatar = Gtk.Image()
-        #self.avatar = Avatar()
+        #self.avatar = Gtk.Image()
+        self.avatar = Avatar()
         self.avatar.set_margin_right(AVATAR_MARGIN)
         self.avatar_box = Gtk.Alignment()
         self.avatar_box.add(self.avatar)
@@ -48,18 +48,18 @@ class StatusWidget(Gtk.EventBox):
         self.reposted_mark = Gtk.Image()
         self.repeated_mark = Gtk.Image()
 
-        self.username = MarkupLabel(act_as_link=True)
-        self.username.set_ellipsize(Pango.EllipsizeMode.END)
-        self.status_text = MarkupLabel()
+        username = MarkupLabel(act_as_link=True)
+        username.set_ellipsize(Pango.EllipsizeMode.END)
+        status_text = MarkupLabel()
         #self.footer = MarkupLabel()
 
         # Setting user image
-        self.avatar.set_from_pixbuf(self.base.load_image('unknown.png', True))
+        #self.avatar.set_from_pixbuf(self.base.load_image('unknown.png', True))
         # Building the status style
         user = '<span size="9000" foreground="%s"><b>%s</b></span>' % (
             self.base.get_color_scheme('links'), status.username
         )
-        self.username.set_markup(user)
+        username.set_markup(user)
 
         text = status.text.replace('&gt;', '>')
         text = text.replace('&lt;', '<')
@@ -69,7 +69,7 @@ class StatusWidget(Gtk.EventBox):
         pango_text = self.__highlight_groups(status, pango_text)
         pango_text = self.__highlight_mentions(status, pango_text)
 
-        footer = '<span size="7000" foreground="#999">%s' % status.datetime
+        footer = '\n<span size="7000" foreground="#999">%s' % status.datetime
         #if status.source:
         #    footer += ' %s %s' % (_('from'), status.source.name)
         if status.in_reply_to_user:
@@ -79,7 +79,7 @@ class StatusWidget(Gtk.EventBox):
         footer += '</span>'
         #self.footer.set_markup(footer)
         pango_text += footer
-        self.status_text.set_markup(pango_text)
+        status_text.set_markup(pango_text)
 
         starbox = Gtk.HBox()
         starbox.pack_start(self.repeated_mark, False, False, 2)
@@ -91,14 +91,14 @@ class StatusWidget(Gtk.EventBox):
 
         header = Gtk.HBox()
         header.pack_start(self.reposted_mark, False, False, 2)
-        header.pack_start(self.username, False, False, 2)
+        header.pack_start(username, False, False, 2)
         header.pack_start(self.verified_mark, False, False, 2)
         header.pack_start(self.protected_mark, False, False, 0)
         header.pack_start(staralign, True, True, 0)
 
         content = Gtk.VBox()
         content.pack_start(header, False, False, 0)
-        content.pack_start(self.status_text, True, True, 0)
+        content.pack_start(status_text, True, True, 0)
         #content.pack_start(self.footer, False, False, 0)
 
         box = Gtk.HBox()
@@ -117,10 +117,10 @@ class StatusWidget(Gtk.EventBox):
         self.set_repeated_mark(status.repeated)
         self.set_reposted_mark(status.reposted_by)
 
-        self.connect('button-release-event', self.__on_click)
-        self.click_url_handler = self.status_text.connect('activate-link', self.__open_url)
-        self.click_avatar_handler = self.avatar_box.connect('button-press-event', self.__on_click_avatar)
-        self.click_username_handler = self.username.connect('button-release-event', self.__on_click_username)
+        #self.connect('button-release-event', self.__on_click)
+        #self.click_url_handler = self.status_text.connect('activate-link', self.__open_url)
+        #self.click_avatar_handler = self.avatar_box.connect('button-press-event', self.__on_click_avatar)
+        #self.click_username_handler = self.username.connect('button-release-event', self.__on_click_username)
 
         self.base.fetch_status_avatar(status, self.update_avatar)
 
@@ -186,13 +186,13 @@ class StatusWidget(Gtk.EventBox):
             self.base.show_user_profile(account_id, username)
         return True
 
-    def __del__(self):
-        print 'garbage collected'
+    #def __del__(self):
+    #    print 'garbage collected'
 
     def release(self):
         self.avatar_box.disconnect(self.click_avatar_handler)
-        self.username.disconnect(self.click_username_handler)
-        self.status_text.disconnect(self.click_url_handler)
+        #self.username.disconnect(self.click_username_handler)
+        #self.status_text.disconnect(self.click_url_handler)
 
 
     def update(self, status):
@@ -201,10 +201,10 @@ class StatusWidget(Gtk.EventBox):
 
     def update_avatar(self, response):
         if response.code == 0:
-            pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(response.items, 48, 48, True)
-            self.avatar.set_from_pixbuf(pix)
-            del pix
-            #self.avatar.set_image(response.items)
+            #pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(response.items, 48, 48, True)
+            #self.avatar.set_from_pixbuf(pix)
+            #del pix
+            self.avatar.set_image(response.items)
 
     def set_favorited_mark(self, value):
         if value:
@@ -247,7 +247,7 @@ class Avatar(Gtk.DrawingArea):
 
     def set_image(self, filename):
         print filename
-        self.image = cairo.ImageSurface.create_from_png(filename)
+        #self.image = cairo.ImageSurface.create_from_png(filename)
 
     def __on_draw(self, widget, cr):
         if not self.image:

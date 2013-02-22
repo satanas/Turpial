@@ -107,6 +107,9 @@ class Container(Gtk.VBox):
         if len(self.columns) == 0:
             self.empty()
 
+    def exist_column(self, column_id):
+        return self.columns.has_key(column_id)
+
     def mark_status_favorite(self, status):
         # TODO: Optimize this function. Map?
         for key, column in self.columns.iteritems():

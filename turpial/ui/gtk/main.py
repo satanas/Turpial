@@ -337,8 +337,12 @@ class Main(Base, Gtk.Window):
             self.delete_status, status)
 
     def update_column(self, arg, data):
-        self.log.debug('Updating askdñlaklñaksd')
         column, notif, max_ = data
+        if not self._container.exist_column(column.id_):
+            self.log.debug('Column %s does not exist. Update nothing' % column.id_)
+            return
+
+        self.log.debug('Updating askdñlaklñaksd')
 
         if arg.code > 0:
             self._container.stop_updating(column.id_, arg.errmsg, 'error')

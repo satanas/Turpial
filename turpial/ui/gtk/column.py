@@ -106,6 +106,7 @@ class StatusesColumn(Gtk.VBox):
             int, # status type
             str, # account_id
             float, # unix timestamp
+            object, #status
         )
 
         # Sort by unix timestamp
@@ -125,7 +126,7 @@ class StatusesColumn(Gtk.VBox):
         column.pack_start(cell_status, True)
         column.set_attributes(cell_status, text=3, datetime=4, client=5,
             favorited=6, repeated=7, protected=9, verified=10, username=2,
-            reposted_by=13, cell_background_gdk=14)
+            in_reply_to_user=12, reposted_by=13, cell_background_gdk=14, entities=18)
         column.set_attributes(cell_avatar, pixbuf=0, cell_background_gdk=14)
 
 
@@ -191,55 +192,6 @@ class StatusesColumn(Gtk.VBox):
         self.spinner.start()
         self.spinner.show()
 
-    def __build_pango_text(self, status):
-        ''' Transform the regular text into pango markup '''
-        return status.text
-        pango_twt = unescape(status.text)
-        pango_twt = pango_twt.replace('&quot;', '"')
-        pango_twt = pango_twt.replace('\r\n', ' ')
-        pango_twt = pango_twt.replace('\n', ' ')
-
-        print pango_twt
-
-        pango_twt = GObject.markup_escape_text(pango_twt)
-
-        user = '<span size="9000" foreground="%s"><b>%s</b></span>\n' % (
-            self.base.get_color_scheme('links'), status.username
-        )
-        pango_twt = '<span size="9000">%s</span>' % pango_twt
-        #pango_twt = self.__highlight_hashtags(pango_twt)
-        #pango_twt = self.__highlight_groups(pango_twt)
-        #pango_twt = self.__highlight_mentions(pango_twt)
-        #pango_twt = self.__highlight_urls(urls, pango_twt)
-        pango_twt += '<span size="2000">\n\n</span>'
-
-        try:
-            pango_twt = user + pango_twt
-        except UnicodeDecodeError:
-            clear_txt = ''
-            invalid_chars = []
-            for c in pango_twt:
-                try:
-                    clear_txt += c.encode('ascii')
-                except UnicodeDecodeError:
-                    invalid_chars.append(c)
-                    clear_txt += '?'
-            log.debug('Problema con caracteres inválidos en un tweet: %s' % invalid_chars)
-            pango_twt = clear_txt
-
-        footer = '<span size="small" foreground="#999">%s' % status.datetime
-        #if status.source:
-        #    footer += ' %s %s' % (i18n.get('from'), status.source.name)
-        if status.in_reply_to_user:
-            footer += ' %s %s' % (i18n.get('in_reply_to'), status.in_reply_to_user)
-        if status.reposted_by:
-            footer += '\n%s %s' % (i18n.get('retweeted_by'), status.reposted_by)
-        footer += '</span>'
-        pango_twt += footer
-
-        return pango_twt
-
-
     def clear(self):
         self._list.get_model().clear()
 
@@ -289,12 +241,11 @@ class StatusesColumn(Gtk.VBox):
 
             print '    Adding: %s' % status.text
             pix = self.base.load_image('unknown.png', True)
-            pango_text = self.__build_pango_text(status)
 
-            row = [pix, str(status.id_), status.username, pango_text, status.datetime, status.source.name,
+            row = [pix, str(status.id_), status.username, status.text, status.datetime, status.source.name,
                 status.favorited, status.repeated, status.is_own, status.protected, status.verified,
                 str(status.in_reply_to_id), status.in_reply_to_user, status.reposted_by, None,
-                StatusType.NORMAL, status.account_id, status.timestamp]
+                StatusType.NORMAL, status.account_id, status.timestamp, status.entities]
             self._list.get_model().append(row)
 
         print '    %i statuses after update' % len(self._list.get_children())
@@ -351,9 +302,12 @@ class StatusCellRenderer(Gtk.CellRendererText):
     repeated = GObject.property(type=bool, default=False)
     protected = GObject.property(type=bool, default=False)
     verified = GObject.property(type=bool, default=False)
+    in_reply_to_user = GObject.property(type=str, default='')
     reposted_by = GObject.property(type=str, default='')
+    entities = GObject.property(type=object)
 
     HEADER_PADDING = MESSAGE_PADDING = 4
+    FOOTER_PADDING = 2
 
     def __init__(self, base, treeview):
         GObject.GObject.__init__(self)
@@ -365,6 +319,13 @@ class StatusCellRenderer(Gtk.CellRendererText):
         # This holds the total height for a given status
         self.total_height = 0
 
+    def __highlight_elements(self, text):
+        for elements in self.get_property('entities').values():
+            for u in elements:
+                cad = u'<span foreground="%s">%s</span>' % (
+                    self.base.get_color_scheme('links'), u.display_text)
+                text = text.replace(u.search_for, cad)
+        return text
 
     def __render_reposted_icon(self, cr, cell_area):
         if not self.get_property('reposted_by'):
@@ -380,12 +341,13 @@ class StatusCellRenderer(Gtk.CellRendererText):
         del icon
         return
 
-    def __render_username(self, text, context, cr, cell_area, layout):
+    def __render_username(self, context, cr, cell_area, layout):
+        username = self.get_property('username').decode('utf-8')
         y = cell_area.y
         x = cell_area.x + self.accum_header_width
 
         user = '<span size="9000" foreground="%s"><b>%s</b></span>' % (
-            self.base.get_color_scheme('links'), unicode(text))
+            self.base.get_color_scheme('links'), username)
         layout.set_markup(user, -1)
         inkRect, logicalRect = layout.get_pixel_extents()
         self.accum_header_width += logicalRect.width + self.HEADER_PADDING
@@ -423,22 +385,64 @@ class StatusCellRenderer(Gtk.CellRendererText):
         del icon
         return
 
-    def __render_message(self, text, context, cr, cell_area, layout):
+    def __render_message(self, context, cr, cell_area, layout):
         y = cell_area.y + self.total_height
         x = cell_area.x + self.MESSAGE_PADDING
 
-        text = unicode(self.get_property('text'))
-        print type(text), text
-        text = u''.join([text]).decode('utf-8')
-        print type(text)
-        #escaped_text = GObject.markup_escape_text(text.decode('utf-8'))
-        #print escaped_text
+        text = self.get_property('text').decode('utf-8')
+        #escaped_text = GObject.markup_escape_text(text)
         pango_text = u'<span size="9000">%s</span>' % text
+        pango_text = self.__highlight_elements(pango_text)
 
         layout.set_markup(pango_text, -1)
 
         inkRect, logicalRect = layout.get_pixel_extents()
         self.total_height += logicalRect.height + self.MESSAGE_PADDING
+
+        context.save()
+        Gtk.render_layout(context, cr, x, y, layout)
+        context.restore()
+        return
+
+    def __render_datetime(self, context, cr, cell_area, layout):
+        datetime = self.get_property('datetime').decode('utf-8')
+        in_reply_to_user = self.get_property('in_reply_to_user')
+
+        y = cell_area.y + self.total_height
+        x = cell_area.x + self.MESSAGE_PADDING
+
+        if in_reply_to_user:
+            pango_text = u'<span size="7000" foreground="#999">%s %s %s</span>' % (
+                datetime, i18n.get('in_reply_to'), in_reply_to_user)
+        else:
+            pango_text = u'<span size="7000" foreground="#999">%s</span>' % datetime
+
+        layout.set_markup(pango_text, -1)
+
+        inkRect, logicalRect = layout.get_pixel_extents()
+        self.total_height += logicalRect.height + self.FOOTER_PADDING
+
+        context.save()
+        Gtk.render_layout(context, cr, x, y, layout)
+        context.restore()
+        return
+
+    def __render_reposted_by(self, context, cr, cell_area, layout):
+        reposted_by = self.get_property('reposted_by')
+        if not reposted_by:
+            return
+
+        y = cell_area.y + self.total_height
+        x = cell_area.x + self.MESSAGE_PADDING
+
+        reposted_by = reposted_by.decode('utf-8')
+        pango_text = u'<span size="7000" foreground="#999">%s %s</span>' % (
+            i18n.get('retweeted_by'), reposted_by)
+
+        layout.set_markup(pango_text, -1)
+
+        inkRect, logicalRect = layout.get_pixel_extents()
+        self.total_height += logicalRect.height + self.FOOTER_PADDING
 
         context.save()
         Gtk.render_layout(context, cr, x, y, layout)
@@ -452,8 +456,24 @@ class StatusCellRenderer(Gtk.CellRendererText):
         return getattr(self, pspec.name)
 
     def do_get_preferred_height_for_width(self, treeview, width):
-        print width, self.total_height
-        return self.total_height, width
+        column = treeview.get_column(0)
+        column_width = column.get_width() - 50
+        text = self.get_property('text')
+        text = text.decode('utf-8')
+        font = Pango.FontDescription('Sans')
+        layout = treeview.create_pango_layout('')
+        layout.set_wrap(Pango.WrapMode.WORD)
+        layout.set_font_description(font)
+        layout.set_width(Pango.SCALE * column_width)
+        layout.set_text(self.get_property('text'), -1)
+
+        inkRect, logicalRect = layout.get_pixel_extents()
+        height = 40
+        if self.get_property('reposted_by'):
+            height += 15
+        height += logicalRect.height
+        #print 'calculating height ******************', width, column_width, height
+        return height, height
 
     def do_render(self, cr, widget, bg_area, cell_area, flags):
         # Initialize values
@@ -470,20 +490,19 @@ class StatusCellRenderer(Gtk.CellRendererText):
         layout.set_wrap(Pango.WrapMode.WORD)
         layout.set_font_description(font)
         layout.set_width(Pango.SCALE * cell_area.width)
-        username = self.get_property('username')
-        text = self.get_property('text')
-
-        print username, 'protected', self.get_property('protected'), 'verified', self.get_property('verified')
 
         context.save()
 
         # Render header
         self.__render_reposted_icon(cr, cell_area)
-        self.__render_username(username, context, cr, cell_area, layout)
+        self.__render_username(context, cr, cell_area, layout)
         self.__render_protected_icon(cr, cell_area)
         self.__render_verified_icon(cr, cell_area)
 
-        self.__render_message(text, context, cr, cell_area, layout)
+        # Render body
+        self.__render_message(context, cr, cell_area, layout)
+        self.__render_datetime(context, cr, cell_area, layout)
+        self.__render_reposted_by(context, cr, cell_area, layout)
 
         context.restore()
         return

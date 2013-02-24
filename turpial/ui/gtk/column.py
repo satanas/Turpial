@@ -11,6 +11,7 @@ from gi.repository import Gdk
 from gi.repository import Pango
 from gi.repository import GObject
 from gi.repository import GdkPixbuf
+from gi.repository import PangoCairo
 
 from turpial.ui.lang import i18n
 from libturpial.common import StatusType
@@ -90,41 +91,42 @@ class StatusesColumn(Gtk.VBox):
             GdkPixbuf.Pixbuf, # avatar
             str, # id
             str, # username
-            str, # pango message
+            str, # plain text message
             str, # datetime
             str, # client
             bool, # favorited?
-            bool, # retweeted?
+            bool, # repeated?
             bool, # own?
             bool, # protected?
-            bool, # certified?
+            bool, # verified?
             str, # in_reply_to_id
             str, # in_reply_to_user
-            str, # retweeted_by
+            str, # reposted_by
             Gdk.Color, # color
-            str, # plain text message
             int, # status type
             str, # account_id
             float, # unix timestamp
         )
 
         # Sort by unix timestamp
-        self.model.set_sort_column_id(18, Gtk.SortType.DESCENDING)
+        self.model.set_sort_column_id(17, Gtk.SortType.DESCENDING)
 
         cell_avatar = Gtk.CellRendererPixbuf()
         cell_avatar.set_property('yalign', 0)
-        cell_tweet = Gtk.CellRendererText()
-        cell_tweet.set_property('wrap-mode', Pango.WrapMode.WORD_CHAR)
-        cell_tweet.set_property('wrap-width', 260)
-        cell_tweet.set_property('yalign', 0)
-        cell_tweet.set_property('xalign', 0)
+        cell_status = StatusCellRenderer(self.base, self._list)
+        cell_status.set_property('wrap-mode', Pango.WrapMode.WORD_CHAR)
+        cell_status.set_property('wrap-width', 260)
+        cell_status.set_property('yalign', 0)
+        cell_status.set_property('xalign', 0)
 
         column = Gtk.TreeViewColumn('tweets')
         column.set_alignment(0.0)
         column.pack_start(cell_avatar, False)
-        column.pack_start(cell_tweet, True)
-        column.set_attributes(cell_tweet, markup=3, cell_background_gdk=11)
-        column.set_attributes(cell_avatar, pixbuf=0, cell_background_gdk=11)
+        column.pack_start(cell_status, True)
+        column.set_attributes(cell_status, text=3, datetime=4, client=5,
+            favorited=6, repeated=7, protected=9, verified=10, username=2,
+            reposted_by=13, cell_background_gdk=14)
+        column.set_attributes(cell_avatar, pixbuf=0, cell_background_gdk=14)
 
 
         self._list.set_model(self.model)
@@ -191,7 +193,7 @@ class StatusesColumn(Gtk.VBox):
 
     def __build_pango_text(self, status):
         ''' Transform the regular text into pango markup '''
-
+        return status.text
         pango_twt = unescape(status.text)
         pango_twt = pango_twt.replace('&quot;', '"')
         pango_twt = pango_twt.replace('\r\n', ' ')
@@ -201,7 +203,7 @@ class StatusesColumn(Gtk.VBox):
 
         pango_twt = GObject.markup_escape_text(pango_twt)
 
-        user = '<span size="9000" foreground="%s"><b>%s</b></span> ' % (
+        user = '<span size="9000" foreground="%s"><b>%s</b></span>\n' % (
             self.base.get_color_scheme('links'), status.username
         )
         pango_twt = '<span size="9000">%s</span>' % pango_twt
@@ -226,8 +228,8 @@ class StatusesColumn(Gtk.VBox):
             pango_twt = clear_txt
 
         footer = '<span size="small" foreground="#999">%s' % status.datetime
-        if status.source:
-            footer += ' %s %s' % (i18n.get('from'), status.source.name)
+        #if status.source:
+        #    footer += ' %s %s' % (i18n.get('from'), status.source.name)
         if status.in_reply_to_user:
             footer += ' %s %s' % (i18n.get('in_reply_to'), status.in_reply_to_user)
         if status.reposted_by:
@@ -291,7 +293,7 @@ class StatusesColumn(Gtk.VBox):
 
             row = [pix, str(status.id_), status.username, pango_text, status.datetime, status.source.name,
                 status.favorited, status.repeated, status.is_own, status.protected, status.verified,
-                str(status.in_reply_to_id), status.in_reply_to_user, status.reposted_by, None, status.text,
+                str(status.in_reply_to_id), status.in_reply_to_user, status.reposted_by, None,
                 StatusType.NORMAL, status.account_id, status.timestamp]
             self._list.get_model().append(row)
 
@@ -339,3 +341,149 @@ class StatusesColumn(Gtk.VBox):
 
         self.menu.show_all()
         self.menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
+
+
+class StatusCellRenderer(Gtk.CellRendererText):
+    username = GObject.property(type=str, default='')
+    datetime = GObject.property(type=str, default='')
+    client = GObject.property(type=str, default='')
+    favorited = GObject.property(type=bool, default=False)
+    repeated = GObject.property(type=bool, default=False)
+    protected = GObject.property(type=bool, default=False)
+    verified = GObject.property(type=bool, default=False)
+    reposted_by = GObject.property(type=str, default='')
+
+    HEADER_PADDING = MESSAGE_PADDING = 4
+
+    def __init__(self, base, treeview):
+        GObject.GObject.__init__(self)
+        self.base = base
+        #self._layout = treeview.create_pango_layout('')
+
+        # With this, we accumulate the width of each part of header
+        self.accum_header_width = 0
+        # This holds the total height for a given status
+        self.total_height = 0
+
+
+    def __render_reposted_icon(self, cr, cell_area):
+        if not self.get_property('reposted_by'):
+            self.accum_header_width += self.HEADER_PADDING
+            return
+
+        y = cell_area.y
+        x = cell_area.x + self.HEADER_PADDING
+        icon = self.base.load_image('mark-reposted.png', True)
+        Gdk.cairo_set_source_pixbuf(cr, icon, x, y)
+        self.accum_header_width += icon.get_width() + self.HEADER_PADDING
+        cr.paint()
+        del icon
+        return
+
+    def __render_username(self, text, context, cr, cell_area, layout):
+        y = cell_area.y
+        x = cell_area.x + self.accum_header_width
+
+        user = '<span size="9000" foreground="%s"><b>%s</b></span>' % (
+            self.base.get_color_scheme('links'), unicode(text))
+        layout.set_markup(user, -1)
+        inkRect, logicalRect = layout.get_pixel_extents()
+        self.accum_header_width += logicalRect.width + self.HEADER_PADDING
+        self.total_height = 20
+
+        context.save()
+        Gtk.render_layout(context, cr, x, y, layout)
+        context.restore()
+        return
+
+    def __render_protected_icon(self, cr, cell_area):
+        if not self.get_property('protected'):
+            return
+
+        y = cell_area.y
+        x = cell_area.x + self.accum_header_width
+        icon = self.base.load_image('mark-protected.png', True)
+        Gdk.cairo_set_source_pixbuf(cr, icon, x, y)
+        self.accum_header_width += icon.get_width() + self.HEADER_PADDING
+        cr.paint()
+        del icon
+        return
+
+    def __render_verified_icon(self, cr, cell_area):
+        if not self.get_property('verified'):
+            return
+
+        y = cell_area.y
+        x = cell_area.x + self.accum_header_width
+        icon = self.base.load_image('mark-verified.png', True)
+        Gdk.cairo_set_source_pixbuf(cr, icon, x, y)
+        # TODO: Do it with cairo_context.move_to
+        self.accum_header_width += icon.get_width() + self.HEADER_PADDING
+        cr.paint()
+        del icon
+        return
+
+    def __render_message(self, text, context, cr, cell_area, layout):
+        y = cell_area.y + self.total_height
+        x = cell_area.x + self.MESSAGE_PADDING
+
+        text = unicode(self.get_property('text'))
+        print type(text), text
+        text = u''.join([text]).decode('utf-8')
+        print type(text)
+        #escaped_text = GObject.markup_escape_text(text.decode('utf-8'))
+        #print escaped_text
+        pango_text = u'<span size="9000">%s</span>' % text
+
+        layout.set_markup(pango_text, -1)
+
+        inkRect, logicalRect = layout.get_pixel_extents()
+        self.total_height += logicalRect.height + self.MESSAGE_PADDING
+
+        context.save()
+        Gtk.render_layout(context, cr, x, y, layout)
+        context.restore()
+        return
+
+    def do_set_property(self, pspec, value):
+        setattr(self, pspec.name, value)
+
+    def do_get_property(self, pspec):
+        return getattr(self, pspec.name)
+
+    def do_get_preferred_height_for_width(self, treeview, width):
+        print width, self.total_height
+        return self.total_height, width
+
+    def do_render(self, cr, widget, bg_area, cell_area, flags):
+        # Initialize values
+        self.accum_header_width = 0
+        self.total_height = 0
+
+        context = widget.get_style_context()
+        xpad = self.get_property('xpad')
+        ypad = self.get_property('ypad')
+
+        # Setting up font and layout
+        font = Pango.FontDescription('Sans')
+        layout = PangoCairo.create_layout(cr)
+        layout.set_wrap(Pango.WrapMode.WORD)
+        layout.set_font_description(font)
+        layout.set_width(Pango.SCALE * cell_area.width)
+        username = self.get_property('username')
+        text = self.get_property('text')
+
+        print username, 'protected', self.get_property('protected'), 'verified', self.get_property('verified')
+
+        context.save()
+
+        # Render header
+        self.__render_reposted_icon(cr, cell_area)
+        self.__render_username(username, context, cr, cell_area, layout)
+        self.__render_protected_icon(cr, cell_area)
+        self.__render_verified_icon(cr, cell_area)
+
+        self.__render_message(text, context, cr, cell_area, layout)
+
+        context.restore()
+        return

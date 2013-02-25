@@ -226,7 +226,6 @@ class StatusesColumn(Gtk.VBox):
                 print '    Deleting: %s' % self._list.get_value(_iter, 15)[:30]
                 self._list.remove(_iter)
 
-        self.clear()
         # Set last_id before reverse, that way we guarantee that last_id holds
         # the id for the newest status
         self.last_id = statuses[0].id_
@@ -240,7 +239,7 @@ class StatusesColumn(Gtk.VBox):
             #    continue
 
             print '    Adding: %s' % status.text
-            pix = self.base.load_image('unknown.png', True)
+            pix = self.base.factory.unknown_avatar()
 
             row = [pix, str(status.id_), status.username, status.text, status.datetime, status.source.name,
                 status.favorited, status.repeated, status.is_own, status.protected, status.verified,
@@ -334,11 +333,9 @@ class StatusCellRenderer(Gtk.CellRendererText):
 
         y = cell_area.y
         x = cell_area.x + self.HEADER_PADDING
-        icon = self.base.load_image('mark-reposted.png', True)
-        Gdk.cairo_set_source_pixbuf(cr, icon, x, y)
+        Gdk.cairo_set_source_pixbuf(cr, self.base.factory.reposted_mark(), x, y)
         self.accum_header_width += icon.get_width() + self.HEADER_PADDING
         cr.paint()
-        del icon
         return
 
     def __render_username(self, context, cr, cell_area, layout):
@@ -364,11 +361,9 @@ class StatusCellRenderer(Gtk.CellRendererText):
 
         y = cell_area.y
         x = cell_area.x + self.accum_header_width
-        icon = self.base.load_image('mark-protected.png', True)
-        Gdk.cairo_set_source_pixbuf(cr, icon, x, y)
+        Gdk.cairo_set_source_pixbuf(cr, self.base.factory.protected_mark(), x, y)
         self.accum_header_width += icon.get_width() + self.HEADER_PADDING
         cr.paint()
-        del icon
         return
 
     def __render_verified_icon(self, cr, cell_area):
@@ -377,12 +372,10 @@ class StatusCellRenderer(Gtk.CellRendererText):
 
         y = cell_area.y
         x = cell_area.x + self.accum_header_width
-        icon = self.base.load_image('mark-verified.png', True)
-        Gdk.cairo_set_source_pixbuf(cr, icon, x, y)
+        Gdk.cairo_set_source_pixbuf(cr, self.base.factory.verified_mark(), x, y)
         # TODO: Do it with cairo_context.move_to
         self.accum_header_width += icon.get_width() + self.HEADER_PADDING
         cr.paint()
-        del icon
         return
 
     def __render_message(self, context, cr, cell_area, layout):
@@ -455,6 +448,7 @@ class StatusCellRenderer(Gtk.CellRendererText):
     def do_get_property(self, pspec):
         return getattr(self, pspec.name)
 
+    #def do_get_preferred_size(self, treeview):
     def do_get_preferred_height_for_width(self, treeview, width):
         column = treeview.get_column(0)
         column_width = column.get_width() - 50

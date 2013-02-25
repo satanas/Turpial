@@ -18,6 +18,7 @@ from turpial.ui.gtk.worker import Worker
 from turpial.ui.gtk.container import Container
 from turpial.ui.gtk.imageview import ImageView
 from turpial.ui.gtk.indicator import Indicators
+from turpial.ui.gtk.factory import ImagesFactory
 
 # Dialogs
 from turpial.ui.gtk.about import AboutDialog
@@ -72,6 +73,8 @@ class Main(Base, Gtk.Window):
         self.avatars_worker = Worker()
         self.avatars_worker.set_timeout_callback(self.__worker_timeout_callback)
         self.avatars_worker.start()
+
+        self.factory = ImagesFactory(self)
 
         # Persistent dialogs
         self.accounts_dialog = AccountsDialog(self)

@@ -252,7 +252,7 @@ class StatusesColumn(Gtk.VBox):
                 iter_ = model.get_iter_first()
                 while iter_:
                     if model.get_value(iter_, 1) == str(id_):
-                        print '    Deleting: %s' % model.get_value(_iter, 3)[:30]
+                        print '    Deleting: %s' % model.get_value(iter_, 3)[:30]
                         model.remove(iter_)
                         index = self.status_ref.index(id_)
                         del(self.status_ref[index])
@@ -349,16 +349,16 @@ class StatusCellRenderer(Gtk.CellRendererText):
                         if hours < 24.0:
                             timestamp = "%i %s" % (hours, i18n.get('hours_ago'))
                         else:
-                            dt = localtime(status_timestamp)
-                            month = strftime(u'%b', dt)
+                            dt = time.localtime(status_timestamp)
+                            month = time.strftime(u'%b', dt)
                             year = dt.tm_year
 
-                            if year == localtime(now).tm_year:
-                                timestamp = u"%s %i, %i:%i" % (dt.tm_mon, dt.tm_day,
+                            if year == time.localtime(now).tm_year:
+                                timestamp = u"%s %i, %i:%i" % (dt.tm_mon, dt.tm_mday,
                                     dt.tm_hour, dt.tm_min)
                             else:
                                 timestamp = u"%s %i %i, %i:%i" % (dt.tm_mon,
-                                    dt.tm_day, year, dt.tm_hour, dt.tm_min)
+                                    dt.tm_mday, year, dt.tm_hour, dt.tm_min)
         return timestamp
 
     def __highlight_elements(self, text):

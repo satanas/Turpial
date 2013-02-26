@@ -209,6 +209,11 @@ continue?'),
     'twitter_search_documentation': _('Twitter Search Documentation'),
     'error_loading_profile': _('Error loading profile'),
     'reply_message_to': _('Reply message to'),
+    'less_than_a_minute': _('Less than a minute'),
+    'minute_ago': _('minute ago'),
+    'minutes_ago': _('minutes ago'),
+    'hour_ago': _('hour ago'),
+    'hours_ago': _('hours ago'),
 }
 
 class i18n:

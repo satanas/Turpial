@@ -32,10 +32,11 @@ class StatusesColumn(Gtk.VBox):
         self.updating = False
         self.menu = None
         self.column = column
+        self.status_ref = []
 
         # Header
         #============================================================
-
+        # TODO: Implement factory for this images
         img = '%s.png' % column.protocol_id
         caption = "%s :: %s" % (column.account_id.split('-')[0],
             urllib2.unquote(column.column_name))
@@ -110,7 +111,7 @@ class StatusesColumn(Gtk.VBox):
         )
 
         # Sort by unix timestamp
-        self.model.set_sort_column_id(17, Gtk.SortType.DESCENDING)
+        #self.model.set_sort_column_id(17, Gtk.SortType.DESCENDING)
 
         cell_avatar = Gtk.CellRendererPixbuf()
         cell_avatar.set_property('yalign', 0)
@@ -209,54 +210,58 @@ class StatusesColumn(Gtk.VBox):
         self.updating = False
 
     def update(self, statuses):
-        to_del = 0
-        num_children = len(self._list)
-        num_statuses = len(statuses)
+        num_to_del = 0
+        num_new_statuses = len(statuses)
+        num_curr_statuses = len(self.status_ref)
         max_statuses = self.base.get_max_statuses_per_column()
-
-        if num_children > 0:
-            if (num_children + num_statuses) >= max_statuses:
-                to_del = (num_children + num_statuses) - max_statuses
-            else:
-                to_del = num_statuses
-
-            for i in range(to_del):
-                last = self._list.iter_n_children(None)
-                _iter = self._list.get_iter_from_string(str(last - 1))
-                print '    Deleting: %s' % self._list.get_value(_iter, 15)[:30]
-                self._list.remove(_iter)
+        model = self._list.get_model()
 
         # Set last_id before reverse, that way we guarantee that last_id holds
         # the id for the newest status
         self.last_id = statuses[0].id_
 
+        # We need to reverse statuses because they come ordered as the newest first
         statuses.reverse()
 
         for status in statuses:
-            # This is to avoid insert duplicated statuses
-            #if status.id_ in [c.status.id_ for c in children]:
-            #    print 'Duplicated status. Nothing to do'
-            #    continue
+            # We don't insert duplicated statuses
+            if status.id_ in self.status_ref:
+                continue
 
-            print '    Adding: %s' % status.text
+            print '    Adding: %s' % status.text[:30]
             pix = self.base.factory.unknown_avatar()
 
             row = [pix, str(status.id_), status.username, status.text, status.datetime, status.source.name,
                 status.favorited, status.repeated, status.is_own, status.protected, status.verified,
                 str(status.in_reply_to_id), status.in_reply_to_user, status.reposted_by, None,
                 StatusType.NORMAL, status.account_id, status.timestamp, status.entities]
-            self._list.get_model().append(row)
 
-        print '    %i statuses after update' % len(self._list.get_children())
+            # We ensure that status is inserted at top
+            model.prepend(row)
+            self.status_ref.insert(0, status.id_)
+            num_curr_statuses += 1
+
+        # We only delete statuses if we overpass the max allowed
+        if (num_curr_statuses) > max_statuses:
+            num_to_del = num_curr_statuses - max_statuses
+            ids_to_del = self.status_ref[-num_to_del:]
+
+            for id_ in ids_to_del:
+                iter_ = model.get_iter_first()
+                while iter_:
+                    if model.get_value(iter_, 1) == str(id_):
+                        print '    Deleting: %s' % model.get_value(_iter, 3)[:30]
+                        model.remove(iter_)
+                        index = self.status_ref.index(id_)
+                        del(self.status_ref[index])
+                        num_curr_statuses -= 1
+                        break
+                    iter_ = self.model.iter_next(iter_)
+
+        print '    %i statuses after update' % num_curr_statuses
 
         #self.mark_all_as_read()
         #self.__set_last_time()
-
-        #new_count = 0
-        #if len(self.model) == 0:
-        #    self.__add_statuses(statuses)
-        #else:
-        #    new_count = self.__modify_statuses(statuses)
 
         #if self.get_vadjustment().get_value() == 0.0:
         #    self.list.scroll_to_cell((0,))
@@ -333,7 +338,8 @@ class StatusCellRenderer(Gtk.CellRendererText):
 
         y = cell_area.y
         x = cell_area.x + self.HEADER_PADDING
-        Gdk.cairo_set_source_pixbuf(cr, self.base.factory.reposted_mark(), x, y)
+        icon = self.base.factory.reposted_mark()
+        Gdk.cairo_set_source_pixbuf(cr, icon, x, y)
         self.accum_header_width += icon.get_width() + self.HEADER_PADDING
         cr.paint()
         return
@@ -361,7 +367,8 @@ class StatusCellRenderer(Gtk.CellRendererText):
 
         y = cell_area.y
         x = cell_area.x + self.accum_header_width
-        Gdk.cairo_set_source_pixbuf(cr, self.base.factory.protected_mark(), x, y)
+        icon = self.base.factory.protected_mark()
+        Gdk.cairo_set_source_pixbuf(cr, icon, x, y)
         self.accum_header_width += icon.get_width() + self.HEADER_PADDING
         cr.paint()
         return
@@ -372,7 +379,8 @@ class StatusCellRenderer(Gtk.CellRendererText):
 
         y = cell_area.y
         x = cell_area.x + self.accum_header_width
-        Gdk.cairo_set_source_pixbuf(cr, self.base.factory.verified_mark(), x, y)
+        icon = self.base.factory.verified_mark()
+        Gdk.cairo_set_source_pixbuf(cr, icon, x, y)
         # TODO: Do it with cairo_context.move_to
         self.accum_header_width += icon.get_width() + self.HEADER_PADDING
         cr.paint()

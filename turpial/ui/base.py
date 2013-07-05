@@ -18,7 +18,6 @@ from xml.sax.saxutils import unescape
 from turpial import VERSION
 from turpial.ui.lang import i18n
 from turpial.singleton import Singleton
-from turpial.ui.unity.unitylauncher import UnityLauncherFactory
 
 MIN_WINDOW_WIDTH = 250
 
@@ -32,15 +31,13 @@ class Base(Singleton):
     def __init__(self, core):
         Singleton.__init__(self, 'turpial.pid')
         self.core = core
-        self.log = logging.getLogger('UI')
-        self.log.debug('Started')
 
         self.images_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), '..', 'data', 'pixmaps'))
 
 
         # Unity integration
-        self.unitylauncher = UnityLauncherFactory().create();
+        #self.unitylauncher = UnityLauncherFactory().create();
         #self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('new_tweet'), True)
         #self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('enable_sounds'), True, not self.sound._disable)
         #self.unitylauncher.add_quicklist_button(self.show_update_box_for_direct, i18n.get('direct_message'), True)

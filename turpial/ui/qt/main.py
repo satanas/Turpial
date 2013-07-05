@@ -18,21 +18,23 @@ from turpial.ui.qt.container import Container
 from turpial.ui.qt.oauthwin import OAuthWindow
 
 
-class Main(QtGui.QMainWindow):
+class Main(Base, QtGui.QMainWindow):
 
     emitter = pyqtSignal(list)
 
     def __init__(self, core):
         self.app = QtGui.QApplication(sys.argv)
 
+        Base.__init__(self, core)
         QtGui.QMainWindow.__init__(self)
 
         self.setWindowTitle('Turpial')
         self.ignore_quit = True
         self.resize(310, 480)
+        self.showed = True
 
-        #self.tray = TrayIcon(self)
-        #self.tray.activated.connect(self.__on_tray_click)
+        self.tray = TrayIcon(self)
+        self.tray.activated.connect(self.__on_tray_click)
 
         self._container = Container(self)
 
@@ -67,13 +69,6 @@ class Main(QtGui.QMainWindow):
             sys.exit(0)
 
     def main_quit(self, widget=None, force=False):
-        self.log.debug('Exiting...')
-        self.unitylauncher.quit()
-        #self.worker.quit()
-        #self.worker.join()
-        #self.avatars_worker.quit()
-        #self.avatars_worker.join()
-        #if widget:
         self.app.quit()
         sys.exit(0)
 

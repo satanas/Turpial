@@ -18,7 +18,6 @@ class TrayIcon(QSystemTrayIcon):
         self.setIcon(icon)
         self.setToolTip(DESC)
         self.show()
-        #self.menu = Gtk.Menu()
 
     def __build_common_menu(self):
         accounts = self.menu.addAction(i18n.get('accounts'))

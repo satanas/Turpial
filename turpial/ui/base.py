@@ -15,11 +15,6 @@ import subprocess
 
 from xml.sax.saxutils import unescape
 
-from libturpial.common import *
-from libturpial.api.models.mediacontent import *
-from libturpial.api.interfaces.service import ServiceResponse
-from libturpial.api.services.showmedia import utils as showmediautils
-
 from turpial import VERSION
 from turpial.ui.lang import i18n
 from turpial.singleton import Singleton

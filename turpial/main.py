@@ -16,9 +16,6 @@ from optparse import OptionParser, SUPPRESS_HELP
 from turpial import DESC
 from turpial.ui import util
 
-from libturpial.api.core import Core
-from libturpial.common.tools import *
-from libturpial.config import AppConfig
 from libturpial import VERSION as LIBTURPIAL_VERSION
 
 LOG_FMT = logging.Formatter('[%(asctime)s] [%(name)s::%(levelname)s] %(message)s', '%Y%m%d-%H:%M')
@@ -41,13 +38,13 @@ class Turpial:
         parser.add_option('-p', dest='mac', action='store_true', default=False,
             help=SUPPRESS_HELP)
 
-
         (options, args) = parser.parse_args()
 
         if not options.mac and parser.failed:
             parser.print_help()
             sys.exit(-2)
 
+        self.core = None
         self.interface = options.interface
 
         if options.debug or options.clean:
@@ -62,8 +59,6 @@ class Turpial:
         if options.clean:
             clean_bytecodes(__file__, self.log)
             sys.exit(0)
-
-        self.core = Core()
 
         # TODO: Override with any configurated value
         if options.interface in util.INTERFACES.keys():

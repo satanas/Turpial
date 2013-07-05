@@ -18,133 +18,30 @@ from turpial.ui.qt.container import Container
 from turpial.ui.qt.oauthwin import OAuthWindow
 
 
-# TODO: Improve all splits for accounts_id with a common function
-
-
-class TimerExecution(object):
-    def __init__(self, function, arg):
-        self.function = function
-        self.arg = arg
-
-    def execute(self):
-        self.function(self.arg)
-        return True
-
-
-class function_caller(object):
-    def __init__(self,func,arg):
-        print "inicializando",func,arg
-        self.func = func
-        self.arg = arg
-
-    def call(self):
-        print "ejecutando call"
-        self.func(self.arg)
-
-class function_caller2(object):
-    def __init__(self,func,arg1,arg2):
-        print "inicializando caller2",func,arg1,arg2
-        self.func = func
-        self.arg1 = arg1
-        self.arg2 = arg1
-
-    def call(self):
-        print "ejecutando call"
-        self.func(self.arg1,self.arg2)
-
-
-
-class Main(Base, QtGui.QMainWindow):
+class Main(QtGui.QMainWindow):
 
     emitter = pyqtSignal(list)
 
     def __init__(self, core):
         self.app = QtGui.QApplication(sys.argv)
 
-        Base.__init__(self, core)
         QtGui.QMainWindow.__init__(self)
 
-        # Configuration
-        self.showed = True
-        self.minimize = 'on'
-        self.is_fullscreen = False
-
-        self.timers = {}
-        self.updating = {}
-        self.columns = {}
-
-        #self.indicator = Indicators()
-        #self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
-        #self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
-
-        self.focus = False
-
-        class eventFilter(QtCore.QObject):
-            def __init__(self, parent):
-                super(eventFilter, self).__init__(parent)
-            def eventFilter(self, object, event):
-                if event.type() == 24:
-                    object.__manage_focus(event, True)
-                if event.type() == 25:
-                    object.__manage_focus(event, False)
-                return False
-
-        #self.filter = eventFilter(self)
-        #self.installEventFilter(self.filter)
-
-
-        self.log = logging.getLogger('Qt')
-        # self.htmlparser = HtmlParser()
         self.setWindowTitle('Turpial')
-
         self.ignore_quit = True
-
-        columns = self.get_all_columns()
-
         self.resize(310, 480)
-        #self.container = HtmlView()
-        #self.setCentralWidget(self.container.view)
-        #self.container.action_request.connect(self._action_request)
-        #self.container.link_request.connect(self._link_request)
 
-        # TODO: Improve the use of this mode
-        self.mode = 0
-
-        # self.screen_width = self.get_screen().get_width()
-        self.screen_width = 310
-        self.max_columns = self.screen_width / MIN_WINDOW_WIDTH
-
-        # Configuration
-        self.showed = True
-        self.minimize = 'on'
-
-        self.timers = {}
-        self.newtimers = []
-        self.alltimers = []
-        self.updating = {}
-        self.columns = {}
-
-        # self.sound = Sound()
-        # self.notify = Notification()
-
-        self.openstatuses = {}
-
-        #self.worker = Worker(self.emitter)
-        #self.emitter.connect(self.__timeout_callback)
-        #self.worker.start()
-
-        # Persistent dialogs
-        #self.accountsdlg = AccountsDialog(self)
-        #self.accountsdlg.update()
-
-        self.tray = TrayIcon(self)
-        self.tray.activated.connect(self.__on_tray_click)
+        #self.tray = TrayIcon(self)
+        #self.tray.activated.connect(self.__on_tray_click)
 
         self._container = Container(self)
 
         #central_widget = QWidget()
         #self._container.add
         #self.setCentralWidget(self._container)
+
+    def start(self):
+        pass
 
 
     #================================================================
@@ -183,7 +80,6 @@ class Main(Base, QtGui.QMainWindow):
     def show_main(self):
         self.start()
         self.show()
-        self.update_container()
 
     def load_image(self, filename, pixbuf=False):
         img_path = os.path.join(self.images_path, filename)

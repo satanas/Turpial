@@ -5,7 +5,12 @@
 import sys
 
 # PyQt4 Support:
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
+from PyQt4.QtGui import QImage
+from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QPixmap
+from PyQt4.QtGui import QVBoxLayout
+from PyQt4.QtGui import QApplication
 #from PyQt4.QtWebKit import *
 from PyQt4.QtCore import pyqtSignal
 
@@ -13,20 +18,20 @@ from turpial import DESC
 from turpial.ui.base import *
 from turpial.ui.qt.tray import TrayIcon
 
-from turpial.ui.qt.worker import Worker
+from turpial.ui.qt.dock import Dock
 from turpial.ui.qt.container import Container
 from turpial.ui.qt.oauthwin import OAuthWindow
 
 
-class Main(Base, QtGui.QMainWindow):
+class Main(Base, QWidget):
 
     emitter = pyqtSignal(list)
 
     def __init__(self, core):
-        self.app = QtGui.QApplication(sys.argv)
+        self.app = QApplication(sys.argv)
 
         Base.__init__(self, core)
-        QtGui.QMainWindow.__init__(self)
+        QWidget.__init__(self)
 
         self.setWindowTitle('Turpial')
         self.ignore_quit = True
@@ -37,10 +42,16 @@ class Main(Base, QtGui.QMainWindow):
         self.tray.activated.connect(self.__on_tray_click)
 
         self._container = Container(self)
+        self._container.empty()
 
-        #central_widget = QWidget()
-        #self._container.add
-        #self.setCentralWidget(self._container)
+        self.dock = Dock(self)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self._container, 1)
+        layout.addWidget(self.dock)
+        layout.setMargin(0);
+
+        self.setLayout(layout)
 
     def start(self):
         pass
@@ -79,8 +90,8 @@ class Main(Base, QtGui.QMainWindow):
     def load_image(self, filename, pixbuf=False):
         img_path = os.path.join(self.images_path, filename)
         if pixbuf:
-            return QtGui.QPixmap(img_path)
-        return QtGui.QImage(img_path)
+            return QPixmap(img_path)
+        return QImage(img_path)
 
     def get_image_path(self, filename):
         return os.path.join(self.images_path, filename)

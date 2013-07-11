@@ -16,11 +16,12 @@ from PyQt4.QtCore import pyqtSignal
 
 from turpial import DESC
 from turpial.ui.base import *
-from turpial.ui.qt.tray import TrayIcon
 
 from turpial.ui.qt.dock import Dock
+from turpial.ui.qt.tray import TrayIcon
 from turpial.ui.qt.container import Container
 from turpial.ui.qt.oauthwin import OAuthWindow
+from turpial.ui.qt.accounts import AccountsDialog
 
 
 class Main(Base, QWidget):
@@ -45,6 +46,14 @@ class Main(Base, QWidget):
         self._container.empty()
 
         self.dock = Dock(self)
+        self.dock.empty()
+
+        accounts = AccountsDialog(self)
+
+        #if len(self.base.get_accounts_list()) > 0:
+        #    no_accounts.set_markup(i18n.get('no_registered_columns'))
+        #else:
+        #    no_accounts.set_markup(i18n.get('no_active_accounts'))
 
         layout = QVBoxLayout()
         layout.addWidget(self._container, 1)

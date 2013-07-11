@@ -16,7 +16,7 @@ class Container(QWidget):
         self.child = None
         self.columns = {}
 
-    def empty(self):
+    def empty(self, with_accounts=None):
         if self.child:
             self.removeWidget(self.child)
 
@@ -25,21 +25,18 @@ class Container(QWidget):
         logo.setPixmap(image)
         logo.setAlignment(QtCore.Qt.AlignCenter)
         logo.setContentsMargins(0, 80, 0, 0)
-        #splash = QtGui.QHBoxLayout()
-        #splash.addWidget(logo, 1)
 
         welcome = QLabel()
         welcome.setText(i18n.get('welcome'))
         welcome.setAlignment(QtCore.Qt.AlignCenter)
 
         message = QLabel()
-        message.setText(i18n.get('create_new_account'))
+        if with_accounts:
+            message.setText(i18n.get('add_some_columns'))
+        else:
+            message.setText(i18n.get('add_new_account'))
         message.setAlignment(QtCore.Qt.AlignCenter)
-
-        #if len(self.base.get_accounts_list()) > 0:
-        #    no_accounts.set_markup(i18n.get('no_registered_columns'))
-        #else:
-        #    no_accounts.set_markup(i18n.get('no_active_accounts'))
+        message.setWordWrap(True)
 
         self.child = QVBoxLayout()
         self.child.addWidget(logo, 1)

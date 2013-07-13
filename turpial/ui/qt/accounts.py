@@ -62,8 +62,6 @@ class AccountsDialog(QDialog):
 
         self.exec_()
 
-
-
     def __close(self, widget, event=None):
         self.showed = False
         self.hide()

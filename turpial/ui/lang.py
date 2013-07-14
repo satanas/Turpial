@@ -44,6 +44,7 @@ STRINGS = {
     'favorites': _('Favorites'),
     'criteria': _('Criteria'),
     'criteria_tooltip': _('Use hashtags, mentions or any text you want as search criteria'),
+    'select_friend': _('Select friend'),
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),
     #'reply_status': _('Reply status'),
@@ -159,7 +160,6 @@ STRINGS = {
     #'shorting_urls': _('Shorting URLs...'),
     #'direct_messages': _('Direct Messages'),
     #'direct_message': _('Direct Message'),
-    #'select_user': _('Select user'),
     #'send_message_to': _('Send message to'),
     #'can_send_message_to_one_account': _("Wait! I just can send messages to \
     #one account at once"),

@@ -2,14 +2,12 @@
 
 # Qt dock for Turpial
 
-from PyQt4.QtGui import QIcon
-from PyQt4.QtGui import QColor
+from PyQt4.QtGui import QToolBar
 from PyQt4.QtGui import QStatusBar
 from PyQt4.QtGui import QHBoxLayout
-from PyQt4.QtGui import QToolButton
-from PyQt4.QtGui import QToolBar
 
 from turpial.ui.lang import i18n
+from turpial.ui.qt.widgets import ImageButton
 
 class Dock(QStatusBar):
     def __init__(self, base):
@@ -19,19 +17,19 @@ class Dock(QStatusBar):
         bg_color = "#333"
         style = "background-color: %s; border: 0px solid %s;" % (bg_color, bg_color)
 
-        self.updates_btn = DockButton(base, 'dock-updates.png',
+        self.updates_btn = ImageButton(base, 'dock-updates.png',
                 i18n.get('update_status'))
-        self.messages_btn = DockButton(base, 'dock-messages.png',
+        self.messages_btn = ImageButton(base, 'dock-messages.png',
                 i18n.get('send_direct_message'))
-        self.columns_btn = DockButton(base, 'dock-columns.png',
+        self.columns_btn = ImageButton(base, 'dock-columns.png',
                 i18n.get('add_columns'))
-        self.accounts_btn = DockButton(base, 'dock-accounts.png',
+        self.accounts_btn = ImageButton(base, 'dock-accounts.png',
                 i18n.get('add_accounts'))
-        self.search_btn = DockButton(base, 'dock-search.png',
+        self.search_btn = ImageButton(base, 'dock-search.png',
                 i18n.get('search'))
-        self.preferences_btn = DockButton(base, 'dock-preferences.png',
+        self.preferences_btn = ImageButton(base, 'dock-preferences.png',
                 i18n.get('open_preferences_dialog'))
-        self.about_btn = DockButton(base, 'dock-about.png',
+        self.about_btn = ImageButton(base, 'dock-about.png',
                 i18n.get('about_turpial'))
 
         toolbar = QToolBar()
@@ -59,13 +57,3 @@ class Dock(QStatusBar):
         self.updates_btn.setEnabled(True)
         self.messages_btn.setEnabled(True)
         self.columns_btn.setEnabled(True)
-
-
-class DockButton(QToolButton):
-    def __init__(self, base, image, tooltip):
-        QToolButton.__init__(self)
-
-        icon = QIcon(base.get_image_path(image))
-        self.setIcon(icon)
-        self.setToolTip(tooltip)
-        self.setMaximumSize(24, 24)

@@ -8,9 +8,7 @@ from PyQt4.QtGui import QComboBox
 from PyQt4.QtGui import QLineEdit
 from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QFormLayout, QVBoxLayout, QHBoxLayout
-#from PyQt4.QtGui import QListWidgetItem
-#
-#from PyQt4.QtCore import QSize
+
 from PyQt4.QtCore import Qt
 
 from turpial.ui.lang import i18n

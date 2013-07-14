@@ -23,6 +23,7 @@ from turpial.ui.qt.container import Container
 from turpial.ui.qt.oauthwin import OAuthWindow
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.oauth import OAuthDialog
+from turpial.ui.qt.profile import ProfileDialog
 
 
 class Main(Base, QWidget):
@@ -50,7 +51,9 @@ class Main(Base, QWidget):
         self.dock.empty()
 
         #accounts = AccountsDialog(self)
-        oauth_dialog = OAuthDialog(self, 'http://twitter.com')
+        #oauth_dialog = OAuthDialog(self, 'http://twitter.com')
+        self.profile = ProfileDialog(self)
+        self.profile.show()
 
         #if len(self.base.get_accounts_list()) > 0:
         #    no_accounts.set_markup(i18n.get('no_registered_columns'))

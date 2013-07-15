@@ -528,5 +528,5 @@ class Main(Base, Gtk.Window):
 
     def refresh_column(self, column_id):
         for col in self.get_registered_columns():
-            if col.build_id() == column_id:
+            if col.slug == column_id:
                 self.download_stream(col)

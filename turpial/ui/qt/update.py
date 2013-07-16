@@ -113,8 +113,6 @@ class CompletionTextEdit(QTextEdit):
             if text.startsWith(' '):
                 text = text[1:]
                 break
-            if text.startsWith('@'):
-                break
 
         return text
 

@@ -5,20 +5,23 @@
 from PyQt4 import QtCore
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QWidget
-from PyQt4.QtGui import QVBoxLayout
+from PyQt4.QtGui import QListView
+from PyQt4.QtGui import QScrollArea
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from turpial.ui.lang import i18n
+from turpial.ui.qt.column import StatusesColumn
 
-class Container(QWidget):
+class Container(QVBoxLayout):
     def __init__(self, base):
-        QWidget.__init__(self)
+        QVBoxLayout.__init__(self)
         self.base = base
         self.child = None
         self.columns = {}
 
     def empty(self, with_accounts=None):
         if self.child:
-            self.removeWidget(self.child)
+            del(self.child)
 
         image = self.base.load_image('logo.png', True)
         logo = QLabel()
@@ -45,5 +48,35 @@ class Container(QWidget):
         self.child.setSpacing(10)
         self.child.setContentsMargins(30, 0, 30, 60)
 
-        self.setLayout(self.child)
+        self.addLayout(self.child)
+
+    def normal(self):
+        if self.child:
+            del(self.child)
+
+        column1 = StatusesColumn(self.base)
+        column2 = StatusesColumn(self.base)
+        column3 = StatusesColumn(self.base)
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(column1)
+        hbox.addWidget(column2)
+        hbox.addWidget(column3)
+
+        widget = QWidget()
+        widget.setLayout(hbox)
+
+        self.child = QScrollArea()
+        #self.child.setLayout(hbox)
+        self.child.setWidgetResizable(False)
+        self.child.setWidget(widget)
+
+        #self.child = QHBoxLayout()
+        #self.child.setSpacing(0)
+        #self.child.setContentsMargins(0, 0, 0, 0)
+        #self.child.addWidget(scroll, 1)
+
+        self.addWidget(self.child, 1)
+
+
 

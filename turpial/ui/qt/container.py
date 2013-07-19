@@ -2,7 +2,7 @@
 
 # Qt container for all columns in Turpial
 
-from PyQt4 import QtCore
+from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QListView
@@ -26,19 +26,19 @@ class Container(QVBoxLayout):
         image = self.base.load_image('logo.png', True)
         logo = QLabel()
         logo.setPixmap(image)
-        logo.setAlignment(QtCore.Qt.AlignCenter)
+        logo.setAlignment(Qt.AlignCenter)
         logo.setContentsMargins(0, 80, 0, 0)
 
         welcome = QLabel()
         welcome.setText(i18n.get('welcome'))
-        welcome.setAlignment(QtCore.Qt.AlignCenter)
+        welcome.setAlignment(Qt.AlignCenter)
 
         message = QLabel()
         if with_accounts:
             message.setText(i18n.get('add_some_columns'))
         else:
             message.setText(i18n.get('add_new_account'))
-        message.setAlignment(QtCore.Qt.AlignCenter)
+        message.setAlignment(Qt.AlignCenter)
         message.setWordWrap(True)
 
         self.child = QVBoxLayout()
@@ -59,24 +59,16 @@ class Container(QVBoxLayout):
         column3 = StatusesColumn(self.base)
 
         hbox = QHBoxLayout()
-        hbox.addWidget(column1)
-        hbox.addWidget(column2)
-        hbox.addWidget(column3)
+        hbox.addWidget(column1, 1)
+        hbox.addWidget(column2, 1)
+        hbox.addWidget(column3, 1)
 
-        widget = QWidget()
-        widget.setLayout(hbox)
+        viewport = QWidget()
+        viewport.setLayout(hbox)
 
         self.child = QScrollArea()
-        #self.child.setLayout(hbox)
-        self.child.setWidgetResizable(False)
-        self.child.setWidget(widget)
-
-        #self.child = QHBoxLayout()
-        #self.child.setSpacing(0)
-        #self.child.setContentsMargins(0, 0, 0, 0)
-        #self.child.addWidget(scroll, 1)
+        self.child.setWidgetResizable(True)
+        self.child.setWidget(viewport)
 
         self.addWidget(self.child, 1)
-
-
 

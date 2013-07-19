@@ -3,6 +3,8 @@
 # Qt widget to implement statuses column in Turpial
 
 #from PyQt4 import QtCore
+from PyQt4.QtCore import QSize
+
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QListView
@@ -16,7 +18,7 @@ class StatusesColumn(QWidget):
     def __init__(self, base):
         QWidget.__init__(self)
         self.base = base
-        self.setMinimumWidth(200)
+        self.setMinimumWidth(250)
 
         icon = QLabel()
         icon.setPixmap(base.load_image('twitter.png', True))

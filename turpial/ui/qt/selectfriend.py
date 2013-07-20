@@ -17,7 +17,7 @@ from turpial.ui.qt.widgets import ImageButton
 
 class SelectFriendDialog(ModalDialog):
     def __init__(self, base):
-        ModalDialog.__init__(self, 290, 80)
+        ModalDialog.__init__(self, 290, 60)
         self.base = base
         self.setWindowTitle(i18n.get('select_friend'))
 

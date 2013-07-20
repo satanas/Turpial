@@ -20,11 +20,11 @@ from turpial.ui.base import *
 from turpial.ui.qt.dock import Dock
 from turpial.ui.qt.tray import TrayIcon
 from turpial.ui.qt.container import Container
-from turpial.ui.qt.oauthwin import OAuthWindow
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.oauth import OAuthDialog
 from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.search import SearchDialog
+from turpial.ui.qt.update import UpdateBox
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 
 
@@ -47,7 +47,8 @@ class Main(Base, QWidget):
         self.tray.activated.connect(self.__on_tray_click)
 
         self._container = Container(self)
-        self._container.empty()
+        #self._container.empty()
+        self._container.normal()
 
         self.dock = Dock(self)
         self.dock.empty()
@@ -57,7 +58,9 @@ class Main(Base, QWidget):
         #self.profile = ProfileDialog(self)
         #self.profile.show()
         #search = SearchDialog(self)
-        friend = SelectFriendDialog(self)
+        #friend = SelectFriendDialog(self)
+        #self.update_box = UpdateBox(self)
+        #self.update_box.show()
 
         #if len(self.base.get_accounts_list()) > 0:
         #    no_accounts.set_markup(i18n.get('no_registered_columns'))
@@ -65,7 +68,8 @@ class Main(Base, QWidget):
         #    no_accounts.set_markup(i18n.get('no_active_accounts'))
 
         layout = QVBoxLayout()
-        layout.addWidget(self._container, 1)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addLayout(self._container, 1)
         layout.addWidget(self.dock)
         layout.setMargin(0);
 

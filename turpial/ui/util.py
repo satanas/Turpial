@@ -19,13 +19,13 @@ INTERFACES = {}
 DEFAULT_INTERFACE = None
 
 # Load gtk3
-try:
-    from turpial.ui.gtk.main import Main as _GTK
-    INTERFACES['gtk'] = _GTK
-    DEFAULT_INTERFACE = DEFAULT_INTERFACE or 'gtk'
-except ImportError, exc:
-    print 'Could not initialize GTK interface.'
-    print exc
+#try:
+#    from turpial.ui.gtk.main import Main as _GTK
+#    INTERFACES['gtk'] = _GTK
+#    DEFAULT_INTERFACE = DEFAULT_INTERFACE or 'gtk'
+#except ImportError, exc:
+#    print 'Could not initialize GTK interface.'
+#    print exc
 
 # Load qt
 try:

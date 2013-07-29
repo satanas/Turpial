@@ -54,7 +54,7 @@ class Container(QVBoxLayout):
         if self.child:
             del(self.child)
 
-        column1 = StatusesColumn(self.base)
+        column1 = StatusesColumn(self.base, True)
         column2 = StatusesColumn(self.base)
         column3 = StatusesColumn(self.base)
 

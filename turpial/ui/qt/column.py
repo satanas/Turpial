@@ -68,7 +68,7 @@ class StatusesColumn(QWidget):
         model = QStandardItemModel()
         self._list.setModel(model)
 
-        status_delegate = StatusDelegate()
+        status_delegate = StatusDelegate(base)
         self._list.setItemDelegate(status_delegate)
         self._list.setResizeMode(QListView.Adjust)
 
@@ -96,8 +96,9 @@ class StatusDelegate(QStyledItemDelegate):
 
     AVATAR_MARGIN = 3
 
-    def __init__(self):
+    def __init__(self, base):
         QStyledItemDelegate.__init__(self)
+        self.base = base
 
     def __calculate_text_width(self, full_width):
         return full_width - (AVATAR_SIZE + (self.AVATAR_MARGIN * 2))
@@ -120,7 +121,7 @@ class StatusDelegate(QStyledItemDelegate):
         height += doc.size().height()
         #print "sizeHint before: %s" % QSize(doc.idealWidth(), doc.size().height())
         #print "size %s, %s, %s" % (self.__calculate_text_width(option.rect.width()), doc.idealWidth(), doc.size())
-        print option.rect
+        #print height
         return QSize(doc.idealWidth(), height)
 
     def paint(self, painter, option, index):
@@ -142,12 +143,17 @@ class StatusDelegate(QStyledItemDelegate):
         doc = QTextDocument()
         doc.setHtml("<b>%s</b>" % username)
         doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
+        height_offset = doc.size().height() - 5
         ctx = QAbstractTextDocumentLayout.PaintContext()
-        height = doc.size().height()
 
         painter.translate(option.rect.left() + AVATAR_SIZE + self.AVATAR_MARGIN, option.rect.top())
         dl = doc.documentLayout()
         dl.draw(painter, ctx)
+
+        # Draw verified account icon
+        verified_icon = self.base.load_image('mark-verified.png', True)
+        rect = QRect(doc.idealWidth() + 5, option.rect.top() + self.AVATAR_MARGIN, 16, 16)
+        painter.drawPixmap(rect, verified_icon)
 
         # Draw status message
         #date = index.data(DateRole)
@@ -157,7 +163,7 @@ class StatusDelegate(QStyledItemDelegate):
         doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
         ctx = QAbstractTextDocumentLayout.PaintContext()
 
-        painter.translate(0, option.rect.top() + height)
+        painter.translate(0, height_offset)
         dl = doc.documentLayout()
         dl.draw(painter, ctx)
 

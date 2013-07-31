@@ -9,6 +9,7 @@ from PyQt4 import QtCore
 from PyQt4.QtGui import QImage
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QPixmap
+from PyQt4.QtGui import QFontDatabase
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QApplication
 #from PyQt4.QtWebKit import *
@@ -37,6 +38,8 @@ class Main(Base, QWidget):
 
         Base.__init__(self, core)
         QWidget.__init__(self)
+        QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/RopaSans-Regular.ttf')
+        QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/Monda-Regular.ttf')
 
         self.setWindowTitle('Turpial')
         self.ignore_quit = True

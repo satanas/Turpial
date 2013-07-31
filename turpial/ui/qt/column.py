@@ -14,6 +14,8 @@ from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QStandardItem
 from PyQt4.QtGui import QStandardItemModel
 from PyQt4.QtGui import QTextDocument
+from PyQt4.QtGui import QFont
+from PyQt4.QtGui import QFontDatabase
 from PyQt4.QtGui import QStyle
 from PyQt4.QtGui import QAbstractTextDocumentLayout
 from PyQt4.QtGui import QLabel
@@ -28,6 +30,9 @@ from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton
 
 AVATAR_SIZE = 48
+FULLNAME_FONT = QFont("Helvetica", 13)
+USERNAME_FONT = QFont("Helvetica", 12)
+
 
 class StatusesColumn(QWidget):
     def __init__(self, base, test=False):
@@ -77,11 +82,13 @@ class StatusesColumn(QWidget):
         filepath = os.path.join(self.base.images_path, 'unknown.png')
         item.setData(filepath, StatusDelegate.AvatarRole)
         item.setData("satanas82", StatusDelegate.UsernameRole)
+        item.setData("Wil Alvarez", StatusDelegate.FullnameRole)
 
         item2 = QStandardItem()
         item2.setData("The path of the righteous man is beset on all sides by the iniquities of the selfish and the tyranny of evil men", StatusDelegate.MessageRole)
         item2.setData(filepath, StatusDelegate.AvatarRole)
         item2.setData("TurpialVe", StatusDelegate.UsernameRole)
+        item2.setData("Turpial", StatusDelegate.FullnameRole)
 
         if test:
             model.appendRow(item)
@@ -89,10 +96,11 @@ class StatusesColumn(QWidget):
 
 
 class StatusDelegate(QStyledItemDelegate):
-    UsernameRole = Qt.UserRole + 100
-    AvatarRole = Qt.UserRole + 101
-    MessageRole = Qt.UserRole + 102
-    DateRole = Qt.UserRole + 103
+    FullnameRole = Qt.UserRole + 100
+    UsernameRole = Qt.UserRole + 101
+    AvatarRole = Qt.UserRole + 102
+    MessageRole = Qt.UserRole + 103
+    DateRole = Qt.UserRole + 104
 
     AVATAR_MARGIN = 3
 
@@ -109,6 +117,7 @@ class StatusDelegate(QStyledItemDelegate):
         username = index.data(self.UsernameRole).toPyObject()
         doc = QTextDocument()
         doc.setHtml("<b>%s</b>" % username)
+        doc.setDefaultFont(FULLNAME_FONT)
         doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
         height += doc.size().height()
 
@@ -138,22 +147,41 @@ class StatusDelegate(QStyledItemDelegate):
                 option.rect.top() + self.AVATAR_MARGIN, AVATAR_SIZE, AVATAR_SIZE)
         painter.drawPixmap(rect, avatar)
 
+        # Draw verified account icon
+        verified_icon = self.base.load_image('mark-verified.png', True)
+        rect = QRect(rect.right() + 5, rect.top(), 16, 16)
+        painter.drawPixmap(rect, verified_icon)
+
+        # Draw protected account icon
+        protected_icon = self.base.load_image('mark-protected.png', True)
+        rect = QRect(rect.right() + 2, rect.top(), 16, 16)
+        painter.drawPixmap(rect, protected_icon)
+
+        # Draw fullname
+        fullname = index.data(self.FullnameRole).toPyObject()
+        doc = QTextDocument()
+        doc.setHtml("<b>%s</b>" % fullname)
+        doc.setDefaultFont(FULLNAME_FONT)
+        doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
+        ctx = QAbstractTextDocumentLayout.PaintContext()
+
+        painter.translate(rect.right() + 2, option.rect.top())
+        dl = doc.documentLayout()
+        dl.draw(painter, ctx)
+        rect = QRect(doc.idealWidth(), option.rect.top(), 16, 16)
+
         # Draw username
         username = index.data(self.UsernameRole).toPyObject()
         doc = QTextDocument()
-        doc.setHtml("<b>%s</b>" % username)
+        doc.setHtml("@%s" % username)
+        doc.setDefaultFont(FULLNAME_FONT)
         doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
         height_offset = doc.size().height() - 5
         ctx = QAbstractTextDocumentLayout.PaintContext()
 
-        painter.translate(option.rect.left() + AVATAR_SIZE + self.AVATAR_MARGIN, option.rect.top())
+        painter.translate(rect.right(), option.rect.top())
         dl = doc.documentLayout()
         dl.draw(painter, ctx)
-
-        # Draw verified account icon
-        verified_icon = self.base.load_image('mark-verified.png', True)
-        rect = QRect(doc.idealWidth() + 5, option.rect.top() + self.AVATAR_MARGIN, 16, 16)
-        painter.drawPixmap(rect, verified_icon)
 
         # Draw status message
         #date = index.data(DateRole)
@@ -163,7 +191,7 @@ class StatusDelegate(QStyledItemDelegate):
         doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
         ctx = QAbstractTextDocumentLayout.PaintContext()
 
-        painter.translate(0, height_offset)
+        painter.translate(option.rect.left(), option.rect.top() + 10)
         dl = doc.documentLayout()
         dl.draw(painter, ctx)
 

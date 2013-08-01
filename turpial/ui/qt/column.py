@@ -30,8 +30,9 @@ from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton
 
 AVATAR_SIZE = 48
-FULLNAME_FONT = QFont("Helvetica", 13)
-USERNAME_FONT = QFont("Helvetica", 12)
+#FULLNAME_FONT = QFont("Aaargh", 15)
+FULLNAME_FONT = QFont("CicleGordita", 14)
+#USERNAME_FONT = QFont("Helvetica", 12)
 
 
 class StatusesColumn(QWidget):
@@ -116,8 +117,8 @@ class StatusDelegate(QStyledItemDelegate):
 
         username = index.data(self.UsernameRole).toPyObject()
         doc = QTextDocument()
-        doc.setHtml("<b>%s</b>" % username)
         doc.setDefaultFont(FULLNAME_FONT)
+        doc.setHtml("%s" % username)
         doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
         height += doc.size().height()
 
@@ -160,8 +161,10 @@ class StatusDelegate(QStyledItemDelegate):
         # Draw fullname
         fullname = index.data(self.FullnameRole).toPyObject()
         doc = QTextDocument()
-        doc.setHtml("<b>%s</b>" % fullname)
-        doc.setDefaultFont(FULLNAME_FONT)
+        doc.setHtml("%s" % fullname)
+        font = QFont()
+        font.setPointSize(14)
+        doc.setDefaultFont(font)
         doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
         ctx = QAbstractTextDocumentLayout.PaintContext()
 

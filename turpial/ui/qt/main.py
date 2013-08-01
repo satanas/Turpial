@@ -2,6 +2,7 @@
 
 # Qt main view for Turpial
 
+import os
 import sys
 
 # PyQt4 Support:
@@ -40,6 +41,10 @@ class Main(Base, QWidget):
         QWidget.__init__(self)
         QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/RopaSans-Regular.ttf')
         QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/Monda-Regular.ttf')
+        path = os.path.join(os.path.dirname(__file__), '../../data/fonts/Cicle_Gordita.ttf')
+        id_ = QFontDatabase.addApplicationFont(path)
+        path = os.path.join(os.path.dirname(__file__), '../../data/fonts/Aaargh.ttf.ttf')
+        id_ = QFontDatabase.addApplicationFont(path)
 
         self.setWindowTitle('Turpial')
         self.ignore_quit = True

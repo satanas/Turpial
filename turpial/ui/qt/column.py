@@ -8,6 +8,7 @@ import os
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QSize
 from PyQt4.QtCore import QRect
+from PyQt4.QtCore import QRectF
 from PyQt4.QtCore import QLine
 from PyQt4.QtCore import QString
 
@@ -31,7 +32,6 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton
 
-AVATAR_SIZE = 48
 FULLNAME_FONT = QFont("Helvetica", 13)
 USERNAME_FONT = QFont("Helvetica", 11)
 FOOTER_FONT = QFont("Helvetica", 11)
@@ -41,7 +41,7 @@ class StatusesColumn(QWidget):
     def __init__(self, base, test=False):
         QWidget.__init__(self)
         self.base = base
-        self.setMinimumWidth(260)
+        self.setMinimumWidth(280)
 
         icon = QLabel()
         icon.setPixmap(base.load_image('twitter.png', True))
@@ -105,36 +105,48 @@ class StatusDelegate(QStyledItemDelegate):
     MessageRole = Qt.UserRole + 103
     DateRole = Qt.UserRole + 104
 
-    AVATAR_MARGIN = 3
+    AVATAR_SIZE = 48
+    BOX_MARGIN = 2
+    LEFT_MESSAGE_MARGIN = 10
+    TOP_MESSAGE_MARGIN = 1
+    BOTTOM_MESSAGE_MARGIN = 3
 
     def __init__(self, base):
         QStyledItemDelegate.__init__(self)
         self.base = base
 
-    def __calculate_text_width(self, full_width):
-        return full_width - (AVATAR_SIZE + (self.AVATAR_MARGIN * 2))
+    def __calculate_text_width(self, option):
+        width = option.rect.width()
+        width -= (self.BOX_MARGIN + self.AVATAR_SIZE + self.LEFT_MESSAGE_MARGIN)
+        return width
 
-    def sizeHint(self, option, index):
-        height = 0
-
-        username = index.data(self.UsernameRole).toPyObject()
+    def __render_fullname(self, option, index):
+        fullname = index.data(self.FullnameRole).toPyObject()
         doc = QTextDocument()
-        doc.setHtml("<b>%s</b>" % username)
+        doc.setHtml("<b>%s</b>" % fullname)
         doc.setDefaultFont(FULLNAME_FONT)
-        doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
-        height += doc.size().height()
+        doc.setTextWidth(self.__calculate_text_width(option))
+        return doc
 
-        #print "sizeHint after: %s" % option.rect
+    def __render_status_message(self, option, index):
         message = index.data(self.MessageRole).toPyObject()
         doc = QTextDocument()
         doc.setHtml(message)
-        doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
-        #doc.adjustSize()
-        height += doc.size().height()
-        #print "sizeHint before: %s" % QSize(doc.idealWidth(), doc.size().height())
-        #print "size %s, %s, %s" % (self.__calculate_text_width(option.rect.width()), doc.idealWidth(), doc.size())
-        #print height
-        return QSize(doc.idealWidth(), height + 20)
+        doc.setTextWidth(self.__calculate_text_width(option))
+        return doc
+
+
+    def sizeHint(self, option, index):
+        fullname = self.__render_fullname(option, index)
+        message = self.__render_status_message(option, index)
+
+        height = self.BOX_MARGIN + fullname.size().height() + self.TOP_MESSAGE_MARGIN
+        height += message.size().height() + self.BOTTOM_MESSAGE_MARGIN + 16 + self.BOX_MARGIN
+
+        width = self.BOX_MARGIN + self.AVATAR_SIZE + self.LEFT_MESSAGE_MARGIN
+        width += message.idealWidth() + self.BOX_MARGIN
+        print width, height
+        return QSize(width, height)
 
     def paint(self, painter, option, index):
         current_width = 0
@@ -147,8 +159,9 @@ class StatusDelegate(QStyledItemDelegate):
         # Draw avatar
         avatar_filepath = index.data(self.AvatarRole).toPyObject()
         avatar = QPixmap(avatar_filepath)
-        rect = QRect(option.rect.left() + self.AVATAR_MARGIN,
-                option.rect.top() + self.AVATAR_MARGIN, AVATAR_SIZE, AVATAR_SIZE)
+        x = option.rect.left() + self.BOX_MARGIN
+        y = option.rect.top() + self.BOX_MARGIN
+        rect = QRect(x, y, self.AVATAR_SIZE, self.AVATAR_SIZE)
         painter.drawPixmap(rect, avatar)
 
         # Draw verified account icon
@@ -158,81 +171,75 @@ class StatusDelegate(QStyledItemDelegate):
 
         # Draw protected account icon
         protected_icon = self.base.load_image('mark-protected.png', True)
-        rect = QRect(rect.right(), rect.top(), 16, 16)
+        rect = QRect(rect.right() + self.LEFT_MESSAGE_MARGIN, y, 16, 16)
         painter.drawPixmap(rect, protected_icon)
 
-        # Draw favorite icon
-        favorite_icon = self.base.load_image('mark-favorite.png', True)
-        rect2 = QRect(option.rect.right() - 16, rect.top(), 16, 16)
-        painter.drawPixmap(rect2, favorite_icon)
-
-        # Draw reposted icon
-        reposted_icon = self.base.load_image('mark-repeated.png', True)
-        rect2 = QRect(option.rect.right() - 32, rect.top(), 16, 16)
-        painter.drawPixmap(rect2, reposted_icon)
-
         # Draw fullname
-        fullname = index.data(self.FullnameRole).toPyObject()
-        doc = QTextDocument()
-        doc.setHtml("<b>%s</b>" % fullname)
-        doc.setDefaultFont(FULLNAME_FONT)
-        doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
-
+        fullname = self.__render_fullname(option, index)
         painter.translate(rect.right(), option.rect.top())
-        doc.drawContents(painter)
-        fullname_width = doc.idealWidth()
-        current_width += rect.right()
+        fullname.drawContents(painter)
 
         # Draw username
         username = index.data(self.UsernameRole).toPyObject()
         doc = QTextDocument()
-        doc.setHtml("@%s" % username)
+        doc.setHtml("<span style='color: #666;'>@%s</span>" % username)
         doc.setDefaultFont(USERNAME_FONT)
-        doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
-        painter.translate(fullname_width, 0)
+        doc.setTextWidth(self.__calculate_text_width(option))
+        painter.translate(fullname.idealWidth(), 0)
         doc.drawContents(painter)
-        current_width += fullname_width
+
+
+        ## Draw favorite icon
+        #favorite_icon = self.base.load_image('mark-favorite.png', True)
+        #rect2 = QRect(option.rect.right() - 16, rect.top(), 16, 16)
+        #painter.drawPixmap(rect2, favorite_icon)
+
+        ## Draw reposted icon
+        #reposted_icon = self.base.load_image('mark-repeated.png', True)
+        #rect2 = QRect(option.rect.right() - 32, rect.top(), 16, 16)
+        #painter.drawPixmap(rect2, reposted_icon)
 
         # Draw status message
-        #date = index.data(DateRole)
-        message = index.data(self.MessageRole).toPyObject()
-        doc = QTextDocument()
-        doc.setHtml(message)
-        doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
+        painter.resetTransform()
+        message = self.__render_status_message(option, index)
 
-        current_width -= AVATAR_SIZE + (self.AVATAR_MARGIN * 2)
-        painter.translate(-current_width, 16)
-        doc.drawContents(painter)
-        height_offset = doc.size().height()
+        x = self.BOX_MARGIN + self.AVATAR_SIZE + self.LEFT_MESSAGE_MARGIN
+        y = option.rect.top() + fullname.size().height() + self.TOP_MESSAGE_MARGIN
+        painter.translate(x, y)
+        message.drawContents(painter)
 
-        # Draw reposted by
-        reposted_by = "Reposted by fulano" #index.data(self.MessageRole).toPyObject()
-        doc = QTextDocument()
-        doc.setHtml("<span style='color: #999;'>%s</span>" % reposted_by)
-        doc.setDefaultFont(FOOTER_FONT)
-        doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
-        painter.translate(-(AVATAR_SIZE + (self.AVATAR_MARGIN * 2) - 16), height_offset)
-        doc.drawContents(painter)
+        ## Draw reposted by
+        #reposted_by = "Reposted by fulano" #index.data(self.MessageRole).toPyObject()
+        #doc = QTextDocument()
+        #doc.setHtml("<span style='color: #999;'>%s</span>" % reposted_by)
+        #doc.setDefaultFont(FOOTER_FONT)
+        #doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
 
-        # Draw reposted icon
-        reposted_icon = self.base.load_image('mark-reposted.png', True)
-        rect2 = QRect(-16, 3, 16, 16)
-        painter.drawPixmap(rect2, reposted_icon)
+        #painter.translate(-(self.AVATAR_SIZE + (self.LEFT_AVATAR_MARGIN * 2) - 16), height_offset)
+        #doc.drawContents(painter)
 
-        # Draw datetime
-        datetime = "6 min"
-        doc = QTextDocument()
-        #doc.setHtml("<span style='color: #666;font-family: \"Ropa Sans\", sans-serif;'>" + datetime + "</span><link href='http://fonts.googleapis.com/css?family=Ropa+Sans' rel='stylesheet' type='text/css'>")
-        doc.setHtml("<span style='color: #999;'>%s</span>" % datetime)
-        doc.setDefaultFont(FOOTER_FONT)
-        doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
-        w = option.rect.right() - doc.idealWidth() - 15
-        painter.translate(w, 0)
-        doc.drawContents(painter)
+        ## Draw reposted icon
+        #reposted_icon = self.base.load_image('mark-reposted.png', True)
+        #rect2 = QRect(-16, 3, 16, 16)
+        #painter.drawPixmap(rect2, reposted_icon)
 
-        painter.translate(-w - 16, 20)
-        line = QLine(0, 0, option.rect.width(), 0)
-        painter.setPen(QColor(230, 230, 230))
-        painter.drawLine(line)
+        ## Draw datetime
+        #datetime = "6 min"
+        #doc = QTextDocument()
+        #doc.setHtml("<span style='color: #999;'>%s</span>" % datetime)
+        #doc.setDefaultFont(FOOTER_FONT)
+        #doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
+        #w = option.rect.right() - doc.idealWidth() - 15
+        #painter.translate(w, 0)
+        #doc.drawContents(painter)
+
+        #painter.translate(-w - 16, 20)
+        #line = QLine(0, 0, option.rect.width(), 0)
+        #painter.setPen(QColor(230, 230, 230))
+        #painter.drawLine(line)
+
+        #line = QLine(0, option.rect.height(), option.rect.width(), option.rect.height())
+        #painter.setPen(QColor(230, 230, 230))
+        #painter.drawLine(line)
 
         painter.restore()

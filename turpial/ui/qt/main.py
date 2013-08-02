@@ -43,7 +43,7 @@ class Main(Base, QWidget):
 
         self.setWindowTitle('Turpial')
         self.ignore_quit = True
-        self.resize(310, 480)
+        self.resize(320, 480)
         self.showed = True
 
         self.tray = TrayIcon(self)

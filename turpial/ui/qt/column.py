@@ -8,9 +8,11 @@ import os
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QSize
 from PyQt4.QtCore import QRect
+from PyQt4.QtCore import QLine
 from PyQt4.QtCore import QString
 
 from PyQt4.QtGui import QIcon
+from PyQt4.QtGui import QColor
 from PyQt4.QtGui import QStandardItem
 from PyQt4.QtGui import QStandardItemModel
 from PyQt4.QtGui import QTextDocument
@@ -39,7 +41,7 @@ class StatusesColumn(QWidget):
     def __init__(self, base, test=False):
         QWidget.__init__(self)
         self.base = base
-        self.setMinimumWidth(200)
+        self.setMinimumWidth(260)
 
         icon = QLabel()
         icon.setPixmap(base.load_image('twitter.png', True))
@@ -151,8 +153,8 @@ class StatusDelegate(QStyledItemDelegate):
 
         # Draw verified account icon
         verified_icon = self.base.load_image('mark-verified.png', True)
-        rect = QRect(rect.right() + 2, rect.top(), 16, 16)
-        painter.drawPixmap(rect, verified_icon)
+        rect2 = QRect(rect.right() - 11, rect.bottom() - 10, 16, 16)
+        painter.drawPixmap(rect2, verified_icon)
 
         # Draw protected account icon
         protected_icon = self.base.load_image('mark-protected.png', True)
@@ -165,7 +167,7 @@ class StatusDelegate(QStyledItemDelegate):
         painter.drawPixmap(rect2, favorite_icon)
 
         # Draw reposted icon
-        reposted_icon = self.base.load_image('mark-reposted.png', True)
+        reposted_icon = self.base.load_image('mark-repeated.png', True)
         rect2 = QRect(option.rect.right() - 32, rect.top(), 16, 16)
         painter.drawPixmap(rect2, reposted_icon)
 
@@ -206,7 +208,7 @@ class StatusDelegate(QStyledItemDelegate):
         # Draw reposted by
         reposted_by = "Reposted by fulano" #index.data(self.MessageRole).toPyObject()
         doc = QTextDocument()
-        doc.setHtml(reposted_by)
+        doc.setHtml("<span style='color: #999;'>%s</span>" % reposted_by)
         doc.setDefaultFont(FOOTER_FONT)
         doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
         painter.translate(-(AVATAR_SIZE + (self.AVATAR_MARGIN * 2) - 16), height_offset)
@@ -214,17 +216,23 @@ class StatusDelegate(QStyledItemDelegate):
 
         # Draw reposted icon
         reposted_icon = self.base.load_image('mark-reposted.png', True)
-        rect2 = QRect(-16, 0, 16, 16)
+        rect2 = QRect(-16, 3, 16, 16)
         painter.drawPixmap(rect2, reposted_icon)
 
         # Draw datetime
-        datetime = "6 min ago"
+        datetime = "6 min"
         doc = QTextDocument()
-        doc.setHtml("<span style='color: #666;font-family: \"Ropa Sans\", sans-serif;'>" + datetime + "</span><link href='http://fonts.googleapis.com/css?family=Ropa+Sans' rel='stylesheet' type='text/css'>")
+        #doc.setHtml("<span style='color: #666;font-family: \"Ropa Sans\", sans-serif;'>" + datetime + "</span><link href='http://fonts.googleapis.com/css?family=Ropa+Sans' rel='stylesheet' type='text/css'>")
+        doc.setHtml("<span style='color: #999;'>%s</span>" % datetime)
         doc.setDefaultFont(FOOTER_FONT)
         doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
         w = option.rect.right() - doc.idealWidth() - 15
         painter.translate(w, 0)
         doc.drawContents(painter)
+
+        painter.translate(-w - 16, 20)
+        line = QLine(0, 0, option.rect.width(), 0)
+        painter.setPen(QColor(230, 230, 230))
+        painter.drawLine(line)
 
         painter.restore()

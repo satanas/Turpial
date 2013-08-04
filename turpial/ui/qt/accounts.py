@@ -24,6 +24,8 @@ from PyQt4.QtCore import QRect
 from turpial.ui.lang import i18n
 from turpial.ui.qt.dialog import ModalDialog
 
+from libturpial.common.tools import get_protocol_from, get_username_from
+
 USERNAME_FONT = QFont("Helvetica", 14)
 PROTOCOL_FONT = QFont("Helvetica", 11)
 
@@ -33,12 +35,6 @@ class AccountsDialog(ModalDialog):
         self.base = base
         self.setWindowTitle(i18n.get('accounts'))
 
-        #account1 = QListWidgetItem("<b>satanas82</b>\nTwitter")
-        #account1.setIcon(QIcon(base.load_image('unknown.png', True)))
-
-        #account2 = QListWidgetItem("TurpialVe\nTwitter")
-        #account2.setIcon(QIcon(base.load_image('unknown.png', True)))
-
         self._list = QListView()
         self._list.setResizeMode(QListView.Adjust)
         self._list.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
@@ -47,23 +43,28 @@ class AccountsDialog(ModalDialog):
         account_delegate = AccountDelegate(base)
         self._list.setItemDelegate(account_delegate)
 
-        item = QStandardItem()
-        filepath = os.path.join(self.base.images_path, 'unknown.png')
-        item.setData(filepath, AccountDelegate.AvatarRole)
-        item.setData("satanas82", AccountDelegate.UsernameRole)
-        item.setData("Twitter", AccountDelegate.ProtocolRole)
-
-        model.appendRow(item)
+        accounts = base.get_registered_accounts()
+        for account in accounts:
+            item = QStandardItem()
+            filepath = os.path.join(self.base.images_path, 'unknown.png')
+            item.setData(filepath, AccountDelegate.AvatarRole)
+            item.setData(get_username_from(account.id_), AccountDelegate.UsernameRole)
+            item.setData(get_protocol_from(account.id_).capitalize(), AccountDelegate.ProtocolRole)
+            model.appendRow(item)
 
         twitter_btn = QToolButton()
         twitter_btn.setText('Connect to Twitter')
         twitter_btn.setIcon(QIcon(base.load_image('twitter.png', True)))
         twitter_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        #twitter_btn.setToolTip(tooltip)
+        twitter_btn.setToolTip(i18n.get('create_a_twitter_account'))
+
         identica_btn = QToolButton()
         identica_btn.setText('Connect to Identi.ca')
         identica_btn.setIcon(QIcon(base.load_image('identica.png', True)))
         identica_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        #identica_btn.setToolTip(tooltip)
+        # TODO: Enable when identi.ca support is ready
+        identica_btn.setEnabled(False)
 
         toolbar = QToolBar()
         toolbar.addWidget(twitter_btn)
@@ -125,7 +126,7 @@ class AccountDelegate(QStyledItemDelegate):
         # Draw username
         username_string = index.data(self.UsernameRole).toPyObject()
         username = QTextDocument()
-        username.setHtml("<b>%s</b>" % username_string)
+        username.setHtml("%s" % username_string)
         username.setDefaultFont(USERNAME_FONT)
         #username.setTextWidth(self.__calculate_text_width(width))
 

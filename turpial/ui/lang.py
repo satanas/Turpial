@@ -54,6 +54,7 @@ STRINGS = {
     'delete_column': _("Delete Column"),
     'now': _("now"),
     'retweeted_by': _("Retweeted by"),
+    'create_a_twitter_account': _('Create a Twitter account'),
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),
     #'reply_status': _('Reply status'),

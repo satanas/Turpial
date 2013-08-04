@@ -19,27 +19,30 @@ from turpial import DESC
 from turpial.ui.base import *
 
 from turpial.ui.qt.dock import Dock
+from turpial.ui.qt.worker import Worker
 from turpial.ui.qt.tray import TrayIcon
-from turpial.ui.qt.container import Container
-from turpial.ui.qt.accounts import AccountsDialog
-from turpial.ui.qt.oauth import OAuthDialog
-from turpial.ui.qt.profile import ProfileDialog
-from turpial.ui.qt.search import SearchDialog
 from turpial.ui.qt.update import UpdateBox
+from turpial.ui.qt.oauth import OAuthDialog
+from turpial.ui.qt.search import SearchDialog
+from turpial.ui.qt.container import Container
+from turpial.ui.qt.profile import ProfileDialog
+from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
+
+from libturpial.api.core import Core
 
 
 class Main(Base, QWidget):
 
-    emitter = pyqtSignal(list)
+    #emitter = pyqtSignal(list)
 
     def __init__(self, core):
         self.app = QApplication(sys.argv)
 
         Base.__init__(self, core)
         QWidget.__init__(self)
-        QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/RopaSans-Regular.ttf')
-        QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/Monda-Regular.ttf')
+        #QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/RopaSans-Regular.ttf')
+        #QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/Monda-Regular.ttf')
 
         self.setWindowTitle('Turpial')
         self.ignore_quit = True
@@ -49,9 +52,16 @@ class Main(Base, QWidget):
         self.tray = TrayIcon(self)
         self.tray.activated.connect(self.__on_tray_click)
 
+        self.core = Core()
+
+        self.worker = Worker()
+        self.worker.start()
+
+        #self.worker.register(self.core.list_accounts, None, self.__test)
+
         self._container = Container(self)
-        #self._container.empty()
-        self._container.normal()
+        self._container.empty()
+        #self._container.normal()
 
         self.dock = Dock(self)
         self.dock.empty()
@@ -78,8 +88,11 @@ class Main(Base, QWidget):
 
         self.setLayout(layout)
 
+    def __test(self, value):
+        print value
+
     def start(self):
-        pass
+        print 'hola'
 
 
     #================================================================
@@ -111,6 +124,7 @@ class Main(Base, QWidget):
     def show_main(self):
         self.start()
         self.show()
+        self.update_container()
 
     def load_image(self, filename, pixbuf=False):
         img_path = os.path.join(self.images_path, filename)
@@ -121,24 +135,27 @@ class Main(Base, QWidget):
     def get_image_path(self, filename):
         return os.path.join(self.images_path, filename)
 
-    def login(self, account_id):
-        pass
-
     def update_container(self):
+        accounts = self.get_registered_accounts()
         columns = self.get_registered_columns()
         if len(columns) == 0:
-            self._container.empty()
-            #self.dock.empty()
+            if len(accounts) == 0:
+                self._container.empty(False)
+            else:
+                self._container.empty(True)
+            self.dock.empty()
             self.tray.empty()
         else:
-            self._container.empty()
+            self._container.normal(columns)
             #self._container.normal(self.get_accounts_list(), columns)
-            #self.dock.normal()
+            self.dock.normal()
             self.tray.normal()
+            cols = self.core.registered_columns()
+            self.download_stream(cols['satanas82-twitter'][0])
 
 
 
-'''
+    '''
     def closeEvent(self, event):
         if self.unitylauncher.is_supported():
             self.showMinimized()
@@ -426,35 +443,36 @@ class Main(Base, QWidget):
                 cmd = "update_videoview('%s',%s,%s);" % (
                     content_obj.path, content_obj.info['width'], content_obj.info['height'])
             self.container.execute(cmd)
+    '''
+
+    def update_column(self, arg, data):
+        column, notif, max_ = data
+
+        # Notifications
+        # FIXME
+        count = len(arg)
+
+        if count > 0:
+            self._container.update_column(column.id_, arg)
 
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
 
     def download_stream(self, column, notif=True):
-        for each in self.alltimers:
-            print each, each.isActive()
+        if self._container.is_updating(column.id_):
+            return True
 
+        last_id = self._container.start_updating(column.id_)
+        count = self.core.get_max_statuses_per_column()
 
-        if self.updating.has_key(column.id_):
-            if self.updating[column.id_]:
-                return True
-        else:
-            self.updating[column.id_] = True
-
-        if not self.columns.has_key(column.id_):
-            self.columns[column.id_] = {'last_id': None}
-
-        last_id = self.columns[column.id_]['last_id']
-        num_statuses = self.core.get_max_statuses_per_column()
-        self.container.execute("start_updating_column('" + column.id_ + "');")
         self.worker.register(self.core.get_column_statuses, (column.account_id,
-            column.column_name, num_statuses, last_id), self.update_column, 
-            (column, notif, num_statuses))
-#        rtn = self.core.get_column_statuses(column.account_id,column.column_name,num_statuses)
-#        self.update_column(rtn, (column, notif, num_statuses))
+            column.slug, count, last_id), self.update_column,
+            (column, notif, count))
         return True
 
+
+    '''
     def refresh_column(self, column_id):
         for col in self.get_registered_columns():
             if col.build_id() == column_id:
@@ -462,4 +480,4 @@ class Main(Base, QWidget):
 
     def is_active(self):
         return self.focus
-'''
+    '''

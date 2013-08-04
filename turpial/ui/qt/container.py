@@ -19,9 +19,21 @@ class Container(QVBoxLayout):
         self.child = None
         self.columns = {}
 
+    def clear_layout(self, layout):
+        if layout is not None:
+            while self.count():
+                item = self.takeAt(0)
+                print item
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
+                else:
+                    self.clear_layout(item.layout())
+
     def empty(self, with_accounts=None):
         if self.child:
-            del(self.child)
+            #del(self.child)
+            self.clear_layout(self.child)
 
         image = self.base.load_image('logo.png', True)
         logo = QLabel()
@@ -48,20 +60,28 @@ class Container(QVBoxLayout):
         self.child.setSpacing(10)
         self.child.setContentsMargins(30, 0, 30, 60)
 
-        self.addLayout(self.child)
+        self.insertLayout(0, self.child)
 
-    def normal(self):
+    def normal(self, columns):
         if self.child:
-            del(self.child)
-
-        column1 = StatusesColumn(self.base, True)
-        column2 = StatusesColumn(self.base)
-        column3 = StatusesColumn(self.base)
+            #del(self.child)
+            self.clear_layout(self.child)
 
         hbox = QHBoxLayout()
-        hbox.addWidget(column1, 1)
-        hbox.addWidget(column2, 1)
-        hbox.addWidget(column3, 1)
+
+        self.columns = {}
+        for account_id, columns in columns.iteritems():
+            for column in columns:
+                self.columns[column.id_] = StatusesColumn(self.base, column.id_)
+                hbox.addWidget(self.columns[column.id_], 1)
+
+        #column1 = StatusesColumn(self.base, True)
+        #column2 = StatusesColumn(self.base)
+        #column3 = StatusesColumn(self.base)
+
+        #hbox.addWidget(column1, 1)
+        #hbox.addWidget(column2, 1)
+        #hbox.addWidget(column3, 1)
 
         viewport = QWidget()
         viewport.setLayout(hbox)
@@ -72,3 +92,16 @@ class Container(QVBoxLayout):
 
         self.addWidget(self.child, 1)
 
+    def start_updating(self, column_id):
+        return self.columns[column_id].start_updating()
+
+    def stop_updating(self, column_id, errmsg=None, errtype=None):
+        self.columns[column_id].stop_updating()
+
+    def is_updating(self, column_id):
+        #return self.columns[column_id].updating
+        return False
+
+    def update_column(self, column_id, statuses):
+        self.columns[column_id].update(statuses)
+        self.stop_updating(column_id)

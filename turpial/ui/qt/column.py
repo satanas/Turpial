@@ -29,21 +29,30 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton
 
+from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from
+
 FULLNAME_FONT = QFont("Helvetica", 13)
 USERNAME_FONT = QFont("Helvetica", 11)
 FOOTER_FONT = QFont("Helvetica", 11)
 
 
 class StatusesColumn(QWidget):
-    def __init__(self, base, test=False):
+    def __init__(self, base, column_id):
         QWidget.__init__(self)
         self.base = base
         self.setMinimumWidth(280)
+        #self.updating = False
+
+        account_id = get_account_id_from(column_id)
+        column_slug = get_column_slug_from(column_id)
+        protocol_id = get_protocol_from(account_id)
 
         icon = QLabel()
-        icon.setPixmap(base.load_image('twitter.png', True))
+        protocol_img = "%s.png" % protocol_id
+        icon.setPixmap(base.load_image(protocol_img, True))
 
-        caption = QLabel('satanas82 :: timeline')
+        label = "%s :: %s" % (account_id, column_id)
+        caption = QLabel(label)
 
         close_button = ImageButton(base, 'action-delete.png',
                 i18n.get('delete_column'))
@@ -98,9 +107,32 @@ class StatusesColumn(QWidget):
         item2.setData(False, StatusDelegate.FavoritedRole)
         item2.setData(True, StatusDelegate.RepeatedRole)
 
-        if test:
+        #if test:
+        #    model.appendRow(item)
+        #    model.appendRow(item2)
+
+    def start_updating(self):
+        print 'updating'
+
+    def stop_updating(self):
+        print 'updated'
+
+    def update(self, statuses):
+        statuses.reverse()
+        model = self._list.model()
+        for status in statuses:
+            item = QStandardItem()
+            item.setData(status.text, StatusDelegate.MessageRole)
+            filepath = os.path.join(self.base.images_path, 'unknown.png')
+            item.setData(filepath, StatusDelegate.AvatarRole)
+            item.setData(status.username, StatusDelegate.UsernameRole)
+            item.setData(status.username, StatusDelegate.FullnameRole)
+            item.setData(status.repeated_by, StatusDelegate.RepostedRole)
+            item.setData(status.protected, StatusDelegate.ProtectedRole)
+            item.setData(status.favorited, StatusDelegate.FavoritedRole)
+            item.setData(status.repeated, StatusDelegate.RepeatedRole)
             model.appendRow(item)
-            model.appendRow(item2)
+
 
 
 class StatusDelegate(QStyledItemDelegate):

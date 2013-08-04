@@ -1,29 +1,29 @@
 # -*- coding: utf-8 -*-
 
-# GTK Worker for Turpial
-#
-# Author: Wil Alvarez (aka Satanas)
-# Nov 18, 2011
+# Qt Worker for Turpial
 
 import Queue
-from PyQt4 import QtCore
 
-class Worker(QtCore.QThread):
-    def __init__(self, emitter):
-        super(Worker,self).__init__()
+from PyQt4.QtCore import QThread
+
+class Worker(QThread):
+    def __init__(self):
+        QThread.__init__(self)
         self.queue = Queue.Queue()
-        self.emitter = emitter
-        self.exit_ = False 
-    
+        self.exit_ = False
+
+    #def __del__(self):
+    #    self.wait()
+
     def set_timeout_callback(self, tcallback):
         self.tcallback = tcallback
-        
+
     def register(self, funct, args, callback, user_data=None):
         self.queue.put((funct, args, callback, user_data))
-    
+
     def quit(self):
         self.exit_ = True
-        
+
     def run(self):
         while not self.exit_:
             try:
@@ -32,17 +32,20 @@ class Worker(QtCore.QThread):
                 continue
             except:
                 continue
-            
+
             (funct, args, callback, user_data) = req
-            
+
             if type(args) == tuple:
                 rtn = funct(*args)
             elif args:
                 rtn = funct(args)
             else:
                 rtn = funct()
-            
+
             if callback:
-                self.emitter.emit([callback, rtn, user_data])
+                if user_data:
+                    callback(rtn, user_data)
+                else:
+                    callback(rtn)
 
 

@@ -6,6 +6,7 @@ import os
 
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QFont
+from PyQt4.QtGui import QStyle
 from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QToolBar
 from PyQt4.QtGui import QListView
@@ -108,11 +109,17 @@ class AccountDelegate(QStyledItemDelegate):
     def paint(self, painter, option, index):
         painter.save()
 
+        selected = False
         cell_width = self.size.width()
 
-        #if option.state & QStyle.State_Selected:
-        #    painter.fillRect(option.rect, option.palette.highlight())
-        #painter.drawRect(option.rect)
+        rect = option.rect
+        rect.width = self.size.width()
+        rect.height = self.size.height()
+        protocol_color = "999"
+        if option.state & QStyle.State_Selected:
+            painter.fillRect(rect, option.palette.highlight())
+            protocol_color = "ddd"
+            selected = True
 
         # Draw avatar
         if not self.avatar:
@@ -133,6 +140,8 @@ class AccountDelegate(QStyledItemDelegate):
         x = option.rect.left() + self.BOX_MARGIN + self.AVATAR_SIZE
         y = option.rect.top() + self.BOX_MARGIN
         painter.translate(x, y)
+        if selected:
+            painter.setPen(option.palette.highlightedText().color())
         username.drawContents(painter)
 
         # Draw protocol
@@ -140,7 +149,7 @@ class AccountDelegate(QStyledItemDelegate):
         painter.translate(0, y)
         protocol_string = index.data(self.ProtocolRole).toPyObject()
         protocol = QTextDocument()
-        protocol.setHtml("<span style='color: #999;'>%s</span>" % protocol_string)
+        protocol.setHtml("<span style='color: #%s;'>%s</span>" % (protocol_color, protocol_string))
         protocol.setDefaultFont(PROTOCOL_FONT)
         protocol.drawContents(painter)
 

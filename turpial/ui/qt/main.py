@@ -62,7 +62,6 @@ class Main(Base, QWidget):
 
         self._container = Container(self)
         self._container.empty()
-        #self._container.normal()
 
         self.dock = Dock(self)
         self.dock.empty()

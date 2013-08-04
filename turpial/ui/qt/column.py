@@ -163,6 +163,7 @@ class StatusDelegate(QStyledItemDelegate):
     LEFT_MESSAGE_MARGIN = 8
     TOP_MESSAGE_MARGIN = 0
     BOTTOM_MESSAGE_MARGIN = 0
+    COMPLEMENT_HEIGHT = 5
 
     def __init__(self, base):
         QStyledItemDelegate.__init__(self)
@@ -207,8 +208,11 @@ class StatusDelegate(QStyledItemDelegate):
         fullname = self.__render_fullname(option.rect.size().width(), index)
         message = self.__render_status_message(option.rect.size().width(), index)
 
-        height = fullname.size().height() + self.TOP_MESSAGE_MARGIN
-        height += message.size().height() + self.BOTTOM_MESSAGE_MARGIN + 16 + (self.BOX_MARGIN * 3)
+        height = option.rect.top() + fullname.size().height() + self.TOP_MESSAGE_MARGIN + message.size().height()
+        if height < self.AVATAR_SIZE:
+            height = self.AVATAR_SIZE + self.COMPLEMENT_HEIGHT
+
+        height += self.BOTTOM_MESSAGE_MARGIN + 16 + (self.BOX_MARGIN * 3)
 
         self.size = QSize(option.rect.width(), height)
         return self.size
@@ -267,6 +271,8 @@ class StatusDelegate(QStyledItemDelegate):
 
         # ==== End of pixmap drawing ====
 
+        accumulated_height = 0
+
         # Draw fullname
         fullname = self.__render_fullname(cell_width, index)
         x = option.rect.left() + self.BOX_MARGIN + self.AVATAR_SIZE
@@ -286,11 +292,15 @@ class StatusDelegate(QStyledItemDelegate):
         painter.translate(x, y)
         message = self.__render_status_message(cell_width, index)
         message.drawContents(painter)
+        accumulated_height += y + message.size().height()
 
         # Draw reposted by
         x = self.BOX_MARGIN + 16 - (self.LEFT_MESSAGE_MARGIN + self.AVATAR_SIZE)
         y = message.size().height() + self.BOTTOM_MESSAGE_MARGIN
+        if accumulated_height < self.AVATAR_SIZE:
+            y += (self.AVATAR_SIZE - accumulated_height) + self.COMPLEMENT_HEIGHT
         painter.translate(x, y)
+
         reposted_by = index.data(self.RepostedRole).toPyObject()
         if reposted_by:
             reposted = QTextDocument()

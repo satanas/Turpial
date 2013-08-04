@@ -21,9 +21,8 @@ class Container(QVBoxLayout):
 
     def clear_layout(self, layout):
         if layout is not None:
-            while self.count():
-                item = self.takeAt(0)
-                print item
+            while layout.count():
+                item = layout.takeAt(0)
                 widget = item.widget()
                 if widget is not None:
                     widget.deleteLater()
@@ -65,7 +64,7 @@ class Container(QVBoxLayout):
     def normal(self, columns):
         if self.child:
             #del(self.child)
-            self.clear_layout(self.child)
+            self.clear_layout(self)
 
         hbox = QHBoxLayout()
 

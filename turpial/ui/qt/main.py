@@ -67,7 +67,8 @@ class Main(Base, QWidget):
         self.dock = Dock(self)
         self.dock.empty()
 
-        #accounts = AccountsDialog(self)
+        self.dock.accounts_clicked.connect(self.show_accounts_dialog)
+
         #oauth_dialog = OAuthDialog(self, 'http://twitter.com')
         #self.profile = ProfileDialog(self)
         #self.profile.show()
@@ -169,6 +170,9 @@ class Main(Base, QWidget):
             self.download_stream(columns[0])
 
 
+
+    def show_accounts_dialog(self):
+        accounts = AccountsDialog(self)
 
     '''
     def closeEvent(self, event):

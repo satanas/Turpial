@@ -270,6 +270,9 @@ class Base(Singleton):
     def show_media(self, url):
         raise NotImplementedError
 
+    def show_accounts_dialog(self):
+        raise NotImplementedError
+
     def login(self, account):
         raise NotImplementedError
 

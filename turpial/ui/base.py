@@ -7,6 +7,7 @@
 
 import os
 import sys
+import time
 import base64
 import urllib
 import logging
@@ -64,6 +65,31 @@ class Base(Singleton):
                 return "%.2f KB" % (size / 1024.0)
         else:
             return "%.2f B" % size
+
+    def humanize_timestamp(self, status_timestamp):
+        now = time.time()
+        seconds = now - status_timestamp
+
+        minutes = seconds / 60.0
+        if minutes < 1.0:
+            timestamp = i18n.get('now')
+        else:
+            if minutes < 60.0:
+                timestamp = "%i m" % minutes
+            else:
+                hours = minutes / 60.0
+                if hours < 24.0:
+                    timestamp = "%i h" % hours
+                else:
+                    dt = time.localtime(status_timestamp)
+                    month = time.strftime(u'%b', dt)
+                    year = dt.tm_year
+
+                    if year == time.localtime(now).tm_year:
+                        timestamp = u"%i %s" % (dt.tm_mday, month)
+                    else:
+                        timestamp = u"%i %s %i" % (dt.tm_mday, month, year)
+        return timestamp
 
     #================================================================
     # Common methods to all interfaces

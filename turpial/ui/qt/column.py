@@ -22,6 +22,7 @@ from PyQt4.QtGui import QListView
 from PyQt4.QtGui import QProgressBar
 from PyQt4.QtGui import QTextDocument
 from PyQt4.QtGui import QStandardItem
+from PyQt4.QtGui import QAbstractItemView
 from PyQt4.QtGui import QStandardItemModel
 from PyQt4.QtGui import QStyledItemDelegate
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
@@ -29,7 +30,8 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton
 
-from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from
+from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from,\
+        get_username_from
 
 FULLNAME_FONT = QFont("Helvetica", 13)
 USERNAME_FONT = QFont("Helvetica", 11)
@@ -44,6 +46,7 @@ class StatusesColumn(QWidget):
         #self.updating = False
 
         account_id = get_account_id_from(column_id)
+        username = get_username_from(account_id)
         column_slug = get_column_slug_from(column_id)
         protocol_id = get_protocol_from(account_id)
 
@@ -51,7 +54,7 @@ class StatusesColumn(QWidget):
         protocol_img = "%s.png" % protocol_id
         icon.setPixmap(base.load_image(protocol_img, True))
 
-        label = "%s :: %s" % (account_id, column_id)
+        label = "%s :: %s" % (username, column_slug)
         caption = QLabel(label)
 
         close_button = ImageButton(base, 'action-delete.png',
@@ -67,8 +70,11 @@ class StatusesColumn(QWidget):
         self.loader.setMaximum(0)
         self.loader.setMaximumHeight(6)
         self.loader.setTextVisible(False)
+        self.loader.setVisible(False)
 
         self._list = QListView()
+        self._list.setResizeMode(QListView.Adjust)
+        self._list.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)
@@ -84,7 +90,6 @@ class StatusesColumn(QWidget):
 
         status_delegate = StatusDelegate(base)
         self._list.setItemDelegate(status_delegate)
-        self._list.setResizeMode(QListView.Adjust)
 
         item = QStandardItem()
         item.setData("Now that we know who you are, I know who I am. I'm not a mistake! It all makes sense! In a comic, you know how you can tell who the arch-villain's going to be?", StatusDelegate.MessageRole)
@@ -112,27 +117,33 @@ class StatusesColumn(QWidget):
         #    model.appendRow(item2)
 
     def start_updating(self):
-        print 'updating'
+        self.loader.setVisible(True)
 
     def stop_updating(self):
-        print 'updated'
+        self.loader.setVisible(False)
 
     def update(self, statuses):
-        statuses.reverse()
         model = self._list.model()
         for status in statuses:
+            filepath = os.path.join(self.base.images_path, 'unknown.png')
+            timestamp = self.base.humanize_timestamp(status.timestamp)
+            if status.repeated_by:
+                repeated_by = "%s %s" % (i18n.get('retweeted_by'), status.repeated_by)
+            else:
+                repeated_by = None
+
             item = QStandardItem()
             item.setData(status.text, StatusDelegate.MessageRole)
-            filepath = os.path.join(self.base.images_path, 'unknown.png')
             item.setData(filepath, StatusDelegate.AvatarRole)
-            item.setData(status.username, StatusDelegate.UsernameRole)
+            item.setData('', StatusDelegate.UsernameRole)
             item.setData(status.username, StatusDelegate.FullnameRole)
-            item.setData(status.repeated_by, StatusDelegate.RepostedRole)
+            item.setData(repeated_by, StatusDelegate.RepostedRole)
             item.setData(status.protected, StatusDelegate.ProtectedRole)
+            item.setData(status.verified, StatusDelegate.VerifiedRole)
             item.setData(status.favorited, StatusDelegate.FavoritedRole)
             item.setData(status.repeated, StatusDelegate.RepeatedRole)
+            item.setData(timestamp, StatusDelegate.DateRole)
             model.appendRow(item)
-
 
 
 class StatusDelegate(QStyledItemDelegate):
@@ -145,6 +156,7 @@ class StatusDelegate(QStyledItemDelegate):
     ProtectedRole = Qt.UserRole + 106
     FavoritedRole = Qt.UserRole + 107
     RepeatedRole = Qt.UserRole + 108
+    VerifiedRole = Qt.UserRole + 109
 
     AVATAR_SIZE = 48
     BOX_MARGIN = 2
@@ -183,7 +195,10 @@ class StatusDelegate(QStyledItemDelegate):
     def __render_username(self, width, index):
         username_string = index.data(self.UsernameRole).toPyObject()
         username = QTextDocument()
-        username.setHtml("<span style='color: #666;'>@%s</span>" % username_string)
+        if username_string != '':
+            username.setHtml("<span style='color: #666;'>@%s</span>" % username_string)
+        else:
+            username.setHtml("<span style='color: #666;'></span>" % username_string)
         username.setDefaultFont(USERNAME_FONT)
         username.setTextWidth(self.__calculate_text_width(width))
         return username
@@ -221,8 +236,9 @@ class StatusDelegate(QStyledItemDelegate):
         painter.drawPixmap(rect, self.avatar)
 
         # Draw verified account icon
-        rect2 = QRect(rect.right() - 11, rect.bottom() - 10, 16, 16)
-        painter.drawPixmap(rect2, self.verified_icon)
+        if index.data(self.VerifiedRole).toPyObject():
+            rect2 = QRect(rect.right() - 11, rect.bottom() - 10, 16, 16)
+            painter.drawPixmap(rect2, self.verified_icon)
 
         marks_margin = 0
         # Favorite mark
@@ -288,7 +304,7 @@ class StatusDelegate(QStyledItemDelegate):
             painter.drawPixmap(rect2, self.reposted_icon)
 
         # Draw datetime
-        datetime = "1s"
+        datetime = index.data(self.DateRole).toPyObject()
         timestamp = QTextDocument()
         timestamp.setHtml("<span style='color: #999;'>%s</span>" % datetime)
         timestamp.setDefaultFont(FOOTER_FONT)

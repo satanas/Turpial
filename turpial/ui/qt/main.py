@@ -30,7 +30,8 @@ from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 
 from libturpial.api.core import Core
-
+from libturpial.api.models.column import Column
+from libturpial.common.tools import get_account_id_from, get_column_slug_from
 
 class Main(Base, QWidget):
 
@@ -88,6 +89,22 @@ class Main(Base, QWidget):
 
         self.setLayout(layout)
 
+
+    def __get_registered_columns(self):
+        i = 1
+        columns = []
+        while True:
+            column_num = "column%s" % i
+            column_id = self.core.config.read('Columns', column_num)
+            if column_id:
+                account_id = get_account_id_from(column_id)
+                column_slug = get_column_slug_from(column_id)
+                columns.append(Column(account_id, column_slug))
+                i += 1
+            else:
+                break
+        return columns
+
     def __test(self, value):
         print value
 
@@ -137,7 +154,7 @@ class Main(Base, QWidget):
 
     def update_container(self):
         accounts = self.get_registered_accounts()
-        columns = self.get_registered_columns()
+        columns = self.__get_registered_columns()
         if len(columns) == 0:
             if len(accounts) == 0:
                 self._container.empty(False)
@@ -147,11 +164,9 @@ class Main(Base, QWidget):
             self.tray.empty()
         else:
             self._container.normal(columns)
-            #self._container.normal(self.get_accounts_list(), columns)
             self.dock.normal()
             self.tray.normal()
-            cols = self.core.registered_columns()
-            self.download_stream(cols['satanas82-twitter'][0])
+            self.download_stream(columns[0])
 
 
 

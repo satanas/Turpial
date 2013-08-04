@@ -70,10 +70,9 @@ class Container(QVBoxLayout):
         hbox = QHBoxLayout()
 
         self.columns = {}
-        for account_id, columns in columns.iteritems():
-            for column in columns:
-                self.columns[column.id_] = StatusesColumn(self.base, column.id_)
-                hbox.addWidget(self.columns[column.id_], 1)
+        for column in columns:
+            self.columns[column.id_] = StatusesColumn(self.base, column.id_)
+            hbox.addWidget(self.columns[column.id_], 1)
 
         #column1 = StatusesColumn(self.base, True)
         #column2 = StatusesColumn(self.base)

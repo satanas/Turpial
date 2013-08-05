@@ -43,6 +43,8 @@ class AccountsDialog(ModalDialog):
         self._list.setModel(model)
         account_delegate = AccountDelegate(base)
         self._list.setItemDelegate(account_delegate)
+        self._list.setContextMenuPolicy(Qt.CustomContextMenu)
+        self._list.customContextMenuRequested.connect(self.__account_clicked)
 
         accounts = base.get_registered_accounts()
         for account in accounts:
@@ -51,6 +53,7 @@ class AccountsDialog(ModalDialog):
             item.setData(filepath, AccountDelegate.AvatarRole)
             item.setData(get_username_from(account.id_), AccountDelegate.UsernameRole)
             item.setData(get_protocol_from(account.id_).capitalize(), AccountDelegate.ProtocolRole)
+            item.setData(account.id_, AccountDelegate.IdRole)
             model.appendRow(item)
 
         twitter_btn = QToolButton()
@@ -67,9 +70,16 @@ class AccountsDialog(ModalDialog):
         # TODO: Enable when identi.ca support is ready
         identica_btn.setEnabled(False)
 
+        delete_btn = QToolButton()
+        delete_btn.setText('Delete account')
+        delete_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        #delete_btn.setToolTip(tooltip)
+        delete_btn.clicked.connect(self.__delete_account)
+
         toolbar = QToolBar()
         toolbar.addWidget(twitter_btn)
         toolbar.addWidget(identica_btn)
+        toolbar.addWidget(delete_btn)
         toolbar.setMinimumHeight(24)
         toolbar.setOrientation(Qt.Vertical)
         toolbar.setContentsMargins(10, 0, 10, 0)
@@ -88,10 +98,23 @@ class AccountsDialog(ModalDialog):
         self.hide()
         return True
 
+    def __account_clicked(self, point):
+        selection = self._list.selectionModel()
+        index = selection.selectedIndexes()[0]
+        account_id = index.data(AccountDelegate.IdRole).toPyObject()
+        print account_id
+
+    def __delete_account(self):
+        selection = self._list.selectionModel()
+        index = selection.selectedIndexes()[0]
+        account_id = index.data(AccountDelegate.IdRole).toPyObject()
+        print account_id
+
 class AccountDelegate(QStyledItemDelegate):
     UsernameRole = Qt.UserRole + 100
     ProtocolRole = Qt.UserRole + 101
     AvatarRole = Qt.UserRole + 102
+    IdRole = Qt.UserRole + 103
 
     AVATAR_SIZE = 48
     BOX_MARGIN = 4

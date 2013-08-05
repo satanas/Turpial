@@ -8,49 +8,54 @@ import os
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QSize
 from PyQt4.QtCore import QRect
-from PyQt4.QtCore import QRectF
 from PyQt4.QtCore import QLine
 from PyQt4.QtCore import QString
 
 from PyQt4.QtGui import QIcon
-from PyQt4.QtGui import QColor
-from PyQt4.QtGui import QStandardItem
-from PyQt4.QtGui import QStandardItemModel
-from PyQt4.QtGui import QTextDocument
 from PyQt4.QtGui import QFont
-from PyQt4.QtGui import QFontDatabase
 from PyQt4.QtGui import QStyle
-from PyQt4.QtGui import QAbstractTextDocumentLayout
+from PyQt4.QtGui import QColor
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QListView
-from PyQt4.QtGui import QStyledItemDelegate
 from PyQt4.QtGui import QProgressBar
+from PyQt4.QtGui import QTextDocument
+from PyQt4.QtGui import QStandardItem
+from PyQt4.QtGui import QAbstractItemView
+from PyQt4.QtGui import QStandardItemModel
+from PyQt4.QtGui import QStyledItemDelegate
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton
 
-AVATAR_SIZE = 48
-#FULLNAME_FONT = QFont("Aaargh", 15)
-#FULLNAME_FONT = QFont("CicleGordita", 14)
-#USERNAME_FONT = QFont("Helvetica", 12)
+from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from,\
+        get_username_from
+
 FULLNAME_FONT = QFont("Helvetica", 13)
 USERNAME_FONT = QFont("Helvetica", 11)
 FOOTER_FONT = QFont("Helvetica", 11)
 
 
 class StatusesColumn(QWidget):
-    def __init__(self, base, test=False):
+    def __init__(self, base, column_id):
         QWidget.__init__(self)
         self.base = base
         self.setMinimumWidth(280)
+        #self.updating = False
+
+        account_id = get_account_id_from(column_id)
+        username = get_username_from(account_id)
+        column_slug = get_column_slug_from(column_id)
+        protocol_id = get_protocol_from(account_id)
 
         icon = QLabel()
-        icon.setPixmap(base.load_image('twitter.png', True))
+        protocol_img = "%s.png" % protocol_id
+        icon.setPixmap(base.load_image(protocol_img, True))
 
-        caption = QLabel('satanas82 :: timeline')
+        label = "%s :: %s" % (username, column_slug)
+        caption = QLabel(label)
 
         close_button = ImageButton(base, 'action-delete.png',
                 i18n.get('delete_column'))
@@ -65,8 +70,11 @@ class StatusesColumn(QWidget):
         self.loader.setMaximum(0)
         self.loader.setMaximumHeight(6)
         self.loader.setTextVisible(False)
+        self.loader.setVisible(False)
 
         self._list = QListView()
+        self._list.setResizeMode(QListView.Adjust)
+        self._list.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)
@@ -82,7 +90,6 @@ class StatusesColumn(QWidget):
 
         status_delegate = StatusDelegate(base)
         self._list.setItemDelegate(status_delegate)
-        self._list.setResizeMode(QListView.Adjust)
 
         item = QStandardItem()
         item.setData("Now that we know who you are, I know who I am. I'm not a mistake! It all makes sense! In a comic, you know how you can tell who the arch-villain's going to be?", StatusDelegate.MessageRole)
@@ -90,18 +97,53 @@ class StatusesColumn(QWidget):
         item.setData(filepath, StatusDelegate.AvatarRole)
         item.setData("satanas82", StatusDelegate.UsernameRole)
         item.setData("Wil Alvarez", StatusDelegate.FullnameRole)
-        item.setData("1375478790", StatusDelegate.DateRole)
+        item.setData(None, StatusDelegate.RepostedRole)
+        item.setData(True, StatusDelegate.ProtectedRole)
+        item.setData(True, StatusDelegate.FavoritedRole)
+        item.setData(False, StatusDelegate.RepeatedRole)
 
         item2 = QStandardItem()
         item2.setData("The path of the righteous man is beset on all sides by the iniquities of the selfish and the tyranny of evil men", StatusDelegate.MessageRole)
         item2.setData(filepath, StatusDelegate.AvatarRole)
         item2.setData("TurpialVe", StatusDelegate.UsernameRole)
         item2.setData("Turpial", StatusDelegate.FullnameRole)
-        item2.setData("1375478800", StatusDelegate.DateRole)
+        item2.setData("Reposted by mengano", StatusDelegate.RepostedRole)
+        item2.setData(False, StatusDelegate.ProtectedRole)
+        item2.setData(False, StatusDelegate.FavoritedRole)
+        item2.setData(True, StatusDelegate.RepeatedRole)
 
-        if test:
+        #if test:
+        #    model.appendRow(item)
+        #    model.appendRow(item2)
+
+    def start_updating(self):
+        self.loader.setVisible(True)
+
+    def stop_updating(self):
+        self.loader.setVisible(False)
+
+    def update(self, statuses):
+        model = self._list.model()
+        for status in statuses:
+            filepath = os.path.join(self.base.images_path, 'unknown.png')
+            timestamp = self.base.humanize_timestamp(status.timestamp)
+            if status.repeated_by:
+                repeated_by = "%s %s" % (i18n.get('retweeted_by'), status.repeated_by)
+            else:
+                repeated_by = None
+
+            item = QStandardItem()
+            item.setData(status.text, StatusDelegate.MessageRole)
+            item.setData(filepath, StatusDelegate.AvatarRole)
+            item.setData('', StatusDelegate.UsernameRole)
+            item.setData(status.username, StatusDelegate.FullnameRole)
+            item.setData(repeated_by, StatusDelegate.RepostedRole)
+            item.setData(status.protected, StatusDelegate.ProtectedRole)
+            item.setData(status.verified, StatusDelegate.VerifiedRole)
+            item.setData(status.favorited, StatusDelegate.FavoritedRole)
+            item.setData(status.repeated, StatusDelegate.RepeatedRole)
+            item.setData(timestamp, StatusDelegate.DateRole)
             model.appendRow(item)
-            model.appendRow(item2)
 
 
 class StatusDelegate(QStyledItemDelegate):
@@ -110,147 +152,180 @@ class StatusDelegate(QStyledItemDelegate):
     AvatarRole = Qt.UserRole + 102
     MessageRole = Qt.UserRole + 103
     DateRole = Qt.UserRole + 104
+    RepostedRole = Qt.UserRole + 105
+    ProtectedRole = Qt.UserRole + 106
+    FavoritedRole = Qt.UserRole + 107
+    RepeatedRole = Qt.UserRole + 108
+    VerifiedRole = Qt.UserRole + 109
 
     AVATAR_SIZE = 48
     BOX_MARGIN = 2
-    LEFT_MESSAGE_MARGIN = 10
-    TOP_MESSAGE_MARGIN = 1
-    BOTTOM_MESSAGE_MARGIN = 3
+    LEFT_MESSAGE_MARGIN = 8
+    TOP_MESSAGE_MARGIN = 0
+    BOTTOM_MESSAGE_MARGIN = 0
+    COMPLEMENT_HEIGHT = 5
 
     def __init__(self, base):
         QStyledItemDelegate.__init__(self)
-        self.base = base
+        self.favorite_icon = base.load_image('mark-favorite.png', True)
+        self.verified_icon = base.load_image('mark-verified.png', True)
+        self.protected_icon = base.load_image('mark-protected.png', True)
+        self.repeated_icon = base.load_image('mark-repeated.png', True)
+        self.reposted_icon = base.load_image('mark-reposted.png', True)
+        self.avatar = None
 
-    def __calculate_text_width(self, option):
-        width = option.rect.width()
-        width -= (self.BOX_MARGIN + self.AVATAR_SIZE + self.LEFT_MESSAGE_MARGIN)
+    def __calculate_text_width(self, width):
+        width -= ((self.BOX_MARGIN * 2) + self.AVATAR_SIZE + self.LEFT_MESSAGE_MARGIN)
         return width
 
-    def __render_fullname(self, option, index):
+    def __render_fullname(self, width, index):
         fullname = index.data(self.FullnameRole).toPyObject()
         doc = QTextDocument()
         doc.setHtml("<b>%s</b>" % fullname)
         doc.setDefaultFont(FULLNAME_FONT)
-        doc.setTextWidth(self.__calculate_text_width(option))
+        doc.setTextWidth(self.__calculate_text_width(width))
         return doc
 
-    def __render_status_message(self, option, index):
+    def __render_status_message(self, width, index):
         message = index.data(self.MessageRole).toPyObject()
         doc = QTextDocument()
         doc.setHtml(message)
-        doc.setTextWidth(self.__calculate_text_width(option))
+        doc.setTextWidth(self.__calculate_text_width(width))
         return doc
 
+    def __render_username(self, width, index):
+        username_string = index.data(self.UsernameRole).toPyObject()
+        username = QTextDocument()
+        if username_string != '':
+            username.setHtml("<span style='color: #666;'>@%s</span>" % username_string)
+        else:
+            username.setHtml("<span style='color: #666;'></span>" % username_string)
+        username.setDefaultFont(USERNAME_FONT)
+        username.setTextWidth(self.__calculate_text_width(width))
+        return username
 
     def sizeHint(self, option, index):
-        fullname = self.__render_fullname(option, index)
-        message = self.__render_status_message(option, index)
+        fullname = self.__render_fullname(option.rect.size().width(), index)
+        message = self.__render_status_message(option.rect.size().width(), index)
 
-        height = self.BOX_MARGIN + fullname.size().height() + self.TOP_MESSAGE_MARGIN
-        height += message.size().height() + self.BOTTOM_MESSAGE_MARGIN + 16 + self.BOX_MARGIN
+        height = option.rect.top() + fullname.size().height() + self.TOP_MESSAGE_MARGIN + message.size().height()
+        if height < self.AVATAR_SIZE:
+            height = self.AVATAR_SIZE + self.COMPLEMENT_HEIGHT
 
-        width = self.BOX_MARGIN + self.AVATAR_SIZE + self.LEFT_MESSAGE_MARGIN
-        width += message.idealWidth() + self.BOX_MARGIN
-        return QSize(width, height)
+        height += self.BOTTOM_MESSAGE_MARGIN + 16 + (self.BOX_MARGIN * 3)
+
+        self.size = QSize(option.rect.width(), height)
+        return self.size
 
     def paint(self, painter, option, index):
-        current_width = 0
         painter.save()
+
+        cell_width = self.size.width()
 
         #if option.state & QStyle.State_Selected:
         #    painter.fillRect(option.rect, option.palette.highlight())
         #painter.drawRect(option.rect)
 
+
+        # Draw marks before translating painter
+        # =====================================
+
         # Draw avatar
-        avatar_filepath = index.data(self.AvatarRole).toPyObject()
-        avatar = QPixmap(avatar_filepath)
-        x = option.rect.left() + self.BOX_MARGIN
-        y = option.rect.top() + self.BOX_MARGIN
+        if not self.avatar:
+            avatar_filepath = index.data(self.AvatarRole).toPyObject()
+            self.avatar = QPixmap(avatar_filepath)
+        x = option.rect.left() + (self.BOX_MARGIN * 2)
+        y = option.rect.top() + (self.BOX_MARGIN * 2)
         rect = QRect(x, y, self.AVATAR_SIZE, self.AVATAR_SIZE)
-        painter.drawPixmap(rect, avatar)
+        painter.drawPixmap(rect, self.avatar)
 
         # Draw verified account icon
-        verified_icon = self.base.load_image('mark-verified.png', True)
-        rect2 = QRect(rect.right() - 11, rect.bottom() - 10, 16, 16)
-        painter.drawPixmap(rect2, verified_icon)
+        if index.data(self.VerifiedRole).toPyObject():
+            rect2 = QRect(rect.right() - 11, rect.bottom() - 10, 16, 16)
+            painter.drawPixmap(rect2, self.verified_icon)
+
+        marks_margin = 0
+        # Favorite mark
+        if index.data(self.FavoritedRole).toPyObject():
+            x = cell_width - 8 - self.BOX_MARGIN
+            y = option.rect.top() + self.BOX_MARGIN
+            rect = QRect(x, y, 16, 16)
+            painter.drawPixmap(rect, self.favorite_icon)
+            marks_margin = 16
+
+        # Draw reposted icon
+        if index.data(self.RepeatedRole).toPyObject():
+            x = cell_width -8 - self.BOX_MARGIN - marks_margin
+            y = option.rect.top() + self.BOX_MARGIN
+            rect = QRect(x, y, 16, 16)
+            painter.drawPixmap(rect, self.repeated_icon)
 
         # Draw protected account icon
-        protected_icon = self.base.load_image('mark-protected.png', True)
-        rect = QRect(rect.right() + self.LEFT_MESSAGE_MARGIN, y, 16, 16)
-        painter.drawPixmap(rect, protected_icon)
+        protected_icon_margin = 0
+        if index.data(self.ProtectedRole).toPyObject():
+            x = option.rect.left() + self.BOX_MARGIN + self.AVATAR_SIZE + self.LEFT_MESSAGE_MARGIN
+            y = option.rect.top() + self.BOX_MARGIN
+            rect = QRect(x, y, 16, 16)
+            painter.drawPixmap(rect, self.protected_icon)
+            protected_icon_margin = 16
+
+        # ==== End of pixmap drawing ====
+
+        accumulated_height = 0
 
         # Draw fullname
-        fullname = self.__render_fullname(option, index)
-        painter.translate(rect.right(), option.rect.top())
+        fullname = self.__render_fullname(cell_width, index)
+        x = option.rect.left() + self.BOX_MARGIN + self.AVATAR_SIZE
+        x += self.LEFT_MESSAGE_MARGIN + protected_icon_margin
+        y = option.rect.top()
+        painter.translate(x, y)
         fullname.drawContents(painter)
 
         # Draw username
-        username = index.data(self.UsernameRole).toPyObject()
-        doc = QTextDocument()
-        doc.setHtml("<span style='color: #666;'>@%s</span>" % username)
-        doc.setDefaultFont(USERNAME_FONT)
-        doc.setTextWidth(self.__calculate_text_width(option))
+        username = self.__render_username(cell_width, index)
         painter.translate(fullname.idealWidth(), 0)
-        doc.drawContents(painter)
-
-
-        ## Draw favorite icon
-        #favorite_icon = self.base.load_image('mark-favorite.png', True)
-        #rect2 = QRect(option.rect.right() - 16, rect.top(), 16, 16)
-        #painter.drawPixmap(rect2, favorite_icon)
-
-        ## Draw reposted icon
-        #reposted_icon = self.base.load_image('mark-repeated.png', True)
-        #rect2 = QRect(option.rect.right() - 32, rect.top(), 16, 16)
-        #painter.drawPixmap(rect2, reposted_icon)
+        username.drawContents(painter)
 
         # Draw status message
-        painter.resetTransform()
-        message = self.__render_status_message(option, index)
-
-        x = self.BOX_MARGIN + self.AVATAR_SIZE + self.LEFT_MESSAGE_MARGIN
-        y = option.rect.top() + fullname.size().height() + self.TOP_MESSAGE_MARGIN
+        x = -fullname.idealWidth() - protected_icon_margin
+        y = fullname.size().height() + self.TOP_MESSAGE_MARGIN
         painter.translate(x, y)
+        message = self.__render_status_message(cell_width, index)
         message.drawContents(painter)
+        accumulated_height += y + message.size().height()
 
-        ## Draw reposted by
-        #reposted_by = "Reposted by fulano" #index.data(self.MessageRole).toPyObject()
-        #doc = QTextDocument()
-        #doc.setHtml("<span style='color: #999;'>%s</span>" % reposted_by)
-        #doc.setDefaultFont(FOOTER_FONT)
-        #doc.setTextWidth(self.__calculate_text_width(option.rect.width()))
+        # Draw reposted by
+        x = self.BOX_MARGIN + 16 - (self.LEFT_MESSAGE_MARGIN + self.AVATAR_SIZE)
+        y = message.size().height() + self.BOTTOM_MESSAGE_MARGIN
+        if accumulated_height < self.AVATAR_SIZE:
+            y += (self.AVATAR_SIZE - accumulated_height) + self.COMPLEMENT_HEIGHT
+        painter.translate(x, y)
 
-        #painter.translate(-(self.AVATAR_SIZE + (self.LEFT_AVATAR_MARGIN * 2) - 16), height_offset)
-        #doc.drawContents(painter)
+        reposted_by = index.data(self.RepostedRole).toPyObject()
+        if reposted_by:
+            reposted = QTextDocument()
+            reposted.setHtml("<span style='color: #999;'>%s</span>" % reposted_by)
+            reposted.setDefaultFont(FOOTER_FONT)
+            reposted.setTextWidth(self.__calculate_text_width(cell_width))
+            reposted.drawContents(painter)
 
-        ## Draw reposted icon
-        #reposted_icon = self.base.load_image('mark-reposted.png', True)
-        #rect2 = QRect(-16, 3, 16, 16)
-        #painter.drawPixmap(rect2, reposted_icon)
+            # Draw reposted icon
+            rect2 = QRect(-16, 3, 16, 16)
+            painter.drawPixmap(rect2, self.reposted_icon)
 
         # Draw datetime
-        painter.resetTransform()
-        datetime = "6 min"
+        datetime = index.data(self.DateRole).toPyObject()
         timestamp = QTextDocument()
         timestamp.setHtml("<span style='color: #999;'>%s</span>" % datetime)
         timestamp.setDefaultFont(FOOTER_FONT)
-        timestamp.setTextWidth(self.__calculate_text_width(option))
-
-        x = option.rect.right() - self.BOX_MARGIN - timestamp.idealWidth()
-        y = option.rect.bottom() - 16 - self.BOX_MARGIN
-
-        painter.translate(x, y)
+        timestamp.setTextWidth(self.__calculate_text_width(cell_width))
+        x = self.size.width() - timestamp.idealWidth() - 15 - self.BOX_MARGIN
+        painter.translate(x, 0)
         timestamp.drawContents(painter)
 
-        #painter.translate(-w - 16, 20)
-        #line = QLine(0, 0, option.rect.width(), 0)
-        #painter.setPen(QColor(230, 230, 230))
-        #painter.drawLine(line)
-
         painter.resetTransform()
-        line = QLine(0, option.rect.bottom(), option.rect.width(), option.rect.bottom())
-        painter.translate(option.rect.left(), option.rect.bottom() - 1)
-        #line = QLine(0, 0, option.rect.width(), 0)
+        painter.translate(0, option.rect.bottom())
+        line = QLine(0, 0, option.rect.width(), 0)
         painter.setPen(QColor(230, 230, 230))
         painter.drawLine(line)
 

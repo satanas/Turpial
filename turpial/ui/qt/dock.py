@@ -6,10 +6,15 @@ from PyQt4.QtGui import QToolBar
 from PyQt4.QtGui import QStatusBar
 from PyQt4.QtGui import QHBoxLayout
 
+from PyQt4.QtCore import pyqtSignal
+
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton
 
 class Dock(QStatusBar):
+
+    accounts_clicked = pyqtSignal()
+
     def __init__(self, base):
         QStatusBar.__init__(self)
         self.base = base
@@ -25,6 +30,7 @@ class Dock(QStatusBar):
                 i18n.get('add_columns'))
         self.accounts_btn = ImageButton(base, 'dock-accounts.png',
                 i18n.get('add_accounts'))
+        self.accounts_btn.clicked.connect(self.__accounts_clicked)
         self.search_btn = ImageButton(base, 'dock-search.png',
                 i18n.get('search'))
         self.preferences_btn = ImageButton(base, 'dock-preferences.png',
@@ -44,6 +50,9 @@ class Dock(QStatusBar):
         toolbar.setMinimumHeight(24)
         self.addPermanentWidget(toolbar)
         self.setStyleSheet("QStatusBar { %s }" % style)
+
+    def __accounts_clicked(self):
+        self.accounts_clicked.emit()
 
     def empty(self, with_accounts=None):
         self.updates_btn.setEnabled(False)

@@ -7,6 +7,7 @@
 
 import os
 import sys
+import time
 import base64
 import urllib
 import logging
@@ -65,120 +66,148 @@ class Base(Singleton):
         else:
             return "%.2f B" % size
 
+    def humanize_timestamp(self, status_timestamp):
+        now = time.time()
+        seconds = now - status_timestamp
+
+        minutes = seconds / 60.0
+        if minutes < 1.0:
+            timestamp = i18n.get('now')
+        else:
+            if minutes < 60.0:
+                timestamp = "%i m" % minutes
+            else:
+                hours = minutes / 60.0
+                if hours < 24.0:
+                    timestamp = "%i h" % hours
+                else:
+                    dt = time.localtime(status_timestamp)
+                    month = time.strftime(u'%b', dt)
+                    year = dt.tm_year
+
+                    if year == time.localtime(now).tm_year:
+                        timestamp = u"%i %s" % (dt.tm_mday, month)
+                    else:
+                        timestamp = u"%i %s %i" % (dt.tm_mday, month, year)
+        return timestamp
+
     #================================================================
     # Common methods to all interfaces
     #================================================================
 
-    def get_protocols_list(self):
-        return self.core.list_protocols()
+    #def get_protocols_list(self):
+    #    return self.core.list_protocols()
 
-    def get_all_accounts(self):
-        return self.core.all_accounts()
+    #def get_all_accounts(self):
+    #    return self.core.all_accounts()
 
-    def get_accounts_list(self):
-        return self.core.list_accounts()
+    #def get_accounts_list(self):
+    #    return self.core.list_accounts()
 
-    def get_all_columns(self):
-        return self.core.all_columns()
+    #def get_all_columns(self):
+    #    return self.core.all_columns()
+
+    def get_registered_accounts(self):
+        return self.core.registered_accounts()
 
     def get_registered_columns(self):
-        return self.core.all_registered_columns()
+        return self.core.registered_columns()
 
-    def get_max_statuses_per_column(self):
-        return self.core.get_max_statuses_per_column()
+    #def get_max_statuses_per_column(self):
+    #    return self.core.get_max_statuses_per_column()
 
-    def disable_sound(self, widget=None):
-        self.sound.disable(not widget.get_active())
+    #def disable_sound(self, widget=None):
+    #    self.sound.disable(not widget.get_active())
 
-    def get_color_scheme(self, key):
-        color = {
-            'links': '#ff6633',
-        }
-        return color[key]
+    #def get_color_scheme(self, key):
+    #    color = {
+    #        'links': '#ff6633',
+    #    }
+    #    return color[key]
 
-    def save_account(self, username, protocol_id, password):
-        if username == "" or username == None:
-            username = "%s" % len(self.core.all_accounts())
-        account_id = self.core.register_account(username, protocol_id, password)
-        self.after_save_account(account_id)
+    #def save_account(self, username, protocol_id, password):
+    #    if username == "" or username == None:
+    #        username = "%s" % len(self.core.all_accounts())
+    #    account_id = self.core.register_account(username, protocol_id, password)
+    #    self.after_save_account(account_id)
 
-    def delete_account(self, account_id):
-        # FIXME: Implement try/except
-        for col in self.get_registered_columns():
-            if col.account_id == account_id:
-                self.delete_column(col.id_)
-        self.core.unregister_account(account_id, True)
-        self.after_delete_account(True)
+    #def delete_account(self, account_id):
+    #    # FIXME: Implement try/except
+    #    for col in self.get_registered_columns():
+    #        if col.account_id == account_id:
+    #            self.delete_column(col.id_)
+    #    self.core.unregister_account(account_id, True)
+    #    self.after_delete_account(True)
 
-    def save_column(self, column_id):
-        column = self.core.register_column(column_id)
-        self.after_save_column(column)
+    #def save_column(self, column_id):
+    #    column = self.core.register_column(column_id)
+    #    self.after_save_column(column)
 
-    def delete_column(self, column_id):
-        self.core.unregister_column(column_id)
-        if self.columns.has_key(column_id):
-            del self.columns[column_id]
-        self.after_delete_column(column_id)
+    #def delete_column(self, column_id):
+    #    self.core.unregister_column(column_id)
+    #    if self.columns.has_key(column_id):
+    #        del self.columns[column_id]
+    #    self.after_delete_column(column_id)
 
-    def start(self):
-        #if self.core.play_sounds_in_login():
-        #    self.sound.login()
+    #def start(self):
+    #    #if self.core.play_sounds_in_login():
+    #    #    self.sound.login()
 
-        for account_id in self.get_accounts_list():
-            self.core.change_login_status(account_id, LoginStatus.IN_PROGRESS)
-            self.login(account_id)
+    #    for account_id in self.get_accounts_list():
+    #        self.core.change_login_status(account_id, LoginStatus.IN_PROGRESS)
+    #        self.login(account_id)
 
-        self.after_login()
+    #    self.after_login()
 
-    def open_url(self, url):
-        browser = self.core.get_default_browser()
+    #def open_url(self, url):
+    #    browser = self.core.get_default_browser()
 
-        if showmediautils.is_service_supported(url):
-            self.show_media(url)
-        elif browser != '':
-            cmd = browser.split(' ')
-            cmd.append(url)
-            self.log.debug('Opening URL %s with %s' % (url, browser))
-            subprocess.Popen(cmd)
-        else:
-            self.log.debug('Opening URL %s with default browser' % url)
-            webbrowser.open(url)
+    #    if showmediautils.is_service_supported(url):
+    #        self.show_media(url)
+    #    elif browser != '':
+    #        cmd = browser.split(' ')
+    #        cmd.append(url)
+    #        self.log.debug('Opening URL %s with %s' % (url, browser))
+    #        subprocess.Popen(cmd)
+    #    else:
+    #        self.log.debug('Opening URL %s with default browser' % url)
+    #        webbrowser.open(url)
 
-    def update_status(self, accounts, message, in_reply_to=None):
-        if len(accounts) > 1:
-            self.worker.register(self.core.broadcast_status, (accounts, message),
-                self.after_broadcast_status)
-        else:
-            self.worker.register(self.core.update_status, (accounts[0],
-                message, in_reply_to), self.after_update_status, accounts[0])
+    #def update_status(self, accounts, message, in_reply_to=None):
+    #    if len(accounts) > 1:
+    #        self.worker.register(self.core.broadcast_status, (accounts, message),
+    #            self.after_broadcast_status)
+    #    else:
+    #        self.worker.register(self.core.update_status, (accounts[0],
+    #            message, in_reply_to), self.after_update_status, accounts[0])
 
-    def direct_message(self, account, user, message):
-        self.worker.register(self.core.send_direct, (account, user, message),
-            self.after_direct_message)
+    #def direct_message(self, account, user, message):
+    #    self.worker.register(self.core.send_direct, (account, user, message),
+    #        self.after_direct_message)
 
-    def repeat_status(self, status):
-        self.worker.register(self.core.repeat_status, (status.account_id, status.id_),
-            self.after_repeat, (self.ACTION_REPEAT))
+    #def repeat_status(self, status):
+    #    self.worker.register(self.core.repeat_status, (status.account_id, status.id_),
+    #        self.after_repeat, (self.ACTION_REPEAT))
 
-    def unrepeat_status(self, status):
-        self.worker.register(self.core.unrepeat_status, (status.account_id, status.id_),
-            self.after_repeat, (self.ACTION_UNREPEAT))
+    #def unrepeat_status(self, status):
+    #    self.worker.register(self.core.unrepeat_status, (status.account_id, status.id_),
+    #        self.after_repeat, (self.ACTION_UNREPEAT))
 
-    def favorite_status(self, status):
-        self.worker.register(self.core.mark_favorite, (status.account_id, status.id_),
-            self.after_favorite, (self.ACTION_FAVORITE))
+    #def favorite_status(self, status):
+    #    self.worker.register(self.core.mark_favorite, (status.account_id, status.id_),
+    #        self.after_favorite, (self.ACTION_FAVORITE))
 
-    def unfavorite_status(self, status):
-        self.worker.register(self.core.unmark_favorite, (status.account_id, status.id_),
-            self.after_favorite, (self.ACTION_UNFAVORITE))
+    #def unfavorite_status(self, status):
+    #    self.worker.register(self.core.unmark_favorite, (status.account_id, status.id_),
+    #        self.after_favorite, (self.ACTION_UNFAVORITE))
 
-    def delete_status(self, status):
-        self.worker.register(self.core.destroy_status, (status.account_id, status.id_),
-            self.after_delete_status)
+    #def delete_status(self, status):
+    #    self.worker.register(self.core.destroy_status, (status.account_id, status.id_),
+    #        self.after_delete_status)
 
-    def autoshort_url(self, message):
-        self.worker.register(self.core.autoshort_url, (message),
-            self.after_autoshort_url)
+    #def autoshort_url(self, message):
+    #    self.worker.register(self.core.autoshort_url, (message),
+    #        self.after_autoshort_url)
 
     #================================================================
     # Hooks that can be implemented on each interface (optionals)
@@ -239,6 +268,9 @@ class Base(Singleton):
         raise NotImplementedError
 
     def show_media(self, url):
+        raise NotImplementedError
+
+    def show_accounts_dialog(self):
         raise NotImplementedError
 
     def login(self, account):

@@ -326,40 +326,6 @@ class StatusCellRenderer(Gtk.CellRendererText):
         # This holds the total height for a given status
         self.total_height = 0
 
-    def __calculate_timestamp(self):
-        now = time.time()
-        status_timestamp = self.get_property('timestamp')
-        seconds = now - status_timestamp
-
-        minutes = seconds / 60.0
-        if minutes < 1.0:
-            timestamp = i18n.get('less_than_a_minute')
-        else:
-            if minutes < 2.0:
-                timestamp = "%i %s" % (minutes, i18n.get('minute_ago'))
-            else:
-                if minutes < 60.0:
-                    timestamp = "%i %s" % (minutes, i18n.get('minutes_ago'))
-                else:
-                    hours = minutes / 60.0
-
-                    if hours < 2.0:
-                        timestamp = "%i %s" % (hours, i18n.get('hour_ago'))
-                    else:
-                        if hours < 24.0:
-                            timestamp = "%i %s" % (hours, i18n.get('hours_ago'))
-                        else:
-                            dt = time.localtime(status_timestamp)
-                            month = time.strftime(u'%b', dt)
-                            year = dt.tm_year
-
-                            if year == time.localtime(now).tm_year:
-                                timestamp = u"%s %i, %i:%i" % (dt.tm_mon, dt.tm_mday,
-                                    dt.tm_hour, dt.tm_min)
-                            else:
-                                timestamp = u"%s %i %i, %i:%i" % (dt.tm_mon,
-                                    dt.tm_mday, year, dt.tm_hour, dt.tm_min)
-        return timestamp
 
     def __highlight_elements(self, text):
         for elements in self.get_property('entities').values():
@@ -445,7 +411,8 @@ class StatusCellRenderer(Gtk.CellRendererText):
 
     def __render_datetime(self, context, cr, cell_area, layout):
         #datetime = self.get_property('datetime').decode('utf-8')
-        datetime = self.__calculate_timestamp()
+        # Ported to base
+        datetime = self.base.humanize_timestamp(self.get_property('timestamp'))
         in_reply_to_user = self.get_property('in_reply_to_user')
 
         y = cell_area.y + self.total_height

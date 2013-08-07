@@ -131,13 +131,13 @@ class Base(Singleton):
     #    account_id = self.core.register_account(username, protocol_id, password)
     #    self.after_save_account(account_id)
 
-    #def delete_account(self, account_id):
-    #    # FIXME: Implement try/except
-    #    for col in self.get_registered_columns():
-    #        if col.account_id == account_id:
-    #            self.delete_column(col.id_)
-    #    self.core.unregister_account(account_id, True)
-    #    self.after_delete_account(True)
+    def delete_account(self, account_id):
+        # FIXME: Implement try/except
+        for col in self.get_registered_columns():
+            if col.account_id == account_id:
+                self.delete_column(col.id_)
+        self.core.unregister_account(account_id, True)
+        self.after_delete_account()
 
     #def save_column(self, column_id):
     #    column = self.core.register_column(column_id)

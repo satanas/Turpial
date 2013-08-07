@@ -91,12 +91,27 @@ class AccountsDialog(ModalDialog):
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
+        self.base.account_deleted.connect(self.__update)
+
         self.exec_()
 
     def __close(self, widget, event=None):
         self.showed = False
         self.hide()
         return True
+
+    def __update(self):
+        model = QStandardItemModel()
+        self._list.setModel(model)
+        accounts = self.base.get_registered_accounts()
+        for account in accounts:
+            item = QStandardItem()
+            filepath = os.path.join(self.base.images_path, 'unknown.png')
+            item.setData(filepath, AccountDelegate.AvatarRole)
+            item.setData(get_username_from(account.id_), AccountDelegate.UsernameRole)
+            item.setData(get_protocol_from(account.id_).capitalize(), AccountDelegate.ProtocolRole)
+            item.setData(account.id_, AccountDelegate.IdRole)
+            model.appendRow(item)
 
     def __account_clicked(self, point):
         selection = self._list.selectionModel()
@@ -108,7 +123,8 @@ class AccountsDialog(ModalDialog):
         selection = self._list.selectionModel()
         index = selection.selectedIndexes()[0]
         account_id = index.data(AccountDelegate.IdRole).toPyObject()
-        print account_id
+        # TODO: Confirm
+        self.base.delete_account(account_id)
 
 class AccountDelegate(QStyledItemDelegate):
     UsernameRole = Qt.UserRole + 100

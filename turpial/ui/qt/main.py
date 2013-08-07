@@ -37,6 +37,7 @@ from libturpial.common.tools import get_account_id_from, get_column_slug_from
 class Main(Base, QWidget):
 
     #emitter = pyqtSignal(list)
+    account_deleted = pyqtSignal()
 
     def __init__(self, core):
         self.app = QApplication(sys.argv)
@@ -183,6 +184,9 @@ class Main(Base, QWidget):
     #================================================================
     # Hooks definitions
     #================================================================
+
+    def after_delete_account(self):
+        self.account_deleted.emit()
 
     def after_delete_column(self, column_id):
         self._container.remove_column(column_id)

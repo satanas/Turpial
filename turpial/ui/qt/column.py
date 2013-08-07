@@ -43,6 +43,7 @@ class StatusesColumn(QWidget):
         QWidget.__init__(self)
         self.base = base
         self.setMinimumWidth(280)
+        self.column_id = column_id
         #self.updating = False
 
         account_id = get_account_id_from(column_id)
@@ -59,6 +60,7 @@ class StatusesColumn(QWidget):
 
         close_button = ImageButton(base, 'action-delete.png',
                 i18n.get('delete_column'))
+        close_button.clicked.connect(self.__delete_column)
 
         header = QHBoxLayout()
         header.addWidget(icon)
@@ -91,30 +93,8 @@ class StatusesColumn(QWidget):
         status_delegate = StatusDelegate(base)
         self._list.setItemDelegate(status_delegate)
 
-        item = QStandardItem()
-        item.setData("Now that we know who you are, I know who I am. I'm not a mistake! It all makes sense! In a comic, you know how you can tell who the arch-villain's going to be?", StatusDelegate.MessageRole)
-        filepath = os.path.join(self.base.images_path, 'unknown.png')
-        item.setData(filepath, StatusDelegate.AvatarRole)
-        item.setData("satanas82", StatusDelegate.UsernameRole)
-        item.setData("Wil Alvarez", StatusDelegate.FullnameRole)
-        item.setData(None, StatusDelegate.RepostedRole)
-        item.setData(True, StatusDelegate.ProtectedRole)
-        item.setData(True, StatusDelegate.FavoritedRole)
-        item.setData(False, StatusDelegate.RepeatedRole)
-
-        item2 = QStandardItem()
-        item2.setData("The path of the righteous man is beset on all sides by the iniquities of the selfish and the tyranny of evil men", StatusDelegate.MessageRole)
-        item2.setData(filepath, StatusDelegate.AvatarRole)
-        item2.setData("TurpialVe", StatusDelegate.UsernameRole)
-        item2.setData("Turpial", StatusDelegate.FullnameRole)
-        item2.setData("Reposted by mengano", StatusDelegate.RepostedRole)
-        item2.setData(False, StatusDelegate.ProtectedRole)
-        item2.setData(False, StatusDelegate.FavoritedRole)
-        item2.setData(True, StatusDelegate.RepeatedRole)
-
-        #if test:
-        #    model.appendRow(item)
-        #    model.appendRow(item2)
+    def __delete_column(self):
+        self.base.delete_column(self.column_id)
 
     def start_updating(self):
         self.loader.setVisible(True)

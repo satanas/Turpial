@@ -31,8 +31,7 @@ class Container(QVBoxLayout):
 
     def empty(self, with_accounts=None):
         if self.child:
-            #del(self.child)
-            self.clear_layout(self.child)
+            self.child.deleteLater()
 
         image = self.base.load_image('logo.png', True)
         logo = QLabel()
@@ -63,7 +62,6 @@ class Container(QVBoxLayout):
 
     def normal(self, columns):
         if self.child:
-            #del(self.child)
             self.clear_layout(self)
 
         hbox = QHBoxLayout()
@@ -72,14 +70,6 @@ class Container(QVBoxLayout):
         for column in columns:
             self.columns[column.id_] = StatusesColumn(self.base, column.id_)
             hbox.addWidget(self.columns[column.id_], 1)
-
-        #column1 = StatusesColumn(self.base, True)
-        #column2 = StatusesColumn(self.base)
-        #column3 = StatusesColumn(self.base)
-
-        #hbox.addWidget(column1, 1)
-        #hbox.addWidget(column2, 1)
-        #hbox.addWidget(column3, 1)
 
         viewport = QWidget()
         viewport.setLayout(hbox)
@@ -103,3 +93,9 @@ class Container(QVBoxLayout):
     def update_column(self, column_id, statuses):
         self.columns[column_id].update(statuses)
         self.stop_updating(column_id)
+
+    def remove_column(self, column_id):
+        self.columns[column_id].deleteLater()
+        del self.columns[column_id]
+        if len(self.columns) == 0:
+            self.empty()

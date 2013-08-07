@@ -66,7 +66,7 @@ class AccountsDialog(ModalDialog):
         identica_btn.setText('Connect to Identi.ca')
         identica_btn.setIcon(QIcon(base.load_image('identica.png', True)))
         identica_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        #identica_btn.setToolTip(tooltip)
+        identica_btn.setToolTip(i18n.get('create_an_identica_account'))
         # TODO: Enable when identi.ca support is ready
         identica_btn.setEnabled(False)
 

@@ -97,7 +97,7 @@ class Main(Base, QWidget):
         self.setLayout(layout)
 
 
-    def __get_registered_columns(self):
+    def get_registered_columns(self):
         i = 1
         columns = []
         while True:
@@ -161,7 +161,7 @@ class Main(Base, QWidget):
 
     def update_container(self):
         accounts = self.get_registered_accounts()
-        columns = self.__get_registered_columns()
+        columns = self.get_registered_columns()
         if len(columns) == 0:
             if len(accounts) == 0:
                 self._container.empty(False)
@@ -179,6 +179,18 @@ class Main(Base, QWidget):
 
     def show_accounts_dialog(self):
         accounts = AccountsDialog(self)
+
+    #================================================================
+    # Hooks definitions
+    #================================================================
+
+    def after_delete_column(self, column_id):
+        self._container.remove_column(column_id)
+        if len(self.get_registered_columns()) == 0:
+            self.dock.empty()
+            self.tray.empty()
+        # TODO: Enable timers
+        #self.__remove_timer(column_id)
 
     '''
     def closeEvent(self, event):

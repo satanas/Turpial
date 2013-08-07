@@ -143,11 +143,9 @@ class Base(Singleton):
     #    column = self.core.register_column(column_id)
     #    self.after_save_column(column)
 
-    #def delete_column(self, column_id):
-    #    self.core.unregister_column(column_id)
-    #    if self.columns.has_key(column_id):
-    #        del self.columns[column_id]
-    #    self.after_delete_column(column_id)
+    def delete_column(self, column_id):
+        #deleted_column = self.core.unregister_column(column_id)
+        self.after_delete_column(column_id)
 
     #def start(self):
     #    #if self.core.play_sounds_in_login():

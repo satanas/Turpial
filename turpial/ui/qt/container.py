@@ -91,7 +91,7 @@ class Container(QVBoxLayout):
         return False
 
     def update_column(self, column_id, statuses):
-        self.columns[column_id].update(statuses)
+        self.columns[column_id].update_statuses(statuses)
         self.stop_updating(column_id)
 
     def remove_column(self, column_id):
@@ -99,3 +99,8 @@ class Container(QVBoxLayout):
         del self.columns[column_id]
         if len(self.columns) == 0:
             self.empty()
+        else:
+            for column in self.columns.values():
+                print column
+                column._list.update()
+                column._list.repaint()

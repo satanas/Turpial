@@ -136,7 +136,7 @@ class Base(Singleton):
         for col in self.get_registered_columns():
             if col.account_id == account_id:
                 self.delete_column(col.id_)
-        self.core.unregister_account(account_id, True)
+        self.core.unregister_account(str(account_id))
         self.after_delete_account()
 
     #def save_column(self, column_id):

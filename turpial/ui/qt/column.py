@@ -102,7 +102,7 @@ class StatusesColumn(QWidget):
     def stop_updating(self):
         self.loader.setVisible(False)
 
-    def update(self, statuses):
+    def update_statuses(self, statuses):
         model = self._list.model()
         for status in statuses:
             filepath = os.path.join(self.base.images_path, 'unknown.png')

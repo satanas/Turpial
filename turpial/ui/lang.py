@@ -17,8 +17,8 @@ else:
 
 STRINGS = {
     'welcome': _('Welcome!'),
-    #'twitter': 'Twitter',
-    #'identica': 'Identi.ca',
+    'twitter': 'Twitter',
+    'identica': 'Identi.ca',
     'add_new_account': _('Add a new account to start using Turpial'),
     'add_some_columns': _('You have accounts registered, now add some columns'),
     'update_status': _('Update status'),

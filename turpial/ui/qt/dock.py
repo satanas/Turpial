@@ -14,6 +14,7 @@ from turpial.ui.qt.widgets import ImageButton
 class Dock(QStatusBar):
 
     accounts_clicked = pyqtSignal()
+    columns_clicked = pyqtSignal()
 
     def __init__(self, base):
         QStatusBar.__init__(self)
@@ -30,13 +31,15 @@ class Dock(QStatusBar):
                 i18n.get('add_columns'))
         self.accounts_btn = ImageButton(base, 'dock-accounts.png',
                 i18n.get('add_accounts'))
-        self.accounts_btn.clicked.connect(self.__accounts_clicked)
         self.search_btn = ImageButton(base, 'dock-search.png',
                 i18n.get('search'))
         self.preferences_btn = ImageButton(base, 'dock-preferences.png',
                 i18n.get('open_preferences_dialog'))
         self.about_btn = ImageButton(base, 'dock-about.png',
                 i18n.get('about_turpial'))
+
+        self.columns_btn.clicked.connect(self.__columns_clicked)
+        self.accounts_btn.clicked.connect(self.__accounts_clicked)
 
         toolbar = QToolBar()
         toolbar.addWidget(self.about_btn)
@@ -53,6 +56,9 @@ class Dock(QStatusBar):
 
     def __accounts_clicked(self):
         self.accounts_clicked.emit()
+
+    def __columns_clicked(self):
+        self.columns_clicked.emit()
 
     def empty(self, with_accounts=None):
         self.updates_btn.setEnabled(False)

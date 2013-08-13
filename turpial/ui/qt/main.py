@@ -7,8 +7,10 @@ import sys
 
 # PyQt4 Support:
 from PyQt4 import QtCore
+from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QImage
 from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QFontDatabase
 from PyQt4.QtGui import QVBoxLayout
@@ -75,6 +77,7 @@ class Main(Base, QWidget):
         self.dock.empty()
 
         self.dock.accounts_clicked.connect(self.show_accounts_dialog)
+        self.dock.columns_clicked.connect(self.show_column_menu)
 
         #oauth_dialog = OAuthDialog(self, 'http://twitter.com')
         #self.profile = ProfileDialog(self)
@@ -180,6 +183,58 @@ class Main(Base, QWidget):
 
     def show_accounts_dialog(self):
         accounts = AccountsDialog(self)
+
+    def show_column_menu(self):
+        empty = True
+        columns = self.get_all_columns()
+        reg_columns = self.get_registered_columns()
+        accounts = self.get_all_accounts()
+
+        self.columns_menu = QMenu(self)
+
+        #if len(accounts) == 0:
+        if True:
+            empty_menu = QAction(i18n.get('no_registered_accounts'), self)
+            empty_menu.setEnabled(False)
+            self.columns_menu.addAction(empty_menu)
+            self.columns_menu.exec_()
+            return
+
+        #for acc in :
+        #    name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
+        #    temp = QAction(name)
+
+        #    # Build submenu for columns in each account
+        #    temp_menu = Gtk.Menu()
+        #    for key, col in columns[acc.id_].iteritems():
+        #        item = Gtk.MenuItem(key)
+        #        if col.id_ != "":
+        #            item.set_sensitive(False)
+        #        item.connect('activate', self.__save_column, col.build_id())
+        #        temp_menu.append(item)
+        #    # Add public timeline
+        #    public_tl = Gtk.MenuItem(i18n.get('public_timeline').lower())
+        #    public_tl.connect('activate', self.__save_column, acc.id_ + '-public')
+        #    temp_menu.append(public_tl)
+
+        #    temp.set_submenu(temp_menu)
+
+        #    # Add view profile item
+        #    temp_menu.append(Gtk.SeparatorMenuItem())
+        #    item = Gtk.MenuItem(i18n.get('view_profile'))
+        #    item.connect('activate', self.__save_column, acc.id_)
+        #    temp_menu.append(item)
+        #    temp.set_sensitive(False)
+        #    self.menu.append(temp)
+
+        #    empty = False
+
+        #if empty:
+        #    
+        #else:
+        #    self.menu.append(Gtk.SeparatorMenuItem())
+        #self.menu.show_all()
+        #self.menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
 
     #================================================================
     # Hooks definitions

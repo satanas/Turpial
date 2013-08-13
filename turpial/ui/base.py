@@ -98,14 +98,14 @@ class Base(Singleton):
     #def get_protocols_list(self):
     #    return self.core.list_protocols()
 
-    #def get_all_accounts(self):
-    #    return self.core.all_accounts()
+    def get_all_accounts(self):
+        return self.core.registered_accounts()
 
     #def get_accounts_list(self):
     #    return self.core.list_accounts()
 
-    #def get_all_columns(self):
-    #    return self.core.all_columns()
+    def get_all_columns(self):
+        return self.core.all_columns()
 
     def get_registered_accounts(self):
         return self.core.registered_accounts()

@@ -2,10 +2,12 @@
 
 # Qt dock for Turpial
 
+from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QToolBar
 from PyQt4.QtGui import QStatusBar
 from PyQt4.QtGui import QHBoxLayout
 
+from PyQt4.QtCore import QPoint
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
@@ -14,7 +16,7 @@ from turpial.ui.qt.widgets import ImageButton
 class Dock(QStatusBar):
 
     accounts_clicked = pyqtSignal()
-    columns_clicked = pyqtSignal()
+    columns_clicked = pyqtSignal(QPoint)
 
     def __init__(self, base):
         QStatusBar.__init__(self)
@@ -58,7 +60,7 @@ class Dock(QStatusBar):
         self.accounts_clicked.emit()
 
     def __columns_clicked(self):
-        self.columns_clicked.emit()
+        self.columns_clicked.emit(QCursor.pos())
 
     def empty(self, with_accounts=None):
         self.updates_btn.setEnabled(False)

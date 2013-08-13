@@ -184,7 +184,7 @@ class Main(Base, QWidget):
     def show_accounts_dialog(self):
         accounts = AccountsDialog(self)
 
-    def show_column_menu(self):
+    def show_column_menu(self, point):
         empty = True
         columns = self.get_all_columns()
         reg_columns = self.get_registered_columns()
@@ -197,7 +197,8 @@ class Main(Base, QWidget):
             empty_menu = QAction(i18n.get('no_registered_accounts'), self)
             empty_menu.setEnabled(False)
             self.columns_menu.addAction(empty_menu)
-            self.columns_menu.exec_()
+            self.columns_menu.exec_(point)
+            #return self.columns_menu
             return
 
         #for acc in :

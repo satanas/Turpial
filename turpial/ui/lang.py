@@ -56,6 +56,7 @@ STRINGS = {
     'retweeted_by': _("Retweeted by"),
     'create_a_twitter_account': _('Create a Twitter account'),
     'create_an_identica_account': _('Create an Identi.ca account'),
+    'no_registered_accounts': _('No registered accounts'),
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),
     #'reply_status': _('Reply status'),

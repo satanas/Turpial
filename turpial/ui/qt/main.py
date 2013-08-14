@@ -185,57 +185,29 @@ class Main(Base, QWidget):
         accounts = AccountsDialog(self)
 
     def show_column_menu(self, point):
-        empty = True
-        columns = self.get_all_columns()
-        reg_columns = self.get_registered_columns()
-        accounts = self.get_all_accounts()
-
         self.columns_menu = QMenu(self)
 
-        #if len(accounts) == 0:
-        if True:
+        available_columns = self.get_available_columns()
+        accounts = self.get_all_accounts()
+
+        if len(accounts) == 0:
             empty_menu = QAction(i18n.get('no_registered_accounts'), self)
             empty_menu.setEnabled(False)
             self.columns_menu.addAction(empty_menu)
-            self.columns_menu.exec_(point)
-            #return self.columns_menu
-            return
+        else:
+            for account in accounts:
+                name = "%s (%s)" % (account.username, i18n.get(account.protocol_id))
+                account_menu = QAction(name, self)
 
-        #for acc in :
-        #    name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
-        #    temp = QAction(name)
+                available_columns_menu = QMenu(self)
+                for column in available_columns[account.id_]:
+                    item = QAction(column.slug, self)
+                    available_columns_menu.addAction(item)
 
-        #    # Build submenu for columns in each account
-        #    temp_menu = Gtk.Menu()
-        #    for key, col in columns[acc.id_].iteritems():
-        #        item = Gtk.MenuItem(key)
-        #        if col.id_ != "":
-        #            item.set_sensitive(False)
-        #        item.connect('activate', self.__save_column, col.build_id())
-        #        temp_menu.append(item)
-        #    # Add public timeline
-        #    public_tl = Gtk.MenuItem(i18n.get('public_timeline').lower())
-        #    public_tl.connect('activate', self.__save_column, acc.id_ + '-public')
-        #    temp_menu.append(public_tl)
+                account_menu.setMenu(available_columns_menu)
+                self.columns_menu.addAction(account_menu)
 
-        #    temp.set_submenu(temp_menu)
-
-        #    # Add view profile item
-        #    temp_menu.append(Gtk.SeparatorMenuItem())
-        #    item = Gtk.MenuItem(i18n.get('view_profile'))
-        #    item.connect('activate', self.__save_column, acc.id_)
-        #    temp_menu.append(item)
-        #    temp.set_sensitive(False)
-        #    self.menu.append(temp)
-
-        #    empty = False
-
-        #if empty:
-        #    
-        #else:
-        #    self.menu.append(Gtk.SeparatorMenuItem())
-        #self.menu.show_all()
-        #self.menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
+        self.columns_menu.exec_(point)
 
     #================================================================
     # Hooks definitions

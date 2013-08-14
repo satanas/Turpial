@@ -113,6 +113,9 @@ class Base(Singleton):
     def get_registered_columns(self):
         return self.core.registered_columns()
 
+    def get_available_columns(self):
+        return self.core.available_columns()
+
     #def get_max_statuses_per_column(self):
     #    return self.core.get_max_statuses_per_column()
 

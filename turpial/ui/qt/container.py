@@ -97,6 +97,14 @@ class Container(QVBoxLayout):
         self.stop_updating(column_id)
 
     def add_column(self, column_id):
+        viewport = self.child.widget()
+        hbox = viewport.layout()
+        print hbox
+        print column_id
+        self.columns[column_id] = StatusesColumn(self.base, column_id)
+        hbox.addWidget(self.columns[column_id], 1)
+
+
 
 
     def remove_column(self, column_id):

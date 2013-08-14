@@ -5,7 +5,6 @@
 import os
 import sys
 
-# PyQt4 Support:
 from PyQt4 import QtCore
 from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QImage
@@ -15,7 +14,7 @@ from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QFontDatabase
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QApplication
-#from PyQt4.QtWebKit import *
+
 from PyQt4.QtCore import pyqtSignal
 
 from turpial import DESC
@@ -38,7 +37,6 @@ from libturpial.common.tools import get_account_id_from, get_column_slug_from
 
 class Main(Base, QWidget):
 
-    #emitter = pyqtSignal(list)
     account_deleted = pyqtSignal()
 
     def __init__(self, core):
@@ -96,7 +94,7 @@ class Main(Base, QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(self._container, 1)
         layout.addWidget(self.dock)
-        layout.setMargin(0);
+        layout.setMargin(0)
 
         self.setLayout(layout)
 
@@ -121,6 +119,10 @@ class Main(Base, QWidget):
 
     def start(self):
         print 'hola'
+
+    def __add_column(self, column_id):
+        print 'add', column_id
+        self.save_column(column_id)
 
 
     #================================================================
@@ -165,6 +167,7 @@ class Main(Base, QWidget):
 
     def update_container(self):
         accounts = self.get_registered_accounts()
+        columns = self.get_registered_columns()
 
         if len(columns) == 0:
             if len(accounts) == 0:
@@ -201,8 +204,9 @@ class Main(Base, QWidget):
 
                 available_columns_menu = QMenu(self)
                 for column in available_columns[account.id_]:
+                    print column.id_
                     item = QAction(column.slug, self)
-                    item.clicked.connect(self.__add_column, column.id_)
+                    item.triggered.connect(lambda: self.__add_column(str(column.id_)))
                     available_columns_menu.addAction(item)
 
                 account_menu.setMenu(available_columns_menu)
@@ -226,7 +230,7 @@ class Main(Base, QWidget):
         #self.__remove_timer(column_id)
 
     def after_save_column(self, column_id):
-        self._container.add_column(column)
+        self._container.add_column(column_id)
         self.dock.normal()
         self.tray.normal()
         #self.download_stream(column)
@@ -377,9 +381,6 @@ class Main(Base, QWidget):
 
         self.menu.addMenu(self.public_tl)
         self.menu.popup(QtGui.QCursor.pos())
-
-    def __add_column(self,column_id):
-        return self.save_column(column_id)
 
     def __close(self, widget, event=None):
         if self.core.minimize_on_close():

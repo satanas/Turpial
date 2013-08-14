@@ -165,7 +165,7 @@ class Main(Base, QWidget):
 
     def update_container(self):
         accounts = self.get_registered_accounts()
-        columns = self.get_registered_columns()
+
         if len(columns) == 0:
             if len(accounts) == 0:
                 self._container.empty(False)
@@ -174,7 +174,7 @@ class Main(Base, QWidget):
             self.dock.empty()
             self.tray.empty()
         else:
-            self._container.normal(columns)
+            self._container.normal()
             self.dock.normal()
             self.tray.normal()
             self.download_stream(columns[0])
@@ -202,6 +202,7 @@ class Main(Base, QWidget):
                 available_columns_menu = QMenu(self)
                 for column in available_columns[account.id_]:
                     item = QAction(column.slug, self)
+                    item.clicked.connect(self.__add_column, column.id_)
                     available_columns_menu.addAction(item)
 
                 account_menu.setMenu(available_columns_menu)
@@ -223,6 +224,13 @@ class Main(Base, QWidget):
             self.tray.empty()
         # TODO: Enable timers
         #self.__remove_timer(column_id)
+
+    def after_save_column(self, column_id):
+        self._container.add_column(column)
+        self.dock.normal()
+        self.tray.normal()
+        #self.download_stream(column)
+        #self.__add_timer(column)
 
     '''
     def closeEvent(self, event):

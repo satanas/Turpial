@@ -142,9 +142,9 @@ class Base(Singleton):
         self.core.unregister_account(str(account_id))
         self.after_delete_account()
 
-    #def save_column(self, column_id):
-    #    column = self.core.register_column(column_id)
-    #    self.after_save_column(column)
+    def save_column(self, column_id):
+        reg_column_id = self.core.register_column(column_id)
+        self.after_save_column(reg_column_id)
 
     def delete_column(self, column_id):
         #deleted_column = self.core.unregister_column(column_id)

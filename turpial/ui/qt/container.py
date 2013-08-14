@@ -60,7 +60,9 @@ class Container(QVBoxLayout):
 
         self.insertLayout(0, self.child)
 
-    def normal(self, columns):
+    def normal(self):
+        columns = self.base.get_registered_columns()
+
         if self.child:
             self.clear_layout(self)
 
@@ -93,6 +95,9 @@ class Container(QVBoxLayout):
     def update_column(self, column_id, statuses):
         self.columns[column_id].update_statuses(statuses)
         self.stop_updating(column_id)
+
+    def add_column(self, column_id):
+
 
     def remove_column(self, column_id):
         self.columns[column_id].deleteLater()

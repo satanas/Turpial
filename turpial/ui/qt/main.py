@@ -74,7 +74,7 @@ class Main(Base, QWidget):
         #self.worker.register(self.core.list_accounts, None, self.__test)
 
         self._container = Container(self)
-        self._container.empty()
+        #self._container.empty()
 
         self.dock = Dock(self)
         self.dock.empty()
@@ -117,6 +117,8 @@ class Main(Base, QWidget):
     #================================================================
 
     def start(self):
+        #if self.core.play_sounds_in_login():
+        #    self.sound.login()
         print 'start'
 
     def main_loop(self):

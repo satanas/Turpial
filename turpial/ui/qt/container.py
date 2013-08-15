@@ -105,20 +105,9 @@ class Container(QVBoxLayout):
         else:
             viewport = self.child.widget()
             hbox = viewport.layout()
-            print hbox
-            print column_id
             self.columns[column_id] = StatusesColumn(self.base, column_id)
             hbox.addWidget(self.columns[column_id], 1)
-
-
-
 
     def remove_column(self, column_id):
         self.columns[column_id].deleteLater()
         del self.columns[column_id]
-        if len(self.columns) == 0:
-            self.empty()
-        else:
-            for column in self.columns.values():
-                column._list.update()
-                column._list.repaint()

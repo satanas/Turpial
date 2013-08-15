@@ -20,6 +20,7 @@ from turpial.ui.qt.widgets import ImageButton, ToggleButton
 
 from libturpial.common import get_username_from, get_protocol_from
 
+MAX_CHAR = 140
 
 class UpdateBox(QWidget):
     def __init__(self, base):
@@ -32,8 +33,8 @@ class UpdateBox(QWidget):
         completer = QCompleter(['one', 'two', 'carlos', 'maria',
             'ana', 'carolina', 'alberto', 'pedro', 'tomas'])
 
-        self.text = CompletionTextEdit()
-        self.text.setCompleter(completer)
+        self.text_edit = CompletionTextEdit()
+        self.text_edit.setCompleter(completer)
 
         upload_button = ImageButton(base, 'action-upload.png',
                 i18n.get('upload_image'))
@@ -46,31 +47,62 @@ class UpdateBox(QWidget):
         self.char_count = QLabel('140')
         self.char_count.setFont(font)
 
-        update_button = QPushButton(i18n.get('update'))
+        self.update_button = QPushButton(i18n.get('update'))
 
-        accounts_combo = QComboBox()
+        self.accounts_combo = QComboBox()
         accounts = self.base.get_registered_accounts()
         for account in accounts:
             protocol = get_protocol_from(account.id_)
             icon = QIcon(base.get_image_path('%s.png' % protocol))
-            accounts_combo.addItem(icon, get_username_from(account.id_), account.id_)
+            self.accounts_combo.addItem(icon, get_username_from(account.id_), account.id_)
         icon = QIcon(base.get_image_path('action-conversation.png'))
-        accounts_combo.addItem(icon, i18n.get('broadcast'))
-
+        self.accounts_combo.addItem(icon, i18n.get('broadcast'), 'broadcast')
 
         buttons = QHBoxLayout()
-        buttons.addWidget(accounts_combo)
+        buttons.addWidget(self.accounts_combo)
         buttons.addWidget(upload_button)
         buttons.addWidget(short_button)
         buttons.addStretch(0)
         buttons.addWidget(self.char_count)
-        buttons.addWidget(update_button)
+        buttons.addWidget(self.update_button)
+
+        self.update_button.clicked.connect(self.__update_status)
+        self.text_edit.textChanged.connect(self.__update_count)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.text, 1)
+        layout.addWidget(self.text_edit, 1)
         layout.addLayout(buttons)
         layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(layout)
+
+
+    def __count_chars(self):
+        message = self.text_edit.toPlainText()
+        return MAX_CHAR - len(message)
+
+    def __update_count(self):
+        remaining_chars = self.__count_chars()
+        if remaining_chars <= 10:
+            self.char_count.setStyleSheet("QLabel { color: #D40D12 }")
+        elif remaining_chars > 10 and remaining_chars <= 20:
+            self.char_count.setStyleSheet("QLabel { color: #D4790D }")
+        else:
+            self.char_count.setStyleSheet("QLabel { color: #000000 }")
+        self.char_count.setText(str(remaining_chars))
+
+    def __update_status(self):
+        index = self.accounts_combo.currentIndex()
+        account_id = str(self.accounts_combo.itemData(index).toPyObject())
+        message = self.text_edit.toPlainText()
+
+        if message == '':
+            self.message.set_error_text(i18n.get('you_must_write_something'))
+            return
+
+        if len(message) > MAX_CHAR:
+            self.message.set_error_text(i18n.get('message_looks_like_testament'))
+            return
+
 
 class CompletionTextEdit(QTextEdit):
     IGNORED_KEYS = (

@@ -148,16 +148,6 @@ class Base(Singleton):
         deleted_column = self.core.unregister_column(column_id)
         self.after_delete_column(column_id)
 
-    #def start(self):
-    #    #if self.core.play_sounds_in_login():
-    #    #    self.sound.login()
-
-    #    for account_id in self.get_accounts_list():
-    #        self.core.change_login_status(account_id, LoginStatus.IN_PROGRESS)
-    #        self.login(account_id)
-
-    #    self.after_login()
-
     #def open_url(self, url):
     #    browser = self.core.get_default_browser()
 
@@ -172,13 +162,13 @@ class Base(Singleton):
     #        self.log.debug('Opening URL %s with default browser' % url)
     #        webbrowser.open(url)
 
-    #def update_status(self, accounts, message, in_reply_to=None):
-    #    if len(accounts) > 1:
-    #        self.worker.register(self.core.broadcast_status, (accounts, message),
-    #            self.after_broadcast_status)
-    #    else:
-    #        self.worker.register(self.core.update_status, (accounts[0],
-    #            message, in_reply_to), self.after_update_status, accounts[0])
+    def update_status(self, account_id, message, in_reply_to=None):
+        self.worker.register(self.core.update_status, (account_id,
+            message, in_reply_to), self.after_update_status, account_id)
+
+    def broadcast_status(self, account_ids, message):
+        self.worker.register(self.core.broadcast_status, (account_ids, message),
+            self.after_broadcast_status)
 
     #def direct_message(self, account, user, message):
     #    self.worker.register(self.core.send_direct, (account, user, message),

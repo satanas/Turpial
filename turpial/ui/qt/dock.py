@@ -17,6 +17,7 @@ class Dock(QStatusBar):
 
     accounts_clicked = pyqtSignal()
     columns_clicked = pyqtSignal(QPoint)
+    search_clicked = pyqtSignal()
 
     def __init__(self, base):
         QStatusBar.__init__(self)
@@ -25,32 +26,33 @@ class Dock(QStatusBar):
         bg_color = "#333"
         style = "background-color: %s; border: 0px solid %s;" % (bg_color, bg_color)
 
-        self.updates_btn = ImageButton(base, 'dock-updates.png',
+        self.updates_button = ImageButton(base, 'dock-updates.png',
                 i18n.get('update_status'))
-        self.messages_btn = ImageButton(base, 'dock-messages.png',
+        self.messages_button = ImageButton(base, 'dock-messages.png',
                 i18n.get('send_direct_message'))
-        self.columns_btn = ImageButton(base, 'dock-columns.png',
+        self.columns_button = ImageButton(base, 'dock-columns.png',
                 i18n.get('add_columns'))
-        self.accounts_btn = ImageButton(base, 'dock-accounts.png',
+        self.accounts_button = ImageButton(base, 'dock-accounts.png',
                 i18n.get('add_accounts'))
-        self.search_btn = ImageButton(base, 'dock-search.png',
+        self.search_button = ImageButton(base, 'dock-search.png',
                 i18n.get('search'))
-        self.preferences_btn = ImageButton(base, 'dock-preferences.png',
+        self.preferences_button = ImageButton(base, 'dock-preferences.png',
                 i18n.get('open_preferences_dialog'))
-        self.about_btn = ImageButton(base, 'dock-about.png',
+        self.about_button = ImageButton(base, 'dock-about.png',
                 i18n.get('about_turpial'))
 
-        self.columns_btn.clicked.connect(self.__columns_clicked)
-        self.accounts_btn.clicked.connect(self.__accounts_clicked)
+        self.columns_button.clicked.connect(self.__columns_clicked)
+        self.accounts_button.clicked.connect(self.__accounts_clicked)
+        self.search_button.clicked.connect(self.__search_clicked)
 
         toolbar = QToolBar()
-        toolbar.addWidget(self.about_btn)
-        toolbar.addWidget(self.preferences_btn)
-        toolbar.addWidget(self.search_btn)
-        toolbar.addWidget(self.accounts_btn)
-        toolbar.addWidget(self.columns_btn)
-        toolbar.addWidget(self.messages_btn)
-        toolbar.addWidget(self.updates_btn)
+        toolbar.addWidget(self.about_button)
+        toolbar.addWidget(self.preferences_button)
+        toolbar.addWidget(self.search_button)
+        toolbar.addWidget(self.accounts_button)
+        toolbar.addWidget(self.columns_button)
+        toolbar.addWidget(self.messages_button)
+        toolbar.addWidget(self.updates_button)
         toolbar.setStyleSheet("QToolBar { %s }" % style)
         toolbar.setMinimumHeight(24)
         self.addPermanentWidget(toolbar)
@@ -62,15 +64,18 @@ class Dock(QStatusBar):
     def __columns_clicked(self):
         self.columns_clicked.emit(QCursor.pos())
 
+    def __search_clicked(self):
+        self.search_clicked.emit()
+
     def empty(self, with_accounts=None):
-        self.updates_btn.setEnabled(False)
-        self.messages_btn.setEnabled(False)
+        self.updates_button.setEnabled(False)
+        self.messages_button.setEnabled(False)
         if with_accounts:
-            self.columns_btn.setEnabled(True)
+            self.columns_button.setEnabled(True)
         else:
-            self.columns_btn.setEnabled(False)
+            self.columns_button.setEnabled(False)
 
     def normal(self):
-        self.updates_btn.setEnabled(True)
-        self.messages_btn.setEnabled(True)
-        self.columns_btn.setEnabled(True)
+        self.updates_button.setEnabled(True)
+        self.messages_button.setEnabled(True)
+        self.columns_button.setEnabled(True)

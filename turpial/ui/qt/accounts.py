@@ -10,6 +10,7 @@ from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QStyle
 from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QPixmap
+from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QListView
 from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QHBoxLayout
@@ -44,22 +45,10 @@ class AccountsDialog(ModalDialog):
         self.list_ = QListView()
         self.list_.setResizeMode(QListView.Adjust)
         self.list_.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
-        model = QStandardItemModel()
-        self.list_.setModel(model)
         account_delegate = AccountDelegate(base)
         self.list_.setItemDelegate(account_delegate)
         self.list_.setContextMenuPolicy(Qt.CustomContextMenu)
         self.list_.clicked.connect(self.__account_clicked)
-
-        accounts = base.get_registered_accounts()
-        for account in accounts:
-            item = QStandardItem()
-            filepath = os.path.join(self.base.images_path, 'unknown.png')
-            item.setData(filepath, AccountDelegate.AvatarRole)
-            item.setData(get_username_from(account.id_), AccountDelegate.UsernameRole)
-            item.setData(get_protocol_from(account.id_).capitalize(), AccountDelegate.ProtocolRole)
-            item.setData(account.id_, AccountDelegate.IdRole)
-            model.appendRow(item)
 
         twitter_menu = QAction(i18n.get('twitter'), self)
         twitter_menu.setIcon(QIcon(base.load_image('twitter.png', True)))
@@ -96,6 +85,8 @@ class AccountsDialog(ModalDialog):
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
+        self.__update()
+
         self.base.account_deleted.connect(self.__update)
         self.base.account_registered.connect(self.__update)
 
@@ -130,9 +121,10 @@ class AccountsDialog(ModalDialog):
         self.__enable(False)
         account = Account.new('twitter')
         oauth_dialog = OAuthDialog(self, account.request_oauth_access())
-        pin = oauth_dialog.pin.text()
-        account.authorize_oauth_access(pin)
-        self.base.save_account(account)
+        if oauth_dialog.result() == QDialog.Accepted:
+            pin = oauth_dialog.pin.text()
+            account.authorize_oauth_access(pin)
+            self.base.save_account(account)
 
     def __enable(self, value):
         # TODO: Display a loading message/indicator

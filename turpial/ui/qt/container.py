@@ -18,6 +18,7 @@ class Container(QVBoxLayout):
         self.base = base
         self.child = None
         self.columns = {}
+        self.is_empty = None
 
     def clear_layout(self, layout):
         if layout is not None:
@@ -59,6 +60,7 @@ class Container(QVBoxLayout):
         self.child.setContentsMargins(30, 0, 30, 60)
 
         self.insertLayout(0, self.child)
+        self.is_empty = True
 
     def normal(self):
         columns = self.base.get_registered_columns()
@@ -81,6 +83,7 @@ class Container(QVBoxLayout):
         self.child.setWidget(viewport)
 
         self.addWidget(self.child, 1)
+        self.is_empty = False
 
     def start_updating(self, column_id):
         return self.columns[column_id].start_updating()
@@ -97,12 +100,15 @@ class Container(QVBoxLayout):
         self.stop_updating(column_id)
 
     def add_column(self, column_id):
-        viewport = self.child.widget()
-        hbox = viewport.layout()
-        print hbox
-        print column_id
-        self.columns[column_id] = StatusesColumn(self.base, column_id)
-        hbox.addWidget(self.columns[column_id], 1)
+        if self.is_empty:
+            self.normal()
+        else:
+            viewport = self.child.widget()
+            hbox = viewport.layout()
+            print hbox
+            print column_id
+            self.columns[column_id] = StatusesColumn(self.base, column_id)
+            hbox.addWidget(self.columns[column_id], 1)
 
 
 

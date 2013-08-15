@@ -13,6 +13,8 @@ from PyQt4.QtCore import Qt
 
 from turpial.ui.lang import i18n
 
+from libturpial.common.tools import get_protocol_from, get_username_from
+
 
 class SearchDialog(QDialog):
     def __init__(self, base):
@@ -23,17 +25,19 @@ class SearchDialog(QDialog):
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
         self.setModal(True)
 
-        icon = QIcon(base.get_image_path('twitter.png'))
-        accounts = QComboBox()
-        accounts.addItem(icon, 'satanas82')
-        accounts.addItem(icon, 'turpialve')
+        self.accounts_combo = QComboBox()
+        accounts = self.base.get_registered_accounts()
+        for account in accounts:
+            protocol = get_protocol_from(account.id_)
+            icon = QIcon(base.get_image_path('%s.png' % protocol))
+            self.accounts_combo.addItem(icon, get_username_from(account.id_), account.id_)
 
-        criteria = QLineEdit()
-        criteria.setToolTip(i18n.get('criteria_tooltip'))
+        self.criteria = QLineEdit()
+        self.criteria.setToolTip(i18n.get('criteria_tooltip'))
 
         form = QFormLayout()
-        form.addRow(i18n.get('account'), accounts)
-        form.addRow(i18n.get('criteria'), criteria)
+        form.addRow(i18n.get('account'), self.accounts_combo)
+        form.addRow(i18n.get('criteria'), self.criteria)
         form.setContentsMargins(30, 10, 10, 5)
         form.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
 
@@ -43,6 +47,8 @@ class SearchDialog(QDialog):
         button_box.addWidget(button)
         button_box.setContentsMargins(0, 0, 15, 15)
 
+        button.clicked.connect(self.accept)
+
         layout = QVBoxLayout()
         layout.addLayout(form)
         layout.addLayout(button_box)
@@ -51,3 +57,11 @@ class SearchDialog(QDialog):
         self.setLayout(layout)
 
         self.exec_()
+
+    def get_criteria(self):
+        return self.criteria.text()
+
+    def get_account(self):
+        index = self.accounts_combo.currentIndex()
+        return self.accounts_combo.itemData(index)
+

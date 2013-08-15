@@ -4,6 +4,7 @@
 
 import os
 import sys
+import urllib2
 
 from functools import partial
 
@@ -13,6 +14,7 @@ from PyQt4.QtGui import QImage
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QPixmap
+from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QFontDatabase
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QApplication
@@ -33,6 +35,7 @@ from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 
 from libturpial.api.core import Core
+from libturpial.common import ColumnType
 from libturpial.api.models.column import Column
 from libturpial.common.tools import get_account_id_from, get_column_slug_from
 
@@ -78,14 +81,14 @@ class Main(Base, QWidget):
 
         self.dock.accounts_clicked.connect(self.show_accounts_dialog)
         self.dock.columns_clicked.connect(self.show_column_menu)
+        self.dock.search_clicked.connect(self.show_search_dialog)
 
         #self.profile = ProfileDialog(self)
         #self.profile.show()
-        #search = SearchDialog(self)
         #friend = SelectFriendDialog(self)
         #self.update_box = UpdateBox(self)
         #self.update_box.show()
-        self.show_accounts_dialog()
+        #self.show_accounts_dialog()
 
         #if len(self.base.get_accounts_list()) > 0:
         #    no_accounts.set_markup(i18n.get('no_registered_columns'))
@@ -173,9 +176,10 @@ class Main(Base, QWidget):
         if len(columns) == 0:
             if len(accounts) == 0:
                 self._container.empty(False)
+                self.dock.empty(False)
             else:
                 self._container.empty(True)
-            self.dock.empty()
+                self.dock.empty(True)
             self.tray.empty()
         else:
             self._container.normal()
@@ -220,6 +224,14 @@ class Main(Base, QWidget):
 
         self.columns_menu.exec_(point)
 
+    def show_search_dialog(self):
+        search = SearchDialog(self)
+        if search.result() == QDialog.Accepted:
+            account_id = str(search.get_account().toPyObject())
+            criteria = str(search.get_criteria())
+            column_id = "%s-%s:%s" % (account_id, ColumnType.SEARCH, urllib2.quote(criteria))
+            self.__add_column(column_id)
+
     #================================================================
     # Hooks definitions
     #================================================================
@@ -232,16 +244,14 @@ class Main(Base, QWidget):
 
     def after_delete_column(self, column_id):
         self._container.remove_column(column_id)
-        if len(self.get_registered_columns()) == 0:
-            self.dock.empty()
-            self.tray.empty()
+        self.update_container()
         # TODO: Enable timers
         #self.__remove_timer(column_id)
 
     def after_save_column(self, column_id):
         self._container.add_column(column_id)
-        self.dock.normal()
-        self.tray.normal()
+        self.update_container()
+        # TODO: Enable timers
         #self.download_stream(column)
         #self.__add_timer(column)
 

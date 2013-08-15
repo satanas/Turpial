@@ -128,18 +128,16 @@ class Base(Singleton):
     #    }
     #    return color[key]
 
-    #def save_account(self, username, protocol_id, password):
-    #    if username == "" or username == None:
-    #        username = "%s" % len(self.core.all_accounts())
-    #    account_id = self.core.register_account(username, protocol_id, password)
-    #    self.after_save_account(account_id)
+    def save_account(self, account):
+        account_id = self.core.register_account(account)
+        self.after_save_account(account)
 
     def delete_account(self, account_id):
         # FIXME: Implement try/except
         for col in self.get_registered_columns():
             if col.account_id == account_id:
                 self.delete_column(col.id_)
-        self.core.unregister_account(str(account_id))
+        self.core.unregister_account(str(account_id), True)
         self.after_delete_account()
 
     def save_column(self, column_id):

@@ -6,12 +6,15 @@ import os
 
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QFont
+from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QStyle
+from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QPixmap
-from PyQt4.QtGui import QToolBar
 from PyQt4.QtGui import QListView
-from PyQt4.QtGui import QToolButton
+from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QHBoxLayout
+from PyQt4.QtGui import QVBoxLayout
+from PyQt4.QtGui import QSizePolicy
 from PyQt4.QtGui import QTextDocument
 from PyQt4.QtGui import QStandardItem
 from PyQt4.QtGui import QAbstractItemView
@@ -23,8 +26,10 @@ from PyQt4.QtCore import QSize
 from PyQt4.QtCore import QRect
 
 from turpial.ui.lang import i18n
+from turpial.ui.qt.oauth import OAuthDialog
 from turpial.ui.qt.dialog import ModalDialog
 
+from libturpial.api.models.account import Account
 from libturpial.common.tools import get_protocol_from, get_username_from
 
 USERNAME_FONT = QFont("Helvetica", 14)
@@ -36,15 +41,15 @@ class AccountsDialog(ModalDialog):
         self.base = base
         self.setWindowTitle(i18n.get('accounts'))
 
-        self._list = QListView()
-        self._list.setResizeMode(QListView.Adjust)
-        self._list.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.list_ = QListView()
+        self.list_.setResizeMode(QListView.Adjust)
+        self.list_.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         model = QStandardItemModel()
-        self._list.setModel(model)
+        self.list_.setModel(model)
         account_delegate = AccountDelegate(base)
-        self._list.setItemDelegate(account_delegate)
-        self._list.setContextMenuPolicy(Qt.CustomContextMenu)
-        self._list.customContextMenuRequested.connect(self.__account_clicked)
+        self.list_.setItemDelegate(account_delegate)
+        self.list_.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.list_.clicked.connect(self.__account_clicked)
 
         accounts = base.get_registered_accounts()
         for account in accounts:
@@ -56,53 +61,49 @@ class AccountsDialog(ModalDialog):
             item.setData(account.id_, AccountDelegate.IdRole)
             model.appendRow(item)
 
-        twitter_btn = QToolButton()
-        twitter_btn.setText('Connect to Twitter')
-        twitter_btn.setIcon(QIcon(base.load_image('twitter.png', True)))
-        twitter_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        twitter_btn.setToolTip(i18n.get('create_a_twitter_account'))
+        twitter_menu = QAction(i18n.get('twitter'), self)
+        twitter_menu.setIcon(QIcon(base.load_image('twitter.png', True)))
+        twitter_menu.setToolTip(i18n.get('register_a_twitter_account'))
+        twitter_menu.triggered.connect(self.__register_twitter_account)
 
-        identica_btn = QToolButton()
-        identica_btn.setText('Connect to Identi.ca')
-        identica_btn.setIcon(QIcon(base.load_image('identica.png', True)))
-        identica_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        identica_btn.setToolTip(i18n.get('create_an_identica_account'))
         # TODO: Enable when identi.ca support is ready
-        identica_btn.setEnabled(False)
+        identica_menu = QAction(i18n.get('identica'), self)
+        identica_menu.setIcon(QIcon(base.load_image('identica.png', True)))
+        identica_menu.setToolTip(i18n.get('register_an_identica_account'))
+        identica_menu.setEnabled(False)
 
-        delete_btn = QToolButton()
-        delete_btn.setText('Delete account')
-        delete_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        #delete_btn.setToolTip(tooltip)
-        delete_btn.clicked.connect(self.__delete_account)
+        self.menu = QMenu()
+        self.menu.addAction(twitter_menu)
+        self.menu.addAction(identica_menu)
 
-        toolbar = QToolBar()
-        toolbar.addWidget(twitter_btn)
-        toolbar.addWidget(identica_btn)
-        toolbar.addWidget(delete_btn)
-        toolbar.setMinimumHeight(24)
-        toolbar.setOrientation(Qt.Vertical)
-        toolbar.setContentsMargins(10, 0, 10, 0)
+        self.new_button = QPushButton(i18n.get('new'))
+        self.new_button.setMenu(self.menu)
+        self.new_button.setToolTip(i18n.get('register_a_new_account'))
 
-        layout = QHBoxLayout()
-        layout.addWidget(self._list)
-        layout.addWidget(toolbar)
+        self.delete_button = QPushButton(i18n.get('delete'))
+        self.delete_button.setEnabled(False)
+        self.delete_button.setToolTip(i18n.get('delete_an_existing_account'))
+        self.delete_button.clicked.connect(self.__delete_account)
+
+        button_box = QHBoxLayout()
+        button_box.addWidget(self.new_button)
+        button_box.addWidget(self.delete_button)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.list_)
+        layout.addLayout(button_box)
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
         self.base.account_deleted.connect(self.__update)
+        self.base.account_registered.connect(self.__update)
 
         self.exec_()
 
-    def __close(self, widget, event=None):
-        self.showed = False
-        self.hide()
-        return True
-
     def __update(self):
         model = QStandardItemModel()
-        self._list.setModel(model)
+        self.list_.setModel(model)
         accounts = self.base.get_registered_accounts()
         for account in accounts:
             item = QStandardItem()
@@ -112,19 +113,32 @@ class AccountsDialog(ModalDialog):
             item.setData(get_protocol_from(account.id_).capitalize(), AccountDelegate.ProtocolRole)
             item.setData(account.id_, AccountDelegate.IdRole)
             model.appendRow(item)
+        self.__enable(True)
 
     def __account_clicked(self, point):
-        selection = self._list.selectionModel()
-        index = selection.selectedIndexes()[0]
-        account_id = index.data(AccountDelegate.IdRole).toPyObject()
-        print account_id
+        self.delete_button.setEnabled(True)
 
     def __delete_account(self):
-        selection = self._list.selectionModel()
+        self.__enable(False)
+        selection = self.list_.selectionModel()
         index = selection.selectedIndexes()[0]
         account_id = index.data(AccountDelegate.IdRole).toPyObject()
         # TODO: Confirm
         self.base.delete_account(account_id)
+
+    def __register_twitter_account(self):
+        self.__enable(False)
+        account = Account.new('twitter')
+        oauth_dialog = OAuthDialog(self, account.request_oauth_access())
+        pin = oauth_dialog.pin.text()
+        account.authorize_oauth_access(pin)
+        self.base.save_account(account)
+
+    def __enable(self, value):
+        # TODO: Display a loading message/indicator
+        self.list_.setEnabled(value)
+        self.new_button.setEnabled(value)
+        self.delete_button.setEnabled(value)
 
 class AccountDelegate(QStyledItemDelegate):
     UsernameRole = Qt.UserRole + 100

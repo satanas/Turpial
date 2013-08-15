@@ -33,16 +33,17 @@ class OAuthDialog(QDialog):
         message = QLabel(i18n.get('copy_the_pin'))
         #message.setAlignment(Qt.AlignRight)
 
-        pin = QLineEdit()
-        pin.setPlaceholderText(i18n.get('type_the_pin'))
+        self.pin = QLineEdit()
+        self.pin.setPlaceholderText(i18n.get('type_the_pin'))
 
         authorize_btn = QPushButton(i18n.get('save'))
+        authorize_btn.clicked.connect(self.accept)
 
         widgets_box = QHBoxLayout()
         widgets_box.setSpacing(3)
         widgets_box.setContentsMargins(3, 3, 3, 3)
         widgets_box.addWidget(message, 1)
-        widgets_box.addWidget(pin)
+        widgets_box.addWidget(self.pin)
         widgets_box.addWidget(authorize_btn)
 
         layout = QVBoxLayout()

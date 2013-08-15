@@ -26,7 +26,6 @@ from turpial.ui.qt.dock import Dock
 from turpial.ui.qt.worker import Worker
 from turpial.ui.qt.tray import TrayIcon
 from turpial.ui.qt.update import UpdateBox
-from turpial.ui.qt.oauth import OAuthDialog
 from turpial.ui.qt.search import SearchDialog
 from turpial.ui.qt.container import Container
 from turpial.ui.qt.profile import ProfileDialog
@@ -40,6 +39,7 @@ from libturpial.common.tools import get_account_id_from, get_column_slug_from
 class Main(Base, QWidget):
 
     account_deleted = pyqtSignal()
+    account_registered = pyqtSignal()
 
     def __init__(self, core):
         self.app = QApplication(sys.argv)
@@ -79,13 +79,13 @@ class Main(Base, QWidget):
         self.dock.accounts_clicked.connect(self.show_accounts_dialog)
         self.dock.columns_clicked.connect(self.show_column_menu)
 
-        #oauth_dialog = OAuthDialog(self, 'http://twitter.com')
         #self.profile = ProfileDialog(self)
         #self.profile.show()
         #search = SearchDialog(self)
         #friend = SelectFriendDialog(self)
         #self.update_box = UpdateBox(self)
         #self.update_box.show()
+        self.show_accounts_dialog()
 
         #if len(self.base.get_accounts_list()) > 0:
         #    no_accounts.set_markup(i18n.get('no_registered_columns'))
@@ -120,10 +120,9 @@ class Main(Base, QWidget):
         print value
 
     def start(self):
-        print 'hola'
+        print 'start'
 
     def __add_column(self, column_id):
-        print 'add', column_id
         self.save_column(column_id)
 
 
@@ -224,6 +223,9 @@ class Main(Base, QWidget):
     #================================================================
     # Hooks definitions
     #================================================================
+
+    def after_save_account(self, account):
+        self.account_registered.emit()
 
     def after_delete_account(self):
         self.account_deleted.emit()

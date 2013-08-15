@@ -18,6 +18,7 @@ class Dock(QStatusBar):
     accounts_clicked = pyqtSignal()
     columns_clicked = pyqtSignal(QPoint)
     search_clicked = pyqtSignal()
+    updates_clicked = pyqtSignal()
 
     def __init__(self, base):
         QStatusBar.__init__(self)
@@ -44,6 +45,7 @@ class Dock(QStatusBar):
         self.columns_button.clicked.connect(self.__columns_clicked)
         self.accounts_button.clicked.connect(self.__accounts_clicked)
         self.search_button.clicked.connect(self.__search_clicked)
+        self.updates_button.clicked.connect(self.__updates_clicked)
 
         toolbar = QToolBar()
         toolbar.addWidget(self.about_button)
@@ -66,6 +68,9 @@ class Dock(QStatusBar):
 
     def __search_clicked(self):
         self.search_clicked.emit()
+
+    def __updates_clicked(self):
+        self.updates_clicked.emit()
 
     def empty(self, with_accounts=None):
         self.updates_button.setEnabled(False)

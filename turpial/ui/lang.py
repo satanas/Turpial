@@ -61,6 +61,7 @@ STRINGS = {
     'register_a_twitter_account': _('Register a Twitter account'),
     'register_an_identica_account': _('Register an Identi.ca account'),
     'no_registered_accounts': _('No registered accounts'),
+    'broadcast': _('Broadcast'),
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),
     #'reply_status': _('Reply status'),

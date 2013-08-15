@@ -14,7 +14,6 @@ from PyQt4.QtGui import QTextCursor
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtCore import SIGNAL
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton, ToggleButton
@@ -49,15 +48,18 @@ class UpdateBox(QWidget):
 
         update_button = QPushButton(i18n.get('update'))
 
-        icon = QIcon(base.get_image_path('twitter.png'))
-        accounts = QComboBox()
-        accounts.addItem(icon, 'satanas82')
-        accounts.addItem(icon, 'turpialve')
+        accounts_combo = QComboBox()
+        accounts = self.base.get_registered_accounts()
+        for account in accounts:
+            protocol = get_protocol_from(account.id_)
+            icon = QIcon(base.get_image_path('%s.png' % protocol))
+            accounts_combo.addItem(icon, get_username_from(account.id_), account.id_)
         icon = QIcon(base.get_image_path('action-conversation.png'))
-        accounts.addItem(icon, 'Broadcast')
+        accounts_combo.addItem(icon, i18n.get('broadcast'))
+
 
         buttons = QHBoxLayout()
-        buttons.addWidget(accounts)
+        buttons.addWidget(accounts_combo)
         buttons.addWidget(upload_button)
         buttons.addWidget(short_button)
         buttons.addStretch(0)

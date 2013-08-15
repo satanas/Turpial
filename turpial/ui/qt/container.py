@@ -114,6 +114,5 @@ class Container(QVBoxLayout):
             self.empty()
         else:
             for column in self.columns.values():
-                print column
                 column._list.update()
                 column._list.repaint()

@@ -5,6 +5,8 @@
 import os
 import sys
 
+from functools import partial
+
 from PyQt4 import QtCore
 from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QImage
@@ -202,14 +204,19 @@ class Main(Base, QWidget):
                 name = "%s (%s)" % (account.username, i18n.get(account.protocol_id))
                 account_menu = QAction(name, self)
 
-                available_columns_menu = QMenu(self)
-                for column in available_columns[account.id_]:
-                    print column.id_
-                    item = QAction(column.slug, self)
-                    item.triggered.connect(lambda: self.__add_column(str(column.id_)))
-                    available_columns_menu.addAction(item)
+                if len(available_columns[account.id_]) > 0:
+                    available_columns_menu = QMenu(self)
+                    for column in available_columns[account.id_]:
+                        # FIXME: Handle lists
+                        if column.__class__.__name__ == 'List':
+                            continue
+                        item = QAction(column.slug, self)
+                        item.triggered.connect(partial(self.__add_column, column.id_))
+                        available_columns_menu.addAction(item)
 
-                account_menu.setMenu(available_columns_menu)
+                    account_menu.setMenu(available_columns_menu)
+                else:
+                    account_menu.setEnabled(False)
                 self.columns_menu.addAction(account_menu)
 
         self.columns_menu.exec_(point)

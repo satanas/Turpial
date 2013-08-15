@@ -147,7 +147,7 @@ class Base(Singleton):
         self.after_save_column(reg_column_id)
 
     def delete_column(self, column_id):
-        #deleted_column = self.core.unregister_column(column_id)
+        deleted_column = self.core.unregister_column(column_id)
         self.after_delete_column(column_id)
 
     #def start(self):

@@ -261,6 +261,9 @@ class Main(Base, QWidget):
         if count > 0:
             self._container.update_column(column.id_, arg)
 
+    def after_update_status(self, account_id):
+        self.update_box.done()
+
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------

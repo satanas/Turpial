@@ -16,6 +16,7 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 from PyQt4.QtCore import Qt
 
 from turpial.ui.lang import i18n
+from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.widgets import ImageButton, ToggleButton
 
 from libturpial.common import get_username_from, get_protocol_from
@@ -26,6 +27,7 @@ class UpdateBox(QWidget):
     def __init__(self, base):
         QWidget.__init__(self)
         self.base = base
+        self.showed = False
         self.setWindowTitle(i18n.get('whats_happening'))
         self.setFixedSize(500, 120)
         #self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
@@ -36,9 +38,9 @@ class UpdateBox(QWidget):
         self.text_edit = CompletionTextEdit()
         self.text_edit.setCompleter(completer)
 
-        upload_button = ImageButton(base, 'action-upload.png',
+        self.upload_button = ImageButton(base, 'action-upload.png',
                 i18n.get('upload_image'))
-        short_button = ImageButton(base, 'action-shorten.png',
+        self.short_button = ImageButton(base, 'action-shorten.png',
                 i18n.get('short_urls'))
 
         font = QFont()
@@ -60,17 +62,23 @@ class UpdateBox(QWidget):
 
         buttons = QHBoxLayout()
         buttons.addWidget(self.accounts_combo)
-        buttons.addWidget(upload_button)
-        buttons.addWidget(short_button)
+        buttons.addWidget(self.upload_button)
+        buttons.addWidget(self.short_button)
         buttons.addStretch(0)
         buttons.addWidget(self.char_count)
         buttons.addWidget(self.update_button)
+
+        self.loader = BarLoadIndicator()
+        self.loader.setVisible(False)
+
+        self.error_message = QLabel()
 
         self.update_button.clicked.connect(self.__update_status)
         self.text_edit.textChanged.connect(self.__update_count)
 
         layout = QVBoxLayout()
         layout.addWidget(self.text_edit, 1)
+        layout.addWidget(self.loader)
         layout.addLayout(buttons)
         layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(layout)
@@ -95,14 +103,39 @@ class UpdateBox(QWidget):
         account_id = str(self.accounts_combo.itemData(index).toPyObject())
         message = self.text_edit.toPlainText()
 
-        if message == '':
-            self.message.set_error_text(i18n.get('you_must_write_something'))
+        if len(message) == 0:
+            print i18n.get('you_can_not_submit_an_empty_message')
             return
 
-        if len(message) > MAX_CHAR:
-            self.message.set_error_text(i18n.get('message_looks_like_testament'))
-            return
+        #if len(message) > MAX_CHAR:
+        #    self.message.set_error_text(i18n.get('message_looks_like_testament'))
+        #    return
+        self.enable(False)
+        self.base.update_status(account_id, message)
 
+    def __clear(self):
+        self.text_edit.setText('')
+        self.accounts_combo.setIndex(0)
+
+    def __reset(self):
+        pass
+
+    def closeEvent(self, event):
+        event.ignore()
+        self.hide()
+
+    def enable(self, value):
+        self.text_edit.setEnabled(value)
+        self.accounts_combo.setEnabled(value)
+        self.upload_button.setEnabled(value)
+        self.short_button.setEnabled(value)
+        self.update_button.setEnabled(value)
+        self.loader.setVisible(not value)
+
+    def done(self):
+        self.__clear()
+        self.__reset()
+        self.hide()
 
 class CompletionTextEdit(QTextEdit):
     IGNORED_KEYS = (

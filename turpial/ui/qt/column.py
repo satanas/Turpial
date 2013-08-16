@@ -19,7 +19,6 @@ from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QListView
-from PyQt4.QtGui import QProgressBar
 from PyQt4.QtGui import QTextDocument
 from PyQt4.QtGui import QStandardItem
 from PyQt4.QtGui import QAbstractItemView
@@ -29,6 +28,7 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton
+from turpial.ui.qt.loader import BarLoadIndicator
 
 from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from,\
         get_username_from
@@ -67,11 +67,7 @@ class StatusesColumn(QWidget):
         header.addWidget(caption, 1)
         header.addWidget(close_button)
 
-        self.loader = QProgressBar()
-        self.loader.setMinimum(0)
-        self.loader.setMaximum(0)
-        self.loader.setMaximumHeight(6)
-        self.loader.setTextVisible(False)
+        self.loader = BarLoadIndicator()
         self.loader.setVisible(False)
 
         self._list = QListView()

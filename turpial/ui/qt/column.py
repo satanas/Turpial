@@ -70,27 +70,28 @@ class StatusesColumn(QWidget):
         self.loader = BarLoadIndicator()
         self.loader.setVisible(False)
 
-        self._list = QListView()
-        self._list.setResizeMode(QListView.Adjust)
-        self._list.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.list_ = QListView()
+        self.list_.setResizeMode(QListView.Adjust)
+        self.list_.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.list_.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(header)
         layout.addWidget(self.loader)
-        layout.addWidget(self._list)
+        layout.addWidget(self.list_)
 
         self.setLayout(layout)
 
         model = QStandardItemModel()
-        self._list.setModel(model)
+        self.list_.setModel(model)
 
         status_delegate = StatusDelegate(base)
-        self._list.setItemDelegate(status_delegate)
+        self.list_.setItemDelegate(status_delegate)
 
     def __delete_column(self):
-        self.base.worker.delete_column(self.column_id)
+        self.base.core.delete_column(self.column_id)
 
     def start_updating(self):
         self.loader.setVisible(True)
@@ -99,7 +100,7 @@ class StatusesColumn(QWidget):
         self.loader.setVisible(False)
 
     def update_statuses(self, statuses):
-        model = self._list.model()
+        model = self.list_.model()
         for status in statuses:
             filepath = os.path.join(self.base.images_path, 'unknown.png')
             timestamp = self.base.humanize_timestamp(status.timestamp)

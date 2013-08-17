@@ -224,7 +224,7 @@ class StatusDelegate(QStyledItemDelegate):
         marks_margin = 0
         # Favorite mark
         if index.data(self.FavoritedRole).toPyObject():
-            x = cell_width - 8 - self.BOX_MARGIN
+            x = cell_width - 16 - self.BOX_MARGIN
             y = option.rect.top() + self.BOX_MARGIN
             rect = QRect(x, y, 16, 16)
             painter.drawPixmap(rect, self.favorite_icon)
@@ -232,7 +232,7 @@ class StatusDelegate(QStyledItemDelegate):
 
         # Draw reposted icon
         if index.data(self.RepeatedRole).toPyObject():
-            x = cell_width -8 - self.BOX_MARGIN - marks_margin
+            x = cell_width - 16 - self.BOX_MARGIN - marks_margin
             y = option.rect.top() + self.BOX_MARGIN
             rect = QRect(x, y, 16, 16)
             painter.drawPixmap(rect, self.repeated_icon)
@@ -296,7 +296,7 @@ class StatusDelegate(QStyledItemDelegate):
         timestamp.setHtml("<span style='color: #999;'>%s</span>" % datetime)
         timestamp.setDefaultFont(FOOTER_FONT)
         timestamp.setTextWidth(self.__calculate_text_width(cell_width))
-        x = self.size.width() - timestamp.idealWidth() - 15 - self.BOX_MARGIN
+        x = self.size.width() - timestamp.idealWidth() - 20 - self.BOX_MARGIN
         painter.translate(x, 0)
         timestamp.drawContents(painter)
 

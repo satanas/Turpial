@@ -25,9 +25,9 @@ from turpial import DESC
 from turpial.ui.base import *
 
 from turpial.ui.qt.dock import Dock
-from turpial.ui.qt.worker import Worker
 from turpial.ui.qt.tray import TrayIcon
 from turpial.ui.qt.update import UpdateBox
+from turpial.ui.qt.worker import CoreWorker
 from turpial.ui.qt.search import SearchDialog
 from turpial.ui.qt.container import Container
 from turpial.ui.qt.profile import ProfileDialog
@@ -63,15 +63,15 @@ class Main(Base, QWidget):
         self.tray = TrayIcon(self)
         self.tray.activated.connect(self.__on_tray_click)
 
-        self.worker = Worker()
-        self.worker.status_updated.connect(self.after_update_status)
-        self.worker.column_updated.connect(self.after_update_column)
-        self.worker.account_saved.connect(self.after_save_account)
-        self.worker.account_deleted.connect(self.after_delete_account)
-        self.worker.column_saved.connect(self.after_save_column)
-        self.worker.column_deleted.connect(self.after_delete_column)
+        self.core = CoreWorker()
+        self.core.status_updated.connect(self.after_update_status)
+        self.core.column_updated.connect(self.after_update_column)
+        self.core.account_saved.connect(self.after_save_account)
+        self.core.account_deleted.connect(self.after_delete_account)
+        self.core.column_saved.connect(self.after_save_column)
+        self.core.column_deleted.connect(self.after_delete_column)
 
-        self.worker.start()
+        self.core.start()
 
         self._container = Container(self)
 
@@ -97,7 +97,7 @@ class Main(Base, QWidget):
         self.setLayout(layout)
 
     def __add_column(self, column_id):
-        self.worker.save_column(column_id)
+        self.core.save_column(column_id)
 
     #================================================================
     # Tray icon
@@ -149,8 +149,8 @@ class Main(Base, QWidget):
         return os.path.join(self.images_path, filename)
 
     def update_container(self):
-        accounts = self.worker.get_registered_accounts()
-        columns = self.worker.get_registered_columns()
+        accounts = self.core.get_registered_accounts()
+        columns = self.core.get_registered_columns()
 
         if len(columns) == 0:
             if len(accounts) == 0:
@@ -172,8 +172,8 @@ class Main(Base, QWidget):
     def show_column_menu(self, point):
         self.columns_menu = QMenu(self)
 
-        available_columns = self.worker.get_available_columns()
-        accounts = self.worker.get_all_accounts()
+        available_columns = self.core.get_available_columns()
+        accounts = self.core.get_all_accounts()
 
         if len(accounts) == 0:
             empty_menu = QAction(i18n.get('no_registered_accounts'), self)
@@ -213,10 +213,10 @@ class Main(Base, QWidget):
         self.update_box.show()
 
     def update_status(self, account_id, message, in_reply_to=None):
-        self.worker.update_status(account_id, message, in_reply_to)
+        self.core.update_status(account_id, message, in_reply_to)
 
     def delete_account(self, account_id):
-        self.worker.delete_account(account_id)
+        self.core.delete_account(account_id)
 
     #================================================================
     # Hooks definitions
@@ -265,5 +265,5 @@ class Main(Base, QWidget):
             return True
 
         last_id = self._container.start_updating(column.id_)
-        self.worker.get_column_statuses(column, last_id)
+        self.core.get_column_statuses(column, last_id)
         return True

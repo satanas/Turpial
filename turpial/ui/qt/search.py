@@ -26,7 +26,7 @@ class SearchDialog(QDialog):
         self.setModal(True)
 
         self.accounts_combo = QComboBox()
-        accounts = self.base.worker.get_registered_accounts()
+        accounts = self.base.core.get_registered_accounts()
         for account in accounts:
             protocol = get_protocol_from(account.id_)
             icon = QIcon(base.get_image_path('%s.png' % protocol))

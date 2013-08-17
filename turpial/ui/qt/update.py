@@ -11,7 +11,8 @@ from PyQt4.QtGui import QTextEdit
 from PyQt4.QtGui import QCompleter
 from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QTextCursor
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
+from PyQt4.QtGui import QVBoxLayout
+from PyQt4.QtGui import QHBoxLayout
 
 from PyQt4.QtCore import Qt
 
@@ -28,7 +29,6 @@ class UpdateBox(QWidget):
         QWidget.__init__(self)
         self.base = base
         self.showed = False
-        self.setWindowTitle(i18n.get('whats_happening'))
         self.setFixedSize(500, 120)
         #self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
 
@@ -52,13 +52,14 @@ class UpdateBox(QWidget):
         self.update_button = QPushButton(i18n.get('update'))
 
         self.accounts_combo = QComboBox()
-        accounts = self.base.worker.get_registered_accounts()
-        for account in accounts:
-            protocol = get_protocol_from(account.id_)
-            icon = QIcon(base.get_image_path('%s.png' % protocol))
-            self.accounts_combo.addItem(icon, get_username_from(account.id_), account.id_)
-        icon = QIcon(base.get_image_path('action-conversation.png'))
-        self.accounts_combo.addItem(icon, i18n.get('broadcast'), 'broadcast')
+        #accounts = self.base.core.get_registered_accounts()
+        #for account in accounts:
+        #    protocol = get_protocol_from(account.id_)
+        #    icon = QIcon(base.get_image_path('%s.png' % protocol))
+        #    self.accounts_combo.addItem(icon, get_username_from(account.id_), account.id_)
+        #if len(accounts) > 1:
+        #    icon = QIcon(base.get_image_path('action-conversation.png'))
+        #    self.accounts_combo.addItem(icon, i18n.get('broadcast'), 'broadcast')
 
         buttons = QHBoxLayout()
         buttons.addWidget(self.accounts_combo)
@@ -119,6 +120,23 @@ class UpdateBox(QWidget):
 
     def __reset(self):
         self.enable(True)
+
+    def __show(self, message=None, account_id=None, reply_id=None, reply_user=None):
+        self.accounts_combo.clear()
+        accounts = self.base.core.get_registered_accounts()
+        for account in accounts:
+            protocol = get_protocol_from(account.id_)
+            icon = QIcon(self.base.get_image_path('%s.png' % protocol))
+            self.accounts_combo.addItem(icon, get_username_from(account.id_), account.id_)
+        if len(accounts) > 1:
+            icon = QIcon(self.base.get_image_path('action-conversation.png'))
+            self.accounts_combo.addItem(icon, i18n.get('broadcast'), 'broadcast')
+
+        QWidget.show(self)
+
+    def show(self):
+        self.setWindowTitle(i18n.get('whats_happening'))
+        self.__show()
 
     def closeEvent(self, event):
         event.ignore()

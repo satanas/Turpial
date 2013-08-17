@@ -11,7 +11,7 @@ from libturpial.api.core import Core
 from libturpial.api.models.column import Column
 from libturpial.common.tools import get_account_id_from, get_column_slug_from
 
-class Worker(QThread):
+class CoreWorker(QThread):
 
     status_updated = pyqtSignal(object, str)
     column_updated = pyqtSignal(object, tuple)

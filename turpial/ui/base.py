@@ -68,7 +68,9 @@ class Base(Singleton):
 
     def humanize_timestamp(self, status_timestamp):
         now = time.time()
-        seconds = now - status_timestamp
+        # FIXME: Workaround to fix the timestamp
+        offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
+        seconds = now - status_timestamp + offset
 
         minutes = seconds / 60.0
         if minutes < 1.0:

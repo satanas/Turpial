@@ -215,6 +215,9 @@ class Main(Base, QWidget):
     def update_status(self, account_id, message, in_reply_to=None):
         self.worker.update_status(account_id, message, in_reply_to)
 
+    def delete_account(self, account_id):
+        self.worker.delete_account(account_id)
+
     #================================================================
     # Hooks definitions
     #================================================================

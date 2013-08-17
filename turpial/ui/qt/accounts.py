@@ -95,7 +95,7 @@ class AccountsDialog(ModalDialog):
     def __update(self):
         model = QStandardItemModel()
         self.list_.setModel(model)
-        accounts = self.base.get_registered_accounts()
+        accounts = self.base.worker.get_registered_accounts()
         for account in accounts:
             item = QStandardItem()
             filepath = os.path.join(self.base.images_path, 'unknown.png')

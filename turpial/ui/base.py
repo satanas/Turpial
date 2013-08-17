@@ -6,6 +6,7 @@
 # Oct 09, 2011
 
 import os
+import pdb
 import sys
 import time
 import base64
@@ -29,9 +30,8 @@ class Base(Singleton):
     ACTION_UNFAVORITE = 'unfavorite'
 
     '''Parent class for every UI interface'''
-    def __init__(self, core):
+    def __init__(self):
         Singleton.__init__(self, 'turpial.pid')
-        self.core = core
 
         self.images_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), '..', 'data', 'pixmaps'))
@@ -107,12 +107,6 @@ class Base(Singleton):
     def get_all_columns(self):
         return self.core.all_columns()
 
-    def get_registered_accounts(self):
-        return self.core.registered_accounts()
-
-    def get_registered_columns(self):
-        return self.core.registered_columns()
-
     def get_available_columns(self):
         return self.core.available_columns()
 
@@ -128,25 +122,6 @@ class Base(Singleton):
     #    }
     #    return color[key]
 
-    def save_account(self, account):
-        account_id = self.core.register_account(account)
-        self.after_save_account(account)
-
-    def delete_account(self, account_id):
-        # FIXME: Implement try/except
-        for col in self.get_registered_columns():
-            if col.account_id == account_id:
-                self.delete_column(col.id_)
-        self.core.unregister_account(str(account_id), True)
-        self.after_delete_account()
-
-    def save_column(self, column_id):
-        reg_column_id = self.core.register_column(column_id)
-        self.after_save_column(reg_column_id)
-
-    def delete_column(self, column_id):
-        deleted_column = self.core.unregister_column(column_id)
-        self.after_delete_column(column_id)
 
     #def open_url(self, url):
     #    browser = self.core.get_default_browser()
@@ -162,9 +137,9 @@ class Base(Singleton):
     #        self.log.debug('Opening URL %s with default browser' % url)
     #        webbrowser.open(url)
 
-    def update_status(self, account_id, message, in_reply_to=None):
-        self.worker.register(self.core.update_status, (account_id,
-            message, in_reply_to), self.after_update_status, account_id)
+    #def update_status(self, account_id, message, in_reply_to=None):
+    #    self.worker.register(self.core.update_status, (account_id,
+    #        message, in_reply_to), self.after_update_status, account_id)
 
     def broadcast_status(self, account_ids, message):
         self.worker.register(self.core.broadcast_status, (account_ids, message),

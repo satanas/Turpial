@@ -52,7 +52,7 @@ class UpdateBox(QWidget):
         self.update_button = QPushButton(i18n.get('update'))
 
         self.accounts_combo = QComboBox()
-        accounts = self.base.get_registered_accounts()
+        accounts = self.base.worker.get_registered_accounts()
         for account in accounts:
             protocol = get_protocol_from(account.id_)
             icon = QIcon(base.get_image_path('%s.png' % protocol))
@@ -101,7 +101,7 @@ class UpdateBox(QWidget):
     def __update_status(self):
         index = self.accounts_combo.currentIndex()
         account_id = str(self.accounts_combo.itemData(index).toPyObject())
-        message = self.text_edit.toPlainText()
+        message = unicode(self.text_edit.toPlainText())
 
         if len(message) == 0:
             print i18n.get('you_can_not_submit_an_empty_message')
@@ -115,10 +115,10 @@ class UpdateBox(QWidget):
 
     def __clear(self):
         self.text_edit.setText('')
-        self.accounts_combo.setIndex(0)
+        self.accounts_combo.setCurrentIndex(0)
 
     def __reset(self):
-        pass
+        self.enable(True)
 
     def closeEvent(self, event):
         event.ignore()

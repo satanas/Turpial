@@ -63,7 +63,7 @@ class Container(QVBoxLayout):
         self.is_empty = True
 
     def normal(self):
-        columns = self.base.get_registered_columns()
+        columns = self.base.worker.get_registered_columns()
 
         if self.child:
             self.clear_layout(self)

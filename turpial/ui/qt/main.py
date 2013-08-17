@@ -34,20 +34,17 @@ from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 
-from libturpial.api.core import Core
 from libturpial.common import ColumnType
-from libturpial.api.models.column import Column
-from libturpial.common.tools import get_account_id_from, get_column_slug_from
 
 class Main(Base, QWidget):
 
     account_deleted = pyqtSignal()
     account_registered = pyqtSignal()
 
-    def __init__(self, core):
+    def __init__(self):
         self.app = QApplication(sys.argv)
 
-        Base.__init__(self, core)
+        Base.__init__(self)
         QWidget.__init__(self)
         QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/RopaSans-Regular.ttf')
         QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/Monda-Regular.ttf')
@@ -66,15 +63,17 @@ class Main(Base, QWidget):
         self.tray = TrayIcon(self)
         self.tray.activated.connect(self.__on_tray_click)
 
-        self.core = Core()
-
         self.worker = Worker()
+        self.worker.status_updated.connect(self.after_update_status)
+        self.worker.column_updated.connect(self.after_update_column)
+        self.worker.account_saved.connect(self.after_save_account)
+        self.worker.account_deleted.connect(self.after_delete_account)
+        self.worker.column_saved.connect(self.after_save_column)
+        self.worker.column_deleted.connect(self.after_delete_column)
+
         self.worker.start()
 
-        #self.worker.register(self.core.list_accounts, None, self.__test)
-
         self._container = Container(self)
-        #self._container.empty()
 
         self.dock = Dock(self)
         self.dock.empty()
@@ -136,21 +135,6 @@ class Main(Base, QWidget):
         self.show()
         self.update_container()
 
-    def get_registered_columns(self):
-        i = 1
-        columns = []
-        while True:
-            column_num = "column%s" % i
-            column_id = self.core.config.read('Columns', column_num)
-            if column_id:
-                account_id = get_account_id_from(column_id)
-                column_slug = get_column_slug_from(column_id)
-                columns.append(Column(account_id, column_slug))
-                i += 1
-            else:
-                break
-        return columns
-
     #================================================================
     # Main methods
     #================================================================
@@ -165,8 +149,8 @@ class Main(Base, QWidget):
         return os.path.join(self.images_path, filename)
 
     def update_container(self):
-        accounts = self.get_registered_accounts()
-        columns = self.get_registered_columns()
+        accounts = self.worker.get_registered_accounts()
+        columns = self.worker.get_registered_columns()
 
         if len(columns) == 0:
             if len(accounts) == 0:
@@ -228,31 +212,36 @@ class Main(Base, QWidget):
     def show_update_box(self):
         self.update_box.show()
 
+    def update_status(self, account_id, message, in_reply_to=None):
+        self.worker.update_status(account_id, message, in_reply_to)
+
     #================================================================
     # Hooks definitions
     #================================================================
 
-    def after_save_account(self, account):
+    def after_save_account(self, account_id):
         self.account_registered.emit()
 
     def after_delete_account(self):
         self.account_deleted.emit()
 
     def after_delete_column(self, column_id):
+        column_id = str(column_id)
         self._container.remove_column(column_id)
         self.update_container()
         # TODO: Enable timers
         #self.__remove_timer(column_id)
 
     def after_save_column(self, column_id):
+        column_id = str(column_id)
         self._container.add_column(column_id)
         self.update_container()
         # TODO: Enable timers
         #self.download_stream(column)
         #self.__add_timer(column)
 
-    def update_column(self, arg, data):
-        column, notif, max_ = data
+    def after_update_column(self, arg, data):
+        column, max_ = data
 
         # Notifications
         # FIXME
@@ -261,21 +250,17 @@ class Main(Base, QWidget):
         if count > 0:
             self._container.update_column(column.id_, arg)
 
-    def after_update_status(self, account_id):
+    def after_update_status(self, response, account_id):
         self.update_box.done()
 
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
 
-    def download_stream(self, column, notif=True):
+    def download_stream(self, column):
         if self._container.is_updating(column.id_):
             return True
 
         last_id = self._container.start_updating(column.id_)
-        count = self.core.get_max_statuses_per_column()
-
-        self.worker.register(self.core.get_column_statuses, (column.account_id,
-            column.slug, count, last_id), self.update_column,
-            (column, notif, count))
+        self.worker.get_column_statuses(column, last_id)
         return True

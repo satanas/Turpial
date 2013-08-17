@@ -90,7 +90,7 @@ class StatusesColumn(QWidget):
         self._list.setItemDelegate(status_delegate)
 
     def __delete_column(self):
-        self.base.delete_column(self.column_id)
+        self.base.worker.delete_column(self.column_id)
 
     def start_updating(self):
         self.loader.setVisible(True)

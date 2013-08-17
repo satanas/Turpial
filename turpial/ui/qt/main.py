@@ -97,7 +97,7 @@ class Main(Base, QWidget):
         self.setLayout(layout)
 
     def __add_column(self, column_id):
-        self.save_column(column_id)
+        self.worker.save_column(column_id)
 
     #================================================================
     # Tray icon
@@ -172,8 +172,8 @@ class Main(Base, QWidget):
     def show_column_menu(self, point):
         self.columns_menu = QMenu(self)
 
-        available_columns = self.get_available_columns()
-        accounts = self.get_all_accounts()
+        available_columns = self.worker.get_available_columns()
+        accounts = self.worker.get_all_accounts()
 
         if len(accounts) == 0:
             empty_menu = QAction(i18n.get('no_registered_accounts'), self)

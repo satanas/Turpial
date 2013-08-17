@@ -33,6 +33,15 @@ class Worker(QThread):
     # Core methods
     #================================================================
 
+    def get_available_columns(self):
+        return self.core.available_columns()
+
+    def get_all_accounts(self):
+        return self.core.registered_accounts()
+
+    def get_all_columns(self):
+        return self.core.all_columns()
+
     def get_registered_accounts(self):
         return self.core.registered_accounts()
 

@@ -104,19 +104,29 @@ class StatusesColumn(QWidget):
             'mark_favorited': os.path.join(self.base.images_path, 'mark-favorited2.png'),
             'mark_repeated': os.path.join(self.base.images_path, 'mark-repeated2.png'),
             'mark_reposted': os.path.join(self.base.images_path, 'mark-reposted.png'),
-            'mark_verified': os.path.join(self.base.images_path, 'mark-verified.png')
+            'mark_verified': os.path.join(self.base.images_path, 'mark-verified.png'),
+            'action_reply': os.path.join(self.base.images_path, 'action-reply.png'),
+            'action_repeat': os.path.join(self.base.images_path, 'action-repeat.png'),
+            'action_quote': os.path.join(self.base.images_path, 'action-quote.png'),
+            'action_favorite': os.path.join(self.base.images_path, 'action-favorite.png'),
+            'action_reply_shadowed': os.path.join(self.base.images_path, 'action-reply-shadowed.png'),
+            'action_repeat_shadowed': os.path.join(self.base.images_path, 'action-repeat-shadowed.png'),
+            'action_quote_shadowed': os.path.join(self.base.images_path, 'action-quote-shadowed.png'),
+            'action_favorite_shadowed': os.path.join(self.base.images_path, 'action-favorite-shadowed.png'),
         }
         stylesheet = self.__load_template('style.css')
         return stylesheet.render(attrs)
 
     def __link_clicked(self, qurl):
         url = str(qurl.toString())
-        if url.startswith('http:'):
+        if url.startswith('http'):
             self.base.open_url(url)
-        elif url.startswith('hashtag:'):
+        elif url.startswith('hashtag'):
             account_id = url.split(':')[1]
             hashtag = "#%s" % url.split(':')[2]
             self.base.add_search_column(account_id, hashtag)
+        elif url.startswith('cmd'):
+            print url
 
     def start_updating(self):
         self.loader.setVisible(True)
@@ -154,7 +164,10 @@ class StatusesColumn(QWidget):
                 in_reply_to = "%s %s" % (i18n.get('in_reply_to'), status.in_reply_to_user)
 
             attrs = {'status': status, 'message': message, 'repeated_by': repeated_by,
-                    'timestamp': timestamp, 'in_reply_to': in_reply_to}
+                    'timestamp': timestamp, 'in_reply_to': in_reply_to, 'reply': i18n.get('reply'),
+                    'quote': i18n.get('quote'), 'retweet': i18n.get('retweet'),
+                    'mark_as_favorite': i18n.get('mark_as_favorite'),}
+
             content += status_template.render(attrs)
 
         html = self.__load_template('column.html')

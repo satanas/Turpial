@@ -14,6 +14,8 @@
                 <div class='username'>{{ status.username }}</div>
                 {% endif %}
 
+                <div class='timestamp'>{{ timestamp }}</div>
+
                 {% if status.is_favorite %}
                 <div class='favorited'></div>
                 {% endif %}
@@ -36,8 +38,25 @@
             <div class='clearfix'></div>
             <div class='reposted'><div>{{ repeated_by }}</div></div>
             {% endif %}
-            <div class='timestamp'>{{ timestamp }}</div>
+            <div class='buttons'>
+                <a href="cmd:reply:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
+                <a href="cmd:repeat:{{ status.id_ }}" title="{{ retweet }}"><div class="action_repeat"></div></a>
+                <a href="cmd:quote:{{ status.id_ }}" title="{{ quote }}"><div class="action_quote"></div></a>
+                <a href="cmd:favorite:{{ status.id_ }}" title="{{ mark_as_favorite }}"><div class="action_favorite"></div></a>
+            </div>
             <div class='clearfix'></div>
         </td>
     </tr>
+
+    <!-- Buttons -->
+    <!--
+    <tr>
+        <td colspan='2' class='buttons'>
+            <a href="cmd:reply:{{ status.id_ }}"><div class="action_reply"></div></a>
+            <a href="cmd:repeat:{{ status.id_ }}"><div class="action_repeat"></div></a>
+            <a href="cmd:quote:{{ status.id_ }}"><div class="action_quote"></div></a>
+            <a href="cmd:favorite:{{ status.id_ }}"><div class="action_favorite"></div></a>
+        </td>
+    </tr>
+    -->
 </table>

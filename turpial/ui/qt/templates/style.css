@@ -7,14 +7,26 @@
     outline: none;
 }
 
+body {
+    background-color: #b4bbc1;
+}
+
 table {
     width: 100%;
     border-bottom: 1px solid #ddd;
+    border-collapse: collapse;
+    /*margin-bottom: 2px;*/
+    background-color: #fff;
+}
+
+table tr {
+    background-color: #fff;
 }
 
 table td {
     text-align: left;
     vertical-align: top;
+    background-color: #fff;
 }
 
 .avatar-row {
@@ -41,8 +53,11 @@ table td {
 .username, .username_protected {
     float: left;
     font-family: 'Oxygen', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .username_protected {
@@ -66,11 +81,11 @@ table td {
 
 .message {
     font-family: 'Pontano Sans', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     word-break: break-word;
 }
 
-.footer {
+.footer, .timestamp {
     font-family: 'Pontano Sans', sans-serif;
     font-size: 12px;
     color: #999;
@@ -81,21 +96,82 @@ table td {
     float: left;
     padding-left: 18px;
     background: url("file://{{ mark_reposted }}") no-repeat;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .in_reply_to {
     margin-left: 4px;
     float: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .timestamp {
     float: right;
     margin-right: 5px;
+    margin-left: 10px;
 }
 
 .entity, a {
     color: #f5861c;
     text-decoration: none;
+}
+
+.buttons {
+    float: right;
+    height: 24px;
+    /*background-color: #f0f4f7;*/
+    padding-right: 4px;
+    vertical-align: middle;
+}
+
+.buttons a {
+    display: block;
+    float: right;
+    margin-left: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.action_reply {
+    width: 20px;
+    height: 20px;
+    background: url("file://{{ action_reply_shadowed }}") no-repeat;
+}
+
+.action_repeat {
+    width: 20px;
+    height: 20px;
+    background: url("file://{{ action_repeat_shadowed }}") no-repeat;
+}
+
+.action_quote {
+    width: 20px;
+    height: 20px;
+    background: url("file://{{ action_quote_shadowed }}") no-repeat;
+}
+
+.action_favorite {
+    width: 20px;
+    height: 20px;
+    background: url("file://{{ action_favorite_shadowed }}") no-repeat;
+}
+
+.action_reply:hover {
+    background: url("file://{{ action_reply }}") no-repeat;
+}
+
+.action_repeat:hover {
+    background: url("file://{{ action_repeat }}") no-repeat;
+}
+
+.action_quote:hover {
+    background: url("file://{{ action_quote }}") no-repeat;
+}
+
+.action_favorite:hover {
+    background: url("file://{{ action_favorite }}") no-repeat;
 }
 
 .clearfix:before, .clearfix:after {

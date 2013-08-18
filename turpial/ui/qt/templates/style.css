@@ -67,6 +67,7 @@ table td {
 .message {
     font-family: 'Pontano Sans', sans-serif;
     font-size: 13px;
+    word-break: break-word;
 }
 
 .footer {

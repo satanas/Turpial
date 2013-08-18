@@ -49,11 +49,9 @@ class Main(Base, QWidget):
         QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/RopaSans-Regular.ttf')
         QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/Monda-Regular.ttf')
         path = os.path.join(os.path.dirname(__file__), '../../data/fonts/Cicle_Gordita.ttf')
-        id_ = QFontDatabase.addApplicationFont(path)
-        path = os.path.join(os.path.dirname(__file__), '../../data/fonts/Aaargh.ttf.ttf')
-        id_ = QFontDatabase.addApplicationFont(path)
-        #QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/RopaSans-Regular.ttf')
-        #QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/Monda-Regular.ttf')
+
+        self.templates_path = os.path.realpath(os.path.join(
+            os.path.dirname(__file__), 'templates'))
 
         self.setWindowTitle('Turpial')
         self.ignore_quit = True

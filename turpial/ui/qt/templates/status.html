@@ -1,0 +1,43 @@
+<table class='status'>
+    <tr>
+        <td class='avatar-row'>
+            <img class='avatar' src='{{ status.avatar }}' />
+            {% if status.is_verified %}
+            <div class='verified'></div>
+            {% endif %}
+        </td>
+        <td class='content'>
+            <div class='user-info'>
+                {% if status.is_protected %}
+                <div class='username_protected'>{{ status.username }}</div>
+                {% else %}
+                <div class='username'>{{ status.username }}</div>
+                {% endif %}
+
+                {% if status.is_favorite %}
+                <div class='favorited'></div>
+                {% endif %}
+
+                {% if status.repeated %}
+                <div class='repeated'></div>
+                {% endif %}
+
+                <div class='clearfix'></div>
+            </div>
+            <div class='message'>{{ message }}</div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan='2' class='footer'>
+            {% if in_reply_to %}
+            <div class='in_reply_to'>{{ in_reply_to }}</div>
+            <div class='clearfix'></div>
+            {% endif %}
+            {% if repeated_by %}
+            <div class='reposted'><div>{{ repeated_by }}</div></div>
+            {% endif %}
+            <div class='timestamp'>{{ timestamp }}</div>
+            <div class='clearfix'></div>
+        </td>
+    </tr>
+</table>

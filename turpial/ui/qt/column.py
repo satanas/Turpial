@@ -4,6 +4,8 @@
 
 import os
 
+from jinja2 import Template
+
 #from PyQt4 import QtCore
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QSize
@@ -26,17 +28,15 @@ from PyQt4.QtGui import QStandardItemModel
 from PyQt4.QtGui import QStyledItemDelegate
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
+from PyQt4.QtWebKit import QWebView
+from PyQt4.QtWebKit import QWebPage
+
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton
 from turpial.ui.qt.loader import BarLoadIndicator
 
 from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from,\
         get_username_from
-
-FULLNAME_FONT = QFont("Helvetica", 13)
-USERNAME_FONT = QFont("Helvetica", 11)
-FOOTER_FONT = QFont("Helvetica", 11)
-
 
 class StatusesColumn(QWidget):
     def __init__(self, base, column_id):
@@ -70,10 +70,15 @@ class StatusesColumn(QWidget):
         self.loader = BarLoadIndicator()
         self.loader.setVisible(False)
 
-        self.list_ = QListView()
-        self.list_.setResizeMode(QListView.Adjust)
-        self.list_.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
-        self.list_.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        #self.list_ = QListView()
+        #self.list_.setResizeMode(QListView.Adjust)
+        #self.list_.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        #self.list_.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.list_ = QWebView()
+        self.list_.linkClicked.connect(self.__link_clicked)
+        page = self.list_.page()
+        page.setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.list_.setPage(page)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)
@@ -84,14 +89,37 @@ class StatusesColumn(QWidget):
 
         self.setLayout(layout)
 
-        model = QStandardItemModel()
-        self.list_.setModel(model)
+        self.stylesheet = self.__load_stylesheet()
 
-        status_delegate = StatusDelegate(base)
-        self.list_.setItemDelegate(status_delegate)
+        #model = QStandardItemModel()
+        #self.list_.setModel(model)
+
+        #status_delegate = StatusDelegate(base)
+        #self.list_.setItemDelegate(status_delegate)
 
     def __delete_column(self):
         self.base.core.delete_column(self.column_id)
+
+    def __load_template(self, name):
+        path = os.path.join(self.base.templates_path, name)
+        fd = open(path)
+        content = fd.read()
+        fd.close()
+        return Template(content)
+
+    def __load_stylesheet(self):
+        attrs = {
+            'mark_protected': os.path.join(self.base.images_path, 'mark-protected.png'),
+            'mark_favorited': os.path.join(self.base.images_path, 'mark-favorited2.png'),
+            'mark_repeated': os.path.join(self.base.images_path, 'mark-repeated2.png'),
+            'mark_reposted': os.path.join(self.base.images_path, 'mark-reposted.png'),
+            'mark_verified': os.path.join(self.base.images_path, 'mark-verified.png')
+        }
+        stylesheet = self.__load_template('style.css')
+        return stylesheet.render(attrs)
+
+    def __link_clicked(self, url):
+        print url
 
     def start_updating(self):
         self.loader.setVisible(True)
@@ -100,27 +128,66 @@ class StatusesColumn(QWidget):
         self.loader.setVisible(False)
 
     def update_statuses(self, statuses):
-        model = self.list_.model()
+        content = ""
+        status_template = self.__load_template('status.html')
         for status in statuses:
-            filepath = os.path.join(self.base.images_path, 'unknown.png')
+            repeated_by = None
+            in_reply_to = None
+            message = status.text
             timestamp = self.base.humanize_timestamp(status.timestamp)
+
+            if status.entities:
+                # Highlight URLs
+                for url in status.entities['urls']:
+                    pretty_url = "<a href='%s'>%s</a>" % (url.url, url.display_text)
+                    message = message.replace(url.search_for, pretty_url)
+                # Highlight hashtags
+                for hashtag in status.entities['hashtags']:
+                    pretty_hashtag = "<a href='hashtag:%s'>%s</a>" % (hashtag.display_text[1:], hashtag.display_text)
+                    message = message.replace(hashtag.search_for, pretty_hashtag)
+                # Highlight mentions
+                for mention in status.entities['mentions']:
+                    pretty_mention = "<a href='profile:%s'>%s</a>" % (mention.url, mention.display_text)
+                    message = message.replace(mention.search_for, pretty_mention)
+
             if status.repeated_by:
                 repeated_by = "%s %s" % (i18n.get('retweeted_by'), status.repeated_by)
-            else:
-                repeated_by = None
+            if status.in_reply_to_id:
+                in_reply_to = "%s %s" % (i18n.get('in_reply_to'), status.in_reply_to_user)
 
-            item = QStandardItem()
-            item.setData(status.text, StatusDelegate.MessageRole)
-            item.setData(filepath, StatusDelegate.AvatarRole)
-            item.setData('', StatusDelegate.UsernameRole)
-            item.setData(status.username, StatusDelegate.FullnameRole)
-            item.setData(repeated_by, StatusDelegate.RepostedRole)
-            item.setData(status.protected, StatusDelegate.ProtectedRole)
-            item.setData(status.verified, StatusDelegate.VerifiedRole)
-            item.setData(status.favorited, StatusDelegate.FavoritedRole)
-            item.setData(status.repeated, StatusDelegate.RepeatedRole)
-            item.setData(timestamp, StatusDelegate.DateRole)
-            model.appendRow(item)
+            attrs = {'status': status, 'message': message, 'repeated_by': repeated_by,
+                    'timestamp': timestamp, 'in_reply_to': in_reply_to}
+            content += status_template.render(attrs)
+
+        html = self.__load_template('column.html')
+        args = {'stylesheet': self.stylesheet, 'content': content}
+        page = html.render(args)
+
+        self.list_.setHtml(page)
+
+        #model = self.list_.model()
+        #for status in statuses:
+        #    filepath = os.path.join(self.base.images_path, 'unknown.png')
+        #    timestamp = self.base.humanize_timestamp(status.timestamp)
+        #    if status.repeated_by:
+        #        repeated_by = "%s %s" % (i18n.get('retweeted_by'), status.repeated_by)
+        #    else:
+        #        repeated_by = None
+
+        #    item = QStandardItem()
+        #    item.setData(status.text, StatusDelegate.MessageRole)
+        #    item.setData(filepath, StatusDelegate.AvatarRole)
+        #    item.setData('', StatusDelegate.UsernameRole)
+        #    item.setData(status.username, StatusDelegate.FullnameRole)
+        #    item.setData(repeated_by, StatusDelegate.RepostedRole)
+        #    item.setData(status.protected, StatusDelegate.ProtectedRole)
+        #    item.setData(status.verified, StatusDelegate.VerifiedRole)
+        #    item.setData(status.favorited, StatusDelegate.FavoritedRole)
+        #    item.setData(status.repeated, StatusDelegate.RepeatedRole)
+        #    item.setData(timestamp, StatusDelegate.DateRole)
+        #    if status.entities:
+        #        item.setData(status.entities['urls'], StatusDelegate.URLsEntitiesRole)
+        #    model.appendRow(item)
 
 
 class StatusDelegate(QStyledItemDelegate):
@@ -134,6 +201,7 @@ class StatusDelegate(QStyledItemDelegate):
     FavoritedRole = Qt.UserRole + 107
     RepeatedRole = Qt.UserRole + 108
     VerifiedRole = Qt.UserRole + 109
+    URLsEntitiesRole = Qt.UserRole + 110
 
     AVATAR_SIZE = 48
     BOX_MARGIN = 2
@@ -164,7 +232,11 @@ class StatusDelegate(QStyledItemDelegate):
         return doc
 
     def __render_status_message(self, width, index):
-        message = index.data(self.MessageRole).toPyObject()
+        message = unicode(index.data(self.MessageRole).toPyObject())
+        urls = index.data(self.URLsEntitiesRole).toPyObject()
+        for url in urls:
+            pretty_url = "<a href='%s'>%s</a>" % (url.url, url.display_text)
+            message = message.replace(url.search_for, pretty_url)
         doc = QTextDocument()
         doc.setHtml(message)
         doc.setTextWidth(self.__calculate_text_width(width))

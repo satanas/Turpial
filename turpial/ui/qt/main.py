@@ -94,9 +94,6 @@ class Main(Base, QWidget):
 
         self.setLayout(layout)
 
-    def __add_column(self, column_id):
-        self.core.save_column(column_id)
-
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
 
@@ -147,6 +144,13 @@ class Main(Base, QWidget):
     #================================================================
     # Main methods
     #================================================================
+
+    def add_column(self, column_id):
+        self.core.save_column(column_id)
+
+    def add_search_column(self, account_id, criteria):
+        column_id = "%s-%s:%s" % (account_id, ColumnType.SEARCH, urllib2.quote(criteria))
+        self.add_column(column_id)
 
     def open_url(self, url):
         if is_preview_service_supported(url):
@@ -210,7 +214,7 @@ class Main(Base, QWidget):
                         if column.__class__.__name__ == 'List':
                             continue
                         item = QAction(column.slug, self)
-                        item.triggered.connect(partial(self.__add_column, column.id_))
+                        item.triggered.connect(partial(self.add_column, column.id_))
                         available_columns_menu.addAction(item)
 
                     account_menu.setMenu(available_columns_menu)
@@ -225,8 +229,7 @@ class Main(Base, QWidget):
         if search.result() == QDialog.Accepted:
             account_id = str(search.get_account().toPyObject())
             criteria = str(search.get_criteria())
-            column_id = "%s-%s:%s" % (account_id, ColumnType.SEARCH, urllib2.quote(criteria))
-            self.__add_column(column_id)
+            self.add_search_column(account_id, criteria)
 
     def show_update_box(self):
         self.update_box.show()

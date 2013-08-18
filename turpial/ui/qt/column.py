@@ -113,6 +113,10 @@ class StatusesColumn(QWidget):
         url = str(qurl.toString())
         if url.startswith('http:'):
             self.base.open_url(url)
+        elif url.startswith('hashtag:'):
+            account_id = url.split(':')[1]
+            hashtag = "#%s" % url.split(':')[2]
+            self.base.add_search_column(account_id, hashtag)
 
     def start_updating(self):
         self.loader.setVisible(True)
@@ -136,7 +140,8 @@ class StatusesColumn(QWidget):
                     message = message.replace(url.search_for, pretty_url)
                 # Highlight hashtags
                 for hashtag in status.entities['hashtags']:
-                    pretty_hashtag = "<a href='hashtag:%s'>%s</a>" % (hashtag.display_text[1:], hashtag.display_text)
+                    pretty_hashtag = "<a href='hashtag:%s:%s'>%s</a>" % (hashtag.account_id,
+                            hashtag.display_text[1:], hashtag.display_text)
                     message = message.replace(hashtag.search_for, pretty_hashtag)
                 # Highlight mentions
                 for mention in status.entities['mentions']:

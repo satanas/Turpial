@@ -122,10 +122,12 @@ class UpdateBox(QWidget):
         self.in_reply_to_id = None
         self.in_reply_to_user = None
         self.message = None
+        self.cursor_position = None
         self.text_edit.setText('')
         self.accounts_combo.setCurrentIndex(0)
+        self.enable(True)
 
-    def __show(self, message=None):
+    def __show(self):
         self.accounts_combo.clear()
         accounts = self.base.core.get_registered_accounts()
         for account in accounts:
@@ -143,7 +145,7 @@ class UpdateBox(QWidget):
         if self.message:
             self.text_edit.setText(self.message)
             cursor = self.text_edit.textCursor()
-            cursor.movePosition(QTextCursor.End, QTextCursor.MoveAnchor)
+            cursor.movePosition(self.cursor_position, QTextCursor.MoveAnchor)
             self.text_edit.setTextCursor(cursor)
 
         QWidget.show(self)
@@ -153,15 +155,26 @@ class UpdateBox(QWidget):
         self.__show()
 
     def show_for_reply(self, account_id, status):
-        self.setWindowTitle(i18n.get('whats_happening'))
+        title = "%s @%s" % (i18n.get('reply_to'), status.username)
+        self.setWindowTitle(title)
         self.account_id = account_id
         self.in_reply_to_id = status.id_
         self.in_reply_to_user = status.username
-        self.message = "@%s " % status.username
+        mentions = ' '.join(["@%s" % user for user in status.get_mentions()])
+        self.message = "%s " % mentions
+        self.cursor_position = QTextCursor.End
+        self.__show()
+
+    def show_for_quote(self, account_id, status):
+        self.setWindowTitle(i18n.get('quoting'))
+        self.account_id = account_id
+        self.message = " RT @%s %s" % (status.username, status.text)
+        self.cursor_position = QTextCursor.Start
         self.__show()
 
     def closeEvent(self, event):
         event.ignore()
+        self.__clear()
         self.hide()
 
     def enable(self, value):
@@ -174,7 +187,6 @@ class UpdateBox(QWidget):
 
     def done(self):
         self.__clear()
-        self.enable(True)
         self.hide()
 
 class CompletionTextEdit(QTextEdit):

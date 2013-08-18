@@ -128,10 +128,17 @@ class StatusesColumn(QWidget):
             self.base.add_search_column(account_id, hashtag)
         elif url.startswith('cmd'):
             status = self.statuses[url.split(':')[2]]
-            self.__reply_status(status)
+            cmd = url.split(':')[1]
+            if cmd == 'reply':
+                self.__reply_status(status)
+            elif cmd == 'quote':
+                self.__quote_status(status)
 
     def __reply_status(self, status):
         self.base.show_update_box_for_reply(self.account_id, status)
+
+    def __quote_status(self, status):
+        self.base.show_update_box_for_quote(self.account_id, status)
 
     def start_updating(self):
         self.loader.setVisible(True)

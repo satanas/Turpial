@@ -237,6 +237,9 @@ class Main(Base, QWidget):
     def show_update_box_for_reply(self, account_id, status):
         self.update_box.show_for_reply(account_id, status)
 
+    def show_update_box_for_quote(self, account_id, status):
+        self.update_box.show_for_quote(account_id, status)
+
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.core.update_status(account_id, message, in_reply_to_id)
 

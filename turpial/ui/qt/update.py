@@ -84,6 +84,8 @@ class UpdateBox(QWidget):
         layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(layout)
 
+        self.__clear()
+
 
     def __count_chars(self):
         message = self.text_edit.toPlainText()
@@ -112,16 +114,18 @@ class UpdateBox(QWidget):
         #    self.message.set_error_text(i18n.get('message_looks_like_testament'))
         #    return
         self.enable(False)
-        self.base.update_status(account_id, message)
+
+        self.base.update_status(account_id, message, self.in_reply_to_id)
 
     def __clear(self):
+        self.account_id = None
+        self.in_reply_to_id = None
+        self.in_reply_to_user = None
+        self.message = None
         self.text_edit.setText('')
         self.accounts_combo.setCurrentIndex(0)
 
-    def __reset(self):
-        self.enable(True)
-
-    def __show(self, message=None, account_id=None, reply_id=None, reply_user=None):
+    def __show(self, message=None):
         self.accounts_combo.clear()
         accounts = self.base.core.get_registered_accounts()
         for account in accounts:
@@ -131,11 +135,29 @@ class UpdateBox(QWidget):
         if len(accounts) > 1:
             icon = QIcon(self.base.get_image_path('action-conversation.png'))
             self.accounts_combo.addItem(icon, i18n.get('broadcast'), 'broadcast')
+        if self.account_id:
+            index = self.accounts_combo.findData(self.account_id)
+            if index >= 0:
+                self.accounts_combo.setCurrentIndex(index)
+                self.accounts_combo.setEnabled(False)
+        if self.message:
+            self.text_edit.setText(self.message)
+            cursor = self.text_edit.textCursor()
+            cursor.movePosition(QTextCursor.End, QTextCursor.MoveAnchor)
+            self.text_edit.setTextCursor(cursor)
 
         QWidget.show(self)
 
     def show(self):
         self.setWindowTitle(i18n.get('whats_happening'))
+        self.__show()
+
+    def show_for_reply(self, account_id, status):
+        self.setWindowTitle(i18n.get('whats_happening'))
+        self.account_id = account_id
+        self.in_reply_to_id = status.id_
+        self.in_reply_to_user = status.username
+        self.message = "@%s " % status.username
         self.__show()
 
     def closeEvent(self, event):
@@ -152,7 +174,7 @@ class UpdateBox(QWidget):
 
     def done(self):
         self.__clear()
-        self.__reset()
+        self.enable(True)
         self.hide()
 
 class CompletionTextEdit(QTextEdit):

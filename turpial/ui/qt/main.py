@@ -234,8 +234,11 @@ class Main(Base, QWidget):
     def show_update_box(self):
         self.update_box.show()
 
-    def update_status(self, account_id, message, in_reply_to=None):
-        self.core.update_status(account_id, message, in_reply_to)
+    def show_update_box_for_reply(self, account_id, status):
+        self.update_box.show_for_reply(account_id, status)
+
+    def update_status(self, account_id, message, in_reply_to_id=None):
+        self.core.update_status(account_id, message, in_reply_to_id)
 
     def delete_account(self, account_id):
         self.core.delete_account(account_id)

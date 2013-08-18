@@ -47,13 +47,13 @@ class StatusesColumn(QWidget):
         self.statuses = {}
         #self.updating = False
 
-        account_id = get_account_id_from(column_id)
-        username = get_username_from(account_id)
+        self.account_id = get_account_id_from(column_id)
+        username = get_username_from(self.account_id)
         column_slug = get_column_slug_from(column_id)
-        protocol_id = get_protocol_from(account_id)
+        self.protocol_id = get_protocol_from(self.account_id)
 
         icon = QLabel()
-        protocol_img = "%s.png" % protocol_id
+        protocol_img = "%s.png" % self.protocol_id
         icon.setPixmap(base.load_image(protocol_img, True))
 
         label = "%s :: %s" % (username, column_slug)
@@ -127,9 +127,11 @@ class StatusesColumn(QWidget):
             hashtag = "#%s" % url.split(':')[2]
             self.base.add_search_column(account_id, hashtag)
         elif url.startswith('cmd'):
-            print url
-            status_id = url.split(':')[2]
-            print self.statuses[status_id].text
+            status = self.statuses[url.split(':')[2]]
+            self.__reply_status(status)
+
+    def __reply_status(self, status):
+        self.base.show_update_box_for_reply(self.account_id, status)
 
     def start_updating(self):
         self.loader.setVisible(True)

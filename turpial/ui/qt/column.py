@@ -44,6 +44,7 @@ class StatusesColumn(QWidget):
         self.base = base
         self.setMinimumWidth(280)
         self.column_id = column_id
+        self.statuses = {}
         #self.updating = False
 
         account_id = get_account_id_from(column_id)
@@ -127,6 +128,8 @@ class StatusesColumn(QWidget):
             self.base.add_search_column(account_id, hashtag)
         elif url.startswith('cmd'):
             print url
+            status_id = url.split(':')[2]
+            print self.statuses[status_id].text
 
     def start_updating(self):
         self.loader.setVisible(True)
@@ -136,11 +139,14 @@ class StatusesColumn(QWidget):
 
     def update_statuses(self, statuses):
         content = ""
+        self.statuses = {}
         status_template = self.__load_template('status.html')
+
         for status in statuses:
             repeated_by = None
             in_reply_to = None
             message = status.text
+            self.statuses[status.id_] = status
             timestamp = self.base.humanize_timestamp(status.timestamp)
 
             if status.entities:

@@ -70,10 +70,6 @@ class StatusesColumn(QWidget):
         self.loader = BarLoadIndicator()
         self.loader.setVisible(False)
 
-        #self.list_ = QListView()
-        #self.list_.setResizeMode(QListView.Adjust)
-        #self.list_.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
-        #self.list_.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.list_ = QWebView()
         self.list_.linkClicked.connect(self.__link_clicked)
         page = self.list_.page()
@@ -91,11 +87,6 @@ class StatusesColumn(QWidget):
 
         self.stylesheet = self.__load_stylesheet()
 
-        #model = QStandardItemModel()
-        #self.list_.setModel(model)
-
-        #status_delegate = StatusDelegate(base)
-        #self.list_.setItemDelegate(status_delegate)
 
     def __delete_column(self):
         self.base.core.delete_column(self.column_id)
@@ -118,8 +109,10 @@ class StatusesColumn(QWidget):
         stylesheet = self.__load_template('style.css')
         return stylesheet.render(attrs)
 
-    def __link_clicked(self, url):
-        print url
+    def __link_clicked(self, qurl):
+        url = str(qurl.toString())
+        if url.startswith('http:'):
+            self.base.open_url(url)
 
     def start_updating(self):
         self.loader.setVisible(True)
@@ -164,30 +157,6 @@ class StatusesColumn(QWidget):
         page = html.render(args)
 
         self.list_.setHtml(page)
-
-        #model = self.list_.model()
-        #for status in statuses:
-        #    filepath = os.path.join(self.base.images_path, 'unknown.png')
-        #    timestamp = self.base.humanize_timestamp(status.timestamp)
-        #    if status.repeated_by:
-        #        repeated_by = "%s %s" % (i18n.get('retweeted_by'), status.repeated_by)
-        #    else:
-        #        repeated_by = None
-
-        #    item = QStandardItem()
-        #    item.setData(status.text, StatusDelegate.MessageRole)
-        #    item.setData(filepath, StatusDelegate.AvatarRole)
-        #    item.setData('', StatusDelegate.UsernameRole)
-        #    item.setData(status.username, StatusDelegate.FullnameRole)
-        #    item.setData(repeated_by, StatusDelegate.RepostedRole)
-        #    item.setData(status.protected, StatusDelegate.ProtectedRole)
-        #    item.setData(status.verified, StatusDelegate.VerifiedRole)
-        #    item.setData(status.favorited, StatusDelegate.FavoritedRole)
-        #    item.setData(status.repeated, StatusDelegate.RepeatedRole)
-        #    item.setData(timestamp, StatusDelegate.DateRole)
-        #    if status.entities:
-        #        item.setData(status.entities['urls'], StatusDelegate.URLsEntitiesRole)
-        #    model.appendRow(item)
 
 
 class StatusDelegate(QStyledItemDelegate):

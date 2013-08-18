@@ -115,21 +115,6 @@ class Base(Singleton):
     #    }
     #    return color[key]
 
-
-    #def open_url(self, url):
-    #    browser = self.core.get_default_browser()
-
-    #    if showmediautils.is_service_supported(url):
-    #        self.show_media(url)
-    #    elif browser != '':
-    #        cmd = browser.split(' ')
-    #        cmd.append(url)
-    #        self.log.debug('Opening URL %s with %s' % (url, browser))
-    #        subprocess.Popen(cmd)
-    #    else:
-    #        self.log.debug('Opening URL %s with default browser' % url)
-    #        webbrowser.open(url)
-
     #def update_status(self, account_id, message, in_reply_to=None):
     #    self.worker.register(self.core.update_status, (account_id,
     #        message, in_reply_to), self.after_update_status, account_id)

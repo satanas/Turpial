@@ -33,6 +33,9 @@ class CoreWorker(QThread):
     # Core methods
     #================================================================
 
+    def get_default_browser(self):
+        return self.core.get_default_browser()
+
     def get_available_columns(self):
         return self.core.available_columns()
 

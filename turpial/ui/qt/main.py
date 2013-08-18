@@ -34,7 +34,7 @@ from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 
-from libturpial.common import ColumnType
+from libturpial.common import ColumnType, is_preview_service_supported
 
 class Main(Base, QWidget):
 
@@ -97,6 +97,17 @@ class Main(Base, QWidget):
     def __add_column(self, column_id):
         self.core.save_column(column_id)
 
+    def __open_in_browser(self, url):
+        browser = self.core.get_default_browser()
+
+        if browser != '':
+            cmd = browser.split(' ')
+            cmd.append(url)
+            subprocess.Popen(cmd)
+        else:
+            webbrowser.open(url)
+
+
     #================================================================
     # Tray icon
     #================================================================
@@ -136,6 +147,16 @@ class Main(Base, QWidget):
     #================================================================
     # Main methods
     #================================================================
+
+    def open_url(self, url):
+        if is_preview_service_supported(url):
+            pass
+            #try:
+            #    bla
+            #except:
+            #    self.__open_in_browser(url)
+        else:
+            self.__open_in_browser(url)
 
     def load_image(self, filename, pixbuf=False):
         img_path = os.path.join(self.images_path, filename)

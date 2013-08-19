@@ -13,9 +13,8 @@ body {
 
 table {
     width: 100%;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #eee;
     border-collapse: collapse;
-    /*margin-bottom: 2px;*/
     background-color: #fff;
 }
 
@@ -42,8 +41,8 @@ table td {
 }
 
 .verified {
-    top: 40px;
-    left: 40px;
+    top: 48px;
+    left: 48px;
     z-index: 10;
     position: absolute;
     width: 16px;
@@ -51,20 +50,18 @@ table td {
     background: url("file://{{ mark_verified }}") no-repeat;
 }
 
-@font-face {
-    font-family: 'Ropa Sans';
-    font-style: normal;
-    font-weight: 400;
-    src: url('{{ ropa_sans }}') format('truetype');
-}
+/*@font-face {
+    font-family: 'ropa_sansregular';
+    src: url('{{ ropa_sans }}') local(ropa_sansregular) format('truetype');
+}*/
 
 .username, .username_protected {
     float: left;
-    /*font-family: 'Oxygen', sans-serif;*/
-    font-family: 'Ropa Sans';
-    font-size: 16px;
-    margin-top: 10px;
-    margin-bottom: 5px;
+    font-family: 'Titillium Web';
+    font-size: 17px;
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 0px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -89,7 +86,7 @@ table td {
 }
 
 .message {
-    font-family: 'Pontano Sans', sans-serif;
+    font-family: 'Ubuntu';
     font-size: 14px;
     word-break: break-word;
     line-height: 1.3;
@@ -97,7 +94,7 @@ table td {
 }
 
 .footer, .timestamp {
-    font-family: 'Pontano Sans', sans-serif;
+    font-family: 'Ropa Sans';
     font-size: 12px;
     color: #ccc;
 }

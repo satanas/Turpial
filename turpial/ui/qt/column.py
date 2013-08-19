@@ -30,6 +30,7 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from PyQt4.QtWebKit import QWebView
 from PyQt4.QtWebKit import QWebPage
+from PyQt4.QtWebKit import QWebSettings
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton
@@ -46,7 +47,6 @@ class StatusesColumn(QWidget):
         self.column_id = column_id
         self.statuses = {}
         #self.updating = False
-        self.ropa_sans = os.path.join(self.base.fonts_path, 'RopaSans-Regular.ttf')
 
         self.account_id = get_account_id_from(column_id)
         username = get_username_from(self.account_id)
@@ -115,7 +115,6 @@ class StatusesColumn(QWidget):
             'action_repeat_shadowed': os.path.join(self.base.images_path, 'action-repeat-shadowed.png'),
             'action_quote_shadowed': os.path.join(self.base.images_path, 'action-quote-shadowed.png'),
             'action_favorite_shadowed': os.path.join(self.base.images_path, 'action-favorite-shadowed.png'),
-            'ropa_sans': self.ropa_sans
         }
         stylesheet = self.__load_template('style.css')
         return stylesheet.render(attrs)

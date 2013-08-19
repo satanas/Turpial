@@ -46,10 +46,19 @@ class Main(Base, QWidget):
 
         Base.__init__(self)
         QWidget.__init__(self)
-        QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/RopaSans-Regular.ttf')
-        QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/Monda-Regular.ttf')
         self.fonts_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'fonts')
+
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'RopaSans-Regular.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Aaargh.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Ubuntu-L.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Regular.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'MavenProLight-300.otf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Powdah.otf'))
         print self.fonts_path
+
+        database = QFontDatabase()
+        for f in database.families():
+            print f
 
         self.templates_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), 'templates'))

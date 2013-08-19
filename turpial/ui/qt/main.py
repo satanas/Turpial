@@ -48,7 +48,8 @@ class Main(Base, QWidget):
         QWidget.__init__(self)
         QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/RopaSans-Regular.ttf')
         QFontDatabase.addApplicationFont('/home/satanas/proyectos/turpial2/turpial/data/fonts/Monda-Regular.ttf')
-        path = os.path.join(os.path.dirname(__file__), '../../data/fonts/Cicle_Gordita.ttf')
+        self.fonts_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'fonts')
+        print self.fonts_path
 
         self.templates_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), 'templates'))

@@ -50,15 +50,10 @@ body {
     background: url("file://{{ mark_verified }}") no-repeat;
 }
 
-/*@font-face {
-    font-family: 'ropa_sansregular';
-    src: url('{{ ropa_sans }}') local(ropa_sansregular) format('truetype');
-}*/
-
 .username, .username_protected {
     float: left;
     font-family: 'Titillium Web';
-    font-size: 17px;
+    font-size: 16px;
     font-weight: bold;
     margin-top: 5px;
     margin-bottom: 0px;
@@ -97,7 +92,7 @@ body {
 
 .footer, .timestamp {
     font-family: 'Aaargh';
-    font-size: 11px;
+    font-size: 12px;
     color: #ccc;
 }
 
@@ -181,6 +176,12 @@ body {
     background: url("file://{{ action_favorite_shadowed }}") no-repeat;
 }
 
+.action_delete {
+    width: 20px;
+    height: 20px;
+    background: url("file://{{ action_delete_shadowed }}") no-repeat;
+}
+
 .action_reply:hover {
     background: url("file://{{ action_reply }}") no-repeat;
 }
@@ -195,6 +196,10 @@ body {
 
 .action_favorite:hover {
     background: url("file://{{ action_favorite }}") no-repeat;
+}
+
+.action_delete:hover {
+    background: url("file://{{ action_delete }}") no-repeat;
 }
 
 .separator-5 {

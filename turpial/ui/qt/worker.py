@@ -14,6 +14,8 @@ from libturpial.common.tools import get_account_id_from, get_column_slug_from
 class CoreWorker(QThread):
 
     status_updated = pyqtSignal(object, str)
+    status_repeated = pyqtSignal(object, str)
+    status_deleted = pyqtSignal(object, str)
     column_updated = pyqtSignal(object, tuple)
     account_saved = pyqtSignal()
     account_deleted = pyqtSignal()
@@ -83,15 +85,26 @@ class CoreWorker(QThread):
         deleted_column = self.core.unregister_column(column_id)
         self.__after_delete_column(column_id)
 
-    def update_status(self, account_id, message, in_reply_to_id=None):
-        self.register(self.core.update_status, (account_id,
-            message, in_reply_to_id), self.__after_update_status, account_id)
-
     def get_column_statuses(self, column, last_id):
         count = self.core.get_max_statuses_per_column()
         self.register(self.core.get_column_statuses, (column.account_id,
             column.slug, count, last_id), self.__after_update_column,
             (column, count))
+
+    def update_status(self, account_id, message, in_reply_to_id=None):
+        self.register(self.core.update_status, (account_id,
+            message, in_reply_to_id), self.__after_update_status, account_id)
+
+    def repeat_status(self, account_id, status_id):
+        self.register(self.core.repeat_status, (account_id, status_id),
+            self.__after_repeat_status, account_id)
+
+    def delete_status(self, account_id, status_id):
+        self.register(self.core.destroy_status, (account_id, status_id),
+            self.__after_delete_status, account_id)
+
+
+
 
     #================================================================
     # Callbacks
@@ -109,11 +122,17 @@ class CoreWorker(QThread):
     def __after_delete_column(self, column_id):
         self.column_deleted.emit(column_id)
 
+    def __after_update_column(self, response, data):
+        self.column_updated.emit(response, data)
+
     def __after_update_status(self, response, account_id):
         self.status_updated.emit(response, account_id)
 
-    def __after_update_column(self, response, data):
-        self.column_updated.emit(response, data)
+    def __after_repeat_status(self, response, account_id):
+        self.status_repeated.emit(response, account_id)
+
+    def __after_delete_status(self, response, account_id):
+        self.status_deleted.emit(response, account_id)
 
     #================================================================
     # Worker methods

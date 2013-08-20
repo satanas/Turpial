@@ -50,7 +50,7 @@ class Main(Base, QWidget):
 
         QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Aaargh.ttf'))
         QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Ubuntu-L.ttf'))
-        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Regular.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Bold.ttf'))
 
         database = QFontDatabase()
         for f in database.families():
@@ -69,6 +69,8 @@ class Main(Base, QWidget):
 
         self.core = CoreWorker()
         self.core.status_updated.connect(self.after_update_status)
+        self.core.status_repeated.connect(self.after_repeat_status)
+        self.core.status_deleted.connect(self.after_delete_status)
         self.core.column_updated.connect(self.after_update_column)
         self.core.account_saved.connect(self.after_save_account)
         self.core.account_deleted.connect(self.after_delete_account)
@@ -153,6 +155,9 @@ class Main(Base, QWidget):
 
     def add_column(self, column_id):
         self.core.save_column(column_id)
+
+    def delete_account(self, account_id):
+        self.core.delete_account(account_id)
 
     def add_search_column(self, account_id, criteria):
         column_id = "%s-%s:%s" % (account_id, ColumnType.SEARCH, urllib2.quote(criteria))
@@ -249,8 +254,11 @@ class Main(Base, QWidget):
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.core.update_status(account_id, message, in_reply_to_id)
 
-    def delete_account(self, account_id):
-        self.core.delete_account(account_id)
+    def repeat_status(self, account_id, status):
+        self.core.repeat_status(account_id, status.id_)
+
+    def delete_status(self, account_id, status):
+        self.core.delete_status(account_id, status.id_)
 
     #================================================================
     # Hooks definitions
@@ -289,6 +297,12 @@ class Main(Base, QWidget):
 
     def after_update_status(self, response, account_id):
         self.update_box.done()
+
+    def after_repeat_status(self, response, account_id):
+        print 'repeated', response, account_id
+
+    def after_delete_status(self, response, account_id):
+        print 'deleted', response, account_id
 
     # ------------------------------------------------------------
     # Timer Methods

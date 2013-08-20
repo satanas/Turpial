@@ -46,10 +46,16 @@
                 {% if in_reply_to and repeated_by %}
                 <div class='separator-15'></div>
                 {% endif %}
-                <a href="cmd:reply:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
-                <a href="cmd:quote:{{ status.id_ }}" title="{{ quote }}"><div class="action_quote"></div></a>
-                <a href="cmd:repeat:{{ status.id_ }}" title="{{ retweet }}"><div class="action_repeat"></div></a>
-                <a href="cmd:favorite:{{ status.id_ }}" title="{{ mark_as_favorite }}"><div class="action_favorite"></div></a>
+                {% if status.is_own %}
+                    <a href="cmd:delete:{{ status.id_ }}" title="{{ delete }}"><div class="action_delete"></div></a>
+                {% else %}
+                    <a href="cmd:reply:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
+                    <a href="cmd:quote:{{ status.id_ }}" title="{{ quote }}"><div class="action_quote"></div></a>
+                    {% if not status.is_protected %}
+                    <a href="cmd:repeat:{{ status.id_ }}" title="{{ retweet }}"><div class="action_repeat"></div></a>
+                    {% endif %}
+                    <a href="cmd:favorite:{{ status.id_ }}" title="{{ mark_as_favorite }}"><div class="action_favorite"></div></a>
+                {% endif %}
             </div>
             <div class='clearfix'></div>
         </td>

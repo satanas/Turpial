@@ -21,6 +21,7 @@ from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QListView
+from PyQt4.QtGui import QMessageBox
 from PyQt4.QtGui import QTextDocument
 from PyQt4.QtGui import QStandardItem
 from PyQt4.QtGui import QAbstractItemView
@@ -115,6 +116,8 @@ class StatusesColumn(QWidget):
             'action_repeat_shadowed': os.path.join(self.base.images_path, 'action-repeat-shadowed.png'),
             'action_quote_shadowed': os.path.join(self.base.images_path, 'action-quote-shadowed.png'),
             'action_favorite_shadowed': os.path.join(self.base.images_path, 'action-favorite-shadowed.png'),
+            'action_delete': os.path.join(self.base.images_path, 'action-delete.png'),
+            'action_delete_shadowed': os.path.join(self.base.images_path, 'action-delete-shadowed.png'),
         }
         stylesheet = self.__load_template('style.css')
         return stylesheet.render(attrs)
@@ -134,12 +137,30 @@ class StatusesColumn(QWidget):
                 self.__reply_status(status)
             elif cmd == 'quote':
                 self.__quote_status(status)
+            elif cmd == 'repeat':
+                self.__repeat_status(status)
+            elif cmd == 'delete':
+                self.__delete_status(status)
 
     def __reply_status(self, status):
         self.base.show_update_box_for_reply(self.account_id, status)
 
     def __quote_status(self, status):
         self.base.show_update_box_for_quote(self.account_id, status)
+
+    def __repeat_status(self, status):
+        confirmation = QMessageBox.question(self, i18n.get('confirm_retweet'),
+            i18n.get('do_you_want_to_retweet_status'), QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No)
+        if confirmation == QMessageBox.Yes:
+            self.base.repeat_status(self.account_id, status)
+
+    def __delete_status(self, status):
+        confirmation = QMessageBox.question(self, i18n.get('confirm_delete'),
+            i18n.get('do_you_want_to_delete_status'), QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No)
+        if confirmation == QMessageBox.Yes:
+            self.base.delete_status(self.account_id, status)
 
     def start_updating(self):
         self.loader.setVisible(True)
@@ -182,7 +203,7 @@ class StatusesColumn(QWidget):
             attrs = {'status': status, 'message': message, 'repeated_by': repeated_by,
                     'timestamp': timestamp, 'in_reply_to': in_reply_to, 'reply': i18n.get('reply'),
                     'quote': i18n.get('quote'), 'retweet': i18n.get('retweet'),
-                    'mark_as_favorite': i18n.get('mark_as_favorite'),}
+                    'mark_as_favorite': i18n.get('mark_as_favorite'), 'delete': i18n.get('delete'),}
 
             content += status_template.render(attrs)
 

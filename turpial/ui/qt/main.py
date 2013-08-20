@@ -64,6 +64,8 @@ class Main(Base, QWidget):
         self.resize(320, 480)
         self.showed = True
 
+        self.update_box = UpdateBox(self)
+
         self.tray = TrayIcon(self)
         self.tray.activated.connect(self.__on_tray_click)
 
@@ -76,6 +78,7 @@ class Main(Base, QWidget):
         self.core.account_deleted.connect(self.after_delete_account)
         self.core.column_saved.connect(self.after_save_column)
         self.core.column_deleted.connect(self.after_delete_column)
+        self.core.urls_shorted.connect(self.update_box.after_short_url)
 
         self.core.start()
 
@@ -92,7 +95,6 @@ class Main(Base, QWidget):
         #self.profile = ProfileDialog(self)
         #self.profile.show()
         #friend = SelectFriendDialog(self)
-        self.update_box = UpdateBox(self)
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -259,6 +261,9 @@ class Main(Base, QWidget):
 
     def delete_status(self, account_id, status):
         self.core.delete_status(account_id, status.id_)
+
+    def short_urls(self, message):
+        self.core.short_urls(message)
 
     #================================================================
     # Hooks definitions

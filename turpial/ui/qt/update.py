@@ -52,14 +52,6 @@ class UpdateBox(QWidget):
         self.update_button = QPushButton(i18n.get('update'))
 
         self.accounts_combo = QComboBox()
-        #accounts = self.base.core.get_registered_accounts()
-        #for account in accounts:
-        #    protocol = get_protocol_from(account.id_)
-        #    icon = QIcon(base.get_image_path('%s.png' % protocol))
-        #    self.accounts_combo.addItem(icon, get_username_from(account.id_), account.id_)
-        #if len(accounts) > 1:
-        #    icon = QIcon(base.get_image_path('action-conversation.png'))
-        #    self.accounts_combo.addItem(icon, i18n.get('broadcast'), 'broadcast')
 
         buttons = QHBoxLayout()
         buttons.addWidget(self.accounts_combo)
@@ -75,6 +67,7 @@ class UpdateBox(QWidget):
         self.error_message = QLabel()
 
         self.update_button.clicked.connect(self.__update_status)
+        self.short_button.clicked.connect(self.__short_urls)
         self.text_edit.textChanged.connect(self.__update_count)
 
         layout = QVBoxLayout()
@@ -100,6 +93,11 @@ class UpdateBox(QWidget):
         else:
             self.char_count.setStyleSheet("QLabel { color: #000000 }")
         self.char_count.setText(str(remaining_chars))
+
+    def __short_urls(self):
+        self.enable(False)
+        message = unicode(self.text_edit.toPlainText())
+        self.base.short_urls(message)
 
     def __update_status(self):
         index = self.accounts_combo.currentIndex()
@@ -188,6 +186,10 @@ class UpdateBox(QWidget):
     def done(self):
         self.__clear()
         self.hide()
+
+    def after_short_url(self, message):
+        self.text_edit.setText(message)
+        self.enable(True)
 
 class CompletionTextEdit(QTextEdit):
     IGNORED_KEYS = (

@@ -70,6 +70,7 @@ body {
     float: right;
     width: 16px;
     height: 16px;
+    margin-top: 10px;
     background: url("file://{{ mark_favorited }}") no-repeat;
 }
 
@@ -77,6 +78,7 @@ body {
     float: right;
     width: 16px;
     height: 16px;
+    margin-top: 10px;
     background: url("file://{{ mark_repeated }}") no-repeat;
 }
 

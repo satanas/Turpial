@@ -31,14 +31,21 @@
     </tr>
     <tr>
         <td colspan='2' class='footer'>
-            {% if in_reply_to %}
-            <div class='in_reply_to'>{{ in_reply_to }}</div>
-            {% endif %}
-            {% if repeated_by %}
-            <div class='clearfix'></div>
-            <div class='reposted'><div>{{ repeated_by }}</div></div>
-            {% endif %}
+            <div class='extra'>
+                {% if in_reply_to %}
+                <span class='in_reply_to'>{{ in_reply_to }}</span>
+                {% endif %}
+                {% if in_reply_to and repeated_by %}
+                <div class='separator-5'></div>
+                {% endif %}
+                {% if repeated_by %}
+                <span class='reposted'>{{ repeated_by }}</span>
+                {% endif %}
+            </div>
             <div class='buttons'>
+                {% if in_reply_to and repeated_by %}
+                <div class='separator-15'></div>
+                {% endif %}
                 <a href="cmd:reply:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
                 <a href="cmd:quote:{{ status.id_ }}" title="{{ quote }}"><div class="action_quote"></div></a>
                 <a href="cmd:repeat:{{ status.id_ }}" title="{{ retweet }}"><div class="action_repeat"></div></a>

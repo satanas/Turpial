@@ -13,6 +13,7 @@ from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QTextCursor
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QHBoxLayout
+from PyQt4.QtGui import QFileDialog
 
 from PyQt4.QtCore import Qt
 
@@ -68,6 +69,7 @@ class UpdateBox(QWidget):
 
         self.update_button.clicked.connect(self.__update_status)
         self.short_button.clicked.connect(self.__short_urls)
+        self.upload_button.clicked.connect(self.__upload_image)
         self.text_edit.textChanged.connect(self.__update_count)
 
         layout = QVBoxLayout()
@@ -98,6 +100,15 @@ class UpdateBox(QWidget):
         self.enable(False)
         message = unicode(self.text_edit.toPlainText())
         self.base.short_urls(message)
+
+    def __upload_image(self):
+        index = self.accounts_combo.currentIndex()
+        account_id = str(self.accounts_combo.itemData(index).toPyObject())
+        filename = str(QFileDialog.getOpenFileName(self, i18n.get('upload_image'),
+            self.base.home_path))
+        if filename != '':
+            self.enable(False)
+            self.base.upload_media(account_id, filename)
 
     def __update_status(self):
         index = self.accounts_combo.currentIndex()
@@ -189,6 +200,16 @@ class UpdateBox(QWidget):
 
     def after_short_url(self, message):
         self.text_edit.setText(message)
+        self.enable(True)
+
+    def after_upload_media(self, media_url):
+        text_cursor = self.text_edit.textCursor()
+        text_cursor.select(QTextCursor.WordUnderCursor)
+        if text_cursor.selectedText() != '':
+            media_url = " %s" % media_url
+        text_cursor.clearSelection()
+        text_cursor.insertText(media_url)
+        self.text_edit.setTextCursor(text_cursor)
         self.enable(True)
 
 class CompletionTextEdit(QTextEdit):

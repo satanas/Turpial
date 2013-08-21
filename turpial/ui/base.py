@@ -35,6 +35,9 @@ class Base(Singleton):
 
         self.images_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), '..', 'data', 'pixmaps'))
+        self.fonts_path = os.path.realpath(os.path.join(
+            os.path.dirname(__file__), '..', 'data', 'fonts'))
+        self.home_path = os.path.expanduser('~')
 
 
         # Unity integration

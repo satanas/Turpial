@@ -46,7 +46,6 @@ class Main(Base, QWidget):
 
         Base.__init__(self)
         QWidget.__init__(self)
-        self.fonts_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'fonts')
 
         QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Ubuntu-L.ttf'))
         QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Bold.ttf'))
@@ -79,6 +78,7 @@ class Main(Base, QWidget):
         self.core.column_saved.connect(self.after_save_column)
         self.core.column_deleted.connect(self.after_delete_column)
         self.core.urls_shorted.connect(self.update_box.after_short_url)
+        self.core.media_uploaded.connect(self.update_box.after_upload_media)
 
         self.core.start()
 
@@ -264,6 +264,9 @@ class Main(Base, QWidget):
 
     def short_urls(self, message):
         self.core.short_urls(message)
+
+    def upload_media(self, account_id, filename):
+        self.core.upload_media(account_id, filename)
 
     #================================================================
     # Hooks definitions

@@ -22,6 +22,7 @@ class CoreWorker(QThread):
     column_saved = pyqtSignal(str)
     column_deleted = pyqtSignal(str)
     urls_shorted = pyqtSignal(str)
+    media_uploaded = pyqtSignal(str)
 
     def __init__(self):
         QThread.__init__(self)
@@ -108,6 +109,10 @@ class CoreWorker(QThread):
         self.register(self.core.short_url_in_message, (message),
             self.__after_short_urls)
 
+    def upload_media(self, account_id, filepath):
+        self.register(self.core.upload_media, (account_id, filepath),
+            self.__after_upload_media)
+
 
     #================================================================
     # Callbacks
@@ -139,6 +144,9 @@ class CoreWorker(QThread):
 
     def __after_short_urls(self, response):
         self.urls_shorted.emit(response)
+
+    def __after_upload_media(self, response):
+        self.media_uploaded.emit(response)
 
     #================================================================
     # Worker methods

@@ -11,6 +11,10 @@ body {
     background-color: #b4bbc1;
 }
 
+.user-info {
+    margin: 0px;
+}
+
 .status {
     width: 100%;
     border-bottom: 1px solid #eee;
@@ -124,7 +128,7 @@ body {
 
 .timestamp {
     float: right;
-    margin: 10px;
+    margin: 7px 10px 6px 10px;
 }
 
 .entity, a {

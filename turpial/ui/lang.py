@@ -69,6 +69,7 @@ STRINGS = {
     'quote': _('Quote'),
     'retweet': _('Retweet'),
     'mark_as_favorite': _('Mark as favorite'),
+    'unmark_as_favorite': _('Unmark as favorite'),
     'reply_to': _('Reply to'),
     'quoting': _('Quoting'),
     'confirm_retweet': _('Confirm Retweet'),

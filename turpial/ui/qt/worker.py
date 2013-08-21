@@ -21,6 +21,8 @@ class CoreWorker(QThread):
     account_deleted = pyqtSignal()
     column_saved = pyqtSignal(str)
     column_deleted = pyqtSignal(str)
+    status_marked_as_favorite = pyqtSignal(object, str)
+    status_unmarked_as_favorite = pyqtSignal(object, str)
     urls_shorted = pyqtSignal(str)
     media_uploaded = pyqtSignal(str)
 
@@ -105,6 +107,14 @@ class CoreWorker(QThread):
         self.register(self.core.destroy_status, (account_id, status_id),
             self.__after_delete_status, account_id)
 
+    def mark_status_as_favorite(self, account_id, status_id):
+        self.register(self.core.mark_status_as_favorite, (account_id, status_id),
+            self.__after_mark_status_as_favorite, account_id)
+
+    def unmark_status_as_favorite(self, account_id, status_id):
+        self.register(self.core.unmark_status_as_favorite, (account_id, status_id),
+            self.__after_unmark_status_as_favorite, account_id)
+
     def short_urls(self, message):
         self.register(self.core.short_url_in_message, (message),
             self.__after_short_urls)
@@ -141,6 +151,12 @@ class CoreWorker(QThread):
 
     def __after_delete_status(self, response, account_id):
         self.status_deleted.emit(response, account_id)
+
+    def __after_mark_status_as_favorite(self, response, account_id):
+        self.status_marked_as_favorite.emit(response, account_id)
+
+    def __after_unmark_status_as_favorite(self, response, account_id):
+        self.status_unmarked_as_favorite.emit(response, account_id)
 
     def __after_short_urls(self, response):
         self.urls_shorted.emit(response)

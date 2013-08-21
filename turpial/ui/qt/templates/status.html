@@ -54,7 +54,11 @@
                     {% if not status.is_protected %}
                     <a href="cmd:repeat:{{ status.id_ }}" title="{{ retweet }}"><div class="action_repeat"></div></a>
                     {% endif %}
+                    {% if status.is_favorite %}
+                    <a href="cmd:unfavorite:{{ status.id_ }}" title="{{ unmark_as_favorite }}"><div class="action_favorite"></div></a>
+                    {% else %}
                     <a href="cmd:favorite:{{ status.id_ }}" title="{{ mark_as_favorite }}"><div class="action_favorite"></div></a>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class='clearfix'></div>

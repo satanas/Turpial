@@ -77,6 +77,8 @@ class Main(Base, QWidget):
         self.core.account_deleted.connect(self.after_delete_account)
         self.core.column_saved.connect(self.after_save_column)
         self.core.column_deleted.connect(self.after_delete_column)
+        self.core.status_marked_as_favorite.connect(self.after_marking_status_as_favorite)
+        self.core.status_unmarked_as_favorite.connect(self.after_unmarking_status_as_favorite)
         self.core.urls_shorted.connect(self.update_box.after_short_url)
         self.core.media_uploaded.connect(self.update_box.after_upload_media)
 
@@ -262,6 +264,12 @@ class Main(Base, QWidget):
     def delete_status(self, account_id, status):
         self.core.delete_status(account_id, status.id_)
 
+    def mark_status_as_favorite(self, account_id, status):
+        self.core.mark_status_as_favorite(account_id, status.id_)
+
+    def unmark_status_as_favorite(self, account_id, status):
+        self.core.unmark_status_as_favorite(account_id, status.id_)
+
     def short_urls(self, message):
         self.core.short_urls(message)
 
@@ -311,6 +319,12 @@ class Main(Base, QWidget):
 
     def after_delete_status(self, response, account_id):
         print 'deleted', response, account_id
+
+    def after_marking_status_as_favorite(self, response, account_id):
+        print 'marked as favorite', response, account_id
+
+    def after_unmarking_status_as_favorite(self, response, account_id):
+        print 'unmarked as favorite', response, account_id
 
     # ------------------------------------------------------------
     # Timer Methods

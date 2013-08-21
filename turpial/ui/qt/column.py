@@ -141,6 +141,10 @@ class StatusesColumn(QWidget):
                 self.__repeat_status(status)
             elif cmd == 'delete':
                 self.__delete_status(status)
+            elif cmd == 'favorite':
+                self.__mark_status_as_favorite(status)
+            elif cmd == 'unfavorite':
+                self.__unmark_status_as_favorite(status)
 
     def __reply_status(self, status):
         self.base.show_update_box_for_reply(self.account_id, status)
@@ -161,6 +165,12 @@ class StatusesColumn(QWidget):
             QMessageBox.No)
         if confirmation == QMessageBox.Yes:
             self.base.delete_status(self.account_id, status)
+
+    def __mark_status_as_favorite(self, status):
+        self.base.mark_status_as_favorite(self.account_id, status)
+
+    def __unmark_status_as_favorite(self, status):
+        self.base.unmark_status_as_favorite(self.account_id, status)
 
     def start_updating(self):
         self.loader.setVisible(True)
@@ -203,7 +213,8 @@ class StatusesColumn(QWidget):
             attrs = {'status': status, 'message': message, 'repeated_by': repeated_by,
                     'timestamp': timestamp, 'in_reply_to': in_reply_to, 'reply': i18n.get('reply'),
                     'quote': i18n.get('quote'), 'retweet': i18n.get('retweet'),
-                    'mark_as_favorite': i18n.get('mark_as_favorite'), 'delete': i18n.get('delete'),}
+                    'mark_as_favorite': i18n.get('mark_as_favorite'), 'delete': i18n.get('delete'),
+                    'unmark_as_favorite': i18n.get('unmark_as_favorite'),}
 
             content += status_template.render(attrs)
 

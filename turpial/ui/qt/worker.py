@@ -42,6 +42,9 @@ class CoreWorker(QThread):
     def get_default_browser(self):
         return self.core.get_default_browser()
 
+    def get_update_interval(self):
+        return self.core.get_update_interval()
+
     def get_available_columns(self):
         return self.core.available_columns()
 

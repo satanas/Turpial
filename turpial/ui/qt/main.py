@@ -8,7 +8,6 @@ import urllib2
 
 from functools import partial
 
-from PyQt4 import QtCore
 from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QImage
 from PyQt4.QtGui import QWidget
@@ -19,6 +18,7 @@ from PyQt4.QtGui import QFontDatabase
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QApplication
 
+from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
 
 from turpial import DESC
@@ -62,6 +62,7 @@ class Main(Base, QWidget):
         self.ignore_quit = True
         self.resize(320, 480)
         self.showed = True
+        self.timers = {}
 
         self.update_box = UpdateBox(self)
 
@@ -202,7 +203,9 @@ class Main(Base, QWidget):
             self._container.normal()
             self.dock.normal()
             self.tray.normal()
-            self.download_stream(columns[0])
+            for column in columns:
+                self.download_stream(column)
+                self.add_timer(column)
 
     def show_accounts_dialog(self):
         accounts = AccountsDialog(self)
@@ -291,7 +294,7 @@ class Main(Base, QWidget):
         self._container.remove_column(column_id)
         self.update_container()
         # TODO: Enable timers
-        #self.__remove_timer(column_id)
+        #self.remove_timer(column_id)
 
     def after_save_column(self, column_id):
         column_id = str(column_id)
@@ -299,7 +302,7 @@ class Main(Base, QWidget):
         self.update_container()
         # TODO: Enable timers
         #self.download_stream(column)
-        #self.__add_timer(column)
+        #self.add_timer(column)
 
     def after_update_column(self, arg, data):
         column, max_ = data
@@ -330,10 +333,43 @@ class Main(Base, QWidget):
     # Timer Methods
     # ------------------------------------------------------------
 
+    def add_timer(self, column):
+        self.remove_timer(column.id_)
+
+        interval = self.core.get_update_interval() * 60 * 1000
+        timer = Timer(interval, column, self.download_stream)
+        self.timers[column.id_] = timer
+        print '--Created timer for %s every %i min' % (column.id_, interval)
+
+    def remove_timer(self, column_id):
+        if self.timers.has_key(column_id):
+            self.timers[column_id].stop()
+            del self.timers[column_id]
+            print '--Removed timer for %s' % column_id
+
     def download_stream(self, column):
+        print 'updating %s' % column
         if self._container.is_updating(column.id_):
             return True
 
         last_id = self._container.start_updating(column.id_)
         self.core.get_column_statuses(column, last_id)
         return True
+
+class Timer:
+    def __init__(self, interval, column, callback):
+        self.interval = interval
+        self.column = column
+        self.callback = callback
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.__on_timeout)
+        self.timer.start(interval)
+
+    def __on_timeout(self):
+        self.callback(self.column)
+
+    def get_id(self):
+        return self.timer.timerId()
+
+    def stop(self):
+        self.timer.stop()

@@ -50,6 +50,7 @@ class Main(Base, QWidget):
         QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Ubuntu-L.ttf'))
         QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Bold.ttf'))
         QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Regular.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Monda-Regular.ttf'))
 
         database = QFontDatabase()
         for f in database.families():
@@ -170,6 +171,7 @@ class Main(Base, QWidget):
 
     def open_url(self, url):
         if is_preview_service_supported(url):
+            self.__open_in_browser(url)
             pass
             #try:
             #    bla
@@ -339,7 +341,7 @@ class Main(Base, QWidget):
         interval = self.core.get_update_interval() * 60 * 1000
         timer = Timer(interval, column, self.download_stream)
         self.timers[column.id_] = timer
-        print '--Created timer for %s every %i min' % (column.id_, interval)
+        print '--Created timer for %s every %i sec' % (column.id_, interval)
 
     def remove_timer(self, column_id):
         if self.timers.has_key(column_id):

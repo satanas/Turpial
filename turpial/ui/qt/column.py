@@ -54,16 +54,23 @@ class StatusesColumn(QWidget):
         column_slug = get_column_slug_from(column_id)
         self.protocol_id = get_protocol_from(self.account_id)
 
+        #font = QFont('Titillium Web', 18, QFont.Normal, False)
+        font = QFont('Monda', 12, QFont.Normal, False)
+
         icon = QLabel()
         protocol_img = "%s.png" % self.protocol_id
         icon.setPixmap(base.load_image(protocol_img, True))
+        icon.setStyleSheet("QLabel { background-color: #555; color: #fff; padding: 0 10px;}")
 
-        label = "%s :: %s" % (username, column_slug)
+        label = "%s : %s" % (username, column_slug)
         caption = QLabel(label)
+        caption.setStyleSheet("QLabel { background-color: #555; color: #fff; }")
+        caption.setFont(font)
 
         close_button = ImageButton(base, 'action-delete.png',
                 i18n.get('delete_column'))
         close_button.clicked.connect(self.__delete_column)
+        close_button.setStyleSheet("QToolButton { background-color: #555; color: #fff; border: 1px solid #555; margin: 0px;}")
 
         header = QHBoxLayout()
         header.addWidget(icon)

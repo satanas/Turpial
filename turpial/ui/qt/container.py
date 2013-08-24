@@ -69,6 +69,8 @@ class Container(QVBoxLayout):
             self.clear_layout(self)
 
         hbox = QHBoxLayout()
+        hbox.setSpacing(0)
+        hbox.setContentsMargins(0, 0, 0, 0)
 
         self.columns = {}
         for column in columns:

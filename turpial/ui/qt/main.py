@@ -165,6 +165,13 @@ class Main(Base, QWidget):
     def delete_account(self, account_id):
         self.core.delete_account(account_id)
 
+    def get_column_from_id(self, column_id):
+        columns = self.core.get_registered_columns()
+        for column in columns:
+            if column_id == column.id_:
+                return column
+        return None
+
     def add_search_column(self, account_id, criteria):
         column_id = "%s-%s:%s" % (account_id, ColumnType.SEARCH, urllib2.quote(criteria))
         self.add_column(column_id)
@@ -294,17 +301,14 @@ class Main(Base, QWidget):
     def after_delete_column(self, column_id):
         column_id = str(column_id)
         self._container.remove_column(column_id)
-        self.update_container()
-        # TODO: Enable timers
-        #self.remove_timer(column_id)
+        self.remove_timer(column_id)
 
     def after_save_column(self, column_id):
         column_id = str(column_id)
         self._container.add_column(column_id)
-        self.update_container()
-        # TODO: Enable timers
-        #self.download_stream(column)
-        #self.add_timer(column)
+        column = self.get_column_from_id(column_id)
+        self.download_stream(column)
+        self.add_timer(column)
 
     def after_update_column(self, arg, data):
         column, max_ = data

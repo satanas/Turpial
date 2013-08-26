@@ -11,6 +11,7 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QGridLayout
 from PyQt4.QtCore import Qt
 
 from turpial.ui.lang import i18n
+from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.widgets import ImageButton, VLine, HLine
 
 
@@ -18,93 +19,144 @@ class ProfileDialog(QWidget):
     def __init__(self, base):
         QWidget.__init__(self)
         self.base = base
+        self.account_id = None
         self.setWindowTitle(i18n.get('user_profile'))
         self.setFixedSize(350, 320)
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
 
-        username = QLabel('<b>@satanas82</b>')
-        username.setTextFormat(Qt.RichText)
+        self.username = QLabel('<b>@satanas82</b>')
+        self.username.setTextFormat(Qt.RichText)
 
-        fullname = QLabel('Full name bla bla')
-        options = ImageButton(base, 'action-status-menu.png',
+        self.fullname = QLabel('Full name bla bla')
+        self.options = ImageButton(base, 'action-status-menu.png',
                 i18n.get(''))
 
-        verified_icon = QLabel()
-        verified_icon.setPixmap(base.load_image('mark-verified.png', True))
+        self.verified_icon = QLabel()
+        self.verified_icon.setPixmap(base.load_image('mark-verified.png', True))
 
-        protected_icon = QLabel()
-        protected_icon.setPixmap(base.load_image('mark-protected.png', True))
+        self.protected_icon = QLabel()
+        self.protected_icon.setPixmap(base.load_image('mark-protected.png', True))
 
-        avatar = QLabel()
-        avatar.setPixmap(base.load_image('unknown.png', True))
+        self.avatar = QLabel()
+        self.avatar.setPixmap(base.load_image('unknown.png', True))
 
         info_line1 = QHBoxLayout()
         info_line1.setSpacing(5)
-        info_line1.addWidget(username)
+        info_line1.addWidget(self.username)
         info_line1.addSpacing(5)
-        info_line1.addWidget(verified_icon)
-        info_line1.addWidget(protected_icon)
+        info_line1.addWidget(self.verified_icon)
+        info_line1.addWidget(self.protected_icon)
         info_line1.addStretch(0)
 
         info_line2 = QHBoxLayout()
-        info_line2.addWidget(fullname, 1)
-        info_line2.addWidget(options)
+        info_line2.addWidget(self.fullname, 1)
+        info_line2.addWidget(self.options)
 
         user_info = QVBoxLayout()
         user_info.addLayout(info_line1)
         user_info.addLayout(info_line2)
 
+        self.loader = BarLoadIndicator()
+        self.loader.setVisible(False)
+
         header = QHBoxLayout()
         header.setContentsMargins(10, 10 ,10, 0)
-        header.addWidget(avatar)
+        header.addWidget(self.avatar)
         header.addSpacing(10)
         header.addLayout(user_info)
 
-        bio = UserInfoBox(base, 'bio', 'icon-bio.png')
-        bio.set_word_wrap(True)
-        bio.set_text('bla bla bla bla blansjkda alkslkja akljdklasjdasd')
 
-        location = UserInfoBox(base, 'location', 'icon-location.png')
-        location.set_text('Lorem Ipsum')
+        self.bio = UserInfoBox(base, 'bio', 'icon-bio.png')
+        self.bio.set_word_wrap(True)
+        self.bio.set_info('bla bla bla bla blansjkda alkslkja akljdklasjdasd')
 
-        web = UserInfoBox(base, 'web', 'icon-home.png')
-        web.set_text('http://bla.com')
+        self.location = UserInfoBox(base, 'location', 'icon-location.png')
+        self.location.set_info('Lorem Ipsum')
+
+        self.web = UserInfoBox(base, 'web', 'icon-home.png')
+        self.web.set_info('http://bla.com')
 
         body = QVBoxLayout()
         body.setSpacing(15)
         body.setContentsMargins(10, 0, 10, 10)
-        body.addLayout(bio)
-        body.addLayout(location)
-        body.addLayout(web)
+        body.addLayout(self.bio)
+        body.addLayout(self.location)
+        body.addLayout(self.web)
 
-        tweets = StatInfoBox('tweets', '999')
-        following = StatInfoBox('following', '9999999')
-        followers = StatInfoBox('followers', '9999999')
-        favorites = StatInfoBox('favorites', '9999')
+        self.tweets = StatInfoBox('tweets', '999')
+        self.following = StatInfoBox('following', '9999999')
+        self.followers = StatInfoBox('followers', '9999999')
+        self.favorites = StatInfoBox('favorites', '9999')
 
         footer = QHBoxLayout()
         footer.setContentsMargins(0, 5, 0, 10)
         footer.setSpacing(1)
-        footer.addLayout(tweets)
+        footer.addLayout(self.tweets)
         footer.addWidget(VLine())
-        footer.addLayout(following)
+        footer.addLayout(self.following)
         footer.addWidget(VLine())
-        footer.addLayout(followers)
+        footer.addLayout(self.followers)
         footer.addWidget(VLine())
-        footer.addLayout(favorites)
+        footer.addLayout(self.favorites)
 
         footer_widget = QWidget()
         footer_widget.setLayout(footer)
         footer_widget.setStyleSheet("QWidget { background-color: #333; color: white; }")
 
+        self.hline = HLine()
+        self.hline.setMinimumHeight(2)
+
         layout = QVBoxLayout()
         layout.addLayout(header)
-        layout.addWidget(HLine())
+        layout.addSpacing(10)
+        layout.addWidget(self.hline)
+        layout.addWidget(self.loader)
+        layout.addSpacing(10)
         layout.addLayout(body, 1)
         layout.addWidget(footer_widget)
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
+
+    def start_loading(self, profile_username):
+        self.account_id = None
+        self.hline.setVisible(False)
+        self.loader.setVisible(True)
+        self.username.setText('<b>%s</b>' % profile_username)
+        self.fullname.setText(i18n.get('loading'))
+        self.options.setEnabled(False)
+        self.verified_icon.setVisible(False)
+        self.protected_icon.setVisible(False)
+        self.avatar.setPixmap(self.base.load_image('unknown.png', True))
+        self.bio.set_info('')
+        self.location.set_info('')
+        self.web.set_info('')
+        self.tweets.set_value('')
+        self.following.set_value('')
+        self.followers.set_value('')
+        self.favorites.set_value('')
+        self.show()
+
+    def loading_finished(self, profile, account_id):
+        self.account_id = account_id
+        self.loader.setVisible(False)
+        self.hline.setVisible(False)
+        self.username.setText('<b>%s</b>' % profile.username)
+        self.fullname.setText(profile.fullname)
+        self.options.setEnabled(True)
+        self.verified_icon.setVisible(profile.verified)
+        self.protected_icon.setVisible(profile.protected)
+        self.avatar.setPixmap(self.base.load_image('unknown.png', True))
+        self.bio.set_info(profile.bio)
+        self.location.set_info(profile.location)
+        self.web.set_info(profile.url)
+        self.tweets.set_value(str(profile.statuses_count))
+        self.following.set_value(str(profile.friends_count))
+        self.followers.set_value(str(profile.followers_count))
+        self.favorites.set_value(str(profile.favorites_count))
+        self.show()
+
+
 
 class UserInfoBox(QVBoxLayout):
     def __init__(self, base, title, image, text=None, text_as_link=False):
@@ -125,7 +177,7 @@ class UserInfoBox(QVBoxLayout):
         self.addLayout(header)
         self.addWidget(self.text)
 
-    def set_text(self, text):
+    def set_info(self, text):
         self.text.setText(text)
 
     def set_word_wrap(self, value):
@@ -140,7 +192,7 @@ class StatInfoBox(QVBoxLayout):
         font.setPointSize(18)
         font.setBold(True)
 
-        self.stat = QLabel("<b>%s</b>" % value)
+        self.stat = QLabel(value)
         self.stat.setAlignment(Qt.AlignCenter)
         self.stat.setFont(font)
 
@@ -154,4 +206,7 @@ class StatInfoBox(QVBoxLayout):
         self.setContentsMargins(0, 0, 0, 0)
         self.addWidget(self.stat)
         self.addWidget(caption)
+
+    def set_value(self, value):
+        self.stat.setText(value)
 

@@ -66,6 +66,7 @@ class Main(Base, QWidget):
         self.timers = {}
 
         self.update_box = UpdateBox(self)
+        self.profile = ProfileDialog(self)
 
         self.tray = TrayIcon(self)
         self.tray.activated.connect(self.__on_tray_click)
@@ -81,6 +82,7 @@ class Main(Base, QWidget):
         self.core.column_deleted.connect(self.after_delete_column)
         self.core.status_marked_as_favorite.connect(self.after_marking_status_as_favorite)
         self.core.status_unmarked_as_favorite.connect(self.after_unmarking_status_as_favorite)
+        self.core.got_user_profile.connect(self.after_get_user_profile)
         self.core.urls_shorted.connect(self.update_box.after_short_url)
         self.core.media_uploaded.connect(self.update_box.after_upload_media)
 
@@ -96,7 +98,6 @@ class Main(Base, QWidget):
         self.dock.search_clicked.connect(self.show_search_dialog)
         self.dock.updates_clicked.connect(self.show_update_box)
 
-        #self.profile = ProfileDialog(self)
         #self.profile.show()
         #friend = SelectFriendDialog(self)
 
@@ -165,6 +166,10 @@ class Main(Base, QWidget):
     def delete_account(self, account_id):
         self.core.delete_account(account_id)
 
+    def add_search_column(self, account_id, criteria):
+        column_id = "%s-%s:%s" % (account_id, ColumnType.SEARCH, urllib2.quote(criteria))
+        self.add_column(column_id)
+
     def get_column_from_id(self, column_id):
         columns = self.core.get_registered_columns()
         for column in columns:
@@ -172,9 +177,11 @@ class Main(Base, QWidget):
                 return column
         return None
 
-    def add_search_column(self, account_id, criteria):
-        column_id = "%s-%s:%s" % (account_id, ColumnType.SEARCH, urllib2.quote(criteria))
-        self.add_column(column_id)
+    def get_shorten_url_service(self):
+        return self.core.get_shorten_url_service()
+
+    def get_upload_media_service(self):
+        return self.core.get_upload_media_service()
 
     def open_url(self, url):
         if is_preview_service_supported(url):
@@ -267,6 +274,10 @@ class Main(Base, QWidget):
     def show_update_box_for_quote(self, account_id, status):
         self.update_box.show_for_quote(account_id, status)
 
+    def show_profile_dialog(self, account_id, profile):
+        self.profile.start_loading(profile)
+        self.core.get_user_profile(account_id, profile)
+
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.core.update_status(account_id, message, in_reply_to_id)
 
@@ -334,6 +345,9 @@ class Main(Base, QWidget):
 
     def after_unmarking_status_as_favorite(self, response, account_id):
         print 'unmarked as favorite', response, account_id
+
+    def after_get_user_profile(self, response, account_id):
+        self.profile.loading_finished(response, account_id)
 
     # ------------------------------------------------------------
     # Timer Methods

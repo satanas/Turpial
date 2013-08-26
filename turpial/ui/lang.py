@@ -76,6 +76,7 @@ STRINGS = {
     'do_you_want_to_retweet_status': _('Do you want to retweet this status to all your friends?'),
     'confirm_delete': _('Confirm Delete'),
     'do_you_want_to_delete_status': _('Do you want to delete this status?'),
+    'loading': _('Loading...'),
 
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),
@@ -113,7 +114,6 @@ STRINGS = {
     #'cancel': _('Cancel'),
     #'public_timeline': _('Public Timeline'),
     #'saving': _('Saving...'),
-    #'loading': _('Loading...'),
     #'connecting': _('Connecting...'),
     #'authenticating': _('Authenticating...'),
     #'authorizing': _('Authorizing...'),

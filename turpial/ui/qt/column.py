@@ -137,6 +137,8 @@ class StatusesColumn(QWidget):
             account_id = url.split(':')[1]
             hashtag = "#%s" % url.split(':')[2]
             self.base.add_search_column(account_id, hashtag)
+        elif url.startswith('profile'):
+            self.base.show_profile_dialog(self.account_id, url.split(':')[1])
         elif url.startswith('cmd'):
             status = self.statuses[url.split(':')[2]]
             cmd = url.split(':')[1]

@@ -23,6 +23,7 @@ class CoreWorker(QThread):
     column_deleted = pyqtSignal(str)
     status_marked_as_favorite = pyqtSignal(object, str)
     status_unmarked_as_favorite = pyqtSignal(object, str)
+    got_user_profile = pyqtSignal(object, str)
     urls_shorted = pyqtSignal(str)
     media_uploaded = pyqtSignal(str)
 
@@ -125,7 +126,8 @@ class CoreWorker(QThread):
             self.__after_unmark_status_as_favorite, account_id)
 
     def get_user_profile(self, account_id, user_profile=None):
-        pass
+        self.register(self.core.get_user_profile, (account_id, user_profile),
+            self.__after_get_user_profile, account_id)
 
     def short_urls(self, message):
         self.register(self.core.short_url_in_message, (message),
@@ -169,6 +171,9 @@ class CoreWorker(QThread):
 
     def __after_unmark_status_as_favorite(self, response, account_id):
         self.status_unmarked_as_favorite.emit(response, account_id)
+
+    def __after_get_user_profile(self, response, account_id):
+        self.got_user_profile.emit(response, account_id)
 
     def __after_short_urls(self, response):
         self.urls_shorted.emit(response)

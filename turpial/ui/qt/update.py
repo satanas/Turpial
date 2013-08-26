@@ -137,6 +137,12 @@ class UpdateBox(QWidget):
         self.enable(True)
 
     def __show(self):
+        short_service = self.base.get_shorten_url_service()
+        short_tooltip = "%s (%s)" % (i18n.get('short_url'), short_service)
+        self.short_button.setToolTip(short_tooltip)
+        upload_service = self.base.get_upload_media_service()
+        upload_tooltip = "%s (%s)" % (i18n.get('upload_image'), upload_service)
+        self.upload_button.setToolTip(upload_tooltip)
         self.accounts_combo.clear()
         accounts = self.base.core.get_registered_accounts()
         for account in accounts:

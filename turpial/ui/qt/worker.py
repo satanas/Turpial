@@ -45,6 +45,12 @@ class CoreWorker(QThread):
     def get_update_interval(self):
         return self.core.get_update_interval()
 
+    def get_shorten_url_service(self):
+        return self.core.get_shorten_url_service()
+
+    def get_upload_media_service(self):
+        return self.core.get_upload_media_service()
+
     def get_available_columns(self):
         return self.core.available_columns()
 
@@ -117,6 +123,9 @@ class CoreWorker(QThread):
     def unmark_status_as_favorite(self, account_id, status_id):
         self.register(self.core.unmark_status_as_favorite, (account_id, status_id),
             self.__after_unmark_status_as_favorite, account_id)
+
+    def get_user_profile(self, account_id, user_profile=None):
+        pass
 
     def short_urls(self, message):
         self.register(self.core.short_url_in_message, (message),

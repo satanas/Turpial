@@ -11,6 +11,9 @@
 </body>
 </html>
 <script language="javascript">
+    var favoriteTooltip = "{{ favorite_tooltip }}";
+    var unfavoriteTooltip = "{{ unfavorite_tooltip }}";
+
     function addNotify(id, type, message) {
         var notificationId = 'notification-' + new Date().getTime() + '-' + id;
         var table = document.getElementById('notifications');
@@ -40,7 +43,8 @@
 
     function setFavorite(status_id) {
         var command = document.getElementById(status_id + '-fav-cmd');
-        command.setAttribute('cmd:unfavorite:' + status_id);
+        command.setAttribute('href', 'cmd:unfavorite:' + status_id);
+        command.setAttribute('title', unfavoriteTooltip);
 
         var icon = document.getElementById(status_id + '-fav-mark');
         icon.className = 'favorited';
@@ -48,10 +52,16 @@
 
     function unsetFavorite(status_id) {
         var command = document.getElementById(status_id + '-fav-cmd');
-        command.setAttribute('cmd:favorite:' + status_id);
+        command.setAttribute('href', 'cmd:favorite:' + status_id);
+        command.setAttribute('title', favoriteTooltip);
 
         var icon = document.getElementById(status_id + '-fav-mark');
         icon.className = 'favorited hidden';
+    }
+
+    function setRepeated(status_id) {
+        var icon = document.getElementById(status_id + '-repeat-mark');
+        icon.className = 'repeated';
     }
 
 </script>

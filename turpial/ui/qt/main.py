@@ -335,7 +335,6 @@ class Main(Base, QWidget):
         self.update_box.done()
 
     def after_repeat_status(self, response, column_id, account_id):
-        print 'repeated', response, str(column_id), account_id
         self._container.mark_status_as_repeated(response.id_)
         self._container.notify_success(str(column_id), response.id_, i18n.get('status_repeated'))
 

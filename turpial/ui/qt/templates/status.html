@@ -18,9 +18,7 @@
 
                 <div id="{{ status.id_ }}-fav-mark" class='favorited {% if not status.is_favorite %} hidden {% endif %}'></div>
 
-                {% if status.repeated %}
-                <div id="{{ status.id_ }}-repeat-mark" class='repeated'></div>
-                {% endif %}
+                <div id="{{ status.id_ }}-repeat-mark" class='repeated {% if not status.repeated %} hidden {% endif %}'></div>
 
                 <div class='clearfix'></div>
             </div>

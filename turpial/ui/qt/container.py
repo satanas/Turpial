@@ -122,6 +122,10 @@ class Container(QVBoxLayout):
         for id_, column in self.columns.iteritems():
             column.unmark_status_as_favorite(status_id)
 
+    def mark_status_as_repeated(self, status_id):
+        for id_, column in self.columns.iteritems():
+            column.mark_status_as_repeated(status_id)
+
     def notify_error(self, column_id, id_, message):
         self.columns[column_id].notify_error(id_, message)
 

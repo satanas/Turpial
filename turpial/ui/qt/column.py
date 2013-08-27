@@ -228,7 +228,7 @@ class StatusesColumn(QWidget):
                     'timestamp': timestamp, 'in_reply_to': in_reply_to, 'reply': i18n.get('reply'),
                     'quote': i18n.get('quote'), 'retweet': i18n.get('retweet'),
                     'mark_as_favorite': i18n.get('mark_as_favorite'), 'delete': i18n.get('delete'),
-                    'unmark_as_favorite': i18n.get('unmark_as_favorite'),}
+                    'remove_from_favorites': i18n.get('remove_from_favorites'),}
 
             content += status_template.render(attrs)
 
@@ -237,6 +237,14 @@ class StatusesColumn(QWidget):
         page = html.render(args)
 
         self.list_.setHtml(page)
+
+    def mark_status_as_favorite(self, status_id):
+        mark = "setFavorite('%s')" % status_id
+        self.list_.page().mainFrame().evaluateJavaScript(mark)
+
+    def unmark_status_as_favorite(self, status_id):
+        mark = "unsetFavorite('%s')" % status_id
+        self.list_.page().mainFrame().evaluateJavaScript(mark)
 
     def notify(self, id_, type_, message):
         message = message.replace("'", "\"")

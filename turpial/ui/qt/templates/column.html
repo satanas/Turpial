@@ -38,6 +38,20 @@
 
     }
 
-    /*addNotify(1, 'success', 'Status retweeted');
-    addNotify(2, 'success', 'Status favorited');*/
+    function setFavorite(status_id) {
+        var command = document.getElementById(status_id + '-fav-cmd');
+        command.setAttribute('cmd:unfavorite:' + status_id);
+
+        var icon = document.getElementById(status_id + '-fav-mark');
+        icon.className = 'favorited';
+    }
+
+    function unsetFavorite(status_id) {
+        var command = document.getElementById(status_id + '-fav-cmd');
+        command.setAttribute('cmd:favorite:' + status_id);
+
+        var icon = document.getElementById(status_id + '-fav-mark');
+        icon.className = 'favorited hidden';
+    }
+
 </script>

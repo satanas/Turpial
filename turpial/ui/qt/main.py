@@ -336,6 +336,7 @@ class Main(Base, QWidget):
 
     def after_repeat_status(self, response, column_id, account_id):
         print 'repeated', response, str(column_id), account_id
+        self._container.mark_status_as_repeated(response.id_)
         self._container.notify_success(str(column_id), response.id_, i18n.get('status_repeated'))
 
     def after_delete_status(self, response, column_id, account_id):
@@ -343,13 +344,13 @@ class Main(Base, QWidget):
         self._container.notify_success(str(column_id), response.id_, i18n.get('status_deleted'))
 
     def after_marking_status_as_favorite(self, response, column_id, account_id):
-        print 'marked as favorite', response, str(column_id), account_id
+        self._container.mark_status_as_favorite(response.id_)
         self._container.notify_success(str(column_id), response.id_,
             i18n.get('status_marked_as_favorite'))
 
 
     def after_unmarking_status_as_favorite(self, response, column_id, account_id):
-        print 'unmarked as favorite', response, str(column_id), account_id
+        self._container.unmark_status_as_favorite(response.id_)
         self._container.notify_success(str(column_id), response.id_,
             i18n.get('status_removed_from_favorites'))
 

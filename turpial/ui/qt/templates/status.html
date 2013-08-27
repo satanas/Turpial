@@ -16,12 +16,10 @@
 
                 <div class='timestamp'>{{ timestamp }}</div>
 
-                {% if status.is_favorite %}
-                <div class='favorited'></div>
-                {% endif %}
+                <div id="{{ status.id_ }}-fav-mark" class='favorited {% if not status.is_favorite %} hidden {% endif %}'></div>
 
                 {% if status.repeated %}
-                <div class='repeated'></div>
+                <div id="{{ status.id_ }}-repeat-mark" class='repeated'></div>
                 {% endif %}
 
                 <div class='clearfix'></div>
@@ -55,9 +53,9 @@
                     <a href="cmd:repeat:{{ status.id_ }}" title="{{ retweet }}"><div class="action_repeat"></div></a>
                     {% endif %}
                     {% if status.is_favorite %}
-                    <a href="cmd:unfavorite:{{ status.id_ }}" title="{{ unmark_as_favorite }}"><div class="action_favorite"></div></a>
+                    <a id="{{ status.id_ }}-fav-cmd" href="cmd:unfavorite:{{ status.id_ }}" title="{{ remove_from_favorites }}"><div class="action_favorite"></div></a>
                     {% else %}
-                    <a href="cmd:favorite:{{ status.id_ }}" title="{{ mark_as_favorite }}"><div class="action_favorite"></div></a>
+                    <a id="{{ status.id_ }}-fav-cmd" href="cmd:favorite:{{ status.id_ }}" title="{{ mark_as_favorite }}"><div class="action_favorite"></div></a>
                     {% endif %}
                 {% endif %}
             </div>

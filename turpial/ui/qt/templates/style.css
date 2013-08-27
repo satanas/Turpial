@@ -274,6 +274,10 @@ body {
     height: 15px;
 }
 
+.hidden {
+    display: none;
+}
+
 .clearfix:before, .clearfix:after {
     content: ".";
     display: block;

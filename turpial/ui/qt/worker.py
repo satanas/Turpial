@@ -14,15 +14,15 @@ from libturpial.common.tools import get_account_id_from, get_column_slug_from
 class CoreWorker(QThread):
 
     status_updated = pyqtSignal(object, str)
-    status_repeated = pyqtSignal(object, str)
-    status_deleted = pyqtSignal(object, str)
+    status_repeated = pyqtSignal(object, str, str)
+    status_deleted = pyqtSignal(object, str, str)
     column_updated = pyqtSignal(object, tuple)
     account_saved = pyqtSignal()
     account_deleted = pyqtSignal()
     column_saved = pyqtSignal(str)
     column_deleted = pyqtSignal(str)
-    status_marked_as_favorite = pyqtSignal(object, str)
-    status_unmarked_as_favorite = pyqtSignal(object, str)
+    status_marked_as_favorite = pyqtSignal(object, str, str)
+    status_unmarked_as_favorite = pyqtSignal(object, str, str)
     got_user_profile = pyqtSignal(object, str)
     urls_shorted = pyqtSignal(str)
     media_uploaded = pyqtSignal(str)
@@ -109,21 +109,21 @@ class CoreWorker(QThread):
         self.register(self.core.update_status, (account_id,
             message, in_reply_to_id), self.__after_update_status, account_id)
 
-    def repeat_status(self, account_id, status_id):
+    def repeat_status(self, column_id, account_id, status_id):
         self.register(self.core.repeat_status, (account_id, status_id),
-            self.__after_repeat_status, account_id)
+            self.__after_repeat_status, (column_id, account_id))
 
-    def delete_status(self, account_id, status_id):
+    def delete_status(self, column_id, account_id, status_id):
         self.register(self.core.destroy_status, (account_id, status_id),
-            self.__after_delete_status, account_id)
+            self.__after_delete_status, (column_id, account_id))
 
-    def mark_status_as_favorite(self, account_id, status_id):
+    def mark_status_as_favorite(self, column_id, account_id, status_id):
         self.register(self.core.mark_status_as_favorite, (account_id, status_id),
-            self.__after_mark_status_as_favorite, account_id)
+            self.__after_mark_status_as_favorite, (column_id, account_id))
 
-    def unmark_status_as_favorite(self, account_id, status_id):
+    def unmark_status_as_favorite(self, column_id, account_id, status_id):
         self.register(self.core.unmark_status_as_favorite, (account_id, status_id),
-            self.__after_unmark_status_as_favorite, account_id)
+            self.__after_unmark_status_as_favorite, (column_id, account_id))
 
     def get_user_profile(self, account_id, user_profile=None):
         self.register(self.core.get_user_profile, (account_id, user_profile),
@@ -160,17 +160,25 @@ class CoreWorker(QThread):
     def __after_update_status(self, response, account_id):
         self.status_updated.emit(response, account_id)
 
-    def __after_repeat_status(self, response, account_id):
-        self.status_repeated.emit(response, account_id)
+    def __after_repeat_status(self, response, args):
+        column_id = args[0]
+        account_id = args[1]
+        self.status_repeated.emit(response, column_id, account_id)
 
-    def __after_delete_status(self, response, account_id):
-        self.status_deleted.emit(response, account_id)
+    def __after_delete_status(self, response, args):
+        column_id = args[0]
+        account_id = args[1]
+        self.status_deleted.emit(response, column_id, account_id)
 
-    def __after_mark_status_as_favorite(self, response, account_id):
-        self.status_marked_as_favorite.emit(response, account_id)
+    def __after_mark_status_as_favorite(self, response, args):
+        column_id = args[0]
+        account_id = args[1]
+        self.status_marked_as_favorite.emit(response, column_id, account_id)
 
-    def __after_unmark_status_as_favorite(self, response, account_id):
-        self.status_unmarked_as_favorite.emit(response, account_id)
+    def __after_unmark_status_as_favorite(self, response, args):
+        column_id = args[0]
+        account_id = args[1]
+        self.status_unmarked_as_favorite.emit(response, column_id, account_id)
 
     def __after_get_user_profile(self, response, account_id):
         self.got_user_profile.emit(response, account_id)

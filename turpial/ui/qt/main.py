@@ -281,17 +281,17 @@ class Main(Base, QWidget):
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.core.update_status(account_id, message, in_reply_to_id)
 
-    def repeat_status(self, account_id, status):
-        self.core.repeat_status(account_id, status.id_)
+    def repeat_status(self, column_id, account_id, status):
+        self.core.repeat_status(column_id, account_id, status.id_)
 
-    def delete_status(self, account_id, status):
-        self.core.delete_status(account_id, status.id_)
+    def delete_status(self, column_id, account_id, status):
+        self.core.delete_status(column_id, account_id, status.id_)
 
-    def mark_status_as_favorite(self, account_id, status):
-        self.core.mark_status_as_favorite(account_id, status.id_)
+    def mark_status_as_favorite(self, column_id, account_id, status):
+        self.core.mark_status_as_favorite(column_id, account_id, status.id_)
 
-    def unmark_status_as_favorite(self, account_id, status):
-        self.core.unmark_status_as_favorite(account_id, status.id_)
+    def unmark_status_as_favorite(self, column_id, account_id, status):
+        self.core.unmark_status_as_favorite(column_id, account_id, status.id_)
 
     def short_urls(self, message):
         self.core.short_urls(message)
@@ -334,17 +334,25 @@ class Main(Base, QWidget):
     def after_update_status(self, response, account_id):
         self.update_box.done()
 
-    def after_repeat_status(self, response, account_id):
-        print 'repeated', response, account_id
+    def after_repeat_status(self, response, column_id, account_id):
+        print 'repeated', response, str(column_id), account_id
+        self._container.notify_success(str(column_id), response.id_, i18n.get('status_repeated'))
 
-    def after_delete_status(self, response, account_id):
-        print 'deleted', response, account_id
+    def after_delete_status(self, response, column_id, account_id):
+        print 'deleted', response, str(column_id), account_id
+        self._container.notify_success(str(column_id), response.id_, i18n.get('status_deleted'))
 
-    def after_marking_status_as_favorite(self, response, account_id):
-        print 'marked as favorite', response, account_id
+    def after_marking_status_as_favorite(self, response, column_id, account_id):
+        print 'marked as favorite', response, str(column_id), account_id
+        self._container.notify_success(str(column_id), response.id_,
+            i18n.get('status_marked_as_favorite'))
 
-    def after_unmarking_status_as_favorite(self, response, account_id):
-        print 'unmarked as favorite', response, account_id
+
+    def after_unmarking_status_as_favorite(self, response, column_id, account_id):
+        print 'unmarked as favorite', response, str(column_id), account_id
+        self._container.notify_success(str(column_id), response.id_,
+            i18n.get('status_removed_from_favorites'))
+
 
     def after_get_user_profile(self, response, account_id):
         self.profile.loading_finished(response, account_id)

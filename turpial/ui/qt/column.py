@@ -41,11 +41,16 @@ from libturpial.common.tools import get_account_id_from, get_column_slug_from, g
         get_username_from
 
 class StatusesColumn(QWidget):
+    NOTIFICATION_ERROR = 'error'
+    NOTIFICATION_SUCCESS = 'success'
+    NOTIFICATION_WARNING = 'warning'
+    NOTIFICATION_INFO = 'notice'
+
     def __init__(self, base, column_id):
         QWidget.__init__(self)
         self.base = base
         self.setMinimumWidth(280)
-        self.column_id = column_id
+        self.id_ = column_id
         self.statuses = {}
         #self.updating = False
 
@@ -99,7 +104,7 @@ class StatusesColumn(QWidget):
 
 
     def __delete_column(self):
-        self.base.core.delete_column(self.column_id)
+        self.base.core.delete_column(self.id_)
 
     def __load_template(self, name):
         path = os.path.join(self.base.templates_path, name)
@@ -166,20 +171,20 @@ class StatusesColumn(QWidget):
             i18n.get('do_you_want_to_retweet_status'), QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No)
         if confirmation == QMessageBox.Yes:
-            self.base.repeat_status(self.account_id, status)
+            self.base.repeat_status(self.id_, self.account_id, status)
 
     def __delete_status(self, status):
         confirmation = QMessageBox.question(self, i18n.get('confirm_delete'),
             i18n.get('do_you_want_to_delete_status'), QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No)
         if confirmation == QMessageBox.Yes:
-            self.base.delete_status(self.account_id, status)
+            self.base.delete_status(self.id_, self.account_id, status)
 
     def __mark_status_as_favorite(self, status):
-        self.base.mark_status_as_favorite(self.account_id, status)
+        self.base.mark_status_as_favorite(self.id_, self.account_id, status)
 
     def __unmark_status_as_favorite(self, status):
-        self.base.unmark_status_as_favorite(self.account_id, status)
+        self.base.unmark_status_as_favorite(self.id_, self.account_id, status)
 
     def start_updating(self):
         self.loader.setVisible(True)
@@ -232,6 +237,23 @@ class StatusesColumn(QWidget):
         page = html.render(args)
 
         self.list_.setHtml(page)
+
+    def notify(self, id_, type_, message):
+        message = message.replace("'", "\"")
+        notification = "addNotify('%s', '%s', '%s');" % (id_, type_, message)
+        self.list_.page().mainFrame().evaluateJavaScript(notification)
+
+    def notify_error(self, id_, message):
+        self.notify(id_, self.NOTIFICATION_ERROR, message)
+
+    def notify_success(self, id_, message):
+        self.notify(id_, self.NOTIFICATION_SUCCESS, message)
+
+    def notify_warning(self, id_, message):
+        self.notify(id_, self.NOTIFICATION_WARNING, message)
+
+    def notify_info(self, id_, message):
+        self.notify(id_, self.NOTIFICATION_INFO, message)
 
 
 class StatusDelegate(QStyledItemDelegate):

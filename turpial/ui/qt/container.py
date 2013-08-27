@@ -113,3 +113,15 @@ class Container(QVBoxLayout):
     def remove_column(self, column_id):
         self.columns[column_id].deleteLater()
         del self.columns[column_id]
+
+    def notify_error(self, column_id, id_, message):
+        self.columns[column_id].notify_error(id_, message)
+
+    def notify_success(self, column_id, id_, message):
+        self.columns[column_id].notify_success(id_, message)
+
+    def notify_warning(self, column_id, id_, message):
+        self.columns[column_id].notify_warning(id_, message)
+
+    def notify_info(self, column_id, id_, message):
+        self.columns[column_id].notify_info(id_, message)

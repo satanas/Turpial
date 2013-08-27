@@ -11,15 +11,33 @@
 </body>
 </html>
 <script language="javascript">
-    function addNotify(type, message) {
+    function addNotify(id, type, message) {
+        var notificationId = 'notification-' + new Date().getTime() + '-' + id;
         var table = document.getElementById('notifications');
         var rowCount = table.rows.length;
         var row = table.insertRow(rowCount);
         var cell = row.insertCell(0);
         cell.textContent = message;
         cell.setAttribute('class', type);
+        row.setAttribute('id', notificationId);
+        row.onclick = removeNotify;
     }
 
-    addNotify('success', 'Status retweeted');
-    addNotify('success', 'Status favorited');
+    function removeNotify() {
+        var currentId = this.getAttribute('id');
+        var table = document.getElementById('notifications');
+        var rowCount = table.rows.length;
+        for(var i = 0; i < rowCount; i++) {
+            var row = table.rows[i];
+            var rowId = row.getAttribute('id');
+            if (rowId == currentId) {
+                table.deleteRow(i);
+                break;
+            }
+        }
+
+    }
+
+    /*addNotify(1, 'success', 'Status retweeted');
+    addNotify(2, 'success', 'Status favorited');*/
 </script>

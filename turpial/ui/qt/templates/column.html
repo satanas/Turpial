@@ -5,6 +5,21 @@
     <style media='screen' type='text/css'>{{ stylesheet }}</style>
 </head>
 <body>
+<table id="notifications" class="alert">
+</table>
 {{ content }}
 </body>
 </html>
+<script language="javascript">
+    function addNotify(type, message) {
+        var table = document.getElementById('notifications');
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        var cell = row.insertCell(0);
+        cell.textContent = message;
+        cell.setAttribute('class', type);
+    }
+
+    addNotify('success', 'Status retweeted');
+    addNotify('success', 'Status favorited');
+</script>

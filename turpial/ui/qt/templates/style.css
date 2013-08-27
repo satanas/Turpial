@@ -11,6 +11,63 @@ body {
     background-color: #b4bbc1;
 }
 
+/*::-webkit-scrollbar {
+    background: transparent;
+    overflow: visible;
+    width: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.15);
+    border: solid #fff;
+    min-height: 30px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}*/
+
+.alert {
+    color: #555;
+    font-family: 'Ubuntu';
+    font-size: 13px;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 98%;
+    z-index: 1;
+}
+
+.alert td {
+    border-radius: 5px;
+    padding: 4px 6px;
+    margin: 1px 1px;
+}
+
+.error {
+    border: 1px solid #f5aca6;
+    background-color: #ffecec;
+}
+
+.warning {
+    border: 1px solid #f2c779;
+    background-color: #fff8c4;
+}
+
+.success {
+    border: 1px solid #a6ca8a;
+    background-color: #e9ffd9;
+}
+
+.notice {
+    border: 1px solid #8ed9f6;
+    background-color: #e3f7fc;
+}
+
 .user-info {
     margin: 0px;
 }

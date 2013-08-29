@@ -245,12 +245,17 @@ class StatusesColumn(QWidget):
         self.list_.page().mainFrame().evaluateJavaScript(mark)
 
     def unmark_status_as_favorite(self, status_id):
-        mark = "unsetFavorite('%s')" % status_id
+        mark = "unsetFavorite('%s');" % status_id
         self.list_.page().mainFrame().evaluateJavaScript(mark)
 
     def mark_status_as_repeated(self, status_id):
-        mark = "setRepeated('%s')" % status_id
+        mark = "setRepeated('%s');" % status_id
         self.list_.page().mainFrame().evaluateJavaScript(mark)
+
+    def remove_status(self, status_id):
+        operation = "removeStatus('%s');" % status_id
+        print operation
+        self.list_.page().mainFrame().evaluateJavaScript(operation)
 
     def notify(self, id_, type_, message):
         message = message.replace("'", "\"")

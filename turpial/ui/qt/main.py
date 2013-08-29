@@ -339,7 +339,7 @@ class Main(Base, QWidget):
         self._container.notify_success(str(column_id), response.id_, i18n.get('status_repeated'))
 
     def after_delete_status(self, response, column_id, account_id):
-        print 'deleted', response, str(column_id), account_id
+        self._container.remove_status(response.id_)
         self._container.notify_success(str(column_id), response.id_, i18n.get('status_deleted'))
 
     def after_marking_status_as_favorite(self, response, column_id, account_id):

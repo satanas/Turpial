@@ -1,4 +1,4 @@
-<table id='{{ status.id_ }}' class='status'>
+<table id='status-{{ status.id_ }}' class='status'>
     <tr>
         <td class='avatar-row'>
             <img class='avatar' src='{{ status.avatar }}' />
@@ -42,18 +42,26 @@
                 {% if in_reply_to and repeated_by %}
                 <div class='separator-15'></div>
                 {% endif %}
-                {% if status.is_own %}
-                    <a href="cmd:delete:{{ status.id_ }}" title="{{ delete }}"><div class="action_delete"></div></a>
-                {% else %}
-                    <a href="cmd:reply:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
-                    <a href="cmd:quote:{{ status.id_ }}" title="{{ quote }}"><div class="action_quote"></div></a>
-                    {% if not status.is_protected %}
-                    <a href="cmd:repeat:{{ status.id_ }}" title="{{ retweet }}"><div class="action_repeat"></div></a>
-                    {% endif %}
-                    {% if status.is_favorite %}
-                    <a id="{{ status.id_ }}-fav-cmd" href="cmd:unfavorite:{{ status.id_ }}" title="{{ remove_from_favorites }}"><div class="action_favorite"></div></a>
+                {% if status.type_ == 1 %}
+                    {% if status.is_own %}
+                        <a href="cmd:delete:{{ status.id_ }}" title="{{ delete }}"><div class="action_delete"></div></a>
                     {% else %}
-                    <a id="{{ status.id_ }}-fav-cmd" href="cmd:favorite:{{ status.id_ }}" title="{{ mark_as_favorite }}"><div class="action_favorite"></div></a>
+                        <a href="cmd:reply:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
+                        <a href="cmd:quote:{{ status.id_ }}" title="{{ quote }}"><div class="action_quote"></div></a>
+                        {% if not status.is_protected %}
+                        <a href="cmd:repeat:{{ status.id_ }}" title="{{ retweet }}"><div class="action_repeat"></div></a>
+                        {% endif %}
+                        {% if status.is_favorite %}
+                        <a id="{{ status.id_ }}-fav-cmd" href="cmd:unfavorite:{{ status.id_ }}" title="{{ remove_from_favorites }}"><div class="action_favorite"></div></a>
+                        {% else %}
+                        <a id="{{ status.id_ }}-fav-cmd" href="cmd:favorite:{{ status.id_ }}" title="{{ mark_as_favorite }}"><div class="action_favorite"></div></a>
+                        {% endif %}
+                    {% endif %}
+                {% elif status.type_ == 2 %}
+                    {% if status.is_own %}
+                        <a href="cmd:delete_direct:{{ status.id_ }}" title="{{ delete }}"><div class="action_delete"></div></a>
+                    {% else %}
+                        <a href="cmd:reply_direct:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
                     {% endif %}
                 {% endif %}
             </div>

@@ -159,6 +159,10 @@ class StatusesColumn(QWidget):
                 self.__mark_status_as_favorite(status)
             elif cmd == 'unfavorite':
                 self.__unmark_status_as_favorite(status)
+            elif cmd == 'delete_direct':
+                self.__delete_direct_message(status)
+            elif cmd == 'reply_direct':
+                self.__reply_direct_message(status)
 
     def __reply_status(self, status):
         self.base.show_update_box_for_reply(self.account_id, status)
@@ -179,6 +183,16 @@ class StatusesColumn(QWidget):
             QMessageBox.No)
         if confirmation == QMessageBox.Yes:
             self.base.delete_status(self.id_, self.account_id, status)
+
+    def __delete_direct_message(self, status):
+        confirmation = QMessageBox.question(self, i18n.get('confirm_delete'),
+            i18n.get('do_you_want_to_delete_direct_message'), QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No)
+        if confirmation == QMessageBox.Yes:
+            self.base.delete_direct_message(self.id_, self.account_id, status)
+
+    def __reply_direct_message(self, status):
+        self.base.show_update_box_for_reply_direct(self.account_id, status)
 
     def __mark_status_as_favorite(self, status):
         self.base.mark_status_as_favorite(self.id_, self.account_id, status)
@@ -254,7 +268,6 @@ class StatusesColumn(QWidget):
 
     def remove_status(self, status_id):
         operation = "removeStatus('%s');" % status_id
-        print operation
         self.list_.page().mainFrame().evaluateJavaScript(operation)
 
     def notify(self, id_, type_, message):

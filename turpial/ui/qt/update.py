@@ -124,12 +124,16 @@ class UpdateBox(QWidget):
         #    return
         self.enable(False)
 
-        self.base.update_status(account_id, message, self.in_reply_to_id)
+        if self.direct_message_to:
+            self.base.send_direct_message(account_id, self.direct_message_to, message)
+        else:
+            self.base.update_status(account_id, message, self.in_reply_to_id)
 
     def __clear(self):
         self.account_id = None
         self.in_reply_to_id = None
         self.in_reply_to_user = None
+        self.direct_message_to = None
         self.message = None
         self.cursor_position = None
         self.text_edit.setText('')
@@ -178,6 +182,13 @@ class UpdateBox(QWidget):
         mentions = ' '.join(["@%s" % user for user in status.get_mentions()])
         self.message = "%s " % mentions
         self.cursor_position = QTextCursor.End
+        self.__show()
+
+    def show_for_reply_direct(self, account_id, status):
+        title = "%s @%s" % (i18n.get('send_message_to'), status.username)
+        self.setWindowTitle(title)
+        self.account_id = account_id
+        self.direct_message_to = status.username
         self.__show()
 
     def show_for_quote(self, account_id, status):

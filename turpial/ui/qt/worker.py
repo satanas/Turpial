@@ -16,6 +16,8 @@ class CoreWorker(QThread):
     status_updated = pyqtSignal(object, str)
     status_repeated = pyqtSignal(object, str, str)
     status_deleted = pyqtSignal(object, str, str)
+    message_deleted = pyqtSignal(object, str, str)
+    message_sent = pyqtSignal(object, str)
     column_updated = pyqtSignal(object, tuple)
     account_saved = pyqtSignal()
     account_deleted = pyqtSignal()
@@ -117,6 +119,14 @@ class CoreWorker(QThread):
         self.register(self.core.destroy_status, (account_id, status_id),
             self.__after_delete_status, (column_id, account_id))
 
+    def delete_direct_message(self, column_id, account_id, status_id):
+        self.register(self.core.destroy_direct_message, (account_id, status_id),
+            self.__after_delete_direct_message, (column_id, account_id))
+
+    def send_direct_message(self, account_id, username, message):
+        self.register(self.core.send_direct_message, (account_id, username,
+            message), self.__after_send_direct_message, account_id)
+
     def mark_status_as_favorite(self, column_id, account_id, status_id):
         self.register(self.core.mark_status_as_favorite, (account_id, status_id),
             self.__after_mark_status_as_favorite, (column_id, account_id))
@@ -169,6 +179,14 @@ class CoreWorker(QThread):
         column_id = args[0]
         account_id = args[1]
         self.status_deleted.emit(response, column_id, account_id)
+
+    def __after_delete_direct_message(self, response, args):
+        column_id = args[0]
+        account_id = args[1]
+        self.message_deleted.emit(response, column_id, account_id)
+
+    def __after_send_direct_message(self, response, account_id):
+        self.message_sent.emit(response, account_id)
 
     def __after_mark_status_as_favorite(self, response, args):
         column_id = args[0]

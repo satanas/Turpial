@@ -65,9 +65,8 @@
     }
 
     function removeStatus(status_id) {
-        var status_ = document.getElementById(status_id + '');
-        alert(status_);
-        status_.remove();
+        var status_ = document.getElementById('status-' + status_id);
+        document.body.removeChild(status_);
     }
 
 </script>

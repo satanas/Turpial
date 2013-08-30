@@ -75,6 +75,8 @@ class Main(Base, QWidget):
         self.core.status_updated.connect(self.after_update_status)
         self.core.status_repeated.connect(self.after_repeat_status)
         self.core.status_deleted.connect(self.after_delete_status)
+        self.core.message_deleted.connect(self.after_delete_message)
+        self.core.message_sent.connect(self.after_send_message)
         self.core.column_updated.connect(self.after_update_column)
         self.core.account_saved.connect(self.after_save_account)
         self.core.account_deleted.connect(self.after_delete_account)
@@ -274,6 +276,9 @@ class Main(Base, QWidget):
     def show_update_box_for_quote(self, account_id, status):
         self.update_box.show_for_quote(account_id, status)
 
+    def show_update_box_for_reply_direct(self, account_id, status):
+        self.update_box.show_for_reply_direct(account_id, status)
+
     def show_profile_dialog(self, account_id, profile):
         self.profile.start_loading(profile)
         self.core.get_user_profile(account_id, profile)
@@ -286,6 +291,12 @@ class Main(Base, QWidget):
 
     def delete_status(self, column_id, account_id, status):
         self.core.delete_status(column_id, account_id, status.id_)
+
+    def delete_direct_message(self, column_id, account_id, status):
+        self.core.delete_direct_message(column_id, account_id, status.id_)
+
+    def send_direct_message(self, account_id, username, message):
+        self.core.send_direct_message(account_id, username, message)
 
     def mark_status_as_favorite(self, column_id, account_id, status):
         self.core.mark_status_as_favorite(column_id, account_id, status.id_)
@@ -341,6 +352,13 @@ class Main(Base, QWidget):
     def after_delete_status(self, response, column_id, account_id):
         self._container.remove_status(response.id_)
         self._container.notify_success(str(column_id), response.id_, i18n.get('status_deleted'))
+
+    def after_delete_message(self, response, column_id, account_id):
+        self._container.remove_status(response.id_)
+        self._container.notify_success(str(column_id), response.id_, i18n.get('direct_message_deleted'))
+
+    def after_send_message(self, response, account_id):
+        self.update_box.done()
 
     def after_marking_status_as_favorite(self, response, column_id, account_id):
         self._container.mark_status_as_favorite(response.id_)

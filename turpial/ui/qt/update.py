@@ -205,7 +205,8 @@ class UpdateBox(QWidget):
 
     def enable(self, value):
         self.text_edit.setEnabled(value)
-        self.accounts_combo.setEnabled(value)
+        if not self.account_id:
+            self.accounts_combo.setEnabled(value)
         self.upload_button.setEnabled(value)
         self.short_button.setEnabled(value)
         self.update_button.setEnabled(value)

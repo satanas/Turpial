@@ -21,13 +21,13 @@ class ProfileDialog(QWidget):
         self.base = base
         self.account_id = None
         self.setWindowTitle(i18n.get('user_profile'))
-        self.setFixedSize(350, 320)
+        self.setFixedSize(350, 350)
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
 
-        self.username = QLabel('<b>@satanas82</b>')
+        self.username = QLabel('')
         self.username.setTextFormat(Qt.RichText)
 
-        self.fullname = QLabel('Full name bla bla')
+        self.fullname = QLabel('')
         self.options = ImageButton(base, 'action-status-menu.png',
                 i18n.get(''))
 
@@ -68,13 +68,13 @@ class ProfileDialog(QWidget):
 
         self.bio = UserInfoBox(base, 'bio', 'icon-bio.png')
         self.bio.set_word_wrap(True)
-        self.bio.set_info('bla bla bla bla blansjkda alkslkja akljdklasjdasd')
+        self.bio.set_info('')
 
         self.location = UserInfoBox(base, 'location', 'icon-location.png')
-        self.location.set_info('Lorem Ipsum')
+        self.location.set_info('')
 
         self.web = UserInfoBox(base, 'web', 'icon-home.png')
-        self.web.set_info('http://bla.com')
+        self.web.set_info('')
 
         body = QVBoxLayout()
         body.setSpacing(15)
@@ -83,10 +83,10 @@ class ProfileDialog(QWidget):
         body.addLayout(self.location)
         body.addLayout(self.web)
 
-        self.tweets = StatInfoBox('tweets', '999')
-        self.following = StatInfoBox('following', '9999999')
-        self.followers = StatInfoBox('followers', '9999999')
-        self.favorites = StatInfoBox('favorites', '9999')
+        self.tweets = StatInfoBox('tweets', '')
+        self.following = StatInfoBox('following', '')
+        self.followers = StatInfoBox('followers', '')
+        self.favorites = StatInfoBox('favorites', '')
 
         footer = QHBoxLayout()
         footer.setContentsMargins(0, 5, 0, 10)
@@ -117,14 +117,10 @@ class ProfileDialog(QWidget):
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
+        self.__clear()
 
-    def start_loading(self, profile_username):
+    def __clear(self):
         self.account_id = None
-        self.hline.setVisible(False)
-        self.loader.setVisible(True)
-        self.username.setText('<b>%s</b>' % profile_username)
-        self.fullname.setText(i18n.get('loading'))
-        self.options.setEnabled(False)
         self.verified_icon.setVisible(False)
         self.protected_icon.setVisible(False)
         self.avatar.setPixmap(self.base.load_image('unknown.png', True))
@@ -135,6 +131,14 @@ class ProfileDialog(QWidget):
         self.following.set_value('')
         self.followers.set_value('')
         self.favorites.set_value('')
+
+    def start_loading(self, profile_username):
+        self.__clear()
+        self.hline.setVisible(False)
+        self.loader.setVisible(True)
+        self.username.setText('<b>%s</b>' % profile_username)
+        self.fullname.setText(i18n.get('loading'))
+        self.options.setEnabled(False)
         self.show()
 
     def loading_finished(self, profile, account_id):
@@ -177,8 +181,9 @@ class UserInfoBox(QVBoxLayout):
         self.addLayout(header)
         self.addWidget(self.text)
 
-    def set_info(self, text):
-        self.text.setText(text)
+    def set_info(self, text=None):
+        if text is not None:
+            self.text.setText(text)
 
     def set_word_wrap(self, value):
         self.text.setWordWrap(value)

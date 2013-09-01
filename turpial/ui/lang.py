@@ -216,7 +216,6 @@ STRINGS = {
     #'url_already_short': _('URL already short'),
     #'no_url_to_short': _('There are no URLs to short'),
     #'couldnt_shrink_urls': _("Oops... I couldn't shrink all URLs"),
-    #'criteria': _('Criteria'),
     #'this_search_support_advanced_operators': _('This search supports advanced operators like:'),
     #'for_more_information_visit': _('For more information visit'),
     #'twitter_search_documentation': _('Twitter Search Documentation'),

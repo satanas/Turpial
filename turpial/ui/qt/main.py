@@ -88,6 +88,7 @@ class Main(Base, QWidget):
         self.core.got_user_profile.connect(self.after_get_user_profile)
         self.core.urls_shorted.connect(self.update_box.after_short_url)
         self.core.media_uploaded.connect(self.update_box.after_upload_media)
+        self.core.friends_list_updated.connect(self.update_box.update_friends_list)
 
         self.core.start()
 
@@ -188,6 +189,9 @@ class Main(Base, QWidget):
     def get_upload_media_service(self):
         return self.core.get_upload_media_service()
 
+    def load_friends_list(self):
+        return self.core.load_friends_list()
+
     def open_url(self, url):
         if is_preview_service_supported(url):
             self.__open_in_browser(url)
@@ -227,6 +231,7 @@ class Main(Base, QWidget):
             for column in columns:
                 self.download_stream(column)
                 self.add_timer(column)
+            self.get_friend_list()
 
     def show_accounts_dialog(self):
         accounts = AccountsDialog(self)
@@ -335,6 +340,10 @@ class Main(Base, QWidget):
 
     def upload_media(self, account_id, filename):
         self.core.upload_media(account_id, filename)
+
+    def get_friend_list(self):
+        self.core.get_friend_list()
+
 
     #================================================================
     # Hooks definitions

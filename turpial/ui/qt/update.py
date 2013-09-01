@@ -33,8 +33,7 @@ class UpdateBox(QWidget):
         self.setFixedSize(500, 120)
         #self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
 
-        completer = QCompleter(['one', 'two', 'carlos', 'maria',
-            'ana', 'carolina', 'alberto', 'pedro', 'tomas'])
+        completer = QCompleter()
 
         self.text_edit = CompletionTextEdit()
         self.text_edit.setCompleter(completer)
@@ -230,6 +229,11 @@ class UpdateBox(QWidget):
         self.text_edit.setTextCursor(text_cursor)
         self.enable(True)
 
+    def update_friends_list(self):
+        completer = QCompleter(self.base.load_friends_list())
+        self.text_edit.setCompleter(completer)
+
+
 class CompletionTextEdit(QTextEdit):
     IGNORED_KEYS = (
         Qt.Key_Enter,
@@ -245,7 +249,8 @@ class CompletionTextEdit(QTextEdit):
 
     def setCompleter(self, completer):
         if self.completer:
-            self.disconnect(self.completer, 0, self, 0)
+            #self.disconnect(self.completer, 0, self, 0)
+            self.completer.activated.disconnect()
 
         self.completer = completer
         self.completer.setWidget(self)

@@ -28,6 +28,7 @@ class CoreWorker(QThread):
     got_user_profile = pyqtSignal(object, str)
     urls_shorted = pyqtSignal(str)
     media_uploaded = pyqtSignal(str)
+    friends_list_updated = pyqtSignal()
 
     def __init__(self):
         QThread.__init__(self)
@@ -82,7 +83,10 @@ class CoreWorker(QThread):
         return columns
 
     def is_muted(self, username):
-        self.core.is_muted(username)
+        return self.core.is_muted(username)
+
+    def load_friends_list(self):
+        return self.core.load_all_friends_list()
 
     def save_account(self, account):
         account_id = self.core.register_account(account)
@@ -150,6 +154,10 @@ class CoreWorker(QThread):
         self.register(self.core.upload_media, (account_id, filepath),
             self.__after_upload_media)
 
+    def get_friend_list(self):
+        self.register(self.core.get_all_friends_list, None,
+            self.__after_get_friend_list)
+
 
     #================================================================
     # Callbacks
@@ -209,6 +217,9 @@ class CoreWorker(QThread):
 
     def __after_upload_media(self, response):
         self.media_uploaded.emit(response)
+
+    def __after_get_friend_list(self, response):
+        self.friends_list_updated.emit()
 
     #================================================================
     # Worker methods

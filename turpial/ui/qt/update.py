@@ -183,6 +183,13 @@ class UpdateBox(QWidget):
         self.cursor_position = QTextCursor.End
         self.__show()
 
+    def show_for_send_direct(self, account_id, username):
+        title = "%s @%s" % (i18n.get('send_message_to'), username)
+        self.setWindowTitle(title)
+        self.account_id = account_id
+        self.direct_message_to = username
+        self.__show()
+
     def show_for_reply_direct(self, account_id, status):
         title = "%s @%s" % (i18n.get('send_message_to'), status.username)
         self.setWindowTitle(title)
@@ -249,7 +256,6 @@ class CompletionTextEdit(QTextEdit):
 
     def setCompleter(self, completer):
         if self.completer:
-            #self.disconnect(self.completer, 0, self, 0)
             self.completer.activated.disconnect()
 
         self.completer = completer

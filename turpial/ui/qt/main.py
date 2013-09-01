@@ -89,6 +89,10 @@ class Main(Base, QWidget):
         self.core.urls_shorted.connect(self.update_box.after_short_url)
         self.core.media_uploaded.connect(self.update_box.after_upload_media)
         self.core.friends_list_updated.connect(self.update_box.update_friends_list)
+        self.core.user_muted.connect(self.after_mute_user)
+        self.core.user_unmuted.connect(self.after_unmute_user)
+        self.core.user_blocked.connect(self.after_block_user)
+        self.core.user_reported_as_spam.connect(self.after_report_user_as_spam)
 
         self.core.start()
 
@@ -284,6 +288,9 @@ class Main(Base, QWidget):
     def show_update_box_for_quote(self, account_id, status):
         self.update_box.show_for_quote(account_id, status)
 
+    def show_update_box_for_send_direct(self, account_id, username):
+        self.update_box.show_for_send_direct(account_id, username)
+
     def show_update_box_for_reply_direct(self, account_id, status):
         self.update_box.show_for_reply_direct(account_id, status)
 
@@ -294,23 +301,26 @@ class Main(Base, QWidget):
     def show_profile_menu(self, point, profile):
         self.profile_menu = QMenu(self)
         # follow/unfollow
-        # report as spam
-        # block
 
         message_menu = QAction(i18n.get('send_direct_message'), self)
+        message_menu.triggered.connect(partial(
+                self.show_update_box_for_send_direct, profile.account_id, profile.username))
         if self.core.is_muted(profile.username):
             mute_menu = QAction(i18n.get('unmute'), self)
+            mute_menu.triggered.connect(partial(self.unmute, profile.username))
         else:
             mute_menu = QAction(i18n.get('mute'), self)
+            mute_menu.triggered.connect(partial(self.mute, profile.username))
         block_menu = QAction(i18n.get('block'), self)
+        block_menu.triggered.connect(partial(self.block, profile.account_id, profile.username))
         spam_menu = QAction(i18n.get('report_as_spam'), self)
+        spam_menu.triggered.connect(partial(self.report_as_spam, profile.account_id,
+            profile.username))
 
         self.profile_menu.addAction(message_menu)
         self.profile_menu.addAction(mute_menu)
         self.profile_menu.addAction(block_menu)
         self.profile_menu.addAction(spam_menu)
-
-        # item.triggered.connect(partial(self.add_column, column.id_))
 
         self.profile_menu.exec_(point)
 
@@ -343,6 +353,18 @@ class Main(Base, QWidget):
 
     def get_friend_list(self):
         self.core.get_friend_list()
+
+    def mute(self, username):
+        self.core.mute(username)
+
+    def unmute(self, username):
+        self.core.unmute(username)
+
+    def block(self, account_id, username):
+        self.core.block(account_id, username)
+
+    def report_as_spam(self, account_id, username):
+        self.core.report_as_spam(account_id, username)
 
 
     #================================================================
@@ -406,9 +428,20 @@ class Main(Base, QWidget):
         self._container.notify_success(str(column_id), response.id_,
             i18n.get('status_removed_from_favorites'))
 
-
     def after_get_user_profile(self, response, account_id):
         self.profile.loading_finished(response, account_id)
+
+    def after_mute_user(self, response):
+        print "User %s muted" % response
+
+    def after_unmute_user(self, response):
+        print "User %s unmuted" % response
+
+    def after_block_user(self, response):
+        print "User %s blocked" % response.username
+
+    def after_report_user_as_spam(self, response):
+        print "User %s reported" % response.username
 
     # ------------------------------------------------------------
     # Timer Methods

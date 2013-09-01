@@ -162,11 +162,14 @@ class Main(Base, QWidget):
     # Main methods
     #================================================================
 
-    def add_column(self, column_id):
-        self.core.save_column(column_id)
+    def save_account(self, account):
+        self.core.save_account(account)
 
     def delete_account(self, account_id):
         self.core.delete_account(account_id)
+
+    def add_column(self, column_id):
+        self.core.save_column(column_id)
 
     def add_search_column(self, account_id, criteria):
         column_id = "%s-%s:%s" % (account_id, ColumnType.SEARCH, urllib2.quote(criteria))
@@ -314,7 +317,7 @@ class Main(Base, QWidget):
     # Hooks definitions
     #================================================================
 
-    def after_save_account(self, account_id):
+    def after_save_account(self):
         self.account_registered.emit()
 
     def after_delete_account(self):

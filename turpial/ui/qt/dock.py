@@ -9,6 +9,7 @@ from PyQt4.QtGui import QHBoxLayout
 
 from PyQt4.QtCore import QPoint
 from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import ImageButton

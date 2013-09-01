@@ -81,6 +81,9 @@ class CoreWorker(QThread):
                 break
         return columns
 
+    def is_muted(self, username):
+        self.core.is_muted(username)
+
     def save_account(self, account):
         account_id = self.core.register_account(account)
         self.__after_save_account()

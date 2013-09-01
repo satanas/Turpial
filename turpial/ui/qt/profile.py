@@ -5,10 +5,13 @@
 from PyQt4.QtGui import QFont
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QLabel
+from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QGridLayout
 
 from PyQt4.QtCore import Qt
+from PyQt4.QtCore import QPoint
+from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.loader import BarLoadIndicator
@@ -16,6 +19,9 @@ from turpial.ui.qt.widgets import ImageButton, VLine, HLine
 
 
 class ProfileDialog(QWidget):
+
+    options_clicked = pyqtSignal(QPoint, object)
+
     def __init__(self, base):
         QWidget.__init__(self)
         self.base = base
@@ -23,6 +29,7 @@ class ProfileDialog(QWidget):
         self.setWindowTitle(i18n.get('user_profile'))
         self.setFixedSize(350, 350)
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        self.setStyleSheet("QWidget { background-color: #fff; }")
 
         self.username = QLabel('')
         self.username.setTextFormat(Qt.RichText)
@@ -30,6 +37,7 @@ class ProfileDialog(QWidget):
         self.fullname = QLabel('')
         self.options = ImageButton(base, 'action-status-menu.png',
                 i18n.get(''))
+        self.options.clicked.connect(self.__options_clicked)
 
         self.verified_icon = QLabel()
         self.verified_icon.setPixmap(base.load_image('mark-verified.png', True))
@@ -120,6 +128,7 @@ class ProfileDialog(QWidget):
         self.__clear()
 
     def __clear(self):
+        self.profile = None
         self.account_id = None
         self.verified_icon.setVisible(False)
         self.protected_icon.setVisible(False)
@@ -132,6 +141,9 @@ class ProfileDialog(QWidget):
         self.followers.set_value('')
         self.favorites.set_value('')
 
+    def __options_clicked(self):
+        self.options_clicked.emit(QCursor.pos(), self.profile)
+
     def start_loading(self, profile_username):
         self.__clear()
         self.hline.setVisible(False)
@@ -142,6 +154,7 @@ class ProfileDialog(QWidget):
         self.show()
 
     def loading_finished(self, profile, account_id):
+        self.profile = profile
         self.account_id = account_id
         self.loader.setVisible(False)
         self.hline.setVisible(False)

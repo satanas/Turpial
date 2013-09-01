@@ -67,6 +67,7 @@ class Main(Base, QWidget):
 
         self.update_box = UpdateBox(self)
         self.profile = ProfileDialog(self)
+        self.profile.options_clicked.connect(self.show_profile_menu)
 
         self.tray = TrayIcon(self)
         self.tray.activated.connect(self.__on_tray_click)
@@ -100,7 +101,6 @@ class Main(Base, QWidget):
         self.dock.search_clicked.connect(self.show_search_dialog)
         self.dock.updates_clicked.connect(self.show_update_box)
 
-        #self.profile.show()
         #friend = SelectFriendDialog(self)
 
         layout = QVBoxLayout()
@@ -285,6 +285,29 @@ class Main(Base, QWidget):
     def show_profile_dialog(self, account_id, profile):
         self.profile.start_loading(profile)
         self.core.get_user_profile(account_id, profile)
+
+    def show_profile_menu(self, point, profile):
+        self.profile_menu = QMenu(self)
+        # follow/unfollow
+        # report as spam
+        # block
+
+        message_menu = QAction(i18n.get('send_direct_message'), self)
+        if self.core.is_muted(profile.username):
+            mute_menu = QAction(i18n.get('unmute'), self)
+        else:
+            mute_menu = QAction(i18n.get('mute'), self)
+        block_menu = QAction(i18n.get('block'), self)
+        spam_menu = QAction(i18n.get('report_as_spam'), self)
+
+        self.profile_menu.addAction(message_menu)
+        self.profile_menu.addAction(mute_menu)
+        self.profile_menu.addAction(block_menu)
+        self.profile_menu.addAction(spam_menu)
+
+        # item.triggered.connect(partial(self.add_column, column.id_))
+
+        self.profile_menu.exec_(point)
 
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.core.update_status(account_id, message, in_reply_to_id)

@@ -8,11 +8,9 @@
         </td>
         <td class='content'>
             <div class='user-info'>
-                {% if status.is_protected %}
-                <div class='username_protected'>{{ status.username }}</div>
-                {% else %}
-                <div class='username'>{{ status.username }}</div>
-                {% endif %}
+                <div class='username{% if status.is_protected %}_protected{% endif %}'>
+                    <a href="profile:{{ status.username }}">{{ status.username }}</a>
+                </div>
 
                 <div class='timestamp'>{{ timestamp }}</div>
 

@@ -123,6 +123,11 @@ body {
     text-overflow: ellipsis;
 }
 
+.username a, .username_protected a {
+    color: #000;
+    text-decoration: none;
+}
+
 .username_protected {
     padding-left: 18px;
     background: url("file://{{ mark_protected }}") no-repeat;

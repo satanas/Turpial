@@ -130,7 +130,7 @@ body {
 
 .username_protected {
     padding-left: 18px;
-    background: url("file://{{ mark_protected }}") no-repeat;
+    background: url("file://{{ mark_protected }}") no-repeat 0px 5px;
 }
 
 .favorited {

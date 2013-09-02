@@ -105,6 +105,7 @@ class Main(Base, QWidget):
         self.dock.columns_clicked.connect(self.show_column_menu)
         self.dock.search_clicked.connect(self.show_search_dialog)
         self.dock.updates_clicked.connect(self.show_update_box)
+        self.dock.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
 
         #friend = SelectFriendDialog(self)
 
@@ -323,6 +324,10 @@ class Main(Base, QWidget):
         self.profile_menu.addAction(spam_menu)
 
         self.profile_menu.exec_(point)
+
+    def show_friends_dialog_for_direct_message(self):
+        friend = SelectFriendDialog(self)
+        self.show_update_box_for_send_direct(friend.get_account(), friend.get_username())
 
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.core.update_status(account_id, message, in_reply_to_id)

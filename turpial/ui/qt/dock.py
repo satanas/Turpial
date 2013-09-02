@@ -20,6 +20,7 @@ class Dock(QStatusBar):
     columns_clicked = pyqtSignal(QPoint)
     search_clicked = pyqtSignal()
     updates_clicked = pyqtSignal()
+    messages_clicked = pyqtSignal()
 
     def __init__(self, base):
         QStatusBar.__init__(self)
@@ -43,10 +44,11 @@ class Dock(QStatusBar):
         self.about_button = ImageButton(base, 'dock-about.png',
                 i18n.get('about_turpial'))
 
+        self.updates_button.clicked.connect(self.__updates_clicked)
+        self.messages_button.clicked.connect(self.__messages_clicked)
         self.columns_button.clicked.connect(self.__columns_clicked)
         self.accounts_button.clicked.connect(self.__accounts_clicked)
         self.search_button.clicked.connect(self.__search_clicked)
-        self.updates_button.clicked.connect(self.__updates_clicked)
 
         toolbar = QToolBar()
         toolbar.addWidget(self.about_button)
@@ -72,6 +74,9 @@ class Dock(QStatusBar):
 
     def __updates_clicked(self):
         self.updates_clicked.emit()
+
+    def __messages_clicked(self):
+        self.messages_clicked.emit()
 
     def empty(self, with_accounts=None):
         self.updates_button.setEnabled(False)

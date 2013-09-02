@@ -74,6 +74,7 @@ class Main(Base, QWidget):
 
         self.core = CoreWorker()
         self.core.status_updated.connect(self.after_update_status)
+        self.core.status_broadcasted.connect(self.after_broadcast_status)
         self.core.status_repeated.connect(self.after_repeat_status)
         self.core.status_deleted.connect(self.after_delete_status)
         self.core.message_deleted.connect(self.after_delete_message)
@@ -332,6 +333,12 @@ class Main(Base, QWidget):
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.core.update_status(account_id, message, in_reply_to_id)
 
+    def broadcast_status(self, message):
+        accounts = []
+        for account in self.core.get_registered_accounts():
+            accounts.append(account.id_)
+        self.core.broadcast_status(accounts, message)
+
     def repeat_status(self, column_id, account_id, status):
         self.core.repeat_status(column_id, account_id, status.id_)
 
@@ -405,6 +412,9 @@ class Main(Base, QWidget):
             self._container.update_column(column.id_, arg)
 
     def after_update_status(self, response, account_id):
+        self.update_box.done()
+
+    def after_broadcast_status(self, response):
         self.update_box.done()
 
     def after_repeat_status(self, response, column_id, account_id):

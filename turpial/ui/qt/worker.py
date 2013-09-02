@@ -14,6 +14,7 @@ from libturpial.common.tools import get_account_id_from, get_column_slug_from
 class CoreWorker(QThread):
 
     status_updated = pyqtSignal(object, str)
+    status_broadcasted = pyqtSignal(object)
     status_repeated = pyqtSignal(object, str, str)
     status_deleted = pyqtSignal(object, str, str)
     message_deleted = pyqtSignal(object, str, str)
@@ -122,6 +123,10 @@ class CoreWorker(QThread):
         self.register(self.core.update_status, (account_id,
             message, in_reply_to_id), self.__after_update_status, account_id)
 
+    def broadcast_status(self, accounts, message):
+        self.register(self.core.broadcast_status, (accounts, message),
+            self.__after_broadcast_status)
+
     def repeat_status(self, column_id, account_id, status_id):
         self.register(self.core.repeat_status, (account_id, status_id),
             self.__after_repeat_status, (column_id, account_id))
@@ -197,6 +202,9 @@ class CoreWorker(QThread):
 
     def __after_update_status(self, response, account_id):
         self.status_updated.emit(response, account_id)
+
+    def __after_broadcast_status(self, response):
+        self.status_broadcasted.emit(response)
 
     def __after_repeat_status(self, response, args):
         column_id = args[0]

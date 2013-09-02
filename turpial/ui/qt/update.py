@@ -126,7 +126,10 @@ class UpdateBox(QWidget):
         if self.direct_message_to:
             self.base.send_direct_message(account_id, self.direct_message_to, message)
         else:
-            self.base.update_status(account_id, message, self.in_reply_to_id)
+            if account_id == 'broadcast':
+                self.base.broadcast_status(message)
+            else:
+                self.base.update_status(account_id, message, self.in_reply_to_id)
 
     def __clear(self):
         self.account_id = None

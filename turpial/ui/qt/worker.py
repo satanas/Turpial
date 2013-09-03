@@ -36,6 +36,7 @@ class CoreWorker(QThread):
     user_reported_as_spam = pyqtSignal(object)
     user_followed = pyqtSignal(object, str)
     user_unfollowed = pyqtSignal(object, str)
+    exception_raised = pyqtSignal(object)
 
     def __init__(self):
         QThread.__init__(self)
@@ -310,12 +311,16 @@ class CoreWorker(QThread):
 
             (funct, args, callback, user_data) = req
 
-            if type(args) == tuple:
-                rtn = funct(*args)
-            elif args:
-                rtn = funct(args)
-            else:
-                rtn = funct()
+            try:
+                if type(args) == tuple:
+                    rtn = funct(*args)
+                elif args:
+                    rtn = funct(args)
+                else:
+                    rtn = funct()
+            except Exception, e:
+                self.exception_raised.emit(e)
+                continue
 
             if callback:
                 if user_data:

@@ -96,6 +96,7 @@ class Main(Base, QWidget):
         self.core.user_reported_as_spam.connect(self.after_report_user_as_spam)
         self.core.user_followed.connect(self.after_follow_user)
         self.core.user_unfollowed.connect(self.after_unfollow_user)
+        self.core.exception_raised.connect(self.on_exception)
 
         self.core.start()
 
@@ -489,6 +490,9 @@ class Main(Base, QWidget):
 
     def after_unfollow_user(self, response):
         print "User %s unfollowed" % response.username
+
+    def on_exception(self, exception):
+        print exception
 
     # ------------------------------------------------------------
     # Timer Methods

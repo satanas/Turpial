@@ -11,6 +11,8 @@ from PyQt4.QtGui import QCompleter
 from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QFormLayout, QVBoxLayout, QHBoxLayout
 
+from PyQt4.QtCore import Qt
+
 from turpial.ui.lang import i18n
 from turpial.ui.qt.dialog import ModalDialog
 from turpial.ui.qt.widgets import ImageButton
@@ -32,6 +34,7 @@ class SelectFriendDialog(ModalDialog):
             self.accounts_combo.addItem(icon, get_username_from(account.id_), account.id_)
 
         completer = QCompleter(self.base.load_friends_list())
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
         self.friend = QLineEdit()
         self.friend.setCompleter(completer)
         select_button = QPushButton(i18n.get('select'))

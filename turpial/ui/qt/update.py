@@ -33,10 +33,7 @@ class UpdateBox(QWidget):
         self.setFixedSize(500, 120)
         #self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
 
-        completer = QCompleter()
-
         self.text_edit = CompletionTextEdit()
-        self.text_edit.setCompleter(completer)
 
         self.upload_button = ImageButton(base, 'action-upload.png',
                 i18n.get('upload_image'))
@@ -143,6 +140,7 @@ class UpdateBox(QWidget):
         self.enable(True)
 
     def __show(self):
+        self.update_friends_list()
         short_service = self.base.get_shorten_url_service()
         short_tooltip = "%s (%s)" % (i18n.get('short_url'), short_service)
         self.short_button.setToolTip(short_tooltip)
@@ -241,6 +239,7 @@ class UpdateBox(QWidget):
 
     def update_friends_list(self):
         completer = QCompleter(self.base.load_friends_list())
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
         self.text_edit.setCompleter(completer)
 
 

@@ -92,6 +92,7 @@ STRINGS = {
     'unmute': _("Unmute"),
     'block': _("Block"),
     'report_as_spam': _("Report as spam"),
+    'this_is_you': _("This is you!"),
 
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),
@@ -166,7 +167,6 @@ STRINGS = {
     #'user_reported_spam_successfully': _("User reported as spam successfully"),
     #'blocking_user': _("Blocking user..."),
     #'user_blocked_successfully': _("User blocked successfully"),
-    #'this_is_you': _("This is you!"),
     #'following_user': _('Following user...'),
     #'unfollowing_user': _('Unfollowing user...'),
     #'you_are_now_following': _("You are now following @%s"),

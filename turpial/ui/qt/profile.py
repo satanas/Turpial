@@ -17,6 +17,8 @@ from turpial.ui.lang import i18n
 from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.widgets import ImageButton, VLine, HLine
 
+from libturpial.common.tools import get_username_from
+
 
 class ProfileDialog(QWidget):
 
@@ -48,6 +50,9 @@ class ProfileDialog(QWidget):
         self.avatar = QLabel()
         self.avatar.setPixmap(base.load_image('unknown.png', True))
 
+        self.you_label = QLabel(i18n.get('this_is_you'))
+        self.you_label.setVisible(False)
+
         info_line1 = QHBoxLayout()
         info_line1.setSpacing(5)
         info_line1.addWidget(self.username)
@@ -59,6 +64,7 @@ class ProfileDialog(QWidget):
         info_line2 = QHBoxLayout()
         info_line2.addWidget(self.fullname, 1)
         info_line2.addWidget(self.options)
+        info_line2.addWidget(self.you_label)
 
         user_info = QVBoxLayout()
         user_info.addLayout(info_line1)
@@ -132,6 +138,8 @@ class ProfileDialog(QWidget):
         self.account_id = None
         self.verified_icon.setVisible(False)
         self.protected_icon.setVisible(False)
+        self.you_label.setVisible(False)
+        self.options.setVisible(False)
         self.avatar.setPixmap(self.base.load_image('unknown.png', True))
         self.bio.set_info('')
         self.location.set_info('')
@@ -150,7 +158,6 @@ class ProfileDialog(QWidget):
         self.loader.setVisible(True)
         self.username.setText('<b>%s</b>' % profile_username)
         self.fullname.setText(i18n.get('loading'))
-        self.options.setEnabled(False)
         self.show()
 
     def loading_finished(self, profile, account_id):
@@ -160,7 +167,13 @@ class ProfileDialog(QWidget):
         self.hline.setVisible(False)
         self.username.setText('<b>%s</b>' % profile.username)
         self.fullname.setText(profile.fullname)
-        self.options.setEnabled(True)
+
+        if get_username_from(account_id) == profile.username:
+            self.you_label.setVisible(True)
+            self.options.setVisible(False)
+        else:
+            self.you_label.setVisible(False)
+            self.options.setVisible(True)
         self.verified_icon.setVisible(profile.verified)
         self.protected_icon.setVisible(profile.protected)
         self.avatar.setPixmap(self.base.load_image('unknown.png', True))

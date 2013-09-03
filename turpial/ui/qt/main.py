@@ -94,6 +94,8 @@ class Main(Base, QWidget):
         self.core.user_unmuted.connect(self.after_unmute_user)
         self.core.user_blocked.connect(self.after_block_user)
         self.core.user_reported_as_spam.connect(self.after_report_user_as_spam)
+        self.core.user_followed.connect(self.after_follow_user)
+        self.core.user_unfollowed.connect(self.after_unfollow_user)
 
         self.core.start()
 
@@ -305,6 +307,8 @@ class Main(Base, QWidget):
 
         if profile.following:
             unfollow_menu = QAction(i18n.get('unfollow'), self)
+            unfollow_menu.triggered.connect(partial(self.unfollow, profile.account_id,
+                profile.username))
             message_menu = QAction(i18n.get('send_direct_message'), self)
             message_menu.triggered.connect(partial(
                 self.show_update_box_for_send_direct, profile.account_id, profile.username))
@@ -318,6 +322,8 @@ class Main(Base, QWidget):
             self.profile_menu.addSeparator()
         else:
             follow_menu = QAction(i18n.get('follow'), self)
+            follow_menu.triggered.connect(partial(self.follow, profile.account_id,
+                profile.username))
             self.profile_menu.addAction(follow_menu)
             self.profile_menu.addSeparator()
 
@@ -391,6 +397,12 @@ class Main(Base, QWidget):
 
     def report_as_spam(self, account_id, username):
         self.core.report_as_spam(account_id, username)
+
+    def follow(self, account_id, username):
+        self.core.follow(account_id, username)
+
+    def unfollow(self, account_id, username):
+        self.core.unfollow(account_id, username)
 
 
     #================================================================
@@ -471,6 +483,12 @@ class Main(Base, QWidget):
 
     def after_report_user_as_spam(self, response):
         print "User %s reported" % response.username
+
+    def after_follow_user(self, response):
+        print "User %s followed" % response.username
+
+    def after_unfollow_user(self, response):
+        print "User %s unfollowed" % response.username
 
     # ------------------------------------------------------------
     # Timer Methods

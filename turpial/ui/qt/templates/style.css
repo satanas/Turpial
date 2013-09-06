@@ -271,9 +271,8 @@ body {
     background: url("file://{{ action_delete }}") no-repeat;
 }
 
-.conversation {
-    background-color: #ddd;
-    margin-left: 10px;
+.conversation table {
+    border-left: 10px solid #f00;
 }
 
 .separator-5 {

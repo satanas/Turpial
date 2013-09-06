@@ -109,10 +109,7 @@ class StatusesWebView(QWebView):
                 'remove_from_favorites': i18n.get('remove_from_favorites'),
                 'conversation_id': conversation_id}
 
-        content = self.status_template.render(attrs)
-        if conversation_id:
-            content += "<div id='%s' class='conversation'></div>" % conversation_id
-        return content
+        return self.status_template.render(attrs)
 
 
     def update_statuses(self, statuses):

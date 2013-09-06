@@ -66,4 +66,9 @@
             <div class='clearfix'></div>
         </td>
     </tr>
+    {% if conversation_id %}
+    <tr>
+        <td colspan="2"><div id='{{ conversation_id }}' class='conversation hidden'></div></td>
+    </tr>
+    {% endif %}
 </table>

@@ -93,6 +93,7 @@ STRINGS = {
     'block': _("Block"),
     'report_as_spam': _("Report as spam"),
     'this_is_you': _("This is you!"),
+    'conversation': _("Conversation"),
 
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),

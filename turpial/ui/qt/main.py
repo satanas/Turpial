@@ -471,6 +471,7 @@ class Main(Base, QWidget):
             i18n.get('status_removed_from_favorites'))
 
     def after_get_user_profile(self, response, account_id):
+        print response, account_id
         self.profile.loading_finished(response, account_id)
 
     def after_mute_user(self, response):
@@ -492,7 +493,7 @@ class Main(Base, QWidget):
         print "User %s unfollowed" % response.username
 
     def on_exception(self, exception):
-        print exception
+        print 'Exception', exception
 
     # ------------------------------------------------------------
     # Timer Methods

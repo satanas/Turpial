@@ -96,6 +96,7 @@ class Main(Base, QWidget):
         self.core.user_reported_as_spam.connect(self.after_report_user_as_spam)
         self.core.user_followed.connect(self.after_follow_user)
         self.core.user_unfollowed.connect(self.after_unfollow_user)
+        self.core.status_from_conversation.connect(self.after_get_status_from_conversation)
         self.core.exception_raised.connect(self.on_exception)
 
         self.core.start()
@@ -405,6 +406,9 @@ class Main(Base, QWidget):
     def unfollow(self, account_id, username):
         self.core.unfollow(account_id, username)
 
+    def get_conversation(self, account_id, status, conversation_id):
+        self.core.get_status_from_conversation(account_id, status.in_reply_to_id, conversation_id)
+
 
     #================================================================
     # Hooks definitions
@@ -471,7 +475,6 @@ class Main(Base, QWidget):
             i18n.get('status_removed_from_favorites'))
 
     def after_get_user_profile(self, response, account_id):
-        print response, account_id
         self.profile.loading_finished(response, account_id)
 
     def after_mute_user(self, response):
@@ -491,6 +494,15 @@ class Main(Base, QWidget):
 
     def after_unfollow_user(self, response):
         print "User %s unfollowed" % response.username
+
+    def after_get_status_from_conversation(self, response, conversation_id):
+        print response.text
+        #if self.conversation.showed:
+        #    self.conversation.update_conversation(status)
+        self._container.update_conversation(response, conversation_id)
+        if response.in_reply_to_id:
+            self.core.get_status_from_conversation(response.account_id, response.in_reply_to_id,
+                conversation_id)
 
     def on_exception(self, exception):
         print 'Exception', exception

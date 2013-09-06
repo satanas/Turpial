@@ -26,8 +26,8 @@
     <tr>
         <td colspan='2' class='footer'>
             <div class='extra'>
-                {% if in_reply_to %}
-                <span class='in_reply_to'>{{ in_reply_to }}</span>
+                {% if view_conversation %}
+                <span class='in_reply_to'><a href="cmd:conversation:{{ status.id_ }}">{{ view_conversation }}</a></span>
                 {% endif %}
                 {% if in_reply_to and repeated_by %}
                 <div class='separator-5'></div>

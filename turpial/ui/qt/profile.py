@@ -135,6 +135,7 @@ class ProfileDialog(QWidget):
 
     def __clear(self):
         self.profile = None
+        self.showed = False
         self.account_id = None
         self.verified_icon.setVisible(False)
         self.protected_icon.setVisible(False)
@@ -159,6 +160,7 @@ class ProfileDialog(QWidget):
         self.username.setText('<b>%s</b>' % profile_username)
         self.fullname.setText(i18n.get('loading'))
         self.show()
+        self.showed = True
 
     def loading_finished(self, profile, account_id):
         self.profile = profile

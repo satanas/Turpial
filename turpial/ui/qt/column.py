@@ -78,7 +78,7 @@ class StatusesColumn(QWidget):
         self.loader = BarLoadIndicator()
         self.loader.setVisible(False)
 
-        self.webview = StatusesWebView(self.base)
+        self.webview = StatusesWebView(self.base, self.id_)
         self.webview.link_clicked.connect(self.__link_clicked)
         self.webview.hashtag_clicked.connect(self.__hashtag_clicked)
         self.webview.profile_clicked.connect(self.__profile_clicked)
@@ -125,6 +125,8 @@ class StatusesColumn(QWidget):
             self.__delete_direct_message(status)
         elif cmd == 'reply_direct':
             self.__reply_direct_message(status)
+        elif cmd == 'conversation':
+            self.__show_conversation(status)
 
     def __reply_status(self, status):
         self.base.show_update_box_for_reply(self.account_id, status)
@@ -162,6 +164,11 @@ class StatusesColumn(QWidget):
     def __unmark_status_as_favorite(self, status):
         self.base.unmark_status_as_favorite(self.id_, self.account_id, status)
 
+    def __show_conversation(self, status):
+        conversation_id = "%s-conversation-%s" % (self.id_, status.id_)
+        print 'showing conversation', conversation_id
+        self.base.get_conversation(self.account_id, status, conversation_id)
+
     def start_updating(self):
         self.loader.setVisible(True)
 
@@ -170,6 +177,10 @@ class StatusesColumn(QWidget):
 
     def update_statuses(self, statuses):
         self.statuses = self.webview.update_statuses(statuses)
+
+    def update_conversation(self, status, conversation_id):
+        self.webview.update_conversation(status, conversation_id)
+
 
     def mark_status_as_favorite(self, status_id):
         mark = "setFavorite('%s')" % status_id

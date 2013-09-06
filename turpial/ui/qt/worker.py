@@ -37,6 +37,7 @@ class CoreWorker(QThread):
     user_followed = pyqtSignal(object, str)
     user_unfollowed = pyqtSignal(object, str)
     exception_raised = pyqtSignal(object)
+    status_from_conversation = pyqtSignal(object, str)
 
     def __init__(self):
         QThread.__init__(self)
@@ -203,6 +204,10 @@ class CoreWorker(QThread):
         self.register(self.core.unfollow, (account_id, username),
             self.__after_unfollow_user, account_id)
 
+    def get_status_from_conversation(self, account_id, status_id, conversation_id):
+        self.register(self.core.get_single_status, (account_id, status_id),
+            self.__after_get_status_from_conversation, conversation_id)
+
 
     #================================================================
     # Callbacks
@@ -289,6 +294,9 @@ class CoreWorker(QThread):
     def __after_unfollow_user(self, response, account_id):
         self.__remove_friend(response.username)
         self.user_unfollowed.emit(response, account_id)
+
+    def __after_get_status_from_conversation(self, response, conversation_id):
+        self.status_from_conversation.emit(response, conversation_id)
 
     #================================================================
     # Worker methods

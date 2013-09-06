@@ -271,6 +271,11 @@ body {
     background: url("file://{{ action_delete }}") no-repeat;
 }
 
+.conversation {
+    background-color: #ddd;
+    margin-left: 10px;
+}
+
 .separator-5 {
     height: 5px;
 }

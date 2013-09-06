@@ -69,4 +69,9 @@
         document.body.removeChild(status_);
     }
 
+    function updateConversation(conversation_id, html) {
+        var conversation = document.getElementById(conversation_id);
+        conversation.innerHTML = conversation.innerHTML + html;
+    }
+
 </script>

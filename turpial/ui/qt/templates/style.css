@@ -272,7 +272,11 @@ body {
 }
 
 .conversation table {
-    border-left: 10px solid #f00;
+    border-left: 10px solid #999;
+}
+
+.conversation table td {
+    background-color: #f6f6f6;
 }
 
 .separator-5 {

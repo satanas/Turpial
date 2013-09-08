@@ -69,10 +69,23 @@
         document.body.removeChild(status_);
     }
 
-    function updateConversation(conversation_id, html) {
-        var conversation = document.getElementById(conversation_id);
+    function updateConversation(status_root_id, html) {
+        var conversation = document.getElementById(status_root_id + '-conversation');
+        var viewCmd = document.getElementById(status_root_id + '-view-conv-cmd');
+        var hideCmd = document.getElementById(status_root_id + '-hide-conv-cmd');
         conversation.innerHTML = conversation.innerHTML + html;
         conversation.className = 'conversation';
+        viewCmd.className = 'hidden';
+        hideCmd.className = '';
+    }
+
+    function clearConversation(status_root_id) {
+        var conversation = document.getElementById(status_root_id + '-conversation');
+        var viewCmd = document.getElementById(status_root_id + '-view-conv-cmd');
+        var hideCmd = document.getElementById(status_root_id + '-hide-conv-cmd');
+        conversation.innerHTML = "";
+        viewCmd.className = '';
+        hideCmd.className = 'hidden';
     }
 
 </script>

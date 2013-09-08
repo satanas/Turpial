@@ -66,6 +66,7 @@ STRINGS = {
     'you_can_not_submit_an_empty_message': _("You can not submit an empty message"),
     'message_too_long_it_looks_like_a_testament': _("Message too long, it looks like a testament"),
     'view_conversation': _("View conversation"),
+    'hide_conversation': _("Hide conversation"),
     'reply': _('Reply'),
     'quote': _('Quote'),
     'retweet': _('Retweet'),

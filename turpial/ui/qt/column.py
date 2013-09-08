@@ -125,8 +125,10 @@ class StatusesColumn(QWidget):
             self.__delete_direct_message(status)
         elif cmd == 'reply_direct':
             self.__reply_direct_message(status)
-        elif cmd == 'conversation':
-            self.__show_conversation(status)
+        elif cmd == 'view_conversation':
+            self.__view_conversation(status)
+        elif cmd == 'hide_conversation':
+            self.__hide_conversation(status)
 
     def __reply_status(self, status):
         self.base.show_update_box_for_reply(self.account_id, status)
@@ -164,10 +166,12 @@ class StatusesColumn(QWidget):
     def __unmark_status_as_favorite(self, status):
         self.base.unmark_status_as_favorite(self.id_, self.account_id, status)
 
-    def __show_conversation(self, status):
-        conversation_id = "%s-conversation-%s" % (self.id_, status.id_)
-        print 'showing conversation', conversation_id
-        self.base.get_conversation(self.account_id, status, conversation_id)
+    def __view_conversation(self, status):
+        self.webview.clear_conversation(status.id_)
+        self.base.get_conversation(self.account_id, status, self.id_, status.id_)
+
+    def __hide_conversation(self, status):
+        self.webview.clear_conversation(status.id_)
 
     def start_updating(self):
         self.loader.setVisible(True)
@@ -178,9 +182,8 @@ class StatusesColumn(QWidget):
     def update_statuses(self, statuses):
         self.statuses = self.webview.update_statuses(statuses)
 
-    def update_conversation(self, status, conversation_id):
-        self.webview.update_conversation(status, conversation_id)
-
+    def update_conversation(self, status, status_root_id):
+        self.webview.update_conversation(status, status_root_id)
 
     def mark_status_as_favorite(self, status_id):
         mark = "setFavorite('%s')" % status_id

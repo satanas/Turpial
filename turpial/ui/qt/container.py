@@ -130,9 +130,10 @@ class Container(QVBoxLayout):
         for id_, column in self.columns.iteritems():
             column.remove_status(status_id)
 
-    def update_conversation(self, status, conversation_id):
+    def update_conversation(self, status, column_id, status_root_id):
         for id_, column in self.columns.iteritems():
-            column.update_conversation(status, conversation_id)
+            if id_ == column_id:
+                column.update_conversation(status, status_root_id)
 
     def notify_error(self, column_id, id_, message):
         self.columns[column_id].notify_error(id_, message)

@@ -406,8 +406,9 @@ class Main(Base, QWidget):
     def unfollow(self, account_id, username):
         self.core.unfollow(account_id, username)
 
-    def get_conversation(self, account_id, status, conversation_id):
-        self.core.get_status_from_conversation(account_id, status.in_reply_to_id, conversation_id)
+    def get_conversation(self, account_id, status, column_id, status_root_id):
+        self.core.get_status_from_conversation(account_id, status.in_reply_to_id, column_id,
+            status_root_id)
 
 
     #================================================================
@@ -495,14 +496,11 @@ class Main(Base, QWidget):
     def after_unfollow_user(self, response):
         print "User %s unfollowed" % response.username
 
-    def after_get_status_from_conversation(self, response, conversation_id):
-        print response.text
-        #if self.conversation.showed:
-        #    self.conversation.update_conversation(status)
-        self._container.update_conversation(response, conversation_id)
+    def after_get_status_from_conversation(self, response, column_id, status_root_id):
+        self._container.update_conversation(response, column_id, status_root_id)
         if response.in_reply_to_id:
             self.core.get_status_from_conversation(response.account_id, response.in_reply_to_id,
-                conversation_id)
+                column_id, status_root_id)
 
     def on_exception(self, exception):
         print 'Exception', exception

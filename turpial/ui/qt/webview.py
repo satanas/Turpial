@@ -78,6 +78,7 @@ class StatusesWebView(QWebView):
         repeated_by = None
         conversation_id = None
         view_conversation = None
+        hide_conversation = None
         message = status.text
         timestamp = self.base.humanize_timestamp(status.timestamp)
 
@@ -101,9 +102,11 @@ class StatusesWebView(QWebView):
         if status.in_reply_to_id and with_conversation:
             conversation_id = "%s-conversation-%s" % (self.column_id, status.id_)
             view_conversation = i18n.get('view_conversation')
+            hide_conversation = i18n.get('hide_conversation')
 
         attrs = {'status': status, 'message': message, 'repeated_by': repeated_by,
-                'timestamp': timestamp, 'view_conversation': view_conversation, 'reply': i18n.get('reply'),
+                'timestamp': timestamp, 'view_conversation': view_conversation,
+                'reply': i18n.get('reply'), 'hide_conversation': hide_conversation,
                 'quote': i18n.get('quote'), 'retweet': i18n.get('retweet'),
                 'mark_as_favorite': i18n.get('mark_as_favorite'), 'delete': i18n.get('delete'),
                 'remove_from_favorites': i18n.get('remove_from_favorites'),
@@ -132,9 +135,13 @@ class StatusesWebView(QWebView):
     def execute_javascript(self, js_cmd):
         self.page().mainFrame().evaluateJavaScript(js_cmd)
 
-    def update_conversation(self, status, conversation_id):
+    def update_conversation(self, status, status_root_id):
         status_rendered = self.__render_status(status, with_conversation=False)
         status_rendered = status_rendered.replace("\n", '')
         status_rendered = status_rendered.replace('\'', '"')
-        conversation = """updateConversation('%s', '%s')""" % (conversation_id, status_rendered)
+        conversation = """updateConversation('%s', '%s')""" % (status_root_id, status_rendered)
+        self.execute_javascript(conversation)
+
+    def clear_conversation(self, status_root_id):
+        conversation = "clearConversation('%s')" % status_root_id
         self.execute_javascript(conversation)

@@ -27,7 +27,10 @@
         <td colspan='2' class='footer'>
             <div class='extra'>
                 {% if view_conversation %}
-                <span class='in_reply_to'><a href="cmd:conversation:{{ status.id_ }}">{{ view_conversation }}</a></span>
+                <span class='in_reply_to'>
+                    <a id="{{ status.id_  }}-view-conv-cmd" href="cmd:view_conversation:{{ status.id_ }}">{{ view_conversation }}</a>
+                    <a id="{{ status.id_  }}-hide-conv-cmd" class="hidden" href="cmd:hide_conversation:{{ status.id_ }}">{{ hide_conversation }}</a>
+                </span>
                 {% endif %}
                 {% if in_reply_to and repeated_by %}
                 <div class='separator-5'></div>
@@ -68,7 +71,7 @@
     </tr>
     {% if conversation_id %}
     <tr>
-        <td colspan="2"><div id='{{ conversation_id }}' class='conversation hidden'></div></td>
+        <td colspan="2"><div id='{{ status.id_ }}-conversation' class='conversation hidden'></div></td>
     </tr>
     {% endif %}
 </table>

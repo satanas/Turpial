@@ -28,6 +28,7 @@ class StatusesWebView(QWebView):
         self.linkClicked.connect(self.__element_clicked)
         page = self.page()
         page.setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        page.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
         self.setPage(page)
         self.status_template = self.__load_template('status.html')
 
@@ -129,6 +130,9 @@ class StatusesWebView(QWebView):
             'unfavorite_tooltip': i18n.get('remove_from_favorites')}
         html = column.render(args)
 
+        fd = open('/tmp/pupu.html', 'w')
+        fd.write(html.encode('ascii', 'ignore'))
+        fd.close()
         self.setHtml(html)
         return processed_statuses
 
@@ -145,3 +149,26 @@ class StatusesWebView(QWebView):
     def clear_conversation(self, status_root_id):
         conversation = "clearConversation('%s')" % status_root_id
         self.execute_javascript(conversation)
+
+class ImageWebView(QWebView):
+
+    def __init__(self, base):
+        QWebView.__init__(self)
+        self.base = base
+        #self.linkClicked.connect(self.__element_clicked)
+        page = self.page()
+        page.setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.setPage(page)
+
+        self.images_template = self.__load_template('images.html')
+
+    def __load_template(self, name):
+        path = os.path.join(self.base.templates_path, name)
+        fd = open(path)
+        content = fd.read()
+        fd.close()
+        return Template(content)
+
+    def update_image(self, url):
+        html = self.images_template.render(url=url)
+        self.setHtml(html)

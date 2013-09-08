@@ -33,6 +33,7 @@ from turpial.ui.qt.container import Container
 from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
+from turpial.ui.qt.imageview import ImageView
 
 from libturpial.common import ColumnType, is_preview_service_supported
 
@@ -119,6 +120,8 @@ class Main(Base, QWidget):
         layout.setMargin(0)
 
         self.setLayout(layout)
+
+        self.image = ImageView(self, 'http://images.wikia.com/friends/images/d/da/Shocked.gif')
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()

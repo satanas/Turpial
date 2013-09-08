@@ -75,8 +75,8 @@
         var hideCmd = document.getElementById(status_root_id + '-hide-conv-cmd');
         conversation.innerHTML = conversation.innerHTML + html;
         conversation.className = 'conversation';
-        viewCmd.className = 'hidden';
-        hideCmd.className = '';
+        viewCmd.className = 'in_reply_to hidden';
+        hideCmd.className = 'in_reply_to';
     }
 
     function clearConversation(status_root_id) {
@@ -84,8 +84,8 @@
         var viewCmd = document.getElementById(status_root_id + '-view-conv-cmd');
         var hideCmd = document.getElementById(status_root_id + '-hide-conv-cmd');
         conversation.innerHTML = "";
-        viewCmd.className = '';
-        hideCmd.className = 'hidden';
+        viewCmd.className = 'in_reply_to';
+        hideCmd.className = 'in_reply_to hidden';
     }
 
 </script>

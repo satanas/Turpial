@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Qt OAuth dialog for Turpial
+# Qt profile dialog for Turpial
 
 from PyQt4.QtGui import QFont
 from PyQt4.QtGui import QIcon

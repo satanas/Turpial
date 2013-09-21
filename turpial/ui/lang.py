@@ -95,6 +95,7 @@ STRINGS = {
     'report_as_spam': _("Report as spam"),
     'this_is_you': _("This is you!"),
     'conversation': _("Conversation"),
+    'in_progress': _("In progress..."),
 
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),
@@ -156,7 +157,6 @@ STRINGS = {
     #'updating_status': _("Updating status..."),
     #'error_posting_to': _("Error posting to %s"),
     #'manual_update': _("Manual Update"),
-    #'in_progress': _("In progress..."),
     #'logged_in': _("Logged In"),
     #'turpial_follow': _("Turpial (Follow)"),
     #'turpial_unfollow': _("Turpial (Unfollow)"),

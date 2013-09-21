@@ -117,14 +117,17 @@ class Container(QVBoxLayout):
     def mark_status_as_favorite(self, status_id):
         for id_, column in self.columns.iteritems():
             column.mark_status_as_favorite(status_id)
+            column.release_status(status_id)
 
     def unmark_status_as_favorite(self, status_id):
         for id_, column in self.columns.iteritems():
             column.unmark_status_as_favorite(status_id)
+            column.release_status(status_id)
 
     def mark_status_as_repeated(self, status_id):
         for id_, column in self.columns.iteritems():
             column.mark_status_as_repeated(status_id)
+            column.release_status(status_id)
 
     def remove_status(self, status_id):
         for id_, column in self.columns.iteritems():

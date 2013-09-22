@@ -26,9 +26,9 @@ from turpial.ui.base import *
 
 from turpial.ui.qt.dock import Dock
 from turpial.ui.qt.tray import TrayIcon
-from turpial.ui.qt.update import UpdateBox
 from turpial.ui.qt.worker import CoreWorker
 from turpial.ui.qt.search import SearchDialog
+from turpial.ui.qt.updatebox import UpdateBox
 from turpial.ui.qt.container import Container
 from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog

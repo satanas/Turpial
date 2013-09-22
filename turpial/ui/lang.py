@@ -96,6 +96,7 @@ STRINGS = {
     'this_is_you': _("This is you!"),
     'conversation': _("Conversation"),
     'in_progress': _("In progress..."),
+    'select_one_account_to_post': _("Select one account to post"),
 
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),
@@ -153,7 +154,6 @@ STRINGS = {
     #'deleting': _("Deleting..."),
     #'short': _("Short"),
     #'image': _("Image"),
-    #'select_account_to_post': _("Select accounts to post"),
     #'updating_status': _("Updating status..."),
     #'error_posting_to': _("Error posting to %s"),
     #'manual_update': _("Manual Update"),

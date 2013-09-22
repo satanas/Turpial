@@ -113,6 +113,8 @@ class Container(QVBoxLayout):
     def remove_column(self, column_id):
         self.columns[column_id].deleteLater()
         del self.columns[column_id]
+        if len(self.columns) == 0:
+            self.empty()
 
     def mark_status_as_favorite(self, status_id):
         for id_, column in self.columns.iteritems():

@@ -33,7 +33,7 @@ from turpial.ui.qt.container import Container
 from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
-from turpial.ui.qt.imageview import ImageView
+#from turpial.ui.qt.imageview import ImageView
 
 from libturpial.common import ColumnType, is_preview_service_supported
 
@@ -69,9 +69,6 @@ class Main(Base, QWidget):
         self.update_box = UpdateBox(self)
         self.profile = ProfileDialog(self)
         self.profile.options_clicked.connect(self.show_profile_menu)
-
-        self.tray = TrayIcon(self)
-        self.tray.activated.connect(self.__on_tray_click)
 
         self.core = CoreWorker()
         self.core.status_updated.connect(self.after_update_status)
@@ -113,6 +110,11 @@ class Main(Base, QWidget):
         self.dock.updates_clicked.connect(self.show_update_box)
         self.dock.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
 
+        self.tray = TrayIcon(self)
+        self.tray.toggled.connect(self.toggle_tray_icon)
+        self.tray.updates_clicked.connect(self.show_update_box)
+        self.tray.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
+
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(self._container, 1)
@@ -121,7 +123,7 @@ class Main(Base, QWidget):
 
         self.setLayout(layout)
 
-        self.image = ImageView(self, 'http://images.wikia.com/friends/images/d/da/Shocked.gif')
+        #self.image = ImageView(self, 'http://images.wikia.com/friends/images/d/da/Shocked.gif')
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -134,11 +136,7 @@ class Main(Base, QWidget):
             webbrowser.open(url)
 
 
-    #================================================================
-    # Tray icon
-    #================================================================
-
-    def __on_tray_click(self):
+    def toggle_tray_icon(self):
         if self.showed:
             self.showed = False
             self.hide()

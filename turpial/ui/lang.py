@@ -23,6 +23,7 @@ STRINGS = {
     'add_some_columns': _('You have accounts registered, now add some columns'),
     'update_status': _('Update status'),
     'send_direct_message': _('Send direct message'),
+    'settings': _('Settings'),
     'open_preferences_dialog': _('Open preferences dialog'),
     'about_turpial': _('About Turpial'),
     'add_columns': _('Add columns'),
@@ -95,6 +96,7 @@ STRINGS = {
     'report_as_spam': _("Report as spam"),
     'this_is_you': _("This is you!"),
     'conversation': _("Conversation"),
+    'quit': _('Quit'),
 
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),
@@ -118,7 +120,6 @@ STRINGS = {
     #'new_dent': _('New Dent'),
     #'new_dents': _('New Dents'),
     #'posts': _('Posts'),
-    #'exit': _('Quit'),
     #'user': _('User'),
     #'password': _('Password'),
     #'user_and_password': _('User and password'),

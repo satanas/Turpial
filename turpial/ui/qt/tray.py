@@ -4,12 +4,23 @@
 
 from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QIcon
+from PyQt4.QtGui import QCursor
+from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QSystemTrayIcon
+
+from PyQt4.QtCore import QPoint
+from PyQt4.QtCore import pyqtSignal
 
 from turpial import DESC
 from turpial.ui.lang import i18n
 
 class TrayIcon(QSystemTrayIcon):
+
+    settings_clicked = pyqtSignal(QPoint)
+    updates_clicked = pyqtSignal()
+    messages_clicked = pyqtSignal()
+    toggled = pyqtSignal()
+
     def __init__(self, base):
         QSystemTrayIcon.__init__(self)
 
@@ -17,26 +28,37 @@ class TrayIcon(QSystemTrayIcon):
         icon = QIcon(base.get_image_path('turpial-tray.png'))
         self.setIcon(icon)
         self.setToolTip(DESC)
+
+        self.activated.connect(self.__activated)
         self.show()
 
     def __build_common_menu(self):
-        accounts = self.menu.addAction(i18n.get('accounts'))
-        preferences = self.menu.addAction(i18n.get('preferences'))
-        sounds = self.menu.addAction(i18n.get('enable_sounds'))
-        #sound_.set_active(not self.sound._disable)
+        settings = QAction(i18n.get('settings'), self)
+        settings.triggered.connect(self.__settings_clicked)
+        quit = QAction(i18n.get('quit'), self)
+        #FIXME: create a signal for this
+        quit.triggered.connect(self.base.main_quit)
+
+        self.menu.addAction(settings)
         self.menu.addSeparator()
-        exit_ = self.menu.addAction(i18n.get('exit'), self.base.main_quit)
+        self.menu.addAction(quit)
 
-        #self.menu.append(accounts)
-        #self.menu.append(preferences)
-        #self.menu.append(sounds)
-        #self.menu.append(Gtk.SeparatorMenuItem())
-        #self.menu.append(exit_)
+    def __settings_clicked(self):
+        self.settings_clicked.emit(QCursor.pos())
 
-        #accounts.connect('activate', self.base.show_accounts_dialog)
-        #preferences.connect('activate', self.base.show_preferences_dialog)
-        #sounds.connect('toggled', self.base.disable_sound)
-        #exit_.connect('activate', self.base.main_quit)
+    def __updates_clicked(self):
+        self.updates_clicked.emit()
+
+    def __messages_clicked(self):
+        self.messages_clicked.emit()
+
+    def __activated(self, reason):
+        print reason
+        if QSystemTrayIcon.Trigger:
+            self.toggled.emit()
+        elif QSystemTrayIcon.Context:
+            print 'bla'
+            self.menu.popup(QCursor.pos())
 
     def empty(self):
         self.menu = QMenu()
@@ -46,10 +68,12 @@ class TrayIcon(QSystemTrayIcon):
     def normal(self):
         self.menu = QMenu()
 
-        tweet = self.menu.addAction(i18n.get('new_tweet'))
-        #tweet.connect('activate', self.base.show_update_box)
-        direct = self.menu.addAction(i18n.get('direct_message'))
-        #direct.connect('activate', self.base.show_update_box, True)
+        updates = QAction(i18n.get('update_status'), self)
+        updates.triggered.connect(self.__updates_clicked)
+        messages = QAction(i18n.get('send_direct_message'), self)
+        messages.triggered.connect(self.__messages_clicked)
+        self.menu.addAction(updates)
+        self.menu.addAction(messages)
 
         self.__build_common_menu()
 

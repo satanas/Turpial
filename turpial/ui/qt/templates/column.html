@@ -88,4 +88,18 @@
         hideCmd.className = 'in_reply_to hidden';
     }
 
+    function lockStatus(status_id) {
+        var statusButtons = document.getElementById(status_id + '-buttons');
+        var operationLoader = document.getElementById(status_id + '-operation-loader');
+        statusButtons.className = 'buttons hidden';
+        operationLoader.className = 'operation-loader';
+    }
+
+    function releaseStatus(status_id) {
+        var statusButtons = document.getElementById(status_id + '-buttons');
+        var operationLoader = document.getElementById(status_id + '-operation-loader');
+        statusButtons.className = 'buttons';
+        operationLoader.className = 'operation-loader hidden';
+    }
+
 </script>

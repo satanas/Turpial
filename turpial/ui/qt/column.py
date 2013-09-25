@@ -141,6 +141,7 @@ class StatusesColumn(QWidget):
             i18n.get('do_you_want_to_retweet_status'), QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No)
         if confirmation == QMessageBox.Yes:
+            self.lock_status(status.id_)
             self.base.repeat_status(self.id_, self.account_id, status)
 
     def __delete_status(self, status):
@@ -148,6 +149,7 @@ class StatusesColumn(QWidget):
             i18n.get('do_you_want_to_delete_status'), QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No)
         if confirmation == QMessageBox.Yes:
+            self.lock_status(status.id_)
             self.base.delete_status(self.id_, self.account_id, status)
 
     def __delete_direct_message(self, status):
@@ -161,9 +163,11 @@ class StatusesColumn(QWidget):
         self.base.show_update_box_for_reply_direct(self.account_id, status)
 
     def __mark_status_as_favorite(self, status):
+        self.lock_status(status.id_)
         self.base.mark_status_as_favorite(self.id_, self.account_id, status)
 
     def __unmark_status_as_favorite(self, status):
+        self.lock_status(status.id_)
         self.base.unmark_status_as_favorite(self.id_, self.account_id, status)
 
     def __view_conversation(self, status):
@@ -199,6 +203,14 @@ class StatusesColumn(QWidget):
 
     def remove_status(self, status_id):
         operation = "removeStatus('%s');" % status_id
+        self.webview.execute_javascript(operation)
+
+    def lock_status(self, status_id):
+        operation = "lockStatus('%s');" % status_id
+        self.webview.execute_javascript(operation)
+
+    def release_status(self, status_id):
+        operation = "releaseStatus('%s');" % status_id
         self.webview.execute_javascript(operation)
 
     def notify(self, id_, type_, message):

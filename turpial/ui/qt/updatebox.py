@@ -115,6 +115,10 @@ class UpdateBox(QWidget):
             print i18n.get('you_can_not_submit_an_empty_message')
             return
 
+        if index == 0:
+            print i18n.get('select_one_account_to_post')
+            return
+
         #if len(message) > MAX_CHAR:
         #    self.message.set_error_text(i18n.get('message_looks_like_testament'))
         #    return
@@ -148,6 +152,7 @@ class UpdateBox(QWidget):
         upload_tooltip = "%s (%s)" % (i18n.get('upload_image'), upload_service)
         self.upload_button.setToolTip(upload_tooltip)
         self.accounts_combo.clear()
+        self.accounts_combo.addItem('--', '')
         accounts = self.base.core.get_registered_accounts()
         for account in accounts:
             protocol = get_protocol_from(account.id_)
@@ -158,7 +163,7 @@ class UpdateBox(QWidget):
             self.accounts_combo.addItem(icon, i18n.get('broadcast'), 'broadcast')
         if self.account_id:
             index = self.accounts_combo.findData(self.account_id)
-            if index >= 0:
+            if index > 0:
                 self.accounts_combo.setCurrentIndex(index)
                 self.accounts_combo.setEnabled(False)
         if self.message:

@@ -276,6 +276,10 @@ body {
     background-color: #f6f6f6;
 }
 
+.operation-loader {
+    text-align: right;
+}
+
 .separator-5 {
     height: 5px;
 }

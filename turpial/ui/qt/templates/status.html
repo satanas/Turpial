@@ -39,7 +39,7 @@
                 <span class='reposted'>{{ repeated_by }}</span>
                 {% endif %}
             </div>
-            <div class='buttons'>
+            <div class='buttons' id="{{ status.id_ }}-buttons">
                 {% if in_reply_to and repeated_by %}
                 <div class='separator-15'></div>
                 {% endif %}
@@ -66,6 +66,7 @@
                     {% endif %}
                 {% endif %}
             </div>
+            <div class="operation-loader hidden" id="{{ status.id_ }}-operation-loader">{{ in_progress }}</div>
         </td>
     </tr>
     {% if conversation_id %}

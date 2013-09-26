@@ -53,11 +53,9 @@ class TrayIcon(QSystemTrayIcon):
         self.messages_clicked.emit()
 
     def __activated(self, reason):
-        print reason
-        if QSystemTrayIcon.Trigger:
+        if reason == QSystemTrayIcon.Trigger:
             self.toggled.emit()
-        elif QSystemTrayIcon.Context:
-            print 'bla'
+        elif reason == QSystemTrayIcon.Context:
             self.menu.popup(QCursor.pos())
 
     def empty(self):

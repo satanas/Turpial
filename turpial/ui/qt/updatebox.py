@@ -244,7 +244,6 @@ class UpdateBox(QWidget):
 
     def update_friends_list(self):
         completer = QCompleter(self.base.load_friends_list())
-        completer.setCaseSensitivity(Qt.CaseInsensitive)
         self.text_edit.setCompleter(completer)
 
 
@@ -260,12 +259,14 @@ class CompletionTextEdit(QTextEdit):
     def __init__(self):
         QTextEdit.__init__(self)
         self.completer = None
+        self.setAcceptRichText(False)
 
     def setCompleter(self, completer):
         if self.completer:
             self.completer.activated.disconnect()
 
         self.completer = completer
+        self.completer.setCaseSensitivity(Qt.CaseInsensitive)
         self.completer.setWidget(self)
         self.completer.activated.connect(self.insertCompletion)
 
@@ -300,9 +301,11 @@ class CompletionTextEdit(QTextEdit):
         QTextEdit.focusInEvent(self, event)
 
     def keyPressEvent(self, event):
+        print self.completer
         if self.completer and self.completer.popup().isVisible():
             if event.key() in self.IGNORED_KEYS:
                 event.ignore()
+                print 'ignoring'
                 return
 
         QTextEdit.keyPressEvent(self, event)
@@ -313,6 +316,7 @@ class CompletionTextEdit(QTextEdit):
 
         if hasModifier or event.text().isEmpty() or not completionPrefix.startsWith('@'):
             self.completer.popup().hide()
+            print 'me fui', event.key(), int(event.modifiers())
             return
 
         if completionPrefix.startsWith('@') and completionPrefix[1:] != self.completer.completionPrefix():
@@ -321,7 +325,7 @@ class CompletionTextEdit(QTextEdit):
             popup.setCurrentIndex(self.completer.completionModel().index(0, 0))
 
         cursor_rect = self.cursorRect()
-        cursor_rect.setWidth(self.completer.popup().sizeHintForColumn(0) 
+        cursor_rect.setWidth(self.completer.popup().sizeHintForColumn(0)
                 + self.completer.popup().verticalScrollBar().sizeHint().width())
         self.completer.complete(cursor_rect)
 

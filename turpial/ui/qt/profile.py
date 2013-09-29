@@ -192,6 +192,10 @@ class ProfileDialog(QWidget):
         self.favorites.set_value(str(profile.favorites_count))
         self.show()
 
+    def update_avatar(self, image_path, username):
+        if username != self.profile.username or not self.showed:
+            return
+        self.avatar.setPixmap(self.base.load_image(image_path, True))
 
 
 class UserInfoBox(QVBoxLayout):

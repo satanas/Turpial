@@ -39,6 +39,7 @@ class CoreWorker(QThread):
     exception_raised = pyqtSignal(object)
     status_from_conversation = pyqtSignal(object, str, str)
     fetched_profile_image = pyqtSignal(str)
+    fetched_avatar = pyqtSignal(str, str)
 
     def __init__(self):
         QThread.__init__(self)
@@ -213,6 +214,10 @@ class CoreWorker(QThread):
         self.register(self.core.get_profile_image, (account_id, username),
             self.__after_get_profile_image)
 
+    def get_avatar_from_status(self, status):
+        self.register(self.core.get_status_avatar, (status),
+            self.__after_get_avatar_from_status, status.username)
+
 
     #================================================================
     # Callbacks
@@ -307,6 +312,10 @@ class CoreWorker(QThread):
 
     def __after_get_profile_image(self, response):
         self.fetched_profile_image.emit(response)
+
+    def __after_get_avatar_from_status(self, response, args):
+        username = args
+        self.fetched_avatar.emit(response, username)
 
     #================================================================
     # Worker methods

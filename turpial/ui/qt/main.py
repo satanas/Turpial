@@ -97,6 +97,7 @@ class Main(Base, QWidget):
         self.core.user_unfollowed.connect(self.after_unfollow_user)
         self.core.status_from_conversation.connect(self.after_get_status_from_conversation)
         self.core.fetched_profile_image.connect(self.after_get_profile_image)
+        self.core.fetched_avatar.connect(self.update_profile_avatar)
         self.core.exception_raised.connect(self.on_exception)
 
         self.core.start()
@@ -301,9 +302,9 @@ class Main(Base, QWidget):
     def show_update_box_for_reply_direct(self, account_id, status):
         self.update_box.show_for_reply_direct(account_id, status)
 
-    def show_profile_dialog(self, account_id, profile):
-        self.profile.start_loading(profile)
-        self.core.get_user_profile(account_id, profile)
+    def show_profile_dialog(self, account_id, username):
+        self.profile.start_loading(username)
+        self.core.get_user_profile(account_id, username)
 
     def show_profile_menu(self, point, profile):
         self.profile_menu = QMenu(self)
@@ -483,6 +484,7 @@ class Main(Base, QWidget):
 
     def after_get_user_profile(self, response, account_id):
         self.profile.loading_finished(response, account_id)
+        self.core.get_avatar_from_status(response)
 
     def after_mute_user(self, response):
         print "User %s muted" % response
@@ -510,6 +512,9 @@ class Main(Base, QWidget):
 
     def after_get_profile_image(self, image_path):
         self.image_view.loading_finished(str(image_path))
+
+    def update_profile_avatar(self, image_path, username):
+        self.profile.update_avatar(str(image_path), str(username))
 
     def on_exception(self, exception):
         print 'Exception', exception

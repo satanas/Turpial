@@ -47,8 +47,9 @@ class ProfileDialog(QWidget):
         self.protected_icon = QLabel()
         self.protected_icon.setPixmap(base.load_image('mark-protected.png', True))
 
-        self.avatar = QLabel()
+        self.avatar = ClickableLabel()
         self.avatar.setPixmap(base.load_image('unknown.png', True))
+        self.avatar.clicked.connect(self.__show_avatar)
 
         self.you_label = QLabel(i18n.get('this_is_you'))
         self.you_label.setVisible(False)
@@ -153,6 +154,9 @@ class ProfileDialog(QWidget):
     def __options_clicked(self):
         self.options_clicked.emit(QCursor.pos(), self.profile)
 
+    def __show_avatar(self):
+        self.base.show_profile_image(self.account_id, self.profile.username)
+
     def start_loading(self, profile_username):
         self.__clear()
         self.hline.setVisible(False)
@@ -164,7 +168,7 @@ class ProfileDialog(QWidget):
 
     def loading_finished(self, profile, account_id):
         self.profile = profile
-        self.account_id = account_id
+        self.account_id = str(account_id)
         self.loader.setVisible(False)
         self.hline.setVisible(False)
         self.username.setText('<b>%s</b>' % profile.username)
@@ -243,3 +247,12 @@ class StatInfoBox(QVBoxLayout):
     def set_value(self, value):
         self.stat.setText(value)
 
+class ClickableLabel(QLabel):
+    clicked = pyqtSignal()
+
+    def __init__(self):
+        QLabel.__init__(self)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.clicked.emit()

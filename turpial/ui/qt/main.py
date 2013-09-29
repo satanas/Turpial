@@ -5,6 +5,7 @@
 import os
 import sys
 import urllib2
+import traceback
 
 from functools import partial
 
@@ -412,7 +413,6 @@ class Main(Base, QWidget):
             status_root_id)
 
     def show_profile_image(self, account_id, username):
-        # open imageview loading_finished
         self.image_view.start_loading()
         self.core.get_profile_image(account_id, username)
 

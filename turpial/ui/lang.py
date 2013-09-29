@@ -99,6 +99,7 @@ STRINGS = {
     'quit': _('Quit'),
     'in_progress': _("In progress..."),
     'select_one_account_to_post': _("Select one account to post"),
+    'image_preview': _("Image Preview"),
 
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),
@@ -189,7 +190,6 @@ STRINGS = {
     #one account at once"),
     #'sending_message': _('Sending message...'),
     #'direct_message_sent_successfully': _('Direct message sent successfully'),
-    #'image_preview': _("Image Preview"),
     #'general': _('General'),
     #'notifications': _('Notifications'),
     #'services': _('Services'),

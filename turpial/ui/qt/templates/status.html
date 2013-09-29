@@ -1,7 +1,7 @@
 <table id='status-{{ status.id_ }}' class='status'>
     <tr>
         <td class='avatar-row'>
-            <img class='avatar' src='{{ status.avatar }}' />
+            <a href="cmd:show_avatar:{{ status.id_ }}"><img class='avatar' src='{{ status.avatar }}' /></a>
             {% if status.is_verified %}
             <div class='verified'></div>
             {% endif %}

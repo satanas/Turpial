@@ -26,7 +26,7 @@ class CoreWorker(QThread):
     column_deleted = pyqtSignal(str)
     status_marked_as_favorite = pyqtSignal(object, str, str)
     status_unmarked_as_favorite = pyqtSignal(object, str, str)
-    got_user_profile = pyqtSignal(object, str)
+    fetched_user_profile = pyqtSignal(object, str)
     urls_shorted = pyqtSignal(str)
     media_uploaded = pyqtSignal(str)
     friends_list_updated = pyqtSignal()
@@ -38,6 +38,7 @@ class CoreWorker(QThread):
     user_unfollowed = pyqtSignal(object, str)
     exception_raised = pyqtSignal(object)
     status_from_conversation = pyqtSignal(object, str, str)
+    fetched_profile_image = pyqtSignal(str)
 
     def __init__(self):
         QThread.__init__(self)
@@ -208,6 +209,10 @@ class CoreWorker(QThread):
         self.register(self.core.get_single_status, (account_id, status_id),
             self.__after_get_status_from_conversation, (column_id, status_root_id))
 
+    def get_profile_image(self, account_id, username):
+        self.register(self.core.get_profile_image, (account_id, username),
+            self.__after_get_profile_image)
+
 
     #================================================================
     # Callbacks
@@ -263,7 +268,7 @@ class CoreWorker(QThread):
         self.status_unmarked_as_favorite.emit(response, column_id, account_id)
 
     def __after_get_user_profile(self, response, account_id):
-        self.got_user_profile.emit(response, account_id)
+        self.fetched_user_profile.emit(response, account_id)
 
     def __after_short_urls(self, response):
         self.urls_shorted.emit(response)
@@ -299,6 +304,9 @@ class CoreWorker(QThread):
         column_id = args[0]
         status_root_id = args[1]
         self.status_from_conversation.emit(response, column_id, status_root_id)
+
+    def __after_get_profile_image(self, response):
+        self.fetched_profile_image.emit(response)
 
     #================================================================
     # Worker methods

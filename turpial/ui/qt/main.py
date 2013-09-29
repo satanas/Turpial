@@ -33,7 +33,7 @@ from turpial.ui.qt.container import Container
 from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
-#from turpial.ui.qt.imageview import ImageView
+from turpial.ui.qt.imageview import ImageView
 
 from libturpial.common import ColumnType, is_preview_service_supported
 
@@ -84,7 +84,7 @@ class Main(Base, QWidget):
         self.core.column_deleted.connect(self.after_delete_column)
         self.core.status_marked_as_favorite.connect(self.after_marking_status_as_favorite)
         self.core.status_unmarked_as_favorite.connect(self.after_unmarking_status_as_favorite)
-        self.core.got_user_profile.connect(self.after_get_user_profile)
+        self.core.fetched_user_profile.connect(self.after_get_user_profile)
         self.core.urls_shorted.connect(self.update_box.after_short_url)
         self.core.media_uploaded.connect(self.update_box.after_upload_media)
         self.core.friends_list_updated.connect(self.update_box.update_friends_list)
@@ -95,6 +95,7 @@ class Main(Base, QWidget):
         self.core.user_followed.connect(self.after_follow_user)
         self.core.user_unfollowed.connect(self.after_unfollow_user)
         self.core.status_from_conversation.connect(self.after_get_status_from_conversation)
+        self.core.fetched_profile_image.connect(self.after_get_profile_image)
         self.core.exception_raised.connect(self.on_exception)
 
         self.core.start()
@@ -123,7 +124,7 @@ class Main(Base, QWidget):
 
         self.setLayout(layout)
 
-        #self.image = ImageView(self, 'http://images.wikia.com/friends/images/d/da/Shocked.gif')
+        self.image_view = ImageView(self)
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -410,6 +411,11 @@ class Main(Base, QWidget):
         self.core.get_status_from_conversation(account_id, status.in_reply_to_id, column_id,
             status_root_id)
 
+    def show_profile_image(self, account_id, username):
+        # open imageview loading_finished
+        self.image_view.start_loading()
+        self.core.get_profile_image(account_id, username)
+
 
     #================================================================
     # Hooks definitions
@@ -501,6 +507,9 @@ class Main(Base, QWidget):
         if response.in_reply_to_id:
             self.core.get_status_from_conversation(response.account_id, response.in_reply_to_id,
                 column_id, status_root_id)
+
+    def after_get_profile_image(self, image_path):
+        self.image_view.loading_finished(str(image_path))
 
     def on_exception(self, exception):
         print 'Exception', exception

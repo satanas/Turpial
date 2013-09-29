@@ -129,6 +129,8 @@ class StatusesColumn(QWidget):
             self.__view_conversation(status)
         elif cmd == 'hide_conversation':
             self.__hide_conversation(status)
+        elif cmd == 'show_avatar':
+            self.__show_avatar(status)
 
     def __reply_status(self, status):
         self.base.show_update_box_for_reply(self.account_id, status)
@@ -176,6 +178,9 @@ class StatusesColumn(QWidget):
 
     def __hide_conversation(self, status):
         self.webview.clear_conversation(status.id_)
+
+    def __show_avatar(self, status):
+        self.base.show_profile_image(self.account_id, status.username)
 
     def start_updating(self):
         self.loader.setVisible(True)

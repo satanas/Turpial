@@ -71,12 +71,21 @@
 
     function updateConversation(status_root_id, html) {
         var conversation = document.getElementById(status_root_id + '-conversation');
-        var viewCmd = document.getElementById(status_root_id + '-view-conv-cmd');
+        var loadingCmd = document.getElementById(status_root_id + '-loading-conv-cmd');
         var hideCmd = document.getElementById(status_root_id + '-hide-conv-cmd');
         conversation.innerHTML = conversation.innerHTML + html;
         conversation.className = 'conversation';
-        viewCmd.className = 'in_reply_to hidden';
+        loadingCmd.className = 'in_reply_to hidden';
         hideCmd.className = 'in_reply_to';
+    }
+
+    function viewConversation(status_root_id) {
+        var conversation = document.getElementById(status_root_id + '-conversation');
+        var viewCmd = document.getElementById(status_root_id + '-view-conv-cmd');
+        var loadingCmd = document.getElementById(status_root_id + '-loading-conv-cmd');
+        conversation.innerHTML = "";
+        loadingCmd.className = 'in_reply_to';
+        viewCmd.className = 'in_reply_to hidden';
     }
 
     function clearConversation(status_root_id) {

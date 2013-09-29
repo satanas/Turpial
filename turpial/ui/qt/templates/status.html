@@ -29,6 +29,7 @@
                 {% if view_conversation %}
                 <div>
                     <a class='in_reply_to' id="{{ status.id_  }}-view-conv-cmd" href="cmd:view_conversation:{{ status.id_ }}">{{ view_conversation }}</a>
+                    <span class='in_reply_to hidden' id="{{ status.id_  }}-loading-conv-cmd">{{ loading }}</span>
                     <a class='in_reply_to hidden' id="{{ status.id_  }}-hide-conv-cmd" href="cmd:hide_conversation:{{ status.id_ }}">{{ hide_conversation }}</a>
                 </div>
                 {% endif %}

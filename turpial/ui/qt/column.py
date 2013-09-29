@@ -171,7 +171,7 @@ class StatusesColumn(QWidget):
         self.base.unmark_status_as_favorite(self.id_, self.account_id, status)
 
     def __view_conversation(self, status):
-        self.webview.clear_conversation(status.id_)
+        self.webview.view_conversation(status.id_)
         self.base.get_conversation(self.account_id, status, self.id_, status.id_)
 
     def __hide_conversation(self, status):

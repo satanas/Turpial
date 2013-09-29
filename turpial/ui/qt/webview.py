@@ -111,7 +111,8 @@ class StatusesWebView(QWebView):
                 'quote': i18n.get('quote'), 'retweet': i18n.get('retweet'),
                 'mark_as_favorite': i18n.get('mark_as_favorite'), 'delete': i18n.get('delete'),
                 'remove_from_favorites': i18n.get('remove_from_favorites'),
-                'conversation_id': conversation_id, 'in_progress': i18n.get('in_progress'), }
+                'conversation_id': conversation_id, 'in_progress': i18n.get('in_progress'), 
+                'loading': i18n.get('loading'), }
 
         return self.status_template.render(attrs)
 
@@ -144,6 +145,10 @@ class StatusesWebView(QWebView):
         status_rendered = status_rendered.replace("\n", '')
         status_rendered = status_rendered.replace('\'', '"')
         conversation = """updateConversation('%s', '%s')""" % (status_root_id, status_rendered)
+        self.execute_javascript(conversation)
+
+    def view_conversation(self, status_root_id):
+        conversation = "viewConversation('%s')" % status_root_id
         self.execute_javascript(conversation)
 
     def clear_conversation(self, status_root_id):

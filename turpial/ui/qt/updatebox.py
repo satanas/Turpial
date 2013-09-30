@@ -70,6 +70,7 @@ class UpdateBox(QWidget):
         self.upload_button.clicked.connect(self.__upload_image)
         self.text_edit.textChanged.connect(self.__update_count)
         self.text_edit.quit.connect(self.closeEvent)
+        self.text_edit.activated.connect(self.__update_status)
 
         layout = QVBoxLayout()
         layout.addWidget(self.text_edit, 1)
@@ -270,6 +271,7 @@ class CompletionTextEdit(QTextEdit):
     )
 
     quit = pyqtSignal()
+    activated = pyqtSignal()
 
     def __init__(self):
         QTextEdit.__init__(self)
@@ -330,6 +332,11 @@ class CompletionTextEdit(QTextEdit):
         QTextEdit.keyPressEvent(self, event)
 
         hasModifier = event.modifiers() != Qt.NoModifier
+        enterKey = event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return
+
+        if hasModifier and event.modifiers() == Qt.ControlModifier and enterKey:
+            self.activated.emit()
+            return
 
         completionPrefix = self.textUnderCursor()
 

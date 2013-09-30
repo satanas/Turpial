@@ -100,6 +100,8 @@ STRINGS = {
     'in_progress': _("In progress..."),
     'select_one_account_to_post': _("Select one account to post"),
     'image_preview': _("Image Preview"),
+    'confirm_discard': _('Confirm Discard'),
+    'do_you_want_to_discard_message': _('Do you want to discard this message?'),
 
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),
@@ -210,8 +212,6 @@ STRINGS = {
     #'do_you_want_to_undo_repeat_status': _('Do you want to undo this repeat?'),
     #'confirm_unfollow': _('Confirm Unfollow'),
     #'do_you_want_to_unfollow_user': _('Do you want to unfollow @%s?'),
-    #'confirm_discarad': _('Confirm Discard'),
-    #'do_you_want_to_discard_message': _('Do you want to discard this message?'),
     #'error_loading_image': _('Error loading image'),
     #'credentials_could_not_be_empty': _('Credentials could not be empty'),
     #'file_not_found': _("File not found"),

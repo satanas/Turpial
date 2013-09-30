@@ -10,12 +10,14 @@ from PyQt4.QtGui import QComboBox
 from PyQt4.QtGui import QTextEdit
 from PyQt4.QtGui import QCompleter
 from PyQt4.QtGui import QPushButton
+from PyQt4.QtGui import QMessageBox
 from PyQt4.QtGui import QTextCursor
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QHBoxLayout
 from PyQt4.QtGui import QFileDialog
 
 from PyQt4.QtCore import Qt
+from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.loader import BarLoadIndicator
@@ -67,6 +69,7 @@ class UpdateBox(QWidget):
         self.short_button.clicked.connect(self.__short_urls)
         self.upload_button.clicked.connect(self.__upload_image)
         self.text_edit.textChanged.connect(self.__update_count)
+        self.text_edit.quit.connect(self.closeEvent)
 
         layout = QVBoxLayout()
         layout.addWidget(self.text_edit, 1)
@@ -210,8 +213,18 @@ class UpdateBox(QWidget):
         self.cursor_position = QTextCursor.Start
         self.__show()
 
-    def closeEvent(self, event):
-        event.ignore()
+    def closeEvent(self, event=None):
+        message = unicode(self.text_edit.toPlainText())
+
+        if len(message) > 0:
+            confirmation = QMessageBox.question(self, i18n.get('confirm_discard'),
+            i18n.get('do_you_want_to_discard_message'), QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No)
+            if confirmation == QMessageBox.No:
+                return
+
+        if event:
+            event.ignore()
         self.__clear()
         self.hide()
 
@@ -255,6 +268,8 @@ class CompletionTextEdit(QTextEdit):
         Qt.Key_Tab,
         Qt.Key_Backtab
     )
+
+    quit = pyqtSignal()
 
     def __init__(self):
         QTextEdit.__init__(self)
@@ -301,12 +316,16 @@ class CompletionTextEdit(QTextEdit):
         QTextEdit.focusInEvent(self, event)
 
     def keyPressEvent(self, event):
-        print self.completer
+        #print self.completer
         if self.completer and self.completer.popup().isVisible():
             if event.key() in self.IGNORED_KEYS:
                 event.ignore()
                 print 'ignoring'
                 return
+
+        if event.key() == Qt.Key_Escape:
+            self.quit.emit()
+            return
 
         QTextEdit.keyPressEvent(self, event)
 
@@ -316,7 +335,7 @@ class CompletionTextEdit(QTextEdit):
 
         if hasModifier or event.text().isEmpty() or not completionPrefix.startsWith('@'):
             self.completer.popup().hide()
-            print 'me fui', event.key(), int(event.modifiers())
+            #print 'me fui', event.key(), int(event.modifiers())
             return
 
         if completionPrefix.startsWith('@') and completionPrefix[1:] != self.completer.completionPrefix():

@@ -55,6 +55,7 @@ class SearchDialog(QDialog):
         layout.setSpacing(5)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
+        self.criteria.setFocus()
 
         self.exec_()
 

@@ -181,9 +181,9 @@ class CoreWorker(QThread):
         self.register(self.core.upload_media, (account_id, filepath),
             self.__after_upload_media)
 
-    def get_friend_list(self):
+    def get_friends_list(self):
         self.register(self.core.get_all_friends_list, None,
-            self.__after_get_friend_list)
+            self.__after_get_friends_list)
 
     def mute(self, username):
         self.register(self.core.mute, username, self.__after_mute_user)
@@ -281,7 +281,7 @@ class CoreWorker(QThread):
     def __after_upload_media(self, response):
         self.media_uploaded.emit(response)
 
-    def __after_get_friend_list(self, response):
+    def __after_get_friends_list(self, response):
         self.friends_list_updated.emit()
 
     def __after_mute_user(self, response):

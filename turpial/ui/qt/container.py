@@ -100,6 +100,7 @@ class Container(QVBoxLayout):
     def update_column(self, column_id, statuses):
         self.columns[column_id].update_statuses(statuses)
         self.stop_updating(column_id)
+        self.base.add_extra_friends_from_statuses(statuses)
 
     def add_column(self, column_id):
         if self.is_empty:

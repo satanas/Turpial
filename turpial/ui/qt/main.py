@@ -66,6 +66,7 @@ class Main(Base, QWidget):
         self.resize(320, 480)
         self.showed = True
         self.timers = {}
+        self.extra_friends = []
 
         self.update_box = UpdateBox(self)
         self.profile = ProfileDialog(self)
@@ -147,6 +148,13 @@ class Main(Base, QWidget):
             self.showed = True
             self.show()
 
+    def add_extra_friends_from_statuses(self, statuses):
+        current_friends_list = self.load_friends_list()
+        for status in statuses:
+            for user in status.get_mentions():
+                if user not in current_friends_list and user not in self.extra_friends:
+                    self.extra_friends.append(user)
+
     #================================================================
     # Overrided methods
     #================================================================
@@ -204,6 +212,9 @@ class Main(Base, QWidget):
     def load_friends_list(self):
         return self.core.load_friends_list()
 
+    def load_friends_list_with_extras(self):
+        return self.extra_friends + self.core.load_friends_list()
+
     def open_url(self, url):
         if is_preview_service_supported(url):
             self.__open_in_browser(url)
@@ -243,7 +254,7 @@ class Main(Base, QWidget):
             for column in columns:
                 self.download_stream(column)
                 self.add_timer(column)
-            self.get_friend_list()
+            self.fetch_friends_list()
 
     def show_accounts_dialog(self):
         accounts = AccountsDialog(self)
@@ -388,8 +399,8 @@ class Main(Base, QWidget):
     def upload_media(self, account_id, filename):
         self.core.upload_media(account_id, filename)
 
-    def get_friend_list(self):
-        self.core.get_friend_list()
+    def fetch_friends_list(self):
+        self.core.get_friends_list()
 
     def mute(self, username):
         self.core.mute(username)

@@ -30,6 +30,7 @@ MAX_CHAR = 140
 class UpdateBox(QWidget):
     def __init__(self, base):
         QWidget.__init__(self)
+        #self.setParent(base)
         self.base = base
         self.showed = False
         self.setFixedSize(500, 120)
@@ -257,7 +258,7 @@ class UpdateBox(QWidget):
         self.enable(True)
 
     def update_friends_list(self):
-        completer = QCompleter(self.base.load_friends_list())
+        completer = QCompleter(self.base.load_friends_list_with_extras())
         self.text_edit.setCompleter(completer)
 
 

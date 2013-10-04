@@ -23,22 +23,21 @@
         cell.textContent = message;
         cell.setAttribute('class', type);
         row.setAttribute('id', notificationId);
-        row.onclick = removeNotify;
+        row.onclick = function () { removeNotify(notificationId); };
+        setTimeout(removeNotify, 5000, notificationId);
     }
 
-    function removeNotify() {
-        var currentId = this.getAttribute('id');
+    function removeNotify(notificationId) {
         var table = document.getElementById('notifications');
         var rowCount = table.rows.length;
         for(var i = 0; i < rowCount; i++) {
             var row = table.rows[i];
             var rowId = row.getAttribute('id');
-            if (rowId == currentId) {
+            if (rowId == notificationId) {
                 table.deleteRow(i);
                 break;
             }
         }
-
     }
 
     function setFavorite(status_id) {

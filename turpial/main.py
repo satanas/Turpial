@@ -16,6 +16,9 @@ from optparse import OptionParser, SUPPRESS_HELP
 from turpial import DESC
 from turpial.ui import util
 
+from libturpial.api.core import Core
+from libturpial.common.tools import *
+from libturpial.lib.config import AppConfig
 from libturpial import VERSION as LIBTURPIAL_VERSION
 
 LOG_FMT = logging.Formatter('[%(asctime)s] [%(name)s::%(levelname)s] %(message)s', '%Y%m%d-%H:%M')

@@ -7,6 +7,7 @@ from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QTabWidget
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QGridLayout
 
 from PyQt4.QtCore import Qt
@@ -14,6 +15,7 @@ from PyQt4.QtCore import QPoint
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
+from turpial.ui.qt.column import StatusesColumn
 from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.widgets import ImageButton, VLine, HLine
 
@@ -31,7 +33,7 @@ class ProfileDialog(QWidget):
         self.setWindowTitle(i18n.get('user_profile'))
         self.setFixedSize(350, 350)
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
-        self.setStyleSheet("QWidget { background-color: #fff; }")
+        self.setStyleSheet("QWidget { background-color: #fff; } QTabWidget { background-color: #fff; }")
 
         self.username = QLabel('')
         self.username.setTextFormat(Qt.RichText)
@@ -98,6 +100,20 @@ class ProfileDialog(QWidget):
         body.addLayout(self.location)
         body.addLayout(self.web)
 
+        body_layout = QWidget()
+        body_layout.setLayout(body)
+
+        self.last_statuses = StatusesColumn(self.base, None, False)
+        statuses_layout = QVBoxLayout()
+        statuses_layout.setContentsMargins(0, 0, 0, 0)
+        statuses_layout.addWidget(self.last_statuses)
+        statuses = QWidget()
+        statuses.setLayout(statuses_layout)
+
+        self.tabs = QTabWidget(self)
+        self.tabs.addTab(body_layout, i18n.get('info'))
+        self.tabs.addTab(statuses, i18n.get('recent'))
+
         self.tweets = StatInfoBox('tweets', '')
         self.following = StatInfoBox('following', '')
         self.followers = StatInfoBox('followers', '')
@@ -127,11 +143,12 @@ class ProfileDialog(QWidget):
         layout.addWidget(self.hline)
         layout.addWidget(self.loader)
         layout.addSpacing(10)
-        layout.addLayout(body, 1)
+        layout.addWidget(self.tabs, 1)
         layout.addWidget(footer_widget)
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
+
         self.__clear()
 
     def __clear(self):
@@ -150,12 +167,21 @@ class ProfileDialog(QWidget):
         self.following.set_value('')
         self.followers.set_value('')
         self.favorites.set_value('')
+        self.last_statuses.id_ = None
+        self.last_statuses.clear()
+        self.tabs.setCurrentIndex(0)
 
     def __options_clicked(self):
         self.options_clicked.emit(QCursor.pos(), self.profile)
 
     def __show_avatar(self):
         self.base.show_profile_image(self.account_id, self.profile.username)
+
+    def closeEvent(self, event=None):
+        if event:
+            event.ignore()
+        self.__clear()
+        self.hide()
 
     def start_loading(self, profile_username):
         self.__clear()
@@ -190,6 +216,10 @@ class ProfileDialog(QWidget):
         self.following.set_value(str(profile.friends_count))
         self.followers.set_value(str(profile.followers_count))
         self.favorites.set_value(str(profile.favorites_count))
+
+        column_id = "%s-%s" % (self.account_id, profile.username)
+        self.last_statuses.set_column_id(column_id)
+        self.last_statuses.update_statuses(profile.recent_updates)
         self.show()
 
     def update_avatar(self, image_path, username):

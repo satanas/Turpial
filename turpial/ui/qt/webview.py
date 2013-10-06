@@ -116,7 +116,6 @@ class StatusesWebView(QWebView):
 
         return self.status_template.render(attrs)
 
-
     def update_statuses(self, statuses):
         content = ''
         processed_statuses = {}
@@ -136,6 +135,9 @@ class StatusesWebView(QWebView):
         fd.close()
         self.setHtml(html)
         return processed_statuses
+
+    def clear(self):
+        self.setHtml('')
 
     def execute_javascript(self, js_cmd):
         self.page().mainFrame().evaluateJavaScript(js_cmd)

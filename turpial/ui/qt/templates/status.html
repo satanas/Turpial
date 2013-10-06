@@ -60,11 +60,8 @@
                         {% endif %}
                     {% endif %}
                 {% elif status.type_ == 2 %}
-                    {% if status.is_own %}
-                        <a href="cmd:delete_direct:{{ status.id_ }}" title="{{ delete }}"><div class="action_delete"></div></a>
-                    {% else %}
-                        <a href="cmd:reply_direct:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
-                    {% endif %}
+                    <a href="cmd:delete_direct:{{ status.id_ }}" title="{{ delete }}"><div class="action_delete"></div></a>
+                    <a href="cmd:reply_direct:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
                 {% endif %}
             </div>
             <div class="operation-loader hidden" id="{{ status.id_ }}-operation-loader">{{ in_progress }}</div>

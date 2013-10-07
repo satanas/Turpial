@@ -63,6 +63,7 @@ STRINGS = {
     'register_a_twitter_account': _('Register a Twitter account'),
     'register_an_identica_account': _('Register an Identi.ca account'),
     'no_registered_accounts': _('No registered accounts'),
+    'error_registering_new_account': _('Error registering new account'),
     'broadcast': _('Broadcast'),
     'you_can_not_submit_an_empty_message': _("You can not submit an empty message"),
     'message_too_long_it_looks_like_a_testament': _("Message too long, it looks like a testament"),

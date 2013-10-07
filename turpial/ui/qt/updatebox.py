@@ -220,7 +220,7 @@ class UpdateBox(QWidget):
 
         if len(message) > 0:
             confirmation = QMessageBox.question(self, i18n.get('confirm_discard'),
-            i18n.get('do_you_want_to_discard_message'), QMessageBox.Yes | QMessageBox.No,
+                i18n.get('do_you_want_to_discard_message'), QMessageBox.Yes | QMessageBox.No,
                 QMessageBox.No)
             if confirmation == QMessageBox.No:
                 return

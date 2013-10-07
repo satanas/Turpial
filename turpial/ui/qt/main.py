@@ -15,9 +15,10 @@ from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QDialog
-from PyQt4.QtGui import QFontDatabase
+from PyQt4.QtGui import QMessageBox
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QApplication
+from PyQt4.QtGui import QFontDatabase
 
 from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
@@ -182,6 +183,10 @@ class Main(Base, QWidget):
     #================================================================
     # Main methods
     #================================================================
+
+    def show_error_message(self, title, message, error):
+        full_message = "%s (%s)" % (message, error)
+        message = QMessageBox.critical(self, title, full_message, QMessageBox.Ok)
 
     def save_account(self, account):
         self.core.save_account(account)

@@ -3,6 +3,7 @@
 # Qt account manager for Turpial
 
 import os
+import sys
 
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QFont
@@ -123,8 +124,14 @@ class AccountsDialog(ModalDialog):
         oauth_dialog = OAuthDialog(self, account.request_oauth_access())
         if oauth_dialog.result() == QDialog.Accepted:
             pin = oauth_dialog.pin.text()
-            account.authorize_oauth_access(pin)
-            self.base.save_account(account)
+            try:
+                account.authorize_oauth_access(pin)
+                self.base.save_account(account)
+            except Exception, e:
+                err_msg = "%s: %s" % (sys.exc_info()[0], sys.exc_info()[1])
+                self.base.show_error_message(i18n.get('register_a_new_account'),
+                    i18n.get('error_registering_new_account'), err_msg)
+                self.__enable(True)
 
     def __enable(self, value):
         # TODO: Display a loading message/indicator

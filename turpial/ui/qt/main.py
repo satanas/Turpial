@@ -148,6 +148,7 @@ class Main(Base, QWidget):
         else:
             self.showed = True
             self.show()
+            self.raise_()
 
     def add_extra_friends_from_statuses(self, statuses):
         current_friends_list = self.load_friends_list()

@@ -31,7 +31,7 @@ class ProfileDialog(QWidget):
         self.base = base
         self.account_id = None
         self.setWindowTitle(i18n.get('user_profile'))
-        self.setFixedSize(350, 350)
+        self.setFixedSize(350, 390)
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
         self.setStyleSheet("QWidget { background-color: #fff; } QTabWidget { background-color: #fff; }")
 

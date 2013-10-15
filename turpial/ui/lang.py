@@ -105,6 +105,8 @@ STRINGS = {
     'do_you_want_to_discard_message': _('Do you want to discard this message?'),
     'info': _('Info'),
     'recent': _('Recent'),
+    'empty_message': _('Empty message'),
+    'select_account': _('Select account'),
 
     #'no_registered_columns': ,
     #'preferences': _('Preferences'),

@@ -117,11 +117,13 @@ class UpdateBox(QWidget):
         message = unicode(self.text_edit.toPlainText())
 
         if len(message) == 0:
-            print i18n.get('you_can_not_submit_an_empty_message')
+            self.base.show_error_message(i18n.get('empty_message'),
+                i18n.get('you_can_not_submit_an_empty_message'))
             return
 
         if index == 0:
-            print i18n.get('select_one_account_to_post')
+            self.base.show_error_message(i18n.get('select_account'),
+                i18n.get('select_one_account_to_post'))
             return
 
         #if len(message) > MAX_CHAR:
@@ -147,6 +149,7 @@ class UpdateBox(QWidget):
         self.text_edit.setText('')
         self.accounts_combo.setCurrentIndex(0)
         self.enable(True)
+        self.showed = False
 
     def __show(self):
         self.update_friends_list()
@@ -178,12 +181,17 @@ class UpdateBox(QWidget):
             self.text_edit.setTextCursor(cursor)
 
         QWidget.show(self)
+        self.showed = True
 
     def show(self):
+        if self.showed:
+            return self.raise_()
         self.setWindowTitle(i18n.get('whats_happening'))
         self.__show()
 
     def show_for_reply(self, account_id, status):
+        if self.showed:
+            return self.raise_()
         title = "%s @%s" % (i18n.get('reply_to'), status.username)
         self.setWindowTitle(title)
         self.account_id = account_id
@@ -195,6 +203,8 @@ class UpdateBox(QWidget):
         self.__show()
 
     def show_for_send_direct(self, account_id, username):
+        if self.showed:
+            return self.raise_()
         title = "%s @%s" % (i18n.get('send_message_to'), username)
         self.setWindowTitle(title)
         self.account_id = account_id
@@ -202,6 +212,8 @@ class UpdateBox(QWidget):
         self.__show()
 
     def show_for_reply_direct(self, account_id, status):
+        if self.showed:
+            return self.raise_()
         title = "%s @%s" % (i18n.get('send_message_to'), status.username)
         self.setWindowTitle(title)
         self.account_id = account_id
@@ -209,6 +221,8 @@ class UpdateBox(QWidget):
         self.__show()
 
     def show_for_quote(self, account_id, status):
+        if self.showed:
+            return self.raise_()
         self.setWindowTitle(i18n.get('quoting'))
         self.account_id = account_id
         self.message = " RT @%s %s" % (status.username, status.text)

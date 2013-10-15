@@ -308,9 +308,9 @@ class CompletionTextEdit(QTextEdit):
 
         tc = self.textCursor()
         extra = (completion.length() - self.completer.completionPrefix().length())
-        tc.movePosition(QTextCursor.Left)
-        tc.movePosition(QTextCursor.EndOfWord)
-        tc.insertText(completion.right(extra))
+        tc.movePosition(QTextCursor.StartOfWord)
+        tc.select(QTextCursor.WordUnderCursor)
+        tc.insertText(''.join([str(completion), ' ']))
         self.setTextCursor(tc)
 
     def textUnderCursor(self):

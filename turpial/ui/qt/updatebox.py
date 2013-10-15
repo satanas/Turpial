@@ -160,8 +160,9 @@ class UpdateBox(QWidget):
         upload_tooltip = "%s (%s)" % (i18n.get('upload_image'), upload_service)
         self.upload_button.setToolTip(upload_tooltip)
         self.accounts_combo.clear()
-        self.accounts_combo.addItem('--', '')
         accounts = self.base.core.get_registered_accounts()
+        if len(accounts) > 1:
+            self.accounts_combo.addItem('--', '')
         for account in accounts:
             protocol = get_protocol_from(account.id_)
             icon = QIcon(self.base.get_image_path('%s.png' % protocol))

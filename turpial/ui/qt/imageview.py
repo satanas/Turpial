@@ -46,7 +46,7 @@ class ImageView(QWidget):
         self.__clear()
 
     def __clear(self):
-        self.setBaseSize(350, 350)
+        self.resize(350, 350)
         self.view.setPixmap(QPixmap())
 
     def closeEvent(self, event):

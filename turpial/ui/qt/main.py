@@ -56,8 +56,8 @@ class Main(Base, QWidget):
         QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Monda-Regular.ttf'))
 
         database = QFontDatabase()
-        for f in database.families():
-            print f
+        #for f in database.families():
+        #    print f
 
         self.templates_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), 'templates'))
@@ -156,6 +156,11 @@ class Main(Base, QWidget):
             for user in status.get_mentions():
                 if user not in current_friends_list and user not in self.extra_friends:
                     self.extra_friends.append(user)
+
+    def closeEvent(self, event=None):
+        if event:
+            event.ignore()
+        self.main_quit()
 
     #================================================================
     # Overrided methods

@@ -113,6 +113,7 @@ class UpdateBox(QWidget):
 
     def __update_status(self):
         index = self.accounts_combo.currentIndex()
+        accounts = self.base.core.get_registered_accounts()
         account_id = str(self.accounts_combo.itemData(index).toPyObject())
         message = unicode(self.text_edit.toPlainText())
 
@@ -121,7 +122,7 @@ class UpdateBox(QWidget):
                 i18n.get('you_can_not_submit_an_empty_message'))
             return
 
-        if index == 0:
+        if index == 0 and len(accounts) > 1:
             self.base.show_error_message(i18n.get('select_account'),
                 i18n.get('select_one_account_to_post'))
             return

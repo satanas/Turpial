@@ -23,6 +23,7 @@ from turpial.ui.lang import i18n
 from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.widgets import ImageButton, ToggleButton
 
+from libturpial.common.tools import get_urls
 from libturpial.common import get_username_from, get_protocol_from
 
 MAX_CHAR = 140
@@ -82,9 +83,11 @@ class UpdateBox(QWidget):
 
         self.__clear()
 
-
     def __count_chars(self):
-        message = self.text_edit.toPlainText()
+        message = str(self.text_edit.toPlainText())
+        urls = [url for url in get_urls(message) if len(url) > 23]
+        for url in urls:
+            message = message.replace(url, '0' * 23)
         return MAX_CHAR - len(message)
 
     def __update_count(self):

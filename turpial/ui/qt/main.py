@@ -72,6 +72,7 @@ class Main(Base, QWidget):
         self.update_box = UpdateBox(self)
         self.profile = ProfileDialog(self)
         self.profile.options_clicked.connect(self.show_profile_menu)
+        self.image_view = ImageView(self)
 
         self.core = CoreWorker()
         self.core.status_updated.connect(self.after_update_status)
@@ -127,8 +128,6 @@ class Main(Base, QWidget):
         layout.setMargin(0)
 
         self.setLayout(layout)
-
-        self.image_view = ImageView(self)
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()

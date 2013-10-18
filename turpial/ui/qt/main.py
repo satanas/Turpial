@@ -245,6 +245,18 @@ class Main(Base, QWidget):
     def get_image_path(self, filename):
         return os.path.join(self.images_path, filename)
 
+    def update_dock(self):
+        accounts = self.core.get_registered_accounts()
+        columns = self.core.get_registered_columns()
+
+        if len(columns) == 0:
+            if len(accounts) == 0:
+                self.dock.empty(False)
+            else:
+                self.dock.normal()
+        else:
+            self.dock.normal()
+
     def update_container(self):
         accounts = self.core.get_registered_accounts()
         columns = self.core.get_registered_columns()
@@ -445,6 +457,7 @@ class Main(Base, QWidget):
 
     def after_save_account(self):
         self.account_registered.emit()
+        self.update_dock()
 
     def after_delete_account(self):
         self.account_deleted.emit()

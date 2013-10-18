@@ -84,8 +84,8 @@ class UpdateBox(QWidget):
         self.__clear()
 
     def __count_chars(self):
-        message = str(self.text_edit.toPlainText())
-        urls = [url for url in get_urls(message) if len(url) > 23]
+        message = self.text_edit.toPlainText()
+        urls = [str(url) for url in get_urls(message) if len(url) > 23]
         for url in urls:
             message = message.replace(url, '0' * 23)
         return MAX_CHAR - len(message)

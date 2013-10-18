@@ -113,7 +113,12 @@ class CoreWorker(QThread):
 
     def save_account(self, account):
         account_id = self.core.register_account(account)
+        self.load_account(account_id)
         self.__after_save_account()
+
+    # FIXME: Remove this after implement this in libturpial
+    def load_account(self, account_id):
+        self.core.accman.load(account_id)
 
     def delete_account(self, account_id):
         # FIXME: Implement try/except

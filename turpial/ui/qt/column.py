@@ -44,6 +44,7 @@ class StatusesColumn(QWidget):
         self.base = base
         self.setMinimumWidth(280)
         self.statuses = {}
+        self.conversations = {}
         self.id_ = None
         #self.updating = False
 
@@ -111,8 +112,19 @@ class StatusesColumn(QWidget):
 
     def __cmd_clicked(self, url):
         status_id = str(url.split(':')[1])
-        status = self.statuses[status_id]
         cmd = url.split(':')[0]
+        try:
+            status = self.statuses[status_id]
+        except KeyError:
+            status = None
+            for status_root, statuses in self.conversations.iteritems():
+                for item in statuses:
+                    if item.id_ == status_id:
+                        status = item
+                        break
+                if status is not None:
+                    break
+
         if cmd == 'reply':
             self.__reply_status(status)
         elif cmd == 'quote':
@@ -181,6 +193,7 @@ class StatusesColumn(QWidget):
         self.base.get_conversation(self.account_id, status, self.id_, status.id_)
 
     def __hide_conversation(self, status):
+        del self.conversations[status.id_]
         self.webview.clear_conversation(status.id_)
 
     def __show_avatar(self, status):
@@ -203,9 +216,15 @@ class StatusesColumn(QWidget):
 
     def update_statuses(self, statuses):
         self.statuses = self.webview.update_statuses(statuses)
+        self.conversations = {}
 
     def update_conversation(self, status, status_root_id):
+        status_root_id = str(status_root_id)
         self.webview.update_conversation(status, status_root_id)
+        if status_root_id in self.conversations:
+            self.conversations[status_root_id].append(status)
+        else:
+            self.conversations[status_root_id] = [status]
 
     def mark_status_as_favorite(self, status_id):
         mark = "setFavorite('%s')" % status_id

@@ -96,16 +96,16 @@ class OptParser(OptionParser):
         pass
 
 def main():
-    try:
-        subprocess.call(['turpial-unity-daemon', 'stop'])
-        subprocess.call(['turpial-unity-daemon', 'start'])
-    except:
-        pass
+    #try:
+    #    subprocess.call(['turpial-unity-daemon', 'stop'])
+    #    subprocess.call(['turpial-unity-daemon', 'start'])
+    #except:
+    #    pass
     t = Turpial()
-    try:
-        subprocess.call(['turpial-unity-daemon', 'stop'])
-    except:
-        pass
+    #try:
+    #    subprocess.call(['turpial-unity-daemon', 'stop'])
+    #except:
+    #    pass
 
 if __name__ == '__main__':
     sys.exit(main())

@@ -86,10 +86,10 @@ class Dock(QStatusBar):
     def __settings_clicked(self):
         self.settings_menu = QMenu(self)
 
-        accounts = QAction(i18n.get('add_accounts'), self)
+        accounts = QAction(i18n.get('accounts'), self)
         accounts.triggered.connect(partial(self.__accounts_clicked))
 
-        columns = QAction(i18n.get('add_columns'), self)
+        columns = QAction(i18n.get('columns'), self)
         if self.status > self.EMPTY:
             columns_menu = self.base.build_columns_menu()
             columns.setMenu(columns_menu)

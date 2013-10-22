@@ -27,9 +27,14 @@ class Dock(QStatusBar):
     updates_clicked = pyqtSignal()
     messages_clicked = pyqtSignal()
 
+    EMPTY = 0
+    WITH_ACCOUNTS = 1
+    NORMAL = 2
+
     def __init__(self, base):
         QStatusBar.__init__(self)
         self.base = base
+        self.status = self.EMPTY
 
         bg_color = "#333"
         style = "background-color: %s; border: 0px solid %s;" % (bg_color, bg_color)
@@ -42,9 +47,6 @@ class Dock(QStatusBar):
                 i18n.get('search'))
         self.settings_button = ImageButton(base, 'dock-preferences.png',
                 i18n.get('settings'))
-        self.about_button = ImageButton(base, 'dock-about.png',
-                i18n.get('about_turpial'))
-        self.about_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.updates_button.clicked.connect(self.__updates_clicked)
         self.messages_button.clicked.connect(self.__messages_clicked)
@@ -55,7 +57,6 @@ class Dock(QStatusBar):
         separator.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
 
         toolbar = QToolBar()
-        toolbar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         toolbar.addWidget(self.settings_button)
         toolbar.addWidget(separator)
         toolbar.addWidget(self.search_button)
@@ -65,32 +66,6 @@ class Dock(QStatusBar):
         toolbar.setMinimumHeight(24)
         self.addPermanentWidget(toolbar, 1)
         self.setStyleSheet("QStatusBar { %s }" % style)
-        self.setContentsMargins(0, 0, 0, 0)
-
-    def __build_settings_menu(self, with_accounts):
-        menu = QMenu(self)
-
-        accounts = QAction(i18n.get('add_accounts'), self)
-        accounts.triggered.connect(partial(self.__accounts_clicked))
-
-        columns = QAction(i18n.get('add_columns'), self)
-        if with_accounts:
-            columns_menu = self.base.build_columns_menu()
-            columns.setMenu(columns_menu)
-        else:
-            columns.setEnabled(False)
-
-        preferences = QAction(i18n.get('preferences'), self)
-        about_turpial = QAction(i18n.get('about_turpial'), self)
-
-        menu.addAction(accounts)
-        menu.addAction(columns)
-        menu.addSeparator()
-        menu.addAction(preferences)
-        menu.addSeparator()
-        menu.addAction(about_turpial)
-        return menu
-
 
     def __accounts_clicked(self):
         self.accounts_clicked.emit()
@@ -108,14 +83,39 @@ class Dock(QStatusBar):
         self.messages_clicked.emit()
 
     def __settings_clicked(self):
+        self.settings_menu = QMenu(self)
+
+        accounts = QAction(i18n.get('add_accounts'), self)
+        accounts.triggered.connect(partial(self.__accounts_clicked))
+
+        columns = QAction(i18n.get('add_columns'), self)
+        if self.status > self.EMPTY:
+            columns_menu = self.base.build_columns_menu()
+            columns.setMenu(columns_menu)
+        else:
+            columns.setEnabled(False)
+
+        preferences = QAction(i18n.get('preferences'), self)
+        about_turpial = QAction(i18n.get('about_turpial'), self)
+
+        self.settings_menu.addAction(accounts)
+        self.settings_menu.addAction(columns)
+        self.settings_menu.addSeparator()
+        self.settings_menu.addAction(preferences)
+        self.settings_menu.addSeparator()
+        self.settings_menu.addAction(about_turpial)
         self.settings_menu.exec_(QCursor.pos())
 
     def empty(self, with_accounts=None):
         self.updates_button.setEnabled(False)
         self.messages_button.setEnabled(False)
-        self.settings_menu = self.__build_settings_menu(with_accounts)
+        if with_accounts:
+            self.status = self.WITH_ACCOUNTS
+        else:
+            self.status = self.EMPTY
+
 
     def normal(self):
         self.updates_button.setEnabled(True)
         self.messages_button.setEnabled(True)
-        self.settings_menu = self.__build_settings_menu(True)
+        self.status = self.NORMAL

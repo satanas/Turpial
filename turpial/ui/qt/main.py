@@ -471,6 +471,10 @@ class Main(Base, QWidget):
         self._container.remove_column(column_id)
         self.remove_timer(column_id)
 
+        columns = self.core.get_registered_columns()
+        if len(columns) == 0:
+            self.update_container()
+
     def after_save_column(self, column_id):
         column_id = str(column_id)
         self._container.add_column(column_id)

@@ -226,6 +226,13 @@ class Main(Base, QWidget):
         full_message = "%s (%s)" % (message, error)
         message = QMessageBox.critical(self, title, full_message, QMessageBox.Ok)
 
+    def show_confirmation_message(self, title, message):
+        confirmation = QMessageBox.question(self, title, message,
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if confirmation == QMessageBox.No:
+            return False
+        return True
+
     def save_account(self, account):
         self.core.save_account(account)
 

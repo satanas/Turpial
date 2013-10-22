@@ -10,7 +10,6 @@ from PyQt4.QtGui import QComboBox
 from PyQt4.QtGui import QTextEdit
 from PyQt4.QtGui import QCompleter
 from PyQt4.QtGui import QPushButton
-from PyQt4.QtGui import QMessageBox
 from PyQt4.QtGui import QTextCursor
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QHBoxLayout
@@ -238,10 +237,9 @@ class UpdateBox(QWidget):
         message = unicode(self.text_edit.toPlainText())
 
         if len(message) > 0:
-            confirmation = QMessageBox.question(self, i18n.get('confirm_discard'),
-                i18n.get('do_you_want_to_discard_message'), QMessageBox.Yes | QMessageBox.No,
-                QMessageBox.No)
-            if confirmation == QMessageBox.No:
+            confirmation = self.base.show_confirmation_message(i18n.get('confirm_discard'),
+                i18n.get('do_you_want_to_discard_message'))
+            if not confirmation:
                 return
 
         if event:

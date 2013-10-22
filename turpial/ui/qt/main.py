@@ -42,6 +42,7 @@ from libturpial.common import ColumnType, get_preview_service_from_url
 class Main(Base, QWidget):
 
     account_deleted = pyqtSignal()
+    account_loaded = pyqtSignal()
     account_registered = pyqtSignal()
 
     def __init__(self):
@@ -83,6 +84,7 @@ class Main(Base, QWidget):
         self.core.message_sent.connect(self.after_send_message)
         self.core.column_updated.connect(self.after_update_column)
         self.core.account_saved.connect(self.after_save_account)
+        self.core.account_loaded.connect(self.after_load_account)
         self.core.account_deleted.connect(self.after_delete_account)
         self.core.column_saved.connect(self.after_save_column)
         self.core.column_deleted.connect(self.after_delete_column)
@@ -235,6 +237,9 @@ class Main(Base, QWidget):
 
     def save_account(self, account):
         self.core.save_account(account)
+
+    def load_account(self, account_id):
+        self.core.load_account(account_id)
 
     def delete_account(self, account_id):
         self.core.delete_account(account_id)
@@ -467,6 +472,9 @@ class Main(Base, QWidget):
     def after_save_account(self):
         self.account_registered.emit()
         self.update_dock()
+
+    def after_load_account(self):
+        self.account_loaded.emit()
 
     def after_delete_account(self):
         self.account_deleted.emit()

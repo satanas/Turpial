@@ -21,6 +21,7 @@ class CoreWorker(QThread):
     message_sent = pyqtSignal(object, str)
     column_updated = pyqtSignal(object, tuple)
     account_saved = pyqtSignal()
+    account_loaded = pyqtSignal()
     account_deleted = pyqtSignal()
     column_saved = pyqtSignal(str)
     column_deleted = pyqtSignal(str)
@@ -114,12 +115,17 @@ class CoreWorker(QThread):
 
     def save_account(self, account):
         account_id = self.core.register_account(account)
-        self.load_account(account_id)
+        self.load_account(account_id, trigger_signal=False)
         self.__after_save_account()
 
     # FIXME: Remove this after implement this in libturpial
-    def load_account(self, account_id):
-        self.core.accman.load(account_id)
+    def load_account(self, account_id, trigger_signal=True):
+        if trigger_signal:
+            self.register(self.core.accman.load, (account_id),
+                self.__after_load_account)
+        else:
+            self.core.accman.load(account_id)
+            self.__after_load_account()
 
     def delete_account(self, account_id):
         # FIXME: Implement try/except
@@ -235,6 +241,9 @@ class CoreWorker(QThread):
 
     def __after_save_account(self):
         self.account_saved.emit()
+
+    def __after_load_account(self, response=None):
+        self.account_loaded.emit()
 
     def __after_delete_account(self):
         self.account_deleted.emit()

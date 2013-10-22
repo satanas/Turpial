@@ -75,9 +75,15 @@ class AccountsDialog(ModalDialog):
         self.delete_button.setToolTip(i18n.get('delete_an_existing_account'))
         self.delete_button.clicked.connect(self.__delete_account)
 
+        self.relogin_button = QPushButton(i18n.get('relogin'))
+        self.relogin_button.setEnabled(False)
+        self.relogin_button.setToolTip(i18n.get('relogin_this_account'))
+        self.relogin_button.clicked.connect(self.__relogin_account)
+
         button_box = QHBoxLayout()
         button_box.addWidget(self.new_button)
         button_box.addWidget(self.delete_button)
+        button_box.addWidget(self.relogin_button)
 
         layout = QVBoxLayout()
         layout.addWidget(self.list_)
@@ -89,6 +95,7 @@ class AccountsDialog(ModalDialog):
         self.__update()
 
         self.base.account_deleted.connect(self.__update)
+        self.base.account_loaded.connect(self.__update)
         self.base.account_registered.connect(self.__update)
 
         self.exec_()
@@ -110,15 +117,17 @@ class AccountsDialog(ModalDialog):
 
         self.__enable(True)
         self.delete_button.setEnabled(False)
+        self.relogin_button.setEnabled(False)
 
     def __account_clicked(self, point):
         self.delete_button.setEnabled(True)
+        self.relogin_button.setEnabled(True)
 
     def __delete_account(self):
         self.__enable(False)
         selection = self.list_.selectionModel()
         index = selection.selectedIndexes()[0]
-        account_id = index.data(AccountDelegate.IdRole).toPyObject()
+        account_id = str(index.data(AccountDelegate.IdRole).toPyObject())
         message = i18n.get('delete_account_confirm') % account_id
         confirmation = self.base.show_confirmation_message(i18n.get('confirm_delete'),
             message)
@@ -142,11 +151,19 @@ class AccountsDialog(ModalDialog):
                     i18n.get('error_registering_new_account'), err_msg)
                 self.__enable(True)
 
+    def __relogin_account(self):
+        self.__enable(False)
+        selection = self.list_.selectionModel()
+        index = selection.selectedIndexes()[0]
+        account_id = str(index.data(AccountDelegate.IdRole).toPyObject())
+        self.base.load_account(account_id)
+
     def __enable(self, value):
         # TODO: Display a loading message/indicator
         self.list_.setEnabled(value)
         self.new_button.setEnabled(value)
         self.delete_button.setEnabled(value)
+        self.relogin_button.setEnabled(value)
 
 class AccountDelegate(QStyledItemDelegate):
     UsernameRole = Qt.UserRole + 100

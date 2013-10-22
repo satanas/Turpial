@@ -139,6 +139,38 @@ class Main(Base, QWidget):
         else:
             webbrowser.open(url)
 
+    def build_columns_menu(self):
+        columns_menu = QMenu(self)
+
+        available_columns = self.core.get_available_columns()
+        accounts = self.core.get_all_accounts()
+
+        if len(accounts) == 0:
+            empty_menu = QAction(i18n.get('no_registered_accounts'), self)
+            empty_menu.setEnabled(False)
+            columns_menu.addAction(empty_menu)
+        else:
+            for account in accounts:
+                name = "%s (%s)" % (account.username, i18n.get(account.protocol_id))
+                account_menu = QAction(name, self)
+
+                if len(available_columns[account.id_]) > 0:
+                    available_columns_menu = QMenu(self)
+                    for column in available_columns[account.id_]:
+                        # FIXME: Handle lists
+                        if column.__class__.__name__ == 'List':
+                            continue
+                        item = QAction(column.slug, self)
+                        item.triggered.connect(partial(self.add_column, column.id_))
+                        available_columns_menu.addAction(item)
+
+                    account_menu.setMenu(available_columns_menu)
+                else:
+                    account_menu.setEnabled(False)
+                columns_menu.addAction(account_menu)
+
+        return columns_menu
+
 
     def toggle_tray_icon(self):
         if self.showed:
@@ -282,35 +314,7 @@ class Main(Base, QWidget):
         accounts = AccountsDialog(self)
 
     def show_column_menu(self, point):
-        self.columns_menu = QMenu(self)
-
-        available_columns = self.core.get_available_columns()
-        accounts = self.core.get_all_accounts()
-
-        if len(accounts) == 0:
-            empty_menu = QAction(i18n.get('no_registered_accounts'), self)
-            empty_menu.setEnabled(False)
-            self.columns_menu.addAction(empty_menu)
-        else:
-            for account in accounts:
-                name = "%s (%s)" % (account.username, i18n.get(account.protocol_id))
-                account_menu = QAction(name, self)
-
-                if len(available_columns[account.id_]) > 0:
-                    available_columns_menu = QMenu(self)
-                    for column in available_columns[account.id_]:
-                        # FIXME: Handle lists
-                        if column.__class__.__name__ == 'List':
-                            continue
-                        item = QAction(column.slug, self)
-                        item.triggered.connect(partial(self.add_column, column.id_))
-                        available_columns_menu.addAction(item)
-
-                    account_menu.setMenu(available_columns_menu)
-                else:
-                    account_menu.setEnabled(False)
-                self.columns_menu.addAction(account_menu)
-
+        self.columns_menu = self.build_columns_menu()
         self.columns_menu.exec_(point)
 
     def show_search_dialog(self):

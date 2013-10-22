@@ -24,7 +24,7 @@ STRINGS = {
     'update_status': _('Update status'),
     'send_direct_message': _('Send direct message'),
     'settings': _('Settings'),
-    'open_preferences_dialog': _('Open preferences dialog'),
+    'preferences': _('Preferences'),
     'about_turpial': _('About Turpial'),
     'add_columns': _('Add columns'),
     'add_accounts': _('Add accounts'),
@@ -109,7 +109,6 @@ STRINGS = {
     'select_account': _('Select account'),
 
     #'no_registered_columns': ,
-    #'preferences': _('Preferences'),
     #'reply_status': _('Reply status'),
     #'add_account': _('Add account'),
     #'columns': _('Columns'),

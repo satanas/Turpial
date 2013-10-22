@@ -109,6 +109,7 @@ STRINGS = {
     'recent': _('Recent'),
     'empty_message': _('Empty message'),
     'select_account': _('Select account'),
+    'delete_account_confirm': _("Do you really want to delete the account %s?"),
 
     #'no_registered_columns': ,
     #'reply_status': _('Reply status'),
@@ -149,7 +150,6 @@ STRINGS = {
     #'secure_auth': _('Secure Authentication'),
     #'login_cancelled': _('Login cancelled by user'),
     #'invalid_pin': _('You must write a valid PIN'),
-    #'delete_account_confirm': _("Do you really want to delete the account "),
     #'delete_column_confirm': _("Do you really want to delete the column "),
     #'fields_cant_be_empty': _("Fields can't be empty"),
     #'from': _("from"),

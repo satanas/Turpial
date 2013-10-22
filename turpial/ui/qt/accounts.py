@@ -97,6 +97,7 @@ class AccountsDialog(ModalDialog):
         model = QStandardItemModel()
         self.list_.setModel(model)
         accounts = self.base.core.get_registered_accounts()
+        count = 0
         for account in accounts:
             item = QStandardItem()
             filepath = os.path.join(self.base.images_path, 'unknown.png')
@@ -105,7 +106,10 @@ class AccountsDialog(ModalDialog):
             item.setData(get_protocol_from(account.id_).capitalize(), AccountDelegate.ProtocolRole)
             item.setData(account.id_, AccountDelegate.IdRole)
             model.appendRow(item)
+            count += 1
+
         self.__enable(True)
+        self.delete_button.setEnabled(False)
 
     def __account_clicked(self, point):
         self.delete_button.setEnabled(True)
@@ -115,7 +119,12 @@ class AccountsDialog(ModalDialog):
         selection = self.list_.selectionModel()
         index = selection.selectedIndexes()[0]
         account_id = index.data(AccountDelegate.IdRole).toPyObject()
-        # TODO: Confirm
+        message = i18n.get('delete_account_confirm') % account_id
+        confirmation = self.base.show_confirmation_message(i18n.get('confirm_delete'),
+            message)
+        if not confirmation:
+            self.__enable(True)
+            return
         self.base.delete_account(account_id)
 
     def __register_twitter_account(self):

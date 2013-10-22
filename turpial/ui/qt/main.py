@@ -37,7 +37,7 @@ from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 from turpial.ui.qt.imageview import ImageView
 
-from libturpial.common import ColumnType, is_preview_service_supported
+from libturpial.common import ColumnType, get_preview_service_from_url
 
 class Main(Base, QWidget):
 
@@ -101,6 +101,7 @@ class Main(Base, QWidget):
         self.core.status_from_conversation.connect(self.after_get_status_from_conversation)
         self.core.fetched_profile_image.connect(self.after_get_profile_image)
         self.core.fetched_avatar.connect(self.update_profile_avatar)
+        self.core.fetched_image_preview.connect(self.after_get_image_preview)
         self.core.exception_raised.connect(self.on_exception)
 
         self.core.start()
@@ -258,13 +259,10 @@ class Main(Base, QWidget):
         return self.extra_friends + self.core.load_friends_list()
 
     def open_url(self, url):
-        if is_preview_service_supported(url):
-            self.__open_in_browser(url)
-            pass
-            #try:
-            #    bla
-            #except:
-            #    self.__open_in_browser(url)
+        preview_service = get_preview_service_from_url(url)
+        if preview_service:
+            self.core.get_image_preview(preview_service, url)
+            self.image_view.start_loading()
         else:
             self.__open_in_browser(url)
 
@@ -557,6 +555,9 @@ class Main(Base, QWidget):
 
     def update_profile_avatar(self, image_path, username):
         self.profile.update_avatar(str(image_path), str(username))
+
+    def after_get_image_preview(self, response):
+        self.image_view.loading_finished(str(response.path))
 
     def on_exception(self, exception):
         print 'Exception', exception

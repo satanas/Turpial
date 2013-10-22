@@ -30,6 +30,7 @@ from turpial.ui.qt.widgets import ImageButton
 from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.webview import StatusesWebView
 
+from libturpial.common import get_preview_service_from_url
 from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from,\
         get_username_from
 
@@ -102,7 +103,9 @@ class StatusesColumn(QWidget):
         self.base.core.delete_column(self.id_)
 
     def __link_clicked(self, url):
-        self.base.open_url(str(url))
+        url = str(url)
+        preview_service = get_preview_service_from_url(url)
+        self.base.open_url(url)
 
     def __hashtag_clicked(self, hashtag):
         self.base.add_search_column(self.account_id, str(hashtag))

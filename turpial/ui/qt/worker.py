@@ -40,6 +40,7 @@ class CoreWorker(QThread):
     status_from_conversation = pyqtSignal(object, str, str)
     fetched_profile_image = pyqtSignal(str)
     fetched_avatar = pyqtSignal(str, str)
+    fetched_image_preview = pyqtSignal(object)
 
     def __init__(self):
         QThread.__init__(self)
@@ -223,6 +224,10 @@ class CoreWorker(QThread):
         self.register(self.core.get_status_avatar, (status),
             self.__after_get_avatar_from_status, status.username)
 
+    def get_image_preview(self, preview_service, url):
+        self.register(preview_service.do_service, (url),
+            self.__after_get_image_preview)
+
 
     #================================================================
     # Callbacks
@@ -321,6 +326,9 @@ class CoreWorker(QThread):
     def __after_get_avatar_from_status(self, response, args):
         username = args
         self.fetched_avatar.emit(response, username)
+
+    def __after_get_image_preview(self, response):
+        self.fetched_image_preview.emit(response)
 
     #================================================================
     # Worker methods

@@ -160,11 +160,14 @@ class Main(Base, QWidget):
                 if len(available_columns[account.id_]) > 0:
                     available_columns_menu = QMenu(self)
                     for column in available_columns[account.id_]:
-                        # FIXME: Handle lists
-                        if column.__class__.__name__ == 'List':
-                            continue
                         item = QAction(column.slug, self)
-                        item.triggered.connect(partial(self.add_column, column.id_))
+                        if column.__class__.__name__ == 'List':
+                            #FIXME: Uncomment this after fixing the error with get_list_id in libturpial
+                            #column_id = "-".join([account.id_, column.id_])
+                            #item.triggered.connect(partial(self.add_column, column_id))
+                            continue
+                        else:
+                            item.triggered.connect(partial(self.add_column, column.id_))
                         available_columns_menu.addAction(item)
 
                     account_menu.setMenu(available_columns_menu)

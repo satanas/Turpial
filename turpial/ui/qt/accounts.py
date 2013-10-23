@@ -81,6 +81,8 @@ class AccountsDialog(ModalDialog):
         self.relogin_button.clicked.connect(self.__relogin_account)
 
         button_box = QHBoxLayout()
+        button_box.addStretch(1)
+        button_box.setSpacing(5)
         button_box.addWidget(self.new_button)
         button_box.addWidget(self.delete_button)
         button_box.addWidget(self.relogin_button)

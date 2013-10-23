@@ -50,6 +50,7 @@ class UpdateBox(QWidget):
         self.char_count.setFont(font)
 
         self.update_button = QPushButton(i18n.get('update'))
+        self.queue_button = QPushButton(i18n.get('q'))
 
         self.accounts_combo = QComboBox()
 
@@ -59,6 +60,7 @@ class UpdateBox(QWidget):
         buttons.addWidget(self.short_button)
         buttons.addStretch(0)
         buttons.addWidget(self.char_count)
+        buttons.addWidget(self.queue_button)
         buttons.addWidget(self.update_button)
 
         self.loader = BarLoadIndicator()
@@ -67,11 +69,13 @@ class UpdateBox(QWidget):
         self.error_message = QLabel()
 
         self.update_button.clicked.connect(self.__update_status)
+        self.queue_button.clicked.connect(self.__queue_status)
         self.short_button.clicked.connect(self.__short_urls)
         self.upload_button.clicked.connect(self.__upload_image)
         self.text_edit.textChanged.connect(self.__update_count)
         self.text_edit.quit.connect(self.closeEvent)
         self.text_edit.activated.connect(self.__update_status)
+        self.text_edit.enqueued.connect(self.__queue_status)
 
         layout = QVBoxLayout()
         layout.addWidget(self.text_edit, 1)
@@ -142,6 +146,25 @@ class UpdateBox(QWidget):
             else:
                 self.base.update_status(account_id, message, self.in_reply_to_id)
 
+    def __queue_status(self):
+        index = self.accounts_combo.currentIndex()
+        accounts = self.base.core.get_registered_accounts()
+        account_id = str(self.accounts_combo.itemData(index).toPyObject())
+        message = unicode(self.text_edit.toPlainText())
+
+        if len(message) == 0:
+            self.base.show_error_message(i18n.get('empty_message'),
+                i18n.get('you_can_not_submit_an_empty_message'))
+            return
+
+        if index == 0 and len(accounts) > 1:
+            self.base.show_error_message(i18n.get('select_account'),
+                i18n.get('select_one_account_to_post'))
+            return
+
+        self.enable(False)
+        self.base.push_status_to_queue(account_id, message)
+
     def __clear(self):
         self.account_id = None
         self.in_reply_to_id = None
@@ -151,6 +174,7 @@ class UpdateBox(QWidget):
         self.cursor_position = None
         self.text_edit.setText('')
         self.accounts_combo.setCurrentIndex(0)
+        self.queue_button.setEnabled(True)
         self.enable(True)
         self.showed = False
 
@@ -205,6 +229,7 @@ class UpdateBox(QWidget):
         self.message = "%s " % mentions
         self.cursor_position = QTextCursor.End
         self.__show()
+        self.queue_button.setEnabled(False)
 
     def show_for_send_direct(self, account_id, username):
         if self.showed:
@@ -214,6 +239,7 @@ class UpdateBox(QWidget):
         self.account_id = account_id
         self.direct_message_to = username
         self.__show()
+        self.queue_button.setEnabled(False)
 
     def show_for_reply_direct(self, account_id, status):
         if self.showed:
@@ -223,6 +249,7 @@ class UpdateBox(QWidget):
         self.account_id = account_id
         self.direct_message_to = status.username
         self.__show()
+        self.queue_button.setEnabled(False)
 
     def show_for_quote(self, account_id, status):
         if self.showed:
@@ -232,6 +259,7 @@ class UpdateBox(QWidget):
         self.message = " RT @%s %s" % (status.username, status.text)
         self.cursor_position = QTextCursor.Start
         self.__show()
+        self.queue_button.setEnabled(False)
 
     def closeEvent(self, event=None):
         message = unicode(self.text_edit.toPlainText())
@@ -254,6 +282,7 @@ class UpdateBox(QWidget):
         self.upload_button.setEnabled(value)
         self.short_button.setEnabled(value)
         self.update_button.setEnabled(value)
+        self.queue_button.setEnabled(value)
         self.loader.setVisible(not value)
 
     def done(self):
@@ -290,6 +319,7 @@ class CompletionTextEdit(QTextEdit):
 
     quit = pyqtSignal()
     activated = pyqtSignal()
+    enqueued = pyqtSignal()
 
     def __init__(self):
         QTextEdit.__init__(self)
@@ -351,9 +381,14 @@ class CompletionTextEdit(QTextEdit):
 
         hasModifier = event.modifiers() != Qt.NoModifier
         enterKey = event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return
+        queueKey = event.key() == Qt.Key_P
 
         if hasModifier and event.modifiers() == Qt.ControlModifier and enterKey:
             self.activated.emit()
+            return
+
+        if hasModifier and event.modifiers() == Qt.ControlModifier and queueKey:
+            self.enqueued.emit()
             return
 
         completionPrefix = self.textUnderCursor()

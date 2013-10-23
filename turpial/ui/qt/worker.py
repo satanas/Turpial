@@ -2,6 +2,7 @@
 
 # Qt Worker for Turpial
 
+import os
 import Queue
 
 from PyQt4.QtCore import QThread
@@ -17,6 +18,8 @@ class CoreWorker(QThread):
     status_broadcasted = pyqtSignal(object)
     status_repeated = pyqtSignal(object, str, str)
     status_deleted = pyqtSignal(object, str, str)
+    status_enqueued= pyqtSignal(str)
+    status_updated_from_queue = pyqtSignal(object, str)
     message_deleted = pyqtSignal(object, str, str)
     message_sent = pyqtSignal(object, str)
     column_updated = pyqtSignal(object, tuple)
@@ -48,6 +51,8 @@ class CoreWorker(QThread):
         self.queue = Queue.Queue()
         self.exit_ = False
         self.core = Core()
+
+        self.queue_path = os.path.join(self.core.config.basedir, 'queue')
 
     #def __del__(self):
     #    self.wait()
@@ -234,6 +239,29 @@ class CoreWorker(QThread):
         self.register(preview_service.do_service, (url),
             self.__after_get_image_preview)
 
+    def push_status(self, account_id, message):
+        fd = open(self.queue_path, 'a+')
+        row = "%s\1%s\n" % (account_id, message)
+        fd.write(row.encode('utf-8'))
+        fd.close()
+        self.__after_push_status(account_id)
+
+    def pop_status(self):
+        lines = open(self.queue_path).readlines()
+        if not lines:
+            return None
+
+        row = lines[0].strip()
+        account_id, message = row.split("\1")
+        del lines[0]
+
+        open(self.queue_path, 'w').writelines(lines)
+        return account_id, message
+
+    def update_status_from_queue(self, account_id, message):
+        self.register(self.core.update_status, (account_id, message),
+            self.__after_update_status_from_queue, account_id)
+
 
     #================================================================
     # Callbacks
@@ -338,6 +366,12 @@ class CoreWorker(QThread):
 
     def __after_get_image_preview(self, response):
         self.fetched_image_preview.emit(response)
+
+    def __after_push_status(self, account_id):
+        self.status_enqueued.emit(account_id)
+
+    def __after_update_status_from_queue(self, response, account_id):
+        self.status_updated_from_queue.emit(response, account_id)
 
     #================================================================
     # Worker methods

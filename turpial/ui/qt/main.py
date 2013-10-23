@@ -80,6 +80,7 @@ class Main(Base, QWidget):
         self.core.status_broadcasted.connect(self.after_broadcast_status)
         self.core.status_repeated.connect(self.after_repeat_status)
         self.core.status_deleted.connect(self.after_delete_status)
+        self.core.status_enqueued.connect(self.after_enqueue_status)
         self.core.message_deleted.connect(self.after_delete_message)
         self.core.message_sent.connect(self.after_send_message)
         self.core.column_updated.connect(self.after_update_column)
@@ -104,6 +105,7 @@ class Main(Base, QWidget):
         self.core.fetched_profile_image.connect(self.after_get_profile_image)
         self.core.fetched_avatar.connect(self.update_profile_avatar)
         self.core.fetched_image_preview.connect(self.after_get_image_preview)
+        self.core.status_updated_from_queue.connect(self.after_status_updated_from_queue)
         self.core.exception_raised.connect(self.on_exception)
 
         self.core.start()
@@ -131,6 +133,7 @@ class Main(Base, QWidget):
         layout.setMargin(0)
 
         self.setLayout(layout)
+        self.set_queue_timer()
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -141,42 +144,6 @@ class Main(Base, QWidget):
             subprocess.Popen(cmd)
         else:
             webbrowser.open(url)
-
-    def build_columns_menu(self):
-        columns_menu = QMenu(self)
-
-        available_columns = self.core.get_available_columns()
-        accounts = self.core.get_all_accounts()
-
-        if len(accounts) == 0:
-            empty_menu = QAction(i18n.get('no_registered_accounts'), self)
-            empty_menu.setEnabled(False)
-            columns_menu.addAction(empty_menu)
-        else:
-            for account in accounts:
-                name = "%s (%s)" % (account.username, i18n.get(account.protocol_id))
-                account_menu = QAction(name, self)
-
-                if len(available_columns[account.id_]) > 0:
-                    available_columns_menu = QMenu(self)
-                    for column in available_columns[account.id_]:
-                        item = QAction(column.slug, self)
-                        if column.__class__.__name__ == 'List':
-                            #FIXME: Uncomment this after fixing the error with get_list_id in libturpial
-                            #column_id = "-".join([account.id_, column.id_])
-                            #item.triggered.connect(partial(self.add_column, column_id))
-                            continue
-                        else:
-                            item.triggered.connect(partial(self.add_column, column.id_))
-                        available_columns_menu.addAction(item)
-
-                    account_menu.setMenu(available_columns_menu)
-                else:
-                    account_menu.setEnabled(False)
-                columns_menu.addAction(account_menu)
-
-        return columns_menu
-
 
     def toggle_tray_icon(self):
         if self.showed:
@@ -326,6 +293,41 @@ class Main(Base, QWidget):
     def show_accounts_dialog(self):
         accounts = AccountsDialog(self)
 
+    def build_columns_menu(self):
+        columns_menu = QMenu(self)
+
+        available_columns = self.core.get_available_columns()
+        accounts = self.core.get_all_accounts()
+
+        if len(accounts) == 0:
+            empty_menu = QAction(i18n.get('no_registered_accounts'), self)
+            empty_menu.setEnabled(False)
+            columns_menu.addAction(empty_menu)
+        else:
+            for account in accounts:
+                name = "%s (%s)" % (account.username, i18n.get(account.protocol_id))
+                account_menu = QAction(name, self)
+
+                if len(available_columns[account.id_]) > 0:
+                    available_columns_menu = QMenu(self)
+                    for column in available_columns[account.id_]:
+                        item = QAction(column.slug, self)
+                        if column.__class__.__name__ == 'List':
+                            #FIXME: Uncomment this after fixing the error with get_list_id in libturpial
+                            #column_id = "-".join([account.id_, column.id_])
+                            #item.triggered.connect(partial(self.add_column, column_id))
+                            continue
+                        else:
+                            item.triggered.connect(partial(self.add_column, column.id_))
+                        available_columns_menu.addAction(item)
+
+                    account_menu.setMenu(available_columns_menu)
+                else:
+                    account_menu.setEnabled(False)
+                columns_menu.addAction(account_menu)
+
+        return columns_menu
+
     def show_column_menu(self, point):
         self.columns_menu = self.build_columns_menu()
         self.columns_menu.exec_(point)
@@ -467,6 +469,13 @@ class Main(Base, QWidget):
         self.image_view.start_loading()
         self.core.get_profile_image(account_id, username)
 
+    def push_status_to_queue(self, account_id, message):
+        self.core.push_status(account_id, message)
+
+    def update_status_from_queue(self, args=None):
+        response = self.core.pop_status()
+        if response:
+            self.core.update_status_from_queue(response[0], response[1])
 
     #================================================================
     # Hooks definitions
@@ -577,6 +586,14 @@ class Main(Base, QWidget):
     def after_get_image_preview(self, response):
         self.image_view.loading_finished(str(response.path))
 
+    def after_enqueue_status(self, account_id):
+        self.update_box.done()
+        # TODO: OS Notification
+
+    def after_status_updated_from_queue(self, response, account_id):
+        print '++Posted queue message'
+        # TODO: OS Notification
+
     def on_exception(self, exception):
         print 'Exception', exception
 
@@ -606,6 +623,14 @@ class Main(Base, QWidget):
         last_id = self._container.start_updating(column.id_)
         self.core.get_column_statuses(column, last_id)
         return True
+
+    def set_queue_timer(self):
+        self.remove_timer('queue')
+
+        interval = 1 * 60 * 1000
+        timer = Timer(interval, None, self.update_status_from_queue)
+        self.timers['queue'] = timer
+        print '--Created timer for queue every %i sec' % interval
 
 class Timer:
     def __init__(self, interval, column, callback):

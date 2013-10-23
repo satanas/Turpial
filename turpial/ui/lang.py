@@ -110,6 +110,7 @@ STRINGS = {
     'empty_message': _('Empty message'),
     'select_account': _('Select account'),
     'delete_account_confirm': _("Do you really want to delete the account %s?"),
+    'status_queue': _('Status queue'),
 
     #'no_registered_columns': ,
     #'reply_status': _('Reply status'),

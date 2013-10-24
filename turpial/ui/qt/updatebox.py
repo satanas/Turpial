@@ -201,7 +201,7 @@ class UpdateBox(QWidget):
             index = self.accounts_combo.findData(self.account_id)
             if index > 0:
                 self.accounts_combo.setCurrentIndex(index)
-                self.accounts_combo.setEnabled(False)
+            self.accounts_combo.setEnabled(False)
         if self.message:
             self.text_edit.setText(self.message)
             cursor = self.text_edit.textCursor()

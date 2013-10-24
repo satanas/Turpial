@@ -36,6 +36,7 @@ from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 from turpial.ui.qt.imageview import ImageView
+from turpial.ui.qt.queue import QueueDialog
 
 from libturpial.common import ColumnType, get_preview_service_from_url
 
@@ -133,7 +134,10 @@ class Main(Base, QWidget):
         layout.setMargin(0)
 
         self.setLayout(layout)
-        self.set_queue_timer()
+        #self.set_queue_timer()
+
+        self.q = QueueDialog(self)
+        self.q.show()
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -475,7 +479,7 @@ class Main(Base, QWidget):
     def update_status_from_queue(self, args=None):
         response = self.core.pop_status()
         if response:
-            self.core.update_status_from_queue(response[0], response[1])
+            self.core.update_status_from_queue(response.account_id, response.text)
 
     #================================================================
     # Hooks definitions

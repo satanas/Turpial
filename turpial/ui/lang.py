@@ -111,6 +111,9 @@ STRINGS = {
     'select_account': _('Select account'),
     'delete_account_confirm': _("Do you really want to delete the account %s?"),
     'status_queue': _('Status queue'),
+    'delete_selected_message': _('Delete selected message'),
+    'delete_all': _('Delete all'),
+    'delete_all_messages_in_queue': _('Delete all messages in queue'),
 
     #'no_registered_columns': ,
     #'reply_status': _('Reply status'),

@@ -9,6 +9,7 @@ from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
 
 from libturpial.api.core import Core
+from libturpial.api.models.status import Status
 from libturpial.api.models.column import Column
 from libturpial.common.tools import get_account_id_from, get_column_slug_from
 
@@ -256,7 +257,22 @@ class CoreWorker(QThread):
         del lines[0]
 
         open(self.queue_path, 'w').writelines(lines)
-        return account_id, message
+        status = Status()
+        status.account_id = account_id
+        status.text = message
+        return status
+
+    def list_queue(self):
+        statuses = []
+        lines = open(self.queue_path).readlines()
+        for line in lines:
+            account_id, message = line.strip().split("\1")
+            status = Status()
+            status.account_id = account_id
+            status.text = message
+            statuses.append(status)
+        return statuses
+
 
     def update_status_from_queue(self, account_id, message):
         self.register(self.core.update_status, (account_id, message),

@@ -75,6 +75,7 @@ class Main(Base, QWidget):
         self.profile = ProfileDialog(self)
         self.profile.options_clicked.connect(self.show_profile_menu)
         self.image_view = ImageView(self)
+        self.queue_dialog = QueueDialog(self)
 
         self.core = CoreWorker()
         self.core.status_updated.connect(self.after_update_status)
@@ -121,6 +122,7 @@ class Main(Base, QWidget):
         self.dock.search_clicked.connect(self.show_search_dialog)
         self.dock.updates_clicked.connect(self.show_update_box)
         self.dock.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
+        self.dock.queue_clicked.connect(self.show_queue_dialog)
 
         self.tray = TrayIcon(self)
         self.tray.toggled.connect(self.toggle_tray_icon)
@@ -136,8 +138,6 @@ class Main(Base, QWidget):
         self.setLayout(layout)
         #self.set_queue_timer()
 
-        self.q = QueueDialog(self)
-        self.q.show()
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -480,6 +480,9 @@ class Main(Base, QWidget):
         response = self.core.pop_status()
         if response:
             self.core.update_status_from_queue(response.account_id, response.text)
+
+    def show_queue_dialog(self):
+        self.queue_dialog.show()
 
     #================================================================
     # Hooks definitions

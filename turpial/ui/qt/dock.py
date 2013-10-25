@@ -26,6 +26,7 @@ class Dock(QStatusBar):
     search_clicked = pyqtSignal()
     updates_clicked = pyqtSignal()
     messages_clicked = pyqtSignal()
+    queue_clicked = pyqtSignal()
 
     EMPTY = 0
     WITH_ACCOUNTS = 1
@@ -83,17 +84,23 @@ class Dock(QStatusBar):
     def __messages_clicked(self):
         self.messages_clicked.emit()
 
+    def __queue_clicked(self):
+        self.queue_clicked.emit()
+
     def __settings_clicked(self):
         self.settings_menu = QMenu(self)
 
         accounts = QAction(i18n.get('accounts'), self)
         accounts.triggered.connect(partial(self.__accounts_clicked))
 
+        queue = QAction(i18n.get('statuses_queue'), self)
+        queue.triggered.connect(partial(self.__queue_clicked))
         columns = QAction(i18n.get('columns'), self)
         if self.status > self.EMPTY:
             columns_menu = self.base.build_columns_menu()
             columns.setMenu(columns_menu)
         else:
+            queue.setEnabled(False)
             columns.setEnabled(False)
 
         preferences = QAction(i18n.get('preferences'), self)
@@ -101,6 +108,7 @@ class Dock(QStatusBar):
 
         self.settings_menu.addAction(accounts)
         self.settings_menu.addAction(columns)
+        self.settings_menu.addAction(queue)
         self.settings_menu.addSeparator()
         self.settings_menu.addAction(preferences)
         self.settings_menu.addSeparator()

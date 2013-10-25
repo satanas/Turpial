@@ -15,13 +15,13 @@ from PyQt4.QtGui import QWidget
 #from PyQt4.QtGui import QDialog
 #from PyQt4.QtGui import QListView
 from PyQt4.QtGui import QTableView
+from PyQt4.QtGui import QHeaderView
 from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QHBoxLayout
 from PyQt4.QtGui import QVBoxLayout
 #from PyQt4.QtGui import QSizePolicy
 #from PyQt4.QtGui import QTextDocument
-#from PyQt4.QtGui import QStandardItem
-#from PyQt4.QtGui import QAbstractItemView
+from PyQt4.QtGui import QAbstractItemView
 from PyQt4.QtGui import QStandardItem
 from PyQt4.QtGui import QStandardItemModel
 #from PyQt4.QtGui import QStyledItemDelegate
@@ -44,7 +44,8 @@ class QueueDialog(QWidget):
     def __init__(self, base):
         QWidget.__init__(self)
         self.base = base
-        self.setWindowTitle(i18n.get('status_queue'))
+        self.showed = False
+        self.setWindowTitle(i18n.get('statuses_queue'))
         self.setFixedSize(500, 400)
 
         #self.list_ = QListView()
@@ -54,7 +55,14 @@ class QueueDialog(QWidget):
         #self.list_.setItemDelegate(account_delegate)
         #self.list_.setContextMenuPolicy(Qt.CustomContextMenu)
         #self.list_.clicked.connect(self.__account_clicked)
+
         self.list_ = QTableView()
+        self.list_.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        #header = QHeaderView(Qt.Horizontal, self.list_)
+        ##header.setResizeMode(1, QHeaderView.Stretch)
+        #header.setStretchLastSection(True)
+        #self.list_.setHorizontalHeader(header)
 
         self.delete_button = QPushButton(i18n.get('delete'))
         self.delete_button.setEnabled(False)
@@ -78,8 +86,6 @@ class QueueDialog(QWidget):
         layout.setContentsMargins(5, 5, 5, 0)
         self.setLayout(layout)
 
-        self.__update()
-
         #self.base.account_deleted.connect(self.__update)
         #self.base.account_loaded.connect(self.__update)
         #self.base.account_registered.connect(self.__update)
@@ -88,7 +94,6 @@ class QueueDialog(QWidget):
         model = QStandardItemModel()
         model.setHorizontalHeaderItem(0, QStandardItem(i18n.get('account')))
         model.setHorizontalHeaderItem(1, QStandardItem(i18n.get('message')))
-        self.list_.resizeColumnToContents(1)
         self.list_.setModel(model)
         row = 0
         for status in self.base.core.list_queue():
@@ -114,6 +119,8 @@ class QueueDialog(QWidget):
         self.__enable(True)
         self.delete_button.setEnabled(False)
         self.clear_button.setEnabled(False)
+        self.list_.horizontalHeader().setResizeMode(1, QHeaderView.Stretch)
+        self.list_.resizeColumnsToContents()
 
     def __account_clicked(self, point):
         self.delete_button.setEnabled(True)
@@ -144,6 +151,21 @@ class QueueDialog(QWidget):
         self.list_.setEnabled(value)
         self.delete_button.setEnabled(value)
         self.clear_button.setEnabled(value)
+
+    def closeEvent(self, event=None):
+        if event:
+            event.ignore()
+        self.hide()
+        self.showed = False
+
+    def show(self):
+        if self.showed:
+            self.raise_()
+            return
+
+        self.__update()
+        QWidget.show(self)
+        self.showed = True
 
 #class AccountDelegate(QStyledItemDelegate):
 #    UsernameRole = Qt.UserRole + 100

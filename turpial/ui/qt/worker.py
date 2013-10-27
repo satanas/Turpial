@@ -19,8 +19,11 @@ class CoreWorker(QThread):
     status_broadcasted = pyqtSignal(object)
     status_repeated = pyqtSignal(object, str, str)
     status_deleted = pyqtSignal(object, str, str)
-    status_enqueued= pyqtSignal(str)
-    status_updated_from_queue = pyqtSignal(object, str)
+    status_pushed_to_queue = pyqtSignal(str)
+    status_poped_from_queue = pyqtSignal(object)
+    status_deleted_from_queue = pyqtSignal()
+    queue_cleared = pyqtSignal()
+    status_posted_from_queue = pyqtSignal(object, str)
     message_deleted = pyqtSignal(object, str, str)
     message_sent = pyqtSignal(object, str)
     column_updated = pyqtSignal(object, tuple)
@@ -70,6 +73,21 @@ class CoreWorker(QThread):
         friends.remove(username)
         self.core.config.save_friends(friends)
 
+    def __get_from_queue(self, index=0):
+        lines = open(self.queue_path).readlines()
+        if not lines:
+            return None
+
+        row = lines[index].strip()
+        account_id, message = row.split("\1")
+        del lines[index]
+
+        open(self.queue_path, 'w').writelines(lines)
+        status = Status()
+        status.account_id = account_id
+        status.text = message
+        return status
+
     #================================================================
     # Core methods
     #================================================================
@@ -79,6 +97,9 @@ class CoreWorker(QThread):
 
     def get_update_interval(self):
         return self.core.get_update_interval()
+
+    def get_queue_interval(self):
+        return 5
 
     def get_shorten_url_service(self):
         return self.core.get_shorten_url_service()
@@ -240,29 +261,22 @@ class CoreWorker(QThread):
         self.register(preview_service.do_service, (url),
             self.__after_get_image_preview)
 
-    def push_status(self, account_id, message):
+    def push_status_to_queue(self, account_id, message):
         fd = open(self.queue_path, 'a+')
         row = "%s\1%s\n" % (account_id, message)
         fd.write(row.encode('utf-8'))
         fd.close()
-        self.__after_push_status(account_id)
+        self.__after_push_status_to_queue(account_id)
 
-    def pop_status(self):
-        lines = open(self.queue_path).readlines()
-        if not lines:
-            return None
+    def pop_status_from_queue(self):
+        status = self.__get_from_queue()
+        self.__after_pop_status_from_queue(status)
 
-        row = lines[0].strip()
-        account_id, message = row.split("\1")
-        del lines[0]
+    def delete_status_from_queue(self, index=0):
+        status = self.__get_from_queue(index)
+        self.__after_delete_status_from_queue()
 
-        open(self.queue_path, 'w').writelines(lines)
-        status = Status()
-        status.account_id = account_id
-        status.text = message
-        return status
-
-    def list_queue(self):
+    def list_statuses_queue(self):
         statuses = []
         lines = open(self.queue_path).readlines()
         for line in lines:
@@ -273,11 +287,13 @@ class CoreWorker(QThread):
             statuses.append(status)
         return statuses
 
+    def clear_statuses_queue(self):
+        open(self.queue_path, 'w').writelines([])
+        self.__after_clear_queue()
 
-    def update_status_from_queue(self, account_id, message):
+    def post_status_from_queue(self, account_id, message):
         self.register(self.core.update_status, (account_id, message),
-            self.__after_update_status_from_queue, account_id)
-
+            self.__after_post_status_from_queue, account_id)
 
     #================================================================
     # Callbacks
@@ -383,11 +399,20 @@ class CoreWorker(QThread):
     def __after_get_image_preview(self, response):
         self.fetched_image_preview.emit(response)
 
-    def __after_push_status(self, account_id):
-        self.status_enqueued.emit(account_id)
+    def __after_push_status_to_queue(self, account_id):
+        self.status_pushed_to_queue.emit(account_id)
 
-    def __after_update_status_from_queue(self, response, account_id):
-        self.status_updated_from_queue.emit(response, account_id)
+    def __after_pop_status_from_queue(self, status):
+        self.status_poped_from_queue.emit(status)
+
+    def __after_delete_status_from_queue(self):
+        self.status_deleted_from_queue.emit()
+
+    def __after_clear_queue(self):
+        self.queue_cleared.emit()
+
+    def __after_post_status_from_queue(self, response, account_id):
+        self.status_posted_from_queue.emit(response, account_id)
 
     #================================================================
     # Worker methods

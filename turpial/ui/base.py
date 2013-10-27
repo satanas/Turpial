@@ -96,6 +96,7 @@ class Base(Singleton):
                         timestamp = u"%i %s %i" % (dt.tm_mday, month, year)
         return timestamp
 
+
     #================================================================
     # Common methods to all interfaces
     #================================================================

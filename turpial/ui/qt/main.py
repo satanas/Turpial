@@ -40,6 +40,11 @@ from turpial.ui.qt.queue import QueueDialog
 
 from libturpial.common import ColumnType, get_preview_service_from_url
 
+
+# Exceptions
+#{u'errors': [{u'message': u'Sorry, you are not authorized to see this status.', u'code': 179}]}
+#Exception 'id'
+
 class Main(Base, QWidget):
 
     account_deleted = pyqtSignal()
@@ -82,7 +87,6 @@ class Main(Base, QWidget):
         self.core.status_broadcasted.connect(self.after_broadcast_status)
         self.core.status_repeated.connect(self.after_repeat_status)
         self.core.status_deleted.connect(self.after_delete_status)
-        self.core.status_enqueued.connect(self.after_enqueue_status)
         self.core.message_deleted.connect(self.after_delete_message)
         self.core.message_sent.connect(self.after_send_message)
         self.core.column_updated.connect(self.after_update_column)
@@ -107,7 +111,11 @@ class Main(Base, QWidget):
         self.core.fetched_profile_image.connect(self.after_get_profile_image)
         self.core.fetched_avatar.connect(self.update_profile_avatar)
         self.core.fetched_image_preview.connect(self.after_get_image_preview)
-        self.core.status_updated_from_queue.connect(self.after_status_updated_from_queue)
+        self.core.status_pushed_to_queue.connect(self.after_push_status_to_queue)
+        self.core.status_poped_from_queue.connect(self.after_pop_status_from_queue)
+        self.core.status_posted_from_queue.connect(self.after_post_status_from_queue)
+        self.core.status_deleted_from_queue.connect(self.after_delete_status_from_queue)
+        self.core.queue_cleared.connect(self.after_clear_queue)
         self.core.exception_raised.connect(self.on_exception)
 
         self.core.start()
@@ -136,7 +144,7 @@ class Main(Base, QWidget):
         layout.setMargin(0)
 
         self.setLayout(layout)
-        #self.set_queue_timer()
+        self.set_queue_timer()
 
 
     def __open_in_browser(self, url):
@@ -474,12 +482,16 @@ class Main(Base, QWidget):
         self.core.get_profile_image(account_id, username)
 
     def push_status_to_queue(self, account_id, message):
-        self.core.push_status(account_id, message)
+        self.core.push_status_to_queue(account_id, message)
 
     def update_status_from_queue(self, args=None):
-        response = self.core.pop_status()
-        if response:
-            self.core.update_status_from_queue(response.account_id, response.text)
+        self.core.pop_status_from_queue()
+
+    def delete_message_from_queue(self, index):
+        self.core.delete_status_from_queue(index)
+
+    def clear_queue(self):
+        self.core.clear_statuses_queue()
 
     def show_queue_dialog(self):
         self.queue_dialog.show()
@@ -593,13 +605,24 @@ class Main(Base, QWidget):
     def after_get_image_preview(self, response):
         self.image_view.loading_finished(str(response.path))
 
-    def after_enqueue_status(self, account_id):
+    def after_push_status_to_queue(self, account_id):
         self.update_box.done()
+        self.queue_dialog.update()
         # TODO: OS Notification
 
-    def after_status_updated_from_queue(self, response, account_id):
+    def after_pop_status_from_queue(self, status):
+        self.core.post_status_from_queue(status.account_id, status.text)
+
+    def after_post_status_from_queue(self, response, account_id):
         print '++Posted queue message'
+        self.queue_dialog.update()
         # TODO: OS Notification
+
+    def after_delete_status_from_queue(self):
+        self.queue_dialog.update()
+
+    def after_clear_queue(self):
+        self.queue_dialog.update()
 
     def on_exception(self, exception):
         print 'Exception', exception
@@ -634,9 +657,10 @@ class Main(Base, QWidget):
     def set_queue_timer(self):
         self.remove_timer('queue')
 
-        interval = 1 * 60 * 1000
+        interval = self.core.get_queue_interval() * 60 * 1000
         timer = Timer(interval, None, self.update_status_from_queue)
         self.timers['queue'] = timer
+        self.queue_dialog.update()
         print '--Created timer for queue every %i sec' % interval
 
 class Timer:

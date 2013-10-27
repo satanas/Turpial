@@ -115,6 +115,10 @@ STRINGS = {
     'delete_all': _('Delete all'),
     'delete_all_messages_in_queue': _('Delete all messages in queue'),
     'message': _('Message'),
+    'delete_message_from_queue_confirm': _('Do you want to delete this message from the queue?'),
+    'clear_message_queue_confirm': _('Do you want to clear the queue?'),
+    'messages_will_be_send': _('Messages will be send every %s as long as Turpial remain open'),
+    'next_message_should_be_posted_at': _('Next message should be posted at'),
 
     #'no_registered_columns': ,
     #'reply_status': _('Reply status'),

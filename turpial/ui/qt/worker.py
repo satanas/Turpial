@@ -295,6 +295,49 @@ class CoreWorker(QThread):
         self.register(self.core.update_status, (account_id, message),
             self.__after_post_status_from_queue, account_id)
 
+    def get_update_interval_per_column(self, column_id):
+        column_key = None
+        for i in range(1, len(self.get_registered_columns()) + 1):
+            column_num = "column%s" % i
+            stored_id = self.core.config.read('Columns', column_num)
+            if stored_id == column_id:
+                column_key = column_num
+            else:
+                i += 1
+
+        if not column_key:
+            return None
+
+        key = "%s-update-interval" % column_key
+        interval = self.core.config.read('Columns', key)
+        if not interval:
+            self.core.config.write('Columns', key, 5)
+            interval = "5"
+        return int(interval)
+
+    def show_notifications_in_column(self, column_id):
+        column_key = None
+        for i in range(1, len(self.get_registered_columns()) + 1):
+            column_num = "column%s" % i
+            stored_id = self.core.config.read('Columns', column_num)
+            if stored_id == column_id:
+                column_key = column_num
+            else:
+                i += 1
+
+        if not column_key:
+            return None
+
+        key = "%s-notifications" % column_key
+        notifications = self.core.config.read('Columns', key)
+        if not notifications:
+            self.core.config.write('Columns', key, 'on')
+            notifications = 'on'
+
+        if notifications == 'on':
+            return True
+        return False
+
     #================================================================
     # Callbacks
     #================================================================

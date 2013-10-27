@@ -145,7 +145,7 @@ class Main(Base, QWidget):
 
         self.setLayout(layout)
         self.set_queue_timer()
-
+        self.core.show_notifications_in_column('satanas82-twitter-timeline')
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -611,7 +611,8 @@ class Main(Base, QWidget):
         # TODO: OS Notification
 
     def after_pop_status_from_queue(self, status):
-        self.core.post_status_from_queue(status.account_id, status.text)
+        if status:
+            self.core.post_status_from_queue(status.account_id, status.text)
 
     def after_post_status_from_queue(self, response, account_id):
         print '++Posted queue message'
@@ -634,7 +635,7 @@ class Main(Base, QWidget):
     def add_timer(self, column):
         self.remove_timer(column.id_)
 
-        interval = self.core.get_update_interval() * 60 * 1000
+        interval = self.core.get_update_interval_per_column(column.id_) * 60 * 1000
         timer = Timer(interval, column, self.download_stream)
         self.timers[column.id_] = timer
         print '--Created timer for %s every %i sec' % (column.id_, interval)

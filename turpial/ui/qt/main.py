@@ -145,7 +145,7 @@ class Main(Base, QWidget):
 
         self.setLayout(layout)
         self.set_queue_timer()
-        self.core.show_notifications_in_column('satanas82-twitter-timeline')
+        print self.core.get_show_notifications_in_column('satanas82-twitter-timeline')
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()

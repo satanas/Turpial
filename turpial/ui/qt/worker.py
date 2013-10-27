@@ -88,6 +88,17 @@ class CoreWorker(QThread):
         status.text = message
         return status
 
+    def __get_column_num_from_id(self, column_id):
+        column_key = None
+        for i in range(1, len(self.get_registered_columns()) + 1):
+            column_num = "column%s" % i
+            stored_id = self.core.config.read('Columns', column_num)
+            if stored_id == column_id:
+                column_key = column_num
+            else:
+                i += 1
+        return column_key
+
     #================================================================
     # Core methods
     #================================================================
@@ -296,17 +307,7 @@ class CoreWorker(QThread):
             self.__after_post_status_from_queue, account_id)
 
     def get_update_interval_per_column(self, column_id):
-        column_key = None
-        for i in range(1, len(self.get_registered_columns()) + 1):
-            column_num = "column%s" % i
-            stored_id = self.core.config.read('Columns', column_num)
-            if stored_id == column_id:
-                column_key = column_num
-            else:
-                i += 1
-
-        if not column_key:
-            return None
+        column_key = self.__get_column_num_from_id(column_id)
 
         key = "%s-update-interval" % column_key
         interval = self.core.config.read('Columns', key)
@@ -315,18 +316,15 @@ class CoreWorker(QThread):
             interval = "5"
         return int(interval)
 
-    def show_notifications_in_column(self, column_id):
-        column_key = None
-        for i in range(1, len(self.get_registered_columns()) + 1):
-            column_num = "column%s" % i
-            stored_id = self.core.config.read('Columns', column_num)
-            if stored_id == column_id:
-                column_key = column_num
-            else:
-                i += 1
+    def set_update_interval_in_column(self, column_id, interval):
+        column_key = self.__get_column_num_from_id(column_id)
 
-        if not column_key:
-            return None
+        key = "%s-update-interval" % column_key
+        self.core.config.write('Columns', key, interval)
+        return interval
+
+    def get_show_notifications_in_column(self, column_id):
+        column_key = self.__get_column_num_from_id(column_id)
 
         key = "%s-notifications" % column_key
         notifications = self.core.config.read('Columns', key)
@@ -337,6 +335,17 @@ class CoreWorker(QThread):
         if notifications == 'on':
             return True
         return False
+
+    def set_show_notifications_in_column(self, column_id, value):
+        column_key = self.__get_column_num_from_id(column_id)
+
+        key = "%s-notifications" % column_key
+        if value:
+            notifications = 'on'
+        else:
+            notifications = 'off'
+        self.core.config.write('Columns', key, notifications)
+        return value
 
     #================================================================
     # Callbacks

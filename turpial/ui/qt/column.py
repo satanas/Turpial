@@ -88,7 +88,7 @@ class StatusesColumn(QWidget):
         caption.setStyleSheet("QLabel { background-color: #555; color: #fff; }")
         caption.setFont(font)
 
-        close_button = ImageButton(self.base, 'action-delete.png',
+        close_button = ImageButton(self.base, 'action-delete-shadowed.png',
                 i18n.get('delete_column'))
         close_button.clicked.connect(self.__delete_column)
         close_button.setStyleSheet("QToolButton { background-color: #555; color: #fff; border: 1px solid #555; margin: 0px;}")

@@ -310,9 +310,14 @@ class CoreWorker(QThread):
         column_key = self.__get_column_num_from_id(column_id)
 
         key = "%s-update-interval" % column_key
-        interval = self.core.config.read('Columns', key)
+        interval = self.core.config.read('Intervals', key)
         if not interval:
-            self.core.config.write('Columns', key, 5)
+            # FIXME: Fix in libturpial
+            config = self.core.config.read_all()
+            if not config.has_key('Intervals'):
+                config['Intervals'] = {}
+                self.core.config.save(config)
+            self.core.config.write_section('Intervals', {key: 5})
             interval = "5"
         return int(interval)
 
@@ -320,16 +325,21 @@ class CoreWorker(QThread):
         column_key = self.__get_column_num_from_id(column_id)
 
         key = "%s-update-interval" % column_key
-        self.core.config.write('Columns', key, interval)
+        self.core.config.write('Intervals', key, interval)
         return interval
 
     def get_show_notifications_in_column(self, column_id):
         column_key = self.__get_column_num_from_id(column_id)
 
         key = "%s-notifications" % column_key
-        notifications = self.core.config.read('Columns', key)
+        notifications = self.core.config.read('Notifications', key)
         if not notifications:
-            self.core.config.write('Columns', key, 'on')
+            # FIXME: Fix in libturpial
+            config = self.core.config.read_all()
+            if not config.has_key('Notifications'):
+                config['Notifications'] = {}
+                self.core.config.save(config)
+            self.core.config.write_section('Notifications', {key: 'on'})
             notifications = 'on'
 
         if notifications == 'on':
@@ -344,7 +354,7 @@ class CoreWorker(QThread):
             notifications = 'on'
         else:
             notifications = 'off'
-        self.core.config.write('Columns', key, notifications)
+        self.core.config.write('Notifications', key, notifications)
         return value
 
     #================================================================

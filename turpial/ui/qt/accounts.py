@@ -82,7 +82,7 @@ class AccountsDialog(ModalDialog):
 
         button_box = QHBoxLayout()
         button_box.addStretch(1)
-        button_box.setSpacing(5)
+        button_box.setSpacing(4)
         button_box.addWidget(self.new_button)
         button_box.addWidget(self.delete_button)
         button_box.addWidget(self.relogin_button)
@@ -90,8 +90,8 @@ class AccountsDialog(ModalDialog):
         layout = QVBoxLayout()
         layout.addWidget(self.list_)
         layout.addLayout(button_box)
-        layout.setSpacing(0)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(5)
+        layout.setContentsMargins(5, 5, 5, 0)
         self.setLayout(layout)
 
         self.__update()

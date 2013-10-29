@@ -50,7 +50,9 @@ class UpdateBox(QWidget):
         self.char_count.setFont(font)
 
         self.update_button = QPushButton(i18n.get('update'))
+        self.update_button.setToolTip(self.base.get_shortcut_string('Enter'))
         self.queue_button = QPushButton(i18n.get('add_to_queue'))
+        self.queue_button.setToolTip(self.base.get_shortcut_string('P'))
 
         self.accounts_combo = QComboBox()
 

@@ -21,6 +21,9 @@ from turpial import VERSION
 from turpial.ui.lang import i18n
 from turpial.singleton import Singleton
 
+from libturpial.common import OS_MAC
+from libturpial.common.tools import detect_os
+
 MIN_WINDOW_WIDTH = 250
 
 class Base(Singleton):
@@ -38,7 +41,10 @@ class Base(Singleton):
         self.fonts_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), '..', 'data', 'fonts'))
         self.home_path = os.path.expanduser('~')
-
+        if detect_os() == OS_MAC:
+            self.shortcut_key = 'Cmd'
+        else:
+            self.shortcut_key = 'Ctrl'
 
         # Unity integration
         #self.unitylauncher = UnityLauncherFactory().create();
@@ -96,6 +102,8 @@ class Base(Singleton):
                         timestamp = u"%i %s %i" % (dt.tm_mday, month, year)
         return timestamp
 
+    def get_shortcut_string(self, key):
+        return "+".join([self.shortcut_key, key])
 
     #================================================================
     # Common methods to all interfaces
@@ -123,9 +131,9 @@ class Base(Singleton):
     #    self.worker.register(self.core.update_status, (account_id,
     #        message, in_reply_to), self.after_update_status, account_id)
 
-    def broadcast_status(self, account_ids, message):
-        self.worker.register(self.core.broadcast_status, (account_ids, message),
-            self.after_broadcast_status)
+    #def broadcast_status(self, account_ids, message):
+    #    self.worker.register(self.core.broadcast_status, (account_ids, message),
+    #        self.after_broadcast_status)
 
     #def direct_message(self, account, user, message):
     #    self.worker.register(self.core.send_direct, (account, user, message),

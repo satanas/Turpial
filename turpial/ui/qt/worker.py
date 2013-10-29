@@ -110,7 +110,7 @@ class CoreWorker(QThread):
         return self.core.get_update_interval()
 
     def get_queue_interval(self):
-        return 5
+        return 30
 
     def get_shorten_url_service(self):
         return self.core.get_shorten_url_service()
@@ -315,9 +315,11 @@ class CoreWorker(QThread):
             # FIXME: Fix in libturpial
             config = self.core.config.read_all()
             if not config.has_key('Intervals'):
-                config['Intervals'] = {}
+                config['Intervals'] = {key: 5}
                 self.core.config.save(config)
-            self.core.config.write_section('Intervals', {key: 5})
+            else:
+                self.core.config.write('Intervals', key, 5)
+            config = self.core.config.read_all()
             interval = "5"
         return int(interval)
 
@@ -339,7 +341,7 @@ class CoreWorker(QThread):
             if not config.has_key('Notifications'):
                 config['Notifications'] = {}
                 self.core.config.save(config)
-            self.core.config.write_section('Notifications', {key: 'on'})
+            self.core.config.write('Notifications', key, 'on')
             notifications = 'on'
 
         if notifications == 'on':

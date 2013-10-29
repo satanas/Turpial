@@ -119,6 +119,8 @@ STRINGS = {
     'clear_message_queue_confirm': _('Do you want to clear the queue?'),
     'messages_will_be_send': _('Messages will be send every %s as long as Turpial remain open'),
     'next_message_should_be_posted_at': _('Next message should be posted at'),
+    'add_to_queue': _('Add to Queue'),
+    'about_description': _('Microblogging client written in Python'),
 
     #'no_registered_columns': ,
     #'reply_status': _('Reply status'),
@@ -230,7 +232,6 @@ STRINGS = {
     #'error_loading_image': _('Error loading image'),
     #'credentials_could_not_be_empty': _('Credentials could not be empty'),
     #'file_not_found': _("File not found"),
-    #'about_description': _('Microblogging client written in Python'),
     #'i_couldnt_update_status': _("Oh oh... I couldn't update your status"),
     #'url_already_short': _('URL already short'),
     #'no_url_to_short': _('There are no URLs to short'),

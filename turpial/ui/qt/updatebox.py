@@ -50,11 +50,12 @@ class UpdateBox(QWidget):
         self.char_count.setFont(font)
 
         self.update_button = QPushButton(i18n.get('update'))
-        self.queue_button = QPushButton(i18n.get('q'))
+        self.queue_button = QPushButton(i18n.get('add_to_queue'))
 
         self.accounts_combo = QComboBox()
 
         buttons = QHBoxLayout()
+        buttons.setSpacing(4)
         buttons.addWidget(self.accounts_combo)
         buttons.addWidget(self.upload_button)
         buttons.addWidget(self.short_button)

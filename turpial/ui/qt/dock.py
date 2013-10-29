@@ -87,6 +87,9 @@ class Dock(QStatusBar):
     def __queue_clicked(self):
         self.queue_clicked.emit()
 
+    def __about_clicked(self):
+        self.base.show_about_dialog()
+
     def __settings_clicked(self):
         self.settings_menu = QMenu(self)
 
@@ -105,6 +108,7 @@ class Dock(QStatusBar):
 
         preferences = QAction(i18n.get('preferences'), self)
         about_turpial = QAction(i18n.get('about_turpial'), self)
+        about_turpial.triggered.connect(partial(self.__about_clicked))
 
         self.settings_menu.addAction(accounts)
         self.settings_menu.addAction(columns)

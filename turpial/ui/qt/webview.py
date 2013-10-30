@@ -2,6 +2,7 @@
 
 # Qt widget to show statusesin Turpial using a QWebView
 
+import re
 import os
 
 from jinja2 import Template
@@ -81,6 +82,7 @@ class StatusesWebView(QWebView):
         view_conversation = None
         hide_conversation = None
         message = status.text
+        message = message.replace('\n', '<br/>')
         timestamp = self.base.humanize_timestamp(status.timestamp)
 
         if status.entities:
@@ -88,11 +90,15 @@ class StatusesWebView(QWebView):
             for url in status.entities['urls']:
                 pretty_url = "<a href='%s'>%s</a>" % (url.url, url.display_text)
                 message = message.replace(url.search_for, pretty_url)
+
             # Highlight hashtags
+            sorted_hashtags = {}
             for hashtag in status.entities['hashtags']:
                 pretty_hashtag = "<a href='hashtag:%s:%s'>%s</a>" % (hashtag.account_id,
                         hashtag.display_text[1:], hashtag.display_text)
-                message = message.replace(hashtag.search_for, pretty_hashtag)
+                pattern = r"%s\b" % hashtag.search_for
+                message = re.sub(pattern, pretty_hashtag, message)
+
             # Highlight mentions
             for mention in status.entities['mentions']:
                 pretty_mention = "<a href='profile:%s'>%s</a>" % (mention.url, mention.display_text)
@@ -116,7 +122,6 @@ class StatusesWebView(QWebView):
 
         return self.status_template.render(attrs)
 
-
     def update_statuses(self, statuses):
         content = ''
         processed_statuses = {}
@@ -131,11 +136,14 @@ class StatusesWebView(QWebView):
             'unfavorite_tooltip': i18n.get('remove_from_favorites')}
         html = column.render(args)
 
-        fd = open('/tmp/pupu.html', 'w')
+        fd = open('/tmp/turpial-debug.html', 'w')
         fd.write(html.encode('ascii', 'ignore'))
         fd.close()
         self.setHtml(html)
         return processed_statuses
+
+    def clear(self):
+        self.setHtml('')
 
     def execute_javascript(self, js_cmd):
         self.page().mainFrame().evaluateJavaScript(js_cmd)
@@ -154,26 +162,3 @@ class StatusesWebView(QWebView):
     def clear_conversation(self, status_root_id):
         conversation = "clearConversation('%s')" % status_root_id
         self.execute_javascript(conversation)
-
-class ImageWebView(QWebView):
-
-    def __init__(self, base):
-        QWebView.__init__(self)
-        self.base = base
-        #self.linkClicked.connect(self.__element_clicked)
-        page = self.page()
-        page.setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        self.setPage(page)
-
-        self.images_template = self.__load_template('images.html')
-
-    def __load_template(self, name):
-        path = os.path.join(self.base.templates_path, name)
-        fd = open(path)
-        content = fd.read()
-        fd.close()
-        return Template(content)
-
-    def update_image(self, url):
-        html = self.images_template.render(url=url)
-        self.setHtml(html)

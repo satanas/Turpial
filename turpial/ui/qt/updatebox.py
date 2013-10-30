@@ -10,7 +10,6 @@ from PyQt4.QtGui import QComboBox
 from PyQt4.QtGui import QTextEdit
 from PyQt4.QtGui import QCompleter
 from PyQt4.QtGui import QPushButton
-from PyQt4.QtGui import QMessageBox
 from PyQt4.QtGui import QTextCursor
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QHBoxLayout
@@ -23,6 +22,7 @@ from turpial.ui.lang import i18n
 from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.widgets import ImageButton, ToggleButton
 
+from libturpial.common.tools import get_urls
 from libturpial.common import get_username_from, get_protocol_from
 
 MAX_CHAR = 140
@@ -50,15 +50,20 @@ class UpdateBox(QWidget):
         self.char_count.setFont(font)
 
         self.update_button = QPushButton(i18n.get('update'))
+        self.update_button.setToolTip(self.base.get_shortcut_string('Enter'))
+        self.queue_button = QPushButton(i18n.get('add_to_queue'))
+        self.queue_button.setToolTip(self.base.get_shortcut_string('P'))
 
         self.accounts_combo = QComboBox()
 
         buttons = QHBoxLayout()
+        buttons.setSpacing(4)
         buttons.addWidget(self.accounts_combo)
         buttons.addWidget(self.upload_button)
         buttons.addWidget(self.short_button)
         buttons.addStretch(0)
         buttons.addWidget(self.char_count)
+        buttons.addWidget(self.queue_button)
         buttons.addWidget(self.update_button)
 
         self.loader = BarLoadIndicator()
@@ -67,11 +72,13 @@ class UpdateBox(QWidget):
         self.error_message = QLabel()
 
         self.update_button.clicked.connect(self.__update_status)
+        self.queue_button.clicked.connect(self.__queue_status)
         self.short_button.clicked.connect(self.__short_urls)
         self.upload_button.clicked.connect(self.__upload_image)
         self.text_edit.textChanged.connect(self.__update_count)
         self.text_edit.quit.connect(self.closeEvent)
         self.text_edit.activated.connect(self.__update_status)
+        self.text_edit.enqueued.connect(self.__queue_status)
 
         layout = QVBoxLayout()
         layout.addWidget(self.text_edit, 1)
@@ -82,9 +89,11 @@ class UpdateBox(QWidget):
 
         self.__clear()
 
-
     def __count_chars(self):
         message = self.text_edit.toPlainText()
+        urls = [str(url) for url in get_urls(message) if len(url) > 23]
+        for url in urls:
+            message = message.replace(url, '0' * 23)
         return MAX_CHAR - len(message)
 
     def __update_count(self):
@@ -113,15 +122,18 @@ class UpdateBox(QWidget):
 
     def __update_status(self):
         index = self.accounts_combo.currentIndex()
+        accounts = self.base.core.get_registered_accounts()
         account_id = str(self.accounts_combo.itemData(index).toPyObject())
         message = unicode(self.text_edit.toPlainText())
 
         if len(message) == 0:
-            print i18n.get('you_can_not_submit_an_empty_message')
+            self.base.show_error_message(i18n.get('empty_message'),
+                i18n.get('you_can_not_submit_an_empty_message'))
             return
 
-        if index == 0:
-            print i18n.get('select_one_account_to_post')
+        if index == 0 and len(accounts) > 1:
+            self.base.show_error_message(i18n.get('select_account'),
+                i18n.get('select_one_account_to_post'))
             return
 
         #if len(message) > MAX_CHAR:
@@ -137,6 +149,25 @@ class UpdateBox(QWidget):
             else:
                 self.base.update_status(account_id, message, self.in_reply_to_id)
 
+    def __queue_status(self):
+        index = self.accounts_combo.currentIndex()
+        accounts = self.base.core.get_registered_accounts()
+        account_id = str(self.accounts_combo.itemData(index).toPyObject())
+        message = unicode(self.text_edit.toPlainText())
+
+        if len(message) == 0:
+            self.base.show_error_message(i18n.get('empty_message'),
+                i18n.get('you_can_not_submit_an_empty_message'))
+            return
+
+        if index == 0 and len(accounts) > 1:
+            self.base.show_error_message(i18n.get('select_account'),
+                i18n.get('select_one_account_to_post'))
+            return
+
+        self.enable(False)
+        self.base.push_status_to_queue(account_id, message)
+
     def __clear(self):
         self.account_id = None
         self.in_reply_to_id = None
@@ -146,7 +177,9 @@ class UpdateBox(QWidget):
         self.cursor_position = None
         self.text_edit.setText('')
         self.accounts_combo.setCurrentIndex(0)
+        self.queue_button.setEnabled(True)
         self.enable(True)
+        self.showed = False
 
     def __show(self):
         self.update_friends_list()
@@ -157,8 +190,9 @@ class UpdateBox(QWidget):
         upload_tooltip = "%s (%s)" % (i18n.get('upload_image'), upload_service)
         self.upload_button.setToolTip(upload_tooltip)
         self.accounts_combo.clear()
-        self.accounts_combo.addItem('--', '')
         accounts = self.base.core.get_registered_accounts()
+        if len(accounts) > 1:
+            self.accounts_combo.addItem('--', '')
         for account in accounts:
             protocol = get_protocol_from(account.id_)
             icon = QIcon(self.base.get_image_path('%s.png' % protocol))
@@ -170,7 +204,7 @@ class UpdateBox(QWidget):
             index = self.accounts_combo.findData(self.account_id)
             if index > 0:
                 self.accounts_combo.setCurrentIndex(index)
-                self.accounts_combo.setEnabled(False)
+            self.accounts_combo.setEnabled(False)
         if self.message:
             self.text_edit.setText(self.message)
             cursor = self.text_edit.textCursor()
@@ -178,12 +212,17 @@ class UpdateBox(QWidget):
             self.text_edit.setTextCursor(cursor)
 
         QWidget.show(self)
+        self.showed = True
 
     def show(self):
+        if self.showed:
+            return self.raise_()
         self.setWindowTitle(i18n.get('whats_happening'))
         self.__show()
 
     def show_for_reply(self, account_id, status):
+        if self.showed:
+            return self.raise_()
         title = "%s @%s" % (i18n.get('reply_to'), status.username)
         self.setWindowTitle(title)
         self.account_id = account_id
@@ -193,36 +232,45 @@ class UpdateBox(QWidget):
         self.message = "%s " % mentions
         self.cursor_position = QTextCursor.End
         self.__show()
+        self.queue_button.setEnabled(False)
 
     def show_for_send_direct(self, account_id, username):
+        if self.showed:
+            return self.raise_()
         title = "%s @%s" % (i18n.get('send_message_to'), username)
         self.setWindowTitle(title)
         self.account_id = account_id
         self.direct_message_to = username
         self.__show()
+        self.queue_button.setEnabled(False)
 
     def show_for_reply_direct(self, account_id, status):
+        if self.showed:
+            return self.raise_()
         title = "%s @%s" % (i18n.get('send_message_to'), status.username)
         self.setWindowTitle(title)
         self.account_id = account_id
         self.direct_message_to = status.username
         self.__show()
+        self.queue_button.setEnabled(False)
 
     def show_for_quote(self, account_id, status):
+        if self.showed:
+            return self.raise_()
         self.setWindowTitle(i18n.get('quoting'))
         self.account_id = account_id
         self.message = " RT @%s %s" % (status.username, status.text)
         self.cursor_position = QTextCursor.Start
         self.__show()
+        self.queue_button.setEnabled(False)
 
     def closeEvent(self, event=None):
         message = unicode(self.text_edit.toPlainText())
 
         if len(message) > 0:
-            confirmation = QMessageBox.question(self, i18n.get('confirm_discard'),
-            i18n.get('do_you_want_to_discard_message'), QMessageBox.Yes | QMessageBox.No,
-                QMessageBox.No)
-            if confirmation == QMessageBox.No:
+            confirmation = self.base.show_confirmation_message(i18n.get('confirm_discard'),
+                i18n.get('do_you_want_to_discard_message'))
+            if not confirmation:
                 return
 
         if event:
@@ -237,6 +285,7 @@ class UpdateBox(QWidget):
         self.upload_button.setEnabled(value)
         self.short_button.setEnabled(value)
         self.update_button.setEnabled(value)
+        self.queue_button.setEnabled(value)
         self.loader.setVisible(not value)
 
     def done(self):
@@ -273,6 +322,7 @@ class CompletionTextEdit(QTextEdit):
 
     quit = pyqtSignal()
     activated = pyqtSignal()
+    enqueued = pyqtSignal()
 
     def __init__(self):
         QTextEdit.__init__(self)
@@ -294,9 +344,9 @@ class CompletionTextEdit(QTextEdit):
 
         tc = self.textCursor()
         extra = (completion.length() - self.completer.completionPrefix().length())
-        tc.movePosition(QTextCursor.Left)
-        tc.movePosition(QTextCursor.EndOfWord)
-        tc.insertText(completion.right(extra))
+        tc.movePosition(QTextCursor.StartOfWord)
+        tc.select(QTextCursor.WordUnderCursor)
+        tc.insertText(''.join([str(completion), ' ']))
         self.setTextCursor(tc)
 
     def textUnderCursor(self):
@@ -334,9 +384,14 @@ class CompletionTextEdit(QTextEdit):
 
         hasModifier = event.modifiers() != Qt.NoModifier
         enterKey = event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return
+        queueKey = event.key() == Qt.Key_P
 
         if hasModifier and event.modifiers() == Qt.ControlModifier and enterKey:
             self.activated.emit()
+            return
+
+        if hasModifier and event.modifiers() == Qt.ControlModifier and queueKey:
+            self.enqueued.emit()
             return
 
         completionPrefix = self.textUnderCursor()

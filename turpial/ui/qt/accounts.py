@@ -3,6 +3,7 @@
 # Qt account manager for Turpial
 
 import os
+import sys
 
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QFont
@@ -74,20 +75,29 @@ class AccountsDialog(ModalDialog):
         self.delete_button.setToolTip(i18n.get('delete_an_existing_account'))
         self.delete_button.clicked.connect(self.__delete_account)
 
+        self.relogin_button = QPushButton(i18n.get('relogin'))
+        self.relogin_button.setEnabled(False)
+        self.relogin_button.setToolTip(i18n.get('relogin_this_account'))
+        self.relogin_button.clicked.connect(self.__relogin_account)
+
         button_box = QHBoxLayout()
+        button_box.addStretch(1)
+        button_box.setSpacing(4)
         button_box.addWidget(self.new_button)
         button_box.addWidget(self.delete_button)
+        button_box.addWidget(self.relogin_button)
 
         layout = QVBoxLayout()
         layout.addWidget(self.list_)
         layout.addLayout(button_box)
-        layout.setSpacing(0)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(5)
+        layout.setContentsMargins(5, 5, 5, 0)
         self.setLayout(layout)
 
         self.__update()
 
         self.base.account_deleted.connect(self.__update)
+        self.base.account_loaded.connect(self.__update)
         self.base.account_registered.connect(self.__update)
 
         self.exec_()
@@ -96,6 +106,7 @@ class AccountsDialog(ModalDialog):
         model = QStandardItemModel()
         self.list_.setModel(model)
         accounts = self.base.core.get_registered_accounts()
+        count = 0
         for account in accounts:
             item = QStandardItem()
             filepath = os.path.join(self.base.images_path, 'unknown.png')
@@ -104,17 +115,27 @@ class AccountsDialog(ModalDialog):
             item.setData(get_protocol_from(account.id_).capitalize(), AccountDelegate.ProtocolRole)
             item.setData(account.id_, AccountDelegate.IdRole)
             model.appendRow(item)
+            count += 1
+
         self.__enable(True)
+        self.delete_button.setEnabled(False)
+        self.relogin_button.setEnabled(False)
 
     def __account_clicked(self, point):
         self.delete_button.setEnabled(True)
+        self.relogin_button.setEnabled(True)
 
     def __delete_account(self):
         self.__enable(False)
         selection = self.list_.selectionModel()
         index = selection.selectedIndexes()[0]
-        account_id = index.data(AccountDelegate.IdRole).toPyObject()
-        # TODO: Confirm
+        account_id = str(index.data(AccountDelegate.IdRole).toPyObject())
+        message = i18n.get('delete_account_confirm') % account_id
+        confirmation = self.base.show_confirmation_message(i18n.get('confirm_delete'),
+            message)
+        if not confirmation:
+            self.__enable(True)
+            return
         self.base.delete_account(account_id)
 
     def __register_twitter_account(self):
@@ -123,14 +144,28 @@ class AccountsDialog(ModalDialog):
         oauth_dialog = OAuthDialog(self, account.request_oauth_access())
         if oauth_dialog.result() == QDialog.Accepted:
             pin = oauth_dialog.pin.text()
-            account.authorize_oauth_access(pin)
-            self.base.save_account(account)
+            try:
+                account.authorize_oauth_access(pin)
+                self.base.save_account(account)
+            except Exception, e:
+                err_msg = "%s: %s" % (sys.exc_info()[0], sys.exc_info()[1])
+                self.base.show_error_message(i18n.get('register_a_new_account'),
+                    i18n.get('error_registering_new_account'), err_msg)
+                self.__enable(True)
+
+    def __relogin_account(self):
+        self.__enable(False)
+        selection = self.list_.selectionModel()
+        index = selection.selectedIndexes()[0]
+        account_id = str(index.data(AccountDelegate.IdRole).toPyObject())
+        self.base.load_account(account_id)
 
     def __enable(self, value):
         # TODO: Display a loading message/indicator
         self.list_.setEnabled(value)
         self.new_button.setEnabled(value)
         self.delete_button.setEnabled(value)
+        self.relogin_button.setEnabled(value)
 
 class AccountDelegate(QStyledItemDelegate):
     UsernameRole = Qt.UserRole + 100

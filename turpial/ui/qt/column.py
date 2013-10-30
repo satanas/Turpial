@@ -30,6 +30,7 @@ from turpial.ui.qt.widgets import ImageButton
 from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.webview import StatusesWebView
 
+from libturpial.common import get_preview_service_from_url
 from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from,\
         get_username_from
 
@@ -39,41 +40,14 @@ class StatusesColumn(QWidget):
     NOTIFICATION_WARNING = 'warning'
     NOTIFICATION_INFO = 'notice'
 
-    def __init__(self, base, column_id):
+    def __init__(self, base, column_id, include_header=True):
         QWidget.__init__(self)
         self.base = base
         self.setMinimumWidth(280)
-        self.id_ = column_id
         self.statuses = {}
+        self.conversations = {}
+        self.id_ = None
         #self.updating = False
-
-        self.account_id = get_account_id_from(column_id)
-        username = get_username_from(self.account_id)
-        column_slug = get_column_slug_from(column_id)
-        self.protocol_id = get_protocol_from(self.account_id)
-
-        #font = QFont('Titillium Web', 18, QFont.Normal, False)
-        font = QFont('Monda', 12, QFont.Normal, False)
-
-        icon = QLabel()
-        protocol_img = "%s.png" % self.protocol_id
-        icon.setPixmap(base.load_image(protocol_img, True))
-        icon.setStyleSheet("QLabel { background-color: #555; color: #fff; padding: 0 10px;}")
-
-        label = "%s : %s" % (username, column_slug)
-        caption = QLabel(label)
-        caption.setStyleSheet("QLabel { background-color: #555; color: #fff; }")
-        caption.setFont(font)
-
-        close_button = ImageButton(base, 'action-delete.png',
-                i18n.get('delete_column'))
-        close_button.clicked.connect(self.__delete_column)
-        close_button.setStyleSheet("QToolButton { background-color: #555; color: #fff; border: 1px solid #555; margin: 0px;}")
-
-        header = QHBoxLayout()
-        header.addWidget(icon)
-        header.addWidget(caption, 1)
-        header.addWidget(close_button)
 
         self.loader = BarLoadIndicator()
         self.loader.setVisible(False)
@@ -87,17 +61,51 @@ class StatusesColumn(QWidget):
         layout = QVBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addLayout(header)
-        layout.addWidget(self.loader)
+
+        if include_header:
+            header = self.__build_header(column_id)
+            layout.addLayout(header)
+            layout.addWidget(self.loader)
         layout.addWidget(self.webview)
 
         self.setLayout(layout)
+
+    def __build_header(self, column_id):
+        self.set_column_id(column_id)
+        username = get_username_from(self.account_id)
+        column_slug = get_column_slug_from(column_id)
+
+        #font = QFont('Titillium Web', 18, QFont.Normal, False)
+        font = QFont('Monda', 12, QFont.Normal, False)
+
+        icon = QLabel()
+        protocol_img = "%s.png" % self.protocol_id
+        icon.setPixmap(self.base.load_image(protocol_img, True))
+        icon.setStyleSheet("QLabel { background-color: #555; color: #fff; padding: 0 10px;}")
+
+        label = "%s : %s" % (username, column_slug)
+        caption = QLabel(label)
+        caption.setStyleSheet("QLabel { background-color: #555; color: #fff; }")
+        caption.setFont(font)
+
+        close_button = ImageButton(self.base, 'action-delete-shadowed.png',
+                i18n.get('delete_column'))
+        close_button.clicked.connect(self.__delete_column)
+        close_button.setStyleSheet("QToolButton { background-color: #555; color: #fff; border: 1px solid #555; margin: 0px;}")
+
+        header = QHBoxLayout()
+        header.addWidget(icon)
+        header.addWidget(caption, 1)
+        header.addWidget(close_button)
+        return header
 
     def __delete_column(self):
         self.base.core.delete_column(self.id_)
 
     def __link_clicked(self, url):
-        self.base.open_url(str(url))
+        url = str(url)
+        preview_service = get_preview_service_from_url(url)
+        self.base.open_url(url)
 
     def __hashtag_clicked(self, hashtag):
         self.base.add_search_column(self.account_id, str(hashtag))
@@ -107,8 +115,19 @@ class StatusesColumn(QWidget):
 
     def __cmd_clicked(self, url):
         status_id = str(url.split(':')[1])
-        status = self.statuses[status_id]
         cmd = url.split(':')[0]
+        try:
+            status = self.statuses[status_id]
+        except KeyError:
+            status = None
+            for status_root, statuses in self.conversations.iteritems():
+                for item in statuses:
+                    if item.id_ == status_id:
+                        status = item
+                        break
+                if status is not None:
+                    break
+
         if cmd == 'reply':
             self.__reply_status(status)
         elif cmd == 'quote':
@@ -177,10 +196,20 @@ class StatusesColumn(QWidget):
         self.base.get_conversation(self.account_id, status, self.id_, status.id_)
 
     def __hide_conversation(self, status):
+        del self.conversations[status.id_]
         self.webview.clear_conversation(status.id_)
 
     def __show_avatar(self, status):
         self.base.show_profile_image(self.account_id, status.username)
+
+    def set_column_id(self, column_id):
+        self.id_ = column_id
+        self.account_id = get_account_id_from(column_id)
+        self.protocol_id = get_protocol_from(self.account_id)
+        self.webview.column_id = column_id
+
+    def clear(self):
+        self.webview.clear()
 
     def start_updating(self):
         self.loader.setVisible(True)
@@ -190,9 +219,15 @@ class StatusesColumn(QWidget):
 
     def update_statuses(self, statuses):
         self.statuses = self.webview.update_statuses(statuses)
+        self.conversations = {}
 
     def update_conversation(self, status, status_root_id):
+        status_root_id = str(status_root_id)
         self.webview.update_conversation(status, status_root_id)
+        if status_root_id in self.conversations:
+            self.conversations[status_root_id].append(status)
+        else:
+            self.conversations[status_root_id] = [status]
 
     def mark_status_as_favorite(self, status_id):
         mark = "setFavorite('%s')" % status_id

@@ -9,5 +9,5 @@ class ModalDialog(QDialog):
     def __init__(self, width, height):
         QDialog.__init__(self)
         self.setFixedSize(width, height)
-        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
         self.setModal(True)

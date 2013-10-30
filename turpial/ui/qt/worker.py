@@ -2,12 +2,14 @@
 
 # Qt Worker for Turpial
 
+import os
 import Queue
 
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
 
 from libturpial.api.core import Core
+from libturpial.api.models.status import Status
 from libturpial.api.models.column import Column
 from libturpial.common.tools import get_account_id_from, get_column_slug_from
 
@@ -17,10 +19,16 @@ class CoreWorker(QThread):
     status_broadcasted = pyqtSignal(object)
     status_repeated = pyqtSignal(object, str, str)
     status_deleted = pyqtSignal(object, str, str)
+    status_pushed_to_queue = pyqtSignal(str)
+    status_poped_from_queue = pyqtSignal(object)
+    status_deleted_from_queue = pyqtSignal()
+    queue_cleared = pyqtSignal()
+    status_posted_from_queue = pyqtSignal(object, str)
     message_deleted = pyqtSignal(object, str, str)
     message_sent = pyqtSignal(object, str)
     column_updated = pyqtSignal(object, tuple)
     account_saved = pyqtSignal()
+    account_loaded = pyqtSignal()
     account_deleted = pyqtSignal()
     column_saved = pyqtSignal(str)
     column_deleted = pyqtSignal(str)
@@ -40,12 +48,15 @@ class CoreWorker(QThread):
     status_from_conversation = pyqtSignal(object, str, str)
     fetched_profile_image = pyqtSignal(str)
     fetched_avatar = pyqtSignal(str, str)
+    fetched_image_preview = pyqtSignal(object)
 
     def __init__(self):
         QThread.__init__(self)
         self.queue = Queue.Queue()
         self.exit_ = False
         self.core = Core()
+
+        self.queue_path = os.path.join(self.core.config.basedir, 'queue')
 
     #def __del__(self):
     #    self.wait()
@@ -62,6 +73,32 @@ class CoreWorker(QThread):
         friends.remove(username)
         self.core.config.save_friends(friends)
 
+    def __get_from_queue(self, index=0):
+        lines = open(self.queue_path).readlines()
+        if not lines:
+            return None
+
+        row = lines[index].strip()
+        account_id, message = row.split("\1")
+        del lines[index]
+
+        open(self.queue_path, 'w').writelines(lines)
+        status = Status()
+        status.account_id = account_id
+        status.text = message
+        return status
+
+    def __get_column_num_from_id(self, column_id):
+        column_key = None
+        for i in range(1, len(self.get_registered_columns()) + 1):
+            column_num = "column%s" % i
+            stored_id = self.core.config.read('Columns', column_num)
+            if stored_id == column_id:
+                column_key = column_num
+            else:
+                i += 1
+        return column_key
+
     #================================================================
     # Core methods
     #================================================================
@@ -71,6 +108,9 @@ class CoreWorker(QThread):
 
     def get_update_interval(self):
         return self.core.get_update_interval()
+
+    def get_queue_interval(self):
+        return 30
 
     def get_shorten_url_service(self):
         return self.core.get_shorten_url_service()
@@ -113,7 +153,17 @@ class CoreWorker(QThread):
 
     def save_account(self, account):
         account_id = self.core.register_account(account)
+        self.load_account(account_id, trigger_signal=False)
         self.__after_save_account()
+
+    # FIXME: Remove this after implement this in libturpial
+    def load_account(self, account_id, trigger_signal=True):
+        if trigger_signal:
+            self.register(self.core.accman.load, (account_id),
+                self.__after_load_account)
+        else:
+            self.core.accman.load(account_id)
+            self.__after_load_account()
 
     def delete_account(self, account_id):
         # FIXME: Implement try/except
@@ -218,6 +268,96 @@ class CoreWorker(QThread):
         self.register(self.core.get_status_avatar, (status),
             self.__after_get_avatar_from_status, status.username)
 
+    def get_image_preview(self, preview_service, url):
+        self.register(preview_service.do_service, (url),
+            self.__after_get_image_preview)
+
+    def push_status_to_queue(self, account_id, message):
+        fd = open(self.queue_path, 'a+')
+        row = "%s\1%s\n" % (account_id, message)
+        fd.write(row.encode('utf-8'))
+        fd.close()
+        self.__after_push_status_to_queue(account_id)
+
+    def pop_status_from_queue(self):
+        status = self.__get_from_queue()
+        self.__after_pop_status_from_queue(status)
+
+    def delete_status_from_queue(self, index=0):
+        status = self.__get_from_queue(index)
+        self.__after_delete_status_from_queue()
+
+    def list_statuses_queue(self):
+        statuses = []
+        lines = open(self.queue_path).readlines()
+        for line in lines:
+            account_id, message = line.strip().split("\1")
+            status = Status()
+            status.account_id = account_id
+            status.text = message
+            statuses.append(status)
+        return statuses
+
+    def clear_statuses_queue(self):
+        open(self.queue_path, 'w').writelines([])
+        self.__after_clear_queue()
+
+    def post_status_from_queue(self, account_id, message):
+        self.register(self.core.update_status, (account_id, message),
+            self.__after_post_status_from_queue, account_id)
+
+    def get_update_interval_per_column(self, column_id):
+        column_key = self.__get_column_num_from_id(column_id)
+
+        key = "%s-update-interval" % column_key
+        interval = self.core.config.read('Intervals', key)
+        if not interval:
+            # FIXME: Fix in libturpial
+            config = self.core.config.read_all()
+            if not config.has_key('Intervals'):
+                config['Intervals'] = {key: 5}
+                self.core.config.save(config)
+            else:
+                self.core.config.write('Intervals', key, 5)
+            config = self.core.config.read_all()
+            interval = "5"
+        return int(interval)
+
+    def set_update_interval_in_column(self, column_id, interval):
+        column_key = self.__get_column_num_from_id(column_id)
+
+        key = "%s-update-interval" % column_key
+        self.core.config.write('Intervals', key, interval)
+        return interval
+
+    def get_show_notifications_in_column(self, column_id):
+        column_key = self.__get_column_num_from_id(column_id)
+
+        key = "%s-notifications" % column_key
+        notifications = self.core.config.read('Notifications', key)
+        if not notifications:
+            # FIXME: Fix in libturpial
+            config = self.core.config.read_all()
+            if not config.has_key('Notifications'):
+                config['Notifications'] = {}
+                self.core.config.save(config)
+            self.core.config.write('Notifications', key, 'on')
+            notifications = 'on'
+
+        if notifications == 'on':
+            return True
+        return False
+
+    def set_show_notifications_in_column(self, column_id, value):
+        column_key = self.__get_column_num_from_id(column_id)
+
+        key = "%s-notifications" % column_key
+        if value:
+            notifications = 'on'
+        else:
+            notifications = 'off'
+        self.core.config.write('Notifications', key, notifications)
+        return value
 
     #================================================================
     # Callbacks
@@ -225,6 +365,9 @@ class CoreWorker(QThread):
 
     def __after_save_account(self):
         self.account_saved.emit()
+
+    def __after_load_account(self, response=None):
+        self.account_loaded.emit()
 
     def __after_delete_account(self):
         self.account_deleted.emit()
@@ -316,6 +459,24 @@ class CoreWorker(QThread):
     def __after_get_avatar_from_status(self, response, args):
         username = args
         self.fetched_avatar.emit(response, username)
+
+    def __after_get_image_preview(self, response):
+        self.fetched_image_preview.emit(response)
+
+    def __after_push_status_to_queue(self, account_id):
+        self.status_pushed_to_queue.emit(account_id)
+
+    def __after_pop_status_from_queue(self, status):
+        self.status_poped_from_queue.emit(status)
+
+    def __after_delete_status_from_queue(self):
+        self.status_deleted_from_queue.emit()
+
+    def __after_clear_queue(self):
+        self.queue_cleared.emit()
+
+    def __after_post_status_from_queue(self, response, account_id):
+        self.status_posted_from_queue.emit(response, account_id)
 
     #================================================================
     # Worker methods

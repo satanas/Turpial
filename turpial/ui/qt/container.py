@@ -3,7 +3,9 @@
 # Qt container for all columns in Turpial
 
 from PyQt4.QtCore import Qt
+
 from PyQt4.QtGui import QLabel
+from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QListView
 from PyQt4.QtGui import QScrollArea
@@ -19,6 +21,12 @@ class Container(QVBoxLayout):
         self.child = None
         self.columns = {}
         self.is_empty = None
+
+    def __link_clicked(self, url):
+        if url == 'cmd:add_columns':
+            self.base.show_column_menu(QCursor.pos())
+        elif url == 'cmd:add_accounts':
+            self.base.show_accounts_dialog()
 
     def clear_layout(self, layout):
         if layout is not None:
@@ -46,9 +54,13 @@ class Container(QVBoxLayout):
 
         message = QLabel()
         if with_accounts:
-            message.setText(i18n.get('add_some_columns'))
+            text = "%s <a href='cmd:add_columns'>%s</a>" % (i18n.get('you_have_accounts_registered'),
+                i18n.get('add_some_columns'))
         else:
-            message.setText(i18n.get('add_new_account'))
+            text = "<a href='cmd:add_accounts'>%s</a> %s" & (i18n.get('add_new_account'),
+                i18n.get('to_start_using_turpial'))
+        message.setText(text)
+        message.linkActivated.connect(self.__link_clicked)
         message.setAlignment(Qt.AlignCenter)
         message.setWordWrap(True)
 
@@ -114,8 +126,6 @@ class Container(QVBoxLayout):
     def remove_column(self, column_id):
         self.columns[column_id].deleteLater()
         del self.columns[column_id]
-        if len(self.columns) == 0:
-            self.empty()
 
     def mark_status_as_favorite(self, status_id):
         for id_, column in self.columns.iteritems():

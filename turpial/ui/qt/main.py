@@ -15,9 +15,10 @@ from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QDialog
-from PyQt4.QtGui import QFontDatabase
+from PyQt4.QtGui import QMessageBox
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QApplication
+from PyQt4.QtGui import QFontDatabase
 
 from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
@@ -35,12 +36,19 @@ from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 from turpial.ui.qt.imageview import ImageView
+from turpial.ui.qt.queue import QueueDialog
 
-from libturpial.common import ColumnType, is_preview_service_supported
+from libturpial.common import ColumnType, get_preview_service_from_url
+
+
+# Exceptions
+#{u'errors': [{u'message': u'Sorry, you are not authorized to see this status.', u'code': 179}]}
+#Exception 'id'
 
 class Main(Base, QWidget):
 
     account_deleted = pyqtSignal()
+    account_loaded = pyqtSignal()
     account_registered = pyqtSignal()
 
     def __init__(self):
@@ -55,8 +63,8 @@ class Main(Base, QWidget):
         QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Monda-Regular.ttf'))
 
         database = QFontDatabase()
-        for f in database.families():
-            print f
+        #for f in database.families():
+        #    print f
 
         self.templates_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), 'templates'))
@@ -71,6 +79,8 @@ class Main(Base, QWidget):
         self.update_box = UpdateBox(self)
         self.profile = ProfileDialog(self)
         self.profile.options_clicked.connect(self.show_profile_menu)
+        self.image_view = ImageView(self)
+        self.queue_dialog = QueueDialog(self)
 
         self.core = CoreWorker()
         self.core.status_updated.connect(self.after_update_status)
@@ -81,6 +91,7 @@ class Main(Base, QWidget):
         self.core.message_sent.connect(self.after_send_message)
         self.core.column_updated.connect(self.after_update_column)
         self.core.account_saved.connect(self.after_save_account)
+        self.core.account_loaded.connect(self.after_load_account)
         self.core.account_deleted.connect(self.after_delete_account)
         self.core.column_saved.connect(self.after_save_column)
         self.core.column_deleted.connect(self.after_delete_column)
@@ -99,6 +110,12 @@ class Main(Base, QWidget):
         self.core.status_from_conversation.connect(self.after_get_status_from_conversation)
         self.core.fetched_profile_image.connect(self.after_get_profile_image)
         self.core.fetched_avatar.connect(self.update_profile_avatar)
+        self.core.fetched_image_preview.connect(self.after_get_image_preview)
+        self.core.status_pushed_to_queue.connect(self.after_push_status_to_queue)
+        self.core.status_poped_from_queue.connect(self.after_pop_status_from_queue)
+        self.core.status_posted_from_queue.connect(self.after_post_status_from_queue)
+        self.core.status_deleted_from_queue.connect(self.after_delete_status_from_queue)
+        self.core.queue_cleared.connect(self.after_clear_queue)
         self.core.exception_raised.connect(self.on_exception)
 
         self.core.start()
@@ -113,6 +130,7 @@ class Main(Base, QWidget):
         self.dock.search_clicked.connect(self.show_search_dialog)
         self.dock.updates_clicked.connect(self.show_update_box)
         self.dock.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
+        self.dock.queue_clicked.connect(self.show_queue_dialog)
 
         self.tray = TrayIcon(self)
         self.tray.toggled.connect(self.toggle_tray_icon)
@@ -126,8 +144,7 @@ class Main(Base, QWidget):
         layout.setMargin(0)
 
         self.setLayout(layout)
-
-        self.image_view = ImageView(self)
+        self.set_queue_timer()
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -139,7 +156,6 @@ class Main(Base, QWidget):
         else:
             webbrowser.open(url)
 
-
     def toggle_tray_icon(self):
         if self.showed:
             self.showed = False
@@ -147,6 +163,7 @@ class Main(Base, QWidget):
         else:
             self.showed = True
             self.show()
+            self.raise_()
 
     def add_extra_friends_from_statuses(self, statuses):
         current_friends_list = self.load_friends_list()
@@ -154,6 +171,11 @@ class Main(Base, QWidget):
             for user in status.get_mentions():
                 if user not in current_friends_list and user not in self.extra_friends:
                     self.extra_friends.append(user)
+
+    def closeEvent(self, event=None):
+        if event:
+            event.ignore()
+        self.main_quit()
 
     #================================================================
     # Overrided methods
@@ -183,8 +205,25 @@ class Main(Base, QWidget):
     # Main methods
     #================================================================
 
+    def show_error_message(self, title, message, error):
+        full_message = "%s (%s)" % (message, error)
+        message = QMessageBox.critical(self, title, full_message, QMessageBox.Ok)
+
+    def show_confirmation_message(self, title, message):
+        confirmation = QMessageBox.question(self, title, message,
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if confirmation == QMessageBox.No:
+            return False
+        return True
+
+    def show_about_dialog(self):
+        QMessageBox.about(self, 'Turpial', i18n.get('about_description'))
+
     def save_account(self, account):
         self.core.save_account(account)
+
+    def load_account(self, account_id):
+        self.core.load_account(account_id)
 
     def delete_account(self, account_id):
         self.core.delete_account(account_id)
@@ -216,13 +255,10 @@ class Main(Base, QWidget):
         return self.extra_friends + self.core.load_friends_list()
 
     def open_url(self, url):
-        if is_preview_service_supported(url):
-            self.__open_in_browser(url)
-            pass
-            #try:
-            #    bla
-            #except:
-            #    self.__open_in_browser(url)
+        preview_service = get_preview_service_from_url(url)
+        if preview_service:
+            self.core.get_image_preview(preview_service, url)
+            self.image_view.start_loading()
         else:
             self.__open_in_browser(url)
 
@@ -234,6 +270,18 @@ class Main(Base, QWidget):
 
     def get_image_path(self, filename):
         return os.path.join(self.images_path, filename)
+
+    def update_dock(self):
+        accounts = self.core.get_registered_accounts()
+        columns = self.core.get_registered_columns()
+
+        if len(columns) == 0:
+            if len(accounts) == 0:
+                self.dock.empty(False)
+            else:
+                self.dock.normal()
+        else:
+            self.dock.normal()
 
     def update_container(self):
         accounts = self.core.get_registered_accounts()
@@ -259,8 +307,8 @@ class Main(Base, QWidget):
     def show_accounts_dialog(self):
         accounts = AccountsDialog(self)
 
-    def show_column_menu(self, point):
-        self.columns_menu = QMenu(self)
+    def build_columns_menu(self):
+        columns_menu = QMenu(self)
 
         available_columns = self.core.get_available_columns()
         accounts = self.core.get_all_accounts()
@@ -268,7 +316,7 @@ class Main(Base, QWidget):
         if len(accounts) == 0:
             empty_menu = QAction(i18n.get('no_registered_accounts'), self)
             empty_menu.setEnabled(False)
-            self.columns_menu.addAction(empty_menu)
+            columns_menu.addAction(empty_menu)
         else:
             for account in accounts:
                 name = "%s (%s)" % (account.username, i18n.get(account.protocol_id))
@@ -277,18 +325,25 @@ class Main(Base, QWidget):
                 if len(available_columns[account.id_]) > 0:
                     available_columns_menu = QMenu(self)
                     for column in available_columns[account.id_]:
-                        # FIXME: Handle lists
-                        if column.__class__.__name__ == 'List':
-                            continue
                         item = QAction(column.slug, self)
-                        item.triggered.connect(partial(self.add_column, column.id_))
+                        if column.__class__.__name__ == 'List':
+                            #FIXME: Uncomment this after fixing the error with get_list_id in libturpial
+                            #column_id = "-".join([account.id_, column.id_])
+                            #item.triggered.connect(partial(self.add_column, column_id))
+                            continue
+                        else:
+                            item.triggered.connect(partial(self.add_column, column.id_))
                         available_columns_menu.addAction(item)
 
                     account_menu.setMenu(available_columns_menu)
                 else:
                     account_menu.setEnabled(False)
-                self.columns_menu.addAction(account_menu)
+                columns_menu.addAction(account_menu)
 
+        return columns_menu
+
+    def show_column_menu(self, point):
+        self.columns_menu = self.build_columns_menu()
         self.columns_menu.exec_(point)
 
     def show_search_dialog(self):
@@ -428,6 +483,20 @@ class Main(Base, QWidget):
         self.image_view.start_loading()
         self.core.get_profile_image(account_id, username)
 
+    def push_status_to_queue(self, account_id, message):
+        self.core.push_status_to_queue(account_id, message)
+
+    def update_status_from_queue(self, args=None):
+        self.core.pop_status_from_queue()
+
+    def delete_message_from_queue(self, index):
+        self.core.delete_status_from_queue(index)
+
+    def clear_queue(self):
+        self.core.clear_statuses_queue()
+
+    def show_queue_dialog(self):
+        self.queue_dialog.show()
 
     #================================================================
     # Hooks definitions
@@ -435,6 +504,10 @@ class Main(Base, QWidget):
 
     def after_save_account(self):
         self.account_registered.emit()
+        self.update_dock()
+
+    def after_load_account(self):
+        self.account_loaded.emit()
 
     def after_delete_account(self):
         self.account_deleted.emit()
@@ -443,6 +516,10 @@ class Main(Base, QWidget):
         column_id = str(column_id)
         self._container.remove_column(column_id)
         self.remove_timer(column_id)
+
+        columns = self.core.get_registered_columns()
+        if len(columns) == 0:
+            self.update_container()
 
     def after_save_column(self, column_id):
         column_id = str(column_id)
@@ -510,10 +587,14 @@ class Main(Base, QWidget):
         print "User %s reported" % response.username
 
     def after_follow_user(self, response):
+        # TODO: OS Notification
         print "User %s followed" % response.username
+        self.profile.update_following(response.username, True)
 
     def after_unfollow_user(self, response):
+        # TODO: OS Notification
         print "User %s unfollowed" % response.username
+        self.profile.update_following(response.username, False)
 
     def after_get_status_from_conversation(self, response, column_id, status_root_id):
         self._container.update_conversation(response, column_id, status_root_id)
@@ -526,6 +607,29 @@ class Main(Base, QWidget):
 
     def update_profile_avatar(self, image_path, username):
         self.profile.update_avatar(str(image_path), str(username))
+
+    def after_get_image_preview(self, response):
+        self.image_view.loading_finished(str(response.path))
+
+    def after_push_status_to_queue(self, account_id):
+        self.update_box.done()
+        self.queue_dialog.update()
+        # TODO: OS Notification
+
+    def after_pop_status_from_queue(self, status):
+        if status:
+            self.core.post_status_from_queue(status.account_id, status.text)
+
+    def after_post_status_from_queue(self, response, account_id):
+        print '++Posted queue message'
+        self.queue_dialog.update()
+        # TODO: OS Notification
+
+    def after_delete_status_from_queue(self):
+        self.queue_dialog.update()
+
+    def after_clear_queue(self):
+        self.queue_dialog.update()
 
     def on_exception(self, exception):
         print 'Exception', exception
@@ -556,6 +660,15 @@ class Main(Base, QWidget):
         last_id = self._container.start_updating(column.id_)
         self.core.get_column_statuses(column, last_id)
         return True
+
+    def set_queue_timer(self):
+        self.remove_timer('queue')
+
+        interval = self.core.get_queue_interval() * 60 * 1000
+        timer = Timer(interval, None, self.update_status_from_queue)
+        self.timers['queue'] = timer
+        self.queue_dialog.update()
+        print '--Created timer for queue every %i sec' % interval
 
 class Timer:
     def __init__(self, interval, column, callback):

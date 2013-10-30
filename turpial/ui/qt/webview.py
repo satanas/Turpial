@@ -82,6 +82,7 @@ class StatusesWebView(QWebView):
         view_conversation = None
         hide_conversation = None
         message = status.text
+        message = message.replace('\n', '<br/>')
         timestamp = self.base.humanize_timestamp(status.timestamp)
 
         if status.entities:

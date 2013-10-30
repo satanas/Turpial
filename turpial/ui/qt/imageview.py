@@ -49,6 +49,15 @@ class ImageView(QWidget):
         self.resize(350, 350)
         self.view.setPixmap(QPixmap())
 
+    def __center_on_parent(self):
+        geo = self.base.geometry()
+        cx = geo.x() + (geo.width() / 2)
+        cy = geo.y() + (geo.height() / 2)
+        geo2 = self.geometry()
+        fx = cx - (geo2.width() / 2)
+        fy = cy - (geo2.height() / 2)
+        self.setGeometry(fx,fy, geo2.width(), geo2.height())
+
     def closeEvent(self, event):
         event.ignore()
         self.__clear()
@@ -56,6 +65,7 @@ class ImageView(QWidget):
 
     def start_loading(self):
         self.loader.setVisible(True)
+        self.__center_on_parent()
         self.show()
 
     def loading_finished(self, url):
@@ -64,3 +74,4 @@ class ImageView(QWidget):
         self.view.setPixmap(pix)
         self.view.adjustSize()
         self.resize(pix.width() + 2, pix.height() + 2)
+        self.__center_on_parent()

@@ -18,7 +18,7 @@ from turpial.ui import util
 
 from libturpial.api.core import Core
 from libturpial.common.tools import *
-from libturpial.config import AppConfig
+from libturpial.lib.config import AppConfig
 from libturpial import VERSION as LIBTURPIAL_VERSION
 
 LOG_FMT = logging.Formatter('[%(asctime)s] [%(name)s::%(levelname)s] %(message)s', '%Y%m%d-%H:%M')
@@ -41,7 +41,6 @@ class Turpial:
         parser.add_option('-p', dest='mac', action='store_true', default=False,
             help=SUPPRESS_HELP)
 
-
         (options, args) = parser.parse_args()
 
         if not options.mac and parser.failed:
@@ -63,11 +62,9 @@ class Turpial:
             clean_bytecodes(__file__, self.log)
             sys.exit(0)
 
-        self.core = Core()
-
         # TODO: Override with any configurated value
         if options.interface in util.INTERFACES.keys():
-            self.ui = util.INTERFACES[options.interface](self.core)
+            self.ui = util.INTERFACES[options.interface]()
         else:
             print "'%s' is not a valid interface. Availables interfaces are %s" % (
             options.interface, util.available_interfaces())
@@ -102,16 +99,16 @@ class OptParser(OptionParser):
         pass
 
 def main():
-    try:
-        subprocess.call(['turpial-unity-daemon', 'stop'])
-        subprocess.call(['turpial-unity-daemon', 'start'])
-    except:
-        pass
+    #try:
+    #    subprocess.call(['turpial-unity-daemon', 'stop'])
+    #    subprocess.call(['turpial-unity-daemon', 'start'])
+    #except:
+    #    pass
     t = Turpial()
-    try:
-        subprocess.call(['turpial-unity-daemon', 'stop'])
-    except:
-        pass
+    #try:
+    #    subprocess.call(['turpial-unity-daemon', 'stop'])
+    #except:
+    #    pass
 
 if __name__ == '__main__':
     sys.exit(main())

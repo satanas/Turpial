@@ -1,0 +1,75 @@
+<table id='status-{{ status.id_ }}' class='status'>
+    <tr>
+        <td class='avatar-row'>
+            <a href="cmd:show_avatar:{{ status.id_ }}"><img class='avatar' src='{{ status.avatar }}' /></a>
+            {% if status.is_verified %}
+            <div class='verified'></div>
+            {% endif %}
+        </td>
+        <td class='content'>
+            <div class='user-info'>
+                <div class='username{% if status.is_protected %}_protected{% endif %}'>
+                    <a href="profile:{{ status.username }}">{{ status.username }}</a>
+                </div>
+
+                <div class='timestamp'>{{ timestamp }}</div>
+
+                <div id="{{ status.id_ }}-fav-mark" class='favorited {% if not status.is_favorite %} hidden {% endif %}'></div>
+
+                <div id="{{ status.id_ }}-repeat-mark" class='repeated {% if not status.repeated %} hidden {% endif %}'></div>
+
+                <div class='clearfix'></div>
+            </div>
+            <div class='message'>{{ message }}</div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan='2' class='footer'>
+            <div class='extra'>
+                {% if view_conversation %}
+                <div>
+                    <a class='in_reply_to' id="{{ status.id_  }}-view-conv-cmd" href="cmd:view_conversation:{{ status.id_ }}">{{ view_conversation }}</a>
+                    <span class='in_reply_to hidden' id="{{ status.id_  }}-loading-conv-cmd">{{ loading }}</span>
+                    <a class='in_reply_to hidden' id="{{ status.id_  }}-hide-conv-cmd" href="cmd:hide_conversation:{{ status.id_ }}">{{ hide_conversation }}</a>
+                </div>
+                {% endif %}
+                {% if in_reply_to and repeated_by %}
+                <div class='separator-5'></div>
+                {% endif %}
+                {% if repeated_by %}
+                <span class='reposted'>{{ repeated_by }}</span>
+                {% endif %}
+            </div>
+            <div class='buttons' id="{{ status.id_ }}-buttons">
+                {% if in_reply_to and repeated_by %}
+                <div class='separator-15'></div>
+                {% endif %}
+                {% if status.type_ == 1 %}
+                    {% if status.is_own %}
+                        <a href="cmd:delete:{{ status.id_ }}" title="{{ delete }}"><div class="action_delete"></div></a>
+                    {% else %}
+                        <a href="cmd:reply:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
+                        <a href="cmd:quote:{{ status.id_ }}" title="{{ quote }}"><div class="action_quote"></div></a>
+                        {% if not status.is_protected %}
+                        <a href="cmd:repeat:{{ status.id_ }}" title="{{ retweet }}"><div class="action_repeat"></div></a>
+                        {% endif %}
+                        {% if status.is_favorite %}
+                        <a id="{{ status.id_ }}-fav-cmd" href="cmd:unfavorite:{{ status.id_ }}" title="{{ remove_from_favorites }}"><div class="action_favorite"></div></a>
+                        {% else %}
+                        <a id="{{ status.id_ }}-fav-cmd" href="cmd:favorite:{{ status.id_ }}" title="{{ mark_as_favorite }}"><div class="action_favorite"></div></a>
+                        {% endif %}
+                    {% endif %}
+                {% elif status.type_ == 2 %}
+                    <a href="cmd:delete_direct:{{ status.id_ }}" title="{{ delete }}"><div class="action_delete"></div></a>
+                    <a href="cmd:reply_direct:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
+                {% endif %}
+            </div>
+            <div class="operation-loader hidden" id="{{ status.id_ }}-operation-loader">{{ in_progress }}</div>
+        </td>
+    </tr>
+    {% if conversation_id %}
+    <tr>
+        <td colspan="2"><div id='{{ status.id_ }}-conversation' class='conversation hidden'></div></td>
+    </tr>
+    {% endif %}
+</table>

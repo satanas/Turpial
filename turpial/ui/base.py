@@ -6,7 +6,9 @@
 # Oct 09, 2011
 
 import os
+import pdb
 import sys
+import time
 import base64
 import urllib
 import logging
@@ -15,15 +17,12 @@ import subprocess
 
 from xml.sax.saxutils import unescape
 
-from libturpial.common import *
-from libturpial.api.models.mediacontent import *
-from libturpial.api.interfaces.service import ServiceResponse
-from libturpial.api.services.showmedia import utils as showmediautils
-
 from turpial import VERSION
 from turpial.ui.lang import i18n
 from turpial.singleton import Singleton
-from turpial.ui.unity.unitylauncher import UnityLauncherFactory
+
+from libturpial.common import OS_MAC
+from libturpial.common.tools import detect_os
 
 MIN_WINDOW_WIDTH = 250
 
@@ -34,18 +33,21 @@ class Base(Singleton):
     ACTION_UNFAVORITE = 'unfavorite'
 
     '''Parent class for every UI interface'''
-    def __init__(self, core):
+    def __init__(self):
         Singleton.__init__(self, 'turpial.pid')
-        self.core = core
-        self.log = logging.getLogger('UI')
-        self.log.debug('Started')
 
         self.images_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), '..', 'data', 'pixmaps'))
-
+        self.fonts_path = os.path.realpath(os.path.join(
+            os.path.dirname(__file__), '..', 'data', 'fonts'))
+        self.home_path = os.path.expanduser('~')
+        if detect_os() == OS_MAC:
+            self.shortcut_key = 'Cmd'
+        else:
+            self.shortcut_key = 'Ctrl'
 
         # Unity integration
-        self.unitylauncher = UnityLauncherFactory().create();
+        #self.unitylauncher = UnityLauncherFactory().create();
         #self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('new_tweet'), True)
         #self.unitylauncher.add_quicklist_checkbox(self.sound.disable, i18n.get('enable_sounds'), True, not self.sound._disable)
         #self.unitylauncher.add_quicklist_button(self.show_update_box_for_direct, i18n.get('direct_message'), True)
@@ -73,120 +75,93 @@ class Base(Singleton):
         else:
             return "%.2f B" % size
 
+    def humanize_timestamp(self, status_timestamp):
+        now = time.time()
+        # FIXME: Workaround to fix the timestamp
+        offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
+        seconds = now - status_timestamp + offset
+
+        minutes = seconds / 60.0
+        if minutes < 1.0:
+            timestamp = i18n.get('now')
+        else:
+            if minutes < 60.0:
+                timestamp = "%i m" % minutes
+            else:
+                hours = minutes / 60.0
+                if hours < 24.0:
+                    timestamp = "%i h" % hours
+                else:
+                    dt = time.localtime(status_timestamp)
+                    month = time.strftime(u'%b', dt)
+                    year = dt.tm_year
+
+                    if year == time.localtime(now).tm_year:
+                        timestamp = u"%i %s" % (dt.tm_mday, month)
+                    else:
+                        timestamp = u"%i %s %i" % (dt.tm_mday, month, year)
+        return timestamp
+
+    def get_shortcut_string(self, key):
+        return "+".join([self.shortcut_key, key])
+
     #================================================================
     # Common methods to all interfaces
     #================================================================
 
-    def get_protocols_list(self):
-        return self.core.list_protocols()
+    #def get_protocols_list(self):
+    #    return self.core.list_protocols()
 
-    def get_all_accounts(self):
-        return self.core.all_accounts()
+    #def get_accounts_list(self):
+    #    return self.core.list_accounts()
 
-    def get_accounts_list(self):
-        return self.core.list_accounts()
+    #def get_max_statuses_per_column(self):
+    #    return self.core.get_max_statuses_per_column()
 
-    def get_all_columns(self):
-        return self.core.all_columns()
+    #def disable_sound(self, widget=None):
+    #    self.sound.disable(not widget.get_active())
 
-    def get_registered_columns(self):
-        return self.core.all_registered_columns()
+    #def get_color_scheme(self, key):
+    #    color = {
+    #        'links': '#ff6633',
+    #    }
+    #    return color[key]
 
-    def get_max_statuses_per_column(self):
-        return self.core.get_max_statuses_per_column()
+    #def update_status(self, account_id, message, in_reply_to=None):
+    #    self.worker.register(self.core.update_status, (account_id,
+    #        message, in_reply_to), self.after_update_status, account_id)
 
-    def disable_sound(self, widget=None):
-        self.sound.disable(not widget.get_active())
+    #def broadcast_status(self, account_ids, message):
+    #    self.worker.register(self.core.broadcast_status, (account_ids, message),
+    #        self.after_broadcast_status)
 
-    def get_color_scheme(self, key):
-        color = {
-            'links': '#ff6633',
-        }
-        return color[key]
+    #def direct_message(self, account, user, message):
+    #    self.worker.register(self.core.send_direct, (account, user, message),
+    #        self.after_direct_message)
 
-    def save_account(self, username, protocol_id, password):
-        if username == "" or username == None:
-            username = "%s" % len(self.core.all_accounts())
-        account_id = self.core.register_account(username, protocol_id, password)
-        self.after_save_account(account_id)
+    #def repeat_status(self, status):
+    #    self.worker.register(self.core.repeat_status, (status.account_id, status.id_),
+    #        self.after_repeat, (self.ACTION_REPEAT))
 
-    def delete_account(self, account_id):
-        # FIXME: Implement try/except
-        for col in self.get_registered_columns():
-            if col.account_id == account_id:
-                self.delete_column(col.id_)
-        self.core.unregister_account(account_id, True)
-        self.after_delete_account(True)
+    #def unrepeat_status(self, status):
+    #    self.worker.register(self.core.unrepeat_status, (status.account_id, status.id_),
+    #        self.after_repeat, (self.ACTION_UNREPEAT))
 
-    def save_column(self, column_id):
-        column = self.core.register_column(column_id)
-        self.after_save_column(column)
+    #def favorite_status(self, status):
+    #    self.worker.register(self.core.mark_favorite, (status.account_id, status.id_),
+    #        self.after_favorite, (self.ACTION_FAVORITE))
 
-    def delete_column(self, column_id):
-        self.core.unregister_column(column_id)
-        if self.columns.has_key(column_id):
-            del self.columns[column_id]
-        self.after_delete_column(column_id)
+    #def unfavorite_status(self, status):
+    #    self.worker.register(self.core.unmark_favorite, (status.account_id, status.id_),
+    #        self.after_favorite, (self.ACTION_UNFAVORITE))
 
-    def start(self):
-        #if self.core.play_sounds_in_login():
-        #    self.sound.login()
+    #def delete_status(self, status):
+    #    self.worker.register(self.core.destroy_status, (status.account_id, status.id_),
+    #        self.after_delete_status)
 
-        for account_id in self.get_accounts_list():
-            self.core.change_login_status(account_id, LoginStatus.IN_PROGRESS)
-            self.login(account_id)
-
-        self.after_login()
-
-    def open_url(self, url):
-        browser = self.core.get_default_browser()
-
-        if showmediautils.is_service_supported(url):
-            self.show_media(url)
-        elif browser != '':
-            cmd = browser.split(' ')
-            cmd.append(url)
-            self.log.debug('Opening URL %s with %s' % (url, browser))
-            subprocess.Popen(cmd)
-        else:
-            self.log.debug('Opening URL %s with default browser' % url)
-            webbrowser.open(url)
-
-    def update_status(self, accounts, message, in_reply_to=None):
-        if len(accounts) > 1:
-            self.worker.register(self.core.broadcast_status, (accounts, message),
-                self.after_broadcast_status)
-        else:
-            self.worker.register(self.core.update_status, (accounts[0],
-                message, in_reply_to), self.after_update_status, accounts[0])
-
-    def direct_message(self, account, user, message):
-        self.worker.register(self.core.send_direct, (account, user, message),
-            self.after_direct_message)
-
-    def repeat_status(self, status):
-        self.worker.register(self.core.repeat_status, (status.account_id, status.id_),
-            self.after_repeat, (self.ACTION_REPEAT))
-
-    def unrepeat_status(self, status):
-        self.worker.register(self.core.unrepeat_status, (status.account_id, status.id_),
-            self.after_repeat, (self.ACTION_UNREPEAT))
-
-    def favorite_status(self, status):
-        self.worker.register(self.core.mark_favorite, (status.account_id, status.id_),
-            self.after_favorite, (self.ACTION_FAVORITE))
-
-    def unfavorite_status(self, status):
-        self.worker.register(self.core.unmark_favorite, (status.account_id, status.id_),
-            self.after_favorite, (self.ACTION_UNFAVORITE))
-
-    def delete_status(self, status):
-        self.worker.register(self.core.destroy_status, (status.account_id, status.id_),
-            self.after_delete_status)
-
-    def autoshort_url(self, message):
-        self.worker.register(self.core.autoshort_url, (message),
-            self.after_autoshort_url)
+    #def autoshort_url(self, message):
+    #    self.worker.register(self.core.autoshort_url, (message),
+    #        self.after_autoshort_url)
 
     #================================================================
     # Hooks that can be implemented on each interface (optionals)
@@ -247,6 +222,9 @@ class Base(Singleton):
         raise NotImplementedError
 
     def show_media(self, url):
+        raise NotImplementedError
+
+    def show_accounts_dialog(self):
         raise NotImplementedError
 
     def login(self, account):

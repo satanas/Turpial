@@ -2,44 +2,163 @@
 
 # Qt container for all columns in Turpial
 
-from PyQt4 import QtGui
+from PyQt4.QtCore import Qt
+
+from PyQt4.QtGui import QLabel
+from PyQt4.QtGui import QCursor
+from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QListView
+from PyQt4.QtGui import QScrollArea
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from turpial.ui.lang import i18n
+from turpial.ui.qt.column import StatusesColumn
 
-class Container(QtGui.QVBoxLayout):
+class Container(QVBoxLayout):
     def __init__(self, base):
-        QtGui.QVBoxLayout.__init__(self)
+        QVBoxLayout.__init__(self)
         self.base = base
         self.child = None
         self.columns = {}
+        self.is_empty = None
 
-    def empty(self):
+    def __link_clicked(self, url):
+        if url == 'cmd:add_columns':
+            self.base.show_column_menu(QCursor.pos())
+        elif url == 'cmd:add_accounts':
+            self.base.show_accounts_dialog()
+
+    def clear_layout(self, layout):
+        if layout is not None:
+            while layout.count():
+                item = layout.takeAt(0)
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
+                else:
+                    self.clear_layout(item.layout())
+
+    def empty(self, with_accounts=None):
         if self.child:
-            self.removeWidget(self.child)
-
-        #placeholder = QImage()
+            self.child.deleteLater()
 
         image = self.base.load_image('logo.png', True)
-        label = QtGui.QLabel()
-        label.setPixmap(image)
+        logo = QLabel()
+        logo.setPixmap(image)
+        logo.setAlignment(Qt.AlignCenter)
+        logo.setContentsMargins(0, 80, 0, 0)
 
-        welcome = QtGui.QLabel()
-        #welcome.set_use_markup(True)
+        welcome = QLabel()
         welcome.setText(i18n.get('welcome'))
+        welcome.setAlignment(Qt.AlignCenter)
 
-        #no_accounts = Gtk.Label()
-        #no_accounts.set_use_markup(True)
-        #no_accounts.set_line_wrap(True)
-        #no_accounts.set_justify(Gtk.Justification.CENTER)
-        #if len(self.base.get_accounts_list()) > 0:
-        #    no_accounts.set_markup(i18n.get('no_registered_columns'))
-        #else:
-        #    no_accounts.set_markup(i18n.get('no_active_accounts'))
+        message = QLabel()
+        if with_accounts:
+            text = "%s <a href='cmd:add_columns'>%s</a>" % (i18n.get('you_have_accounts_registered'),
+                i18n.get('add_some_columns'))
+        else:
+            text = "<a href='cmd:add_accounts'>%s</a> %s" & (i18n.get('add_new_account'),
+                i18n.get('to_start_using_turpial'))
+        message.setText(text)
+        message.linkActivated.connect(self.__link_clicked)
+        message.setAlignment(Qt.AlignCenter)
+        message.setWordWrap(True)
 
-        self.child = QtGui.QVBoxLayout()
-        self.child.addStretch(1)
-        #self.child.pack_start(placeholder, False, False, 40)
-        self.child.addWidget(label)
+        self.child = QVBoxLayout()
+        self.child.addWidget(logo, 1)
         self.child.addWidget(welcome)
-        #self.child.pack_start(no_accounts, False, False, 0)
+        self.child.addWidget(message)
+        self.child.setSpacing(10)
+        self.child.setContentsMargins(30, 0, 30, 60)
 
+        self.insertLayout(0, self.child)
+        self.is_empty = True
+
+    def normal(self):
+        columns = self.base.core.get_registered_columns()
+
+        if self.child:
+            self.clear_layout(self)
+
+        hbox = QHBoxLayout()
+        hbox.setSpacing(0)
+        hbox.setContentsMargins(0, 0, 0, 0)
+
+        self.columns = {}
+        for column in columns:
+            self.columns[column.id_] = StatusesColumn(self.base, column.id_)
+            hbox.addWidget(self.columns[column.id_], 1)
+
+        viewport = QWidget()
+        viewport.setLayout(hbox)
+
+        self.child = QScrollArea()
+        self.child.setWidgetResizable(True)
+        self.child.setWidget(viewport)
+
+        self.addWidget(self.child, 1)
+        self.is_empty = False
+
+    def start_updating(self, column_id):
+        return self.columns[column_id].start_updating()
+
+    def stop_updating(self, column_id, errmsg=None, errtype=None):
+        self.columns[column_id].stop_updating()
+
+    def is_updating(self, column_id):
+        #return self.columns[column_id].updating
+        return False
+
+    def update_column(self, column_id, statuses):
+        self.columns[column_id].update_statuses(statuses)
+        self.stop_updating(column_id)
+        self.base.add_extra_friends_from_statuses(statuses)
+
+    def add_column(self, column_id):
+        if self.is_empty:
+            self.normal()
+        else:
+            viewport = self.child.widget()
+            hbox = viewport.layout()
+            self.columns[column_id] = StatusesColumn(self.base, column_id)
+            hbox.addWidget(self.columns[column_id], 1)
+
+    def remove_column(self, column_id):
+        self.columns[column_id].deleteLater()
+        del self.columns[column_id]
+
+    def mark_status_as_favorite(self, status_id):
+        for id_, column in self.columns.iteritems():
+            column.mark_status_as_favorite(status_id)
+            column.release_status(status_id)
+
+    def unmark_status_as_favorite(self, status_id):
+        for id_, column in self.columns.iteritems():
+            column.unmark_status_as_favorite(status_id)
+            column.release_status(status_id)
+
+    def mark_status_as_repeated(self, status_id):
+        for id_, column in self.columns.iteritems():
+            column.mark_status_as_repeated(status_id)
+            column.release_status(status_id)
+
+    def remove_status(self, status_id):
+        for id_, column in self.columns.iteritems():
+            column.remove_status(status_id)
+
+    def update_conversation(self, status, column_id, status_root_id):
+        for id_, column in self.columns.iteritems():
+            if id_ == column_id:
+                column.update_conversation(status, status_root_id)
+
+    def notify_error(self, column_id, id_, message):
+        self.columns[column_id].notify_error(id_, message)
+
+    def notify_success(self, column_id, id_, message):
+        self.columns[column_id].notify_success(id_, message)
+
+    def notify_warning(self, column_id, id_, message):
+        self.columns[column_id].notify_warning(id_, message)
+
+    def notify_info(self, column_id, id_, message):
+        self.columns[column_id].notify_info(id_, message)

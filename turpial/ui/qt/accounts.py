@@ -1,211 +1,236 @@
 # -*- coding: utf-8 -*-
 
-# GTK account manager for Turpial
-#
-# Author: Wil Alvarez (aka Satanas)
-# Nov 13, 2011
+# Qt account manager for Turpial
 
-from PyQt4 import QtGui
-from PyQt4.QtWebKit import *
-#import gtk
-import logging
-from PyQt4.QtCore import QUrl
-from PyQt4.QtCore import QVariant
-from PyQt4.QtCore import QThread 
-from PyQt4.QtCore import QPropertyAnimation 
+import os
+import sys
+
+from PyQt4.QtGui import QIcon
+from PyQt4.QtGui import QFont
+from PyQt4.QtGui import QMenu
+from PyQt4.QtGui import QStyle
+from PyQt4.QtGui import QAction
+from PyQt4.QtGui import QPixmap
+from PyQt4.QtGui import QDialog
+from PyQt4.QtGui import QListView
+from PyQt4.QtGui import QPushButton
+from PyQt4.QtGui import QHBoxLayout
+from PyQt4.QtGui import QVBoxLayout
+from PyQt4.QtGui import QSizePolicy
+from PyQt4.QtGui import QTextDocument
+from PyQt4.QtGui import QStandardItem
+from PyQt4.QtGui import QAbstractItemView
+from PyQt4.QtGui import QStandardItemModel
+from PyQt4.QtGui import QStyledItemDelegate
+
+from PyQt4.QtCore import Qt
+from PyQt4.QtCore import QSize
+from PyQt4.QtCore import QRect
 
 from turpial.ui.lang import i18n
-from turpial.ui.html import HtmlParser
-from turpial.ui.qt.htmlview import HtmlView
-from turpial.ui.qt.htmlview import FireTrigger 
+from turpial.ui.qt.oauth import OAuthDialog
+from turpial.ui.qt.dialog import ModalDialog
 
-log = logging.getLogger('Qt-AccountsDialog')
+from libturpial.api.models.account import Account
+from libturpial.common.tools import get_protocol_from, get_username_from
 
-class AccountsDialog(QtGui.QDialog):
-    def __init__(self, parent):
-        super(AccountsDialog,self).__init__()
-        self.moveToThread(QThread())
-        
-        self.mainwin = parent
-        self.htmlparser = HtmlParser()
-        self.setWindowTitle("Account Manager")
-        self.resize(365,325)
-        
-        self.container = HtmlView()
-        self.container.action_request.connect(self.__action_request)
-        self.container.link_request.connect(self.__action_request)
+USERNAME_FONT = QFont("Helvetica", 14)
+PROTOCOL_FONT = QFont("Helvetica", 11)
 
-        self.layout = QtGui.QVBoxLayout()
-        self.layout.setContentsMargins(0,0,0,0)
-        self.layout.addWidget(self.container.view)
-        self.setLayout(self.layout)
+class AccountsDialog(ModalDialog):
+    def __init__(self, base):
+        ModalDialog.__init__(self, 380,325)
+        self.base = base
+        self.setWindowTitle(i18n.get('accounts'))
 
-        self.showed = False
-        self.showed = True 
-        self.form = None
-    
-    def __close(self, widget, event=None):
-        self.showed = False
-        self.hide()
-        return True
+        self.list_ = QListView()
+        self.list_.setResizeMode(QListView.Adjust)
+        self.list_.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        account_delegate = AccountDelegate(base)
+        self.list_.setItemDelegate(account_delegate)
+        self.list_.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.list_.clicked.connect(self.__account_clicked)
 
-    def __action_request(self, url):
-        action, args = self.htmlparser.parse_command(url)
-        
-        if action == "close":
-            self.__close(widget)
-        elif action == "new_account":
-            self.setWindowTitle("Create Account")
-            self.resize(290,200)
-            page = self.htmlparser.account_form(self.mainwin.get_protocols_list())
-            self.container.render(page)
+        twitter_menu = QAction(i18n.get('twitter'), self)
+        twitter_menu.setIcon(QIcon(base.load_image('twitter.png', True)))
+        twitter_menu.setToolTip(i18n.get('register_a_twitter_account'))
+        twitter_menu.triggered.connect(self.__register_twitter_account)
 
-        elif action == "save_account":
-            self.mainwin.save_account(args[0], args[1], args[2])
-            self.args = args
+        # TODO: Enable when identi.ca support is ready
+        identica_menu = QAction(i18n.get('identica'), self)
+        identica_menu.setIcon(QIcon(base.load_image('identica.png', True)))
+        identica_menu.setToolTip(i18n.get('register_an_identica_account'))
+        identica_menu.setEnabled(False)
 
-        elif action == "delete_account":
-            self.mainwin.delete_account(args[0])
-        elif action == "login":
-            self.mainwin.single_login(args[0])
+        self.menu = QMenu()
+        self.menu.addAction(twitter_menu)
+        self.menu.addAction(identica_menu)
 
-    def set_account_id(self,account_id):
-        self.account_id = account_id
+        self.new_button = QPushButton(i18n.get('new'))
+        self.new_button.setMenu(self.menu)
+        self.new_button.setToolTip(i18n.get('register_a_new_account'))
 
+        self.delete_button = QPushButton(i18n.get('delete'))
+        self.delete_button.setEnabled(False)
+        self.delete_button.setToolTip(i18n.get('delete_an_existing_account'))
+        self.delete_button.clicked.connect(self.__delete_account)
 
-    def show_about_win(self):
-            self.setWindowTitle("About")
-            self.resize(400,270)
+        self.relogin_button = QPushButton(i18n.get('relogin'))
+        self.relogin_button.setEnabled(False)
+        self.relogin_button.setToolTip(i18n.get('relogin_this_account'))
+        self.relogin_button.clicked.connect(self.__relogin_account)
 
-            page = self.htmlparser.about()
-            self.container.view.setHtml(page)
+        button_box = QHBoxLayout()
+        button_box.addStretch(1)
+        button_box.setSpacing(4)
+        button_box.addWidget(self.new_button)
+        button_box.addWidget(self.delete_button)
+        button_box.addWidget(self.relogin_button)
 
-    def show_auth_win(self,url):
-            self.setWindowTitle("Auth Window")
-            self.resize(800,600)
+        layout = QVBoxLayout()
+        layout.addWidget(self.list_)
+        layout.addLayout(button_box)
+        layout.setSpacing(5)
+        layout.setContentsMargins(5, 5, 5, 0)
+        self.setLayout(layout)
 
-            self.layout.removeItem(self.layout.itemAt(0))
-            self.container.view
-            self.container = HtmlView()
-            self.layout.addWidget(self.container.view)
-            self.container.view.load(QUrl(url))
-            self.container.load_finished.connect(self.read_code)
+        self.__update()
 
-    def read_code(self):
-        code = self.container.view.page().mainFrame().documentElement().findAll('code')
-        if len(code) > 0:
-            for each in code[0].attributeNames():
-                print "attribute:",each
+        self.base.account_deleted.connect(self.__update)
+        self.base.account_loaded.connect(self.__update)
+        self.base.account_registered.connect(self.__update)
 
-            self.resize(370,330)
-            self.mainwin.__oauth_callback(code[0].toPlainText(),self.account_id)
-            self.container.action_request.connect(self.__action_request)
-            self.container.link_request.connect(self.__action_request)
+        self.exec_()
 
-    
-    def update(self):
-        if self.showed:
-            self.resize(365,325)
-            page = self.htmlparser.accounts(self.mainwin.get_all_accounts())
-            self.container.view.setHtml(page)
-    
-    def cancel_login(self, message):
-        if self.form:
-            self.form.cancel(message)
-            return True
-        self.update()
-        return False
-    
-    def done_login(self):
-        if self.form:
-            self.form.done()
-            return True
-        return False
-    
-    def show_now(self):
-        if self.showed:
-            pass
-        else:
-            self.showed = True
-            self.update()
-            self.show()
-            self.resize(365,325)
-    
-    def quit(self):
-        self.destroy()
+    def __update(self):
+        model = QStandardItemModel()
+        self.list_.setModel(model)
+        accounts = self.base.core.get_registered_accounts()
+        count = 0
+        for account in accounts:
+            item = QStandardItem()
+            filepath = os.path.join(self.base.images_path, 'unknown.png')
+            item.setData(filepath, AccountDelegate.AvatarRole)
+            item.setData(get_username_from(account.id_), AccountDelegate.UsernameRole)
+            item.setData(get_protocol_from(account.id_).capitalize(), AccountDelegate.ProtocolRole)
+            item.setData(account.id_, AccountDelegate.IdRole)
+            model.appendRow(item)
+            count += 1
 
-class AccountForm(QtGui.QDialog):
-    def __init__(self, mainwin, parent, user=None, pwd=None, protocol=None):
-        super(AccountForm,self).__init__()
-        
-        self.mainwin = mainwin
-        self.htmlparser = HtmlParser()
-        self.setWindowTitle("Create Account")
-        self.resize(290,200)
-        
-        self.container = HtmlView()
+        self.__enable(True)
+        self.delete_button.setEnabled(False)
+        self.relogin_button.setEnabled(False)
 
-        self.container.action_request.connect(self.__action_request)
-        self.container.link_request.connect(self.__action_request)
+    def __account_clicked(self, point):
+        self.delete_button.setEnabled(True)
+        self.relogin_button.setEnabled(True)
 
-        self.layout = QtGui.QVBoxLayout()
-        self.layout.setContentsMargins(0,0,0,0)
-        self.layout.addWidget(self.container.view)
-        self.setLayout(self.layout)
-        
-        page = self.htmlparser.account_form(self.mainwin.get_protocols_list())
-        self.container.render(page)
-        self.show()
-        self.working = False
-        
-    def __close(self, widget, event=None):
-        if not self.working:
-            self.destroy()
-            return False
-        else:
-            return True
-    
-    def __action_request(self, url):
-        action, args = self.htmlparser.parse_command(url)
-        
-        if action == "close":
-            self.__close(widget)
-        elif action == "save_account":
-            self.working = True
-            self.authwin = AuthForm(self.mainwin,self)
-            self.authwin.show()
-    
-    def cancel(self, message):
-        self.working = False
-        self.container.execute("cancel_login('" + message + "');")
-    
-    def set_loading_message(self, message):
-        pass
-        
-    def done(self):
-        self.working = False
-        self.destroy()
+    def __delete_account(self):
+        self.__enable(False)
+        selection = self.list_.selectionModel()
+        index = selection.selectedIndexes()[0]
+        account_id = str(index.data(AccountDelegate.IdRole).toPyObject())
+        message = i18n.get('delete_account_confirm') % account_id
+        confirmation = self.base.show_confirmation_message(i18n.get('confirm_delete'),
+            message)
+        if not confirmation:
+            self.__enable(True)
+            return
+        self.base.delete_account(account_id)
 
+    def __register_twitter_account(self):
+        self.__enable(False)
+        account = Account.new('twitter')
+        oauth_dialog = OAuthDialog(self, account.request_oauth_access())
+        if oauth_dialog.result() == QDialog.Accepted:
+            pin = oauth_dialog.pin.text()
+            try:
+                account.authorize_oauth_access(pin)
+                self.base.save_account(account)
+            except Exception, e:
+                err_msg = "%s: %s" % (sys.exc_info()[0], sys.exc_info()[1])
+                self.base.show_error_message(i18n.get('register_a_new_account'),
+                    i18n.get('error_registering_new_account'), err_msg)
+                self.__enable(True)
 
+    def __relogin_account(self):
+        self.__enable(False)
+        selection = self.list_.selectionModel()
+        index = selection.selectedIndexes()[0]
+        account_id = str(index.data(AccountDelegate.IdRole).toPyObject())
+        self.base.load_account(account_id)
 
-class AuthForm(QtGui.QDialog):
-    def __init__(self, mainwin, parent, user=None, pwd=None, protocol=None):
-        super(AuthForm,self).__init__()
-        
-        self.mainwin = mainwin
-        self.htmlparser = HtmlParser()
-        self.setWindowTitle("Create Account")
-        self.resize(490,200)
-        
-        self.container = HtmlView()
+    def __enable(self, value):
+        # TODO: Display a loading message/indicator
+        self.list_.setEnabled(value)
+        self.new_button.setEnabled(value)
+        self.delete_button.setEnabled(value)
+        self.relogin_button.setEnabled(value)
 
-        self.layout = QtGui.QVBoxLayout()
-        self.layout.setContentsMargins(0,0,0,0)
-        self.layout.addWidget(self.container.view)
-        self.setLayout(self.layout)
-        
-        self.container.view.load(QUrl("http://www.google.com"))
-        self.show()
-        
-    def load(self,url):
-        self.container.view.load(QUrl(url))
+class AccountDelegate(QStyledItemDelegate):
+    UsernameRole = Qt.UserRole + 100
+    ProtocolRole = Qt.UserRole + 101
+    AvatarRole = Qt.UserRole + 102
+    IdRole = Qt.UserRole + 103
+
+    AVATAR_SIZE = 48
+    BOX_MARGIN = 4
+    TEXT_MARGIN = 0
+
+    def __init__(self, base):
+        QStyledItemDelegate.__init__(self)
+        self.avatar = None
+
+    def sizeHint(self, option, index):
+        height = self.AVATAR_SIZE + (self.BOX_MARGIN * 2)
+        self.size = QSize(option.rect.width(), height)
+        return self.size
+
+    def paint(self, painter, option, index):
+        painter.save()
+
+        selected = False
+        cell_width = self.size.width()
+
+        rect = option.rect
+        rect.width = self.size.width()
+        rect.height = self.size.height()
+        protocol_color = "999"
+        if option.state & QStyle.State_Selected:
+            painter.fillRect(rect, option.palette.highlight())
+            protocol_color = "ddd"
+            selected = True
+
+        # Draw avatar
+        if not self.avatar:
+            avatar_filepath = index.data(self.AvatarRole).toPyObject()
+            self.avatar = QPixmap(avatar_filepath)
+        x = option.rect.left() + self.BOX_MARGIN
+        y = option.rect.top() + self.BOX_MARGIN
+        rect = QRect(x, y, self.AVATAR_SIZE, self.AVATAR_SIZE)
+        painter.drawPixmap(rect, self.avatar)
+
+        # Draw username
+        username_string = index.data(self.UsernameRole).toPyObject()
+        username = QTextDocument()
+        username.setHtml("%s" % username_string)
+        username.setDefaultFont(USERNAME_FONT)
+        #username.setTextWidth(self.__calculate_text_width(width))
+
+        x = option.rect.left() + self.BOX_MARGIN + self.AVATAR_SIZE
+        y = option.rect.top() + self.BOX_MARGIN
+        painter.translate(x, y)
+        if selected:
+            painter.setPen(option.palette.highlightedText().color())
+        username.drawContents(painter)
+
+        # Draw protocol
+        y = username.size().height() + self.TEXT_MARGIN
+        painter.translate(0, y)
+        protocol_string = index.data(self.ProtocolRole).toPyObject()
+        protocol = QTextDocument()
+        protocol.setHtml("<span style='color: #%s;'>%s</span>" % (protocol_color, protocol_string))
+        protocol.setDefaultFont(PROTOCOL_FONT)
+        protocol.drawContents(painter)
+
+        painter.restore()

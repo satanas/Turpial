@@ -2,166 +2,189 @@
 
 # Qt main view for Turpial
 
+import os
 import sys
+import urllib2
+import traceback
 
-# PyQt4 Support:
-from PyQt4 import QtCore, QtGui
-#from PyQt4.QtWebKit import *
+from functools import partial
+
+from PyQt4.QtGui import QMenu
+from PyQt4.QtGui import QImage
+from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QAction
+from PyQt4.QtGui import QPixmap
+from PyQt4.QtGui import QDialog
+from PyQt4.QtGui import QMessageBox
+from PyQt4.QtGui import QVBoxLayout
+from PyQt4.QtGui import QApplication
+from PyQt4.QtGui import QFontDatabase
+
+from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
 
 from turpial import DESC
 from turpial.ui.base import *
+
+from turpial.ui.qt.dock import Dock
 from turpial.ui.qt.tray import TrayIcon
-
-from turpial.ui.qt.worker import Worker
+from turpial.ui.qt.worker import CoreWorker
+from turpial.ui.qt.search import SearchDialog
+from turpial.ui.qt.updatebox import UpdateBox
 from turpial.ui.qt.container import Container
-from turpial.ui.qt.oauthwin import OAuthWindow
+from turpial.ui.qt.profile import ProfileDialog
+from turpial.ui.qt.accounts import AccountsDialog
+from turpial.ui.qt.selectfriend import SelectFriendDialog
+from turpial.ui.qt.imageview import ImageView
+from turpial.ui.qt.queue import QueueDialog
+
+from libturpial.common import ColumnType, get_preview_service_from_url
 
 
-# TODO: Improve all splits for accounts_id with a common function
+# Exceptions
+#{u'errors': [{u'message': u'Sorry, you are not authorized to see this status.', u'code': 179}]}
+#Exception 'id'
 
+class Main(Base, QWidget):
 
-class TimerExecution(object):
-    def __init__(self, function, arg):
-        self.function = function
-        self.arg = arg
+    account_deleted = pyqtSignal()
+    account_loaded = pyqtSignal()
+    account_registered = pyqtSignal()
 
-    def execute(self):
-        self.function(self.arg)
-        return True
+    def __init__(self):
+        self.app = QApplication(sys.argv)
 
+        Base.__init__(self)
+        QWidget.__init__(self)
 
-class function_caller(object):
-    def __init__(self,func,arg):
-        print "inicializando",func,arg
-        self.func = func
-        self.arg = arg
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Ubuntu-L.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Bold.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Regular.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Monda-Regular.ttf'))
 
-    def call(self):
-        print "ejecutando call"
-        self.func(self.arg)
+        database = QFontDatabase()
+        #for f in database.families():
+        #    print f
 
-class function_caller2(object):
-    def __init__(self,func,arg1,arg2):
-        print "inicializando caller2",func,arg1,arg2
-        self.func = func
-        self.arg1 = arg1
-        self.arg2 = arg1
+        self.templates_path = os.path.realpath(os.path.join(
+            os.path.dirname(__file__), 'templates'))
 
-    def call(self):
-        print "ejecutando call"
-        self.func(self.arg1,self.arg2)
-
-
-
-class Main(Base, QtGui.QMainWindow):
-
-    emitter = pyqtSignal(list)
-
-    def __init__(self, core):
-        self.app = QtGui.QApplication(sys.argv)
-
-        Base.__init__(self, core)
-        QtGui.QMainWindow.__init__(self)
-
-        # Configuration
-        self.showed = True
-        self.minimize = 'on'
-        self.is_fullscreen = False
-
-        self.timers = {}
-        self.updating = {}
-        self.columns = {}
-
-        #self.indicator = Indicators()
-        #self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
-        #self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
-
-        self.focus = False
-
-        class eventFilter(QtCore.QObject):
-            def __init__(self, parent):
-                super(eventFilter, self).__init__(parent)
-            def eventFilter(self, object, event):
-                if event.type() == 24:
-                    object.__manage_focus(event, True)
-                if event.type() == 25:
-                    object.__manage_focus(event, False)
-                return False
-
-        #self.filter = eventFilter(self)
-        #self.installEventFilter(self.filter)
-
-
-        self.log = logging.getLogger('Qt')
-        # self.htmlparser = HtmlParser()
         self.setWindowTitle('Turpial')
-
         self.ignore_quit = True
-
-        columns = self.get_all_columns()
-
-        self.resize(310, 480)
-        #self.container = HtmlView()
-        #self.setCentralWidget(self.container.view)
-        #self.container.action_request.connect(self._action_request)
-        #self.container.link_request.connect(self._link_request)
-
-        # TODO: Improve the use of this mode
-        self.mode = 0
-
-        # self.screen_width = self.get_screen().get_width()
-        self.screen_width = 310
-        self.max_columns = self.screen_width / MIN_WINDOW_WIDTH
-
-        # Configuration
+        self.resize(320, 480)
         self.showed = True
-        self.minimize = 'on'
-
         self.timers = {}
-        self.newtimers = []
-        self.alltimers = []
-        self.updating = {}
-        self.columns = {}
+        self.extra_friends = []
 
-        # self.sound = Sound()
-        # self.notify = Notification()
+        self.update_box = UpdateBox(self)
+        self.profile = ProfileDialog(self)
+        self.profile.options_clicked.connect(self.show_profile_menu)
+        self.image_view = ImageView(self)
+        self.queue_dialog = QueueDialog(self)
 
-        self.openstatuses = {}
+        self.core = CoreWorker()
+        self.core.status_updated.connect(self.after_update_status)
+        self.core.status_broadcasted.connect(self.after_broadcast_status)
+        self.core.status_repeated.connect(self.after_repeat_status)
+        self.core.status_deleted.connect(self.after_delete_status)
+        self.core.message_deleted.connect(self.after_delete_message)
+        self.core.message_sent.connect(self.after_send_message)
+        self.core.column_updated.connect(self.after_update_column)
+        self.core.account_saved.connect(self.after_save_account)
+        self.core.account_loaded.connect(self.after_load_account)
+        self.core.account_deleted.connect(self.after_delete_account)
+        self.core.column_saved.connect(self.after_save_column)
+        self.core.column_deleted.connect(self.after_delete_column)
+        self.core.status_marked_as_favorite.connect(self.after_marking_status_as_favorite)
+        self.core.status_unmarked_as_favorite.connect(self.after_unmarking_status_as_favorite)
+        self.core.fetched_user_profile.connect(self.after_get_user_profile)
+        self.core.urls_shorted.connect(self.update_box.after_short_url)
+        self.core.media_uploaded.connect(self.update_box.after_upload_media)
+        self.core.friends_list_updated.connect(self.update_box.update_friends_list)
+        self.core.user_muted.connect(self.after_mute_user)
+        self.core.user_unmuted.connect(self.after_unmute_user)
+        self.core.user_blocked.connect(self.after_block_user)
+        self.core.user_reported_as_spam.connect(self.after_report_user_as_spam)
+        self.core.user_followed.connect(self.after_follow_user)
+        self.core.user_unfollowed.connect(self.after_unfollow_user)
+        self.core.status_from_conversation.connect(self.after_get_status_from_conversation)
+        self.core.fetched_profile_image.connect(self.after_get_profile_image)
+        self.core.fetched_avatar.connect(self.update_profile_avatar)
+        self.core.fetched_image_preview.connect(self.after_get_image_preview)
+        self.core.status_pushed_to_queue.connect(self.after_push_status_to_queue)
+        self.core.status_poped_from_queue.connect(self.after_pop_status_from_queue)
+        self.core.status_posted_from_queue.connect(self.after_post_status_from_queue)
+        self.core.status_deleted_from_queue.connect(self.after_delete_status_from_queue)
+        self.core.queue_cleared.connect(self.after_clear_queue)
+        self.core.exception_raised.connect(self.on_exception)
 
-        #self.worker = Worker(self.emitter)
-        #self.emitter.connect(self.__timeout_callback)
-        #self.worker.start()
-
-        # Persistent dialogs
-        #self.accountsdlg = AccountsDialog(self)
-        #self.accountsdlg.update()
-
-        self.tray = TrayIcon(self)
-        self.tray.activated.connect(self.__on_tray_click)
+        self.core.start()
 
         self._container = Container(self)
 
-        #central_widget = QWidget()
-        #self._container.add
-        #self.setCentralWidget(self._container)
+        self.dock = Dock(self)
+        self.dock.empty()
 
+        self.dock.accounts_clicked.connect(self.show_accounts_dialog)
+        self.dock.columns_clicked.connect(self.show_column_menu)
+        self.dock.search_clicked.connect(self.show_search_dialog)
+        self.dock.updates_clicked.connect(self.show_update_box)
+        self.dock.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
+        self.dock.queue_clicked.connect(self.show_queue_dialog)
 
-    #================================================================
-    # Tray icon
-    #================================================================
+        self.tray = TrayIcon(self)
+        self.tray.toggled.connect(self.toggle_tray_icon)
+        self.tray.updates_clicked.connect(self.show_update_box)
+        self.tray.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
 
-    def __on_tray_click(self):
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addLayout(self._container, 1)
+        layout.addWidget(self.dock)
+        layout.setMargin(0)
+
+        self.setLayout(layout)
+        self.set_queue_timer()
+
+    def __open_in_browser(self, url):
+        browser = self.core.get_default_browser()
+
+        if browser != '':
+            cmd = browser.split(' ')
+            cmd.append(url)
+            subprocess.Popen(cmd)
+        else:
+            webbrowser.open(url)
+
+    def toggle_tray_icon(self):
         if self.showed:
             self.showed = False
             self.hide()
         else:
             self.showed = True
             self.show()
+            self.raise_()
+
+    def add_extra_friends_from_statuses(self, statuses):
+        current_friends_list = self.load_friends_list()
+        for status in statuses:
+            for user in status.get_mentions():
+                if user not in current_friends_list and user not in self.extra_friends:
+                    self.extra_friends.append(user)
+
+    def closeEvent(self, event=None):
+        if event:
+            event.ignore()
+        self.main_quit()
 
     #================================================================
     # Overrided methods
     #================================================================
+
+    def start(self):
+        #if self.core.play_sounds_in_login():
+        #    self.sound.login()
+        print 'start'
 
     def main_loop(self):
         try:
@@ -170,13 +193,6 @@ class Main(Base, QtGui.QMainWindow):
             sys.exit(0)
 
     def main_quit(self, widget=None, force=False):
-        self.log.debug('Exiting...')
-        self.unitylauncher.quit()
-        #self.worker.quit()
-        #self.worker.join()
-        #self.avatars_worker.quit()
-        #self.avatars_worker.join()
-        #if widget:
         self.app.quit()
         sys.exit(0)
 
@@ -185,354 +201,489 @@ class Main(Base, QtGui.QMainWindow):
         self.show()
         self.update_container()
 
+    #================================================================
+    # Main methods
+    #================================================================
+
+    def show_error_message(self, title, message, error):
+        full_message = "%s (%s)" % (message, error)
+        message = QMessageBox.critical(self, title, full_message, QMessageBox.Ok)
+
+    def show_confirmation_message(self, title, message):
+        confirmation = QMessageBox.question(self, title, message,
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if confirmation == QMessageBox.No:
+            return False
+        return True
+
+    def show_about_dialog(self):
+        QMessageBox.about(self, 'Turpial', i18n.get('about_description'))
+
+    def save_account(self, account):
+        self.core.save_account(account)
+
+    def load_account(self, account_id):
+        self.core.load_account(account_id)
+
+    def delete_account(self, account_id):
+        self.core.delete_account(account_id)
+
+    def add_column(self, column_id):
+        self.core.save_column(column_id)
+
+    def add_search_column(self, account_id, criteria):
+        column_id = "%s-%s:%s" % (account_id, ColumnType.SEARCH, urllib2.quote(criteria))
+        self.add_column(column_id)
+
+    def get_column_from_id(self, column_id):
+        columns = self.core.get_registered_columns()
+        for column in columns:
+            if column_id == column.id_:
+                return column
+        return None
+
+    def get_shorten_url_service(self):
+        return self.core.get_shorten_url_service()
+
+    def get_upload_media_service(self):
+        return self.core.get_upload_media_service()
+
+    def load_friends_list(self):
+        return self.core.load_friends_list()
+
+    def load_friends_list_with_extras(self):
+        return self.extra_friends + self.core.load_friends_list()
+
+    def open_url(self, url):
+        preview_service = get_preview_service_from_url(url)
+        if preview_service:
+            self.core.get_image_preview(preview_service, url)
+            self.image_view.start_loading()
+        else:
+            self.__open_in_browser(url)
+
     def load_image(self, filename, pixbuf=False):
         img_path = os.path.join(self.images_path, filename)
         if pixbuf:
-            return QtGui.QPixmap(img_path)
-        return QtGui.QImage(img_path)
+            return QPixmap(img_path)
+        return QImage(img_path)
 
     def get_image_path(self, filename):
         return os.path.join(self.images_path, filename)
 
-    def login(self, account_id):
-        pass
+    def update_dock(self):
+        accounts = self.core.get_registered_accounts()
+        columns = self.core.get_registered_columns()
+
+        if len(columns) == 0:
+            if len(accounts) == 0:
+                self.dock.empty(False)
+            else:
+                self.dock.normal()
+        else:
+            self.dock.normal()
 
     def update_container(self):
-        columns = self.get_registered_columns()
+        accounts = self.core.get_registered_accounts()
+        columns = self.core.get_registered_columns()
+
         if len(columns) == 0:
-            self._container.empty()
-            #self.dock.empty()
+            if len(accounts) == 0:
+                self._container.empty(False)
+                self.dock.empty(False)
+            else:
+                self._container.empty(True)
+                self.dock.normal()
             self.tray.empty()
         else:
-            self._container.empty()
-            #self._container.normal(self.get_accounts_list(), columns)
-            #self.dock.normal()
+            self._container.normal()
+            self.dock.normal()
             self.tray.normal()
+            for column in columns:
+                self.download_stream(column)
+                self.add_timer(column)
+            self.fetch_friends_list()
 
+    def show_accounts_dialog(self):
+        accounts = AccountsDialog(self)
 
+    def build_columns_menu(self):
+        columns_menu = QMenu(self)
 
-'''
-    def closeEvent(self, event):
-        if self.unitylauncher.is_supported():
-            self.showMinimized()
+        available_columns = self.core.get_available_columns()
+        accounts = self.core.get_all_accounts()
+
+        if len(accounts) == 0:
+            empty_menu = QAction(i18n.get('no_registered_accounts'), self)
+            empty_menu.setEnabled(False)
+            columns_menu.addAction(empty_menu)
         else:
-            self.hide()
-        print self.ignore_quit
-        if self.ignore_quit:
-            event.ignore()
+            for account in accounts:
+                name = "%s (%s)" % (account.username, i18n.get(account.protocol_id))
+                account_menu = QAction(name, self)
 
-    def show_about(self):
-        about = About(self)
+                if len(available_columns[account.id_]) > 0:
+                    available_columns_menu = QMenu(self)
+                    for column in available_columns[account.id_]:
+                        item = QAction(column.slug, self)
+                        if column.__class__.__name__ == 'List':
+                            #FIXME: Uncomment this after fixing the error with get_list_id in libturpial
+                            #column_id = "-".join([account.id_, column.id_])
+                            #item.triggered.connect(partial(self.add_column, column_id))
+                            continue
+                        else:
+                            item.triggered.connect(partial(self.add_column, column.id_))
+                        available_columns_menu.addAction(item)
 
-    def show_preferences(self, widget=None):
-        pref = Preferences(self)
+                    account_menu.setMenu(available_columns_menu)
+                else:
+                    account_menu.setEnabled(False)
+                columns_menu.addAction(account_menu)
 
-    def show_accounts_dialog(self, widget=None):
-        #self.accountsdlg.show()
-        pass
+        return columns_menu
 
-    def show_update_box(self, widget=None):
-        self.container.execute("show_update_box()")
+    def show_column_menu(self, point):
+        self.columns_menu = self.build_columns_menu()
+        self.columns_menu.exec_(point)
 
-    def show_update_box_for_direct(self, widget=None):
-        self.container.execute("show_autocomplete_for_direct()")
+    def show_search_dialog(self):
+        search = SearchDialog(self)
+        if search.result() == QDialog.Accepted:
+            account_id = str(search.get_account().toPyObject())
+            criteria = str(search.get_criteria())
+            self.add_search_column(account_id, criteria)
 
-    def __size_request(self, widget, rectangle):
-        width = rectangle.width
-        columns = len(self.core.all_registered_columns())
-        preferred_width = MIN_WINDOW_WIDTH * columns
-        if width < preferred_width:
-            width = preferred_width
-        self.save_window_geometry(width, rectangle.height)
+    def show_update_box(self):
+        self.update_box.show()
 
-    def __link_request(self, url):
-        import webbrowser
-        webbrowser.open(str(url)[1:])
-        #self.open_url(url.toString())
+    def show_update_box_for_reply(self, account_id, status):
+        self.update_box.show_for_reply(account_id, status)
 
-    def __on_trayicon_click(self, widget):
-        if self.showed:
-            self.showed = False
-            self.hide()
+    def show_update_box_for_quote(self, account_id, status):
+        self.update_box.show_for_quote(account_id, status)
+
+    def show_update_box_for_send_direct(self, account_id, username):
+        self.update_box.show_for_send_direct(account_id, username)
+
+    def show_update_box_for_reply_direct(self, account_id, status):
+        self.update_box.show_for_reply_direct(account_id, status)
+
+    def show_profile_dialog(self, account_id, username):
+        self.profile.start_loading(username)
+        self.core.get_user_profile(account_id, username)
+
+    def show_profile_menu(self, point, profile):
+        self.profile_menu = QMenu(self)
+
+        if profile.following:
+            unfollow_menu = QAction(i18n.get('unfollow'), self)
+            unfollow_menu.triggered.connect(partial(self.unfollow, profile.account_id,
+                profile.username))
+            message_menu = QAction(i18n.get('send_direct_message'), self)
+            message_menu.triggered.connect(partial(
+                self.show_update_box_for_send_direct, profile.account_id, profile.username))
+            self.profile_menu.addAction(unfollow_menu)
+            self.profile_menu.addSeparator()
+            self.profile_menu.addAction(message_menu)
+        elif profile.follow_request:
+            follow_menu = QAction(i18n.get('follow_requested'), self)
+            follow_menu.setEnabled(False)
+            self.profile_menu.addAction(follow_menu)
+            self.profile_menu.addSeparator()
         else:
-            self.showed = True
-            self.show()
+            follow_menu = QAction(i18n.get('follow'), self)
+            follow_menu.triggered.connect(partial(self.follow, profile.account_id,
+                profile.username))
+            self.profile_menu.addAction(follow_menu)
+            self.profile_menu.addSeparator()
 
-    def __on_main_indicator_clicked(self, indicator):
-        self.showed = True
-        self.show()
-        self.present()
-
-    def __on_indicator_clicked(self, indicator, data):
-        self.indicator.clean()
-        self.__on_main_indicator_clicked(indicator)
-
-    def _eventFilter__manage_focus(self, event, focus):
-        self.focus = focus
-        if not self.focus:
-            return
-        self.unitylauncher.set_count_visible(False)
-        self.unitylauncher.set_count(0)
-
-    def __on_key_press(self, widget, event):
-        """keyname = gtk.gdk.keyval_name(event.keyval)
-        if (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'n':
-            self.show_update_box()
-            return True
-        return False"""
-        pass
-
-    def _link_request(self, url):
-        self.on_link_request(url)
-
-    def _action_request(self, url):
-        self.on_action_request(url)
-
-    def __show_tray_menu(self, widget, button, activate_time):
-        """menu = gtk.Menu()
-        tweet = gtk.MenuItem(i18n.get('tweet'))
-        follow = gtk.MenuItem(i18n.get('follow'))
-        exit_ = gtk.MenuItem(i18n.get('exit'))
-        if self.mode == 2:
-            menu.append(tweet)
-            menu.append(follow)
-            menu.append(gtk.SeparatorMenuItem())
-        menu.append(exit_)
-
-        exit_.connect('activate', self.main_quit)
-        #tweet.connect('activate', self.__show_update_box_from_menu)
-        #follow.connect('activate', self.__show_follow_box_from_menu)
-
-        menu.show_all()
-        menu.popup(None, None, None, button, activate_time)"""
-        pass
-
-    def __show_add_column_menu(self):
-        self.menu = QtGui.QMenu("yay") 
-
-        #empty = True
-        twitter_public_acc = None
-        identica_public_acc = None
-        accounts = self.get_all_accounts()
-        columns = self.get_all_columns()
-        reg_columns = self.get_registered_columns()
-        self.functions = []
-        self.temps = []
-
-        for acc in accounts:
-            if acc.protocol_id == 'twitter' and twitter_public_acc is None:
-                twitter_public_acc = acc.id_
-            if acc.protocol_id == 'identica' and identica_public_acc is None:
-                identica_public_acc = acc.id_
-            name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
-
-            self.temp = QtGui.QMenu(name)
-            self.temps.append(self.temp)
-
-            if acc.logged_in:
-                temp_menu = QtGui.QMenu()
-                for key, col in columns[acc.id_].iteritems():
-                    f = function_caller(self.__add_column,col.build_id())
-                    self.functions.append(f)
-                    self.temp.addAction(key,self.functions[-1].call)
-            else:
-                pass
-            self.menu.addMenu(self.temps[-1])
-            empty = False
-
-        self.public_tl = QtGui.QMenu(i18n.get('public_timeline'))
-        self.public_tl_menu = QtGui.QMenu("menu")
-
-        if twitter_public_acc:
-            public_acc = twitter_public_acc + '-public'
-            self.public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
-
-        if identica_public_acc:
-            public_acc = identica_public_acc + '-public'
-            self.public_tl_menu.addAction(i18n.get('twitter'),self.__add_column,public_acc)
-
-
-        self.public_tl.addMenu(self.public_tl_menu)
-
-        self.menu.addMenu(self.public_tl)
-        self.menu.popup(QtGui.QCursor.pos())
-
-    def __add_column(self,column_id):
-        return self.save_column(column_id)
-
-    def __close(self, widget, event=None):
-        if self.core.minimize_on_close():
-            self.showed = False
+        if self.core.is_muted(profile.username):
+            mute_menu = QAction(i18n.get('unmute'), self)
+            mute_menu.triggered.connect(partial(self.unmute, profile.username))
         else:
-            self.main_quit(widget)
-        return True
+            mute_menu = QAction(i18n.get('mute'), self)
+            mute_menu.triggered.connect(partial(self.mute, profile.username))
 
-    def __timeout_callback(self, l):
-        funct, arg, user_data = l
-        if user_data:
-            funct(arg,user_data)
-            pass
-        else:
-            funct(arg)
-            pass
+        block_menu = QAction(i18n.get('block'), self)
+        block_menu.triggered.connect(partial(self.block, profile.account_id, profile.username))
+        spam_menu = QAction(i18n.get('report_as_spam'), self)
+        spam_menu.triggered.connect(partial(self.report_as_spam, profile.account_id,
+            profile.username))
 
-    def _login_callback(self, arg, account_id):
-        if arg.code > 0:
-            msg = arg.errmsg
-            self.show_notice(msg, 'error')
-            self.accountsdlg.cancel_login(msg)
-            return
+        self.profile_menu.addAction(mute_menu)
+        self.profile_menu.addAction(block_menu)
+        self.profile_menu.addAction(spam_menu)
 
-        auth_obj = arg.items
-        if auth_obj.must_auth():
-            #self.accountsdlg.show()
-            #self.accountsdlg.set_account_id(account_id)
-            #self.accountsdlg.show_auth_win(auth_obj.url)
-            pass
-        else:
-            self.__auth_callback(arg, account_id, False)
+        self.profile_menu.exec_(point)
 
-    def _AccountsDialog__oauth_callback(self, verifier, account_id):
-        self.__oauth_callback(verifier,account_id)
+    def show_friends_dialog_for_direct_message(self):
+        friend = SelectFriendDialog(self)
+        if friend.get_username():
+            self.show_update_box_for_send_direct(friend.get_account(), friend.get_username())
 
-    def __oauth_callback(self, verifier, account_id):
-        self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
+    def update_status(self, account_id, message, in_reply_to_id=None):
+        self.core.update_status(account_id, message, in_reply_to_id)
 
-    def __cancel_callback(self, widget, reason, account_id):
-        self.delete_account(account_id)
-        #self.accountsdlg.cancel_login(i18n.get(reason))
+    def broadcast_status(self, message):
+        accounts = []
+        for account in self.core.get_registered_accounts():
+            accounts.append(account.id_)
+        self.core.broadcast_status(accounts, message)
 
-    def __auth_callback(self, arg, account_id, register = True):
-        if arg.code > 0:
-            msg = arg.errmsg
-            self.show_notice(msg, 'error')
-            #self.accountsdlg.cancel_login(msg)
-        else:
-            self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
+    def repeat_status(self, column_id, account_id, status):
+        self.core.repeat_status(column_id, account_id, status.id_)
 
-    def __done_callback(self, arg, userdata):
-        (account_id, register) = userdata
+    def delete_status(self, column_id, account_id, status):
+        self.core.delete_status(column_id, account_id, status.id_)
 
-        if arg.code > 0:
-            self.core.change_login_status(account_id, LoginStatus.NONE)
-            msg = arg.errmsg
-            #self.accountsdlg.cancel_login(msg)
-            self.show_notice(msg, 'error')
-        else:
-            if register:
-                account_id = self.core.name_as_id(account_id)
+    def delete_direct_message(self, column_id, account_id, status):
+        self.core.delete_direct_message(column_id, account_id, status.id_)
 
-            #self.accountsdlg.done_login()
-            #self.accountsdlg.update()
+    def send_direct_message(self, account_id, username, message):
+        self.core.send_direct_message(account_id, username, message)
 
-            response = self.core.get_own_profile(account_id)
-            if response.code > 0:
-                self.show_notice(response.errmsg, 'error')
-            else:
-                pass
+    def mark_status_as_favorite(self, column_id, account_id, status):
+        self.core.mark_status_as_favorite(column_id, account_id, status.id_)
 
-            registered_var = self.get_registered_columns()
-                
-            for col in registered_var:
-                if col.account_id == account_id:
-                    self.download_stream(col, True)
-                    self.__add_timer(col)
-            self.resize(300*len(registered_var),480)
+    def unmark_status_as_favorite(self, column_id, account_id, status):
+        self.core.unmark_status_as_favorite(column_id, account_id, status.id_)
+
+    def short_urls(self, message):
+        self.core.short_urls(message)
+
+    def upload_media(self, account_id, filename):
+        self.core.upload_media(account_id, filename)
+
+    def fetch_friends_list(self):
+        self.core.get_friends_list()
+
+    def mute(self, username):
+        self.core.mute(username)
+
+    def unmute(self, username):
+        self.core.unmute(username)
+
+    def block(self, account_id, username):
+        self.core.block(account_id, username)
+
+    def report_as_spam(self, account_id, username):
+        self.core.report_as_spam(account_id, username)
+
+    def follow(self, account_id, username):
+        self.core.follow(account_id, username)
+
+    def unfollow(self, account_id, username):
+        self.core.unfollow(account_id, username)
+
+    def get_conversation(self, account_id, status, column_id, status_root_id):
+        self.core.get_status_from_conversation(account_id, status.in_reply_to_id, column_id,
+            status_root_id)
+
+    def show_profile_image(self, account_id, username):
+        self.image_view.start_loading()
+        self.core.get_profile_image(account_id, username)
+
+    def push_status_to_queue(self, account_id, message):
+        self.core.push_status_to_queue(account_id, message)
+
+    def update_status_from_queue(self, args=None):
+        self.core.pop_status_from_queue()
+
+    def delete_message_from_queue(self, index):
+        self.core.delete_status_from_queue(index)
+
+    def clear_queue(self):
+        self.core.clear_statuses_queue()
+
+    def show_queue_dialog(self):
+        self.queue_dialog.show()
+
+    #================================================================
+    # Hooks definitions
+    #================================================================
+
+    def after_save_account(self):
+        self.account_registered.emit()
+        self.update_dock()
+
+    def after_load_account(self):
+        self.account_loaded.emit()
+
+    def after_delete_account(self):
+        self.account_deleted.emit()
+
+    def after_delete_column(self, column_id):
+        column_id = str(column_id)
+        self._container.remove_column(column_id)
+        self.remove_timer(column_id)
+
+        columns = self.core.get_registered_columns()
+        if len(columns) == 0:
+            self.update_container()
+
+    def after_save_column(self, column_id):
+        column_id = str(column_id)
+        self._container.add_column(column_id)
+        column = self.get_column_from_id(column_id)
+        self.download_stream(column)
+        self.add_timer(column)
+
+    def after_update_column(self, arg, data):
+        column, max_ = data
+
+        # Notifications
+        # FIXME
+        count = len(arg)
+
+        if count > 0:
+            self._container.update_column(column.id_, arg)
+
+    def after_update_status(self, response, account_id):
+        self.update_box.done()
+
+    def after_broadcast_status(self, response):
+        self.update_box.done()
+
+    def after_repeat_status(self, response, column_id, account_id):
+        self._container.mark_status_as_repeated(response.id_)
+        self._container.notify_success(str(column_id), response.id_, i18n.get('status_repeated'))
+
+    def after_delete_status(self, response, column_id, account_id):
+        self._container.remove_status(response.id_)
+        self._container.notify_success(str(column_id), response.id_, i18n.get('status_deleted'))
+
+    def after_delete_message(self, response, column_id, account_id):
+        self._container.remove_status(response.id_)
+        self._container.notify_success(str(column_id), response.id_, i18n.get('direct_message_deleted'))
+
+    def after_send_message(self, response, account_id):
+        self.update_box.done()
+
+    def after_marking_status_as_favorite(self, response, column_id, account_id):
+        self._container.mark_status_as_favorite(response.id_)
+        self._container.notify_success(str(column_id), response.id_,
+            i18n.get('status_marked_as_favorite'))
 
 
-    def __add_timer(self, column):
-        interval = self.core.get_update_interval()
-        self.log.debug('--Creating timer for %s every %i min' % (column.id_, interval))
-        self.timer = TimerExecution(self.download_stream,column) 
-        self.ctimer = QtCore.QTimer()
-        self.newtimers.append(self.timer)
-        self.ctimer.timeout.connect(self.newtimers[-1].execute)
-        self.ctimer.start(int(interval*1000*60))
-        self.alltimers.append(self.ctimer)
+    def after_unmarking_status_as_favorite(self, response, column_id, account_id):
+        self._container.unmark_status_as_favorite(response.id_)
+        self._container.notify_success(str(column_id), response.id_,
+            i18n.get('status_removed_from_favorites'))
 
-        self.log.debug('--Created timer for %s every %i min (%f) msec' % (column.id_, interval,interval*1000*60))
+    def after_get_user_profile(self, response, account_id):
+        self.profile.loading_finished(response, account_id)
+        self.core.get_avatar_from_status(response)
 
-    def __remove_timer(self, column_id):
-        if self.timers.has_key(column_id):
-            self.log.debug('--Removed timer for %s' % column_id)
+    def after_mute_user(self, response):
+        print "User %s muted" % response
 
+    def after_unmute_user(self, response):
+        print "User %s unmuted" % response
 
-    def show_about(self):
-        #self.accountsdlg.show()
-        #self.accountsdlg.show_about_win()
-        pass
+    def after_block_user(self, response):
+        print "User %s blocked" % response.username
 
-    def show_preferences(self):
-        pref = Preferences(self)
+    def after_report_user_as_spam(self, response):
+        print "User %s reported" % response.username
 
-    # ------------------------------------------------------------
-    # Callbacks
-    # ------------------------------------------------------------
+    def after_follow_user(self, response):
+        # TODO: OS Notification
+        print "User %s followed" % response.username
+        self.profile.update_following(response.username, True)
 
+    def after_unfollow_user(self, response):
+        # TODO: OS Notification
+        print "User %s unfollowed" % response.username
+        self.profile.update_following(response.username, False)
 
+    def after_get_status_from_conversation(self, response, column_id, status_root_id):
+        self._container.update_conversation(response, column_id, status_root_id)
+        if response.in_reply_to_id:
+            self.core.get_status_from_conversation(response.account_id, response.in_reply_to_id,
+                column_id, status_root_id)
 
+    def after_get_profile_image(self, image_path):
+        self.image_view.loading_finished(str(image_path))
 
-    def profile_image_response(self, response):
-        if response.code > 0:
-            self.container.execute('hide_imageview(); show_notice("' + response.errmsg + '", "error");')
-        else:
-            pix = self.load_image(response.items, True)
-            width = pix.width()
-            height = pix.height()
-            del pix
-            cmd = "update_imageview('%s',%s,%s);" % (response.items, width, height)
-            self.container.execute(cmd)
+    def update_profile_avatar(self, image_path, username):
+        self.profile.update_avatar(str(image_path), str(username))
 
-    def show_media_response(self, response):
-        if response.err:
-            self.container.execute('hide_imageview(); show_notice("' + response.errmsg + '", "error");')
-        else:
-            content_obj = response.response
-            if content_obj.is_image():
-                content_obj.save_content()
-                #pix = gtk.gdk.pixbuf_new_from_file(content_obj.path)
-                pix = QtGui.QPixmap(content_obj.path) 
-                cmd = "update_imageview('%s',%s,%s);" % (
-                    content_obj.path, pix.get_width(), pix.get_height())
-                del pix
-            elif content_obj.is_video() or content_obj.is_map():
-                cmd = "update_videoview('%s',%s,%s);" % (
-                    content_obj.path, content_obj.info['width'], content_obj.info['height'])
-            self.container.execute(cmd)
+    def after_get_image_preview(self, response):
+        self.image_view.loading_finished(str(response.path))
+
+    def after_push_status_to_queue(self, account_id):
+        self.update_box.done()
+        self.queue_dialog.update()
+        # TODO: OS Notification
+
+    def after_pop_status_from_queue(self, status):
+        if status:
+            self.core.post_status_from_queue(status.account_id, status.text)
+
+    def after_post_status_from_queue(self, response, account_id):
+        print '++Posted queue message'
+        self.queue_dialog.update()
+        # TODO: OS Notification
+
+    def after_delete_status_from_queue(self):
+        self.queue_dialog.update()
+
+    def after_clear_queue(self):
+        self.queue_dialog.update()
+
+    def on_exception(self, exception):
+        print 'Exception', exception
 
     # ------------------------------------------------------------
     # Timer Methods
     # ------------------------------------------------------------
 
-    def download_stream(self, column, notif=True):
-        for each in self.alltimers:
-            print each, each.isActive()
+    def add_timer(self, column):
+        self.remove_timer(column.id_)
 
+        interval = self.core.get_update_interval() * 60 * 1000
+        timer = Timer(interval, column, self.download_stream)
+        self.timers[column.id_] = timer
+        print '--Created timer for %s every %i sec' % (column.id_, interval)
 
-        if self.updating.has_key(column.id_):
-            if self.updating[column.id_]:
-                return True
-        else:
-            self.updating[column.id_] = True
+    def remove_timer(self, column_id):
+        if self.timers.has_key(column_id):
+            self.timers[column_id].stop()
+            del self.timers[column_id]
+            print '--Removed timer for %s' % column_id
 
-        if not self.columns.has_key(column.id_):
-            self.columns[column.id_] = {'last_id': None}
+    def download_stream(self, column):
+        print 'updating %s' % column
+        if self._container.is_updating(column.id_):
+            return True
 
-        last_id = self.columns[column.id_]['last_id']
-        num_statuses = self.core.get_max_statuses_per_column()
-        self.container.execute("start_updating_column('" + column.id_ + "');")
-        self.worker.register(self.core.get_column_statuses, (column.account_id,
-            column.column_name, num_statuses, last_id), self.update_column, 
-            (column, notif, num_statuses))
-#        rtn = self.core.get_column_statuses(column.account_id,column.column_name,num_statuses)
-#        self.update_column(rtn, (column, notif, num_statuses))
+        last_id = self._container.start_updating(column.id_)
+        self.core.get_column_statuses(column, last_id)
         return True
 
-    def refresh_column(self, column_id):
-        for col in self.get_registered_columns():
-            if col.build_id() == column_id:
-                self.download_stream(col)
+    def set_queue_timer(self):
+        self.remove_timer('queue')
 
-    def is_active(self):
-        return self.focus
-'''
+        interval = self.core.get_queue_interval() * 60 * 1000
+        timer = Timer(interval, None, self.update_status_from_queue)
+        self.timers['queue'] = timer
+        self.queue_dialog.update()
+        print '--Created timer for queue every %i sec' % interval
+
+class Timer:
+    def __init__(self, interval, column, callback):
+        self.interval = interval
+        self.column = column
+        self.callback = callback
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.__on_timeout)
+        self.timer.start(interval)
+
+    def __on_timeout(self):
+        self.callback(self.column)
+
+    def get_id(self):
+        return self.timer.timerId()
+
+    def stop(self):
+        self.timer.stop()

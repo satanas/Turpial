@@ -227,6 +227,11 @@ class ProfileDialog(QWidget):
             return
         self.avatar.setPixmap(self.base.load_image(image_path, True))
 
+    def update_following(self, username, following):
+        if username != self.profile.username or not self.showed:
+            return
+        self.profile.following = following
+
 
 class UserInfoBox(QVBoxLayout):
     def __init__(self, base, title, image, text=None, text_as_link=False):

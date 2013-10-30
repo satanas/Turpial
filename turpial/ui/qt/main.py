@@ -587,10 +587,14 @@ class Main(Base, QWidget):
         print "User %s reported" % response.username
 
     def after_follow_user(self, response):
+        # TODO: OS Notification
         print "User %s followed" % response.username
+        self.profile.update_following(response.username, True)
 
     def after_unfollow_user(self, response):
+        # TODO: OS Notification
         print "User %s unfollowed" % response.username
+        self.profile.update_following(response.username, False)
 
     def after_get_status_from_conversation(self, response, column_id, status_root_id):
         self._container.update_conversation(response, column_id, status_root_id)

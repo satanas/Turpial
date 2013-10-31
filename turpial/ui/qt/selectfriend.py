@@ -42,8 +42,8 @@ class SelectFriendDialog(ModalDialog):
 
         friend_caption = "%s (@)" % i18n.get('friend')
         form = QFormLayout()
-        form.addRow(i18n.get('account'), self.accounts_combo)
         form.addRow(friend_caption, self.friend)
+        form.addRow(i18n.get('account'), self.accounts_combo)
         form.setContentsMargins(30, 10, 10, 5)
         form.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
 

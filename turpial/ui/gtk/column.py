@@ -2,6 +2,7 @@
 
 # GTK3 widget to implement columns in Turpial
 
+import pdb
 import time
 import urllib2
 
@@ -199,6 +200,7 @@ class StatusesColumn(Gtk.VBox):
         self._list.get_model().clear()
 
     def start_updating(self):
+        pdb.set_trace()
         self.spinner.start()
         self.spinner.show()
         self.btn_config.hide()
@@ -206,12 +208,14 @@ class StatusesColumn(Gtk.VBox):
         return self.last_id
 
     def stop_updating(self):
+        pdb.set_trace()
         self.spinner.stop()
         self.spinner.hide()
         self.btn_config.show()
         self.updating = False
 
     def update(self, statuses):
+        pdb.set_trace()
         num_to_del = 0
         num_new_statuses = len(statuses)
         num_curr_statuses = len(self.status_ref)

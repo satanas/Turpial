@@ -57,6 +57,9 @@ class CoreWorker(QThread):
         self.core = Core()
 
         self.queue_path = os.path.join(self.core.config.basedir, 'queue')
+        if not os.path.isfile(self.queue_path):
+            open(self.queue_path, 'w').close()
+
 
     #def __del__(self):
     #    self.wait()

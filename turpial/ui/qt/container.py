@@ -57,7 +57,7 @@ class Container(QVBoxLayout):
             text = "%s <a href='cmd:add_columns'>%s</a>" % (i18n.get('you_have_accounts_registered'),
                 i18n.get('add_some_columns'))
         else:
-            text = "<a href='cmd:add_accounts'>%s</a> %s" & (i18n.get('add_new_account'),
+            text = "<a href='cmd:add_accounts'>%s</a> %s" % (i18n.get('add_new_account'),
                 i18n.get('to_start_using_turpial'))
         message.setText(text)
         message.linkActivated.connect(self.__link_clicked)

@@ -1,3 +1,3 @@
-VERSION = "1.9.7-a1"
+VERSION = "2.5.0-a1"
 NAME = "Turpial"
 DESC = "%s %s" % (NAME, VERSION)

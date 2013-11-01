@@ -37,6 +37,7 @@ from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 from turpial.ui.qt.imageview import ImageView
 from turpial.ui.qt.queue import QueueDialog
+from turpial.ui.notification import OSNotificationSystem
 
 from libturpial.common import ColumnType, get_preview_service_from_url
 
@@ -121,6 +122,8 @@ class Main(Base, QWidget):
         self.core.start()
 
         self._container = Container(self)
+
+        self.os_notifications = OSNotificationSystem(self.images_path)
 
         self.dock = Dock(self)
         self.dock.empty()
@@ -574,27 +577,25 @@ class Main(Base, QWidget):
         self.profile.loading_finished(response, account_id)
         self.core.get_avatar_from_status(response)
 
-    def after_mute_user(self, response):
-        print "User %s muted" % response
+    def after_mute_user(self, username):
+        self.os_notifications.user_muted(username)
 
-    def after_unmute_user(self, response):
-        print "User %s unmuted" % response
+    def after_unmute_user(self, username):
+        self.os_notifications.user_unmuted(username)
 
-    def after_block_user(self, response):
-        print "User %s blocked" % response.username
+    def after_block_user(self, profile):
+        self.os_notifications.user_blocked(profile.username)
 
-    def after_report_user_as_spam(self, response):
-        print "User %s reported" % response.username
+    def after_report_user_as_spam(self, profile):
+        self.os_notifications.user_reported_as_spam(profile.username)
 
-    def after_follow_user(self, response):
-        # TODO: OS Notification
-        print "User %s followed" % response.username
-        self.profile.update_following(response.username, True)
+    def after_follow_user(self, profile):
+        self.profile.update_following(profile.username, True)
+        self.os_notifications.user_followed(profile.username)
 
-    def after_unfollow_user(self, response):
-        # TODO: OS Notification
-        print "User %s unfollowed" % response.username
-        self.profile.update_following(response.username, False)
+    def after_unfollow_user(self, profile):
+        self.profile.update_following(profile.username, False)
+        self.os_notifications.user_unfollowed(profile.username)
 
     def after_get_status_from_conversation(self, response, column_id, status_root_id):
         self._container.update_conversation(response, column_id, status_root_id)
@@ -623,7 +624,7 @@ class Main(Base, QWidget):
     def after_post_status_from_queue(self, response, account_id):
         print '++Posted queue message'
         self.queue_dialog.update()
-        # TODO: OS Notification
+        self.os_notifications.message_from_queue_posted()
 
     def after_delete_status_from_queue(self):
         self.queue_dialog.update()

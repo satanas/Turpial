@@ -7,36 +7,23 @@ import logging
 
 from turpial.ui.lang import i18n
 
-log = logging.getLogger('Notify')
-
 NOTIFY = True
 
 try:
-    #import pynotify
+    import pynotify
     #from glib import GError
-    NOTIFY = False
 except ImportError:
-    log.debug("pynotify is not installed")
     NOTIFY = False
 
-class Notification:
-    def __init__(self, disable=False):
+class OSNotificationSystem:
+    def __init__(self, images_path, disable=False):
+        self.images_path = images_path
         self.activate()
         self.disable = disable
 
         if not NOTIFY:
-            log.debug('Module not available')
             self.disable = True
             return
-
-        if disable:
-            log.debug('Module disabled')
-
-    def toggle_activation(self):
-        if self.active:
-            self.active = False
-        else:
-            self.active = True
 
     def activate(self):
         self.active = True
@@ -44,25 +31,21 @@ class Notification:
     def deactivate(self):
         self.active = False
 
-    def popup(self, title, message, icon=None):
+    def notify(self, title, message, icon=None):
         if self.disable:
-            log.debug('Module disabled. Showing no notifications')
             return
 
-        global NOTIFY
-        if self.active and NOTIFY:
+        if self.active and not self.disable:
             if pynotify.init("Turpial"):
                 if not icon:
-                    iconpath = os.path.join(os.path.dirname(__file__), 'data',
-                        'pixmaps', 'turpial-notification.png')
+                    iconpath = os.path.join(self.images_path, 'turpial-notification.png')
                     icon = os.path.realpath(iconpath)
                 icon = "file://%s" % icon
                 notification = pynotify.Notification(title, message, icon)
                 try:
                     notification.show()
-                except GError:
-                    log.debug('Notification service not running')
-                    NOTIFY = False
+                except Exception, e:
+                    print e
 
     def updates(self, column, count):
         object_name = ''
@@ -83,16 +66,10 @@ class Notification:
 
     def login(self, profile):
         object_name = ''
-        if profile.get_protocol_id() == 'twitter':
-            if profile.statuses_count > 1:
-                object_name = i18n.get('tweets')
-            else:
-                object_name = i18n.get('tweet')
+        if profile.statuses_count > 1:
+            object_name = i18n.get('tweets')
         else:
-            if profile.statuses_count > 1:
-                object_name = i18n.get('dents')
-            else:
-                object_name = i18n.get('dent')
+            object_name = i18n.get('tweet')
 
         self.popup('@%s' % profile.username,
             '%s: %i\n%s: %i\n%s: %i' %
@@ -100,12 +77,26 @@ class Notification:
             i18n.get('following'), profile.friends_count,
             i18n.get('followers'), profile.followers_count))
 
-    def following(self, user, follow):
-        name = user.username
-        if follow:
-            self.popup(i18n.get('turpial_follow'), i18n.get('you_are_now_following') % name)
-        else:
-            self.popup(i18n.get('turpial_unfollow'), i18n.get('you_are_no_longer_following') % name)
+    def user_followed(self, username):
+        self.notify(i18n.get('follow'), i18n.get('you_are_now_following') % username)
+
+    def user_unfollowed(self, username):
+        self.notify(i18n.get('unfollow'), i18n.get('you_are_no_longer_following') % username)
+
+    def user_reported_as_spam(self, username):
+        self.notify(i18n.get('report_as_spam'), i18n.get('has_been_reported_as_spam') % username)
+
+    def user_blocked(self, username):
+        self.notify(i18n.get('block'), i18n.get('has_been_blocked') % username)
+
+    def user_muted(self, username):
+        self.notify(i18n.get('mute'), i18n.get('has_been_muted') % username)
+
+    def user_unmuted(self, username):
+        self.notify(i18n.get('unmute'), i18n.get('has_been_unmuted') % username)
+
+    def message_from_queue_posted(self):
+        self.notify(i18n.get('update_status'), i18n.get('message_from_queue_has_been_posted'))
 
     def following_error(self, message, follow):
         if follow:

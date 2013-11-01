@@ -73,8 +73,9 @@ class CoreWorker(QThread):
     def __remove_friend(self, username):
         # FIXME: On libturpial
         friends = self.core.config.load_friends()
-        friends.remove(username)
-        self.core.config.save_friends(friends)
+        if username in friends:
+            friends.remove(username)
+            self.core.config.save_friends(friends)
 
     def __get_from_queue(self, index=0):
         lines = open(self.queue_path).readlines()

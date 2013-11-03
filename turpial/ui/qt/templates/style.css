@@ -224,6 +224,12 @@ body {
     background: url("file://{{ action_reply_shadowed }}") no-repeat;
 }
 
+.action_reply_direct {
+    width: 20px;
+    height: 20px;
+    background: url("file://{{ action_reply_direct_shadowed }}") no-repeat;
+}
+
 .action_repeat {
     width: 20px;
     height: 20px;
@@ -250,6 +256,10 @@ body {
 
 .action_reply:hover {
     background: url("file://{{ action_reply }}") no-repeat;
+}
+
+.action_reply_direct:hover {
+    background: url("file://{{ action_reply_direct }}") no-repeat;
 }
 
 .action_repeat:hover {

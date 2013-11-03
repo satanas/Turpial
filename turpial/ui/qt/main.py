@@ -25,13 +25,13 @@ from PyQt4.QtCore import pyqtSignal
 
 from turpial import DESC
 from turpial.ui.base import *
+from turpial.ui.sound import SoundSystem
 from turpial.ui.notification import OSNotificationSystem
 
 from turpial.ui.qt.dock import Dock
 from turpial.ui.qt.tray import TrayIcon
 from turpial.ui.qt.worker import CoreWorker
 from turpial.ui.qt.queue import QueueDialog
-from turpial.ui.qt.sound import SoundSystem
 from turpial.ui.qt.search import SearchDialog
 from turpial.ui.qt.updatebox import UpdateBox
 from turpial.ui.qt.container import Container

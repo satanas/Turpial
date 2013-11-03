@@ -60,8 +60,8 @@
                         {% endif %}
                     {% endif %}
                 {% elif status.type_ == 2 %}
-                    <a href="cmd:delete_direct:{{ status.id_ }}" title="{{ delete }}"><div class="action_delete"></div></a>
                     <a href="cmd:reply_direct:{{ status.id_ }}" title="{{ reply }}"><div class="action_reply"></div></a>
+                    <a href="cmd:delete_direct:{{ status.id_ }}" title="{{ delete }}"><div class="action_delete"></div></a>
                 {% endif %}
             </div>
             <div class="operation-loader hidden" id="{{ status.id_ }}-operation-loader">{{ in_progress }}</div>

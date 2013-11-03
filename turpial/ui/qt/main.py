@@ -25,19 +25,20 @@ from PyQt4.QtCore import pyqtSignal
 
 from turpial import DESC
 from turpial.ui.base import *
+from turpial.ui.notification import OSNotificationSystem
 
 from turpial.ui.qt.dock import Dock
 from turpial.ui.qt.tray import TrayIcon
 from turpial.ui.qt.worker import CoreWorker
+from turpial.ui.qt.queue import QueueDialog
+from turpial.ui.qt.sound import SoundSystem
 from turpial.ui.qt.search import SearchDialog
 from turpial.ui.qt.updatebox import UpdateBox
 from turpial.ui.qt.container import Container
+from turpial.ui.qt.imageview import ImageView
 from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
-from turpial.ui.qt.imageview import ImageView
-from turpial.ui.qt.queue import QueueDialog
-from turpial.ui.notification import OSNotificationSystem
 
 from libturpial.common import ColumnType, get_preview_service_from_url
 
@@ -71,6 +72,7 @@ class Main(Base, QWidget):
             os.path.dirname(__file__), 'templates'))
 
         self.setWindowTitle('Turpial')
+        self.app.setApplicationName('Turpial')
         self.ignore_quit = True
         self.resize(320, 480)
         self.showed = True
@@ -124,6 +126,7 @@ class Main(Base, QWidget):
         self._container = Container(self)
 
         self.os_notifications = OSNotificationSystem(self.images_path)
+        self.sounds = SoundSystem(self.sounds_path)
 
         self.dock = Dock(self)
         self.dock.empty()
@@ -148,6 +151,7 @@ class Main(Base, QWidget):
 
         self.setLayout(layout)
         self.set_queue_timer()
+        self.sounds.startup()
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()

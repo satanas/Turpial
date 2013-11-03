@@ -13,11 +13,10 @@ class SoundSystem:
         self.disable = disable
         self.startup_sound = Phonon.createPlayer(Phonon.MusicCategory,
             Phonon.MediaSource(os.path.join(self.sounds_path, 'startup.ogg')))
-        #self.startup_sound = pyglet.media.load(os.path.join(self.sounds_path, 'startup.ogg'))
-        #self.notif1_sound = pyglet.media.load(os.path.join(self.sounds_path, 'notification-1.ogg'))
-        #self.notif2_sound = pyglet.media.load(os.path.join(self.sounds_path, 'notification-2.ogg'))
-        print self.startup_sound
-        #pyglet.app.run()
+        self.notif1_sound = Phonon.createPlayer(Phonon.MusicCategory,
+            Phonon.MediaSource(os.path.join(self.sounds_path, 'notification-1.ogg')))
+        self.notif2_sound = Phonon.createPlayer(Phonon.MusicCategory,
+            Phonon.MediaSource(os.path.join(self.sounds_path, 'notification-2.ogg')))
 
     def activate(self):
         self.active = True
@@ -27,7 +26,6 @@ class SoundSystem:
 
     def startup(self):
         self.startup_sound.play()
-        print 'hello'
 
     def notification_1(self):
         self.notif1_sound.play()

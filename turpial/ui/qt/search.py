@@ -36,8 +36,8 @@ class SearchDialog(QDialog):
         self.criteria.setToolTip(i18n.get('criteria_tooltip'))
 
         form = QFormLayout()
-        form.addRow(i18n.get('account'), self.accounts_combo)
         form.addRow(i18n.get('criteria'), self.criteria)
+        form.addRow(i18n.get('account'), self.accounts_combo)
         form.setContentsMargins(30, 10, 10, 5)
         form.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
 

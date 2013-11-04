@@ -363,6 +363,9 @@ class CoreWorker(QThread):
         self.core.config.write('Notifications', key, notifications)
         return value
 
+    def read_config(self):
+        return self.core.config.read_all()
+
     #================================================================
     # Callbacks
     #================================================================

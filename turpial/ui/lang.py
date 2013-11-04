@@ -128,6 +128,7 @@ STRINGS = {
     'has_been_muted': _("@%s has been muted"),
     'has_been_unmuted': _("@%s has been unmuted"),
     'message_from_queue_has_been_posted': _('Message from queue has been posted'),
+    'close': _('Close'),
 
 
     #'no_registered_columns': ,
@@ -155,7 +156,6 @@ STRINGS = {
     #'password': _('Password'),
     #'user_and_password': _('User and password'),
     #'protocol': _('Protocol'),
-    #'close': _('Close'),
     #'signin': _('Sign In'),
     #'save': _('Save'),
     #'ok': _('Ok'),

@@ -32,12 +32,14 @@ from turpial.ui.qt.dock import Dock
 from turpial.ui.qt.tray import TrayIcon
 from turpial.ui.qt.worker import CoreWorker
 from turpial.ui.qt.queue import QueueDialog
+from turpial.ui.qt.about import AboutDialog
 from turpial.ui.qt.search import SearchDialog
 from turpial.ui.qt.updatebox import UpdateBox
 from turpial.ui.qt.container import Container
 from turpial.ui.qt.imageview import ImageView
 from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog
+from turpial.ui.qt.preferences import PreferencesDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 
 from libturpial.common import ColumnType, get_preview_service_from_url
@@ -84,6 +86,7 @@ class Main(Base, QWidget):
         self.profile.options_clicked.connect(self.show_profile_menu)
         self.image_view = ImageView(self)
         self.queue_dialog = QueueDialog(self)
+        self.preferences_dialog = PreferencesDialog(self)
 
         self.core = CoreWorker()
         self.core.status_updated.connect(self.after_update_status)
@@ -152,6 +155,8 @@ class Main(Base, QWidget):
         self.setLayout(layout)
         self.set_queue_timer()
         self.sounds.startup()
+
+        #self.preferences_dialog.show()
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -224,7 +229,7 @@ class Main(Base, QWidget):
         return True
 
     def show_about_dialog(self):
-        QMessageBox.about(self, 'Turpial', i18n.get('about_description'))
+        AboutDialog(self)
 
     def save_account(self, account):
         self.core.save_account(account)
@@ -504,6 +509,9 @@ class Main(Base, QWidget):
 
     def show_queue_dialog(self):
         self.queue_dialog.show()
+
+    def get_config(self):
+        return self.core.read_config()
 
     #================================================================
     # Hooks definitions

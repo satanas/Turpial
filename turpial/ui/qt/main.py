@@ -86,7 +86,7 @@ class Main(Base, QWidget):
         self.profile.options_clicked.connect(self.show_profile_menu)
         self.image_view = ImageView(self)
         self.queue_dialog = QueueDialog(self)
-        self.preferences_dialog = PreferencesDialog(self)
+        #self.preferences_dialog = PreferencesDialog(self)
 
         self.core = CoreWorker()
         self.core.status_updated.connect(self.after_update_status)
@@ -140,6 +140,7 @@ class Main(Base, QWidget):
         self.dock.updates_clicked.connect(self.show_update_box)
         self.dock.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
         self.dock.queue_clicked.connect(self.show_queue_dialog)
+        self.dock.preferences_clicked.connect(self.show_preferences_dialog)
 
         self.tray = TrayIcon(self)
         self.tray.toggled.connect(self.toggle_tray_icon)
@@ -512,6 +513,9 @@ class Main(Base, QWidget):
 
     def get_config(self):
         return self.core.read_config()
+
+    def show_preferences_dialog(self):
+        self.preferences_dialog = PreferencesDialog(self)
 
     #================================================================
     # Hooks definitions

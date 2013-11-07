@@ -6,13 +6,14 @@
 #from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QSlider
-from PyQt4.QtGui import QTabBar
-from PyQt4.QtGui import QTabWidget
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QComboBox
 from PyQt4.QtGui import QCheckBox
-from PyQt4.QtGui import QListView
+from PyQt4.QtGui import QLineEdit
+from PyQt4.QtGui import QTabWidget
 from PyQt4.QtGui import QPushButton
+from PyQt4.QtGui import QButtonGroup
+from PyQt4.QtGui import QRadioButton
 from PyQt4.QtGui import QStackedWidget
 from PyQt4.QtGui import QStandardItem
 from PyQt4.QtGui import QAbstractItemView
@@ -24,11 +25,6 @@ from PyQt4.QtCore import QSize
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
-#from turpial.ui.qt.column import StatusesColumn
-#from turpial.ui.qt.loader import BarLoadIndicator
-#from turpial.ui.qt.widgets import ImageButton, VLine, HLine
-#
-#from libturpial.common.tools import get_username_from
 
 #TODO: Open in a specific tab
 class PreferencesDialog(QWidget):
@@ -39,29 +35,15 @@ class PreferencesDialog(QWidget):
         self.setFixedSize(400, 350)
         self.current_config = self.base.get_config()
 
-        #self.list_ = QListView()
-        #self.list_.setResizeMode(QListView.Adjust)
-        #self.list_.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
-        #self.list_.setMaximumWidth(128)
-        #self.list_.setGridSize(QSize(-1, 10))
-        #self.list_.clicked.connect(self.__on_change_item)
         self.list_ = QTabWidget()
         self.list_.setTabsClosable(False)
         self.list_.setMovable(False)
         self.list_.setUsesScrollButtons(True)
-        #self.list_.currentChanged.connect(self.__on_change_item)
+
         self.list_.addTab(GeneralPage(base), i18n.get('general'))
         self.list_.addTab(NotificationsPage(), i18n.get('notifications'))
         self.list_.addTab(ServicesPage(base), i18n.get('services'))
-
-        #self.pages = QStackedWidget()
-        #self.pages.addWidget(GeneralPage(base))
-        #self.pages.addWidget(NotificationsPage())
-        #self.pages.addWidget(ServicesPage(base))
-
-        #layout = QVBoxLayout()
-        #layout.addWidget(self.list_)
-        #layout.addWidget(self.pages, 1)
+        self.list_.addTab(BrowserPage(base), i18n.get('web_browser'))
 
         self.save_button = QPushButton(i18n.get('save'))
         self.save_button.clicked.connect(self.__on_save)
@@ -75,7 +57,6 @@ class PreferencesDialog(QWidget):
         button_box.addWidget(self.save_button)
 
         vbox = QVBoxLayout()
-        #vbox.addLayout(layout)
         vbox.addWidget(self.list_, 1)
         vbox.addLayout(button_box)
         vbox.setContentsMargins(10, 10, 10, 5)
@@ -88,17 +69,6 @@ class PreferencesDialog(QWidget):
     def __on_save(self):
         print 'saving'
         self.close()
-
-    def __update(self):
-        #model = QStandardItemModel()
-        #self.list_.setModel(model)
-        #for key in ['general', 'notifications', 'services', 'filters', 'web_browser', 'advanced', 'proxy']:
-        #    item = QStandardItem(i18n.get(key))
-        #    item.setEditable(False)
-        #    model.appendRow(item)
-        for key in ['general', 'notifications', 'services', 'web_browser', 'proxy', 'advanced']:
-            self.list_.addTab(i18n.get(key))
-        self.show()
 
 
 class GeneralPage(QWidget):
@@ -205,6 +175,45 @@ class ServicesPage(QWidget):
     def get_config(self):
         raise NotImplemented
 
+class BrowserPage(QWidget):
+    def __init__(self, base):
+        QWidget.__init__(self)
+
+        description = QLabel("Bla bla")
+        description.setWordWrap(True)
+
+        self.default_browser = RadioButton(i18n.get('use_default_browser'), self)
+        self.custom_browser = RadioButton(i18n.get('set_custom_browser'), self)
+        custom_label = QLabel(i18n.get('command'))
+        self.command = QLineEdit()
+        self.open_button = QPushButton(i18n.get('open'))
+        command_box = QHBoxLayout()
+        command_box.setSpacing(5)
+        command_box.addWidget(custom_label)
+        command_box.addWidget(self.command, 1)
+        command_box.addWidget(self.open_button)
+
+        self.button_group = QButtonGroup()
+        self.button_group.addButton(self.default_browser.radiobutton)
+        self.button_group.addButton(self.custom_browser.radiobutton)
+        self.button_group.setExclusive(True)
+
+        vbox = QVBoxLayout()
+        vbox.setSpacing(0)
+        vbox.setContentsMargins(5, 5, 5, 0)
+        vbox.addWidget(description)
+        vbox.addSpacing(15)
+        vbox.addWidget(self.default_browser)
+        vbox.addSpacing(20)
+        vbox.addWidget(self.custom_browser)
+        vbox.addLayout(command_box)
+        vbox.addStretch(1)
+
+        self.setLayout(vbox)
+
+    def get_config(self):
+        raise NotImplemented
+
 ################################################################################
 ### Widgets
 ################################################################################
@@ -264,8 +273,6 @@ class CheckBox(QWidget):
         self.checkbox = QCheckBox(caption)
         self.checkbox.stateChanged.connect(self.__on_change)
 
-        self.value_label = QLabel()
-
         hbox = QHBoxLayout()
         hbox.addWidget(self.checkbox)
         hbox.setMargin(0)
@@ -314,3 +321,27 @@ class ComboBox(QWidget):
 
     def get_value(self):
         return self.values[self.combo.currentIndex()]
+
+class RadioButton(QWidget):
+    selected = pyqtSignal()
+
+    def __init__(self, caption, parent, selected=False):
+        QWidget.__init__(self)
+
+        self.value = selected
+        self.radiobutton = QRadioButton(caption, parent)
+        self.radiobutton.clicked.connect(self.__on_change)
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.radiobutton)
+        hbox.setMargin(0)
+        self.setLayout(hbox)
+        self.setContentsMargins(0, 0, 0, 0)
+        self.radiobutton.setChecked(self.value)
+
+    def __on_change(self):
+        self.value = True
+        self.selected.emit()
+
+    def get_value(self):
+        return self.radiobutton.isChecked()

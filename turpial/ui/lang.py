@@ -129,6 +129,18 @@ STRINGS = {
     'has_been_unmuted': _("@%s has been unmuted"),
     'message_from_queue_has_been_posted': _('Message from queue has been posted'),
     'close': _('Close'),
+    'general': _('General'),
+    'notifications': _('Notifications'),
+    'services': _('Services'),
+    'web_browser': _('Web Browser'),
+    'filters': _('Filters'),
+    'proxy': _('Proxy'),
+    'advanced': _('Advanced'),
+    'update_frecuency': _('Update frecuency'),
+    'statuses_per_column': _('Statuses per column'),
+    'minimize_on_close': _('Minimize on close'),
+    'use_default_browser': _('Use default browser'),
+    'set_custom_browser': _('Set custom browser'),
 
 
     #'no_registered_columns': ,
@@ -201,13 +213,7 @@ STRINGS = {
     #one account at once"),
     #'sending_message': _('Sending message...'),
     #'direct_message_sent_successfully': _('Direct message sent successfully'),
-    #'general': _('General'),
-    #'notifications': _('Notifications'),
-    #'services': _('Services'),
-    #'web_browser': _('Web Browser'),
-    #'filters': _('Filters'),
-    #'proxy': _('Proxy'),
-    #'advanced': _('Advanced'),
+    
     #'delete_all_images_in_cache': _('Delete all images in cache'),
     #'restore_config_warning': _('This action will close Turpial and will \
     #delete your current config (you must start Turpial again). Do you want to \

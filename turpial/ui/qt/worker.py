@@ -114,7 +114,7 @@ class CoreWorker(QThread):
         return self.core.get_update_interval()
 
     def get_queue_interval(self):
-        return 30
+        return 120
 
     def get_shorten_url_service(self):
         return self.core.get_shorten_url_service()
@@ -133,6 +133,12 @@ class CoreWorker(QThread):
 
     def get_registered_accounts(self):
         return self.core.registered_accounts()
+
+    def get_available_short_url_services(self):
+        return self.core.available_short_url_services()
+
+    def get_available_upload_media_services(self):
+        return self.core.available_upload_media_services()
 
     def get_registered_columns(self):
         i = 1

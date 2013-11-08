@@ -2,6 +2,8 @@
 
 # Qt preferences dialog for Turpial
 
+from datetime import datetime, timedelta
+
 #from PyQt4.QtGui import QFont
 #from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QLabel
@@ -70,87 +72,69 @@ class PreferencesDialog(QWidget):
         print 'saving'
         self.close()
 
-
-class GeneralPage(QWidget):
-    def __init__(self, base):
+class BasePage(QWidget):
+    def __init__(self, caption):
         QWidget.__init__(self)
 
-        #update_frecuency
-        self.update_frecuency = Slider(i18n.get('update_frecuency'), unit='min', default_value=5)
+        description = QLabel(caption)
+        description.setWordWrap(True)
+
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(10, 10, 10, 10)
+        self.layout.addWidget(description)
+        self.layout.addSpacing(15)
+        self.layout.setSpacing(5)
+
+        self.setLayout(self.layout)
+
+
+
+class GeneralPage(BasePage):
+    def __init__(self, base):
+        BasePage.__init__(self, "Adjust update frecuency and other general parameters")
+
+        current_frecuency = base.core.get_update_interval()
+
+        self.update_frecuency = Slider(i18n.get('update_frecuency'), unit='min',
+            default_value=current_frecuency)
         self.statuses_per_column = Slider(i18n.get('statuses_per_column'), minimum_value=20,
-                maximum_value=200, default_value=20)
+            maximum_value=200, default_value=20)
+        self.queue_frecuency = Slider(i18n.get('queue_frecuency'), minimum_value=5,
+            maximum_value=720, default_value=20, single_step=15, time=True)
         self.minimize_on_close = CheckBox(i18n.get('minimize_on_close'))
 
-        vbox = QVBoxLayout()
-        vbox.setSpacing(0)
-        vbox.setContentsMargins(0, 5, 5, 0)
-        vbox.addWidget(self.update_frecuency)
-        vbox.addWidget(self.statuses_per_column)
-        vbox.addWidget(self.minimize_on_close)
-        vbox.addStretch(1)
-
-        self.setLayout(vbox)
+        self.layout.addWidget(self.update_frecuency)
+        self.layout.addWidget(self.queue_frecuency)
+        self.layout.addWidget(self.statuses_per_column)
+        self.layout.addSpacing(10)
+        self.layout.addWidget(self.minimize_on_close)
+        self.layout.addStretch(1)
 
     def get_config(self):
         raise NotImplemented
 
-class NotificationsPage(QWidget):
+class NotificationsPage(BasePage):
     def __init__(self):
-        QWidget.__init__(self)
-
-        # Select the notifications you want to receive from turpial
-        description = QLabel("Select the notifications you want to receive from Turpial")
+        BasePage.__init__(self, "Select the notifications you want to receive from Turpial")
 
         self.notify_on_update = CheckBox(i18n.get('notify_on_update'))
         self.notify_on_actions = CheckBox(i18n.get('notify_on_actions'))
-        self.notify_off = CheckBox(i18n.get('turn_off_notifications'))
-        self.notify_off.status_changed.connect(self.__on_turn_off_notifications)
         self.sound_on_login = CheckBox(i18n.get('sound_on_login'))
-        self.sound_on_update = CheckBox(i18n.get('sound_on_update'))
-        self.sound_off = CheckBox(i18n.get('turn_off_sounds'))
-        self.sound_off.status_changed.connect(self.__on_turn_off_sounds)
+        self.sound_on_update = CheckBox(i18n.get('sound_on_updates'))
 
-        vbox = QVBoxLayout()
-        vbox.setSpacing(0)
-        vbox.setContentsMargins(5, 5, 5, 0)
-        vbox.addWidget(description)
-        vbox.addSpacing(10)
-        vbox.addWidget(self.notify_on_update)
-        vbox.addWidget(self.notify_on_actions)
-        vbox.addWidget(self.notify_off)
-        vbox.addSpacing(15)
-        vbox.addWidget(self.sound_on_login)
-        vbox.addWidget(self.sound_on_update)
-        vbox.addWidget(self.sound_off)
-        vbox.addStretch(1)
-
-        self.setLayout(vbox)
-
-    def __on_turn_off_notifications(self, value):
-        if value:
-            self.notify_on_update.setEnabled(False)
-            self.notify_on_actions.setEnabled(False)
-        else:
-            self.notify_on_update.setEnabled(True)
-            self.notify_on_actions.setEnabled(True)
-
-    def __on_turn_off_sounds(self, value):
-        if value:
-            self.sound_on_login.setEnabled(False)
-            self.sound_on_update.setEnabled(False)
-        else:
-            self.sound_on_login.setEnabled(True)
-            self.sound_on_update.setEnabled(True)
+        self.layout.addWidget(self.notify_on_update)
+        self.layout.addWidget(self.notify_on_actions)
+        self.layout.addSpacing(15)
+        self.layout.addWidget(self.sound_on_login)
+        self.layout.addWidget(self.sound_on_update)
+        self.layout.addStretch(1)
 
     def get_config(self):
         raise NotImplemented
 
-class ServicesPage(QWidget):
+class ServicesPage(BasePage):
     def __init__(self, base):
-        QWidget.__init__(self)
-
-        description = QLabel("Select your preferred service to short URLs and upload images")
-        description.setWordWrap(True)
+        BasePage.__init__(self, "Select your preferred service to short URLs and upload images")
 
         short_url_services = base.core.get_available_short_url_services()
         default_short_url_service = base.core.get_shorten_url_service()
@@ -161,16 +145,10 @@ class ServicesPage(QWidget):
         self.upload_media = ComboBox(i18n.get('upload_image'), upload_media_services,
             default_upload_media_service)
 
-        vbox = QVBoxLayout()
-        vbox.setSpacing(0)
-        vbox.setContentsMargins(5, 5, 5, 0)
-        vbox.addWidget(description)
-        vbox.addSpacing(15)
-        vbox.addWidget(self.short_url)
-        vbox.addWidget(self.upload_media)
-        vbox.addStretch(1)
-
-        self.setLayout(vbox)
+        self.layout.addWidget(self.short_url)
+        self.layout.addSpacing(5)
+        self.layout.addWidget(self.upload_media)
+        self.layout.addStretch(1)
 
     def get_config(self):
         raise NotImplemented
@@ -179,13 +157,30 @@ class BrowserPage(QWidget):
     def __init__(self, base):
         QWidget.__init__(self)
 
+        current_browser = base.core.get_default_browser()
+
         description = QLabel("Bla bla")
         description.setWordWrap(True)
 
-        self.default_browser = RadioButton(i18n.get('use_default_browser'), self)
-        self.custom_browser = RadioButton(i18n.get('set_custom_browser'), self)
-        custom_label = QLabel(i18n.get('command'))
         self.command = QLineEdit()
+
+        if current_browser == '':
+            default_value = True
+            custom_value = False
+            self.command.setText('')
+        else:
+            default_value = False
+            custom_value = True
+            self.command.setText(current_browser)
+
+        self.default_browser = RadioButton(i18n.get('use_default_browser'), self,
+            selected=default_value)
+        self.default_browser.selected.connect(self.__on_defaul_selected)
+        self.custom_browser = RadioButton(i18n.get('set_custom_browser'), self,
+            selected=custom_value)
+        self.custom_browser.selected.connect(self.__on_custom_selected)
+
+        custom_label = QLabel(i18n.get('command'))
         self.open_button = QPushButton(i18n.get('open'))
         command_box = QHBoxLayout()
         command_box.setSpacing(5)
@@ -204,15 +199,24 @@ class BrowserPage(QWidget):
         vbox.addWidget(description)
         vbox.addSpacing(15)
         vbox.addWidget(self.default_browser)
-        vbox.addSpacing(20)
+        vbox.addSpacing(10)
         vbox.addWidget(self.custom_browser)
         vbox.addLayout(command_box)
         vbox.addStretch(1)
 
         self.setLayout(vbox)
 
+    def __on_defaul_selected(self):
+        self.open_button.setEnabled(False)
+        self.command.setEnabled(False)
+
+    def __on_custom_selected(self):
+        self.open_button.setEnabled(True)
+        self.command.setEnabled(True)
+
     def get_config(self):
         raise NotImplemented
+
 
 ################################################################################
 ### Widgets
@@ -221,11 +225,12 @@ class BrowserPage(QWidget):
 # TODO: Add tooltips
 class Slider(QWidget):
     def __init__(self, caption, default_value, minimum_value=1, maximum_value=60, single_step=1,
-            page_step=6, caption_size=None, unit=''):
+            page_step=6, caption_size=None, unit='', time=False):
         QWidget.__init__(self)
 
         self.value = default_value
         self.unit = unit
+        self.time = time
 
         description = QLabel(caption)
         description.setWordWrap(True)
@@ -256,7 +261,13 @@ class Slider(QWidget):
     def __on_change(self, value):
         # FIXME: Fill with spaces to reach the maximum length
         self.value = value
-        text = "%s %s" % (value, self.unit)
+        unit = self.unit
+        if self.time:
+            minutes = timedelta(minutes=self.value)
+            date = datetime(1, 1, 1) + minutes
+            text = "%02dh %02dm" % (date.hour, date.minute)
+        else:
+            text = "%s %s" % (self.value, self.unit)
         self.value_label.setText(text)
 
     def get_value(self):
@@ -313,8 +324,8 @@ class ComboBox(QWidget):
 
         hbox = QHBoxLayout()
         hbox.addWidget(description)
-        hbox.addWidget(self.combo, 1)
-        #hbox.addStretch(1)
+        hbox.addSpacing(10)
+        hbox.addWidget(self.combo)
         hbox.setMargin(0)
         self.setLayout(hbox)
         self.setContentsMargins(0, 0, 0, 0)

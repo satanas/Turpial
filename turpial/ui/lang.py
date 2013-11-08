@@ -139,8 +139,13 @@ STRINGS = {
     'update_frecuency': _('Update frecuency'),
     'statuses_per_column': _('Statuses per column'),
     'minimize_on_close': _('Minimize on close'),
+    'notify_on_update': _('Notify on updates'),
+    'notify_on_actions': _('Notify on actions'),
+    'sound_on_login': _('Sound on login'),
+    'sound_on_updates': _('Sound on updates'),
     'use_default_browser': _('Use default browser'),
     'set_custom_browser': _('Set custom browser'),
+    'command': _('Command'),
 
 
     #'no_registered_columns': ,

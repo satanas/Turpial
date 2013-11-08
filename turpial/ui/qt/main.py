@@ -517,6 +517,9 @@ class Main(Base, QWidget):
     def show_preferences_dialog(self):
         self.preferences_dialog = PreferencesDialog(self)
 
+    def get_cache_size(self):
+        return self.humanize_size(self.core.get_cache_size())
+
     #================================================================
     # Hooks definitions
     #================================================================

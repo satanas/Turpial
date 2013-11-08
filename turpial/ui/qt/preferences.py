@@ -37,15 +37,18 @@ class PreferencesDialog(QWidget):
         self.setFixedSize(400, 350)
         self.current_config = self.base.get_config()
 
-        self.list_ = QTabWidget()
-        self.list_.setTabsClosable(False)
-        self.list_.setMovable(False)
-        self.list_.setUsesScrollButtons(True)
+        self.tabbar = QTabWidget()
+        self.tabbar.setTabsClosable(False)
+        self.tabbar.setMovable(False)
+        self.tabbar.setUsesScrollButtons(True)
+        self.tabbar.setElideMode(Qt.ElideNone)
 
-        self.list_.addTab(GeneralPage(base), i18n.get('general'))
-        self.list_.addTab(NotificationsPage(), i18n.get('notifications'))
-        self.list_.addTab(ServicesPage(base), i18n.get('services'))
-        self.list_.addTab(BrowserPage(base), i18n.get('web_browser'))
+        self.tabbar.addTab(GeneralPage(base), i18n.get('general'))
+        self.tabbar.addTab(NotificationsPage(), i18n.get('notifications'))
+        self.tabbar.addTab(ServicesPage(base), i18n.get('services'))
+        self.tabbar.addTab(BrowserPage(base), i18n.get('web_browser'))
+        self.tabbar.addTab(ProxyPage(base), i18n.get('proxy'))
+        self.tabbar.addTab(AdvancedPage(base), i18n.get('advanced'))
 
         self.save_button = QPushButton(i18n.get('save'))
         self.save_button.clicked.connect(self.__on_save)
@@ -59,7 +62,7 @@ class PreferencesDialog(QWidget):
         button_box.addWidget(self.save_button)
 
         vbox = QVBoxLayout()
-        vbox.addWidget(self.list_, 1)
+        vbox.addWidget(self.tabbar, 1)
         vbox.addLayout(button_box)
         vbox.setContentsMargins(10, 10, 10, 5)
         self.setLayout(vbox)
@@ -91,7 +94,7 @@ class BasePage(QWidget):
 
 class GeneralPage(BasePage):
     def __init__(self, base):
-        BasePage.__init__(self, "Adjust update frecuency and other general parameters")
+        BasePage.__init__(self, i18n.get('general_tab_description'))
 
         current_frecuency = base.core.get_update_interval()
 
@@ -115,7 +118,7 @@ class GeneralPage(BasePage):
 
 class NotificationsPage(BasePage):
     def __init__(self):
-        BasePage.__init__(self, "Select the notifications you want to receive from Turpial")
+        BasePage.__init__(self, i18n.get('notifications_tab_description'))
 
         self.notify_on_update = CheckBox(i18n.get('notify_on_update'))
         self.notify_on_actions = CheckBox(i18n.get('notify_on_actions'))
@@ -134,16 +137,17 @@ class NotificationsPage(BasePage):
 
 class ServicesPage(BasePage):
     def __init__(self, base):
-        BasePage.__init__(self, "Select your preferred service to short URLs and upload images")
+        BasePage.__init__(self, i18n.get('services_tab_description'))
 
         short_url_services = base.core.get_available_short_url_services()
         default_short_url_service = base.core.get_shorten_url_service()
-        self.short_url = ComboBox(i18n.get('short_urls'), short_url_services, default_short_url_service)
+        self.short_url = ComboBox(i18n.get('short_urls'), short_url_services, default_short_url_service,
+            expand_combo=True)
 
         upload_media_services = base.core.get_available_upload_media_services()
         default_upload_media_service = base.core.get_upload_media_service()
         self.upload_media = ComboBox(i18n.get('upload_image'), upload_media_services,
-            default_upload_media_service)
+                default_upload_media_service, expand_combo=True)
 
         self.layout.addWidget(self.short_url)
         self.layout.addSpacing(5)
@@ -159,7 +163,7 @@ class BrowserPage(QWidget):
 
         current_browser = base.core.get_default_browser()
 
-        description = QLabel("Bla bla")
+        description = QLabel(i18n.get('web_browser_tab_description'))
         description.setWordWrap(True)
 
         self.command = QLineEdit()
@@ -213,6 +217,73 @@ class BrowserPage(QWidget):
     def __on_custom_selected(self):
         self.open_button.setEnabled(True)
         self.command.setEnabled(True)
+
+    def get_config(self):
+        raise NotImplemented
+
+class ProxyPage(BasePage):
+    def __init__(self, base):
+        BasePage.__init__(self, i18n.get('proxy_tab_description'))
+
+        default_authenticated = False
+
+        self.protocol = ComboBox(i18n.get('type'), ['HTTP', 'HTTPS'], 'HTTP', expand_combo=True)
+        self.host = LineEdit(i18n.get('host'))
+        self.port = LineEdit(i18n.get('port'), text_size=100)
+        self.authenticated = CheckBox(i18n.get('with_authentication'), checked=default_authenticated)
+        self.authenticated.status_changed.connect(self.__on_click_authenticated)
+        self.username = LineEdit(i18n.get('username'))
+        self.password = LineEdit(i18n.get('password'))
+
+        self.layout.addWidget(self.protocol)
+        self.layout.addWidget(self.host)
+        self.layout.addWidget(self.port)
+        self.layout.addWidget(self.authenticated)
+        self.layout.addWidget(self.username)
+        self.layout.addWidget(self.password)
+        self.layout.addStretch(1)
+
+        self.__on_click_authenticated(default_authenticated)
+
+    def __on_click_authenticated(self, checked):
+        self.__show_authentication_widgets(checked)
+
+    def __show_authentication_widgets(self, visible):
+        self.username.set_visible(visible)
+        self.password.set_visible(visible)
+
+    def get_config(self):
+        raise NotImplemented
+
+class AdvancedPage(BasePage):
+    def __init__(self, base):
+        BasePage.__init__(self, i18n.get('advanced_tab_description'))
+
+        clean_cache_caption = "%s\n(%s)" % (i18n.get('delete_all_files_in_cache'), base.get_cache_size())
+        self.clean_cache = PushButton(clean_cache_caption, i18n.get('clean_cache'))
+        self.clean_cache.clicked.connect(self.__on_clean_cache)
+        self.restore_config = PushButton(i18n.get('restore_config_to_default'), i18n.get('restore_config'))
+        self.restore_config.clicked.connect(self.__on_config_restore)
+        self.socket_timeout = Slider(i18n.get('socket_timeout'), 20, minimum_value=5, maximum_value=120,
+            unit='sec')
+        self.show_avatars = CheckBox(i18n.get('show_avatars'))
+
+        self.layout.addWidget(self.clean_cache)
+        self.layout.addWidget(self.restore_config)
+        self.layout.addSpacing(15)
+        self.layout.addWidget(self.socket_timeout)
+        self.layout.addSpacing(10)
+        self.layout.addWidget(self.show_avatars)
+        self.layout.addStretch(1)
+
+    def __on_clean_cache(self):
+        print 'cleaning cache'
+        clean_cache_caption = "%s\n(0 B)" % (i18n.get('delete_all_files_in_cache'))
+        self.clean_cache.button.setEnabled(False)
+        self.clean_cache.description.setText(clean_cache_caption)
+
+    def __on_config_restore(self):
+        print 'restoring config'
 
     def get_config(self):
         raise NotImplemented
@@ -303,7 +374,7 @@ class CheckBox(QWidget):
         return self.checkbox.isChecked()
 
 class ComboBox(QWidget):
-    def __init__(self, caption, values, default_value, caption_size=None):
+    def __init__(self, caption, values, default_value, caption_size=None, expand_combo=False):
         QWidget.__init__(self)
 
         self.values = values
@@ -325,7 +396,10 @@ class ComboBox(QWidget):
         hbox = QHBoxLayout()
         hbox.addWidget(description)
         hbox.addSpacing(10)
-        hbox.addWidget(self.combo)
+        if expand_combo:
+            hbox.addWidget(self.combo, 1)
+        else:
+            hbox.addWidget(self.combo)
         hbox.setMargin(0)
         self.setLayout(hbox)
         self.setContentsMargins(0, 0, 0, 0)
@@ -356,3 +430,60 @@ class RadioButton(QWidget):
 
     def get_value(self):
         return self.radiobutton.isChecked()
+
+class PushButton(QWidget):
+    clicked = pyqtSignal()
+
+    def __init__(self, caption, button_text, caption_size=None):
+        QWidget.__init__(self)
+
+        self.description = QLabel(caption)
+        self.description.setWordWrap(True)
+        if caption_size:
+            self.description.setMaximumWidth(caption_size)
+
+        self.button = QPushButton(i18n.get(button_text))
+        self.button.clicked.connect(self.__on_click)
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.description, 1)
+        hbox.addSpacing(10)
+        hbox.addWidget(self.button)
+        hbox.setMargin(0)
+        self.setLayout(hbox)
+        self.setContentsMargins(0, 0, 0, 0)
+
+    def __on_click(self):
+        self.clicked.emit()
+
+class LineEdit(QWidget):
+    def __init__(self, caption, default_value=None, caption_size=None, text_size=None):
+        QWidget.__init__(self)
+
+        self.description = QLabel(caption)
+        self.description.setWordWrap(True)
+        if caption_size:
+            self.description.setMaximumWidth(caption_size)
+
+        self.line_edit = QLineEdit()
+        if default_value:
+            self.line_edit.setText(default_value)
+        if text_size:
+            self.line_edit.setMaximumWidth(text_size)
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.description)
+        hbox.addSpacing(10)
+        hbox.addWidget(self.line_edit)
+        if text_size:
+            hbox.addStretch(1)
+        hbox.setMargin(0)
+        self.setLayout(hbox)
+        self.setContentsMargins(0, 0, 0, 0)
+
+    def set_visible(self, value):
+        self.description.setVisible(value)
+        self.line_edit.setVisible(value)
+
+    def get_text(self):
+        pass

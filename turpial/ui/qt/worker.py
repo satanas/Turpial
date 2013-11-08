@@ -49,6 +49,7 @@ class CoreWorker(QThread):
     fetched_profile_image = pyqtSignal(str)
     fetched_avatar = pyqtSignal(str, str)
     fetched_image_preview = pyqtSignal(object)
+    cache_deleted = pyqtSignal()
 
     def __init__(self):
         QThread.__init__(self)
@@ -372,6 +373,16 @@ class CoreWorker(QThread):
     def read_config(self):
         return self.core.config.read_all()
 
+    # FIXME: Fix this on libturpial
+    def get_cache_size(self):
+        total_size = 0
+        for account in self.get_all_accounts():
+            total_size += account.get_cache_size()
+        return total_size
+
+    def delete_cache(self):
+        self.register(self.core.delete_cache, None, self.__after_delete_cache)
+
     #================================================================
     # Callbacks
     #================================================================
@@ -490,6 +501,9 @@ class CoreWorker(QThread):
 
     def __after_post_status_from_queue(self, response, account_id):
         self.status_posted_from_queue.emit(response, account_id)
+
+    def __after_delete_cache(self):
+        self.cache_deleted.emit()
 
     #================================================================
     # Worker methods

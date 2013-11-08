@@ -4,8 +4,6 @@
 
 from datetime import datetime, timedelta
 
-#from PyQt4.QtGui import QFont
-#from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QSlider
 from PyQt4.QtGui import QWidget
@@ -16,8 +14,8 @@ from PyQt4.QtGui import QTabWidget
 from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QButtonGroup
 from PyQt4.QtGui import QRadioButton
-from PyQt4.QtGui import QStackedWidget
 from PyQt4.QtGui import QStandardItem
+from PyQt4.QtGui import QStackedWidget
 from PyQt4.QtGui import QAbstractItemView
 from PyQt4.QtGui import QStandardItemModel
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
@@ -28,13 +26,13 @@ from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
 
-#TODO: Open in a specific tab
+#TODO: Enable tp open dialog in a specific tab
 class PreferencesDialog(QWidget):
     def __init__(self, base):
         QWidget.__init__(self)
         self.base = base
         self.setWindowTitle(i18n.get('preferences'))
-        self.setFixedSize(400, 350)
+        self.setFixedSize(450, 360)
         self.current_config = self.base.get_config()
 
         self.tabbar = QTabWidget()
@@ -44,7 +42,7 @@ class PreferencesDialog(QWidget):
         self.tabbar.setElideMode(Qt.ElideNone)
 
         self.tabbar.addTab(GeneralPage(base), i18n.get('general'))
-        self.tabbar.addTab(NotificationsPage(), i18n.get('notifications'))
+        self.tabbar.addTab(NotificationsPage(base), i18n.get('notifications'))
         self.tabbar.addTab(ServicesPage(base), i18n.get('services'))
         self.tabbar.addTab(BrowserPage(base), i18n.get('web_browser'))
         self.tabbar.addTab(ProxyPage(base), i18n.get('proxy'))
@@ -90,21 +88,22 @@ class BasePage(QWidget):
 
         self.setLayout(self.layout)
 
-
-
 class GeneralPage(BasePage):
     def __init__(self, base):
         BasePage.__init__(self, i18n.get('general_tab_description'))
 
-        current_frecuency = base.core.get_update_interval()
+        update_frecuency = base.core.get_update_interval()
+        queue_frecuency = base.core.get_queue_interval()
+        statuses = base.core.get_statuses_per_column()
+        minimize_on_close = base.core.get_minimize_on_close()
 
         self.update_frecuency = Slider(i18n.get('update_frecuency'), unit='min',
-            default_value=current_frecuency)
+            default_value=update_frecuency)
         self.statuses_per_column = Slider(i18n.get('statuses_per_column'), minimum_value=20,
-            maximum_value=200, default_value=20)
+            maximum_value=200, default_value=statuses)
         self.queue_frecuency = Slider(i18n.get('queue_frecuency'), minimum_value=5,
-            maximum_value=720, default_value=20, single_step=15, time=True)
-        self.minimize_on_close = CheckBox(i18n.get('minimize_on_close'))
+            maximum_value=720, default_value=queue_frecuency, single_step=15, time=True)
+        self.minimize_on_close = CheckBox(i18n.get('minimize_on_close'), checked=minimize_on_close)
 
         self.layout.addWidget(self.update_frecuency)
         self.layout.addWidget(self.queue_frecuency)
@@ -117,19 +116,25 @@ class GeneralPage(BasePage):
         raise NotImplemented
 
 class NotificationsPage(BasePage):
-    def __init__(self):
+    def __init__(self, base):
         BasePage.__init__(self, i18n.get('notifications_tab_description'))
 
-        self.notify_on_update = CheckBox(i18n.get('notify_on_update'))
-        self.notify_on_actions = CheckBox(i18n.get('notify_on_actions'))
-        self.sound_on_login = CheckBox(i18n.get('sound_on_login'))
-        self.sound_on_update = CheckBox(i18n.get('sound_on_updates'))
+        notify_on_updates = base.core.get_notify_on_updates()
+        print notify_on_updates
+        notify_on_actions = base.core.get_notify_on_actions()
+        sound_on_login = base.core.get_sound_on_login()
+        sound_on_updates = base.core.get_sound_on_updates()
 
-        self.layout.addWidget(self.notify_on_update)
+        self.notify_on_updates = CheckBox(i18n.get('notify_on_updates'), checked=notify_on_updates)
+        self.notify_on_actions = CheckBox(i18n.get('notify_on_actions'), checked=notify_on_actions)
+        self.sound_on_login = CheckBox(i18n.get('sound_on_login'), checked=sound_on_login)
+        self.sound_on_updates = CheckBox(i18n.get('sound_on_updates'), checked=sound_on_updates)
+
+        self.layout.addWidget(self.notify_on_updates)
         self.layout.addWidget(self.notify_on_actions)
         self.layout.addSpacing(15)
         self.layout.addWidget(self.sound_on_login)
-        self.layout.addWidget(self.sound_on_update)
+        self.layout.addWidget(self.sound_on_updates)
         self.layout.addStretch(1)
 
     def get_config(self):
@@ -168,20 +173,9 @@ class BrowserPage(QWidget):
 
         self.command = QLineEdit()
 
-        if current_browser == '':
-            default_value = True
-            custom_value = False
-            self.command.setText('')
-        else:
-            default_value = False
-            custom_value = True
-            self.command.setText(current_browser)
-
-        self.default_browser = RadioButton(i18n.get('use_default_browser'), self,
-            selected=default_value)
+        self.default_browser = RadioButton(i18n.get('use_default_browser'), self)
         self.default_browser.selected.connect(self.__on_defaul_selected)
-        self.custom_browser = RadioButton(i18n.get('set_custom_browser'), self,
-            selected=custom_value)
+        self.custom_browser = RadioButton(i18n.get('set_custom_browser'), self)
         self.custom_browser.selected.connect(self.__on_custom_selected)
 
         custom_label = QLabel(i18n.get('command'))
@@ -210,6 +204,15 @@ class BrowserPage(QWidget):
 
         self.setLayout(vbox)
 
+        if current_browser == '':
+            self.default_browser.radiobutton.setChecked(True)
+            self.command.setText('')
+            self.__on_defaul_selected()
+        else:
+            self.custom_browser.radiobutton.setChecked(True)
+            self.command.setText(current_browser)
+            self.__on_custom_selected()
+
     def __on_defaul_selected(self):
         self.open_button.setEnabled(False)
         self.command.setEnabled(False)
@@ -225,15 +228,19 @@ class ProxyPage(BasePage):
     def __init__(self, base):
         BasePage.__init__(self, i18n.get('proxy_tab_description'))
 
-        default_authenticated = False
+        config = base.core.get_proxy_configuration()
+        if config['username'] != '':
+            default_authenticated = True
+        else:
+            default_authenticated = False
 
         self.protocol = ComboBox(i18n.get('type'), ['HTTP', 'HTTPS'], 'HTTP', expand_combo=True)
-        self.host = LineEdit(i18n.get('host'))
-        self.port = LineEdit(i18n.get('port'), text_size=100)
+        self.host = LineEdit(i18n.get('host'), default_value=config['server'])
+        self.port = LineEdit(i18n.get('port'), text_size=100, default_value=config['port'])
         self.authenticated = CheckBox(i18n.get('with_authentication'), checked=default_authenticated)
         self.authenticated.status_changed.connect(self.__on_click_authenticated)
-        self.username = LineEdit(i18n.get('username'))
-        self.password = LineEdit(i18n.get('password'))
+        self.username = LineEdit(i18n.get('username'), default_value=config['username'])
+        self.password = LineEdit(i18n.get('password'), default_value=config['password'])
 
         self.layout.addWidget(self.protocol)
         self.layout.addWidget(self.host)
@@ -259,14 +266,17 @@ class AdvancedPage(BasePage):
     def __init__(self, base):
         BasePage.__init__(self, i18n.get('advanced_tab_description'))
 
+        socket_timeout = base.core.get_socket_timeout()
+        show_avatars = base.core.get_show_user_avatars()
+
         clean_cache_caption = "%s\n(%s)" % (i18n.get('delete_all_files_in_cache'), base.get_cache_size())
         self.clean_cache = PushButton(clean_cache_caption, i18n.get('clean_cache'))
         self.clean_cache.clicked.connect(self.__on_clean_cache)
         self.restore_config = PushButton(i18n.get('restore_config_to_default'), i18n.get('restore_config'))
         self.restore_config.clicked.connect(self.__on_config_restore)
-        self.socket_timeout = Slider(i18n.get('socket_timeout'), 20, minimum_value=5, maximum_value=120,
-            unit='sec')
-        self.show_avatars = CheckBox(i18n.get('show_avatars'))
+        self.socket_timeout = Slider(i18n.get('socket_timeout'), default_value=socket_timeout,
+            minimum_value=5, maximum_value=120, unit='sec')
+        self.show_avatars = CheckBox(i18n.get('show_avatars'), checked=show_avatars)
 
         self.layout.addWidget(self.clean_cache)
         self.layout.addWidget(self.restore_config)

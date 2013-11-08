@@ -114,8 +114,133 @@ class CoreWorker(QThread):
     def get_update_interval(self):
         return self.core.get_update_interval()
 
+    def get_statuses_per_column(self):
+        return self.core.get_max_statuses_per_column()
+
+    def get_minimize_on_close(self):
+        return self.core.minimize_on_close()
+
+    # FIXME: Implement support on libturpial
+    def get_proxy_configuration(self):
+        return self.core.config.read_section('Proxy')
+
+    # FIXME: Implement support on libturpial
+    def get_socket_timeout(self):
+        return int(self.core.config.read('Advanced', 'socket-timeout'))
+
+    def get_show_user_avatars(self):
+        show_avatars = self.core.config.read('Advanced', 'show-user-avatars')
+        return True if show_avatars == 'on' else False
+
+    def get_update_interval_per_column(self, column_id):
+        column_key = self.__get_column_num_from_id(column_id)
+
+        key = "%s-update-interval" % column_key
+        interval = self.core.config.read('Intervals', key)
+        if not interval:
+            # FIXME: Fix in libturpial
+            config = self.core.config.read_all()
+            if not config.has_key('Intervals'):
+                config['Intervals'] = {key: 5}
+                self.core.config.save(config)
+            else:
+                self.core.config.write('Intervals', key, 5)
+            config = self.core.config.read_all()
+            interval = "5"
+        return int(interval)
+
+    def set_update_interval_in_column(self, column_id, interval):
+        column_key = self.__get_column_num_from_id(column_id)
+
+        key = "%s-update-interval" % column_key
+        self.core.config.write('Intervals', key, interval)
+        return interval
+
+    def get_show_notifications_in_column(self, column_id):
+        column_key = self.__get_column_num_from_id(column_id)
+
+        key = "%s-notifications" % column_key
+        notifications = self.core.config.read('Notifications', key)
+        if not notifications:
+            # FIXME: Fix in libturpial
+            config = self.core.config.read_all()
+            if not config.has_key('Notifications'):
+                config['Notifications'] = {}
+                self.core.config.save(config)
+            self.core.config.write('Notifications', key, 'on')
+            notifications = 'on'
+
+        if notifications == 'on':
+            return True
+        return False
+
+    def set_show_notifications_in_column(self, column_id, value):
+        column_key = self.__get_column_num_from_id(column_id)
+
+        key = "%s-notifications" % column_key
+        if value:
+            notifications = 'on'
+        else:
+            notifications = 'off'
+        self.core.config.write('Notifications', key, notifications)
+        return value
+
+    # FIXME: Fix this on libturpial
+    def get_cache_size(self):
+        total_size = 0
+        for account in self.get_all_accounts():
+            total_size += account.get_cache_size()
+        return total_size
+
+    def get_sound_on_login(self):
+        sound_on_login = self.core.config.read('Sounds', 'login')
+        if sound_on_login is None:
+            self.core.config.write('Sounds', 'login', 'on')
+            return True
+        else:
+            if sound_on_login == 'on':
+                return True
+            return False
+
+    def get_sound_on_updates(self):
+        sound_on_update = self.core.config.read('Sounds', 'updates')
+        if sound_on_update is None:
+            self.core.config.write('Sounds', 'updates', 'on')
+            return True
+        else:
+            if sound_on_update == 'on':
+                return True
+            return False
+
+    def get_notify_on_updates(self):
+        try:
+            notify_on_update = self.core.config.cfg.get('Notifications', 'updates')
+            if notify_on_update == 'on':
+                return True
+            return False
+        except:
+            config = self.read_config()
+            config['Notifications']['on-updates'] = 'on'
+            self.core.save_all_config(config)
+            return True
+
+    def get_notify_on_actions(self):
+        try:
+            notify_on_actions = self.core.config.cfg.get('Notifications', 'actions')
+            if notify_on_actions == 'on':
+                return True
+            return False
+        except:
+            config = self.read_config()
+            config['Notifications']['actions'] = 'on'
+            self.core.save_all_config(config)
+            return True
+
     def get_queue_interval(self):
         return 120
+
+    def read_config(self):
+        return self.core.config.read_all()
 
     def get_shorten_url_service(self):
         return self.core.get_shorten_url_service()
@@ -316,69 +441,6 @@ class CoreWorker(QThread):
     def post_status_from_queue(self, account_id, message):
         self.register(self.core.update_status, (account_id, message),
             self.__after_post_status_from_queue, account_id)
-
-    def get_update_interval_per_column(self, column_id):
-        column_key = self.__get_column_num_from_id(column_id)
-
-        key = "%s-update-interval" % column_key
-        interval = self.core.config.read('Intervals', key)
-        if not interval:
-            # FIXME: Fix in libturpial
-            config = self.core.config.read_all()
-            if not config.has_key('Intervals'):
-                config['Intervals'] = {key: 5}
-                self.core.config.save(config)
-            else:
-                self.core.config.write('Intervals', key, 5)
-            config = self.core.config.read_all()
-            interval = "5"
-        return int(interval)
-
-    def set_update_interval_in_column(self, column_id, interval):
-        column_key = self.__get_column_num_from_id(column_id)
-
-        key = "%s-update-interval" % column_key
-        self.core.config.write('Intervals', key, interval)
-        return interval
-
-    def get_show_notifications_in_column(self, column_id):
-        column_key = self.__get_column_num_from_id(column_id)
-
-        key = "%s-notifications" % column_key
-        notifications = self.core.config.read('Notifications', key)
-        if not notifications:
-            # FIXME: Fix in libturpial
-            config = self.core.config.read_all()
-            if not config.has_key('Notifications'):
-                config['Notifications'] = {}
-                self.core.config.save(config)
-            self.core.config.write('Notifications', key, 'on')
-            notifications = 'on'
-
-        if notifications == 'on':
-            return True
-        return False
-
-    def set_show_notifications_in_column(self, column_id, value):
-        column_key = self.__get_column_num_from_id(column_id)
-
-        key = "%s-notifications" % column_key
-        if value:
-            notifications = 'on'
-        else:
-            notifications = 'off'
-        self.core.config.write('Notifications', key, notifications)
-        return value
-
-    def read_config(self):
-        return self.core.config.read_all()
-
-    # FIXME: Fix this on libturpial
-    def get_cache_size(self):
-        total_size = 0
-        for account in self.get_all_accounts():
-            total_size += account.get_cache_size()
-        return total_size
 
     def delete_cache(self):
         self.register(self.core.delete_cache, None, self.__after_delete_cache)

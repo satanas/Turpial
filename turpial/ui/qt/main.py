@@ -674,16 +674,19 @@ class Main(Base, QWidget):
     def after_push_status_to_queue(self, account_id):
         self.update_box.done()
         self.queue_dialog.update()
-        # TODO: OS Notification
 
     def after_pop_status_from_queue(self, status):
         if status:
             self.core.post_status_from_queue(status.account_id, status.text)
 
-    def after_post_status_from_queue(self, response, account_id):
-        print '++Posted queue message'
-        self.queue_dialog.update()
-        self.os_notifications.message_from_queue_posted()
+    def after_post_status_from_queue(self, response, account_id, message):
+        if self.is_exception(response):
+            # TODO: OS Notification
+            print "+++Message enqueued again for error posting"
+            self.push_status_to_queue(account_id, message)
+        else:
+            self.queue_dialog.update()
+            self.os_notifications.message_from_queue_posted()
 
     def after_delete_status_from_queue(self):
         self.queue_dialog.update()

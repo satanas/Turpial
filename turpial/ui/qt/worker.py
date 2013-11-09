@@ -23,7 +23,7 @@ class CoreWorker(QThread):
     status_poped_from_queue = pyqtSignal(object)
     status_deleted_from_queue = pyqtSignal()
     queue_cleared = pyqtSignal()
-    status_posted_from_queue = pyqtSignal(object, str)
+    status_posted_from_queue = pyqtSignal(object, str, str)
     message_deleted = pyqtSignal(object, str, str)
     message_sent = pyqtSignal(object, str)
     column_updated = pyqtSignal(object, tuple)
@@ -448,7 +448,7 @@ class CoreWorker(QThread):
 
     def post_status_from_queue(self, account_id, message):
         self.register(self.core.update_status, (account_id, message),
-            self.__after_post_status_from_queue, account_id)
+            self.__after_post_status_from_queue, (account_id, message))
 
     def delete_cache(self):
         self.register(self.core.delete_cache, None, self.__after_delete_cache)
@@ -579,8 +579,10 @@ class CoreWorker(QThread):
     def __after_clear_queue(self):
         self.queue_cleared.emit()
 
-    def __after_post_status_from_queue(self, response, account_id):
-        self.status_posted_from_queue.emit(response, account_id)
+    def __after_post_status_from_queue(self, response, args):
+        account_id = args[0]
+        message = args[1]
+        self.status_posted_from_queue.emit(response, account_id, message)
 
     def __after_delete_cache(self):
         self.cache_deleted.emit()

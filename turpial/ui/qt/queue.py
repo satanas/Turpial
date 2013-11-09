@@ -2,7 +2,6 @@
 
 # Qt status queue for Turpial
 
-#import os
 import time
 
 from PyQt4.QtGui import QIcon
@@ -24,15 +23,13 @@ from turpial.ui.lang import i18n
 
 from libturpial.common.tools import get_protocol_from, get_username_from
 
-USERNAME_FONT = QFont("Helvetica", 14)
-PROTOCOL_FONT = QFont("Helvetica", 11)
 
 class QueueDialog(QWidget):
     def __init__(self, base):
         QWidget.__init__(self)
         self.base = base
         self.showed = False
-        self.setWindowTitle(i18n.get('statuses_queue'))
+        self.setWindowTitle(i18n.get('messages_queue'))
         self.setFixedSize(500, 400)
         self.last_timestamp = int(time.time())
 
@@ -71,10 +68,6 @@ class QueueDialog(QWidget):
         layout.setSpacing(5)
         layout.setContentsMargins(5, 5, 5, 0)
         self.setLayout(layout)
-
-        #self.base.account_deleted.connect(self.__update)
-        #self.base.account_loaded.connect(self.__update)
-        #self.base.account_registered.connect(self.__update)
 
     def __update(self):
         model = QStandardItemModel()

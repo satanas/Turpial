@@ -27,6 +27,7 @@ class Dock(QStatusBar):
     updates_clicked = pyqtSignal()
     messages_clicked = pyqtSignal()
     queue_clicked = pyqtSignal()
+    filters_clicked = pyqtSignal()
     preferences_clicked = pyqtSignal()
 
     EMPTY = 0
@@ -88,6 +89,9 @@ class Dock(QStatusBar):
     def __queue_clicked(self):
         self.queue_clicked.emit()
 
+    def __filters_clicked(self):
+        self.filters_clicked.emit()
+
     def __preferences_clicked(self):
         self.preferences_clicked.emit()
 
@@ -100,7 +104,7 @@ class Dock(QStatusBar):
         accounts = QAction(i18n.get('accounts'), self)
         accounts.triggered.connect(partial(self.__accounts_clicked))
 
-        queue = QAction(i18n.get('statuses_queue'), self)
+        queue = QAction(i18n.get('messages_queue'), self)
         queue.triggered.connect(partial(self.__queue_clicked))
         columns = QAction(i18n.get('columns'), self)
         if self.status > self.EMPTY:
@@ -110,6 +114,8 @@ class Dock(QStatusBar):
             queue.setEnabled(False)
             columns.setEnabled(False)
 
+        filters = QAction(i18n.get('filters'), self)
+        filters.triggered.connect(partial(self.__filters_clicked))
         preferences = QAction(i18n.get('preferences'), self)
         preferences.triggered.connect(partial(self.__preferences_clicked))
         about_turpial = QAction(i18n.get('about_turpial'), self)
@@ -117,6 +123,7 @@ class Dock(QStatusBar):
 
         self.settings_menu.addAction(accounts)
         self.settings_menu.addAction(columns)
+        self.settings_menu.addAction(filters)
         self.settings_menu.addAction(queue)
         self.settings_menu.addSeparator()
         self.settings_menu.addAction(preferences)

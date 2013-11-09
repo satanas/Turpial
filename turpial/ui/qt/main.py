@@ -37,6 +37,7 @@ from turpial.ui.qt.search import SearchDialog
 from turpial.ui.qt.updatebox import UpdateBox
 from turpial.ui.qt.container import Container
 from turpial.ui.qt.imageview import ImageView
+from turpial.ui.qt.filters import FiltersDialog
 from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.preferences import PreferencesDialog
@@ -86,7 +87,6 @@ class Main(Base, QWidget):
         self.profile.options_clicked.connect(self.show_profile_menu)
         self.image_view = ImageView(self)
         self.queue_dialog = QueueDialog(self)
-        #self.preferences_dialog = PreferencesDialog(self)
 
         self.core = CoreWorker()
         self.core.status_updated.connect(self.after_update_status)
@@ -140,6 +140,7 @@ class Main(Base, QWidget):
         self.dock.updates_clicked.connect(self.show_update_box)
         self.dock.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
         self.dock.queue_clicked.connect(self.show_queue_dialog)
+        self.dock.filters_clicked.connect(self.show_filters_dialog)
         self.dock.preferences_clicked.connect(self.show_preferences_dialog)
 
         self.tray = TrayIcon(self)
@@ -232,6 +233,101 @@ class Main(Base, QWidget):
     def show_about_dialog(self):
         AboutDialog(self)
 
+    def show_accounts_dialog(self):
+        accounts = AccountsDialog(self)
+
+    def show_queue_dialog(self):
+        self.queue_dialog.show()
+
+    def show_profile_dialog(self, account_id, username):
+        self.profile.start_loading(username)
+        self.core.get_user_profile(account_id, username)
+
+    def show_preferences_dialog(self):
+        self.preferences_dialog = PreferencesDialog(self)
+
+    def show_search_dialog(self):
+        search = SearchDialog(self)
+        if search.result() == QDialog.Accepted:
+            account_id = str(search.get_account().toPyObject())
+            criteria = str(search.get_criteria())
+            self.add_search_column(account_id, criteria)
+
+    def show_filters_dialog(self):
+        self.filters_dialog = FiltersDialog(self)
+
+    def show_profile_image(self, account_id, username):
+        self.image_view.start_loading()
+        self.core.get_profile_image(account_id, username)
+
+    def show_update_box(self):
+        self.update_box.show()
+
+    def show_update_box_for_reply(self, account_id, status):
+        self.update_box.show_for_reply(account_id, status)
+
+    def show_update_box_for_quote(self, account_id, status):
+        self.update_box.show_for_quote(account_id, status)
+
+    def show_update_box_for_send_direct(self, account_id, username):
+        self.update_box.show_for_send_direct(account_id, username)
+
+    def show_update_box_for_reply_direct(self, account_id, status):
+        self.update_box.show_for_reply_direct(account_id, status)
+
+    def show_column_menu(self, point):
+        self.columns_menu = self.build_columns_menu()
+        self.columns_menu.exec_(point)
+
+    def show_profile_menu(self, point, profile):
+        self.profile_menu = QMenu(self)
+
+        if profile.following:
+            unfollow_menu = QAction(i18n.get('unfollow'), self)
+            unfollow_menu.triggered.connect(partial(self.unfollow, profile.account_id,
+                profile.username))
+            message_menu = QAction(i18n.get('send_direct_message'), self)
+            message_menu.triggered.connect(partial(
+                self.show_update_box_for_send_direct, profile.account_id, profile.username))
+            self.profile_menu.addAction(unfollow_menu)
+            self.profile_menu.addSeparator()
+            self.profile_menu.addAction(message_menu)
+        elif profile.follow_request:
+            follow_menu = QAction(i18n.get('follow_requested'), self)
+            follow_menu.setEnabled(False)
+            self.profile_menu.addAction(follow_menu)
+            self.profile_menu.addSeparator()
+        else:
+            follow_menu = QAction(i18n.get('follow'), self)
+            follow_menu.triggered.connect(partial(self.follow, profile.account_id,
+                profile.username))
+            self.profile_menu.addAction(follow_menu)
+            self.profile_menu.addSeparator()
+
+        if self.core.is_muted(profile.username):
+            mute_menu = QAction(i18n.get('unmute'), self)
+            mute_menu.triggered.connect(partial(self.unmute, profile.username))
+        else:
+            mute_menu = QAction(i18n.get('mute'), self)
+            mute_menu.triggered.connect(partial(self.mute, profile.username))
+
+        block_menu = QAction(i18n.get('block'), self)
+        block_menu.triggered.connect(partial(self.block, profile.account_id, profile.username))
+        spam_menu = QAction(i18n.get('report_as_spam'), self)
+        spam_menu.triggered.connect(partial(self.report_as_spam, profile.account_id,
+            profile.username))
+
+        self.profile_menu.addAction(mute_menu)
+        self.profile_menu.addAction(block_menu)
+        self.profile_menu.addAction(spam_menu)
+
+        self.profile_menu.exec_(point)
+
+    def show_friends_dialog_for_direct_message(self):
+        friend = SelectFriendDialog(self)
+        if friend.get_username():
+            self.show_update_box_for_send_direct(friend.get_account(), friend.get_username())
+
     def save_account(self, account):
         self.core.save_account(account)
 
@@ -317,9 +413,6 @@ class Main(Base, QWidget):
                 self.add_timer(column)
             self.fetch_friends_list()
 
-    def show_accounts_dialog(self):
-        accounts = AccountsDialog(self)
-
     def build_columns_menu(self):
         columns_menu = QMenu(self)
 
@@ -354,85 +447,6 @@ class Main(Base, QWidget):
                 columns_menu.addAction(account_menu)
 
         return columns_menu
-
-    def show_column_menu(self, point):
-        self.columns_menu = self.build_columns_menu()
-        self.columns_menu.exec_(point)
-
-    def show_search_dialog(self):
-        search = SearchDialog(self)
-        if search.result() == QDialog.Accepted:
-            account_id = str(search.get_account().toPyObject())
-            criteria = str(search.get_criteria())
-            self.add_search_column(account_id, criteria)
-
-    def show_update_box(self):
-        self.update_box.show()
-
-    def show_update_box_for_reply(self, account_id, status):
-        self.update_box.show_for_reply(account_id, status)
-
-    def show_update_box_for_quote(self, account_id, status):
-        self.update_box.show_for_quote(account_id, status)
-
-    def show_update_box_for_send_direct(self, account_id, username):
-        self.update_box.show_for_send_direct(account_id, username)
-
-    def show_update_box_for_reply_direct(self, account_id, status):
-        self.update_box.show_for_reply_direct(account_id, status)
-
-    def show_profile_dialog(self, account_id, username):
-        self.profile.start_loading(username)
-        self.core.get_user_profile(account_id, username)
-
-    def show_profile_menu(self, point, profile):
-        self.profile_menu = QMenu(self)
-
-        if profile.following:
-            unfollow_menu = QAction(i18n.get('unfollow'), self)
-            unfollow_menu.triggered.connect(partial(self.unfollow, profile.account_id,
-                profile.username))
-            message_menu = QAction(i18n.get('send_direct_message'), self)
-            message_menu.triggered.connect(partial(
-                self.show_update_box_for_send_direct, profile.account_id, profile.username))
-            self.profile_menu.addAction(unfollow_menu)
-            self.profile_menu.addSeparator()
-            self.profile_menu.addAction(message_menu)
-        elif profile.follow_request:
-            follow_menu = QAction(i18n.get('follow_requested'), self)
-            follow_menu.setEnabled(False)
-            self.profile_menu.addAction(follow_menu)
-            self.profile_menu.addSeparator()
-        else:
-            follow_menu = QAction(i18n.get('follow'), self)
-            follow_menu.triggered.connect(partial(self.follow, profile.account_id,
-                profile.username))
-            self.profile_menu.addAction(follow_menu)
-            self.profile_menu.addSeparator()
-
-        if self.core.is_muted(profile.username):
-            mute_menu = QAction(i18n.get('unmute'), self)
-            mute_menu.triggered.connect(partial(self.unmute, profile.username))
-        else:
-            mute_menu = QAction(i18n.get('mute'), self)
-            mute_menu.triggered.connect(partial(self.mute, profile.username))
-
-        block_menu = QAction(i18n.get('block'), self)
-        block_menu.triggered.connect(partial(self.block, profile.account_id, profile.username))
-        spam_menu = QAction(i18n.get('report_as_spam'), self)
-        spam_menu.triggered.connect(partial(self.report_as_spam, profile.account_id,
-            profile.username))
-
-        self.profile_menu.addAction(mute_menu)
-        self.profile_menu.addAction(block_menu)
-        self.profile_menu.addAction(spam_menu)
-
-        self.profile_menu.exec_(point)
-
-    def show_friends_dialog_for_direct_message(self):
-        friend = SelectFriendDialog(self)
-        if friend.get_username():
-            self.show_update_box_for_send_direct(friend.get_account(), friend.get_username())
 
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.core.update_status(account_id, message, in_reply_to_id)
@@ -492,10 +506,6 @@ class Main(Base, QWidget):
         self.core.get_status_from_conversation(account_id, status.in_reply_to_id, column_id,
             status_root_id)
 
-    def show_profile_image(self, account_id, username):
-        self.image_view.start_loading()
-        self.core.get_profile_image(account_id, username)
-
     def push_status_to_queue(self, account_id, message):
         self.core.push_status_to_queue(account_id, message)
 
@@ -508,17 +518,14 @@ class Main(Base, QWidget):
     def clear_queue(self):
         self.core.clear_statuses_queue()
 
-    def show_queue_dialog(self):
-        self.queue_dialog.show()
-
     def get_config(self):
         return self.core.read_config()
 
-    def show_preferences_dialog(self):
-        self.preferences_dialog = PreferencesDialog(self)
-
     def get_cache_size(self):
         return self.humanize_size(self.core.get_cache_size())
+
+    def save_filters(self, filters):
+        self.core.save_filters(filters)
 
     #================================================================
     # Hooks definitions

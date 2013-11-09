@@ -453,6 +453,12 @@ class CoreWorker(QThread):
     def delete_cache(self):
         self.register(self.core.delete_cache, None, self.__after_delete_cache)
 
+    def list_filters(self):
+        return self.core.list_filters()
+
+    def save_filters(self, filters):
+        self.core.save_filters(filters)
+
     #================================================================
     # Callbacks
     #================================================================

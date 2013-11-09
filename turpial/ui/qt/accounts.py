@@ -14,14 +14,13 @@ from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QListView
 from PyQt4.QtGui import QPushButton
-from PyQt4.QtGui import QHBoxLayout
-from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QSizePolicy
 from PyQt4.QtGui import QTextDocument
 from PyQt4.QtGui import QStandardItem
 from PyQt4.QtGui import QAbstractItemView
 from PyQt4.QtGui import QStandardItemModel
 from PyQt4.QtGui import QStyledItemDelegate
+from PyQt4.QtGui import QHBoxLayout, QVBoxLayout
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QSize
@@ -29,7 +28,7 @@ from PyQt4.QtCore import QRect
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.oauth import OAuthDialog
-from turpial.ui.qt.dialog import ModalDialog
+from turpial.ui.qt.widgets import ModalDialog
 
 from libturpial.api.models.account import Account
 from libturpial.common.tools import get_protocol_from, get_username_from

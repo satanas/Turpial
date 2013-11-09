@@ -2,7 +2,6 @@
 
 # Qt filters dislog for Turpial
 
-from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QLineEdit
 from PyQt4.QtGui import QListWidget
 from PyQt4.QtGui import QPushButton
@@ -11,14 +10,12 @@ from PyQt4.QtGui import QVBoxLayout
 
 from turpial.ui.lang import i18n
 
-from libturpial.common.tools import get_protocol_from, get_username_from
+from turpial.ui.qt.widgets import Window
 
 
-class FiltersDialog(QWidget):
+class FiltersDialog(Window):
     def __init__(self, base):
-        QWidget.__init__(self)
-        self.base = base
-        self.setWindowTitle(i18n.get('filters'))
+        Window.__init__(self, base, i18n.get('filters'))
         self.setFixedSize(280, 360)
 
         self.expression = QLineEdit()
@@ -103,22 +100,9 @@ class FiltersDialog(QWidget):
         self.delete_button.setEnabled(value)
         self.clear_button.setEnabled(value)
 
-    def __center_on_parent(self):
-        geo = self.base.geometry()
-        cx = geo.x() + (geo.width() / 2)
-        cy = geo.y() + (geo.height() / 2)
-        geo2 = self.geometry()
-        fx = cx - (geo2.width() / 2)
-        fy = cy - (geo2.height() / 2)
-        self.setGeometry(fx,fy, geo2.width(), geo2.height())
-
     def __save_filters(self):
         filters = []
         for i in range(self.list_.count()):
             filters.append(str(self.list_.item(i).text()))
         self.base.save_filters(filters)
         self.__update()
-
-    def show(self):
-        QWidget.show(self)
-        self.__center_on_parent()

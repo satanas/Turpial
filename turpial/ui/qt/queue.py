@@ -7,7 +7,6 @@ import time
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QFont
 from PyQt4.QtGui import QLabel
-from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QTableView
 from PyQt4.QtGui import QHeaderView
 from PyQt4.QtGui import QPushButton
@@ -20,18 +19,17 @@ from PyQt4.QtGui import QStandardItemModel
 from PyQt4.QtCore import Qt
 
 from turpial.ui.lang import i18n
+from turpial.ui.qt.widgets import Window
 
 from libturpial.common.tools import get_protocol_from, get_username_from
 
 
-class QueueDialog(QWidget):
+class QueueDialog(Window):
     def __init__(self, base):
-        QWidget.__init__(self)
-        self.base = base
-        self.showed = False
-        self.setWindowTitle(i18n.get('messages_queue'))
+        Window.__init__(self, base, i18n.get('messages_queue'))
         self.setFixedSize(500, 400)
         self.last_timestamp = int(time.time())
+        self.showed = False
 
         self.list_ = QTableView()
         self.list_.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -138,12 +136,13 @@ class QueueDialog(QWidget):
         self.showed = False
 
     def show(self):
+        print self.showed
         if self.showed:
             self.raise_()
             return
 
         self.__update()
-        QWidget.show(self)
+        Window.show(self)
         self.showed = True
 
     def update(self):

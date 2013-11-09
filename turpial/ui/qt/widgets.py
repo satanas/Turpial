@@ -4,7 +4,9 @@
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QIcon
+from PyQt4.QtGui import QFont
 from PyQt4.QtGui import QFrame
+from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QToolButton
@@ -72,3 +74,12 @@ class Window(QWidget):
     def show(self):
         QWidget.show(self)
         self.__center_on_parent()
+
+class ErrorLabel(QLabel):
+    def __init__(self):
+        QLabel.__init__(self)
+
+        font = QFont()
+        font.setPointSize(10)
+        self.setFont(font)
+        self.setStyleSheet("QLabel {color: #f00}")

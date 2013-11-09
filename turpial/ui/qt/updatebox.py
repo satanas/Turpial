@@ -21,7 +21,7 @@ from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.loader import BarLoadIndicator
-from turpial.ui.qt.widgets import ImageButton, ToggleButton
+from turpial.ui.qt.widgets import ImageButton, ToggleButton, ErrorLabel
 
 from libturpial.common.tools import get_urls
 from libturpial.common import get_username_from, get_protocol_from
@@ -67,11 +67,7 @@ class UpdateBox(QWidget):
 
         self.loader = BarLoadIndicator()
 
-        font2 = QFont()
-        font2.setPointSize(10)
-        self.error_message = QLabel()
-        self.error_message.setFont(font2)
-        self.error_message.setStyleSheet("QLabel {color: #f00}")
+        self.error_message = ErrorLabel()
 
         self.update_button.clicked.connect(self.__update_status)
         self.queue_button.clicked.connect(self.__queue_status)

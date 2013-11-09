@@ -25,10 +25,11 @@ from PyQt4.QtGui import QHBoxLayout, QVBoxLayout
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QSize
 from PyQt4.QtCore import QRect
+from PyQt4.QtCore import QTimer
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.oauth import OAuthDialog
-from turpial.ui.qt.widgets import ModalDialog
+from turpial.ui.qt.widgets import ModalDialog, ErrorLabel
 
 from libturpial.api.models.account import Account
 from libturpial.common.tools import get_protocol_from, get_username_from
@@ -86,8 +87,12 @@ class AccountsDialog(ModalDialog):
         button_box.addWidget(self.delete_button)
         button_box.addWidget(self.relogin_button)
 
+        self.error_message = ErrorLabel()
+        self.error_message.setVisible(False)
+
         layout = QVBoxLayout()
         layout.addWidget(self.list_)
+        layout.addWidget(self.error_message)
         layout.addLayout(button_box)
         layout.setSpacing(5)
         layout.setContentsMargins(5, 5, 5, 0)
@@ -140,16 +145,21 @@ class AccountsDialog(ModalDialog):
     def __register_twitter_account(self):
         self.__enable(False)
         account = Account.new('twitter')
-        oauth_dialog = OAuthDialog(self, account.request_oauth_access())
+        try:
+            oauth_dialog = OAuthDialog(self, account.request_oauth_access())
+        except Exception, e:
+            self.error(i18n.get('problems_registering_new_account'))
+            self.__enable(True)
+            return
+
         if oauth_dialog.result() == QDialog.Accepted:
             pin = oauth_dialog.pin.text()
             try:
                 account.authorize_oauth_access(pin)
                 self.base.save_account(account)
             except Exception, e:
-                err_msg = "%s: %s" % (sys.exc_info()[0], sys.exc_info()[1])
-                self.base.show_error_message(i18n.get('register_a_new_account'),
-                    i18n.get('error_registering_new_account'), err_msg)
+                #err_msg = "%s: %s" % (sys.exc_info()[0], sys.exc_info()[1])
+                self.error(i18n.get('problems_registering_new_account'))
                 self.__enable(True)
 
     def __relogin_account(self):
@@ -165,6 +175,17 @@ class AccountsDialog(ModalDialog):
         self.new_button.setEnabled(value)
         self.delete_button.setEnabled(value)
         self.relogin_button.setEnabled(value)
+
+    def __on_timeout(self):
+        self.error_message.setText('')
+        self.error_message.setVisible(False)
+
+    def error(self, message):
+        self.error_message.setText(message)
+        self.error_message.setVisible(True)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.__on_timeout)
+        self.timer.start(5000)
 
 class AccountDelegate(QStyledItemDelegate):
     UsernameRole = Qt.UserRole + 100

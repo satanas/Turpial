@@ -237,10 +237,18 @@ class CoreWorker(QThread):
             return True
 
     def get_queue_interval(self):
-        return 120
+        queue_interval = self.core.config.read('General', 'queue-interval')
+        if queue_interval is None:
+            self.core.config.write('General', 'queue-interval', '30')
+            return 30
+        else:
+            return int(queue_interval)
 
     def read_config(self):
         return self.core.config.read_all()
+
+    def write_config(self, new_config):
+        self.core.save_all_config(new_config)
 
     def get_shorten_url_service(self):
         return self.core.get_shorten_url_service()

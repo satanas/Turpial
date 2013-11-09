@@ -41,12 +41,19 @@ class PreferencesDialog(QWidget):
         self.tabbar.setUsesScrollButtons(True)
         self.tabbar.setElideMode(Qt.ElideNone)
 
-        self.tabbar.addTab(GeneralPage(base), i18n.get('general'))
-        self.tabbar.addTab(NotificationsPage(base), i18n.get('notifications'))
-        self.tabbar.addTab(ServicesPage(base), i18n.get('services'))
-        self.tabbar.addTab(BrowserPage(base), i18n.get('web_browser'))
-        self.tabbar.addTab(ProxyPage(base), i18n.get('proxy'))
-        self.tabbar.addTab(AdvancedPage(base), i18n.get('advanced'))
+        self.general_page = GeneralPage(base)
+        self.notifications_page = NotificationsPage(base)
+        self.services_page = ServicesPage(base)
+        self.browser_page = BrowserPage(base)
+        self.proxy_page = ProxyPage(base)
+        self.advanced_page = AdvancedPage(base)
+
+        self.tabbar.addTab(self.general_page, i18n.get('general'))
+        self.tabbar.addTab(self.notifications_page, i18n.get('notifications'))
+        self.tabbar.addTab(self.services_page, i18n.get('services'))
+        self.tabbar.addTab(self.browser_page, i18n.get('web_browser'))
+        self.tabbar.addTab(self.proxy_page, i18n.get('proxy'))
+        self.tabbar.addTab(self.advanced_page, i18n.get('advanced'))
 
         self.save_button = QPushButton(i18n.get('save'))
         self.save_button.clicked.connect(self.__on_save)
@@ -70,7 +77,18 @@ class PreferencesDialog(QWidget):
         self.close()
 
     def __on_save(self):
-        print 'saving'
+        notif, sounds = self.notifications_page.get_config()
+
+        new_config = {
+            'General': self.general_page.get_config(),
+            'Notifications': notif,
+            'Sounds': sounds,
+            'Services': self.services_page.get_config(),
+            'Browser': self.browser_page.get_config(),
+            'Proxy': self.proxy_page.get_config(),
+            'Advanced': self.advanced_page.get_config()
+        }
+        self.base.core.write_config(new_config)
         self.close()
 
 class BasePage(QWidget):
@@ -113,14 +131,20 @@ class GeneralPage(BasePage):
         self.layout.addStretch(1)
 
     def get_config(self):
-        raise NotImplemented
+        minimize = 'on' if self.minimize_on_close.get_value() else 'off'
+
+        return {
+            'update-interval': self.update_frecuency.get_value(),
+            'statuses': self.statuses_per_column.get_value(),
+            'queue-interval': self.queue_frecuency.get_value(),
+            'minimize-on-close': minimize
+        }
 
 class NotificationsPage(BasePage):
     def __init__(self, base):
         BasePage.__init__(self, i18n.get('notifications_tab_description'))
 
         notify_on_updates = base.core.get_notify_on_updates()
-        print notify_on_updates
         notify_on_actions = base.core.get_notify_on_actions()
         sound_on_login = base.core.get_sound_on_login()
         sound_on_updates = base.core.get_sound_on_updates()
@@ -138,7 +162,16 @@ class NotificationsPage(BasePage):
         self.layout.addStretch(1)
 
     def get_config(self):
-        raise NotImplemented
+        notif = {
+            'updates': 'on' if self.notify_on_updates.get_value() else 'off',
+            'actions': 'on' if self.notify_on_actions.get_value() else 'off'
+
+        }
+        sound = {
+            'login': 'on' if self.sound_on_login.get_value() else 'off',
+            'updates': 'on' if self.sound_on_updates.get_value() else 'off'
+        }
+        return notif, sound
 
 class ServicesPage(BasePage):
     def __init__(self, base):
@@ -160,7 +193,10 @@ class ServicesPage(BasePage):
         self.layout.addStretch(1)
 
     def get_config(self):
-        raise NotImplemented
+        return {
+            'shorten-url': self.short_url.get_value(),
+            'upload-pic': self.upload_media.get_value()
+        }
 
 class BrowserPage(QWidget):
     def __init__(self, base):
@@ -205,11 +241,11 @@ class BrowserPage(QWidget):
         self.setLayout(vbox)
 
         if current_browser == '':
-            self.default_browser.radiobutton.setChecked(True)
+            self.default_browser.set_value(True)
             self.command.setText('')
             self.__on_defaul_selected()
         else:
-            self.custom_browser.radiobutton.setChecked(True)
+            self.custom_browser.set_value(True)
             self.command.setText(current_browser)
             self.__on_custom_selected()
 
@@ -222,7 +258,9 @@ class BrowserPage(QWidget):
         self.command.setEnabled(True)
 
     def get_config(self):
-        raise NotImplemented
+        return {
+            'cmd': str(self.command.text()),
+        }
 
 class ProxyPage(BasePage):
     def __init__(self, base):
@@ -260,7 +298,20 @@ class ProxyPage(BasePage):
         self.password.set_visible(visible)
 
     def get_config(self):
-        raise NotImplemented
+        if self.authenticated.get_value():
+            username = self.username.get_value()
+            password = self.password.get_value()
+        else:
+            username = ''
+            password = ''
+
+        return {
+            'protocol': self.protocol.get_value(),
+            'server': self.host.get_value(),
+            'port': self.port.get_value(),
+            'username': username,
+            'password': password
+        }
 
 class AdvancedPage(BasePage):
     def __init__(self, base):
@@ -296,7 +347,11 @@ class AdvancedPage(BasePage):
         print 'restoring config'
 
     def get_config(self):
-        raise NotImplemented
+        show_avatars = 'on' if self.show_avatars.get_value() else 'off'
+        return {
+            'socket-timeout': self.socket_timeout.get_value(),
+            'show-user-avatars': show_avatars
+        }
 
 
 ################################################################################
@@ -352,7 +407,7 @@ class Slider(QWidget):
         self.value_label.setText(text)
 
     def get_value(self):
-        return int(self.slider.getValue())
+        return int(self.slider.value())
 
 class CheckBox(QWidget):
     status_changed = pyqtSignal(bool)
@@ -415,7 +470,7 @@ class ComboBox(QWidget):
         self.setContentsMargins(0, 0, 0, 0)
 
     def get_value(self):
-        return self.values[self.combo.currentIndex()]
+        return str(self.values[self.combo.currentIndex()])
 
 class RadioButton(QWidget):
     selected = pyqtSignal()
@@ -437,6 +492,9 @@ class RadioButton(QWidget):
     def __on_change(self):
         self.value = True
         self.selected.emit()
+
+    def set_value(self, value):
+        self.radiobutton.setChecked(value)
 
     def get_value(self):
         return self.radiobutton.isChecked()
@@ -495,5 +553,5 @@ class LineEdit(QWidget):
         self.description.setVisible(value)
         self.line_edit.setVisible(value)
 
-    def get_text(self):
-        pass
+    def get_value(self):
+        return str(self.line_edit.text())

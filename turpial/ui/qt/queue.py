@@ -136,7 +136,6 @@ class QueueDialog(Window):
         self.showed = False
 
     def show(self):
-        print self.showed
         if self.showed:
             self.raise_()
             return

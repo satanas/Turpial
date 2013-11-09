@@ -151,14 +151,45 @@ class Container(QVBoxLayout):
             if id_ == column_id:
                 column.update_conversation(status, status_root_id)
 
+    def error_loading_conversation(self, column_id, status_root_id):
+        for id_, column in self.columns.iteritems():
+            if id_ == column_id:
+                column.error_in_conversation(status_root_id)
+        self.notify_error(column_id, self.base.random_id(), i18n.get('error_loading_conversation'))
+
+    def error_updating_column(self, column_id):
+        self.stop_updating(column_id)
+        self.notify_error(column_id, self.base.random_id(), i18n.get('error_updating_column'))
+
+    def error_repeating_status(self, column_id, status_id):
+        for id_, column in self.columns.iteritems():
+            column.release_status(status_id)
+        self.notify_error(column_id, status_id, i18n.get('error_repeating_status'))
+
+    def error_deleting_status(self, column_id, status_id):
+        for id_, column in self.columns.iteritems():
+            column.release_status(status_id)
+        self.notify_error(column_id, status_id, i18n.get('error_deleting_status'))
+
+    def error_marking_status_as_favorite(self, column_id, status_id):
+        for id_, column in self.columns.iteritems():
+            column.release_status(status_id)
+        self.notify_error(column_id, status_id, i18n.get('error_marking_status_as_favorite'))
+
+    def error_unmarking_status_as_favorite(self, column_id, status_id):
+        for id_, column in self.columns.iteritems():
+            column.release_status(status_id)
+        self.notify_error(column_id, status_id, i18n.get('error_unmarking_status_as_favorite'))
+
+
     def notify_error(self, column_id, id_, message):
-        self.columns[column_id].notify_error(id_, message)
+        self.columns[str(column_id)].notify_error(id_, message)
 
     def notify_success(self, column_id, id_, message):
-        self.columns[column_id].notify_success(id_, message)
+        self.columns[str(column_id)].notify_success(id_, message)
 
     def notify_warning(self, column_id, id_, message):
-        self.columns[column_id].notify_warning(id_, message)
+        self.columns[str(column_id)].notify_warning(id_, message)
 
     def notify_info(self, column_id, id_, message):
-        self.columns[column_id].notify_info(id_, message)
+        self.columns[str(column_id)].notify_info(id_, message)

@@ -4,6 +4,7 @@
 
 import os
 import sys
+import random
 import urllib2
 import traceback
 
@@ -185,6 +186,12 @@ class Main(Base, QWidget):
             for user in status.get_mentions():
                 if user not in current_friends_list and user not in self.extra_friends:
                     self.extra_friends.append(user)
+
+    def is_exception(self, response):
+        return isinstance(response, Exception)
+
+    def random_id(self):
+        return str(random.getrandbits(128))
 
     def closeEvent(self, event=None):
         if event:
@@ -560,44 +567,64 @@ class Main(Base, QWidget):
     def after_update_column(self, arg, data):
         column, max_ = data
 
-        # Notifications
-        # FIXME
-        count = len(arg)
+        if self.is_exception(arg):
+            self._container.error_updating_column(column.id_)
+        else:
+            # Notifications
+            # FIXME
+            count = len(arg)
 
-        if count > 0:
-            self._container.update_column(column.id_, arg)
+            if count > 0:
+                self._container.update_column(column.id_, arg)
 
     def after_update_status(self, response, account_id):
-        self.update_box.done()
+        if self.is_exception(response):
+            self.update_box.error(i18n.get('error_posting_status'))
+        else:
+            self.update_box.done()
 
     def after_broadcast_status(self, response):
-        self.update_box.done()
+        if self.is_exception(response):
+            self.update_box.error(i18n.get('error_posting_status'))
+        else:
+            self.update_box.done()
 
-    def after_repeat_status(self, response, column_id, account_id):
-        self._container.mark_status_as_repeated(response.id_)
-        self._container.notify_success(str(column_id), response.id_, i18n.get('status_repeated'))
+    def after_repeat_status(self, response, column_id, account_id, status_id):
+        if self.is_exception(response):
+            self._container.error_repeating_status(column_id, status_id)
+        else:
+            self._container.mark_status_as_repeated(response.id_)
+            self._container.notify_success(column_id, response.id_, i18n.get('status_repeated'))
 
-    def after_delete_status(self, response, column_id, account_id):
-        self._container.remove_status(response.id_)
-        self._container.notify_success(str(column_id), response.id_, i18n.get('status_deleted'))
+    def after_delete_status(self, response, column_id, account_id, status_id):
+        if self.is_exception(response):
+            self._container.error_deleting_status(column_id, status_id)
+        else:
+            self._container.remove_status(response.id_)
+            self._container.notify_success(column_id, response.id_, i18n.get('status_deleted'))
 
     def after_delete_message(self, response, column_id, account_id):
         self._container.remove_status(response.id_)
-        self._container.notify_success(str(column_id), response.id_, i18n.get('direct_message_deleted'))
+        self._container.notify_success(column_id, response.id_, i18n.get('direct_message_deleted'))
 
     def after_send_message(self, response, account_id):
         self.update_box.done()
 
-    def after_marking_status_as_favorite(self, response, column_id, account_id):
-        self._container.mark_status_as_favorite(response.id_)
-        self._container.notify_success(str(column_id), response.id_,
-            i18n.get('status_marked_as_favorite'))
+    def after_marking_status_as_favorite(self, response, column_id, account_id, status_id):
+        if self.is_exception(response):
+            self._container.error_marking_status_as_favorite(column_id, status_id)
+        else:
+            self._container.mark_status_as_favorite(response.id_)
+            self._container.notify_success(column_id, response.id_,
+                i18n.get('status_marked_as_favorite'))
 
-
-    def after_unmarking_status_as_favorite(self, response, column_id, account_id):
-        self._container.unmark_status_as_favorite(response.id_)
-        self._container.notify_success(str(column_id), response.id_,
-            i18n.get('status_removed_from_favorites'))
+    def after_unmarking_status_as_favorite(self, response, column_id, account_id, status_id):
+        if self.is_exception(response):
+            self._container.error_unmarking_status_as_favorite(column_id, status_id)
+        else:
+            self._container.unmark_status_as_favorite(response.id_)
+            self._container.notify_success(column_id, response.id_,
+                i18n.get('status_removed_from_favorites'))
 
     def after_get_user_profile(self, response, account_id):
         self.profile.loading_finished(response, account_id)
@@ -624,10 +651,13 @@ class Main(Base, QWidget):
         self.os_notifications.user_unfollowed(profile.username)
 
     def after_get_status_from_conversation(self, response, column_id, status_root_id):
-        self._container.update_conversation(response, column_id, status_root_id)
-        if response.in_reply_to_id:
-            self.core.get_status_from_conversation(response.account_id, response.in_reply_to_id,
-                column_id, status_root_id)
+        if self.is_exception(response):
+            self._container.error_loading_conversation(column_id, status_root_id)
+        else:
+            self._container.update_conversation(response, column_id, status_root_id)
+            if response.in_reply_to_id:
+                self.core.get_status_from_conversation(response.account_id, response.in_reply_to_id,
+                    column_id, status_root_id)
 
     def after_get_profile_image(self, image_path):
         self.image_view.loading_finished(str(image_path))
@@ -636,7 +666,10 @@ class Main(Base, QWidget):
         self.profile.update_avatar(str(image_path), str(username))
 
     def after_get_image_preview(self, response):
-        self.image_view.loading_finished(str(response.path))
+        if self.is_exception(response):
+            self.image_view.error()
+        else:
+            self.image_view.loading_finished(str(response.path))
 
     def after_push_status_to_queue(self, account_id):
         self.update_box.done()

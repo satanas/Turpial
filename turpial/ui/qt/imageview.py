@@ -32,10 +32,15 @@ class ImageView(Window):
         scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
+        self.error_label = QLabel(i18n.get('error_loading_image'))
+        self.error_label.setAlignment(Qt.AlignHCenter)
+        self.error_label.setStyleSheet("QLabel {background-color: #ffecec;}")
+
         layout = QVBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.loader)
+        layout.addWidget(self.error_label)
         layout.addWidget(scroll_area)
 
         self.setLayout(layout)
@@ -52,6 +57,7 @@ class ImageView(Window):
 
     def start_loading(self):
         self.loader.setVisible(True)
+        self.error_label.setVisible(False)
         self.show()
 
     def loading_finished(self, url):
@@ -61,3 +67,7 @@ class ImageView(Window):
         self.view.adjustSize()
         self.resize(pix.width() + 2, pix.height() + 2)
         self.show()
+
+    def error(self):
+        self.loader.setVisible(False)
+        self.error_label.setVisible(True)

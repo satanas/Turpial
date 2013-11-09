@@ -16,6 +16,7 @@ from PyQt4.QtGui import QHBoxLayout
 from PyQt4.QtGui import QFileDialog
 
 from PyQt4.QtCore import Qt
+from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
@@ -30,11 +31,9 @@ MAX_CHAR = 140
 class UpdateBox(QWidget):
     def __init__(self, base):
         QWidget.__init__(self)
-        #self.setParent(base)
         self.base = base
         self.showed = False
         self.setFixedSize(500, 120)
-        #self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
 
         self.text_edit = CompletionTextEdit()
 
@@ -67,9 +66,12 @@ class UpdateBox(QWidget):
         buttons.addWidget(self.update_button)
 
         self.loader = BarLoadIndicator()
-        self.loader.setVisible(False)
 
+        font2 = QFont()
+        font2.setPointSize(10)
         self.error_message = QLabel()
+        self.error_message.setFont(font2)
+        self.error_message.setStyleSheet("QLabel {color: #f00}")
 
         self.update_button.clicked.connect(self.__update_status)
         self.queue_button.clicked.connect(self.__queue_status)
@@ -81,8 +83,11 @@ class UpdateBox(QWidget):
         self.text_edit.enqueued.connect(self.__queue_status)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.text_edit, 1)
+        layout.setSpacing(0)
+        layout.addWidget(self.text_edit)
         layout.addWidget(self.loader)
+        layout.addSpacing(5)
+        layout.addWidget(self.error_message)
         layout.addLayout(buttons)
         layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(layout)
@@ -106,6 +111,21 @@ class UpdateBox(QWidget):
             self.char_count.setStyleSheet("QLabel { color: #000000 }")
         self.char_count.setText(str(remaining_chars))
 
+    def __validate(self, message, accounts, index):
+        if len(message) == 0:
+            self.error(i18n.get('you_can_not_submit_an_empty_message'))
+            return False
+
+        if index == 0 and len(accounts) > 1:
+            self.error(i18n.get('select_one_account_to_post'))
+            return False
+
+        if self.__count_chars() < 0:
+            self.error(i18n.get('message_too_long'))
+            return False
+
+        return True
+
     def __short_urls(self):
         self.enable(False)
         message = unicode(self.text_edit.toPlainText())
@@ -126,19 +146,10 @@ class UpdateBox(QWidget):
         account_id = str(self.accounts_combo.itemData(index).toPyObject())
         message = unicode(self.text_edit.toPlainText())
 
-        if len(message) == 0:
-            self.base.show_error_message(i18n.get('empty_message'),
-                i18n.get('you_can_not_submit_an_empty_message'))
+        if not self.__validate(message, accounts, index):
+            self.enable(True)
             return
 
-        if index == 0 and len(accounts) > 1:
-            self.base.show_error_message(i18n.get('select_account'),
-                i18n.get('select_one_account_to_post'))
-            return
-
-        #if len(message) > MAX_CHAR:
-        #    self.message.set_error_text(i18n.get('message_looks_like_testament'))
-        #    return
         self.enable(False)
 
         if self.direct_message_to:
@@ -155,14 +166,8 @@ class UpdateBox(QWidget):
         account_id = str(self.accounts_combo.itemData(index).toPyObject())
         message = unicode(self.text_edit.toPlainText())
 
-        if len(message) == 0:
-            self.base.show_error_message(i18n.get('empty_message'),
-                i18n.get('you_can_not_submit_an_empty_message'))
-            return
-
-        if index == 0 and len(accounts) > 1:
-            self.base.show_error_message(i18n.get('select_account'),
-                i18n.get('select_one_account_to_post'))
+        if not self.__validate(message, accounts, index):
+            self.enable(True)
             return
 
         self.enable(False)
@@ -173,11 +178,15 @@ class UpdateBox(QWidget):
         self.in_reply_to_id = None
         self.in_reply_to_user = None
         self.direct_message_to = None
+        self.quoting = False
         self.message = None
         self.cursor_position = None
         self.text_edit.setText('')
         self.accounts_combo.setCurrentIndex(0)
         self.queue_button.setEnabled(True)
+        self.loader.setVisible(False)
+        self.error_message.setVisible(False)
+        self.error_message.setText('')
         self.enable(True)
         self.showed = False
 
@@ -214,6 +223,10 @@ class UpdateBox(QWidget):
         QWidget.show(self)
         self.showed = True
 
+    def __on_timeout(self):
+        self.error_message.setText('')
+        self.error_message.setVisible(False)
+
     def show(self):
         if self.showed:
             return self.raise_()
@@ -232,7 +245,6 @@ class UpdateBox(QWidget):
         self.message = "%s " % mentions
         self.cursor_position = QTextCursor.End
         self.__show()
-        self.queue_button.setEnabled(False)
 
     def show_for_send_direct(self, account_id, username):
         if self.showed:
@@ -261,6 +273,7 @@ class UpdateBox(QWidget):
         self.account_id = account_id
         self.message = " RT @%s %s" % (status.username, status.text)
         self.cursor_position = QTextCursor.Start
+        self.quoting = True
         self.__show()
         self.queue_button.setEnabled(False)
 
@@ -282,15 +295,26 @@ class UpdateBox(QWidget):
         self.text_edit.setEnabled(value)
         if not self.account_id:
             self.accounts_combo.setEnabled(value)
+        if self.in_reply_to_id or self.direct_message_to or self.quoting:
+            self.queue_button.setEnabled(False)
+        else:
+            self.queue_button.setEnabled(value)
         self.upload_button.setEnabled(value)
         self.short_button.setEnabled(value)
         self.update_button.setEnabled(value)
-        self.queue_button.setEnabled(value)
         self.loader.setVisible(not value)
 
     def done(self):
         self.__clear()
         self.hide()
+
+    def error(self, message):
+        self.enable(True)
+        self.error_message.setText(message)
+        self.error_message.setVisible(True)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.__on_timeout)
+        self.timer.start(5000)
 
     def after_short_url(self, message):
         self.text_edit.setText(message)

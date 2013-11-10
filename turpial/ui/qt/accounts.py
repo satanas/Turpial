@@ -3,7 +3,6 @@
 # Qt account manager for Turpial
 
 import os
-import sys
 
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QFont
@@ -14,7 +13,6 @@ from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QListView
 from PyQt4.QtGui import QPushButton
-from PyQt4.QtGui import QSizePolicy
 from PyQt4.QtGui import QTextDocument
 from PyQt4.QtGui import QStandardItem
 from PyQt4.QtGui import QAbstractItemView

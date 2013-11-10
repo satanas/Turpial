@@ -3,8 +3,6 @@
 # Qt select friend dialog for Turpial
 
 from PyQt4.QtGui import QIcon
-from PyQt4.QtGui import QLabel
-from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QComboBox
 from PyQt4.QtGui import QLineEdit
 from PyQt4.QtGui import QCompleter
@@ -14,7 +12,7 @@ from PyQt4.QtGui import QFormLayout, QVBoxLayout, QHBoxLayout
 from PyQt4.QtCore import Qt
 
 from turpial.ui.lang import i18n
-from turpial.ui.qt.widgets import ImageButton, ModalDialog
+from turpial.ui.qt.widgets import ModalDialog
 
 from libturpial.common.tools import get_protocol_from, get_username_from
 

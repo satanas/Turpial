@@ -3,7 +3,6 @@
 # Qt about dialog for Turpial
 
 from PyQt4.QtGui import QLabel
-from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 

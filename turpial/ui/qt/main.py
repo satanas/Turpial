@@ -9,6 +9,7 @@ import urllib2
 import webbrowser
 import subprocess
 
+
 from functools import partial
 
 from PyQt4.QtGui import (
@@ -18,7 +19,6 @@ from PyQt4.QtGui import (
 
 from PyQt4.QtCore import QTimer, pyqtSignal
 
-from turpial import DESC
 from turpial.ui.base import * #NOQA
 from turpial.ui.sound import SoundSystem
 from turpial.ui.notification import OSNotificationSystem

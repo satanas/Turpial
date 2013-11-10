@@ -7,21 +7,14 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QSize
 from PyQt4.QtCore import QRect
 from PyQt4.QtCore import QLine
-from PyQt4.QtCore import QString
 
-from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QFont
-from PyQt4.QtGui import QStyle
 from PyQt4.QtGui import QColor
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QWidget
-from PyQt4.QtGui import QListView
 from PyQt4.QtGui import QMessageBox
 from PyQt4.QtGui import QTextDocument
-from PyQt4.QtGui import QStandardItem
-from PyQt4.QtGui import QAbstractItemView
-from PyQt4.QtGui import QStandardItemModel
 from PyQt4.QtGui import QStyledItemDelegate
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 

@@ -3,12 +3,11 @@
 # Qt profile dialog for Turpial
 
 from PyQt4.QtGui import QFont
-from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QTabWidget
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QGridLayout
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QPoint

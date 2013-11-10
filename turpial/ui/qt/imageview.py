@@ -7,7 +7,7 @@ from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QPalette
 from PyQt4.QtGui import QSizePolicy
 from PyQt4.QtGui import QScrollArea
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QGridLayout
+from PyQt4.QtGui import QVBoxLayout
 
 from PyQt4.QtCore import Qt
 

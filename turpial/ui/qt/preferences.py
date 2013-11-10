@@ -14,14 +14,9 @@ from PyQt4.QtGui import QTabWidget
 from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QButtonGroup
 from PyQt4.QtGui import QRadioButton
-from PyQt4.QtGui import QStandardItem
-from PyQt4.QtGui import QStackedWidget
-from PyQt4.QtGui import QAbstractItemView
-from PyQt4.QtGui import QStandardItemModel
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtCore import QSize
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n

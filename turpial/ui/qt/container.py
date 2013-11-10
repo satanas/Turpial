@@ -7,7 +7,6 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QWidget
-from PyQt4.QtGui import QListView
 from PyQt4.QtGui import QScrollArea
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 

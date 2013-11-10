@@ -5,15 +5,11 @@
 from PyQt4.QtCore import QUrl
 from PyQt4.QtWebKit import QWebView
 
-from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QLineEdit
 from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
-
-from PyQt4.QtCore import Qt
-from PyQt4.QtCore import QSize
 
 from turpial.ui.lang import i18n
 

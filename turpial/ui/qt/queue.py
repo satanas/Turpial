@@ -5,7 +5,6 @@
 import time
 
 from PyQt4.QtGui import QIcon
-from PyQt4.QtGui import QFont
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QTableView
 from PyQt4.QtGui import QHeaderView

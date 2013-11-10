@@ -10,7 +10,6 @@ from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QToolBar
 from PyQt4.QtGui import QStatusBar
-from PyQt4.QtGui import QHBoxLayout
 from PyQt4.QtGui import QSizePolicy
 
 from PyQt4.QtCore import QPoint

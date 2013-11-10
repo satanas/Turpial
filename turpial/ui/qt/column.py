@@ -40,6 +40,10 @@ class StatusesColumn(QWidget):
         self.statuses = {}
         self.conversations = {}
         self.id_ = None
+        self.bgcolor = "#363636"
+        self.fgcolor = "#fff"
+        #self.fgcolor = "#e3e3e3"
+        #self.fgcolor = "#f9a231"
         #self.updating = False
 
         self.loader = BarLoadIndicator()
@@ -57,7 +61,7 @@ class StatusesColumn(QWidget):
 
         if include_header:
             header = self.__build_header(column_id)
-            layout.addLayout(header)
+            layout.addWidget(header)
             layout.addWidget(self.loader)
         layout.addWidget(self.webview)
 
@@ -71,25 +75,23 @@ class StatusesColumn(QWidget):
         #font = QFont('Titillium Web', 18, QFont.Normal, False)
         font = QFont('Monda', 12, QFont.Normal, False)
 
-        icon = QLabel()
-        protocol_img = "%s.png" % self.protocol_id
-        icon.setPixmap(self.base.load_image(protocol_img, True))
-        icon.setStyleSheet("QLabel { background-color: #555; color: #fff; padding: 0 10px;}")
-
+        bg_style = "background-color: %s; color: %s;" % (self.bgcolor, self.fgcolor)
         label = "%s : %s" % (username, column_slug)
         caption = QLabel(label)
-        caption.setStyleSheet("QLabel { background-color: #555; color: #fff; }")
+        caption.setStyleSheet("QLabel { %s }" % bg_style)
         caption.setFont(font)
 
-        close_button = ImageButton(self.base, 'action-delete-shadowed.png',
-                i18n.get('delete_column'))
+        close_button = ImageButton(self.base, 'action-delete-shadowed.png', i18n.get('delete_column'))
         close_button.clicked.connect(self.__delete_column)
-        close_button.setStyleSheet("QToolButton { background-color: #555; color: #fff; border: 1px solid #555; margin: 0px;}")
+        close_button.setStyleSheet("QToolButton { %s border: 0px solid %s;}" % (bg_style, self.bgcolor))
 
-        header = QHBoxLayout()
-        header.addWidget(icon)
-        header.addWidget(caption, 1)
-        header.addWidget(close_button)
+        header_layout = QHBoxLayout()
+        header_layout.addWidget(caption, 1)
+        header_layout.addWidget(close_button)
+
+        header = QWidget()
+        header.setStyleSheet("QWidget { %s }" % bg_style)
+        header.setLayout(header_layout)
         return header
 
     def __delete_column(self):

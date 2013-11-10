@@ -68,7 +68,7 @@ class Dock(QStatusBar):
         toolbar.setMinimumHeight(24)
         self.addPermanentWidget(toolbar, 1)
         self.setStyleSheet("QStatusBar { %s }" % style)
-        self.setStyleSheet("QToolButton { %s }; QToolButton:hover { %s }" % (style, style))
+        self.setStyleSheet("QToolButton { %s opacity: 128; }; QToolButton:hover { %s opacity: 255;}" % (style, style))
         self.setSizeGripEnabled(False)
 
     def __accounts_clicked(self):

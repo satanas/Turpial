@@ -6,6 +6,7 @@ import os
 import sys
 import random
 import urllib2
+import webbrowser
 
 from functools import partial
 

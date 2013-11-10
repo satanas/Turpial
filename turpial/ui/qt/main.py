@@ -143,10 +143,11 @@ class Main(Base, QWidget):
         self.tray.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
 
         layout = QVBoxLayout()
+        layout.setSpacing(0)
+        layout.setMargin(0)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(self._container, 1)
         layout.addWidget(self.dock)
-        layout.setMargin(0)
 
         self.setLayout(layout)
         self.set_queue_timer()

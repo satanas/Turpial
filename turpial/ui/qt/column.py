@@ -40,8 +40,6 @@ class StatusesColumn(QWidget):
         self.statuses = {}
         self.conversations = {}
         self.id_ = None
-        self.bgcolor = "#363636"
-        self.fgcolor = "#fff"
         #self.fgcolor = "#e3e3e3"
         #self.fgcolor = "#f9a231"
         #self.updating = False
@@ -63,7 +61,7 @@ class StatusesColumn(QWidget):
             header = self.__build_header(column_id)
             layout.addWidget(header)
             layout.addWidget(self.loader)
-        layout.addWidget(self.webview)
+        layout.addWidget(self.webview, 1)
 
         self.setLayout(layout)
 
@@ -81,7 +79,7 @@ class StatusesColumn(QWidget):
             font = QFont('Maven Pro Light', 16, QFont.Light, False)
             font2 = QFont('Monda', 10, QFont.Light, False)
 
-        bg_style = "background-color: %s; color: %s;" % (self.bgcolor, self.fgcolor)
+        bg_style = "background-color: %s; color: %s;" % (self.base.bgcolor, self.base.fgcolor)
         label = "%s : %s" % (username, column_slug)
         caption = QLabel(username)
         caption.setStyleSheet("QLabel { %s }" % bg_style)
@@ -100,7 +98,7 @@ class StatusesColumn(QWidget):
 
         close_button = ImageButton(self.base, 'action-delete-shadowed.png', i18n.get('delete_column'))
         close_button.clicked.connect(self.__delete_column)
-        close_button.setStyleSheet("QToolButton { %s border: 0px solid %s;}" % (bg_style, self.bgcolor))
+        close_button.setStyleSheet("QToolButton { %s border: 0px solid %s;}" % (bg_style, self.base.bgcolor))
 
         header_layout = QHBoxLayout()
         header_layout.addLayout(caption_box, 1)

@@ -38,8 +38,7 @@ class Dock(QStatusBar):
         self.base = base
         self.status = self.EMPTY
 
-        bg_color = "#333"
-        style = "background-color: %s; border: 0px solid %s;" % (bg_color, bg_color)
+        style = "background-color: %s; border: 0px solid %s;" % (self.base.bgcolor, self.base.bgcolor)
 
         self.updates_button = ImageButton(base, 'dock-updates.png',
                 i18n.get('update_status'))
@@ -64,12 +63,16 @@ class Dock(QStatusBar):
         toolbar.addWidget(self.search_button)
         toolbar.addWidget(self.messages_button)
         toolbar.addWidget(self.updates_button)
+        toolbar.setMinimumHeight(30)
+        toolbar.setContentsMargins(0, 0, 0, 0)
         toolbar.setStyleSheet("QToolBar { %s }" % style)
-        toolbar.setMinimumHeight(24)
+        toolbar.setStyleSheet("QToolButton { %s opacity: 128; }; QToolButton:hover { %s opacity: 255;}" % (style, style))
+
         self.addPermanentWidget(toolbar, 1)
-        self.setStyleSheet("QStatusBar { %s }" % style)
-        self.setStyleSheet("QToolButton { %s opacity: 128; }; QToolButton:hover { %s opacity: 255;}" % (style, style))
         self.setSizeGripEnabled(False)
+
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setStyleSheet("QStatusBar { %s }" % style)
 
     def __accounts_clicked(self):
         self.accounts_clicked.emit()

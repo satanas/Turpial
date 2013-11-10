@@ -47,6 +47,9 @@ class Base(Singleton):
         else:
             self.shortcut_key = 'Ctrl'
 
+        self.bgcolor = "#363636"
+        self.fgcolor = "#fff"
+
         # Unity integration
         #self.unitylauncher = UnityLauncherFactory().create();
         #self.unitylauncher.add_quicklist_button(self.show_update_box, i18n.get('new_tweet'), True)

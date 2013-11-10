@@ -84,8 +84,8 @@ class Main(Base, QWidget):
         self.extra_friends = []
 
         self.update_box = UpdateBox(self)
-        self.profile = ProfileDialog(self)
-        self.profile.options_clicked.connect(self.show_profile_menu)
+        self.profile_dialog = ProfileDialog(self)
+        self.profile_dialog.options_clicked.connect(self.show_profile_menu)
         self.image_view = ImageView(self)
         self.queue_dialog = QueueDialog(self)
 
@@ -247,7 +247,7 @@ class Main(Base, QWidget):
         self.queue_dialog.show()
 
     def show_profile_dialog(self, account_id, username):
-        self.profile.start_loading(username)
+        self.profile_dialog.start_loading(username)
         self.core.get_user_profile(account_id, username)
 
     def show_preferences_dialog(self):
@@ -628,9 +628,9 @@ class Main(Base, QWidget):
 
     def after_get_user_profile(self, response, account_id):
         if self.is_exception(response):
-            self.profile.error(i18n.get('problems_loading_user_profile'))
+            self.profile_dialog.error(i18n.get('problems_loading_user_profile'))
         else:
-            self.profile.loading_finished(response, account_id)
+            self.profile_dialog.loading_finished(response, account_id)
             self.core.get_avatar_from_status(response)
 
     def after_mute_user(self, username):
@@ -641,31 +641,31 @@ class Main(Base, QWidget):
 
     def after_block_user(self, profile):
         if self.is_exception(profile):
-            self.profile.error(i18n.get('could_not_block_user'))
+            self.profile_dialog.error(i18n.get('could_not_block_user'))
         else:
             self.base.core.remove_friend(profile.username)
             self.os_notifications.user_blocked(profile.username)
 
     def after_report_user_as_spam(self, profile):
         if self.is_exception(profile):
-            self.profile.error(i18n.get('having_issues_reporting_user_as_spam'))
+            self.profile_dialog.error(i18n.get('having_issues_reporting_user_as_spam'))
         else:
             self.os_notifications.user_reported_as_spam(profile.username)
 
     def after_follow_user(self, profile):
         if self.is_exception(profile):
-            self.profile.error(i18n.get('having_trouble_to_follow_user'))
+            self.profile_dialog.error(i18n.get('having_trouble_to_follow_user'))
         else:
             self.base.core.add_friend(profile.username)
-            self.profile.update_following(profile.username, True)
+            self.profile_dialog.update_following(profile.username, True)
             self.os_notifications.user_followed(profile.username)
 
     def after_unfollow_user(self, profile):
         if self.is_exception(profile):
-            self.profile.error(i18n.get('having_trouble_to_unfollow_user'))
+            self.profile_dialog.error(i18n.get('having_trouble_to_unfollow_user'))
         else:
             self.base.core.remove_friend(profile.username)
-            self.profile.update_following(profile.username, False)
+            self.profile_dialog.update_following(profile.username, False)
             self.os_notifications.user_unfollowed(profile.username)
 
     def after_get_status_from_conversation(self, response, column_id, status_root_id):
@@ -682,7 +682,7 @@ class Main(Base, QWidget):
 
     def update_profile_avatar(self, image_path, username):
         if not self.is_exception(image_path):
-            self.profile.update_avatar(str(image_path), str(username))
+            self.profile_dialog.update_avatar(str(image_path), str(username))
 
     def after_get_image_preview(self, response):
         if self.is_exception(response):

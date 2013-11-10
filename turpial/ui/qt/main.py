@@ -170,8 +170,11 @@ class Main(Base, QWidget):
 
     def toggle_tray_icon(self):
         if self.showed:
-            self.showed = False
-            self.hide()
+            if self.isActiveWindow():
+                self.showed = False
+                self.hide()
+            else:
+                self.raise_()
         else:
             self.showed = True
             self.show()

@@ -6,18 +6,8 @@
 # Oct 09, 2011
 
 import os
-import pdb
-import sys
 import time
-import base64
-import urllib
-import logging
-import webbrowser
-import subprocess
 
-from xml.sax.saxutils import unescape
-
-from turpial import VERSION
 from turpial.ui.lang import i18n
 from turpial.singleton import Singleton
 
@@ -25,6 +15,7 @@ from libturpial.common import OS_MAC
 from libturpial.common.tools import detect_os
 
 MIN_WINDOW_WIDTH = 250
+
 
 class Base(Singleton):
     ACTION_REPEAT = 'repeat'
@@ -42,7 +33,15 @@ class Base(Singleton):
             os.path.dirname(__file__), '..', 'data', 'sounds'))
         self.fonts_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), '..', 'data', 'fonts'))
+        # Keep a list of installed app fonts to ease registration
+        # in the toolkit side
+        self.fonts = [
+            os.path.join(self.fonts_path, f)
+            for f in os.listdir(self.fonts_path)
+        ]
+
         self.home_path = os.path.expanduser('~')
+
         if detect_os() == OS_MAC:
             self.shortcut_key = 'Cmd'
         else:

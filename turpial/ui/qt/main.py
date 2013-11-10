@@ -6,26 +6,18 @@ import os
 import sys
 import random
 import urllib2
-import traceback
 
 from functools import partial
 
-from PyQt4.QtGui import QMenu
-from PyQt4.QtGui import QImage
-from PyQt4.QtGui import QWidget
-from PyQt4.QtGui import QAction
-from PyQt4.QtGui import QPixmap
-from PyQt4.QtGui import QDialog
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtGui import QVBoxLayout
-from PyQt4.QtGui import QApplication
-from PyQt4.QtGui import QFontDatabase
+from PyQt4.QtGui import (
+    QMenu, QImage, QWidget, QAction, QPixmap, QDialog, QMessageBox,
+    QVBoxLayout, QApplication, QFontDatabase, QIcon
+)
 
-from PyQt4.QtCore import QTimer
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import QTimer, pyqtSignal
 
 from turpial import DESC
-from turpial.ui.base import *
+from turpial.ui.base import * #NOQA
 from turpial.ui.sound import SoundSystem
 from turpial.ui.notification import OSNotificationSystem
 
@@ -58,25 +50,20 @@ class Main(Base, QWidget):
     account_registered = pyqtSignal()
 
     def __init__(self):
-        self.app = QApplication(sys.argv)
+        self.app = QApplication(['Turpial'] + sys.argv)
 
         Base.__init__(self)
         QWidget.__init__(self)
 
-        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Ubuntu-L.ttf'))
-        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Bold.ttf'))
-        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Regular.ttf'))
-        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Monda-Regular.ttf'))
-
-        database = QFontDatabase()
-        #for f in database.families():
-        #    print f
+        for font_path in self.fonts:
+            QFontDatabase.addApplicationFont(font_path)
 
         self.templates_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), 'templates'))
 
         self.setWindowTitle('Turpial')
         self.app.setApplicationName('Turpial')
+        self.setWindowIcon(QIcon(self.get_image_path('turpial.svg')))
         self.ignore_quit = True
         self.resize(320, 480)
         self.showed = True

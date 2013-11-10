@@ -177,6 +177,11 @@ STRINGS = {
     'error_marking_status_as_favorite': _("Error marking status as favorite"),
     'error_unmarking_status_as_favorite': _("Error unmarking status as favorite"),
     'error_posting_status': _("Error posting status"),
+    'problems_loading_user_profile': _("Problems loading user profile"),
+    'having_trouble_to_follow_user': _("Having some troubles to follow this user"),
+    'having_trouble_to_unfollow_user': _("Having some troubles to unfollow this user"),
+    'could_not_block_user': _("Oh oh, I could not block this user"),
+    'having_issues_reporting_user_as_spam': _("Having issues reporting this user as spam"),
 
 
     #'no_registered_columns': ,

@@ -47,7 +47,7 @@ class CoreWorker(QThread):
     exception_raised = pyqtSignal(object)
     status_from_conversation = pyqtSignal(object, str, str)
     fetched_profile_image = pyqtSignal(str)
-    fetched_avatar = pyqtSignal(str, str)
+    fetched_avatar = pyqtSignal(object, str)
     fetched_image_preview = pyqtSignal(object)
     cache_deleted = pyqtSignal()
 
@@ -65,13 +65,13 @@ class CoreWorker(QThread):
     #def __del__(self):
     #    self.wait()
 
-    def __add_friend(self, username):
+    def add_friend(self, username):
         # FIXME: On libturpial
         friends = self.core.config.load_friends()
         friends.append(username)
         self.core.config.save_friends(friends)
 
-    def __remove_friend(self, username):
+    def remove_friend(self, username):
         # FIXME: On libturpial
         friends = self.core.config.load_friends()
         if username in friends:
@@ -538,18 +538,15 @@ class CoreWorker(QThread):
         self.user_unmuted.emit(response)
 
     def __after_block_user(self, response):
-        self.__remove_friend(response.username)
         self.user_blocked.emit(response)
 
     def __after_report_user_as_spam(self, response):
         self.user_reported_as_spam.emit(response)
 
     def __after_follow_user(self, response, account_id):
-        self.__add_friend(response.username)
         self.user_followed.emit(response, account_id)
 
     def __after_unfollow_user(self, response, account_id):
-        self.__remove_friend(response.username)
         self.user_unfollowed.emit(response, account_id)
 
     def __after_get_status_from_conversation(self, response, args):

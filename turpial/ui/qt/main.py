@@ -627,8 +627,11 @@ class Main(Base, QWidget):
                 i18n.get('status_removed_from_favorites'))
 
     def after_get_user_profile(self, response, account_id):
-        self.profile.loading_finished(response, account_id)
-        self.core.get_avatar_from_status(response)
+        if self.is_exception(response):
+            self.profile.error(i18n.get('problems_loading_user_profile'))
+        else:
+            self.profile.loading_finished(response, account_id)
+            self.core.get_avatar_from_status(response)
 
     def after_mute_user(self, username):
         self.os_notifications.user_muted(username)
@@ -637,18 +640,33 @@ class Main(Base, QWidget):
         self.os_notifications.user_unmuted(username)
 
     def after_block_user(self, profile):
-        self.os_notifications.user_blocked(profile.username)
+        if self.is_exception(profile):
+            self.profile.error(i18n.get('could_not_block_user'))
+        else:
+            self.base.core.remove_friend(profile.username)
+            self.os_notifications.user_blocked(profile.username)
 
     def after_report_user_as_spam(self, profile):
-        self.os_notifications.user_reported_as_spam(profile.username)
+        if self.is_exception(profile):
+            self.profile.error(i18n.get('having_issues_reporting_user_as_spam'))
+        else:
+            self.os_notifications.user_reported_as_spam(profile.username)
 
     def after_follow_user(self, profile):
-        self.profile.update_following(profile.username, True)
-        self.os_notifications.user_followed(profile.username)
+        if self.is_exception(profile):
+            self.profile.error(i18n.get('having_trouble_to_follow_user'))
+        else:
+            self.base.core.add_friend(profile.username)
+            self.profile.update_following(profile.username, True)
+            self.os_notifications.user_followed(profile.username)
 
     def after_unfollow_user(self, profile):
-        self.profile.update_following(profile.username, False)
-        self.os_notifications.user_unfollowed(profile.username)
+        if self.is_exception(profile):
+            self.profile.error(i18n.get('having_trouble_to_unfollow_user'))
+        else:
+            self.base.core.remove_friend(profile.username)
+            self.profile.update_following(profile.username, False)
+            self.os_notifications.user_unfollowed(profile.username)
 
     def after_get_status_from_conversation(self, response, column_id, status_root_id):
         if self.is_exception(response):
@@ -663,7 +681,8 @@ class Main(Base, QWidget):
         self.image_view.loading_finished(str(image_path))
 
     def update_profile_avatar(self, image_path, username):
-        self.profile.update_avatar(str(image_path), str(username))
+        if not self.is_exception(image_path):
+            self.profile.update_avatar(str(image_path), str(username))
 
     def after_get_image_preview(self, response):
         if self.is_exception(response):

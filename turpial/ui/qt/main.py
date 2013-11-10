@@ -60,6 +60,10 @@ class Main(Base, QWidget):
         for font_path in self.fonts:
             QFontDatabase.addApplicationFont(font_path)
 
+        #database = QFontDatabase()
+        #for f in database.families():
+        #    print f
+
         self.templates_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), 'templates'))
 

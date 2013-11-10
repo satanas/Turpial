@@ -23,9 +23,9 @@ from turpial.ui.qt.widgets import ImageButton
 from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.webview import StatusesWebView
 
-from libturpial.common import get_preview_service_from_url
+from libturpial.common import get_preview_service_from_url, OS_MAC
 from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from,\
-        get_username_from
+        get_username_from, detect_os
 
 class StatusesColumn(QWidget):
     NOTIFICATION_ERROR = 'error'
@@ -73,7 +73,11 @@ class StatusesColumn(QWidget):
         column_slug = get_column_slug_from(column_id)
 
         #font = QFont('Titillium Web', 18, QFont.Normal, False)
-        font = QFont('Monda', 12, QFont.Normal, False)
+        # This is to handle the 96dpi vs 72dpi screen resolutions on Mac vs the world
+        if detect_os() == OS_MAC:
+            font = QFont('Ubuntu', 20, QFont.Light, False)
+        else:
+            font = QFont('Monda', 12, QFont.Normal, False)
 
         bg_style = "background-color: %s; color: %s;" % (self.bgcolor, self.fgcolor)
         label = "%s : %s" % (username, column_slug)

@@ -57,14 +57,8 @@ class Main(Base, QWidget):
         Base.__init__(self)
         QWidget.__init__(self)
 
-        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Ubuntu-L.ttf'))
-        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Bold.ttf'))
-        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'TitilliumWeb-Regular.ttf'))
-        QFontDatabase.addApplicationFont(os.path.join(self.fonts_path, 'Monda-Regular.ttf'))
-
-        database = QFontDatabase()
-        #for f in database.families():
-        #    print f
+        for font_path in self.fonts:
+            QFontDatabase.addApplicationFont(font_path)
 
         self.templates_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), 'templates'))

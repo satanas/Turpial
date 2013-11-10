@@ -520,6 +520,9 @@ class Main(Base, QWidget):
     def get_cache_size(self):
         return self.humanize_size(self.core.get_cache_size())
 
+    def clean_cache(self):
+        self.core.delete_cache()
+
     #================================================================
     # Hooks definitions
     #================================================================

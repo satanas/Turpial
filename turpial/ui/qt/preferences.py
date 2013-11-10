@@ -338,7 +338,7 @@ class AdvancedPage(BasePage):
         self.layout.addStretch(1)
 
     def __on_clean_cache(self):
-        print 'cleaning cache'
+        self.base.clean_cache()
         clean_cache_caption = "%s\n(0 B)" % (i18n.get('delete_all_files_in_cache'))
         self.clean_cache.button.setEnabled(False)
         self.clean_cache.description.setText(clean_cache_caption)

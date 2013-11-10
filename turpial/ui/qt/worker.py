@@ -192,6 +192,11 @@ class CoreWorker(QThread):
             total_size += account.get_cache_size()
         return total_size
 
+    # FIXME: Fix this on libturpial
+    def delete_cache(self):
+        for account in self.get_all_accounts():
+            account.delete_cache()
+
     def get_sound_on_login(self):
         sound_on_login = self.core.config.read('Sounds', 'login')
         if sound_on_login is None:

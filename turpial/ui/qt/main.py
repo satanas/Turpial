@@ -5,6 +5,7 @@
 import os
 import sys
 import urllib2
+import webbrowser
 
 from functools import partial
 

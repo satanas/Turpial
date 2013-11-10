@@ -48,11 +48,11 @@ class OSNotificationSystem:
 
     def updates(self, column, count, filtered=0):
         if count > 1:
-            message = i18n.get('new_tweets') % count
+            message = i18n.get('new_tweets_updated') % count
         else:
-            message = i18n.get('new_tweet')
+            message = i18n.get('new_tweet_updated')
 
-        title = " ".join([i18n.get('updated'), column.name])
+        title = " ".join([i18n.get('updated'), column.slug])
         self.notify(title, message)
 
     def user_followed(self, username):

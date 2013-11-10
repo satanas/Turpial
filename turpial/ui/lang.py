@@ -185,8 +185,8 @@ STRINGS = {
     'can_not_send_direct_message': _("Can not send direct message"),
     'error_shorting_url': _("Error shorting URL"),
     'error_uploading_image': _("Error uploading image"),
-    'new_tweet_updated': _('1 new tweet updated'),
-    'new_tweets_updates': _('%s new tweets updated'),
+    'new_tweet_updated': _("1 new tweet updated"),
+    'new_tweets_updated': _("%s new tweets updated"),
 
 
     #'no_registered_columns': ,

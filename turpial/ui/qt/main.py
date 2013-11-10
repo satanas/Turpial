@@ -575,8 +575,8 @@ class Main(Base, QWidget):
         else:
             count = len(arg)
             if count > 0:
-                if self.core.get_notify_on_updates(column, data):
-                    self.os_notifications.updates()
+                if self.core.get_notify_on_updates():
+                    self.os_notifications.updates(column, count)
 
                 if self.core.get_sound_on_updates():
                     self.sounds.updates()

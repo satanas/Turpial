@@ -197,6 +197,7 @@ class ProfileDialog(Window):
         self.username.setText('<b>%s</b>' % profile_username)
         self.fullname.setText(i18n.get('loading'))
         self.show()
+        self.raise_()
         self.showed = True
 
     def loading_finished(self, profile, account_id):
@@ -228,6 +229,7 @@ class ProfileDialog(Window):
         self.last_statuses.set_column_id(column_id)
         self.last_statuses.update_statuses(profile.recent_updates)
         self.show()
+        self.raise_()
 
     def update_avatar(self, image_path, username):
         if username != self.profile.username or not self.showed:
@@ -249,6 +251,7 @@ class ProfileDialog(Window):
         self.timer.timeout.connect(self.__on_timeout)
         self.timer.start(5000)
         self.show()
+        self.raise_()
 
 
 class UserField(QVBoxLayout):

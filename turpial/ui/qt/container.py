@@ -4,6 +4,7 @@
 
 from PyQt4.QtCore import Qt
 
+from PyQt4.QtGui import QFont
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QWidget
@@ -12,6 +13,9 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.column import StatusesColumn
+
+from libturpial.common import OS_MAC
+from libturpial.common.tools import detect_os
 
 class Container(QVBoxLayout):
     def __init__(self, base):
@@ -41,15 +45,25 @@ class Container(QVBoxLayout):
         if self.child:
             self.child.deleteLater()
 
-        image = self.base.load_image('logo.png', True)
+        image = self.base.load_image('turpial-196.png', True)
         logo = QLabel()
         logo.setPixmap(image)
         logo.setAlignment(Qt.AlignCenter)
         logo.setContentsMargins(0, 80, 0, 0)
 
+        appname = QLabel('Turpial 3')
+        if detect_os() == OS_MAC:
+            font = QFont('Maven Pro Light', 25, 0, False)
+            font2 = QFont('Monda', 14, 0, False)
+        else:
+            font = QFont('Maven Pro Light', 18, QFont.Light, False)
+            font2 = QFont('Ubuntu', 12, QFont.Normal, False)
+        appname.setFont(font)
+
         welcome = QLabel()
         welcome.setText(i18n.get('welcome'))
         welcome.setAlignment(Qt.AlignCenter)
+        welcome.setFont(font)
 
         message = QLabel()
         if with_accounts:
@@ -62,10 +76,12 @@ class Container(QVBoxLayout):
         message.linkActivated.connect(self.__link_clicked)
         message.setAlignment(Qt.AlignCenter)
         message.setWordWrap(True)
+        message.setFont(font2)
 
         self.child = QVBoxLayout()
-        self.child.addWidget(logo, 1)
+        self.child.addWidget(logo)
         self.child.addWidget(welcome)
+        self.child.setSpacing(10)
         self.child.addWidget(message)
         self.child.setSpacing(10)
         self.child.setContentsMargins(30, 0, 30, 60)

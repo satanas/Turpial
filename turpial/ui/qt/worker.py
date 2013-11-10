@@ -252,8 +252,9 @@ class CoreWorker(QThread):
     def read_config(self):
         return self.core.config.read_all()
 
-    def write_config(self, new_config):
-        self.core.save_all_config(new_config)
+    def update_config(self, new_config):
+        for section, items in new_config.iteritems():
+            self.core.config.write_section(section, items)
 
     def get_shorten_url_service(self):
         return self.core.get_shorten_url_service()

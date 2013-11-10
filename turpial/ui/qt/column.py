@@ -75,7 +75,8 @@ class StatusesColumn(QWidget):
         #font = QFont('Titillium Web', 18, QFont.Normal, False)
         # This is to handle the 96dpi vs 72dpi screen resolutions on Mac vs the world
         if detect_os() == OS_MAC:
-            font = QFont('Ubuntu', 20, QFont.Light, False)
+            font = QFont('Maven Pro Light', 25, 0, False)
+            font2 = QFont('Monda', 14, 0, False)
         else:
             font = QFont('Maven Pro Light', 16, QFont.Light, False)
             font2 = QFont('Monda', 10, QFont.Light, False)

@@ -313,17 +313,23 @@ class UpdateBox(QWidget):
         self.timer.start(5000)
 
     def after_short_url(self, message):
-        self.text_edit.setText(message)
+        if self.base.is_exception(message):
+            self.error(i18n.get('error_shorting_url'))
+        else:
+            self.text_edit.setText(message)
         self.enable(True)
 
     def after_upload_media(self, media_url):
-        text_cursor = self.text_edit.textCursor()
-        text_cursor.select(QTextCursor.WordUnderCursor)
-        if text_cursor.selectedText() != '':
-            media_url = " %s" % media_url
-        text_cursor.clearSelection()
-        text_cursor.insertText(media_url)
-        self.text_edit.setTextCursor(text_cursor)
+        if self.base.is_exception(media_url):
+            self.error(i18n.get('error_uploading_image'))
+        else:
+            text_cursor = self.text_edit.textCursor()
+            text_cursor.select(QTextCursor.WordUnderCursor)
+            if text_cursor.selectedText() != '':
+                media_url = " %s" % media_url
+            text_cursor.clearSelection()
+            text_cursor.insertText(media_url)
+            self.text_edit.setTextCursor(text_cursor)
         self.enable(True)
 
     def update_friends_list(self):

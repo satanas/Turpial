@@ -608,7 +608,10 @@ class Main(Base, QWidget):
         self._container.notify_success(column_id, response.id_, i18n.get('direct_message_deleted'))
 
     def after_send_message(self, response, account_id):
-        self.update_box.done()
+        if self.is_exception(response):
+            self.update_box.error(i18n.get('can_not_send_direct_message'))
+        else:
+            self.update_box.done()
 
     def after_marking_status_as_favorite(self, response, column_id, account_id, status_id):
         if self.is_exception(response):

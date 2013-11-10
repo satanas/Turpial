@@ -182,6 +182,9 @@ STRINGS = {
     'having_trouble_to_unfollow_user': _("Having some troubles to unfollow this user"),
     'could_not_block_user': _("Oh oh, I could not block this user"),
     'having_issues_reporting_user_as_spam': _("Having issues reporting this user as spam"),
+    'can_not_send_direct_message': _("Can not send direct message"),
+    'error_shorting_url': _("Error shorting URL"),
+    'error_uploading_image': _("Error uploading image"),
 
 
     #'no_registered_columns': ,

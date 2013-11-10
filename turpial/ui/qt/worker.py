@@ -289,7 +289,9 @@ class CoreWorker(QThread):
 
     def list_statuses_queue(self):
         statuses = []
-        lines = open(self.queue_path).readlines()
+        lines = []
+        if os.path.exists(self.queue_path):
+            lines = open(self.queue_path).readlines()
         for line in lines:
             account_id, message = line.strip().split("\1")
             status = Status()

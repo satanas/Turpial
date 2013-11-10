@@ -90,10 +90,12 @@
     function clearConversation(status_root_id) {
         var conversation = document.getElementById(status_root_id + '-conversation');
         var viewCmd = document.getElementById(status_root_id + '-view-conv-cmd');
+        var loadingCmd = document.getElementById(status_root_id + '-loading-conv-cmd');
         var hideCmd = document.getElementById(status_root_id + '-hide-conv-cmd');
         conversation.innerHTML = "";
         viewCmd.className = 'in_reply_to';
         hideCmd.className = 'in_reply_to hidden';
+        loadingCmd.className = 'in_reply_to hidden';
     }
 
     function lockStatus(status_id) {

@@ -12,35 +12,35 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QGridLayout
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QPoint
+from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.column import StatusesColumn
 from turpial.ui.qt.loader import BarLoadIndicator
-from turpial.ui.qt.widgets import ImageButton, VLine, HLine
+from turpial.ui.qt.widgets import ImageButton, VLine, HLine, Window, ErrorLabel
 
 from libturpial.common.tools import get_username_from
 
 
-class ProfileDialog(QWidget):
+class ProfileDialog(Window):
 
     options_clicked = pyqtSignal(QPoint, object)
 
     def __init__(self, base):
-        QWidget.__init__(self)
-        self.base = base
+        Window.__init__(self, base, i18n.get('user_profile'))
+
         self.account_id = None
-        self.setWindowTitle(i18n.get('user_profile'))
-        self.setFixedSize(350, 390)
-        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
-        self.setStyleSheet("QWidget { background-color: #fff; } QTabWidget { background-color: #fff; }")
+        self.setFixedSize(380, 450)
+        #self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        #self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        #self.setStyleSheet("QWidget { background-color: #fff; } QTabWidget { background-color: #fff; }")
 
         self.username = QLabel('')
         self.username.setTextFormat(Qt.RichText)
 
         self.fullname = QLabel('')
-        self.options = ImageButton(base, 'action-status-menu.png',
-                i18n.get(''))
+        self.options = ImageButton(base, 'action-status-menu.png', i18n.get(''))
         self.options.clicked.connect(self.__options_clicked)
 
         self.verified_icon = QLabel()
@@ -76,63 +76,64 @@ class ProfileDialog(QWidget):
         self.loader = BarLoadIndicator()
         self.loader.setVisible(False)
 
+        self.error_message = ErrorLabel()
+        self.error_message.setVisible(False)
+
         header = QHBoxLayout()
-        header.setContentsMargins(10, 10 ,10, 0)
+        header.setContentsMargins(5, 10, 5, 0)
         header.addWidget(self.avatar)
         header.addSpacing(10)
         header.addLayout(user_info)
 
-
-        self.bio = UserInfoBox(base, 'bio', 'icon-bio.png')
+        # User Info
+        self.bio = UserField(base, 'bio', 'icon-bio.png')
         self.bio.set_word_wrap(True)
         self.bio.set_info('')
 
-        self.location = UserInfoBox(base, 'location', 'icon-location.png')
+        self.location = UserField(base, 'location', 'icon-location.png')
         self.location.set_info('')
 
-        self.web = UserInfoBox(base, 'web', 'icon-home.png')
+        self.web = UserField(base, 'web', 'icon-home.png')
         self.web.set_info('')
-
-        body = QVBoxLayout()
-        body.setSpacing(15)
-        body.setContentsMargins(10, 0, 10, 10)
-        body.addLayout(self.bio)
-        body.addLayout(self.location)
-        body.addLayout(self.web)
-
-        body_layout = QWidget()
-        body_layout.setLayout(body)
-
-        self.last_statuses = StatusesColumn(self.base, None, False)
-        statuses_layout = QVBoxLayout()
-        statuses_layout.setContentsMargins(0, 0, 0, 0)
-        statuses_layout.addWidget(self.last_statuses)
-        statuses = QWidget()
-        statuses.setLayout(statuses_layout)
-
-        self.tabs = QTabWidget(self)
-        self.tabs.addTab(body_layout, i18n.get('info'))
-        self.tabs.addTab(statuses, i18n.get('recent'))
 
         self.tweets = StatInfoBox('tweets', '')
         self.following = StatInfoBox('following', '')
         self.followers = StatInfoBox('followers', '')
         self.favorites = StatInfoBox('favorites', '')
 
-        footer = QHBoxLayout()
-        footer.setContentsMargins(0, 5, 0, 10)
-        footer.setSpacing(1)
-        footer.addLayout(self.tweets)
-        footer.addWidget(VLine())
-        footer.addLayout(self.following)
-        footer.addWidget(VLine())
-        footer.addLayout(self.followers)
-        footer.addWidget(VLine())
-        footer.addLayout(self.favorites)
+        footer_layout = QHBoxLayout()
+        footer_layout.setContentsMargins(0, 5, 0, 10)
+        footer_layout.setSpacing(0)
+        footer_layout.addLayout(self.tweets)
+        footer_layout.addWidget(VLine())
+        footer_layout.addLayout(self.following)
+        footer_layout.addWidget(VLine())
+        footer_layout.addLayout(self.followers)
+        footer_layout.addWidget(VLine())
+        footer_layout.addLayout(self.favorites)
 
-        footer_widget = QWidget()
-        footer_widget.setLayout(footer)
-        footer_widget.setStyleSheet("QWidget { background-color: #333; color: white; }")
+        footer = QWidget()
+        footer.setLayout(footer_layout)
+        footer.setStyleSheet("QWidget { background-color: #333; color: white; }")
+
+        body_layout = QVBoxLayout()
+        body_layout.setSpacing(15)
+        body_layout.setContentsMargins(0, 0, 0, 0)
+        body_layout.addLayout(self.bio)
+        body_layout.addLayout(self.location)
+        body_layout.addLayout(self.web)
+        body_layout.addWidget(footer)
+
+        body = QWidget()
+        body.setLayout(body_layout)
+
+        self.last_statuses = StatusesColumn(self.base, None, False)
+
+        self.tabs = QTabWidget(self)
+        self.tabs.setTabsClosable(False)
+        self.tabs.setMovable(False)
+        self.tabs.addTab(body, i18n.get('info'))
+        self.tabs.addTab(self.last_statuses, i18n.get('recent'))
 
         self.hline = HLine()
         self.hline.setMinimumHeight(2)
@@ -142,11 +143,11 @@ class ProfileDialog(QWidget):
         layout.addSpacing(10)
         layout.addWidget(self.hline)
         layout.addWidget(self.loader)
+        layout.addWidget(self.error_message)
         layout.addSpacing(10)
         layout.addWidget(self.tabs, 1)
-        layout.addWidget(footer_widget)
         layout.setSpacing(0)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(layout)
 
         self.__clear()
@@ -159,6 +160,8 @@ class ProfileDialog(QWidget):
         self.protected_icon.setVisible(False)
         self.you_label.setVisible(False)
         self.options.setVisible(False)
+        self.loader.setVisible(False)
+        self.error_message.setVisible(False)
         self.avatar.setPixmap(self.base.load_image('unknown.png', True))
         self.bio.set_info('')
         self.location.set_info('')
@@ -176,6 +179,10 @@ class ProfileDialog(QWidget):
 
     def __show_avatar(self):
         self.base.show_profile_image(self.account_id, self.profile.username)
+
+    def __on_timeout(self):
+        self.error_message.setText('')
+        self.error_message.setVisible(False)
 
     def closeEvent(self, event=None):
         if event:
@@ -232,8 +239,19 @@ class ProfileDialog(QWidget):
             return
         self.profile.following = following
 
+    def error(self, message):
+        self.loader.setVisible(False)
+        self.hline.setVisible(False)
+        self.fullname.setText('')
+        self.error_message.setText(message)
+        self.error_message.setVisible(True)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.__on_timeout)
+        self.timer.start(5000)
+        self.show()
 
-class UserInfoBox(QVBoxLayout):
+
+class UserField(QVBoxLayout):
     def __init__(self, base, title, image, text=None, text_as_link=False):
         QVBoxLayout.__init__(self)
         icon = QLabel()
@@ -249,6 +267,7 @@ class UserInfoBox(QVBoxLayout):
             self.text = QLabel()
 
         self.setSpacing(5)
+        self.setContentsMargins(10, 0, 10, 0)
         self.addLayout(header)
         self.addWidget(self.text)
 
@@ -265,7 +284,7 @@ class StatInfoBox(QVBoxLayout):
         value = value or '0'
 
         font = QFont()
-        font.setPointSize(18)
+        font.setPointSize(16)
         font.setBold(True)
 
         self.stat = QLabel(value)

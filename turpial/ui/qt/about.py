@@ -10,7 +10,7 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 from PyQt4.QtCore import Qt
 
 from turpial.ui.lang import i18n
-from turpial.ui.qt.dialog import ModalDialog
+from turpial.ui.qt.widgets import ModalDialog
 
 from turpial import VERSION
 

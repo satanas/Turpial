@@ -4,6 +4,7 @@
 
 import os
 import sys
+import random
 import urllib2
 import traceback
 
@@ -37,6 +38,7 @@ from turpial.ui.qt.search import SearchDialog
 from turpial.ui.qt.updatebox import UpdateBox
 from turpial.ui.qt.container import Container
 from turpial.ui.qt.imageview import ImageView
+from turpial.ui.qt.filters import FiltersDialog
 from turpial.ui.qt.profile import ProfileDialog
 from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.preferences import PreferencesDialog
@@ -82,11 +84,10 @@ class Main(Base, QWidget):
         self.extra_friends = []
 
         self.update_box = UpdateBox(self)
-        self.profile = ProfileDialog(self)
-        self.profile.options_clicked.connect(self.show_profile_menu)
+        self.profile_dialog = ProfileDialog(self)
+        self.profile_dialog.options_clicked.connect(self.show_profile_menu)
         self.image_view = ImageView(self)
         self.queue_dialog = QueueDialog(self)
-        #self.preferences_dialog = PreferencesDialog(self)
 
         self.core = CoreWorker()
         self.core.status_updated.connect(self.after_update_status)
@@ -140,6 +141,7 @@ class Main(Base, QWidget):
         self.dock.updates_clicked.connect(self.show_update_box)
         self.dock.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
         self.dock.queue_clicked.connect(self.show_queue_dialog)
+        self.dock.filters_clicked.connect(self.show_filters_dialog)
         self.dock.preferences_clicked.connect(self.show_preferences_dialog)
 
         self.tray = TrayIcon(self)
@@ -155,9 +157,6 @@ class Main(Base, QWidget):
 
         self.setLayout(layout)
         self.set_queue_timer()
-        self.sounds.startup()
-
-        #self.preferences_dialog.show()
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -185,19 +184,28 @@ class Main(Base, QWidget):
                 if user not in current_friends_list and user not in self.extra_friends:
                     self.extra_friends.append(user)
 
+    def is_exception(self, response):
+        return isinstance(response, Exception)
+
+    def random_id(self):
+        return str(random.getrandbits(128))
+
     def closeEvent(self, event=None):
         if event:
             event.ignore()
-        self.main_quit()
+        if self.core.get_minimize_on_close():
+            self.hide()
+            self.showed = False
+        else:
+            self.main_quit()
 
     #================================================================
     # Overrided methods
     #================================================================
 
     def start(self):
-        #if self.core.play_sounds_in_login():
-        #    self.sound.login()
-        print 'start'
+        if self.core.get_sound_on_login():
+            self.sounds.startup()
 
     def main_loop(self):
         try:
@@ -231,6 +239,101 @@ class Main(Base, QWidget):
 
     def show_about_dialog(self):
         AboutDialog(self)
+
+    def show_accounts_dialog(self):
+        accounts = AccountsDialog(self)
+
+    def show_queue_dialog(self):
+        self.queue_dialog.show()
+
+    def show_profile_dialog(self, account_id, username):
+        self.profile_dialog.start_loading(username)
+        self.core.get_user_profile(account_id, username)
+
+    def show_preferences_dialog(self):
+        self.preferences_dialog = PreferencesDialog(self)
+
+    def show_search_dialog(self):
+        search = SearchDialog(self)
+        if search.result() == QDialog.Accepted:
+            account_id = str(search.get_account().toPyObject())
+            criteria = str(search.get_criteria())
+            self.add_search_column(account_id, criteria)
+
+    def show_filters_dialog(self):
+        self.filters_dialog = FiltersDialog(self)
+
+    def show_profile_image(self, account_id, username):
+        self.image_view.start_loading()
+        self.core.get_profile_image(account_id, username)
+
+    def show_update_box(self):
+        self.update_box.show()
+
+    def show_update_box_for_reply(self, account_id, status):
+        self.update_box.show_for_reply(account_id, status)
+
+    def show_update_box_for_quote(self, account_id, status):
+        self.update_box.show_for_quote(account_id, status)
+
+    def show_update_box_for_send_direct(self, account_id, username):
+        self.update_box.show_for_send_direct(account_id, username)
+
+    def show_update_box_for_reply_direct(self, account_id, status):
+        self.update_box.show_for_reply_direct(account_id, status)
+
+    def show_column_menu(self, point):
+        self.columns_menu = self.build_columns_menu()
+        self.columns_menu.exec_(point)
+
+    def show_profile_menu(self, point, profile):
+        self.profile_menu = QMenu(self)
+
+        if profile.following:
+            unfollow_menu = QAction(i18n.get('unfollow'), self)
+            unfollow_menu.triggered.connect(partial(self.unfollow, profile.account_id,
+                profile.username))
+            message_menu = QAction(i18n.get('send_direct_message'), self)
+            message_menu.triggered.connect(partial(
+                self.show_update_box_for_send_direct, profile.account_id, profile.username))
+            self.profile_menu.addAction(unfollow_menu)
+            self.profile_menu.addSeparator()
+            self.profile_menu.addAction(message_menu)
+        elif profile.follow_request:
+            follow_menu = QAction(i18n.get('follow_requested'), self)
+            follow_menu.setEnabled(False)
+            self.profile_menu.addAction(follow_menu)
+            self.profile_menu.addSeparator()
+        else:
+            follow_menu = QAction(i18n.get('follow'), self)
+            follow_menu.triggered.connect(partial(self.follow, profile.account_id,
+                profile.username))
+            self.profile_menu.addAction(follow_menu)
+            self.profile_menu.addSeparator()
+
+        if self.core.is_muted(profile.username):
+            mute_menu = QAction(i18n.get('unmute'), self)
+            mute_menu.triggered.connect(partial(self.unmute, profile.username))
+        else:
+            mute_menu = QAction(i18n.get('mute'), self)
+            mute_menu.triggered.connect(partial(self.mute, profile.username))
+
+        block_menu = QAction(i18n.get('block'), self)
+        block_menu.triggered.connect(partial(self.block, profile.account_id, profile.username))
+        spam_menu = QAction(i18n.get('report_as_spam'), self)
+        spam_menu.triggered.connect(partial(self.report_as_spam, profile.account_id,
+            profile.username))
+
+        self.profile_menu.addAction(mute_menu)
+        self.profile_menu.addAction(block_menu)
+        self.profile_menu.addAction(spam_menu)
+
+        self.profile_menu.exec_(point)
+
+    def show_friends_dialog_for_direct_message(self):
+        friend = SelectFriendDialog(self)
+        if friend.get_username():
+            self.show_update_box_for_send_direct(friend.get_account(), friend.get_username())
 
     def save_account(self, account):
         self.core.save_account(account)
@@ -317,9 +420,6 @@ class Main(Base, QWidget):
                 self.add_timer(column)
             self.fetch_friends_list()
 
-    def show_accounts_dialog(self):
-        accounts = AccountsDialog(self)
-
     def build_columns_menu(self):
         columns_menu = QMenu(self)
 
@@ -354,85 +454,6 @@ class Main(Base, QWidget):
                 columns_menu.addAction(account_menu)
 
         return columns_menu
-
-    def show_column_menu(self, point):
-        self.columns_menu = self.build_columns_menu()
-        self.columns_menu.exec_(point)
-
-    def show_search_dialog(self):
-        search = SearchDialog(self)
-        if search.result() == QDialog.Accepted:
-            account_id = str(search.get_account().toPyObject())
-            criteria = str(search.get_criteria())
-            self.add_search_column(account_id, criteria)
-
-    def show_update_box(self):
-        self.update_box.show()
-
-    def show_update_box_for_reply(self, account_id, status):
-        self.update_box.show_for_reply(account_id, status)
-
-    def show_update_box_for_quote(self, account_id, status):
-        self.update_box.show_for_quote(account_id, status)
-
-    def show_update_box_for_send_direct(self, account_id, username):
-        self.update_box.show_for_send_direct(account_id, username)
-
-    def show_update_box_for_reply_direct(self, account_id, status):
-        self.update_box.show_for_reply_direct(account_id, status)
-
-    def show_profile_dialog(self, account_id, username):
-        self.profile.start_loading(username)
-        self.core.get_user_profile(account_id, username)
-
-    def show_profile_menu(self, point, profile):
-        self.profile_menu = QMenu(self)
-
-        if profile.following:
-            unfollow_menu = QAction(i18n.get('unfollow'), self)
-            unfollow_menu.triggered.connect(partial(self.unfollow, profile.account_id,
-                profile.username))
-            message_menu = QAction(i18n.get('send_direct_message'), self)
-            message_menu.triggered.connect(partial(
-                self.show_update_box_for_send_direct, profile.account_id, profile.username))
-            self.profile_menu.addAction(unfollow_menu)
-            self.profile_menu.addSeparator()
-            self.profile_menu.addAction(message_menu)
-        elif profile.follow_request:
-            follow_menu = QAction(i18n.get('follow_requested'), self)
-            follow_menu.setEnabled(False)
-            self.profile_menu.addAction(follow_menu)
-            self.profile_menu.addSeparator()
-        else:
-            follow_menu = QAction(i18n.get('follow'), self)
-            follow_menu.triggered.connect(partial(self.follow, profile.account_id,
-                profile.username))
-            self.profile_menu.addAction(follow_menu)
-            self.profile_menu.addSeparator()
-
-        if self.core.is_muted(profile.username):
-            mute_menu = QAction(i18n.get('unmute'), self)
-            mute_menu.triggered.connect(partial(self.unmute, profile.username))
-        else:
-            mute_menu = QAction(i18n.get('mute'), self)
-            mute_menu.triggered.connect(partial(self.mute, profile.username))
-
-        block_menu = QAction(i18n.get('block'), self)
-        block_menu.triggered.connect(partial(self.block, profile.account_id, profile.username))
-        spam_menu = QAction(i18n.get('report_as_spam'), self)
-        spam_menu.triggered.connect(partial(self.report_as_spam, profile.account_id,
-            profile.username))
-
-        self.profile_menu.addAction(mute_menu)
-        self.profile_menu.addAction(block_menu)
-        self.profile_menu.addAction(spam_menu)
-
-        self.profile_menu.exec_(point)
-
-    def show_friends_dialog_for_direct_message(self):
-        friend = SelectFriendDialog(self)
-        if friend.get_username():
-            self.show_update_box_for_send_direct(friend.get_account(), friend.get_username())
 
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.core.update_status(account_id, message, in_reply_to_id)
@@ -492,10 +513,6 @@ class Main(Base, QWidget):
         self.core.get_status_from_conversation(account_id, status.in_reply_to_id, column_id,
             status_root_id)
 
-    def show_profile_image(self, account_id, username):
-        self.image_view.start_loading()
-        self.core.get_profile_image(account_id, username)
-
     def push_status_to_queue(self, account_id, message):
         self.core.push_status_to_queue(account_id, message)
 
@@ -508,20 +525,17 @@ class Main(Base, QWidget):
     def clear_queue(self):
         self.core.clear_statuses_queue()
 
-    def show_queue_dialog(self):
-        self.queue_dialog.show()
-
     def get_config(self):
         return self.core.read_config()
-
-    def show_preferences_dialog(self):
-        self.preferences_dialog = PreferencesDialog(self)
 
     def get_cache_size(self):
         return self.humanize_size(self.core.get_cache_size())
 
     def clean_cache(self):
         self.core.delete_cache()
+
+    def save_filters(self, filters):
+        self.core.save_filters(filters)
 
     #================================================================
     # Hooks definitions
@@ -556,97 +570,158 @@ class Main(Base, QWidget):
     def after_update_column(self, arg, data):
         column, max_ = data
 
-        # Notifications
-        # FIXME
-        count = len(arg)
+        if self.is_exception(arg):
+            self._container.error_updating_column(column.id_)
+        else:
+            count = len(arg)
+            if count > 0:
+                if self.core.get_notify_on_updates(column, data):
+                    self.os_notifications.updates()
 
-        if count > 0:
-            self._container.update_column(column.id_, arg)
+                if self.core.get_sound_on_updates():
+                    self.sounds.updates()
+                self._container.update_column(column.id_, arg)
+
 
     def after_update_status(self, response, account_id):
-        self.update_box.done()
+        if self.is_exception(response):
+            self.update_box.error(i18n.get('error_posting_status'))
+        else:
+            self.update_box.done()
 
     def after_broadcast_status(self, response):
-        self.update_box.done()
+        if self.is_exception(response):
+            self.update_box.error(i18n.get('error_posting_status'))
+        else:
+            self.update_box.done()
 
-    def after_repeat_status(self, response, column_id, account_id):
-        self._container.mark_status_as_repeated(response.id_)
-        self._container.notify_success(str(column_id), response.id_, i18n.get('status_repeated'))
+    def after_repeat_status(self, response, column_id, account_id, status_id):
+        if self.is_exception(response):
+            self._container.error_repeating_status(column_id, status_id)
+        else:
+            self._container.mark_status_as_repeated(response.id_)
+            self._container.notify_success(column_id, response.id_, i18n.get('status_repeated'))
 
-    def after_delete_status(self, response, column_id, account_id):
-        self._container.remove_status(response.id_)
-        self._container.notify_success(str(column_id), response.id_, i18n.get('status_deleted'))
+    def after_delete_status(self, response, column_id, account_id, status_id):
+        if self.is_exception(response):
+            self._container.error_deleting_status(column_id, status_id)
+        else:
+            self._container.remove_status(response.id_)
+            self._container.notify_success(column_id, response.id_, i18n.get('status_deleted'))
 
     def after_delete_message(self, response, column_id, account_id):
         self._container.remove_status(response.id_)
-        self._container.notify_success(str(column_id), response.id_, i18n.get('direct_message_deleted'))
+        self._container.notify_success(column_id, response.id_, i18n.get('direct_message_deleted'))
 
     def after_send_message(self, response, account_id):
-        self.update_box.done()
+        if self.is_exception(response):
+            self.update_box.error(i18n.get('can_not_send_direct_message'))
+        else:
+            self.update_box.done()
 
-    def after_marking_status_as_favorite(self, response, column_id, account_id):
-        self._container.mark_status_as_favorite(response.id_)
-        self._container.notify_success(str(column_id), response.id_,
-            i18n.get('status_marked_as_favorite'))
+    def after_marking_status_as_favorite(self, response, column_id, account_id, status_id):
+        if self.is_exception(response):
+            self._container.error_marking_status_as_favorite(column_id, status_id)
+        else:
+            self._container.mark_status_as_favorite(response.id_)
+            self._container.notify_success(column_id, response.id_,
+                i18n.get('status_marked_as_favorite'))
 
-
-    def after_unmarking_status_as_favorite(self, response, column_id, account_id):
-        self._container.unmark_status_as_favorite(response.id_)
-        self._container.notify_success(str(column_id), response.id_,
-            i18n.get('status_removed_from_favorites'))
+    def after_unmarking_status_as_favorite(self, response, column_id, account_id, status_id):
+        if self.is_exception(response):
+            self._container.error_unmarking_status_as_favorite(column_id, status_id)
+        else:
+            self._container.unmark_status_as_favorite(response.id_)
+            self._container.notify_success(column_id, response.id_,
+                i18n.get('status_removed_from_favorites'))
 
     def after_get_user_profile(self, response, account_id):
-        self.profile.loading_finished(response, account_id)
-        self.core.get_avatar_from_status(response)
+        if self.is_exception(response):
+            self.profile_dialog.error(i18n.get('problems_loading_user_profile'))
+        else:
+            self.profile_dialog.loading_finished(response, account_id)
+            self.core.get_avatar_from_status(response)
 
     def after_mute_user(self, username):
-        self.os_notifications.user_muted(username)
+        if self.core.get_notify_on_actions():
+            self.os_notifications.user_muted(username)
 
     def after_unmute_user(self, username):
-        self.os_notifications.user_unmuted(username)
+        if self.core.get_notify_on_actions():
+            self.os_notifications.user_unmuted(username)
 
     def after_block_user(self, profile):
-        self.os_notifications.user_blocked(profile.username)
+        if self.is_exception(profile):
+            self.profile_dialog.error(i18n.get('could_not_block_user'))
+        else:
+            self.base.core.remove_friend(profile.username)
+            if self.core.get_notify_on_actions():
+                self.os_notifications.user_blocked(profile.username)
 
     def after_report_user_as_spam(self, profile):
-        self.os_notifications.user_reported_as_spam(profile.username)
+        if self.is_exception(profile):
+            self.profile_dialog.error(i18n.get('having_issues_reporting_user_as_spam'))
+        else:
+            if self.core.get_notify_on_actions():
+                self.os_notifications.user_reported_as_spam(profile.username)
 
     def after_follow_user(self, profile):
-        self.profile.update_following(profile.username, True)
-        self.os_notifications.user_followed(profile.username)
+        if self.is_exception(profile):
+            self.profile_dialog.error(i18n.get('having_trouble_to_follow_user'))
+        else:
+            self.base.core.add_friend(profile.username)
+            self.profile_dialog.update_following(profile.username, True)
+            if self.core.get_notify_on_actions():
+                self.os_notifications.user_followed(profile.username)
 
     def after_unfollow_user(self, profile):
-        self.profile.update_following(profile.username, False)
-        self.os_notifications.user_unfollowed(profile.username)
+        if self.is_exception(profile):
+            self.profile_dialog.error(i18n.get('having_trouble_to_unfollow_user'))
+        else:
+            self.base.core.remove_friend(profile.username)
+            self.profile_dialog.update_following(profile.username, False)
+            if self.core.get_notify_on_actions():
+                self.os_notifications.user_unfollowed(profile.username)
 
     def after_get_status_from_conversation(self, response, column_id, status_root_id):
-        self._container.update_conversation(response, column_id, status_root_id)
-        if response.in_reply_to_id:
-            self.core.get_status_from_conversation(response.account_id, response.in_reply_to_id,
-                column_id, status_root_id)
+        if self.is_exception(response):
+            self._container.error_loading_conversation(column_id, status_root_id)
+        else:
+            self._container.update_conversation(response, column_id, status_root_id)
+            if response.in_reply_to_id:
+                self.core.get_status_from_conversation(response.account_id, response.in_reply_to_id,
+                    column_id, status_root_id)
 
     def after_get_profile_image(self, image_path):
         self.image_view.loading_finished(str(image_path))
 
     def update_profile_avatar(self, image_path, username):
-        self.profile.update_avatar(str(image_path), str(username))
+        if not self.is_exception(image_path):
+            self.profile_dialog.update_avatar(str(image_path), str(username))
 
     def after_get_image_preview(self, response):
-        self.image_view.loading_finished(str(response.path))
+        if self.is_exception(response):
+            self.image_view.error()
+        else:
+            self.image_view.loading_finished(str(response.path))
 
     def after_push_status_to_queue(self, account_id):
         self.update_box.done()
         self.queue_dialog.update()
-        # TODO: OS Notification
 
     def after_pop_status_from_queue(self, status):
         if status:
             self.core.post_status_from_queue(status.account_id, status.text)
 
-    def after_post_status_from_queue(self, response, account_id):
-        print '++Posted queue message'
-        self.queue_dialog.update()
-        self.os_notifications.message_from_queue_posted()
+    def after_post_status_from_queue(self, response, account_id, message):
+        if self.is_exception(response):
+            # TODO: OS Notification
+            print "+++Message enqueued again for error posting"
+            self.push_status_to_queue(account_id, message)
+        else:
+            self.queue_dialog.update()
+            if self.core.get_notify_on_actions():
+                self.os_notifications.message_from_queue_posted()
 
     def after_delete_status_from_queue(self):
         self.queue_dialog.update()

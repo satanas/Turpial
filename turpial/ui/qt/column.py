@@ -229,6 +229,9 @@ class StatusesColumn(QWidget):
         else:
             self.conversations[status_root_id] = [status]
 
+    def error_in_conversation(self, status_root_id):
+        self.webview.clear_conversation(status_root_id)
+
     def mark_status_as_favorite(self, status_id):
         mark = "setFavorite('%s')" % status_id
         self.webview.execute_javascript(mark)

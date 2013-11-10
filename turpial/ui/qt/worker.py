@@ -17,13 +17,13 @@ class CoreWorker(QThread):
 
     status_updated = pyqtSignal(object, str)
     status_broadcasted = pyqtSignal(object)
-    status_repeated = pyqtSignal(object, str, str)
-    status_deleted = pyqtSignal(object, str, str)
+    status_repeated = pyqtSignal(object, str, str, str)
+    status_deleted = pyqtSignal(object, str, str, str)
     status_pushed_to_queue = pyqtSignal(str)
     status_poped_from_queue = pyqtSignal(object)
     status_deleted_from_queue = pyqtSignal()
     queue_cleared = pyqtSignal()
-    status_posted_from_queue = pyqtSignal(object, str)
+    status_posted_from_queue = pyqtSignal(object, str, str)
     message_deleted = pyqtSignal(object, str, str)
     message_sent = pyqtSignal(object, str)
     column_updated = pyqtSignal(object, tuple)
@@ -32,11 +32,11 @@ class CoreWorker(QThread):
     account_deleted = pyqtSignal()
     column_saved = pyqtSignal(str)
     column_deleted = pyqtSignal(str)
-    status_marked_as_favorite = pyqtSignal(object, str, str)
-    status_unmarked_as_favorite = pyqtSignal(object, str, str)
+    status_marked_as_favorite = pyqtSignal(object, str, str, str)
+    status_unmarked_as_favorite = pyqtSignal(object, str, str, str)
     fetched_user_profile = pyqtSignal(object, str)
-    urls_shorted = pyqtSignal(str)
-    media_uploaded = pyqtSignal(str)
+    urls_shorted = pyqtSignal(object)
+    media_uploaded = pyqtSignal(object)
     friends_list_updated = pyqtSignal()
     user_muted = pyqtSignal(str)
     user_unmuted = pyqtSignal(str)
@@ -47,7 +47,7 @@ class CoreWorker(QThread):
     exception_raised = pyqtSignal(object)
     status_from_conversation = pyqtSignal(object, str, str)
     fetched_profile_image = pyqtSignal(str)
-    fetched_avatar = pyqtSignal(str, str)
+    fetched_avatar = pyqtSignal(object, str)
     fetched_image_preview = pyqtSignal(object)
     cache_deleted = pyqtSignal()
 
@@ -65,13 +65,13 @@ class CoreWorker(QThread):
     #def __del__(self):
     #    self.wait()
 
-    def __add_friend(self, username):
+    def add_friend(self, username):
         # FIXME: On libturpial
         friends = self.core.config.load_friends()
         friends.append(username)
         self.core.config.save_friends(friends)
 
-    def __remove_friend(self, username):
+    def remove_friend(self, username):
         # FIXME: On libturpial
         friends = self.core.config.load_friends()
         if username in friends:
@@ -346,11 +346,11 @@ class CoreWorker(QThread):
 
     def repeat_status(self, column_id, account_id, status_id):
         self.register(self.core.repeat_status, (account_id, status_id),
-            self.__after_repeat_status, (column_id, account_id))
+            self.__after_repeat_status, (column_id, account_id, status_id))
 
     def delete_status(self, column_id, account_id, status_id):
         self.register(self.core.destroy_status, (account_id, status_id),
-            self.__after_delete_status, (column_id, account_id))
+            self.__after_delete_status, (column_id, account_id, status_id))
 
     def delete_direct_message(self, column_id, account_id, status_id):
         self.register(self.core.destroy_direct_message, (account_id, status_id),
@@ -362,11 +362,11 @@ class CoreWorker(QThread):
 
     def mark_status_as_favorite(self, column_id, account_id, status_id):
         self.register(self.core.mark_status_as_favorite, (account_id, status_id),
-            self.__after_mark_status_as_favorite, (column_id, account_id))
+            self.__after_mark_status_as_favorite, (column_id, account_id, status_id))
 
     def unmark_status_as_favorite(self, column_id, account_id, status_id):
         self.register(self.core.unmark_status_as_favorite, (account_id, status_id),
-            self.__after_unmark_status_as_favorite, (column_id, account_id))
+            self.__after_unmark_status_as_favorite, (column_id, account_id, status_id))
 
     def get_user_profile(self, account_id, user_profile=None):
         self.register(self.core.get_user_profile, (account_id, user_profile),
@@ -453,10 +453,16 @@ class CoreWorker(QThread):
 
     def post_status_from_queue(self, account_id, message):
         self.register(self.core.update_status, (account_id, message),
-            self.__after_post_status_from_queue, account_id)
+            self.__after_post_status_from_queue, (account_id, message))
 
     def delete_cache(self):
         self.register(self.core.delete_cache, None, self.__after_delete_cache)
+
+    def list_filters(self):
+        return self.core.list_filters()
+
+    def save_filters(self, filters):
+        self.core.save_filters(filters)
 
     #================================================================
     # Callbacks
@@ -489,12 +495,14 @@ class CoreWorker(QThread):
     def __after_repeat_status(self, response, args):
         column_id = args[0]
         account_id = args[1]
-        self.status_repeated.emit(response, column_id, account_id)
+        status_id = args[2]
+        self.status_repeated.emit(response, column_id, account_id, status_id)
 
     def __after_delete_status(self, response, args):
         column_id = args[0]
         account_id = args[1]
-        self.status_deleted.emit(response, column_id, account_id)
+        status_id = args[2]
+        self.status_deleted.emit(response, column_id, account_id, status_id)
 
     def __after_delete_direct_message(self, response, args):
         column_id = args[0]
@@ -507,12 +515,14 @@ class CoreWorker(QThread):
     def __after_mark_status_as_favorite(self, response, args):
         column_id = args[0]
         account_id = args[1]
-        self.status_marked_as_favorite.emit(response, column_id, account_id)
+        status_id = args[2]
+        self.status_marked_as_favorite.emit(response, column_id, account_id, status_id)
 
     def __after_unmark_status_as_favorite(self, response, args):
         column_id = args[0]
         account_id = args[1]
-        self.status_unmarked_as_favorite.emit(response, column_id, account_id)
+        status_id = args[2]
+        self.status_unmarked_as_favorite.emit(response, column_id, account_id, status_id)
 
     def __after_get_user_profile(self, response, account_id):
         self.fetched_user_profile.emit(response, account_id)
@@ -533,18 +543,15 @@ class CoreWorker(QThread):
         self.user_unmuted.emit(response)
 
     def __after_block_user(self, response):
-        self.__remove_friend(response.username)
         self.user_blocked.emit(response)
 
     def __after_report_user_as_spam(self, response):
         self.user_reported_as_spam.emit(response)
 
     def __after_follow_user(self, response, account_id):
-        self.__add_friend(response.username)
         self.user_followed.emit(response, account_id)
 
     def __after_unfollow_user(self, response, account_id):
-        self.__remove_friend(response.username)
         self.user_unfollowed.emit(response, account_id)
 
     def __after_get_status_from_conversation(self, response, args):
@@ -574,8 +581,10 @@ class CoreWorker(QThread):
     def __after_clear_queue(self):
         self.queue_cleared.emit()
 
-    def __after_post_status_from_queue(self, response, account_id):
-        self.status_posted_from_queue.emit(response, account_id)
+    def __after_post_status_from_queue(self, response, args):
+        account_id = args[0]
+        message = args[1]
+        self.status_posted_from_queue.emit(response, account_id, message)
 
     def __after_delete_cache(self):
         self.cache_deleted.emit()
@@ -609,8 +618,9 @@ class CoreWorker(QThread):
                 else:
                     rtn = funct()
             except Exception, e:
-                self.exception_raised.emit(e)
-                continue
+                #self.exception_raised.emit(e)
+                #continue
+                rtn = e
 
             if callback:
                 if user_data:

@@ -2,13 +2,11 @@
 
 # Qt status queue for Turpial
 
-#import os
 import time
 
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QFont
 from PyQt4.QtGui import QLabel
-from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QTableView
 from PyQt4.QtGui import QHeaderView
 from PyQt4.QtGui import QPushButton
@@ -21,20 +19,17 @@ from PyQt4.QtGui import QStandardItemModel
 from PyQt4.QtCore import Qt
 
 from turpial.ui.lang import i18n
+from turpial.ui.qt.widgets import Window
 
 from libturpial.common.tools import get_protocol_from, get_username_from
 
-USERNAME_FONT = QFont("Helvetica", 14)
-PROTOCOL_FONT = QFont("Helvetica", 11)
 
-class QueueDialog(QWidget):
+class QueueDialog(Window):
     def __init__(self, base):
-        QWidget.__init__(self)
-        self.base = base
-        self.showed = False
-        self.setWindowTitle(i18n.get('statuses_queue'))
+        Window.__init__(self, base, i18n.get('messages_queue'))
         self.setFixedSize(500, 400)
         self.last_timestamp = int(time.time())
+        self.showed = False
 
         self.list_ = QTableView()
         self.list_.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -71,10 +66,6 @@ class QueueDialog(QWidget):
         layout.setSpacing(5)
         layout.setContentsMargins(5, 5, 5, 0)
         self.setLayout(layout)
-
-        #self.base.account_deleted.connect(self.__update)
-        #self.base.account_loaded.connect(self.__update)
-        #self.base.account_registered.connect(self.__update)
 
     def __update(self):
         model = QStandardItemModel()
@@ -150,7 +141,7 @@ class QueueDialog(QWidget):
             return
 
         self.__update()
-        QWidget.show(self)
+        Window.show(self)
         self.showed = True
 
     def update(self):

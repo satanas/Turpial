@@ -49,10 +49,10 @@ class SoundSystem:
     def startup(self):
         self.sounds['startup'].play()
 
-    def notification_1(self):
+    def updates(self):
         self.sounds['notification_1'].play()
 
-    def notification_2(self):
+    def notification(self):
         self.sounds['notification_2'].play()
 
 

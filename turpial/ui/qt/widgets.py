@@ -4,9 +4,12 @@
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QIcon
+from PyQt4.QtGui import QFont
 from PyQt4.QtGui import QFrame
+from PyQt4.QtGui import QLabel
+from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QToolButton
-
 
 class ImageButton(QToolButton):
     def __init__(self, base, image, tooltip):
@@ -45,3 +48,38 @@ class ToggleButton(QToolButton):
 
         if tooltip:
             self.setToolTip(tooltip)
+
+class ModalDialog(QDialog):
+    def __init__(self, width, height):
+        QDialog.__init__(self)
+        self.setFixedSize(width, height)
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
+        self.setModal(True)
+
+class Window(QWidget):
+    def __init__(self, base, title):
+        QWidget.__init__(self)
+        self.setWindowTitle(title)
+        self.base = base
+
+    def __center_on_parent(self):
+        geo = self.base.geometry()
+        cx = geo.x() + (geo.width() / 2)
+        cy = geo.y() + (geo.height() / 2)
+        geo2 = self.geometry()
+        fx = cx - (geo2.width() / 2)
+        fy = cy - (geo2.height() / 2)
+        self.setGeometry(fx,fy, geo2.width(), geo2.height())
+
+    def show(self):
+        QWidget.show(self)
+        self.__center_on_parent()
+
+class ErrorLabel(QLabel):
+    def __init__(self):
+        QLabel.__init__(self)
+
+        font = QFont()
+        font.setPointSize(10)
+        self.setFont(font)
+        self.setStyleSheet("QLabel {color: #f00}")

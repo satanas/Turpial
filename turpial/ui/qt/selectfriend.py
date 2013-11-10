@@ -14,8 +14,7 @@ from PyQt4.QtGui import QFormLayout, QVBoxLayout, QHBoxLayout
 from PyQt4.QtCore import Qt
 
 from turpial.ui.lang import i18n
-from turpial.ui.qt.dialog import ModalDialog
-from turpial.ui.qt.widgets import ImageButton
+from turpial.ui.qt.widgets import ImageButton, ModalDialog
 
 from libturpial.common.tools import get_protocol_from, get_username_from
 

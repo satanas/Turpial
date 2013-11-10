@@ -5,8 +5,8 @@
 from datetime import datetime, timedelta
 
 from PyQt4.QtGui import QLabel
-from PyQt4.QtGui import QSlider
 from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QSlider
 from PyQt4.QtGui import QComboBox
 from PyQt4.QtGui import QCheckBox
 from PyQt4.QtGui import QLineEdit
@@ -26,12 +26,12 @@ from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
 
+from turpial.ui.qt.widgets import Window
+
 #TODO: Enable tp open dialog in a specific tab
-class PreferencesDialog(QWidget):
+class PreferencesDialog(Window):
     def __init__(self, base):
-        QWidget.__init__(self)
-        self.base = base
-        self.setWindowTitle(i18n.get('preferences'))
+        Window.__init__(self, base, i18n.get('preferences'))
         self.setFixedSize(450, 360)
         self.current_config = self.base.get_config()
 

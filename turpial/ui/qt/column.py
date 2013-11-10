@@ -77,20 +77,32 @@ class StatusesColumn(QWidget):
         if detect_os() == OS_MAC:
             font = QFont('Ubuntu', 20, QFont.Light, False)
         else:
-            font = QFont('Monda', 12, QFont.Normal, False)
+            font = QFont('Maven Pro Light', 16, QFont.Light, False)
+            font2 = QFont('Monda', 10, QFont.Light, False)
 
         bg_style = "background-color: %s; color: %s;" % (self.bgcolor, self.fgcolor)
         label = "%s : %s" % (username, column_slug)
-        caption = QLabel(label)
+        caption = QLabel(username)
         caption.setStyleSheet("QLabel { %s }" % bg_style)
         caption.setFont(font)
+
+        caption2 = QLabel(column_slug)
+        caption2.setStyleSheet("QLabel { %s }" % bg_style)
+        caption2.setFont(font2)
+        caption2.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
+
+        caption_box = QHBoxLayout()
+        caption_box.setSpacing(8)
+        caption_box.addWidget(caption)
+        caption_box.addWidget(caption2)
+        caption_box.addStretch(1)
 
         close_button = ImageButton(self.base, 'action-delete-shadowed.png', i18n.get('delete_column'))
         close_button.clicked.connect(self.__delete_column)
         close_button.setStyleSheet("QToolButton { %s border: 0px solid %s;}" % (bg_style, self.bgcolor))
 
         header_layout = QHBoxLayout()
-        header_layout.addWidget(caption, 1)
+        header_layout.addLayout(caption_box, 1)
         header_layout.addWidget(close_button)
 
         header = QWidget()

@@ -185,6 +185,8 @@ STRINGS = {
     'can_not_send_direct_message': _("Can not send direct message"),
     'error_shorting_url': _("Error shorting URL"),
     'error_uploading_image': _("Error uploading image"),
+    'new_tweet_updated': _('1 new tweet updated'),
+    'new_tweets_updates': _('%s new tweets updated'),
 
 
     #'no_registered_columns': ,
@@ -201,8 +203,6 @@ STRINGS = {
     #'favorited': _('Favorited'),
     #'show_all': _('Show all'),
     #'tweet': _('Tweet'),
-    #'new_tweet': _('New Tweet'),
-    #'new_tweets': _('New Tweets'),
     #'dent': _('Dent'),
     #'dents': _('Dents'),
     #'new_dent': _('New Dent'),

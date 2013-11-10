@@ -46,35 +46,14 @@ class OSNotificationSystem:
                 except Exception, e:
                     print e
 
-    #def updates(self, column, count):
-    #    object_name = ''
-    #    if column.protocol_id == 'twitter':
-    #        if count > 1:
-    #            object_name = i18n.get('new_tweets')
-    #        else:
-    #            object_name = i18n.get('new_tweet')
-    #    else:
-    #        if count > 1:
-    #            object_name = i18n.get('new_dents')
-    #        else:
-    #            object_name = i18n.get('new_dent')
-    #    message = "%s :: %s (%s)" % (column.account_id.split('-')[0],
-    #        column.column_name, i18n.get(column.protocol_id))
+    def updates(self, column, count, filtered=0):
+        if count > 1:
+            message = i18n.get('new_tweets') % count
+        else:
+            message = i18n.get('new_tweet')
 
-    #    self.popup('%i %s' % (count, object_name), message)
-
-    #def login(self, profile):
-    #    object_name = ''
-    #    if profile.statuses_count > 1:
-    #        object_name = i18n.get('tweets')
-    #    else:
-    #        object_name = i18n.get('tweet')
-
-    #    self.popup('@%s' % profile.username,
-    #        '%s: %i\n%s: %i\n%s: %i' %
-    #        (object_name, profile.statuses_count,
-    #        i18n.get('following'), profile.friends_count,
-    #        i18n.get('followers'), profile.followers_count))
+        title = " ".join([i18n.get('updated'), column.name])
+        self.notify(title, message)
 
     def user_followed(self, username):
         self.notify(i18n.get('follow'), i18n.get('you_are_now_following') % username)

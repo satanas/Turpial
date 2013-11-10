@@ -157,9 +157,6 @@ class Main(Base, QWidget):
 
         self.setLayout(layout)
         self.set_queue_timer()
-        self.sounds.startup()
-
-        #self.preferences_dialog.show()
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -196,16 +193,19 @@ class Main(Base, QWidget):
     def closeEvent(self, event=None):
         if event:
             event.ignore()
-        self.main_quit()
+        if self.core.get_minimize_on_close():
+            self.hide()
+            self.showed = False
+        else:
+            self.main_quit()
 
     #================================================================
     # Overrided methods
     #================================================================
 
     def start(self):
-        #if self.core.play_sounds_in_login():
-        #    self.sound.login()
-        print 'start'
+        if self.core.get_sound_on_login():
+            self.sounds.startup()
 
     def main_loop(self):
         try:
@@ -570,12 +570,15 @@ class Main(Base, QWidget):
         if self.is_exception(arg):
             self._container.error_updating_column(column.id_)
         else:
-            # Notifications
-            # FIXME
             count = len(arg)
-
             if count > 0:
+                if self.core.get_notify_on_updates(column, data):
+                    self.os_notifications.updates()
+
+                if self.core.get_sound_on_updates():
+                    self.sounds.updates()
                 self._container.update_column(column.id_, arg)
+
 
     def after_update_status(self, response, account_id):
         if self.is_exception(response):
@@ -637,23 +640,27 @@ class Main(Base, QWidget):
             self.core.get_avatar_from_status(response)
 
     def after_mute_user(self, username):
-        self.os_notifications.user_muted(username)
+        if self.core.get_notify_on_actions():
+            self.os_notifications.user_muted(username)
 
     def after_unmute_user(self, username):
-        self.os_notifications.user_unmuted(username)
+        if self.core.get_notify_on_actions():
+            self.os_notifications.user_unmuted(username)
 
     def after_block_user(self, profile):
         if self.is_exception(profile):
             self.profile_dialog.error(i18n.get('could_not_block_user'))
         else:
             self.base.core.remove_friend(profile.username)
-            self.os_notifications.user_blocked(profile.username)
+            if self.core.get_notify_on_actions():
+                self.os_notifications.user_blocked(profile.username)
 
     def after_report_user_as_spam(self, profile):
         if self.is_exception(profile):
             self.profile_dialog.error(i18n.get('having_issues_reporting_user_as_spam'))
         else:
-            self.os_notifications.user_reported_as_spam(profile.username)
+            if self.core.get_notify_on_actions():
+                self.os_notifications.user_reported_as_spam(profile.username)
 
     def after_follow_user(self, profile):
         if self.is_exception(profile):
@@ -661,7 +668,8 @@ class Main(Base, QWidget):
         else:
             self.base.core.add_friend(profile.username)
             self.profile_dialog.update_following(profile.username, True)
-            self.os_notifications.user_followed(profile.username)
+            if self.core.get_notify_on_actions():
+                self.os_notifications.user_followed(profile.username)
 
     def after_unfollow_user(self, profile):
         if self.is_exception(profile):
@@ -669,7 +677,8 @@ class Main(Base, QWidget):
         else:
             self.base.core.remove_friend(profile.username)
             self.profile_dialog.update_following(profile.username, False)
-            self.os_notifications.user_unfollowed(profile.username)
+            if self.core.get_notify_on_actions():
+                self.os_notifications.user_unfollowed(profile.username)
 
     def after_get_status_from_conversation(self, response, column_id, status_root_id):
         if self.is_exception(response):
@@ -708,7 +717,8 @@ class Main(Base, QWidget):
             self.push_status_to_queue(account_id, message)
         else:
             self.queue_dialog.update()
-            self.os_notifications.message_from_queue_posted()
+            if self.core.get_notify_on_actions():
+                self.os_notifications.message_from_queue_posted()
 
     def after_delete_status_from_queue(self):
         self.queue_dialog.update()

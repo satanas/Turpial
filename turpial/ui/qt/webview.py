@@ -113,6 +113,11 @@ class StatusesWebView(QWebView):
             view_conversation = i18n.get('view_conversation')
             hide_conversation = i18n.get('hide_conversation')
 
+        if self.base.core.get_show_user_avatars():
+            avatar = status.avatar
+        else:
+            avatar = "file://%s" % os.path.join(self.base.images_path, 'unknown.png')
+
         attrs = {'status': status, 'message': message, 'repeated_by': repeated_by,
                 'timestamp': timestamp, 'view_conversation': view_conversation,
                 'reply': i18n.get('reply'), 'hide_conversation': hide_conversation,
@@ -120,7 +125,7 @@ class StatusesWebView(QWebView):
                 'mark_as_favorite': i18n.get('mark_as_favorite'), 'delete': i18n.get('delete'),
                 'remove_from_favorites': i18n.get('remove_from_favorites'),
                 'conversation_id': conversation_id, 'in_progress': i18n.get('in_progress'), 
-                'loading': i18n.get('loading'), }
+                'loading': i18n.get('loading'), 'avatar': avatar}
 
         return self.status_template.render(attrs)
 

@@ -53,8 +53,8 @@ class Container(QVBoxLayout):
 
         appname = QLabel('Turpial 3')
         if detect_os() == OS_MAC:
-            font = QFont('Maven Pro Light', 25, 0, False)
-            font2 = QFont('Monda', 14, 0, False)
+            font = QFont('Maven Pro Light', 28, 0, False)
+            font2 = QFont('Ubuntu', 16, 0, False)
         else:
             font = QFont('Maven Pro Light', 18, QFont.Light, False)
             font2 = QFont('Ubuntu', 12, QFont.Normal, False)

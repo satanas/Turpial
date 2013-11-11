@@ -65,8 +65,7 @@ class Dock(QStatusBar):
         toolbar.addWidget(self.updates_button)
         toolbar.setMinimumHeight(30)
         toolbar.setContentsMargins(0, 0, 0, 0)
-        toolbar.setStyleSheet("QToolBar { %s }" % style)
-        toolbar.setStyleSheet("QToolButton { %s opacity: 128; }; QToolButton:hover { %s opacity: 255;}" % (style, style))
+        toolbar.setStyleSheet("QToolBar { %s }; QToolButton { %s opacity: 128; }; QToolButton:hover { %s opacity: 255;}" % (style, style, style))
 
         self.addPermanentWidget(toolbar, 1)
         self.setSizeGripEnabled(False)

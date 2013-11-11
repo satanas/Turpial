@@ -64,7 +64,7 @@ class PreferencesDialog(Window):
         vbox = QVBoxLayout()
         vbox.addWidget(self.tabbar, 1)
         vbox.addLayout(button_box)
-        vbox.setContentsMargins(10, 10, 10, 5)
+        vbox.setContentsMargins(10, 10, 10, 10)
         self.setLayout(vbox)
         self.show()
 

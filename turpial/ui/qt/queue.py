@@ -63,7 +63,7 @@ class QueueDialog(Window):
         layout.addWidget(self.estimated_time)
         layout.addLayout(button_box)
         layout.setSpacing(5)
-        layout.setContentsMargins(5, 5, 5, 0)
+        layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(layout)
 
     def __update(self):

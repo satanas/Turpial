@@ -31,9 +31,6 @@ class ProfileDialog(Window):
 
         self.account_id = None
         self.setFixedSize(380, 450)
-        #self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
-        #self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
-        #self.setStyleSheet("QWidget { background-color: #fff; } QTabWidget { background-color: #fff; }")
 
         self.username = QLabel('')
         self.username.setTextFormat(Qt.RichText)

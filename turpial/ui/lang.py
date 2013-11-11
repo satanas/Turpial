@@ -101,7 +101,7 @@ STRINGS = {
     'conversation': _("Conversation"),
     'quit': _('Quit'),
     'in_progress': _("In progress..."),
-    'select_one_account_to_post': _("Select one account to post"),
+    'select_an_account_before_post': _("Select an account before post"),
     'image_preview': _("Image Preview"),
     'confirm_discard': _('Confirm Discard'),
     'do_you_want_to_discard_message': _('Do you want to discard this message?'),

@@ -35,7 +35,7 @@ class SelectFriendDialog(ModalDialog):
         self.friend = QLineEdit()
         self.friend.setCompleter(completer)
         select_button = QPushButton(i18n.get('select'))
-        select_button.clicked.connect(self.accept)
+        select_button.clicked.connect(self.__validate)
 
         friend_caption = "%s (@)" % i18n.get('friend')
         form = QFormLayout()
@@ -61,6 +61,11 @@ class SelectFriendDialog(ModalDialog):
         #        i18n.get('load_friends_list'))
 
         self.exec_()
+
+    def __validate(self):
+        if self.get_username() != '':
+            self.accept()
+
 
     def get_account(self):
         index = self.accounts_combo.currentIndex()

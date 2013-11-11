@@ -56,6 +56,9 @@ class ModalDialog(QDialog):
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
         self.setModal(True)
 
+    def is_accepted(self):
+        return self.result() == QDialog.Accepted
+
 class Window(QWidget):
     def __init__(self, base, title):
         QWidget.__init__(self)

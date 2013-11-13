@@ -93,7 +93,7 @@ class AccountsDialog(ModalDialog):
         layout.addWidget(self.error_message)
         layout.addLayout(button_box)
         layout.setSpacing(5)
-        layout.setContentsMargins(5, 5, 5, 0)
+        layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(layout)
 
         self.__update()

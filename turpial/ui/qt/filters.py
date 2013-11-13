@@ -52,7 +52,7 @@ class FiltersDialog(Window):
         layout.addWidget(self.list_, 1)
         layout.addLayout(button_box)
         layout.setSpacing(5)
-        layout.setContentsMargins(5, 5, 5, 0)
+        layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(layout)
         self.__update()
         self.show()

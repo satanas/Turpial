@@ -329,7 +329,7 @@ class Main(Base, QWidget):
 
     def show_friends_dialog_for_direct_message(self):
         friend = SelectFriendDialog(self)
-        if friend.get_username():
+        if friend.is_accepted():
             self.show_update_box_for_send_direct(friend.get_account(), friend.get_username())
 
     def save_account(self, account):

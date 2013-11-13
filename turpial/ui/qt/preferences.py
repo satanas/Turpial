@@ -64,7 +64,7 @@ class PreferencesDialog(Window):
         vbox = QVBoxLayout()
         vbox.addWidget(self.tabbar, 1)
         vbox.addLayout(button_box)
-        vbox.setContentsMargins(10, 10, 10, 5)
+        vbox.setContentsMargins(10, 10, 10, 10)
         self.setLayout(vbox)
         self.show()
 
@@ -253,9 +253,11 @@ class BrowserPage(QWidget):
         self.command.setEnabled(True)
 
     def get_config(self):
-        return {
-            'cmd': str(self.command.text()),
-        }
+        if self.default_browser.get_value():
+            cmd = ''
+        else:
+            cmd = str(self.command.text())
+        return { 'cmd': cmd }
 
 class ProxyPage(BasePage):
     def __init__(self, base):

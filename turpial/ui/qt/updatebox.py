@@ -113,7 +113,7 @@ class UpdateBox(QWidget):
             return False
 
         if index == 0 and len(accounts) > 1:
-            self.error(i18n.get('select_one_account_to_post'))
+            self.error(i18n.get('select_an_account_before_post'))
             return False
 
         if self.__count_chars() < 0:
@@ -129,6 +129,12 @@ class UpdateBox(QWidget):
 
     def __upload_image(self):
         index = self.accounts_combo.currentIndex()
+        accounts = self.base.core.get_registered_accounts()
+
+        if index == 0 and len(accounts) > 1:
+            self.error(i18n.get('select_an_account_before_post'))
+            return False
+
         account_id = str(self.accounts_combo.itemData(index).toPyObject())
         filename = str(QFileDialog.getOpenFileName(self, i18n.get('upload_image'),
             self.base.home_path))
@@ -139,7 +145,6 @@ class UpdateBox(QWidget):
     def __update_status(self):
         index = self.accounts_combo.currentIndex()
         accounts = self.base.core.get_registered_accounts()
-        account_id = str(self.accounts_combo.itemData(index).toPyObject())
         message = unicode(self.text_edit.toPlainText())
 
         if not self.__validate(message, accounts, index):
@@ -147,6 +152,7 @@ class UpdateBox(QWidget):
             return
 
         self.enable(False)
+        account_id = str(self.accounts_combo.itemData(index).toPyObject())
 
         if self.direct_message_to:
             self.base.send_direct_message(account_id, self.direct_message_to, message)

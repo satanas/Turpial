@@ -83,7 +83,7 @@ class PreferencesDialog(Window):
             'Proxy': self.proxy_page.get_config(),
             'Advanced': self.advanced_page.get_config()
         }
-        self.base.core.update_config(new_config)
+        self.base.update_config(new_config)
         self.close()
 
 class BasePage(QWidget):
@@ -253,9 +253,11 @@ class BrowserPage(QWidget):
         self.command.setEnabled(True)
 
     def get_config(self):
-        return {
-            'cmd': str(self.command.text()),
-        }
+        if self.default_browser.get_value():
+            cmd = ''
+        else:
+            cmd = str(self.command.text())
+        return { 'cmd': cmd }
 
 class ProxyPage(BasePage):
     def __init__(self, base):

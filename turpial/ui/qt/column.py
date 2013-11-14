@@ -69,6 +69,8 @@ class StatusesColumn(QWidget):
         self.set_column_id(column_id)
         username = get_username_from(self.account_id)
         column_slug = get_column_slug_from(column_id)
+        column_slug = column_slug.replace('%23', '#')
+        column_slug = column_slug.replace('%40', '@')
 
         #font = QFont('Titillium Web', 18, QFont.Normal, False)
         # This is to handle the 96dpi vs 72dpi screen resolutions on Mac vs the world

@@ -8,11 +8,21 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
+from babel.messages import frontend as babel
+from distutils.command.build import build as _build
+
 from turpial import VERSION
 
 LONG_DESCRIPTION = """
 Turpial is a light, fast and beautiful microblogging client written in Python
 """
+
+class build(_build):
+
+    def get_sub_commands(self):
+        sub_commands = _build.get_sub_commands(self)
+        print sub_commands
+        return [('compile_catalog', None), ] + sub_commands
 
 # TODO: Maybe find some better ways to do this
 # looking distutils's copy_tree method
@@ -55,6 +65,12 @@ setup(name="turpial",
           'turpial = turpial.main:main',
           'turpial-unity-daemon = turpial.ui.unity.daemon:main',
       ],
+    },
+    cmdclass={
+        'compile_catalog': babel.compile_catalog,
+        'extract_messages': babel.extract_messages,
+        'init_catalog': babel.init_catalog,
+        'update_catalog': babel.update_catalog,
     },
     data_files=data_files,
 )

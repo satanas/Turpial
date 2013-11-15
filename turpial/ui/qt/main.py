@@ -534,6 +534,14 @@ class Main(Base, QWidget):
     def save_filters(self, filters):
         self.core.save_filters(filters)
 
+    def update_config(self, new_config):
+        current_config = self.core.read_config()
+        if current_config['General']['update-interval'] != new_config['General']['update-interval']:
+            columns = self.core.get_registered_columns()
+            for column in columns:
+                self.add_timer(column)
+        self.core.update_config(new_config)
+
     #================================================================
     # Hooks definitions
     #================================================================

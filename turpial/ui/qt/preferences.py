@@ -83,7 +83,7 @@ class PreferencesDialog(Window):
             'Proxy': self.proxy_page.get_config(),
             'Advanced': self.advanced_page.get_config()
         }
-        self.base.core.update_config(new_config)
+        self.base.update_config(new_config)
         self.close()
 
 class BasePage(QWidget):

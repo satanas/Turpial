@@ -467,6 +467,9 @@ class CoreWorker(QThread):
     def save_filters(self, filters):
         self.core.save_filters(filters)
 
+    def restore_config(self):
+        self.core.delete_current_config()
+
     #================================================================
     # Callbacks
     #================================================================

@@ -2,6 +2,8 @@
 
 # Qt preferences dialog for Turpial
 
+import subprocess
+
 from datetime import datetime, timedelta
 
 from PyQt4.QtGui import QLabel
@@ -111,12 +113,14 @@ class GeneralPage(BasePage):
         minimize_on_close = base.core.get_minimize_on_close()
 
         self.update_frecuency = Slider(i18n.get('update_frecuency'), unit='min',
-            default_value=update_frecuency)
+            default_value=update_frecuency, tooltip=i18n.get('update_frecuency_tooltip'))
         self.statuses_per_column = Slider(i18n.get('statuses_per_column'), minimum_value=20,
             maximum_value=200, default_value=statuses)
         self.queue_frecuency = Slider(i18n.get('queue_frecuency'), minimum_value=5,
-            maximum_value=720, default_value=queue_frecuency, single_step=15, time=True)
-        self.minimize_on_close = CheckBox(i18n.get('minimize_on_close'), checked=minimize_on_close)
+            maximum_value=720, default_value=queue_frecuency, single_step=15, time=True,
+            tooltip=i18n.get('queue_frecuency_tooltip'))
+        self.minimize_on_close = CheckBox(i18n.get('minimize_on_close'), checked=minimize_on_close,
+            tooltip=i18n.get('minimize_on_close_tooltip'))
 
         self.layout.addWidget(self.update_frecuency)
         self.layout.addWidget(self.queue_frecuency)
@@ -144,10 +148,14 @@ class NotificationsPage(BasePage):
         sound_on_login = base.core.get_sound_on_login()
         sound_on_updates = base.core.get_sound_on_updates()
 
-        self.notify_on_updates = CheckBox(i18n.get('notify_on_updates'), checked=notify_on_updates)
-        self.notify_on_actions = CheckBox(i18n.get('notify_on_actions'), checked=notify_on_actions)
-        self.sound_on_login = CheckBox(i18n.get('sound_on_login'), checked=sound_on_login)
-        self.sound_on_updates = CheckBox(i18n.get('sound_on_updates'), checked=sound_on_updates)
+        self.notify_on_updates = CheckBox(i18n.get('notify_on_updates'), checked=notify_on_updates,
+            tooltip=i18n.get('notify_on_updates_toolip'))
+        self.notify_on_actions = CheckBox(i18n.get('notify_on_actions'), checked=notify_on_actions,
+            tooltip=i18n.get('notify_on_actions_toolip'))
+        self.sound_on_login = CheckBox(i18n.get('sound_on_login'), checked=sound_on_login,
+            tooltip=i18n.get('sound_on_login_tooltip'))
+        self.sound_on_updates = CheckBox(i18n.get('sound_on_updates'), checked=sound_on_updates,
+            tooltip=i18n.get('sound_on_updates_tooltip'))
 
         self.layout.addWidget(self.notify_on_updates)
         self.layout.addWidget(self.notify_on_actions)
@@ -211,11 +219,15 @@ class BrowserPage(QWidget):
 
         custom_label = QLabel(i18n.get('command'))
         self.open_button = QPushButton(i18n.get('open'))
+        self.test_button = QPushButton(i18n.get('test'))
+        self.test_button.clicked.connect(self.__on_test)
+
         command_box = QHBoxLayout()
         command_box.setSpacing(5)
         command_box.addWidget(custom_label)
         command_box.addWidget(self.command, 1)
-        command_box.addWidget(self.open_button)
+        #command_box.addWidget(self.open_button)
+        command_box.addWidget(self.test_button)
 
         self.button_group = QButtonGroup()
         self.button_group.addButton(self.default_browser.radiobutton)
@@ -244,12 +256,19 @@ class BrowserPage(QWidget):
             self.command.setText(current_browser)
             self.__on_custom_selected()
 
+    def __on_test(self):
+        cmd = str(self.command.text())
+        if cmd != '':
+            subprocess.Popen([cmd, 'http://turpial.org.ve/'])
+
     def __on_defaul_selected(self):
         self.open_button.setEnabled(False)
+        self.test_button.setEnabled(False)
         self.command.setEnabled(False)
 
     def __on_custom_selected(self):
         self.open_button.setEnabled(True)
+        self.test_button.setEnabled(True)
         self.command.setEnabled(True)
 
     def get_config(self):
@@ -313,6 +332,7 @@ class ProxyPage(BasePage):
 class AdvancedPage(BasePage):
     def __init__(self, base):
         BasePage.__init__(self, i18n.get('advanced_tab_description'))
+        self.base = base
 
         socket_timeout = base.core.get_socket_timeout()
         show_avatars = base.core.get_show_user_avatars()
@@ -323,8 +343,9 @@ class AdvancedPage(BasePage):
         self.restore_config = PushButton(i18n.get('restore_config_to_default'), i18n.get('restore_config'))
         self.restore_config.clicked.connect(self.__on_config_restore)
         self.socket_timeout = Slider(i18n.get('socket_timeout'), default_value=socket_timeout,
-            minimum_value=5, maximum_value=120, unit='sec')
-        self.show_avatars = CheckBox(i18n.get('show_avatars'), checked=show_avatars)
+            minimum_value=5, maximum_value=120, unit='sec', tooltip=i18n.get('socket_timeout_tooltip'))
+        self.show_avatars = CheckBox(i18n.get('show_avatars'), checked=show_avatars,
+            tooltip=i18n.get('show_avatars_tooltip'))
 
         self.layout.addWidget(self.clean_cache)
         self.layout.addWidget(self.restore_config)
@@ -341,7 +362,12 @@ class AdvancedPage(BasePage):
         self.clean_cache.description.setText(clean_cache_caption)
 
     def __on_config_restore(self):
-        print 'restoring config'
+        confirmation = self.base.show_confirmation_message(i18n.get('confirm_restore'),
+            i18n.get('do_you_want_to_restore_config'))
+        if confirmation:
+            self.base.restore_config()
+            self.base.show_information_message(i18n.get('restart_turpial'), i18n.get('config_restored_successfully'))
+            self.base.main_quit()
 
     def get_config(self):
         show_avatars = 'on' if self.show_avatars.get_value() else 'off'
@@ -358,7 +384,7 @@ class AdvancedPage(BasePage):
 # TODO: Add tooltips
 class Slider(QWidget):
     def __init__(self, caption, default_value, minimum_value=1, maximum_value=60, single_step=1,
-            page_step=6, caption_size=None, unit='', time=False):
+            page_step=6, caption_size=None, unit='', time=False, tooltip=''):
         QWidget.__init__(self)
 
         self.value = default_value
@@ -367,6 +393,7 @@ class Slider(QWidget):
 
         description = QLabel(caption)
         description.setWordWrap(True)
+        description.setToolTip(tooltip)
         if caption_size:
             description.setMaximumWidth(caption_size)
 
@@ -375,6 +402,7 @@ class Slider(QWidget):
         self.slider.setMinimum(minimum_value)
         self.slider.setSingleStep(single_step)
         self.slider.setPageStep(page_step)
+        self.slider.setToolTip(tooltip)
         #self.slider.setTickInterval(2)
         #self.slider.setTickPosition(QSlider.TicksBelow)
         self.slider.valueChanged.connect(self.__on_change)
@@ -409,13 +437,14 @@ class Slider(QWidget):
 class CheckBox(QWidget):
     status_changed = pyqtSignal(bool)
 
-    def __init__(self, caption, checked=False):
+    def __init__(self, caption, checked=False, tooltip=''):
         QWidget.__init__(self)
 
         self.value = checked
 
         self.checkbox = QCheckBox(caption)
         self.checkbox.stateChanged.connect(self.__on_change)
+        self.checkbox.setToolTip(tooltip)
 
         hbox = QHBoxLayout()
         hbox.addWidget(self.checkbox)

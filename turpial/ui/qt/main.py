@@ -227,6 +227,9 @@ class Main(Base, QWidget):
         full_message = "%s (%s)" % (message, error)
         message = QMessageBox.critical(self, title, full_message, QMessageBox.Ok)
 
+    def show_information_message(self, title, message):
+        message = QMessageBox.information(self, title, message, QMessageBox.Ok)
+
     def show_confirmation_message(self, title, message):
         confirmation = QMessageBox.question(self, title, message,
             QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
@@ -541,6 +544,9 @@ class Main(Base, QWidget):
             for column in columns:
                 self.add_timer(column)
         self.core.update_config(new_config)
+
+    def restore_config(self):
+        self.core.restore_config()
 
     #================================================================
     # Hooks definitions

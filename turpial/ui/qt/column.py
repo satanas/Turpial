@@ -170,26 +170,23 @@ class StatusesColumn(QWidget):
         self.base.show_update_box_for_quote(self.account_id, status)
 
     def __repeat_status(self, status):
-        confirmation = QMessageBox.question(self, i18n.get('confirm_retweet'),
-            i18n.get('do_you_want_to_retweet_status'), QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No)
-        if confirmation == QMessageBox.Yes:
+        confirmation = self.base.show_confirmation_message(i18n.get('confirm_retweet'),
+            i18n.get('do_you_want_to_retweet_status'))
+        if confirmation:
             self.lock_status(status.id_)
             self.base.repeat_status(self.id_, self.account_id, status)
 
     def __delete_status(self, status):
-        confirmation = QMessageBox.question(self, i18n.get('confirm_delete'),
-            i18n.get('do_you_want_to_delete_status'), QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No)
-        if confirmation == QMessageBox.Yes:
+        confirmation = self.base.show_confirmation_message(i18n.get('confirm_delete'),
+            i18n.get('do_you_want_to_delete_status'))
+        if confirmation:
             self.lock_status(status.id_)
             self.base.delete_status(self.id_, self.account_id, status)
 
     def __delete_direct_message(self, status):
-        confirmation = QMessageBox.question(self, i18n.get('confirm_delete'),
-            i18n.get('do_you_want_to_delete_direct_message'), QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No)
-        if confirmation == QMessageBox.Yes:
+        confirmation = self.base.show_confirmation_message(i18n.get('confirm_delete'),
+            i18n.get('do_you_want_to_delete_direct_message'))
+        if confirmation:
             self.base.delete_direct_message(self.id_, self.account_id, status)
 
     def __reply_direct_message(self, status):

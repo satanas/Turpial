@@ -17,6 +17,7 @@ from PyQt4.QtGui import QStandardItemModel
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QTimer
+from PyQt4.QtCore import QString
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import Window
@@ -159,10 +160,10 @@ class QueueDialog(Window):
         for status in self.base.core.list_statuses_queue():
             username = get_username_from(status.account_id)
             protocol_image = "%s.png" % get_protocol_from(status.account_id)
-            item = QStandardItem(username)
+            item = QStandardItem(QString.fromUtf8(username))
             item.setIcon(QIcon(self.base.load_image(protocol_image, True)))
             model.setItem(row, 0, item)
-            model.setItem(row, 1, QStandardItem(status.text))
+            model.setItem(row, 1, QStandardItem(QString.fromUtf8(status.text)))
             row += 1
 
         humanized_interval = self.base.humanize_time_intervals(self.base.core.get_queue_interval())

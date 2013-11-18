@@ -150,7 +150,8 @@ class Main(Base, QWidget):
         layout.addWidget(self.dock)
 
         self.setLayout(layout)
-        self.set_queue_timer()
+        self.turn_on_queue_timer()
+        self.queue_dialog.update_timestamp()
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -539,11 +540,19 @@ class Main(Base, QWidget):
 
     def update_config(self, new_config):
         current_config = self.core.read_config()
-        if current_config['General']['update-interval'] != new_config['General']['update-interval']:
+        current_update_interval = int(current_config['General']['update-interval'])
+        current_queue_interval = int(current_config['General']['queue-interval'])
+
+        self.core.update_config(new_config)
+
+        if current_update_interval != new_config['General']['update-interval']:
             columns = self.core.get_registered_columns()
             for column in columns:
                 self.add_timer(column)
-        self.core.update_config(new_config)
+
+        if current_queue_interval != new_config['General']['queue-interval']:
+            self.set_queue_timer()
+
 
     def restore_config(self):
         self.core.restore_config()
@@ -719,6 +728,7 @@ class Main(Base, QWidget):
     def after_push_status_to_queue(self, account_id):
         self.update_box.done()
         self.queue_dialog.update()
+        self.turn_on_queue_timer()
 
     def after_pop_status_from_queue(self, status):
         if status:
@@ -730,7 +740,9 @@ class Main(Base, QWidget):
             print "+++Message enqueued again for error posting"
             self.push_status_to_queue(account_id, message)
         else:
+            self.turn_off_queue_timer()
             self.queue_dialog.update()
+            self.queue_dialog.update_timestamp()
             if self.core.get_notify_on_actions():
                 self.os_notifications.message_from_queue_posted()
 
@@ -739,6 +751,8 @@ class Main(Base, QWidget):
 
     def after_clear_queue(self):
         self.queue_dialog.update()
+        self.queue_dialog.update_timestamp()
+        self.turn_off_queue_timer()
 
     def on_exception(self, exception):
         print 'Exception', exception
@@ -772,12 +786,21 @@ class Main(Base, QWidget):
 
     def set_queue_timer(self):
         self.remove_timer('queue')
-
         interval = self.core.get_queue_interval() * 60 * 1000
         timer = Timer(interval, None, self.update_status_from_queue)
         self.timers['queue'] = timer
         self.queue_dialog.update()
         print '--Created timer for queue every %i sec' % interval
+
+    def turn_on_queue_timer(self):
+        if len(self.core.list_statuses_queue()) > 0 and not self.timers.has_key('queue'):
+            self.set_queue_timer()
+            self.queue_dialog.update_timestamp()
+
+    def turn_off_queue_timer(self):
+        if len(self.core.list_statuses_queue()) == 0:
+            self.remove_timer('queue')
+            self.queue_dialog.update_timestamp()
 
 class Timer:
     def __init__(self, interval, column, callback):

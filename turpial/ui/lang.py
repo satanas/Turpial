@@ -202,6 +202,7 @@ STRINGS = {
     'confirm_restore': _("Confirm restore"),
     'do_you_want_to_restore_config': _("Do you want yo restore your configuration to default? Turpial will be closed and must be restarted after this operation"),
     'config_restored_successfully': _("Configuration restored to default successfully. Please, restart Turpial"),
+    'that_account_does_not_exist': _("Wait! That account does not exist"),
     #'i_couldnt_update_status': _("Oh oh... I couldn't update your status"),
     #'couldnt_shrink_urls': _("Oops... I couldn't shrink all URLs"),
 }

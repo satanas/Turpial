@@ -106,6 +106,13 @@ class Base(Singleton):
                         timestamp = u"%i %s %i" % (dt.tm_mday, month, year)
         return timestamp
 
+    def humanize_time_intervals(self, interval):
+        if interval > 1:
+            unit = i18n.get('minutes')
+        else:
+            unit = i18n.get('minute')
+        return " ".join([str(interval), unit])
+
     def get_shortcut_string(self, key):
         return "+".join([self.shortcut_key, key])
 

@@ -3,6 +3,8 @@
 # Qt account manager for Turpial
 
 import os
+import sys
+import traceback
 
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QFont
@@ -146,6 +148,9 @@ class AccountsDialog(ModalDialog):
         try:
             oauth_dialog = OAuthDialog(self, account.request_oauth_access())
         except Exception, e:
+            err_msg = "%s: %s" % (sys.exc_info()[0], sys.exc_info()[1])
+            print traceback.format_exc()
+            print err_msg
             self.error(i18n.get('problems_registering_new_account'))
             self.__enable(True)
             return
@@ -156,16 +161,25 @@ class AccountsDialog(ModalDialog):
                 account.authorize_oauth_access(pin)
                 self.base.save_account(account)
             except Exception, e:
-                #err_msg = "%s: %s" % (sys.exc_info()[0], sys.exc_info()[1])
+                err_msg = "%s: %s" % (sys.exc_info()[0], sys.exc_info()[1])
+                print traceback.format_exc()
+                print err_msg
                 self.error(i18n.get('problems_registering_new_account'))
                 self.__enable(True)
 
     def __relogin_account(self):
         self.__enable(False)
         selection = self.list_.selectionModel()
-        index = selection.selectedIndexes()[0]
-        account_id = str(index.data(AccountDelegate.IdRole).toPyObject())
-        self.base.load_account(account_id)
+        try:
+            index = selection.selectedIndexes()[0]
+            account_id = str(index.data(AccountDelegate.IdRole).toPyObject())
+            self.base.load_account(account_id)
+        except Exception, e:
+                err_msg = "%s: %s" % (sys.exc_info()[0], sys.exc_info()[1])
+                print traceback.format_exc()
+                print err_msg
+                self.error(i18n.get('problems_registering_new_account'))
+                self.__enable(True)
 
     def __enable(self, value):
         # TODO: Display a loading message/indicator

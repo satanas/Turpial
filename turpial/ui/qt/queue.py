@@ -16,6 +16,8 @@ from PyQt4.QtGui import QStandardItem
 from PyQt4.QtGui import QStandardItemModel
 
 from PyQt4.QtCore import Qt
+from PyQt4.QtCore import QTimer
+from PyQt4.QtCore import QString
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import Window
@@ -27,7 +29,7 @@ class QueueDialog(Window):
     def __init__(self, base):
         Window.__init__(self, base, i18n.get('messages_queue'))
         self.setFixedSize(500, 400)
-        self.last_timestamp = int(time.time())
+        self.last_timestamp = None
         self.showed = False
 
         self.list_ = QTableView()
@@ -66,67 +68,65 @@ class QueueDialog(Window):
         layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(layout)
 
-    def __update(self):
-        model = QStandardItemModel()
-        model.setHorizontalHeaderItem(0, QStandardItem(i18n.get('account')))
-        model.setHorizontalHeaderItem(1, QStandardItem(i18n.get('message')))
-        self.list_.setModel(model)
-        row = 0
-        interval = self.base.core.get_queue_interval() * 60
-        est_time = time.strftime("%H:%M", time.localtime(self.last_timestamp + interval))
-        for status in self.base.core.list_statuses_queue():
-            username = get_username_from(status.account_id)
-            protocol_image = "%s.png" % get_protocol_from(status.account_id)
-            item = QStandardItem(username)
-            item.setIcon(QIcon(self.base.load_image(protocol_image, True)))
-            model.setItem(row, 0, item)
-            model.setItem(row, 1, QStandardItem(status.text))
-            row += 1
-
-        humanized_interval = "%s minutes" % self.base.core.get_queue_interval()
-        warning = i18n.get('messages_will_be_send') % humanized_interval
-        next_message = ' '.join([i18n.get('next_message_should_be_posted_at'), est_time])
-        self.caption.setText(warning)
-        self.estimated_time.setText(next_message)
-
-        self.__enable(True)
-        self.delete_button.setEnabled(False)
-        if row == 0:
-            self.clear_button.setEnabled(False)
-        self.list_.horizontalHeader().setResizeMode(1, QHeaderView.Stretch)
-        self.list_.resizeColumnsToContents()
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.__on_timeout)
+        self.timer.start(60000)
 
     def __account_clicked(self, point):
         self.delete_button.setEnabled(True)
         self.clear_button.setEnabled(True)
 
     def __delete_message(self):
-        self.__enable(False)
+        self.__disable()
         selection = self.list_.selectionModel()
         index = selection.selectedIndexes()[0]
         message = i18n.get('delete_message_from_queue_confirm')
         confirmation = self.base.show_confirmation_message(i18n.get('confirm_delete'),
             message)
         if not confirmation:
-            self.__enable(True)
+            self.__enable()
             return
         self.base.delete_message_from_queue(index.row())
 
     def __delete_all(self):
-        self.__enable(False)
+        self.__disable()
         message = i18n.get('clear_message_queue_confirm')
         confirmation = self.base.show_confirmation_message(i18n.get('confirm_delete'),
             message)
         if not confirmation:
-            self.__enable(True)
+            self.__enable()
             return
         self.base.clear_queue()
 
-    def __enable(self, value):
-        # TODO: Display a loading message/indicator
-        self.list_.setEnabled(value)
-        self.delete_button.setEnabled(value)
-        self.clear_button.setEnabled(value)
+
+    def __enable(self):
+        self.list_.setEnabled(True)
+        self.delete_button.setEnabled(False)
+        if len(self.base.core.list_statuses_queue()) > 0:
+            self.clear_button.setEnabled(True)
+        else:
+            self.clear_button.setEnabled(False)
+
+    def __disable(self):
+        self.list_.setEnabled(False)
+        self.delete_button.setEnabled(False)
+        self.clear_button.setEnabled(False)
+
+    def __on_timeout(self):
+        now = int(time.time())
+        interval = self.base.core.get_queue_interval() * 60
+        if self.last_timestamp:
+            est_time = ((self.last_timestamp + interval) - now) / 60
+        else:
+            est_time = 0
+
+        humanized_est_time = self.base.humanize_time_intervals(est_time)
+        next_message = ' '.join([i18n.get('next_message_should_be_posted_in'), humanized_est_time])
+
+        if len(self.base.core.list_statuses_queue()) == 0:
+            self.estimated_time.setText('')
+        else:
+            self.estimated_time.setText(next_message)
 
     def closeEvent(self, event=None):
         if event:
@@ -139,10 +139,52 @@ class QueueDialog(Window):
             self.raise_()
             return
 
-        self.__update()
+        self.update()
         Window.show(self)
         self.showed = True
 
     def update(self):
-        self.last_timestamp = int(time.time())
-        self.__update()
+        model = QStandardItemModel()
+        model.setHorizontalHeaderItem(0, QStandardItem(i18n.get('account')))
+        model.setHorizontalHeaderItem(1, QStandardItem(i18n.get('message')))
+        self.list_.setModel(model)
+
+        now = int(time.time())
+        interval = self.base.core.get_queue_interval() * 60
+        if self.last_timestamp:
+            est_time = ((self.last_timestamp + interval) - now) / 60
+        else:
+            est_time = 0
+
+        row = 0
+        for status in self.base.core.list_statuses_queue():
+            username = get_username_from(status.account_id)
+            protocol_image = "%s.png" % get_protocol_from(status.account_id)
+            item = QStandardItem(QString.fromUtf8(username))
+            item.setIcon(QIcon(self.base.load_image(protocol_image, True)))
+            model.setItem(row, 0, item)
+            model.setItem(row, 1, QStandardItem(QString.fromUtf8(status.text)))
+            row += 1
+
+        humanized_interval = self.base.humanize_time_intervals(self.base.core.get_queue_interval())
+        humanized_est_time = self.base.humanize_time_intervals(est_time)
+
+        warning = i18n.get('messages_will_be_send') % humanized_interval
+        next_message = ' '.join([i18n.get('next_message_should_be_posted_in'), humanized_est_time])
+        self.caption.setText(warning)
+
+        if row == 0:
+            self.estimated_time.setText('')
+        else:
+            self.estimated_time.setText(next_message)
+
+        self.list_.horizontalHeader().setResizeMode(1, QHeaderView.Stretch)
+        self.list_.resizeColumnsToContents()
+
+        self.__enable()
+
+    def update_timestamp(self):
+        if len(self.base.core.list_statuses_queue()) > 0:
+            self.last_timestamp = int(time.time())
+        else:
+            self.last_timestamp = None

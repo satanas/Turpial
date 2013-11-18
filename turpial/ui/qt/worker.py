@@ -219,7 +219,7 @@ class CoreWorker(QThread):
 
     def get_notify_on_updates(self):
         try:
-            notify_on_update = self.core.config.cfg.get('Notifications', 'updates')
+            notify_on_update = self.core.config.cfg.get('Notifications', 'updates', raw=True)
             if notify_on_update == 'on':
                 return True
             return False
@@ -231,7 +231,7 @@ class CoreWorker(QThread):
 
     def get_notify_on_actions(self):
         try:
-            notify_on_actions = self.core.config.cfg.get('Notifications', 'actions')
+            notify_on_actions = self.core.config.cfg.get('Notifications', 'actions', raw=True)
             if notify_on_actions == 'on':
                 return True
             return False
@@ -242,19 +242,32 @@ class CoreWorker(QThread):
             return True
 
     def get_queue_interval(self):
-        queue_interval = self.core.config.read('General', 'queue-interval')
-        if queue_interval is None:
-            self.core.config.write('General', 'queue-interval', '30')
-            return 30
-        else:
+        try:
+            queue_interval = self.core.config.cfg.get('General', 'queue-interval', raw=True)
             return int(queue_interval)
+        except:
+            config = self.read_config()
+            config['General']['queue-interval'] = 30
+            self.core.save_all_config(config)
+            return config['General']['queue-interval']
 
     def read_config(self):
-        return self.core.config.read_all()
+        config = {}
+
+        # FIXME: Implemen this on libturpial
+        for section in self.core.config.cfg.sections():
+            if not config.has_key(section):
+                config[section] = {}
+
+            for item in self.core.config.cfg.items(section, raw=True):
+                for value in item:
+                    config[section][item[0]] = item[1]
+        return config
 
     def update_config(self, new_config):
-        for section, items in new_config.iteritems():
-            self.core.config.write_section(section, items)
+        #for section, items in new_config.iteritems():
+        #    self.core.config.write_section(section, items)
+        self.core.save_all_config(new_config)
 
     def get_shorten_url_service(self):
         return self.core.get_shorten_url_service()

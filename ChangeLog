@@ -1,3 +1,20 @@
+v2.9.6-a1 (Nov 20, 2013):
+	* New backend on top of libturpial
+	* Rewrite of the whole interface using Qt
+	* Support for multiple accounts and multiple columns
+	* No more login with user & password
+	* Added queue for messages
+	* Enhanced filters
+	* Added support for Mac OS (and Windows theoretically)
+	* Support for broadcasting messages
+	* Cleaned and improved overall UI
+	* Improved user interaction with tweets
+	* Links, mentions and hashtags are clickable
+	* Enhanced twitter search
+	* Added more services to short url and upload pictures
+	* Implemented previsualization of images and user avatars
+	* Improved conversation interface
+
 v1.7.6-a1 (Mar 18, 2012):
     * Bug #308: Improved URL detection
     * Bug #504: Content menu doesn't show in secondary columns

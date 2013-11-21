@@ -13,6 +13,7 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.column import StatusesColumn
+from turpial.ui.qt.loader import BarLoadIndicator
 
 from libturpial.common import OS_MAC
 from libturpial.common.tools import detect_os
@@ -24,12 +25,15 @@ class Container(QVBoxLayout):
         self.child = None
         self.columns = {}
         self.is_empty = None
+        self.loading()
 
     def __link_clicked(self, url):
         if url == 'cmd:add_columns':
             self.base.show_column_menu(QCursor.pos())
         elif url == 'cmd:add_accounts':
             self.base.show_accounts_dialog()
+        elif url == 'cmd:restart':
+            self.base.restart()
 
     def clear_layout(self, layout):
         if layout is not None:
@@ -43,7 +47,7 @@ class Container(QVBoxLayout):
 
     def empty(self, with_accounts=None):
         if self.child:
-            self.child.deleteLater()
+            self.clear_layout(self)
 
         image = self.base.load_image('turpial-196.png', True)
         logo = QLabel()
@@ -85,6 +89,96 @@ class Container(QVBoxLayout):
         self.child.addWidget(message)
         self.child.setSpacing(10)
         self.child.setContentsMargins(30, 0, 30, 60)
+
+        self.insertLayout(0, self.child)
+        self.is_empty = True
+
+    def loading(self):
+        if self.child:
+            self.clear_layout(self)
+
+        image = self.base.load_image('turpial-196.png', True)
+        logo = QLabel()
+        logo.setPixmap(image)
+        logo.setAlignment(Qt.AlignCenter)
+        logo.setContentsMargins(0, 80, 0, 0)
+
+        appname = QLabel('Turpial 3')
+        if detect_os() == OS_MAC:
+            font = QFont('Maven Pro Light', 28, 0, False)
+            font2 = QFont('Ubuntu', 16, 0, False)
+        else:
+            font = QFont('Maven Pro Light', 18, QFont.Light, False)
+            font2 = QFont('Ubuntu', 12, QFont.Normal, False)
+        appname.setFont(font)
+
+        welcome = QLabel()
+        welcome.setText(i18n.get('hi_there'))
+        welcome.setAlignment(Qt.AlignCenter)
+        welcome.setFont(font)
+
+        message = QLabel()
+        message.setText(i18n.get('give_me_a_minute'))
+        message.setAlignment(Qt.AlignCenter)
+        message.setWordWrap(True)
+        message.setFont(font2)
+
+        loader = BarLoadIndicator()
+
+        self.child = QVBoxLayout()
+        self.child.addWidget(logo)
+        self.child.addWidget(welcome)
+        self.child.addSpacing(10)
+        self.child.addWidget(message)
+        #self.child.setSpacing(10)
+        self.child.addStretch(1)
+        self.child.addWidget(loader)
+        self.child.setContentsMargins(30, 0, 30, 30)
+
+        self.insertLayout(0, self.child)
+        self.is_empty = True
+
+    def error(self):
+        if self.child:
+            self.clear_layout(self)
+
+        image = self.base.load_image('turpial-196.png', True)
+        logo = QLabel()
+        logo.setPixmap(image)
+        logo.setAlignment(Qt.AlignCenter)
+        logo.setContentsMargins(0, 80, 0, 0)
+
+        appname = QLabel('Turpial 3')
+        if detect_os() == OS_MAC:
+            font = QFont('Maven Pro Light', 28, 0, False)
+            font2 = QFont('Ubuntu', 16, 0, False)
+        else:
+            font = QFont('Maven Pro Light', 18, QFont.Light, False)
+            font2 = QFont('Ubuntu', 12, QFont.Normal, False)
+        appname.setFont(font)
+
+        welcome = QLabel()
+        welcome.setText(i18n.get('oh_oh'))
+        welcome.setAlignment(Qt.AlignCenter)
+        welcome.setFont(font)
+
+        message = QLabel()
+        text = "%s. <a href='cmd:restart'>%s</a>" % (i18n.get('something_terrible_happened'),
+            i18n.get('try_again'))
+        message.setText(text)
+        message.linkActivated.connect(self.__link_clicked)
+        message.setAlignment(Qt.AlignCenter)
+        message.setWordWrap(True)
+        message.setFont(font2)
+
+        self.child = QVBoxLayout()
+        self.child.addWidget(logo)
+        self.child.addWidget(welcome)
+        self.child.addSpacing(10)
+        self.child.addWidget(message)
+        #self.child.setSpacing(10)
+        self.child.addStretch(1)
+        self.child.setContentsMargins(30, 0, 30, 30)
 
         self.insertLayout(0, self.child)
         self.is_empty = True

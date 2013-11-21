@@ -29,6 +29,7 @@ class Dock(QStatusBar):
     filters_clicked = pyqtSignal()
     preferences_clicked = pyqtSignal()
 
+    LOADING = -1
     EMPTY = 0
     WITH_ACCOUNTS = 1
     NORMAL = 2
@@ -36,7 +37,7 @@ class Dock(QStatusBar):
     def __init__(self, base):
         QStatusBar.__init__(self)
         self.base = base
-        self.status = self.EMPTY
+        self.status = self.LOADING
 
         style = "background-color: %s; border: 0px solid %s;" % (self.base.bgcolor, self.base.bgcolor)
 
@@ -72,6 +73,7 @@ class Dock(QStatusBar):
 
         self.setContentsMargins(0, 0, 0, 0)
         self.setStyleSheet("QStatusBar { %s }" % style)
+        self.loading()
 
     def __accounts_clicked(self):
         self.accounts_clicked.emit()
@@ -109,12 +111,6 @@ class Dock(QStatusBar):
         queue = QAction(i18n.get('messages_queue'), self)
         queue.triggered.connect(partial(self.__queue_clicked))
         columns = QAction(i18n.get('columns'), self)
-        if self.status > self.EMPTY:
-            columns_menu = self.base.build_columns_menu()
-            columns.setMenu(columns_menu)
-        else:
-            queue.setEnabled(False)
-            columns.setEnabled(False)
 
         filters = QAction(i18n.get('filters'), self)
         filters.triggered.connect(partial(self.__filters_clicked))
@@ -122,6 +118,19 @@ class Dock(QStatusBar):
         preferences.triggered.connect(partial(self.__preferences_clicked))
         about_turpial = QAction(i18n.get('about_turpial'), self)
         about_turpial.triggered.connect(partial(self.__about_clicked))
+
+        if self.status > self.EMPTY:
+            columns_menu = self.base.build_columns_menu()
+            columns.setMenu(columns_menu)
+        elif self.status == self.EMPTY:
+            queue.setEnabled(False)
+            columns.setEnabled(False)
+        elif self.status == self.LOADING:
+            accounts.setEnabled(False)
+            queue.setEnabled(False)
+            columns.setEnabled(False)
+            filters.setEnabled(False)
+            preferences.setEnabled(False)
 
         self.settings_menu.addAction(accounts)
         self.settings_menu.addAction(columns)
@@ -133,9 +142,16 @@ class Dock(QStatusBar):
         self.settings_menu.addAction(about_turpial)
         self.settings_menu.exec_(QCursor.pos())
 
+    def loading(self):
+        self.updates_button.setEnabled(False)
+        self.messages_button.setEnabled(False)
+        self.search_button.setEnabled(False)
+        self.status = self.LOADING
+
     def empty(self, with_accounts=None):
         self.updates_button.setEnabled(False)
         self.messages_button.setEnabled(False)
+        self.search_button.setEnabled(False)
         if with_accounts:
             self.status = self.WITH_ACCOUNTS
         else:
@@ -145,4 +161,5 @@ class Dock(QStatusBar):
     def normal(self):
         self.updates_button.setEnabled(True)
         self.messages_button.setEnabled(True)
+        self.search_button.setEnabled(True)
         self.status = self.NORMAL

@@ -73,6 +73,7 @@ class Main(Base, QWidget):
         self.ignore_quit = True
         self.resize(320, 480)
         self.showed = True
+        self.core_ready = False
         self.timers = {}
         self.extra_friends = []
 
@@ -83,6 +84,7 @@ class Main(Base, QWidget):
         self.queue_dialog = QueueDialog(self)
 
         self.core = CoreWorker()
+        self.core.ready.connect(self.after_core_initialized)
         self.core.status_updated.connect(self.after_update_status)
         self.core.status_broadcasted.connect(self.after_broadcast_status)
         self.core.status_repeated.connect(self.after_repeat_status)
@@ -126,7 +128,6 @@ class Main(Base, QWidget):
         self.sounds = SoundSystem(self.sounds_path)
 
         self.dock = Dock(self)
-        self.dock.empty()
 
         self.dock.accounts_clicked.connect(self.show_accounts_dialog)
         self.dock.columns_clicked.connect(self.show_column_menu)
@@ -150,8 +151,7 @@ class Main(Base, QWidget):
         layout.addWidget(self.dock)
 
         self.setLayout(layout)
-        self.turn_on_queue_timer()
-        self.queue_dialog.update_timestamp()
+
 
     def __open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -191,19 +191,29 @@ class Main(Base, QWidget):
     def closeEvent(self, event=None):
         if event:
             event.ignore()
-        if self.core.get_minimize_on_close():
-            self.hide()
-            self.showed = False
+
+        if self.core.status > self.core.LOADING:
+            if self.core.get_minimize_on_close():
+                self.hide()
+                self.showed = False
+            else:
+                self.main_quit()
         else:
-            self.main_quit()
+            confirmation = self.show_confirmation_message(i18n.get('confirm_close'),
+                i18n.get('do_you_want_to_close_turpial'))
+            if confirmation:
+                self.main_quit()
 
     #================================================================
     # Overrided methods
     #================================================================
 
     def start(self):
-        if self.core.get_sound_on_login():
-            self.sounds.startup()
+        pass
+
+    def restart(self):
+        self.core.restart()
+        self._container.loading()
 
     def main_loop(self):
         try:
@@ -218,7 +228,6 @@ class Main(Base, QWidget):
     def show_main(self):
         self.start()
         self.show()
-        self.update_container()
 
     #================================================================
     # Main methods
@@ -560,6 +569,20 @@ class Main(Base, QWidget):
     #================================================================
     # Hooks definitions
     #================================================================
+
+    def after_core_initialized(self, response):
+        if self.is_exception(response):
+            self.core.status = self.core.ERROR
+            self._container.error()
+        else:
+            if self.core.get_sound_on_login():
+                self.sounds.startup()
+            self.queue_dialog.start()
+            self.update_container()
+            self.turn_on_queue_timer()
+            self.queue_dialog.update_timestamp()
+            self.core.status = self.core.READY
+
 
     def after_save_account(self):
         self.account_registered.emit()

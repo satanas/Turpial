@@ -15,6 +15,7 @@ from libturpial.common.tools import get_account_id_from, get_column_slug_from
 
 class CoreWorker(QThread):
 
+    ready = pyqtSignal(object)
     status_updated = pyqtSignal(object, str)
     status_broadcasted = pyqtSignal(object)
     status_repeated = pyqtSignal(object, str, str, str)
@@ -51,19 +52,28 @@ class CoreWorker(QThread):
     fetched_image_preview = pyqtSignal(object)
     cache_deleted = pyqtSignal()
 
+    ERROR = -1
+    LOADING = 0
+    READY = 1
+
     def __init__(self):
         QThread.__init__(self)
         self.queue = Queue.Queue()
         self.exit_ = False
-        self.core = Core()
+        self.status = self.LOADING
+        #self.core = Core()
 
-        self.queue_path = os.path.join(self.core.config.basedir, 'queue')
-        if not os.path.isfile(self.queue_path):
-            open(self.queue_path, 'w').close()
-
+        #self.queue_path = os.path.join(self.core.config.basedir, 'queue')
+        #if not os.path.isfile(self.queue_path):
+        #    open(self.queue_path, 'w').close()
+        self.core = None
+        self.restart()
 
     #def __del__(self):
     #    self.wait()
+
+    def restart(self):
+        self.register(self.login, (), self.__after_login, None)
 
     def add_friend(self, username):
         # FIXME: On libturpial
@@ -107,6 +117,12 @@ class CoreWorker(QThread):
     #================================================================
     # Core methods
     #================================================================
+
+    def login(self):
+        self.core = Core()
+        self.queue_path = os.path.join(self.core.config.basedir, 'queue')
+        if not os.path.isfile(self.queue_path):
+            open(self.queue_path, 'w').close()
 
     def get_default_browser(self):
         return self.core.get_default_browser()
@@ -486,6 +502,9 @@ class CoreWorker(QThread):
     #================================================================
     # Callbacks
     #================================================================
+
+    def __after_login(self, response):
+        self.ready.emit(response)
 
     def __after_save_account(self):
         self.account_saved.emit()

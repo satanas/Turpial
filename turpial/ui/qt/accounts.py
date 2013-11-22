@@ -178,7 +178,7 @@ class AccountsDialog(ModalDialog):
                 err_msg = "%s: %s" % (sys.exc_info()[0], sys.exc_info()[1])
                 print traceback.format_exc()
                 print err_msg
-                self.error(i18n.get('problems_registering_new_account'))
+                self.error(i18n.get('that_account_does_not_exist'))
                 self.__enable(True)
 
     def __enable(self, value):

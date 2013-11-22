@@ -68,10 +68,6 @@ class QueueDialog(Window):
         layout.setContentsMargins(5, 5, 5, 5)
         self.setLayout(layout)
 
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.__on_timeout)
-        self.timer.start(60000)
-
     def __account_clicked(self, point):
         self.delete_button.setEnabled(True)
         self.clear_button.setEnabled(True)
@@ -127,6 +123,11 @@ class QueueDialog(Window):
             self.estimated_time.setText('')
         else:
             self.estimated_time.setText(next_message)
+
+    def start(self):
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.__on_timeout)
+        self.timer.start(60000)
 
     def closeEvent(self, event=None):
         if event:

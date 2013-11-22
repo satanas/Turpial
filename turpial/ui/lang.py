@@ -207,7 +207,7 @@ STRINGS = {
     'give_me_a_minute': _("Give me a minute, I am shaking my feathers and stretching my wings..."),
     'confirm_close': _("Confirm close"),
     'do_you_want_to_close_turpial': _("Do you want to close Turpial?"),
-    'oh_oh': _("Oh oh..."),
+    'oh_oh': _("Uh oh..."),
     'something_terrible_happened': _("Something terrible happened, I could not reach the Internet"),
     'try_again': _("Try again"),
     #'i_couldnt_update_status': _("Oh oh... I couldn't update your status"),

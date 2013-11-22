@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: turpial 2.9.7-a1\n"
 "Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-11-21 15:47-0300\n"
+"POT-Creation-Date: 2013-11-22 18:31-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -789,7 +789,7 @@ msgid "Do you want to close Turpial?"
 msgstr ""
 
 #: turpial/ui/lang.py:210
-msgid "Oh oh..."
+msgid "Uh oh..."
 msgstr ""
 
 #: turpial/ui/lang.py:211

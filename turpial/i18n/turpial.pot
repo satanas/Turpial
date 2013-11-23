@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: turpial 2.9.7-a1\n"
 "Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-11-22 18:31-0300\n"
+"POT-Creation-Date: 2013-11-23 10:48-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -678,7 +678,7 @@ msgid "Having some troubles to unfollow this user"
 msgstr ""
 
 #: turpial/ui/lang.py:184
-msgid "Oh oh, I could not block this user"
+msgid "Uh oh, I could not block this user"
 msgstr ""
 
 #: turpial/ui/lang.py:185

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: turpial 2.9.7-a1\n"
 "Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-11-23 10:48-0300\n"
+"POT-Creation-Date: 2013-11-23 11:04-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -760,7 +760,7 @@ msgstr ""
 
 #: turpial/ui/lang.py:203
 msgid ""
-"Do you want yo restore your configuration to default? Turpial will be "
+"Do you want to restore your configuration to default? Turpial will be "
 "closed and must be restarted after this operation"
 msgstr ""
 

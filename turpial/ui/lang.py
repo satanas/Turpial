@@ -200,7 +200,7 @@ STRINGS = {
     'socket_timeout_tooltip': _("Set the timeout to wait before closing the connection"),
     'show_avatars_tooltip': _("When selected Turpial show user avatars, Otherwise it will show a black box (recommended for slow or limited internet connections)"),
     'confirm_restore': _("Confirm restore"),
-    'do_you_want_to_restore_config': _("Do you want yo restore your configuration to default? Turpial will be closed and must be restarted after this operation"),
+    'do_you_want_to_restore_config': _("Do you want to restore your configuration to default? Turpial will be closed and must be restarted after this operation"),
     'config_restored_successfully': _("Configuration restored to default successfully. Please, restart Turpial"),
     'that_account_does_not_exist': _("Wait! That account does not exist"),
     'hi_there': _("Hi there!"),

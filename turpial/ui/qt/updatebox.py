@@ -405,7 +405,6 @@ class CompletionTextEdit(QTextEdit):
         if self.completer and self.completer.popup().isVisible():
             if event.key() in self.IGNORED_KEYS:
                 event.ignore()
-                print 'ignoring'
                 return
 
         if event.key() == Qt.Key_Escape:

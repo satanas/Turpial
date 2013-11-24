@@ -616,14 +616,15 @@ class Main(Base, QWidget):
         if self.is_exception(arg):
             self._container.error_updating_column(column.id_)
         else:
-            count = len(arg)
-            if count > 0:
+            if len(arg) > 0:
                 if self.core.get_notify_on_updates():
                     self.os_notifications.updates(column, count)
 
                 if self.core.get_sound_on_updates():
                     self.sounds.updates()
                 self._container.update_column(column.id_, arg)
+            else:
+                self._container.stop_updating(column.id_)
 
 
     def after_update_status(self, response, account_id):
@@ -799,7 +800,6 @@ class Main(Base, QWidget):
             print '--Removed timer for %s' % column_id
 
     def download_stream(self, column):
-        print 'updating %s' % column
         if self._container.is_updating(column.id_):
             return True
 

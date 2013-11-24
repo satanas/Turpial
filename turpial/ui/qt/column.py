@@ -43,6 +43,7 @@ class StatusesColumn(QWidget):
         #self.fgcolor = "#e3e3e3"
         #self.fgcolor = "#f9a231"
         #self.updating = False
+        self.last_id = None
 
         self.loader = BarLoadIndicator()
         self.loader.setVisible(False)
@@ -222,6 +223,9 @@ class StatusesColumn(QWidget):
 
     def start_updating(self):
         self.loader.setVisible(True)
+        #return self.last_id
+        # FIXME: Change this after implement the selective update
+        return None
 
     def stop_updating(self):
         self.loader.setVisible(False)
@@ -229,6 +233,7 @@ class StatusesColumn(QWidget):
     def update_statuses(self, statuses):
         self.statuses = self.webview.update_statuses(statuses)
         self.conversations = {}
+        self.last_id = statuses[0].id_
 
     def update_conversation(self, status, status_root_id):
         status_root_id = str(status_root_id)

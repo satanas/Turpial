@@ -112,4 +112,17 @@
         operationLoader.className = 'operation-loader hidden';
     }
 
+    function appendStatus(html_status) {
+        var table = document.getElementById('notifications');
+
+        var parser = new DOMParser();
+        //var doc = parser.parseFromString(html, "text/html");
+        var doc = document.createElement("div");
+        doc.innerHTML = html_status;
+        document.body.insertBefore(doc.firstChild, table);
+        var last = document.body.children[document.body.children.length - 1];
+        document.body.removeChild(last);
+        html_status = '';
+    }
+
 </script>

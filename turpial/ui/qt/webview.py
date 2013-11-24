@@ -22,6 +22,8 @@ class StatusesWebView(QWebView):
     profile_clicked = pyqtSignal(str)
     cmd_clicked = pyqtSignal(str)
 
+    EMPTY_PAGE= '<html><head></head><body></body></html>'
+
     def __init__(self, base, column_id):
         QWebView.__init__(self)
         self.base = base
@@ -133,10 +135,10 @@ class StatusesWebView(QWebView):
         content = ''
         processed_statuses = {}
 
+        # FIXME: Change this after implement the selective update
         for status in statuses:
             processed_statuses[status.id_] = status
             content += self.__render_status(status)
-
         column = self.__load_template('column.html')
         args = {'stylesheet': self.stylesheet, 'content': content,
             'favorite_tooltip': i18n.get('mark_as_favorite'),
@@ -147,6 +149,29 @@ class StatusesWebView(QWebView):
         fd.write(html.encode('ascii', 'ignore'))
         fd.close()
         self.setHtml(html)
+
+        #current_page = self.page().currentFrame().toHtml()
+
+        #if current_page == self.EMPTY_PAGE:
+        #    for status in statuses:
+        #        processed_statuses[status.id_] = status
+        #        content += self.__render_status(status)
+        #    column = self.__load_template('column.html')
+        #    args = {'stylesheet': self.stylesheet, 'content': content,
+        #        'favorite_tooltip': i18n.get('mark_as_favorite'),
+        #        'unfavorite_tooltip': i18n.get('remove_from_favorites')}
+        #    html = column.render(args)
+
+        #    fd = open('/tmp/turpial-debug.html', 'w')
+        #    fd.write(html.encode('ascii', 'ignore'))
+        #    fd.close()
+        #    self.setHtml(html)
+        #else:
+        #    for status in statuses:
+        #        processed_statuses[status.id_] = status
+        #        content = self.__render_status(status)
+        #        self.append_status(content)
+
         return processed_statuses
 
     def clear(self):
@@ -169,3 +194,14 @@ class StatusesWebView(QWebView):
     def clear_conversation(self, status_root_id):
         conversation = "clearConversation('%s')" % status_root_id
         self.execute_javascript(conversation)
+
+    def append_status(self, html):
+        html = html.replace("\n", '')
+        html = html.replace('\'', '"')
+
+        fd = open('/tmp/turpial-update-column.html', 'w')
+        fd.write(html.encode('ascii', 'ignore'))
+        fd.close()
+
+        cmd = """appendStatus('%s')""" % html
+        self.execute_javascript(cmd)

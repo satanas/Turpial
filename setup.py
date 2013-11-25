@@ -27,7 +27,7 @@ class build(_build):
 # TODO: Maybe find some better ways to do this
 # looking distutils's copy_tree method
 data_files=[
-    ('./', ['AUTHORS', 'COPYING']),
+    ('./', ['AUTHORS', 'COPYING', 'TRANSLATORS', 'THANKS']),
     ('share/icons/scalable/apps', ['turpial/data/pixmaps/turpial.svg']),
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
     ('share/applications', ['turpial.desktop']),
@@ -58,8 +58,8 @@ setup(name="turpial",
     include_package_data=True,
     packages=find_packages(),
     package_data={
-      'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/layout/*.template',
-      'data/layout/*.partial', 'data/layout/js/*', 'data/layout/css/*']
+      'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/fonts/*', 'turpial/ui/qt/*',
+          'turpial/ui/qt/templates/*'],
     },
     entry_points={
       'console_scripts': [

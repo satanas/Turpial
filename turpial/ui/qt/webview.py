@@ -156,7 +156,7 @@ class StatusesWebView(QWebView):
             for status in statuses:
                 #processed_statuses[status.id_] = status
                 content = self.__render_status(status)
-                self.append_status(content)
+                self.append_status(content, status.id_)
 
         #return processed_statuses
 
@@ -181,7 +181,7 @@ class StatusesWebView(QWebView):
         conversation = "clearConversation('%s')" % status_root_id
         self.execute_javascript(conversation)
 
-    def append_status(self, html):
+    def append_status(self, html, status_id):
         html = html.replace("\n", '')
         html = html.replace('\'', '"')
 
@@ -189,5 +189,5 @@ class StatusesWebView(QWebView):
         fd.write(html.encode('ascii', 'ignore'))
         fd.close()
 
-        cmd = """appendStatus('%s')""" % html
+        cmd = """appendStatus('%s', '%s')""" % (html, status_id)
         self.execute_javascript(cmd)

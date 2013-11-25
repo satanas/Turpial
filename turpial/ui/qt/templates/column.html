@@ -116,7 +116,8 @@
 
     function appendStatus(html_status, status_id) {
         var status_object = document.getElementById(status_id);
-        if (status_object == null) {
+
+        if (status_object != null) {
             return;
         }
 

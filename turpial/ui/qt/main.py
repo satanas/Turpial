@@ -811,15 +811,15 @@ class Main(Base, QWidget):
         print '--Created timer for queue every %i sec' % interval
 
     def turn_on_queue_timer(self):
+        self.queue_dialog.update()
         if len(self.core.list_statuses_queue()) > 0 and not self.timers.has_key('queue'):
             self.set_queue_timer()
-            self.queue_dialog.update()
             self.queue_dialog.update_timestamp()
 
     def turn_off_queue_timer(self):
+        self.queue_dialog.update()
         if len(self.core.list_statuses_queue()) == 0:
             self.remove_timer('queue')
-            self.queue_dialog.update()
             self.queue_dialog.update_timestamp()
 
 class Timer:

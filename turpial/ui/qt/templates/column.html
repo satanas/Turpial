@@ -122,16 +122,18 @@
 
         var table = document.getElementById('notifications');
         var parser = new DOMParser();
-        //var doc = parser.parseFromString(html, "text/html");
         var doc = document.createElement("div");
         doc.innerHTML = html_status;
-        //document.body.insertBefore(doc.firstChild, table);
+
         var container = document.getElementById('statuses-container');
         var first = container.children[0];
-        //container.appendChild(doc.firstChild);
-        container.insertBefore(doc.firstChild, first);
         var last = container.children[container.children.length - 1];
+        container.insertBefore(doc.firstChild, first);
         container.removeChild(last);
+    }
+
+    function updateTimestamp(status_id, timestamp) {
+        var status_object = document.getElementById(status_id);
     }
 
 </script>

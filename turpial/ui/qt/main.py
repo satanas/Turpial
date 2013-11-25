@@ -580,7 +580,6 @@ class Main(Base, QWidget):
             self.queue_dialog.start()
             self.update_container()
             self.turn_on_queue_timer()
-            self.queue_dialog.update_timestamp()
             self.core.status = self.core.READY
 
 
@@ -751,7 +750,6 @@ class Main(Base, QWidget):
 
     def after_push_status_to_queue(self, account_id):
         self.update_box.done()
-        self.queue_dialog.update()
         self.turn_on_queue_timer()
 
     def after_pop_status_from_queue(self, status):
@@ -765,8 +763,6 @@ class Main(Base, QWidget):
             self.push_status_to_queue(account_id, message)
         else:
             self.turn_off_queue_timer()
-            self.queue_dialog.update()
-            self.queue_dialog.update_timestamp()
             if self.core.get_notify_on_actions():
                 self.os_notifications.message_from_queue_posted()
 
@@ -812,17 +808,18 @@ class Main(Base, QWidget):
         interval = self.core.get_queue_interval() * 60 * 1000
         timer = Timer(interval, None, self.update_status_from_queue)
         self.timers['queue'] = timer
-        self.queue_dialog.update()
         print '--Created timer for queue every %i sec' % interval
 
     def turn_on_queue_timer(self):
         if len(self.core.list_statuses_queue()) > 0 and not self.timers.has_key('queue'):
             self.set_queue_timer()
+            self.queue_dialog.update()
             self.queue_dialog.update_timestamp()
 
     def turn_off_queue_timer(self):
         if len(self.core.list_statuses_queue()) == 0:
             self.remove_timer('queue')
+            self.queue_dialog.update()
             self.queue_dialog.update_timestamp()
 
 class Timer:

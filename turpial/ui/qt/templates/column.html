@@ -7,7 +7,9 @@
 <body>
 <table id="notifications" class="alert">
 </table>
-{{ content }}
+<div id="statuses-container">
+    {{ content }}
+</div>
 </body>
 </html>
 <script language="javascript">
@@ -112,17 +114,24 @@
         operationLoader.className = 'operation-loader hidden';
     }
 
-    function appendStatus(html_status) {
-        var table = document.getElementById('notifications');
+    function appendStatus(html_status, status_id) {
+        var status_object = document.getElementById(status_id);
+        if (status_object = null) {
+            return;
+        }
 
+        var table = document.getElementById('notifications');
         var parser = new DOMParser();
         //var doc = parser.parseFromString(html, "text/html");
         var doc = document.createElement("div");
         doc.innerHTML = html_status;
-        document.body.insertBefore(doc.firstChild, table);
-        var last = document.body.children[document.body.children.length - 1];
-        document.body.removeChild(last);
-        html_status = '';
+        //document.body.insertBefore(doc.firstChild, table);
+        var container = document.getElementById('statuses-container');
+        var first = container.children[0];
+        //container.appendChild(doc.firstChild);
+        container.insertBefore(doc.firstChild, first);
+        var last = container.children[container.children.length - 1];
+        container.removeChild(last);
     }
 
 </script>

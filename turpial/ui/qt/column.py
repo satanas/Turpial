@@ -37,7 +37,7 @@ class StatusesColumn(QWidget):
         QWidget.__init__(self)
         self.base = base
         self.setMinimumWidth(280)
-        self.statuses = {}
+        self.statuses = []
         self.conversations = {}
         self.id_ = None
         #self.fgcolor = "#e3e3e3"
@@ -130,7 +130,10 @@ class StatusesColumn(QWidget):
         status_id = str(url.split(':')[1])
         cmd = url.split(':')[0]
         try:
-            status = self.statuses[status_id]
+            for status_ in self.statuses:
+                if status_.id_ == status_id:
+                    status = status_
+                    break
         except KeyError:
             status = None
             for status_root, statuses in self.conversations.iteritems():
@@ -223,15 +226,15 @@ class StatusesColumn(QWidget):
 
     def start_updating(self):
         self.loader.setVisible(True)
-        #return self.last_id
-        # FIXME: Change this after implement the selective update
-        return None
+        return self.last_id
 
     def stop_updating(self):
         self.loader.setVisible(False)
 
     def update_statuses(self, statuses):
-        self.statuses = self.webview.update_statuses(statuses)
+        self.webview.update_statuses(statuses)
+        self.statuses = self.statuses[: -(len(statuses))]
+        self.statuses += statuses
         self.conversations = {}
         self.last_id = statuses[0].id_
 

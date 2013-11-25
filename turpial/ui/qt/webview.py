@@ -133,46 +133,32 @@ class StatusesWebView(QWebView):
 
     def update_statuses(self, statuses):
         content = ''
-        processed_statuses = {}
+        #processed_statuses = {}
 
-        # FIXME: Change this after implement the selective update
-        for status in statuses:
-            processed_statuses[status.id_] = status
-            content += self.__render_status(status)
-        column = self.__load_template('column.html')
-        args = {'stylesheet': self.stylesheet, 'content': content,
-            'favorite_tooltip': i18n.get('mark_as_favorite'),
-            'unfavorite_tooltip': i18n.get('remove_from_favorites')}
-        html = column.render(args)
+        current_page = self.page().currentFrame().toHtml()
 
-        fd = open('/tmp/turpial-debug.html', 'w')
-        fd.write(html.encode('ascii', 'ignore'))
-        fd.close()
-        self.setHtml(html)
+        if current_page == self.EMPTY_PAGE:
+            for status in statuses:
+                #processed_statuses[status.id_] = status
+                content += self.__render_status(status)
+            column = self.__load_template('column.html')
+            args = {'stylesheet': self.stylesheet, 'content': content,
+                'favorite_tooltip': i18n.get('mark_as_favorite'),
+                'unfavorite_tooltip': i18n.get('remove_from_favorites')}
+            html = column.render(args)
 
-        #current_page = self.page().currentFrame().toHtml()
+            fd = open('/tmp/turpial-debug.html', 'w')
+            fd.write(html.encode('ascii', 'ignore'))
+            fd.close()
+            self.setHtml(html)
+        else:
+            statuses.reverse()
+            for status in statuses:
+                #processed_statuses[status.id_] = status
+                content = self.__render_status(status)
+                self.append_status(content)
 
-        #if current_page == self.EMPTY_PAGE:
-        #    for status in statuses:
-        #        processed_statuses[status.id_] = status
-        #        content += self.__render_status(status)
-        #    column = self.__load_template('column.html')
-        #    args = {'stylesheet': self.stylesheet, 'content': content,
-        #        'favorite_tooltip': i18n.get('mark_as_favorite'),
-        #        'unfavorite_tooltip': i18n.get('remove_from_favorites')}
-        #    html = column.render(args)
-
-        #    fd = open('/tmp/turpial-debug.html', 'w')
-        #    fd.write(html.encode('ascii', 'ignore'))
-        #    fd.close()
-        #    self.setHtml(html)
-        #else:
-        #    for status in statuses:
-        #        processed_statuses[status.id_] = status
-        #        content = self.__render_status(status)
-        #        self.append_status(content)
-
-        return processed_statuses
+        #return processed_statuses
 
     def clear(self):
         self.setHtml('')

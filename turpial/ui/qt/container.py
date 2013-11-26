@@ -218,6 +218,10 @@ class Container(QVBoxLayout):
         #return self.columns[column_id].updating
         return False
 
+    def update_timestamps(self, column_id):
+        self.columns[column_id].update_timestamps()
+        self.stop_updating(column_id)
+
     def update_column(self, column_id, statuses):
         self.columns[column_id].update_statuses(statuses)
         self.stop_updating(column_id)

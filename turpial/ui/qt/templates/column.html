@@ -133,8 +133,9 @@
         container.removeChild(last);
     }
 
-    function updateTimestamp(status_id, timestamp) {
-        var status_object = document.getElementById(status_id);
+    function updateTimestamp(status_id, new_timestamp) {
+        var status_timestamp = document.getElementById(status_id + '-timestamp');
+        status_timestamp.innerHTML = new_timestamp;
     }
 
 </script>

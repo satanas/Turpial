@@ -231,12 +231,22 @@ class StatusesColumn(QWidget):
     def stop_updating(self):
         self.loader.setVisible(False)
 
+    def update_timestamps(self):
+        self.webview.sync_timestamps(self.statuses)
+
     def update_statuses(self, statuses):
-        self.webview.update_statuses(statuses)
-        self.statuses = self.statuses[: -(len(statuses))]
-        self.statuses += statuses
-        self.conversations = {}
         self.last_id = statuses[0].id_
+        self.update_timestamps()
+        self.webview.update_statuses(statuses)
+
+        # Remove old conversations
+        to_remove = self.statuses[-(len(statuses)):]
+        self.statuses = self.statuses[: -(len(statuses))]
+        self.statuses = statuses + self.statuses
+        for status in to_remove:
+            if self.conversations.has_key(status.id_):
+                del self.conversations[status.id_]
+        print self.last_id
 
     def update_conversation(self, status, status_root_id):
         status_root_id = str(status_root_id)

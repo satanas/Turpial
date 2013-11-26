@@ -132,14 +132,13 @@ class StatusesWebView(QWebView):
         return self.status_template.render(attrs)
 
     def update_statuses(self, statuses):
+        statuses_ = statuses[:]
         content = ''
-        #processed_statuses = {}
 
         current_page = self.page().currentFrame().toHtml()
 
         if current_page == self.EMPTY_PAGE:
-            for status in statuses:
-                #processed_statuses[status.id_] = status
+            for status in statuses_:
                 content += self.__render_status(status)
             column = self.__load_template('column.html')
             args = {'stylesheet': self.stylesheet, 'content': content,
@@ -152,13 +151,10 @@ class StatusesWebView(QWebView):
             fd.close()
             self.setHtml(html)
         else:
-            statuses.reverse()
-            for status in statuses:
-                #processed_statuses[status.id_] = status
+            statuses_.reverse()
+            for status in statuses_:
                 content = self.__render_status(status)
                 self.append_status(content, status.id_)
-
-        #return processed_statuses
 
     def clear(self):
         self.setHtml('')
@@ -191,3 +187,10 @@ class StatusesWebView(QWebView):
 
         cmd = """appendStatus('%s', '%s')""" % (html, status_id)
         self.execute_javascript(cmd)
+
+    def sync_timestamps(self, statuses):
+        for status in statuses:
+            new_timestamp = self.base.humanize_timestamp(status.timestamp)
+            cmd = """updateTimestamp('%s', '%s')""" % (status.id_, new_timestamp)
+            self.execute_javascript(cmd)
+

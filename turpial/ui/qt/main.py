@@ -623,7 +623,7 @@ class Main(Base, QWidget):
                     self.sounds.updates()
                 self._container.update_column(column.id_, arg)
             else:
-                self._container.stop_updating(column.id_)
+                self._container.update_timestamps(column.id_)
 
 
     def after_update_status(self, response, account_id):

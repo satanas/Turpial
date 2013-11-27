@@ -221,7 +221,7 @@ class ProfileDialog(Window):
         self.followers.set_value(str(profile.followers_count))
         self.favorites.set_value(str(profile.favorites_count))
 
-        column_id = "%s-%s" % (self.account_id, profile.username)
+        column_id = "%s-profile-recent" % self.account_id
         self.last_statuses.set_column_id(column_id)
         self.last_statuses.update_statuses(profile.recent_updates)
         self.show()

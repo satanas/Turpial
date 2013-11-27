@@ -246,7 +246,6 @@ class StatusesColumn(QWidget):
         for status in to_remove:
             if self.conversations.has_key(status.id_):
                 del self.conversations[status.id_]
-        print self.last_id
 
     def update_conversation(self, status, status_root_id):
         status_root_id = str(status_root_id)

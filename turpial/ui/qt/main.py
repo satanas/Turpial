@@ -615,7 +615,8 @@ class Main(Base, QWidget):
         if self.is_exception(arg):
             self._container.error_updating_column(column.id_)
         else:
-            if len(arg) > 0:
+            count = len(arg)
+            if count > 0:
                 if self.core.get_notify_on_updates():
                     self.os_notifications.updates(column, count)
 

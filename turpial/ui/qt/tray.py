@@ -30,6 +30,7 @@ class TrayIcon(QSystemTrayIcon):
         self.setToolTip(DESC)
 
         self.activated.connect(self.__activated)
+        self.loading()
         self.show()
 
     def __build_common_menu(self):
@@ -37,7 +38,7 @@ class TrayIcon(QSystemTrayIcon):
         settings.triggered.connect(self.__settings_clicked)
         quit = QAction(i18n.get('quit'), self)
         #FIXME: create a signal for this
-        quit.triggered.connect(self.base.main_quit)
+        quit.triggered.connect(self.base.closeEvent)
 
         self.menu.addAction(settings)
         self.menu.addSeparator()
@@ -61,6 +62,13 @@ class TrayIcon(QSystemTrayIcon):
     def empty(self):
         self.menu = QMenu()
         self.__build_common_menu()
+        self.setContextMenu(self.menu)
+
+    def loading(self):
+        self.menu = QMenu()
+        loading = QAction(i18n.get('loading'), self)
+        loading.setEnabled(False)
+        self.menu.addAction(loading)
         self.setContextMenu(self.menu)
 
     def normal(self):

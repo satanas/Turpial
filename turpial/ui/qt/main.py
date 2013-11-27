@@ -142,6 +142,7 @@ class Main(Base, QWidget):
         self.tray.toggled.connect(self.toggle_tray_icon)
         self.tray.updates_clicked.connect(self.show_update_box)
         self.tray.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
+        self.tray.settings_clicked.connect(self.show_preferences_dialog)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)

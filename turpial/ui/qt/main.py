@@ -641,11 +641,22 @@ class Main(Base, QWidget):
             self.update_box.done()
 
     def after_repeat_status(self, response, column_id, account_id, status_id):
+        column_id = str(column_id)
         if self.is_exception(response):
-            self._container.error_repeating_status(column_id, status_id)
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.error_repeating_status(status_id)
+            else:
+                self._container.error_repeating_status(column_id, status_id)
         else:
+            message = i18n.get('status_repeated')
             self._container.mark_status_as_repeated(response.id_)
-            self._container.notify_success(column_id, response.id_, i18n.get('status_repeated'))
+
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.last_statuses.mark_status_as_repeated(response.id_)
+                self.profile_dialog.last_statuses.release_status(response.id_)
+                self.profile_dialog.last_statuses.notify_success(response.id_, message)
+            else:
+                self._container.notify_success(column_id, response.id_, message)
 
     def after_delete_status(self, response, column_id, account_id, status_id):
         if self.is_exception(response):
@@ -665,20 +676,40 @@ class Main(Base, QWidget):
             self.update_box.done()
 
     def after_marking_status_as_favorite(self, response, column_id, account_id, status_id):
+        column_id = str(column_id)
         if self.is_exception(response):
-            self._container.error_marking_status_as_favorite(column_id, status_id)
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.error_marking_status_as_favorite(status_id)
+            else:
+                self._container.error_marking_status_as_favorite(column_id, status_id)
         else:
+            message = i18n.get('status_marked_as_favorite')
             self._container.mark_status_as_favorite(response.id_)
-            self._container.notify_success(column_id, response.id_,
-                i18n.get('status_marked_as_favorite'))
+
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.last_statuses.mark_status_as_favorite(response.id_)
+                self.profile_dialog.last_statuses.release_status(response.id_)
+                self.profile_dialog.last_statuses.notify_success(response.id_, message)
+            else:
+                self._container.notify_success(column_id, response.id_, message)
 
     def after_unmarking_status_as_favorite(self, response, column_id, account_id, status_id):
+        column_id = str(column_id)
         if self.is_exception(response):
-            self._container.error_unmarking_status_as_favorite(column_id, status_id)
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.error_unmarking_status_as_favorite(status_id)
+            else:
+                self._container.error_unmarking_status_as_favorite(column_id, status_id)
         else:
+            message = i18n.get('status_removed_from_favorites')
             self._container.unmark_status_as_favorite(response.id_)
-            self._container.notify_success(column_id, response.id_,
-                i18n.get('status_removed_from_favorites'))
+
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.last_statuses.unmark_status_as_favorite(response.id_)
+                self.profile_dialog.last_statuses.release_status(response.id_)
+                self.profile_dialog.last_statuses.notify_success(response.id_, message)
+            else:
+                self._container.notify_success(column_id, response.id_, message)
 
     def after_get_user_profile(self, response, account_id):
         if self.is_exception(response):
@@ -729,10 +760,18 @@ class Main(Base, QWidget):
                 self.os_notifications.user_unfollowed(profile.username)
 
     def after_get_status_from_conversation(self, response, column_id, status_root_id):
+        column_id = str(column_id)
         if self.is_exception(response):
-            self._container.error_loading_conversation(column_id, status_root_id)
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.error_loading_conversation(status_root_id)
+            else:
+                self._container.error_loading_conversation(column_id, status_root_id)
         else:
-            self._container.update_conversation(response, column_id, status_root_id)
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.last_statuses.update_conversation(response, status_root_id)
+            else:
+                self._container.update_conversation(response, column_id, status_root_id)
+
             if response.in_reply_to_id:
                 self.core.get_status_from_conversation(response.account_id, response.in_reply_to_id,
                     column_id, status_root_id)

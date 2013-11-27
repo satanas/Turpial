@@ -221,11 +221,16 @@ class ProfileDialog(Window):
         self.followers.set_value(str(profile.followers_count))
         self.favorites.set_value(str(profile.favorites_count))
 
-        column_id = "%s-profile-recent" % self.account_id
+        column_id = "%s-profile_recent" % self.account_id
         self.last_statuses.set_column_id(column_id)
         self.last_statuses.update_statuses(profile.recent_updates)
         self.show()
         self.raise_()
+
+    def is_for_profile(self, column_id):
+        if column_id.find('profile_recent') > 0:
+            return True
+        return False
 
     def update_avatar(self, image_path, username):
         if username != self.profile.username or not self.showed:
@@ -248,6 +253,22 @@ class ProfileDialog(Window):
         self.timer.start(5000)
         self.show()
         self.raise_()
+
+    def error_marking_status_as_favorite(self, status_id):
+        self.last_statuses.release_status(status_id)
+        self.last_statuses.notify_error(status_id, i18n.get('error_marking_status_as_favorite'))
+
+    def error_unmarking_status_as_favorite(self, status_id):
+        self.last_statuses.release_status(status_id)
+        self.last_statuses.notify_error(status_id, i18n.get('error_unmarking_status_as_favorite'))
+
+    def error_repeating_status(self, status_id):
+        self.last_statuses.release_status(status_id)
+        self.last_statuses.notify_error(status_id, i18n.get('error_repeating_status'))
+
+    def error_loading_conversation(self, status_root_id):
+        self.last_statuses.error_in_conversation(status_root_id)
+        self.last_statuses.notify_error(self.base.random_id(), i18n.get('error_loading_conversation'))
 
 
 class UserField(QVBoxLayout):

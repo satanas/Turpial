@@ -182,12 +182,12 @@ class ServicesPage(BasePage):
 
         short_url_services = base.core.get_available_short_url_services()
         default_short_url_service = base.core.get_shorten_url_service()
-        self.short_url = ComboBox(i18n.get('short_urls'), short_url_services, default_short_url_service,
+        self.short_url = ComboBox(i18n.get('short_urls'), sorted(short_url_services), default_short_url_service,
             expand_combo=True)
 
         upload_media_services = base.core.get_available_upload_media_services()
         default_upload_media_service = base.core.get_upload_media_service()
-        self.upload_media = ComboBox(i18n.get('upload_image'), upload_media_services,
+        self.upload_media = ComboBox(i18n.get('upload_image'), sorted(upload_media_services),
                 default_upload_media_service, expand_combo=True)
 
         self.layout.addWidget(self.short_url)

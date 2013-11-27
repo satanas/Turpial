@@ -129,13 +129,17 @@ class StatusesColumn(QWidget):
     def __cmd_clicked(self, url):
         status_id = str(url.split(':')[1])
         cmd = url.split(':')[0]
+        status = None
         try:
+            print 'Seeking for status in self array'
             for status_ in self.statuses:
                 if status_.id_ == status_id:
                     status = status_
                     break
+            if status is None:
+                raise KeyError
         except KeyError:
-            status = None
+            print 'Seeking for status in conversations array'
             for status_root, statuses in self.conversations.iteritems():
                 for item in statuses:
                     if item.id_ == status_id:
@@ -143,6 +147,9 @@ class StatusesColumn(QWidget):
                         break
                 if status is not None:
                     break
+
+        if status is None:
+            self.notify_error(status_id, i18n.get('try_again'))
 
         if cmd == 'reply':
             self.__reply_status(status)
@@ -215,6 +222,14 @@ class StatusesColumn(QWidget):
     def __show_avatar(self, status):
         self.base.show_profile_image(self.account_id, status.username)
 
+    def __set_last_status_id(self, statuses):
+        for status in statuses:
+            if status.repeated_by:
+                continue
+            else:
+                self.last_id = status.id_
+                break
+
     def set_column_id(self, column_id):
         self.id_ = column_id
         self.account_id = get_account_id_from(column_id)
@@ -235,14 +250,26 @@ class StatusesColumn(QWidget):
         self.webview.sync_timestamps(self.statuses)
 
     def update_statuses(self, statuses):
-        self.last_id = statuses[0].id_
+        self.__set_last_status_id(statuses)
+
         self.update_timestamps()
         self.webview.update_statuses(statuses)
 
+        # Filter repeated statuses
+        # FIXME: This should be done with list comprehension using comparation methods on status.py
+        unique_statuses = []
+        for s1 in statuses:
+            exist = False
+            for s2 in self.statuses:
+                if s1.id_ == s2.id_:
+                    exist = True
+                    break
+            if not exist:
+                unique_statuses.append(s1)
+
         # Remove old conversations
-        to_remove = self.statuses[-(len(statuses)):]
-        self.statuses = self.statuses[: -(len(statuses))]
-        self.statuses = statuses + self.statuses
+        to_remove = self.statuses[-(len(unique_statuses)):]
+        self.statuses = statuses + self.statuses[: -(len(unique_statuses))]
         for status in to_remove:
             if self.conversations.has_key(status.id_):
                 del self.conversations[status.id_]

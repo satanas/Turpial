@@ -609,20 +609,20 @@ class Main(Base, QWidget):
         self.download_stream(column)
         self.add_timer(column)
 
-    def after_update_column(self, arg, data):
+    def after_update_column(self, response, data):
         column, max_ = data
 
-        if self.is_exception(arg):
+        if self.is_exception(response):
             self._container.error_updating_column(column.id_)
         else:
-            count = len(arg)
+            count = len(response)
             if count > 0:
                 if self.core.get_notify_on_updates():
                     self.os_notifications.updates(column, count)
 
                 if self.core.get_sound_on_updates():
                     self.sounds.updates()
-                self._container.update_column(column.id_, arg)
+                self._container.update_column(column.id_, response)
             else:
                 self._container.update_timestamps(column.id_)
 

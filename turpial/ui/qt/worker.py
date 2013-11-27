@@ -47,7 +47,7 @@ class CoreWorker(QThread):
     user_unfollowed = pyqtSignal(object, str)
     exception_raised = pyqtSignal(object)
     status_from_conversation = pyqtSignal(object, str, str)
-    fetched_profile_image = pyqtSignal(str)
+    fetched_profile_image = pyqtSignal(object)
     fetched_avatar = pyqtSignal(object, str)
     fetched_image_preview = pyqtSignal(object)
     cache_deleted = pyqtSignal()

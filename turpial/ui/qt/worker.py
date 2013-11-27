@@ -281,8 +281,6 @@ class CoreWorker(QThread):
         return config
 
     def update_config(self, new_config):
-        #for section, items in new_config.iteritems():
-        #    self.core.config.write_section(section, items)
         self.core.save_all_config(new_config)
 
     def get_shorten_url_service(self):
@@ -353,6 +351,8 @@ class CoreWorker(QThread):
         self.__after_delete_account()
 
     def save_column(self, column_id):
+        #FIXME: Hack to avoid the libturpial error saving config
+        self.update_config(self.read_config())
         reg_column_id = self.core.register_column(column_id)
         self.__after_save_column(reg_column_id)
 

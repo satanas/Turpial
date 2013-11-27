@@ -223,12 +223,10 @@ class StatusesColumn(QWidget):
         self.base.show_profile_image(self.account_id, status.username)
 
     def __set_last_status_id(self, statuses):
-        for status in statuses:
-            if status.repeated_by:
-                continue
-            else:
-                self.last_id = status.id_
-                break
+        if statuses[0].repeated_by:
+            self.last_id = statuses[0].original_status_id
+        else:
+            self.last_id = statuses[0].id_
 
     def set_column_id(self, column_id):
         self.id_ = column_id

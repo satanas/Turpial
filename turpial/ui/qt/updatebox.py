@@ -360,6 +360,7 @@ class CompletionTextEdit(QTextEdit):
         QTextEdit.__init__(self)
         self.completer = None
         self.setAcceptRichText(False)
+        self.setTabChangesFocus(True)
 
     def setCompleter(self, completer):
         if self.completer:

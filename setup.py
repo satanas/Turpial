@@ -27,11 +27,10 @@ class build(_build):
 # TODO: Maybe find some better ways to do this
 # looking distutils's copy_tree method
 data_files=[
-    ('./', ['AUTHORS', 'COPYING', 'TRANSLATORS', 'THANKS']),
     ('share/icons/scalable/apps', ['turpial/data/pixmaps/turpial.svg']),
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
     ('share/applications', ['turpial.desktop']),
-    ('share/doc/turpial', ['ChangeLog', 'README.rst']),
+    ('share/doc/turpial', ['ChangeLog', 'README.rst', 'AUTHORS', 'COPYING', 'TRANSLATORS', 'THANKS']),
 ]
 
 setup(name="turpial",

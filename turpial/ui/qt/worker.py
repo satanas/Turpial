@@ -499,6 +499,21 @@ class CoreWorker(QThread):
     def restore_config(self):
         self.core.delete_current_config()
 
+    def get_window_size(self):
+        try:
+            size = self.core.config.cfg.get('Window', 'size', raw=True)
+            window_size = int(size.split(',')[0]), int(size.split(',')[1])
+            return window_size
+        except:
+            config = self.read_config()
+            config['Window']['size'] = "320,480"
+            self.core.save_all_config(config)
+            return config['Window']['size']
+
+    def set_window_size(self, width, height):
+        window_size = "%s,%s" % (width, height)
+        self.core.config.write('Window', 'size', window_size)
+
     #================================================================
     # Callbacks
     #================================================================

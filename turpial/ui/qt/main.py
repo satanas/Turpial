@@ -14,10 +14,10 @@ from functools import partial
 
 from PyQt4.QtGui import (
     QMenu, QImage, QWidget, QAction, QPixmap, QDialog, QMessageBox,
-    QVBoxLayout, QApplication, QFontDatabase, QIcon
+    QVBoxLayout, QApplication, QFontDatabase, QIcon, QDesktopWidget
 )
 
-from PyQt4.QtCore import QTimer, pyqtSignal
+from PyQt4.QtCore import QTimer, pyqtSignal, QRect
 
 from turpial.ui.base import * #NOQA
 from turpial.ui.sound import SoundSystem
@@ -70,8 +70,10 @@ class Main(Base, QWidget):
         self.setWindowTitle('Turpial')
         self.app.setApplicationName('Turpial')
         self.setWindowIcon(QIcon(self.get_image_path('turpial.svg')))
-        self.ignore_quit = True
         self.resize(320, 480)
+        self.center_on_screen()
+
+        self.ignore_quit = True
         self.showed = True
         self.core_ready = False
         self.timers = {}
@@ -188,6 +190,15 @@ class Main(Base, QWidget):
 
     def random_id(self):
         return str(random.getrandbits(128))
+
+    def center_on_screen(self):
+        current_position = self.frameGeometry()
+        current_position.moveCenter(self.app.desktop().availableGeometry().center())
+        self.move(current_position.topLeft())
+
+    def resizeEvent(self, event):
+        if self.core.status > self.core.LOADING:
+            self.core.set_window_size(event.size().width(), event.size().height())
 
     def closeEvent(self, event=None):
         if event:
@@ -576,6 +587,9 @@ class Main(Base, QWidget):
             self.core.status = self.core.ERROR
             self._container.error()
         else:
+            width, height = self.core.get_window_size()
+            self.resize(width, height)
+            self.center_on_screen()
             if self.core.get_sound_on_login():
                 self.sounds.startup()
             self.queue_dialog.start()

@@ -135,7 +135,9 @@
 
     function updateTimestamp(status_id, new_timestamp) {
         var status_timestamp = document.getElementById(status_id + '-timestamp');
-        status_timestamp.innerHTML = new_timestamp;
+        if (status_timestamp != null) {
+            status_timestamp.innerHTML = new_timestamp;
+        }
     }
 
 </script>

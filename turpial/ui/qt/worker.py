@@ -512,6 +512,8 @@ class CoreWorker(QThread):
 
     def set_window_size(self, width, height):
         window_size = "%s,%s" % (width, height)
+        #FIXME: Hack to avoid the libturpial error saving config
+        self.update_config(self.read_config())
         self.core.config.write('Window', 'size', window_size)
 
     #================================================================

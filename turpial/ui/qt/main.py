@@ -572,7 +572,7 @@ class Main(Base, QWidget):
                 self.add_timer(column)
 
         if current_queue_interval != new_config['General']['queue-interval']:
-            self.set_queue_timer()
+            self.turn_on_queue_timer(force=True)
 
 
     def restore_config(self):
@@ -865,9 +865,9 @@ class Main(Base, QWidget):
         self.timers['queue'] = timer
         print '--Created timer for queue every %i sec' % interval
 
-    def turn_on_queue_timer(self):
+    def turn_on_queue_timer(self, force=False):
         self.queue_dialog.update()
-        if len(self.core.list_statuses_queue()) > 0 and not self.timers.has_key('queue'):
+        if len(self.core.list_statuses_queue()) > 0 and (not self.timers.has_key('queue') or force):
             self.set_queue_timer()
             self.queue_dialog.update_timestamp()
 

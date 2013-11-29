@@ -46,7 +46,7 @@ setup(name="turpial",
     license="GPLv3",
     keywords='twitter identi.ca microblogging turpial',
     classifiers=[
-      "Development Status :: 5 - Production/Stable",
+      "Development Status :: 4 - Beta",
       "Environment :: X11 Applications :: GTK",
       "Intended Audience :: End Users/Desktop",
       "License :: OSI Approved :: GNU General Public License (GPL)",
@@ -63,7 +63,7 @@ setup(name="turpial",
     entry_points={
       'console_scripts': [
           'turpial = turpial.main:main',
-          'turpial-unity-daemon = turpial.ui.unity.daemon:main',
+          #'turpial-unity-daemon = turpial.ui.unity.daemon:main',
       ],
     },
     cmdclass={

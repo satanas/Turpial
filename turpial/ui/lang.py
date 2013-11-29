@@ -10,9 +10,9 @@ gettext_domain = 'turpial'
 # localedir definition in development mode
 if os.path.isdir(os.path.join(os.path.dirname(__file__), '..', 'i18n')):
     localedir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'i18n'))
-    trans = gettext.install(gettext_domain, localedir)
+    trans = gettext.install(gettext_domain, localedir, unicode=1)
 else:
-    trans = gettext.install(gettext_domain)
+    trans = gettext.install(gettext_domain, unicode=1)
 
 STRINGS = {
     'welcome': _('Welcome!'),

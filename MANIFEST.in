@@ -1,6 +1,7 @@
 include turpial/data/pixmaps/*
 include turpial/data/sounds/*
 include turpial/data/fonts/*
+global-include turpial/i18n/ *.po
 include turpial/ui/qt/templates/*
 include turpial.desktop
 include doc/*

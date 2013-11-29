@@ -58,7 +58,7 @@ setup(name="turpial",
     packages=find_packages(),
     package_data={
       'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/fonts/*', 'turpial/ui/qt/*',
-          'turpial/ui/qt/templates/*'],
+          'turpial/i18n/*', 'turpial/ui/qt/templates/*'],
     },
     entry_points={
       'console_scripts': [

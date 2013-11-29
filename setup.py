@@ -47,7 +47,7 @@ setup(name="turpial",
     keywords='twitter identi.ca microblogging turpial',
     classifiers=[
       "Development Status :: 4 - Beta",
-      "Environment :: X11 Applications :: GTK",
+      "Environment :: X11 Applications :: Qt",
       "Intended Audience :: End Users/Desktop",
       "License :: OSI Approved :: GNU General Public License (GPL)",
       "Operating System :: POSIX :: Linux",

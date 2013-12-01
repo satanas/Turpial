@@ -1,942 +1,944 @@
 # Translations template for turpial.
 # Copyright (C) 2013 Turpial
 # This file is distributed under the same license as the turpial project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
-#
-#, fuzzy
+# 
+# Translators:
+# ced117 <cedric@ced117.net>, 2013
+# separent <separent@yahoo.com>, 2013
 msgid ""
 msgstr ""
-"Project-Id-Version: turpial 2.9.7-a1\n"
+"Project-Id-Version: Turpial\n"
 "Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
 "POT-Creation-Date: 2013-11-23 11:04-0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2013-11-23 21:30+0000\n"
+"Last-Translator: separent <separent@yahoo.com>\n"
+"Language-Team: French (http://www.transifex.com/projects/p/turpial-1/language/fr/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: turpial/ui/lang.py:18
 msgid "Welcome!"
-msgstr ""
+msgstr "Bienvenue !"
 
 #: turpial/ui/lang.py:21
 msgid "Add a new account"
-msgstr ""
+msgstr "Ajouter un nouveau compte"
 
 #: turpial/ui/lang.py:22
 msgid "to start using Turpial"
-msgstr ""
+msgstr "pour démarrer l'utilisation de Turpial"
 
 #: turpial/ui/lang.py:23
 msgid "You have accounts registered, now"
-msgstr ""
+msgstr "Vous avez des comptes enregistrés, maintenant"
 
 #: turpial/ui/lang.py:24
 msgid "add some columns"
-msgstr ""
+msgstr "Ajouter des colonnes"
 
 #: turpial/ui/lang.py:25
 msgid "Update status"
-msgstr ""
+msgstr "Mettre à jour le status"
 
 #: turpial/ui/lang.py:26
 msgid "Send direct message"
-msgstr ""
+msgstr "Envoyer un message direct"
 
 #: turpial/ui/lang.py:27
 msgid "Settings"
-msgstr ""
+msgstr "Paramètres"
 
 #: turpial/ui/lang.py:28
 msgid "Preferences"
-msgstr ""
+msgstr "Préférences"
 
 #: turpial/ui/lang.py:29
 msgid "About Turpial"
-msgstr ""
+msgstr "A propos de Turpial"
 
 #: turpial/ui/lang.py:30
 msgid "Search"
-msgstr ""
+msgstr "Rechercher"
 
 #: turpial/ui/lang.py:31
 msgid "Account"
-msgstr ""
+msgstr "Compte"
 
 #: turpial/ui/lang.py:32
 msgid "Accounts"
-msgstr ""
+msgstr "Comptes"
 
 #: turpial/ui/lang.py:33
 msgid "Columns"
-msgstr ""
+msgstr "Colonnes"
 
 #: turpial/ui/lang.py:34
 msgid "Authorize Turpial"
-msgstr ""
+msgstr "Autoriser Turpial"
 
 #: turpial/ui/lang.py:35
 msgid "Type the PIN"
-msgstr ""
+msgstr "Entrer le code PIN"
 
 #: turpial/ui/lang.py:36
 msgid "Save"
-msgstr ""
+msgstr "Enregistrer"
 
 #: turpial/ui/lang.py:37
 msgid "Authorize Turpial and copy the PIN in the text box"
-msgstr ""
+msgstr "Autoriser Turpial et copier le code pin dans la zone de texte"
 
 #: turpial/ui/lang.py:38
 msgid "User Profile"
-msgstr ""
+msgstr "Profile utilisateur"
 
 #: turpial/ui/lang.py:39
 msgid "Bio"
-msgstr ""
+msgstr "Bio"
 
 #: turpial/ui/lang.py:40
 msgid "Location"
-msgstr ""
+msgstr "Localisation"
 
 #: turpial/ui/lang.py:41
 msgid "Web"
-msgstr ""
+msgstr "Web"
 
 #: turpial/ui/lang.py:42
 msgid "Tweets"
-msgstr ""
+msgstr "Tweets"
 
 #: turpial/ui/lang.py:43
 msgid "Following"
-msgstr ""
+msgstr "Abonnements"
 
 #: turpial/ui/lang.py:44
 msgid "Followers"
-msgstr ""
+msgstr "Abonnés"
 
 #: turpial/ui/lang.py:45
 msgid "Favorites"
-msgstr ""
+msgstr "Favoris"
 
 #: turpial/ui/lang.py:46
 msgid "Criteria"
-msgstr ""
+msgstr "Critères"
 
 #: turpial/ui/lang.py:47
 msgid "Use hashtags, mentions or any text you want as search criteria"
-msgstr ""
+msgstr "Utiliser des hashtags, mentions ou n'importe quel texte que vous voulez comme critère de recherche"
 
 #: turpial/ui/lang.py:48
 msgid "Select friend to send message"
-msgstr ""
+msgstr "Sélectionner un ami auquel vous voulez envoyer un message"
 
 #: turpial/ui/lang.py:49
 msgid "Friend"
-msgstr ""
+msgstr "Ami"
 
 #: turpial/ui/lang.py:50
 msgid "Select"
-msgstr ""
+msgstr "Sélectionner "
 
 #: turpial/ui/lang.py:51
 msgid "Load friends list"
-msgstr ""
+msgstr "Charger la liste d'ami"
 
 #: turpial/ui/lang.py:52
 msgid "What's happening?"
-msgstr ""
+msgstr "Qu'est se passe-t-il ?"
 
 #: turpial/ui/lang.py:53
 msgid "Upload image"
-msgstr ""
+msgstr "Uploader une image"
 
 #: turpial/ui/lang.py:54
 msgid "Short URLs"
-msgstr ""
+msgstr "URL courtes"
 
 #: turpial/ui/lang.py:55
 msgid "Update"
-msgstr ""
+msgstr "Mise à jour"
 
 #: turpial/ui/lang.py:56
 msgid "Delete Column"
-msgstr ""
+msgstr "Supprimer colonne"
 
 #: turpial/ui/lang.py:57
 msgid "now"
-msgstr ""
+msgstr "maintenant"
 
 #: turpial/ui/lang.py:58 turpial/ui/gtk/statuswidget.py:77
 msgid "Retweeted by"
-msgstr ""
+msgstr "Retweeté par"
 
 #: turpial/ui/lang.py:59
 msgid "New"
-msgstr ""
+msgstr "Nouveau"
 
 #: turpial/ui/lang.py:60
 msgid "Delete"
-msgstr ""
+msgstr "Supprimer"
 
 #: turpial/ui/lang.py:61
 msgid "Relogin"
-msgstr ""
+msgstr "Se reconnecter"
 
 #: turpial/ui/lang.py:62
 msgid "Register a new account"
-msgstr ""
+msgstr "Enregistrer un nouveau compte"
 
 #: turpial/ui/lang.py:63
 msgid "Delete an existing account"
-msgstr ""
+msgstr "Supprimer un compte existant"
 
 #: turpial/ui/lang.py:64
 msgid "Register a Twitter account"
-msgstr ""
+msgstr "Enregistrer un compte Twitter"
 
 #: turpial/ui/lang.py:65
 msgid "Register an Identi.ca account"
-msgstr ""
+msgstr "Enregistrer un compte Identi.ca"
 
 #: turpial/ui/lang.py:66
 msgid "No registered accounts"
-msgstr ""
+msgstr "Pas de comptes enregistrés"
 
 #: turpial/ui/lang.py:67
 msgid "Problems registering a new account"
-msgstr ""
+msgstr "Une erreur c'est produite lors de l'enregistrement d'un nouveau compte"
 
 #: turpial/ui/lang.py:68
 msgid "Broadcast"
-msgstr ""
+msgstr "Diffusion"
 
 #: turpial/ui/lang.py:69
 msgid "You can not submit an empty message"
-msgstr ""
+msgstr "Vous ne pouvez pas envoyer un message vide"
 
 #: turpial/ui/lang.py:70
 msgid "Hey! That message is too long, it looks like a testament"
-msgstr ""
+msgstr "Hé! Ce message est trop long, il ressemble à un testament"
 
 #: turpial/ui/lang.py:71
 msgid "View conversation"
-msgstr ""
+msgstr "Voir la conversation"
 
 #: turpial/ui/lang.py:72
 msgid "Hide conversation"
-msgstr ""
+msgstr "Cacher la conversation"
 
 #: turpial/ui/lang.py:73
 msgid "Reply"
-msgstr ""
+msgstr "Répondre"
 
 #: turpial/ui/lang.py:74
 msgid "Quote"
-msgstr ""
+msgstr "Citer"
 
 #: turpial/ui/lang.py:75
 msgid "Retweet"
-msgstr ""
+msgstr "Retweet"
 
 #: turpial/ui/lang.py:76
 msgid "Mark as favorite"
-msgstr ""
+msgstr "Marquer comme favori"
 
 #: turpial/ui/lang.py:77
 msgid "Remove from favorites"
-msgstr ""
+msgstr "Supprimer des favoris"
 
 #: turpial/ui/lang.py:78
 msgid "Reply to"
-msgstr ""
+msgstr "Répondre à"
 
 #: turpial/ui/lang.py:79
 msgid "Quoting"
-msgstr ""
+msgstr "Citant"
 
 #: turpial/ui/lang.py:80
 msgid "Confirm Retweet"
-msgstr ""
+msgstr "Confirmer le retweet"
 
 #: turpial/ui/lang.py:81
 msgid "Do you want to retweet this status to all your friends?"
-msgstr ""
+msgstr "Vous voulez retweeter ce status à tout vos amis?"
 
 #: turpial/ui/lang.py:82
 msgid "Confirm Delete"
-msgstr ""
+msgstr "Confirmer la suppression "
 
 #: turpial/ui/lang.py:83
 msgid "Do you want to delete this status?"
-msgstr ""
+msgstr "Vous voulez supprimer ce status?"
 
 #: turpial/ui/lang.py:84
 msgid "Do you want to delete this direct message?"
-msgstr ""
+msgstr "Vous voulez supprimer ce message direct ?"
 
 #: turpial/ui/lang.py:85
 msgid "Loading..."
-msgstr ""
+msgstr "Chargement..."
 
 #: turpial/ui/lang.py:86
 msgid "Status repeated"
-msgstr ""
+msgstr "Status répété"
 
 #: turpial/ui/lang.py:87
 msgid "Status deleted"
-msgstr ""
+msgstr "Status supprimé"
 
 #: turpial/ui/lang.py:88
 msgid "Direct message deleted"
-msgstr ""
+msgstr "Message direct supprimé"
 
 #: turpial/ui/lang.py:89
 msgid "Status marked as favorite"
-msgstr ""
+msgstr "Status marqué comme favori"
 
 #: turpial/ui/lang.py:90
 msgid "Status removed from favorites"
-msgstr ""
+msgstr "Status supprimé des favoris"
 
 #: turpial/ui/lang.py:91
 msgid "Send message to"
-msgstr ""
+msgstr "Envoyer un message à"
 
 #: turpial/ui/lang.py:92
 msgid "Follow"
-msgstr ""
+msgstr "Suivre"
 
 #: turpial/ui/lang.py:93
 msgid "Follow requested"
-msgstr ""
+msgstr "Demande d'abonnement"
 
 #: turpial/ui/lang.py:94
 msgid "Unfollow"
-msgstr ""
+msgstr "Se désabonner"
 
 #: turpial/ui/lang.py:95
 msgid "Mute"
-msgstr ""
+msgstr "Désactiver le son"
 
 #: turpial/ui/lang.py:96
 msgid "Unmute"
-msgstr ""
+msgstr "Activer le son"
 
 #: turpial/ui/lang.py:97
 msgid "Block"
-msgstr ""
+msgstr "Bloquer"
 
 #: turpial/ui/lang.py:98
 msgid "Report as spam"
-msgstr ""
+msgstr "Signaler comme spam"
 
 #: turpial/ui/lang.py:99
 msgid "This is you!"
-msgstr ""
+msgstr "C'est vous !"
 
 #: turpial/ui/lang.py:100
 msgid "Conversation"
-msgstr ""
+msgstr "Conversation"
 
 #: turpial/ui/lang.py:101
 msgid "Quit"
-msgstr ""
+msgstr "Quitter"
 
 #: turpial/ui/lang.py:102
 msgid "In progress..."
-msgstr ""
+msgstr "En cours..."
 
 #: turpial/ui/lang.py:103
 msgid "Select an account before post"
-msgstr ""
+msgstr "Sélectionner un compte avant de poster"
 
 #: turpial/ui/lang.py:104
 msgid "Image Preview"
-msgstr ""
+msgstr "Prévisualisation de l'image"
 
 #: turpial/ui/lang.py:105
 msgid "Confirm Discard"
-msgstr ""
+msgstr "Confirmer la suppression "
 
 #: turpial/ui/lang.py:106
 msgid "Do you want to discard this message?"
-msgstr ""
+msgstr "Voulez-vous supprimer ce message?"
 
 #: turpial/ui/lang.py:107
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: turpial/ui/lang.py:108
 msgid "Recent"
-msgstr ""
+msgstr "Récent"
 
 #: turpial/ui/lang.py:109
 #, python-format
 msgid "Do you really want to delete the account %s?"
-msgstr ""
+msgstr "Vous voulez vraiment supprimer le compte %s?"
 
 #: turpial/ui/lang.py:110
 msgid "Messages queue"
-msgstr ""
+msgstr "File d'attente des messages"
 
 #: turpial/ui/lang.py:111
 msgid "Delete selected message"
-msgstr ""
+msgstr "Supprimer le message sélectionné "
 
 #: turpial/ui/lang.py:112
 msgid "Delete all"
-msgstr ""
+msgstr "Supprimer tout"
 
 #: turpial/ui/lang.py:113
 msgid "Delete all messages in queue"
-msgstr ""
+msgstr "Supprimer tous les messages en file d'attente"
 
 #: turpial/ui/lang.py:114
 msgid "Message"
-msgstr ""
+msgstr "Message"
 
 #: turpial/ui/lang.py:115
 msgid "Do you want to delete this message from the queue?"
-msgstr ""
+msgstr "Voulez-vous supprimer ce message de la file d'attente?"
 
 #: turpial/ui/lang.py:116
 msgid "Do you want to clear the queue?"
-msgstr ""
+msgstr "Voulez-vous effacer la file d'attente?"
 
 #: turpial/ui/lang.py:117
 #, python-format
 msgid "Messages will be send every %s as long as Turpial remain open"
-msgstr ""
+msgstr "Les messages seront envoyés à chaque %s tant que Turpial sera en fonction."
 
 #: turpial/ui/lang.py:118
 msgid "Next message should be posted in"
-msgstr ""
+msgstr "Le prochain message devrait être posté"
 
 #: turpial/ui/lang.py:119
 msgid "minute"
-msgstr ""
+msgstr "minute"
 
 #: turpial/ui/lang.py:120
 msgid "minutes"
-msgstr ""
+msgstr "minutes"
 
 #: turpial/ui/lang.py:121
 msgid "Add to Queue"
-msgstr ""
+msgstr "Ajouter à la file d'attente"
 
 #: turpial/ui/lang.py:122
 msgid "Microblogging client written in Python"
-msgstr ""
+msgstr "Client de microblogage écrit en Python"
 
 #: turpial/ui/lang.py:123
 #, python-format
 msgid "You are now following @%s"
-msgstr ""
+msgstr "Vous suivez maintenant @%s"
 
 #: turpial/ui/lang.py:124
 #, python-format
 msgid "You are no longer following @%s"
-msgstr ""
+msgstr "Vous ne suivez plus @%s"
 
 #: turpial/ui/lang.py:125
 #, python-format
 msgid "@%s has been reported as spam"
-msgstr ""
+msgstr " @%s a été rapporté comme indésirable"
 
 #: turpial/ui/lang.py:126
 #, python-format
 msgid "@%s has been blocked"
-msgstr ""
+msgstr " @%s a été bloqué"
 
 #: turpial/ui/lang.py:127
 #, python-format
 msgid "@%s has been muted"
-msgstr ""
+msgstr " @%s a été mis en sourdine"
 
 #: turpial/ui/lang.py:128
 #, python-format
 msgid "@%s has been unmuted"
-msgstr ""
+msgstr " @%s n'est plus en sourdine"
 
 #: turpial/ui/lang.py:129
 msgid "Message from queue has been posted"
-msgstr ""
+msgstr "Les messages de la file d'attente ont été postés"
 
 #: turpial/ui/lang.py:130
 msgid "Close"
-msgstr ""
+msgstr "Fermer"
 
 #: turpial/ui/lang.py:131
 msgid "General"
-msgstr ""
+msgstr "Général"
 
 #: turpial/ui/lang.py:132 turpial/ui/gtk/preferences/tabs.py:88
 msgid "Notifications"
-msgstr ""
+msgstr "Notifications"
 
 #: turpial/ui/lang.py:133
 msgid "Services"
-msgstr ""
+msgstr "Services"
 
 #: turpial/ui/lang.py:134
 msgid "Web Browser"
-msgstr ""
+msgstr "Navigateur web"
 
 #: turpial/ui/lang.py:135 turpial/ui/lang.py:167
 msgid "Filters"
-msgstr ""
+msgstr "Filtres"
 
 #: turpial/ui/lang.py:136
 msgid "Proxy"
-msgstr ""
+msgstr "Proxy"
 
 #: turpial/ui/lang.py:137
 msgid "Advanced"
-msgstr ""
+msgstr "Avancé"
 
 #: turpial/ui/lang.py:138
 msgid "Adjust update frecuency and other general parameters"
-msgstr ""
+msgstr "Ajuster la fréquence de mise à jour et autres paramètres généraux"
 
 #: turpial/ui/lang.py:139 turpial/ui/gtk/preferences/tabs.py:61
 msgid "Select the notifications you want to receive from Turpial"
-msgstr ""
+msgstr "Sélectionnez les notifications que vous désirer recevoir de Turpial"
 
 #: turpial/ui/lang.py:140
 msgid "Setup your favorite web browser to open links"
-msgstr ""
+msgstr "Configurez votre navigateur web préféré pour ouvrir les liens"
 
 #: turpial/ui/lang.py:141
 msgid "Select your preferred service to short URLs and upload images"
-msgstr ""
+msgstr "Sélectionner votre service favori de raccourcissement d'URLs et de mise en ligne d'images"
 
 #: turpial/ui/lang.py:142 turpial/ui/gtk/preferences/tabs.py:383
 msgid "Proxy settings for Turpial (Need Restart)"
-msgstr ""
+msgstr "Paramètres proxy pour Turpial (demande un redémarrage)"
 
 #: turpial/ui/lang.py:143
 msgid "Advanced options. Please, keep away unless you know what you are doing"
-msgstr ""
+msgstr "Options avancées. N'y touchez pas à moins que vous sachiez ce que vous faites"
 
 #: turpial/ui/lang.py:144
 msgid "Update frecuency"
-msgstr ""
+msgstr "Fréquence de mise à jour"
 
 #: turpial/ui/lang.py:145
 msgid "Queue frecuency"
-msgstr ""
+msgstr "Fréquence de file d'attente"
 
 #: turpial/ui/lang.py:146
 msgid "Statuses per column"
-msgstr ""
+msgstr "Statuts par colonne"
 
 #: turpial/ui/lang.py:147
 msgid "Minimize on close"
-msgstr ""
+msgstr "Minimiser à la fermeture"
 
 #: turpial/ui/lang.py:148
 msgid "Notify on updates"
-msgstr ""
+msgstr "Notifier lors des mises à jour"
 
 #: turpial/ui/lang.py:149
 msgid "Notify on actions"
-msgstr ""
+msgstr "Notifier lors des actions"
 
 #: turpial/ui/lang.py:150
 msgid "Sound on login"
-msgstr ""
+msgstr "Son lors de l'authentification"
 
 #: turpial/ui/lang.py:151
 msgid "Sound on updates"
-msgstr ""
+msgstr "Son lors de mises à jour"
 
 #: turpial/ui/lang.py:152
 msgid "Use default browser"
-msgstr ""
+msgstr "Utiliser le navigateur web par défaut"
 
 #: turpial/ui/lang.py:153
 msgid "Set custom browser"
-msgstr ""
+msgstr "Choisir un navigateur personnalisé"
 
 #: turpial/ui/lang.py:154 turpial/ui/gtk/preferences/tabs.py:232
 msgid "Command"
-msgstr ""
+msgstr "Commande"
 
 #: turpial/ui/lang.py:155 turpial/ui/gtk/preferences/tabs.py:316
 msgid "Clean cache"
-msgstr ""
+msgstr "Nettoyer le cache"
 
 #: turpial/ui/lang.py:156
 msgid "Delete all files in cache"
-msgstr ""
+msgstr "Supprimer tous les fichiers du cahce"
 
 #: turpial/ui/lang.py:157
 msgid "Restore configuration to default"
-msgstr ""
+msgstr "Revenir à la configuration par défaut"
 
 #: turpial/ui/lang.py:158 turpial/ui/gtk/preferences/tabs.py:324
 msgid "Restore config"
-msgstr ""
+msgstr "Restaurer la config"
 
 #: turpial/ui/lang.py:159
 msgid "Socket timeout"
-msgstr ""
+msgstr "Délai de déconnection"
 
 #: turpial/ui/lang.py:160
 msgid "Show user avatars"
-msgstr ""
+msgstr "Montrer les avatars de l'utilisateur"
 
 #: turpial/ui/lang.py:161
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: turpial/ui/lang.py:162
 msgid "Host"
-msgstr ""
+msgstr "Hôte"
 
 #: turpial/ui/lang.py:163
 msgid "Port"
-msgstr ""
+msgstr "Port"
 
 #: turpial/ui/lang.py:164
 msgid "With authentication"
-msgstr ""
+msgstr "Avec authentification"
 
 #: turpial/ui/lang.py:165 turpial/ui/gtk/preferences/tabs.py:389
 msgid "Username"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 #: turpial/ui/lang.py:166 turpial/ui/gtk/preferences/tabs.py:390
 msgid "Password"
-msgstr ""
+msgstr "Mot de passe"
 
 #: turpial/ui/lang.py:168
 msgid "Add filter"
-msgstr ""
+msgstr "Ajouter filtre"
 
 #: turpial/ui/lang.py:169
 msgid "Create a new filter"
-msgstr ""
+msgstr "Créer un nouveau filtre"
 
 #: turpial/ui/lang.py:170
 msgid "Delete selected filter"
-msgstr ""
+msgstr "Supprimer le filtre sélectionné "
 
 #: turpial/ui/lang.py:171
 msgid "Delete all filters"
-msgstr ""
+msgstr "Supprimer tout les filtres"
 
 #: turpial/ui/lang.py:172
 msgid "Do you want to clear all the filters?"
-msgstr ""
+msgstr "Vous voulez effacer tout les filtres?"
 
 #: turpial/ui/lang.py:173
 msgid "Error loading image"
-msgstr ""
+msgstr "Erreur lors du chargement de l'image"
 
 #: turpial/ui/lang.py:174
 msgid "Error loading conversation"
-msgstr ""
+msgstr "Erreur lors du chargement de la discussion"
 
 #: turpial/ui/lang.py:175
 msgid "Error updating column"
-msgstr ""
+msgstr "Erreur lors de la mise à jour de la colonne"
 
 #: turpial/ui/lang.py:176
 msgid "Error repeating status"
-msgstr ""
+msgstr "Erreur lors de la répétition du status"
 
 #: turpial/ui/lang.py:177
 msgid "Error deleting status"
-msgstr ""
+msgstr "Erreur lors de la suppression du status"
 
 #: turpial/ui/lang.py:178
 msgid "Error marking status as favorite"
-msgstr ""
+msgstr "Erreur lors du marquage du status en tant que favori"
 
 #: turpial/ui/lang.py:179
 msgid "Error unmarking status as favorite"
-msgstr ""
+msgstr "Erreur lors du démarquage du status en tant que favori"
 
 #: turpial/ui/lang.py:180
 msgid "Error posting status"
-msgstr ""
+msgstr "Erreur lors de la publication du status"
 
 #: turpial/ui/lang.py:181
 msgid "Problems loading user profile"
-msgstr ""
+msgstr "Erreur lors du chargement du profile de l'utilisateur"
 
 #: turpial/ui/lang.py:182
 msgid "Having some troubles to follow this user"
-msgstr ""
+msgstr "Ayant des problèmes pour suivre cet utilisateur"
 
 #: turpial/ui/lang.py:183
 msgid "Having some troubles to unfollow this user"
-msgstr ""
+msgstr "Ayant des problèmes lors du désabonnement de cet utilisateur"
 
 #: turpial/ui/lang.py:184
 msgid "Uh oh, I could not block this user"
-msgstr ""
+msgstr "Oups, je n'ai pas pu bloqué cet utilisateur"
 
 #: turpial/ui/lang.py:185
 msgid "Having issues reporting this user as spam"
-msgstr ""
+msgstr "Ayant des problèmes pour signaler cet utilisateur en tant que spam"
 
 #: turpial/ui/lang.py:186
 msgid "Can not send direct message"
-msgstr ""
+msgstr "Ne peut pas envoyer de message direct"
 
 #: turpial/ui/lang.py:187
 msgid "Error shorting URL"
-msgstr ""
+msgstr "Erreur lors du raccourcissement de l'URL"
 
 #: turpial/ui/lang.py:188
 msgid "Error uploading image"
-msgstr ""
+msgstr "Erreur lors de la mise en ligne de l'image"
 
 #: turpial/ui/lang.py:189
 msgid "1 new tweet updated"
-msgstr ""
+msgstr "1 nouveau tweet mis à jour"
 
 #: turpial/ui/lang.py:190
 #, python-format
 msgid "%s new tweets updated"
-msgstr ""
+msgstr "%s nouveau tweets mises à jour"
 
 #: turpial/ui/lang.py:191 turpial/ui/gtk/preferences/tabs.py:236
 msgid "Test"
-msgstr ""
+msgstr "Tester"
 
 #: turpial/ui/lang.py:192
 msgid "Open"
-msgstr ""
+msgstr "Ouvrir"
 
 #: turpial/ui/lang.py:193
 msgid "Set how often are updated the columns"
-msgstr ""
+msgstr "Configurer la fréquence des mises à jour des colonnes"
 
 #: turpial/ui/lang.py:194
 msgid "Set how often are posted messages from the queue"
-msgstr ""
+msgstr "Configurer la fréquence de postage des messages de la file d'attente"
 
 #: turpial/ui/lang.py:195
 msgid "Send Turpial to system tray instead of closing"
-msgstr ""
+msgstr "Envoyer Turpial dans la barre d'état du système au lieu de fermer"
 
 #: turpial/ui/lang.py:196
 msgid "Display system notifications when you get updates"
-msgstr ""
+msgstr "Présenter des notifications système lorsque vous recevez des mises à jour"
 
 #: turpial/ui/lang.py:197
 msgid ""
-"Display system notifications when you perform action like follow, block, "
-"etc"
-msgstr ""
+"Display system notifications when you perform action like follow, block, etc"
+msgstr "Présenter des notifications système lorsque vous effectuez des actions comme suivre, bloquer, etc."
 
 #: turpial/ui/lang.py:198
 msgid "Play sounds at startup"
-msgstr ""
+msgstr "Jouer des sons au démarrage"
 
 #: turpial/ui/lang.py:199
 msgid "Play sounds when you get updates"
-msgstr ""
+msgstr "Jouer des sons lorsque vous recevez des mises à jour"
 
 #: turpial/ui/lang.py:200
 msgid "Set the timeout to wait before closing the connection"
-msgstr ""
+msgstr "Configurer le délai d'attente avant de fermer la connection"
 
 #: turpial/ui/lang.py:201
 msgid ""
-"When selected Turpial show user avatars, Otherwise it will show a black "
-"box (recommended for slow or limited internet connections)"
-msgstr ""
+"When selected Turpial show user avatars, Otherwise it will show a black box "
+"(recommended for slow or limited internet connections)"
+msgstr "Lorsque sélectionné, Turpial montre les avatars. Autrement, Turpial montrera une boîte noire (recommandé pour les connections Internet lentes ou limitées)"
 
 #: turpial/ui/lang.py:202
 msgid "Confirm restore"
-msgstr ""
+msgstr "Confirmez la restauration"
 
 #: turpial/ui/lang.py:203
 msgid ""
-"Do you want to restore your configuration to default? Turpial will be "
-"closed and must be restarted after this operation"
-msgstr ""
+"Do you want to restore your configuration to default? Turpial will be closed"
+" and must be restarted after this operation"
+msgstr "Voulez-vous restaurer la configuration par défaut? Turpial sera fermé et devra être relancé après cette opération"
 
 #: turpial/ui/lang.py:204
-msgid "Configuration restored to default successfully. Please, restart Turpial"
-msgstr ""
+msgid ""
+"Configuration restored to default successfully. Please, restart Turpial"
+msgstr "La configuration a été réinitialisée avec succès. Veuillez redémarrer Turpial"
 
 #: turpial/ui/lang.py:205
 msgid "Wait! That account does not exist"
-msgstr ""
+msgstr "Attendez! Ce compte n'existe pas"
 
 #: turpial/ui/lang.py:206
 msgid "Hi there!"
-msgstr ""
+msgstr "Salut la compagnie!"
 
 #: turpial/ui/lang.py:207
 msgid "Give me a minute, I am shaking my feathers and stretching my wings..."
-msgstr ""
+msgstr "Donnez-moi une minute: je suis en train de me secouer les plumes et de me réchauffer les ailes..."
 
 #: turpial/ui/lang.py:208
 msgid "Confirm close"
-msgstr ""
+msgstr "Confirmer la fermeture"
 
 #: turpial/ui/lang.py:209
 msgid "Do you want to close Turpial?"
-msgstr ""
+msgstr "Voulez-vous fermer Turpial?"
 
 #: turpial/ui/lang.py:210
 msgid "Uh oh..."
-msgstr ""
+msgstr "Oups..."
 
 #: turpial/ui/lang.py:211
 msgid "Something terrible happened, I could not reach the Internet"
-msgstr ""
+msgstr "Quelque chose de terrible est arrivé: je n'ai pas pu me connecter à Internet"
 
 #: turpial/ui/lang.py:212
 msgid "Try again"
-msgstr ""
+msgstr "Essayez encore"
 
 #: turpial/ui/gtk/statuswidget.py:73
 msgid "from"
-msgstr ""
+msgstr "de"
 
 #: turpial/ui/gtk/statuswidget.py:75
 msgid "in reply to"
-msgstr ""
+msgstr "en réponse à"
 
 #: turpial/ui/gtk/preferences/tabs.py:20
 msgid "Adjust update frequency for columns"
-msgstr ""
+msgstr "Ajuster la fréquence de mise à jours par colonnes"
 
 #: turpial/ui/gtk/preferences/tabs.py:29
 msgid "Update Interval"
-msgstr ""
+msgstr "Intervalle de mise à jour"
 
 #: turpial/ui/gtk/preferences/tabs.py:30
 msgid "Statuses"
-msgstr ""
+msgstr "Statuts"
 
 #: turpial/ui/gtk/preferences/tabs.py:32
 msgid "Load profile color"
-msgstr ""
+msgstr "Charger la couleur du profil"
 
 #: turpial/ui/gtk/preferences/tabs.py:33
 msgid "Use your profile color for highlighted elements"
-msgstr ""
+msgstr "Utiliser votre couleur de profil pour les éléments en surbrillance"
 
 #: turpial/ui/gtk/preferences/tabs.py:36
 msgid "Minimize to tray"
-msgstr ""
+msgstr "Minimiser dans la barre d'état "
 
 #: turpial/ui/gtk/preferences/tabs.py:37
 msgid "Send Turpial to system tray when closing main window"
-msgstr ""
+msgstr "Envoyer Turpial dans la barre d'état lors de la fermeture de la fenêtre principale"
 
 #: turpial/ui/gtk/preferences/tabs.py:73 turpial/ui/gtk/preferences/tabs.py:85
 msgid "Updates"
-msgstr ""
+msgstr "Mises à jour"
 
 #: turpial/ui/gtk/preferences/tabs.py:74
 msgid "Show a notification when you get updates"
-msgstr ""
+msgstr "Montrer une notification lors de la réception de mise à jours"
 
 #: turpial/ui/gtk/preferences/tabs.py:76 turpial/ui/gtk/preferences/tabs.py:82
 msgid "Login"
-msgstr ""
+msgstr "Authentification"
 
 #: turpial/ui/gtk/preferences/tabs.py:77
 msgid "Show a notification at login with user profile"
-msgstr ""
+msgstr "Montrer une notification lors de l'authentification au profil de l'utilisateur"
 
 #: turpial/ui/gtk/preferences/tabs.py:79
 msgid "Tray icon"
-msgstr ""
+msgstr "Icône de la barre d'état"
 
 #: turpial/ui/gtk/preferences/tabs.py:80
 msgid "Change the tray icon when you have notifications"
-msgstr ""
+msgstr "Modifier l’icône de la barre d'état quand vous avez des notifications"
 
 #: turpial/ui/gtk/preferences/tabs.py:83
 msgid "Play a sound when you login"
-msgstr ""
+msgstr "Jouer un son lors de l'authentification"
 
 #: turpial/ui/gtk/preferences/tabs.py:86
 msgid "Play a sound when you get updates"
-msgstr ""
+msgstr "Jouer un son quand vous recevez des mise à jours"
 
 #: turpial/ui/gtk/preferences/tabs.py:92
 msgid "Sounds"
-msgstr ""
+msgstr "Sons"
 
 #: turpial/ui/gtk/preferences/tabs.py:117
 msgid "Select your preferred services to shorten URLs and to upload images"
-msgstr ""
+msgstr "Sélectionner votre service favori pour le raccourcissement d'URLs et la mise en ligne d'images"
 
 #: turpial/ui/gtk/preferences/tabs.py:121
 msgid "Shorten URL"
-msgstr ""
+msgstr "Raccourcir l'URL"
 
 #: turpial/ui/gtk/preferences/tabs.py:122
 msgid "Upload images"
-msgstr ""
+msgstr "Uploader des images"
 
 #: turpial/ui/gtk/preferences/tabs.py:138
 msgid "Filter out anything that bothers you"
-msgstr ""
+msgstr "Filtrer quoi que ce soit qui vous dérange"
 
 #: turpial/ui/gtk/preferences/tabs.py:223
 msgid "Setup your favorite web browser to open all links"
-msgstr ""
+msgstr "Configurez votre navigateur web préféré pour ouvrir tous les liens"
 
 #: turpial/ui/gtk/preferences/tabs.py:229
 msgid "Default web browser"
-msgstr ""
+msgstr "Navigateur web par défaut"
 
 #: turpial/ui/gtk/preferences/tabs.py:230
 msgid "Choose another web browser"
-msgstr ""
+msgstr "Choisir un autre navigateur web"
 
 #: turpial/ui/gtk/preferences/tabs.py:237
 msgid "Browse"
-msgstr ""
+msgstr "Sélectionner"
 
 #: turpial/ui/gtk/preferences/tabs.py:277
 msgid "Select the full path of your web browser"
-msgstr ""
+msgstr "Sélectionner le chemin complet de votre navigateur web"
 
 #: turpial/ui/gtk/preferences/tabs.py:304
 msgid "Advanced options. Use it only if you know what you do"
-msgstr ""
+msgstr "Options avancées. Ne les utilisées que si vous savez ce que vous faites"
 
 #: turpial/ui/gtk/preferences/tabs.py:322
 msgid "Restore config to default"
-msgstr ""
+msgstr "Réinitialiser la configuration"
 
 #: turpial/ui/gtk/preferences/tabs.py:337
 msgid "Timeout"
-msgstr ""
+msgstr "Délai"
 
 #: turpial/ui/gtk/preferences/tabs.py:340
 msgid "Load user avatars"
-msgstr ""
+msgstr "Charger les avatars"
 
 #: turpial/ui/gtk/preferences/tabs.py:341
 msgid "Disable loading user avatars for slow connections"
-msgstr ""
+msgstr "Désactiver le chargement des avatars pour les connexions lentes"
 
 #: turpial/ui/gtk/preferences/tabs.py:344
 msgid "Maintenance"
-msgstr ""
+msgstr "Maintenance"
 
 #: turpial/ui/gtk/preferences/tabs.py:346
 msgid "Connection"
-msgstr ""
+msgstr "Connexion"
 
 #: turpial/ui/gtk/preferences/tabs.py:387
 msgid "Server/Port"
-msgstr ""
-
+msgstr "Serveur/Port"

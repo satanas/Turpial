@@ -1,942 +1,943 @@
 # Translations template for turpial.
 # Copyright (C) 2013 Turpial
 # This file is distributed under the same license as the turpial project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
-#
-#, fuzzy
+# 
+# Translators:
+# jcmeliton <jcmeliton@gmail.com>, 2013
 msgid ""
 msgstr ""
-"Project-Id-Version: turpial 2.9.7-a1\n"
+"Project-Id-Version: Turpial\n"
 "Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
 "POT-Creation-Date: 2013-11-23 11:04-0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2013-11-26 13:54+0000\n"
+"Last-Translator: jcmeliton <jcmeliton@gmail.com>\n"
+"Language-Team: Catalan (http://www.transifex.com/projects/p/turpial-1/language/ca/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
+"Language: ca\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: turpial/ui/lang.py:18
 msgid "Welcome!"
-msgstr ""
+msgstr "Benvingut!"
 
 #: turpial/ui/lang.py:21
 msgid "Add a new account"
-msgstr ""
+msgstr "Afegir un nou compte"
 
 #: turpial/ui/lang.py:22
 msgid "to start using Turpial"
-msgstr ""
+msgstr "Per començar a utilitzar Turpial"
 
 #: turpial/ui/lang.py:23
 msgid "You have accounts registered, now"
-msgstr ""
+msgstr "Tens comptes registrats, ara"
 
 #: turpial/ui/lang.py:24
 msgid "add some columns"
-msgstr ""
+msgstr "Afegir algunes columnes"
 
 #: turpial/ui/lang.py:25
 msgid "Update status"
-msgstr ""
+msgstr "Actualitzar estat"
 
 #: turpial/ui/lang.py:26
 msgid "Send direct message"
-msgstr ""
+msgstr "Enviar missatge directe"
 
 #: turpial/ui/lang.py:27
 msgid "Settings"
-msgstr ""
+msgstr "Configuració"
 
 #: turpial/ui/lang.py:28
 msgid "Preferences"
-msgstr ""
+msgstr "Preferències"
 
 #: turpial/ui/lang.py:29
 msgid "About Turpial"
-msgstr ""
+msgstr "Sobre Turpial"
 
 #: turpial/ui/lang.py:30
 msgid "Search"
-msgstr ""
+msgstr "Cerca"
 
 #: turpial/ui/lang.py:31
 msgid "Account"
-msgstr ""
+msgstr "Compte"
 
 #: turpial/ui/lang.py:32
 msgid "Accounts"
-msgstr ""
+msgstr "Comptes"
 
 #: turpial/ui/lang.py:33
 msgid "Columns"
-msgstr ""
+msgstr "Columnes"
 
 #: turpial/ui/lang.py:34
 msgid "Authorize Turpial"
-msgstr ""
+msgstr "Autoritzar Turpial"
 
 #: turpial/ui/lang.py:35
 msgid "Type the PIN"
-msgstr ""
+msgstr "Escriu el PIN"
 
 #: turpial/ui/lang.py:36
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: turpial/ui/lang.py:37
 msgid "Authorize Turpial and copy the PIN in the text box"
-msgstr ""
+msgstr "Autoritzar Turpial i copiar el PIN al quadre de text"
 
 #: turpial/ui/lang.py:38
 msgid "User Profile"
-msgstr ""
+msgstr "Perfil d'usuari"
 
 #: turpial/ui/lang.py:39
 msgid "Bio"
-msgstr ""
+msgstr "Biografia"
 
 #: turpial/ui/lang.py:40
 msgid "Location"
-msgstr ""
+msgstr "Ubicació"
 
 #: turpial/ui/lang.py:41
 msgid "Web"
-msgstr ""
+msgstr "Web"
 
 #: turpial/ui/lang.py:42
 msgid "Tweets"
-msgstr ""
+msgstr "Tuits"
 
 #: turpial/ui/lang.py:43
 msgid "Following"
-msgstr ""
+msgstr "Seguint"
 
 #: turpial/ui/lang.py:44
 msgid "Followers"
-msgstr ""
+msgstr "Seguidors"
 
 #: turpial/ui/lang.py:45
 msgid "Favorites"
-msgstr ""
+msgstr "Favorits"
 
 #: turpial/ui/lang.py:46
 msgid "Criteria"
-msgstr ""
+msgstr "Criteri"
 
 #: turpial/ui/lang.py:47
 msgid "Use hashtags, mentions or any text you want as search criteria"
-msgstr ""
+msgstr "Utilitzeu hashtags, mencions o qualsevol text que desitgeu com a criteri de cerca"
 
 #: turpial/ui/lang.py:48
 msgid "Select friend to send message"
-msgstr ""
+msgstr "Seleccioneu amic per enviar un missatge"
 
 #: turpial/ui/lang.py:49
 msgid "Friend"
-msgstr ""
+msgstr "Amic"
 
 #: turpial/ui/lang.py:50
 msgid "Select"
-msgstr ""
+msgstr "Selecciona"
 
 #: turpial/ui/lang.py:51
 msgid "Load friends list"
-msgstr ""
+msgstr "Carregar llista d'amics"
 
 #: turpial/ui/lang.py:52
 msgid "What's happening?"
-msgstr ""
+msgstr "Què està passant?"
 
 #: turpial/ui/lang.py:53
 msgid "Upload image"
-msgstr ""
+msgstr "Pujar una imatge"
 
 #: turpial/ui/lang.py:54
 msgid "Short URLs"
-msgstr ""
+msgstr "Escurçar URLs"
 
 #: turpial/ui/lang.py:55
 msgid "Update"
-msgstr ""
+msgstr "Actualitzar"
 
 #: turpial/ui/lang.py:56
 msgid "Delete Column"
-msgstr ""
+msgstr "Eliminar columna"
 
 #: turpial/ui/lang.py:57
 msgid "now"
-msgstr ""
+msgstr "Ara"
 
 #: turpial/ui/lang.py:58 turpial/ui/gtk/statuswidget.py:77
 msgid "Retweeted by"
-msgstr ""
+msgstr "Retuitejat per"
 
 #: turpial/ui/lang.py:59
 msgid "New"
-msgstr ""
+msgstr "Nou"
 
 #: turpial/ui/lang.py:60
 msgid "Delete"
-msgstr ""
+msgstr "Esborrar"
 
 #: turpial/ui/lang.py:61
 msgid "Relogin"
-msgstr ""
+msgstr "Reiniciar sessió"
 
 #: turpial/ui/lang.py:62
 msgid "Register a new account"
-msgstr ""
+msgstr "Registrar un nou compte"
 
 #: turpial/ui/lang.py:63
 msgid "Delete an existing account"
-msgstr ""
+msgstr "Eliminar un compte existent"
 
 #: turpial/ui/lang.py:64
 msgid "Register a Twitter account"
-msgstr ""
+msgstr "Registrar un compte de Twitter"
 
 #: turpial/ui/lang.py:65
 msgid "Register an Identi.ca account"
-msgstr ""
+msgstr "Registrar un compte de Identi.ca"
 
 #: turpial/ui/lang.py:66
 msgid "No registered accounts"
-msgstr ""
+msgstr "No hi ha comptes registrades"
 
 #: turpial/ui/lang.py:67
 msgid "Problems registering a new account"
-msgstr ""
+msgstr "Problemes registrant un compte nou"
 
 #: turpial/ui/lang.py:68
 msgid "Broadcast"
-msgstr ""
+msgstr "Difondre"
 
 #: turpial/ui/lang.py:69
 msgid "You can not submit an empty message"
-msgstr ""
+msgstr "No pots enviar un missatge buit"
 
 #: turpial/ui/lang.py:70
 msgid "Hey! That message is too long, it looks like a testament"
-msgstr ""
+msgstr "Hey! Aquest missatge és massa llarg, sembla un testament"
 
 #: turpial/ui/lang.py:71
 msgid "View conversation"
-msgstr ""
+msgstr "Veure conversa"
 
 #: turpial/ui/lang.py:72
 msgid "Hide conversation"
-msgstr ""
+msgstr "Amaga conversa"
 
 #: turpial/ui/lang.py:73
 msgid "Reply"
-msgstr ""
+msgstr "Respondre"
 
 #: turpial/ui/lang.py:74
 msgid "Quote"
-msgstr ""
+msgstr "Cita"
 
 #: turpial/ui/lang.py:75
 msgid "Retweet"
-msgstr ""
+msgstr "Retuitar"
 
 #: turpial/ui/lang.py:76
 msgid "Mark as favorite"
-msgstr ""
+msgstr "Marcar com a favorit"
 
 #: turpial/ui/lang.py:77
 msgid "Remove from favorites"
-msgstr ""
+msgstr "Eliminar dels favorits"
 
 #: turpial/ui/lang.py:78
 msgid "Reply to"
-msgstr ""
+msgstr "Respondre a"
 
 #: turpial/ui/lang.py:79
 msgid "Quoting"
-msgstr ""
+msgstr "Citant"
 
 #: turpial/ui/lang.py:80
 msgid "Confirm Retweet"
-msgstr ""
+msgstr "Confirmar Retuit"
 
 #: turpial/ui/lang.py:81
 msgid "Do you want to retweet this status to all your friends?"
-msgstr ""
+msgstr "Vols retuitar aquest estat a tots els teus amics?"
 
 #: turpial/ui/lang.py:82
 msgid "Confirm Delete"
-msgstr ""
+msgstr "Confirmar eliminació"
 
 #: turpial/ui/lang.py:83
 msgid "Do you want to delete this status?"
-msgstr ""
+msgstr "Vols esborrar aquest estatus?"
 
 #: turpial/ui/lang.py:84
 msgid "Do you want to delete this direct message?"
-msgstr ""
+msgstr "Vols esborrar aquest missatge directe?"
 
 #: turpial/ui/lang.py:85
 msgid "Loading..."
-msgstr ""
+msgstr "Carregant..."
 
 #: turpial/ui/lang.py:86
 msgid "Status repeated"
-msgstr ""
+msgstr "Estat repetit"
 
 #: turpial/ui/lang.py:87
 msgid "Status deleted"
-msgstr ""
+msgstr "Estat esborrat"
 
 #: turpial/ui/lang.py:88
 msgid "Direct message deleted"
-msgstr ""
+msgstr "Missatge directe esborrat"
 
 #: turpial/ui/lang.py:89
 msgid "Status marked as favorite"
-msgstr ""
+msgstr "Estat marcat com a favorit"
 
 #: turpial/ui/lang.py:90
 msgid "Status removed from favorites"
-msgstr ""
+msgstr "Estat esborrat de favorits"
 
 #: turpial/ui/lang.py:91
 msgid "Send message to"
-msgstr ""
+msgstr "Enviar un missatge a"
 
 #: turpial/ui/lang.py:92
 msgid "Follow"
-msgstr ""
+msgstr "Segueix"
 
 #: turpial/ui/lang.py:93
 msgid "Follow requested"
-msgstr ""
+msgstr "Petició enviada"
 
 #: turpial/ui/lang.py:94
 msgid "Unfollow"
-msgstr ""
+msgstr "Deixa de seguir"
 
 #: turpial/ui/lang.py:95
 msgid "Mute"
-msgstr ""
+msgstr "Silenciar"
 
 #: turpial/ui/lang.py:96
 msgid "Unmute"
-msgstr ""
+msgstr "Treure silenci"
 
 #: turpial/ui/lang.py:97
 msgid "Block"
-msgstr ""
+msgstr "Bloquejar"
 
 #: turpial/ui/lang.py:98
 msgid "Report as spam"
-msgstr ""
+msgstr "Marca com a SPAM"
 
 #: turpial/ui/lang.py:99
 msgid "This is you!"
-msgstr ""
+msgstr "Aquest ets tu!"
 
 #: turpial/ui/lang.py:100
 msgid "Conversation"
-msgstr ""
+msgstr "Conversa"
 
 #: turpial/ui/lang.py:101
 msgid "Quit"
-msgstr ""
+msgstr "Sortir"
 
 #: turpial/ui/lang.py:102
 msgid "In progress..."
-msgstr ""
+msgstr "En curs..."
 
 #: turpial/ui/lang.py:103
 msgid "Select an account before post"
-msgstr ""
+msgstr "Seleccioneu un compte abans de publicar"
 
 #: turpial/ui/lang.py:104
 msgid "Image Preview"
-msgstr ""
+msgstr "Previsualització d'imatge"
 
 #: turpial/ui/lang.py:105
 msgid "Confirm Discard"
-msgstr ""
+msgstr "Confirmar Descart"
 
 #: turpial/ui/lang.py:106
 msgid "Do you want to discard this message?"
-msgstr ""
+msgstr "Vols descartar aquest missatge?"
 
 #: turpial/ui/lang.py:107
 msgid "Info"
-msgstr ""
+msgstr "Informació"
 
 #: turpial/ui/lang.py:108
 msgid "Recent"
-msgstr ""
+msgstr "Recent"
 
 #: turpial/ui/lang.py:109
 #, python-format
 msgid "Do you really want to delete the account %s?"
-msgstr ""
+msgstr "Realment voleu eliminar el compte %s?"
 
 #: turpial/ui/lang.py:110
 msgid "Messages queue"
-msgstr ""
+msgstr "Cua de missatges"
 
 #: turpial/ui/lang.py:111
 msgid "Delete selected message"
-msgstr ""
+msgstr "Esborrar el missatge seleccionat"
 
 #: turpial/ui/lang.py:112
 msgid "Delete all"
-msgstr ""
+msgstr "Esborrar tot"
 
 #: turpial/ui/lang.py:113
 msgid "Delete all messages in queue"
-msgstr ""
+msgstr "Esborrar tots els missatges a la cua"
 
 #: turpial/ui/lang.py:114
 msgid "Message"
-msgstr ""
+msgstr "Missatge"
 
 #: turpial/ui/lang.py:115
 msgid "Do you want to delete this message from the queue?"
-msgstr ""
+msgstr "Vols esborrar aquest missatge de la cua?"
 
 #: turpial/ui/lang.py:116
 msgid "Do you want to clear the queue?"
-msgstr ""
+msgstr "Vols esborrar la cua?"
 
 #: turpial/ui/lang.py:117
 #, python-format
 msgid "Messages will be send every %s as long as Turpial remain open"
-msgstr ""
+msgstr "Els missatges s'envien cada %s, sempre que romangui obert Turpial"
 
 #: turpial/ui/lang.py:118
 msgid "Next message should be posted in"
-msgstr ""
+msgstr "El missatge següent ha de ser publicat en el"
 
 #: turpial/ui/lang.py:119
 msgid "minute"
-msgstr ""
+msgstr "Minut"
 
 #: turpial/ui/lang.py:120
 msgid "minutes"
-msgstr ""
+msgstr "Minuts"
 
 #: turpial/ui/lang.py:121
 msgid "Add to Queue"
-msgstr ""
+msgstr "Afegir a la cua"
 
 #: turpial/ui/lang.py:122
 msgid "Microblogging client written in Python"
-msgstr ""
+msgstr "Client de microblogging escrit en Python"
 
 #: turpial/ui/lang.py:123
 #, python-format
 msgid "You are now following @%s"
-msgstr ""
+msgstr "Ara segueixes a @%s"
 
 #: turpial/ui/lang.py:124
 #, python-format
 msgid "You are no longer following @%s"
-msgstr ""
+msgstr "Ja no estàs seguint a @%s"
 
 #: turpial/ui/lang.py:125
 #, python-format
 msgid "@%s has been reported as spam"
-msgstr ""
+msgstr "@%s s'ha reportat com a SPAM"
 
 #: turpial/ui/lang.py:126
 #, python-format
 msgid "@%s has been blocked"
-msgstr ""
+msgstr "@%s ha estat bloquejat"
 
 #: turpial/ui/lang.py:127
 #, python-format
 msgid "@%s has been muted"
-msgstr ""
+msgstr "@%s ha estat silenciat"
 
 #: turpial/ui/lang.py:128
 #, python-format
 msgid "@%s has been unmuted"
-msgstr ""
+msgstr "@%s si li ha tret el silenci"
 
 #: turpial/ui/lang.py:129
 msgid "Message from queue has been posted"
-msgstr ""
+msgstr "Un missatge de la cua s'ha publicat"
 
 #: turpial/ui/lang.py:130
 msgid "Close"
-msgstr ""
+msgstr "Tancar"
 
 #: turpial/ui/lang.py:131
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #: turpial/ui/lang.py:132 turpial/ui/gtk/preferences/tabs.py:88
 msgid "Notifications"
-msgstr ""
+msgstr "Notificacions"
 
 #: turpial/ui/lang.py:133
 msgid "Services"
-msgstr ""
+msgstr "Serveis"
 
 #: turpial/ui/lang.py:134
 msgid "Web Browser"
-msgstr ""
+msgstr "Navegador Web"
 
 #: turpial/ui/lang.py:135 turpial/ui/lang.py:167
 msgid "Filters"
-msgstr ""
+msgstr "Filtres"
 
 #: turpial/ui/lang.py:136
 msgid "Proxy"
-msgstr ""
+msgstr "Proxy"
 
 #: turpial/ui/lang.py:137
 msgid "Advanced"
-msgstr ""
+msgstr "Avançat"
 
 #: turpial/ui/lang.py:138
 msgid "Adjust update frecuency and other general parameters"
-msgstr ""
+msgstr "Ajusta  freqüència d'actualització i altres paràmetres generals"
 
 #: turpial/ui/lang.py:139 turpial/ui/gtk/preferences/tabs.py:61
 msgid "Select the notifications you want to receive from Turpial"
-msgstr ""
+msgstr "Selecciona les notificacions que vols rebre de Turpial"
 
 #: turpial/ui/lang.py:140
 msgid "Setup your favorite web browser to open links"
-msgstr ""
+msgstr "Configura el teu navegador web favorit per obrir enllaços"
 
 #: turpial/ui/lang.py:141
 msgid "Select your preferred service to short URLs and upload images"
-msgstr ""
+msgstr "Selecciona el seu servei preferit a les URL curtes i pujar imatges"
 
 #: turpial/ui/lang.py:142 turpial/ui/gtk/preferences/tabs.py:383
 msgid "Proxy settings for Turpial (Need Restart)"
-msgstr ""
+msgstr "Configuració de proxy per Turpial (Necessita Reiniciar)"
 
 #: turpial/ui/lang.py:143
 msgid "Advanced options. Please, keep away unless you know what you are doing"
-msgstr ""
+msgstr "Opcions avançades. Si us plau, mantingui lluny a menys que sàpiga el que està fent"
 
 #: turpial/ui/lang.py:144
 msgid "Update frecuency"
-msgstr ""
+msgstr "Freqüència d'actualització"
 
 #: turpial/ui/lang.py:145
 msgid "Queue frecuency"
-msgstr ""
+msgstr "Freqüencia de la cua"
 
 #: turpial/ui/lang.py:146
 msgid "Statuses per column"
-msgstr ""
+msgstr "Estats per columna"
 
 #: turpial/ui/lang.py:147
 msgid "Minimize on close"
-msgstr ""
+msgstr "Minimitzar al tancar"
 
 #: turpial/ui/lang.py:148
 msgid "Notify on updates"
-msgstr ""
+msgstr "Notificar-me les actualitzacions"
 
 #: turpial/ui/lang.py:149
 msgid "Notify on actions"
-msgstr ""
+msgstr "Notificar-me les accions"
 
 #: turpial/ui/lang.py:150
 msgid "Sound on login"
-msgstr ""
+msgstr "So en iniciar sessió"
 
 #: turpial/ui/lang.py:151
 msgid "Sound on updates"
-msgstr ""
+msgstr "So en les actualitzacions"
 
 #: turpial/ui/lang.py:152
 msgid "Use default browser"
-msgstr ""
+msgstr "Utilitzeu el navegador per defecte"
 
 #: turpial/ui/lang.py:153
 msgid "Set custom browser"
-msgstr ""
+msgstr "Establir navegador personalitzat"
 
 #: turpial/ui/lang.py:154 turpial/ui/gtk/preferences/tabs.py:232
 msgid "Command"
-msgstr ""
+msgstr "Comando"
 
 #: turpial/ui/lang.py:155 turpial/ui/gtk/preferences/tabs.py:316
 msgid "Clean cache"
-msgstr ""
+msgstr "Netejar memòria cau"
 
 #: turpial/ui/lang.py:156
 msgid "Delete all files in cache"
-msgstr ""
+msgstr "Elimineu tots els arxius a la memòria cau"
 
 #: turpial/ui/lang.py:157
 msgid "Restore configuration to default"
-msgstr ""
+msgstr "Restaurar configuració per defecte"
 
 #: turpial/ui/lang.py:158 turpial/ui/gtk/preferences/tabs.py:324
 msgid "Restore config"
-msgstr ""
+msgstr "Restaurar configuració"
 
 #: turpial/ui/lang.py:159
 msgid "Socket timeout"
-msgstr ""
+msgstr "Temps d'espera de Socket"
 
 #: turpial/ui/lang.py:160
 msgid "Show user avatars"
-msgstr ""
+msgstr "Mostra els avatars dels usuaris"
 
 #: turpial/ui/lang.py:161
 msgid "Type"
-msgstr ""
+msgstr "Tipus"
 
 #: turpial/ui/lang.py:162
 msgid "Host"
-msgstr ""
+msgstr "Amfitrió"
 
 #: turpial/ui/lang.py:163
 msgid "Port"
-msgstr ""
+msgstr "Port"
 
 #: turpial/ui/lang.py:164
 msgid "With authentication"
-msgstr ""
+msgstr "Amb autenticació"
 
 #: turpial/ui/lang.py:165 turpial/ui/gtk/preferences/tabs.py:389
 msgid "Username"
-msgstr ""
+msgstr "Nom d'usuari"
 
 #: turpial/ui/lang.py:166 turpial/ui/gtk/preferences/tabs.py:390
 msgid "Password"
-msgstr ""
+msgstr "Contrasenya"
 
 #: turpial/ui/lang.py:168
 msgid "Add filter"
-msgstr ""
+msgstr "Afegir filtre"
 
 #: turpial/ui/lang.py:169
 msgid "Create a new filter"
-msgstr ""
+msgstr "Crear un nou filtre"
 
 #: turpial/ui/lang.py:170
 msgid "Delete selected filter"
-msgstr ""
+msgstr "Esborrar filtre seleccionat"
 
 #: turpial/ui/lang.py:171
 msgid "Delete all filters"
-msgstr ""
+msgstr "Esborrar tots els filtres"
 
 #: turpial/ui/lang.py:172
 msgid "Do you want to clear all the filters?"
-msgstr ""
+msgstr "Vols esborrar tots els filtres?"
 
 #: turpial/ui/lang.py:173
 msgid "Error loading image"
-msgstr ""
+msgstr "Error en carregar imatge"
 
 #: turpial/ui/lang.py:174
 msgid "Error loading conversation"
-msgstr ""
+msgstr "Error en carrgar conversa"
 
 #: turpial/ui/lang.py:175
 msgid "Error updating column"
-msgstr ""
+msgstr "Error en actualitzar la columna"
 
 #: turpial/ui/lang.py:176
 msgid "Error repeating status"
-msgstr ""
+msgstr "Estat d'error repetit"
 
 #: turpial/ui/lang.py:177
 msgid "Error deleting status"
-msgstr ""
+msgstr "Error en eliminar l'estat"
 
 #: turpial/ui/lang.py:178
 msgid "Error marking status as favorite"
-msgstr ""
+msgstr "Error al marcar estat com a favorit"
 
 #: turpial/ui/lang.py:179
 msgid "Error unmarking status as favorite"
-msgstr ""
+msgstr "Error al desmarcar estat com a favorit"
 
 #: turpial/ui/lang.py:180
 msgid "Error posting status"
-msgstr ""
+msgstr "Error publicant estat"
 
 #: turpial/ui/lang.py:181
 msgid "Problems loading user profile"
-msgstr ""
+msgstr "Problemes carregant perfil d'usuari"
 
 #: turpial/ui/lang.py:182
 msgid "Having some troubles to follow this user"
-msgstr ""
+msgstr "Tinc dificultats per seguir a aquest usuari"
 
 #: turpial/ui/lang.py:183
 msgid "Having some troubles to unfollow this user"
-msgstr ""
+msgstr "Tinc dificultats per a deixar de seguir a aquest usuari"
 
 #: turpial/ui/lang.py:184
 msgid "Uh oh, I could not block this user"
-msgstr ""
+msgstr "Oh oh, no puc bloquejar a aquest usuari"
 
 #: turpial/ui/lang.py:185
 msgid "Having issues reporting this user as spam"
-msgstr ""
+msgstr "Tinc problemes pera denunciar aquest usuari com a SPAM"
 
 #: turpial/ui/lang.py:186
 msgid "Can not send direct message"
-msgstr ""
+msgstr "No es pot enviar missatge directe"
 
 #: turpial/ui/lang.py:187
 msgid "Error shorting URL"
-msgstr ""
+msgstr "Error escurçant URL"
 
 #: turpial/ui/lang.py:188
 msgid "Error uploading image"
-msgstr ""
+msgstr "Error al carregar imatge"
 
 #: turpial/ui/lang.py:189
 msgid "1 new tweet updated"
-msgstr ""
+msgstr "1 nou tuit actualitzat"
 
 #: turpial/ui/lang.py:190
 #, python-format
 msgid "%s new tweets updated"
-msgstr ""
+msgstr "%s nous tuits actualitzats"
 
 #: turpial/ui/lang.py:191 turpial/ui/gtk/preferences/tabs.py:236
 msgid "Test"
-msgstr ""
+msgstr "Prova"
 
 #: turpial/ui/lang.py:192
 msgid "Open"
-msgstr ""
+msgstr "Obrir"
 
 #: turpial/ui/lang.py:193
 msgid "Set how often are updated the columns"
-msgstr ""
+msgstr "Indiqueu la freqüència d'actualització de les columnes"
 
 #: turpial/ui/lang.py:194
 msgid "Set how often are posted messages from the queue"
-msgstr ""
+msgstr "Indiqueu la freqüència es publiquen missatges de la cua"
 
 #: turpial/ui/lang.py:195
 msgid "Send Turpial to system tray instead of closing"
-msgstr ""
+msgstr "Enviar Turpial a la safata del sistema en lloc de tancar"
 
 #: turpial/ui/lang.py:196
 msgid "Display system notifications when you get updates"
-msgstr ""
+msgstr "Mostrar notificacions del sistema quan arribin actualitzacions"
 
 #: turpial/ui/lang.py:197
 msgid ""
-"Display system notifications when you perform action like follow, block, "
-"etc"
-msgstr ""
+"Display system notifications when you perform action like follow, block, etc"
+msgstr "Mostra notificacions del sistema quan realitzes accions com seguir, bloquejar, etc"
 
 #: turpial/ui/lang.py:198
 msgid "Play sounds at startup"
-msgstr ""
+msgstr "Reprodueix sons en l'inici"
 
 #: turpial/ui/lang.py:199
 msgid "Play sounds when you get updates"
-msgstr ""
+msgstr "Reproduir sons quan rep actualitzacions"
 
 #: turpial/ui/lang.py:200
 msgid "Set the timeout to wait before closing the connection"
-msgstr ""
+msgstr "Establiu el temps d'espera que ha de passar abans de tancar la connexió"
 
 #: turpial/ui/lang.py:201
 msgid ""
-"When selected Turpial show user avatars, Otherwise it will show a black "
-"box (recommended for slow or limited internet connections)"
-msgstr ""
+"When selected Turpial show user avatars, Otherwise it will show a black box "
+"(recommended for slow or limited internet connections)"
+msgstr "Quan estiga seleccionat Turpial mostra Avatars d'usuari. Contrariament es mostrarà quadre negre (Conexions lentes o limitades)"
 
 #: turpial/ui/lang.py:202
 msgid "Confirm restore"
-msgstr ""
+msgstr "Confirmar restauració"
 
 #: turpial/ui/lang.py:203
 msgid ""
-"Do you want to restore your configuration to default? Turpial will be "
-"closed and must be restarted after this operation"
-msgstr ""
+"Do you want to restore your configuration to default? Turpial will be closed"
+" and must be restarted after this operation"
+msgstr "Vols restaurar la configuració per defecte? Turpial es tancarà i s'ha de reiniciar després d'aquesta operació"
 
 #: turpial/ui/lang.py:204
-msgid "Configuration restored to default successfully. Please, restart Turpial"
-msgstr ""
+msgid ""
+"Configuration restored to default successfully. Please, restart Turpial"
+msgstr "Configuració dels paràmetres per defecte amb èxit. Si us plau, reinicieu Turpial"
 
 #: turpial/ui/lang.py:205
 msgid "Wait! That account does not exist"
-msgstr ""
+msgstr "Espera! Aquest compte no existeix"
 
 #: turpial/ui/lang.py:206
 msgid "Hi there!"
-msgstr ""
+msgstr "Hola!"
 
 #: turpial/ui/lang.py:207
 msgid "Give me a minute, I am shaking my feathers and stretching my wings..."
-msgstr ""
+msgstr "Dóna'm un minut, estic movent les meus plomes i estirar les meves ales ..."
 
 #: turpial/ui/lang.py:208
 msgid "Confirm close"
-msgstr ""
+msgstr "Confirma sortida"
 
 #: turpial/ui/lang.py:209
 msgid "Do you want to close Turpial?"
-msgstr ""
+msgstr "Vols tancar Turpial?"
 
 #: turpial/ui/lang.py:210
 msgid "Uh oh..."
-msgstr ""
+msgstr "Oh oh..."
 
 #: turpial/ui/lang.py:211
 msgid "Something terrible happened, I could not reach the Internet"
-msgstr ""
+msgstr "Una cosa terrible ha passat, no puc arribar a Internet"
 
 #: turpial/ui/lang.py:212
 msgid "Try again"
-msgstr ""
+msgstr "Intenta-ho de nou"
 
 #: turpial/ui/gtk/statuswidget.py:73
 msgid "from"
-msgstr ""
+msgstr "de"
 
 #: turpial/ui/gtk/statuswidget.py:75
 msgid "in reply to"
-msgstr ""
+msgstr "En resposta a"
 
 #: turpial/ui/gtk/preferences/tabs.py:20
 msgid "Adjust update frequency for columns"
-msgstr ""
+msgstr "Ajusta la freqüència d'actualització per a les columnes"
 
 #: turpial/ui/gtk/preferences/tabs.py:29
 msgid "Update Interval"
-msgstr ""
+msgstr "Interval d'actualització"
 
 #: turpial/ui/gtk/preferences/tabs.py:30
 msgid "Statuses"
-msgstr ""
+msgstr "Estatus"
 
 #: turpial/ui/gtk/preferences/tabs.py:32
 msgid "Load profile color"
-msgstr ""
+msgstr "Carrega color de perfil"
 
 #: turpial/ui/gtk/preferences/tabs.py:33
 msgid "Use your profile color for highlighted elements"
-msgstr ""
+msgstr "Utilitzeu el perfil de color per als elements ressaltats"
 
 #: turpial/ui/gtk/preferences/tabs.py:36
 msgid "Minimize to tray"
-msgstr ""
+msgstr "Minimitzar a la safata de sistema"
 
 #: turpial/ui/gtk/preferences/tabs.py:37
 msgid "Send Turpial to system tray when closing main window"
-msgstr ""
+msgstr "Enviar Turpial a la safata del sistema en tancar la finestra principal"
 
 #: turpial/ui/gtk/preferences/tabs.py:73 turpial/ui/gtk/preferences/tabs.py:85
 msgid "Updates"
-msgstr ""
+msgstr "Actualitzacions"
 
 #: turpial/ui/gtk/preferences/tabs.py:74
 msgid "Show a notification when you get updates"
-msgstr ""
+msgstr "Mostra una notificació quan rep actualitzacions"
 
 #: turpial/ui/gtk/preferences/tabs.py:76 turpial/ui/gtk/preferences/tabs.py:82
 msgid "Login"
-msgstr ""
+msgstr "Iniciar sessió"
 
 #: turpial/ui/gtk/preferences/tabs.py:77
 msgid "Show a notification at login with user profile"
-msgstr ""
+msgstr "Mostrar una notificació en iniciar la sessió amb el perfil d'usuari"
 
 #: turpial/ui/gtk/preferences/tabs.py:79
 msgid "Tray icon"
-msgstr ""
+msgstr "Icona de la safata"
 
 #: turpial/ui/gtk/preferences/tabs.py:80
 msgid "Change the tray icon when you have notifications"
-msgstr ""
+msgstr "Canviar la icona de la safata quan tens notificacions"
 
 #: turpial/ui/gtk/preferences/tabs.py:83
 msgid "Play a sound when you login"
-msgstr ""
+msgstr "Reprodueix un so quan inicies sessió"
 
 #: turpial/ui/gtk/preferences/tabs.py:86
 msgid "Play a sound when you get updates"
-msgstr ""
+msgstr "Reprodueix un so quan reps actualitzacions"
 
 #: turpial/ui/gtk/preferences/tabs.py:92
 msgid "Sounds"
-msgstr ""
+msgstr "Sons"
 
 #: turpial/ui/gtk/preferences/tabs.py:117
 msgid "Select your preferred services to shorten URLs and to upload images"
-msgstr ""
+msgstr "Seleccioneu els vostres serveis preferits per escurçar URLs i per pujar imatges"
 
 #: turpial/ui/gtk/preferences/tabs.py:121
 msgid "Shorten URL"
-msgstr ""
+msgstr "URL Escurçada"
 
 #: turpial/ui/gtk/preferences/tabs.py:122
 msgid "Upload images"
-msgstr ""
+msgstr "Carregar imatges"
 
 #: turpial/ui/gtk/preferences/tabs.py:138
 msgid "Filter out anything that bothers you"
-msgstr ""
+msgstr "Filtrar qualsevol cosa que moleste"
 
 #: turpial/ui/gtk/preferences/tabs.py:223
 msgid "Setup your favorite web browser to open all links"
-msgstr ""
+msgstr "Configureu el vostre navegador web favorit per obrir tots els enllaços"
 
 #: turpial/ui/gtk/preferences/tabs.py:229
 msgid "Default web browser"
-msgstr ""
+msgstr "Navegador web per defecte"
 
 #: turpial/ui/gtk/preferences/tabs.py:230
 msgid "Choose another web browser"
-msgstr ""
+msgstr "Triar altre navegador web"
 
 #: turpial/ui/gtk/preferences/tabs.py:237
 msgid "Browse"
-msgstr ""
+msgstr "Navega"
 
 #: turpial/ui/gtk/preferences/tabs.py:277
 msgid "Select the full path of your web browser"
-msgstr ""
+msgstr "Seleccioneu la ruta completa del navegador"
 
 #: turpial/ui/gtk/preferences/tabs.py:304
 msgid "Advanced options. Use it only if you know what you do"
-msgstr ""
+msgstr "Opcions avançades. Utilitzeu-lo només si saps el que fas"
 
 #: turpial/ui/gtk/preferences/tabs.py:322
 msgid "Restore config to default"
-msgstr ""
+msgstr "Restaurar les configuracions predeterminades"
 
 #: turpial/ui/gtk/preferences/tabs.py:337
 msgid "Timeout"
-msgstr ""
+msgstr "Temps d'espera"
 
 #: turpial/ui/gtk/preferences/tabs.py:340
 msgid "Load user avatars"
-msgstr ""
+msgstr "Carregar avatars d'usuaris"
 
 #: turpial/ui/gtk/preferences/tabs.py:341
 msgid "Disable loading user avatars for slow connections"
-msgstr ""
+msgstr "Desactivar els avatars dels usuaris de càrrega per a connexions lentes"
 
 #: turpial/ui/gtk/preferences/tabs.py:344
 msgid "Maintenance"
-msgstr ""
+msgstr "Manteniment"
 
 #: turpial/ui/gtk/preferences/tabs.py:346
 msgid "Connection"
-msgstr ""
+msgstr "Connexió"
 
 #: turpial/ui/gtk/preferences/tabs.py:387
 msgid "Server/Port"
-msgstr ""
-
+msgstr "Servidor/Port"

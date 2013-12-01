@@ -47,7 +47,7 @@ class CoreWorker(QThread):
     user_unfollowed = pyqtSignal(object, str)
     exception_raised = pyqtSignal(object)
     status_from_conversation = pyqtSignal(object, str, str)
-    fetched_profile_image = pyqtSignal(str)
+    fetched_profile_image = pyqtSignal(object)
     fetched_avatar = pyqtSignal(object, str)
     fetched_image_preview = pyqtSignal(object)
     cache_deleted = pyqtSignal()
@@ -281,8 +281,6 @@ class CoreWorker(QThread):
         return config
 
     def update_config(self, new_config):
-        #for section, items in new_config.iteritems():
-        #    self.core.config.write_section(section, items)
         self.core.save_all_config(new_config)
 
     def get_shorten_url_service(self):
@@ -353,6 +351,8 @@ class CoreWorker(QThread):
         self.__after_delete_account()
 
     def save_column(self, column_id):
+        #FIXME: Hack to avoid the libturpial error saving config
+        self.update_config(self.read_config())
         reg_column_id = self.core.register_column(column_id)
         self.__after_save_column(reg_column_id)
 
@@ -498,6 +498,23 @@ class CoreWorker(QThread):
 
     def restore_config(self):
         self.core.delete_current_config()
+
+    def get_window_size(self):
+        try:
+            size = self.core.config.cfg.get('Window', 'size', raw=True)
+            window_size = int(size.split(',')[0]), int(size.split(',')[1])
+            return window_size
+        except:
+            config = self.read_config()
+            config['Window']['size'] = "320,480"
+            self.core.save_all_config(config)
+            return config['Window']['size']
+
+    def set_window_size(self, width, height):
+        window_size = "%s,%s" % (width, height)
+        #FIXME: Hack to avoid the libturpial error saving config
+        self.update_config(self.read_config())
+        self.core.config.write('Window', 'size', window_size)
 
     #================================================================
     # Callbacks

@@ -10,9 +10,9 @@ gettext_domain = 'turpial'
 # localedir definition in development mode
 if os.path.isdir(os.path.join(os.path.dirname(__file__), '..', 'i18n')):
     localedir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'i18n'))
-    trans = gettext.install(gettext_domain, localedir)
+    trans = gettext.install(gettext_domain, localedir, unicode=1)
 else:
-    trans = gettext.install(gettext_domain)
+    trans = gettext.install(gettext_domain, unicode=1)
 
 STRINGS = {
     'welcome': _('Welcome!'),
@@ -181,7 +181,7 @@ STRINGS = {
     'problems_loading_user_profile': _("Problems loading user profile"),
     'having_trouble_to_follow_user': _("Having some troubles to follow this user"),
     'having_trouble_to_unfollow_user': _("Having some troubles to unfollow this user"),
-    'could_not_block_user': _("Oh oh, I could not block this user"),
+    'could_not_block_user': _("Uh oh, I could not block this user"),
     'having_issues_reporting_user_as_spam': _("Having issues reporting this user as spam"),
     'can_not_send_direct_message': _("Can not send direct message"),
     'error_shorting_url': _("Error shorting URL"),
@@ -200,7 +200,7 @@ STRINGS = {
     'socket_timeout_tooltip': _("Set the timeout to wait before closing the connection"),
     'show_avatars_tooltip': _("When selected Turpial show user avatars, Otherwise it will show a black box (recommended for slow or limited internet connections)"),
     'confirm_restore': _("Confirm restore"),
-    'do_you_want_to_restore_config': _("Do you want yo restore your configuration to default? Turpial will be closed and must be restarted after this operation"),
+    'do_you_want_to_restore_config': _("Do you want to restore your configuration to default? Turpial will be closed and must be restarted after this operation"),
     'config_restored_successfully': _("Configuration restored to default successfully. Please, restart Turpial"),
     'that_account_does_not_exist': _("Wait! That account does not exist"),
     'hi_there': _("Hi there!"),

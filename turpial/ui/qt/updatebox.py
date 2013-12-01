@@ -360,6 +360,7 @@ class CompletionTextEdit(QTextEdit):
         QTextEdit.__init__(self)
         self.completer = None
         self.setAcceptRichText(False)
+        self.setTabChangesFocus(True)
 
     def setCompleter(self, completer):
         if self.completer:
@@ -405,7 +406,6 @@ class CompletionTextEdit(QTextEdit):
         if self.completer and self.completer.popup().isVisible():
             if event.key() in self.IGNORED_KEYS:
                 event.ignore()
-                print 'ignoring'
                 return
 
         if event.key() == Qt.Key_Escape:

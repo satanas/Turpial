@@ -30,7 +30,7 @@ data_files=[
     ('share/icons/scalable/apps', ['turpial/data/pixmaps/turpial.svg']),
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
     ('share/applications', ['turpial.desktop']),
-    ('share/doc/turpial', ['AUTHORS', 'COPYING', 'ChangeLog', 'README.rst']),
+    ('share/doc/turpial', ['ChangeLog', 'README.rst', 'AUTHORS', 'COPYING', 'TRANSLATORS', 'THANKS']),
 ]
 
 setup(name="turpial",
@@ -46,8 +46,8 @@ setup(name="turpial",
     license="GPLv3",
     keywords='twitter identi.ca microblogging turpial',
     classifiers=[
-      "Development Status :: 5 - Production/Stable",
-      "Environment :: X11 Applications :: GTK",
+      "Development Status :: 4 - Beta",
+      "Environment :: X11 Applications :: Qt",
       "Intended Audience :: End Users/Desktop",
       "License :: OSI Approved :: GNU General Public License (GPL)",
       "Operating System :: POSIX :: Linux",
@@ -57,13 +57,13 @@ setup(name="turpial",
     include_package_data=True,
     packages=find_packages(),
     package_data={
-      'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/layout/*.template',
-      'data/layout/*.partial', 'data/layout/js/*', 'data/layout/css/*']
+      'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/fonts/*', 'turpial/ui/qt/*',
+          'turpial/i18n/*', 'turpial/ui/qt/templates/*'],
     },
     entry_points={
       'console_scripts': [
           'turpial = turpial.main:main',
-          'turpial-unity-daemon = turpial.ui.unity.daemon:main',
+          #'turpial-unity-daemon = turpial.ui.unity.daemon:main',
       ],
     },
     cmdclass={

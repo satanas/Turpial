@@ -14,10 +14,10 @@ from functools import partial
 
 from PyQt4.QtGui import (
     QMenu, QImage, QWidget, QAction, QPixmap, QDialog, QMessageBox,
-    QVBoxLayout, QApplication, QFontDatabase, QIcon
+    QVBoxLayout, QApplication, QFontDatabase, QIcon, QDesktopWidget
 )
 
-from PyQt4.QtCore import QTimer, pyqtSignal
+from PyQt4.QtCore import QTimer, pyqtSignal, QRect
 
 from turpial.ui.base import * #NOQA
 from turpial.ui.sound import SoundSystem
@@ -70,8 +70,10 @@ class Main(Base, QWidget):
         self.setWindowTitle('Turpial')
         self.app.setApplicationName('Turpial')
         self.setWindowIcon(QIcon(self.get_image_path('turpial.svg')))
-        self.ignore_quit = True
         self.resize(320, 480)
+        self.center_on_screen()
+
+        self.ignore_quit = True
         self.showed = True
         self.core_ready = False
         self.timers = {}
@@ -142,6 +144,7 @@ class Main(Base, QWidget):
         self.tray.toggled.connect(self.toggle_tray_icon)
         self.tray.updates_clicked.connect(self.show_update_box)
         self.tray.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
+        self.tray.settings_clicked.connect(self.show_preferences_dialog)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)
@@ -187,6 +190,15 @@ class Main(Base, QWidget):
 
     def random_id(self):
         return str(random.getrandbits(128))
+
+    def center_on_screen(self):
+        current_position = self.frameGeometry()
+        current_position.moveCenter(self.app.desktop().availableGeometry().center())
+        self.move(current_position.topLeft())
+
+    def resizeEvent(self, event):
+        if self.core.status > self.core.LOADING:
+            self.core.set_window_size(event.size().width(), event.size().height())
 
     def closeEvent(self, event=None):
         if event:
@@ -560,7 +572,7 @@ class Main(Base, QWidget):
                 self.add_timer(column)
 
         if current_queue_interval != new_config['General']['queue-interval']:
-            self.set_queue_timer()
+            self.turn_on_queue_timer(force=True)
 
 
     def restore_config(self):
@@ -575,12 +587,14 @@ class Main(Base, QWidget):
             self.core.status = self.core.ERROR
             self._container.error()
         else:
+            width, height = self.core.get_window_size()
+            self.resize(width, height)
+            self.center_on_screen()
             if self.core.get_sound_on_login():
                 self.sounds.startup()
             self.queue_dialog.start()
             self.update_container()
             self.turn_on_queue_timer()
-            self.queue_dialog.update_timestamp()
             self.core.status = self.core.READY
 
 
@@ -610,20 +624,22 @@ class Main(Base, QWidget):
         self.download_stream(column)
         self.add_timer(column)
 
-    def after_update_column(self, arg, data):
+    def after_update_column(self, response, data):
         column, max_ = data
 
-        if self.is_exception(arg):
+        if self.is_exception(response):
             self._container.error_updating_column(column.id_)
         else:
-            count = len(arg)
+            count = len(response)
             if count > 0:
                 if self.core.get_notify_on_updates():
                     self.os_notifications.updates(column, count)
 
                 if self.core.get_sound_on_updates():
                     self.sounds.updates()
-                self._container.update_column(column.id_, arg)
+                self._container.update_column(column.id_, response)
+            else:
+                self._container.update_timestamps(column.id_)
 
 
     def after_update_status(self, response, account_id):
@@ -639,11 +655,22 @@ class Main(Base, QWidget):
             self.update_box.done()
 
     def after_repeat_status(self, response, column_id, account_id, status_id):
+        column_id = str(column_id)
         if self.is_exception(response):
-            self._container.error_repeating_status(column_id, status_id)
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.error_repeating_status(status_id)
+            else:
+                self._container.error_repeating_status(column_id, status_id)
         else:
+            message = i18n.get('status_repeated')
             self._container.mark_status_as_repeated(response.id_)
-            self._container.notify_success(column_id, response.id_, i18n.get('status_repeated'))
+
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.last_statuses.mark_status_as_repeated(response.id_)
+                self.profile_dialog.last_statuses.release_status(response.id_)
+                self.profile_dialog.last_statuses.notify_success(response.id_, message)
+            else:
+                self._container.notify_success(column_id, response.id_, message)
 
     def after_delete_status(self, response, column_id, account_id, status_id):
         if self.is_exception(response):
@@ -663,20 +690,40 @@ class Main(Base, QWidget):
             self.update_box.done()
 
     def after_marking_status_as_favorite(self, response, column_id, account_id, status_id):
+        column_id = str(column_id)
         if self.is_exception(response):
-            self._container.error_marking_status_as_favorite(column_id, status_id)
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.error_marking_status_as_favorite(status_id)
+            else:
+                self._container.error_marking_status_as_favorite(column_id, status_id)
         else:
+            message = i18n.get('status_marked_as_favorite')
             self._container.mark_status_as_favorite(response.id_)
-            self._container.notify_success(column_id, response.id_,
-                i18n.get('status_marked_as_favorite'))
+
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.last_statuses.mark_status_as_favorite(response.id_)
+                self.profile_dialog.last_statuses.release_status(response.id_)
+                self.profile_dialog.last_statuses.notify_success(response.id_, message)
+            else:
+                self._container.notify_success(column_id, response.id_, message)
 
     def after_unmarking_status_as_favorite(self, response, column_id, account_id, status_id):
+        column_id = str(column_id)
         if self.is_exception(response):
-            self._container.error_unmarking_status_as_favorite(column_id, status_id)
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.error_unmarking_status_as_favorite(status_id)
+            else:
+                self._container.error_unmarking_status_as_favorite(column_id, status_id)
         else:
+            message = i18n.get('status_removed_from_favorites')
             self._container.unmark_status_as_favorite(response.id_)
-            self._container.notify_success(column_id, response.id_,
-                i18n.get('status_removed_from_favorites'))
+
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.last_statuses.unmark_status_as_favorite(response.id_)
+                self.profile_dialog.last_statuses.release_status(response.id_)
+                self.profile_dialog.last_statuses.notify_success(response.id_, message)
+            else:
+                self._container.notify_success(column_id, response.id_, message)
 
     def after_get_user_profile(self, response, account_id):
         if self.is_exception(response):
@@ -727,10 +774,18 @@ class Main(Base, QWidget):
                 self.os_notifications.user_unfollowed(profile.username)
 
     def after_get_status_from_conversation(self, response, column_id, status_root_id):
+        column_id = str(column_id)
         if self.is_exception(response):
-            self._container.error_loading_conversation(column_id, status_root_id)
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.error_loading_conversation(status_root_id)
+            else:
+                self._container.error_loading_conversation(column_id, status_root_id)
         else:
-            self._container.update_conversation(response, column_id, status_root_id)
+            if self.profile_dialog.is_for_profile(column_id):
+                self.profile_dialog.last_statuses.update_conversation(response, status_root_id)
+            else:
+                self._container.update_conversation(response, column_id, status_root_id)
+
             if response.in_reply_to_id:
                 self.core.get_status_from_conversation(response.account_id, response.in_reply_to_id,
                     column_id, status_root_id)
@@ -750,7 +805,6 @@ class Main(Base, QWidget):
 
     def after_push_status_to_queue(self, account_id):
         self.update_box.done()
-        self.queue_dialog.update()
         self.turn_on_queue_timer()
 
     def after_pop_status_from_queue(self, status):
@@ -764,8 +818,6 @@ class Main(Base, QWidget):
             self.push_status_to_queue(account_id, message)
         else:
             self.turn_off_queue_timer()
-            self.queue_dialog.update()
-            self.queue_dialog.update_timestamp()
             if self.core.get_notify_on_actions():
                 self.os_notifications.message_from_queue_posted()
 
@@ -799,7 +851,6 @@ class Main(Base, QWidget):
             print '--Removed timer for %s' % column_id
 
     def download_stream(self, column):
-        print 'updating %s' % column
         if self._container.is_updating(column.id_):
             return True
 
@@ -812,15 +863,16 @@ class Main(Base, QWidget):
         interval = self.core.get_queue_interval() * 60 * 1000
         timer = Timer(interval, None, self.update_status_from_queue)
         self.timers['queue'] = timer
-        self.queue_dialog.update()
         print '--Created timer for queue every %i sec' % interval
 
-    def turn_on_queue_timer(self):
-        if len(self.core.list_statuses_queue()) > 0 and not self.timers.has_key('queue'):
+    def turn_on_queue_timer(self, force=False):
+        self.queue_dialog.update()
+        if len(self.core.list_statuses_queue()) > 0 and (not self.timers.has_key('queue') or force):
             self.set_queue_timer()
             self.queue_dialog.update_timestamp()
 
     def turn_off_queue_timer(self):
+        self.queue_dialog.update()
         if len(self.core.list_statuses_queue()) == 0:
             self.remove_timer('queue')
             self.queue_dialog.update_timestamp()

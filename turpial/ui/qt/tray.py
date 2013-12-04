@@ -38,7 +38,7 @@ class TrayIcon(QSystemTrayIcon):
         settings.triggered.connect(self.__settings_clicked)
         quit = QAction(i18n.get('quit'), self)
         #FIXME: create a signal for this
-        quit.triggered.connect(self.base.closeEvent)
+        quit.triggered.connect(self.base.main_quit)
 
         self.menu.addAction(settings)
         self.menu.addSeparator()

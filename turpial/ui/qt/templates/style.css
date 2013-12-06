@@ -166,7 +166,7 @@ body {
 .footer, .timestamp {
     font-family: 'Titillium Web';
     font-size: 12px;
-    color: #ccc;
+    color: #999;
 }
 
 .reposted {

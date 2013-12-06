@@ -51,11 +51,13 @@ class Main(Base, QWidget):
     account_loaded = pyqtSignal()
     account_registered = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, debug=False):
         self.app = QApplication(['Turpial'] + sys.argv)
 
         Base.__init__(self)
         QWidget.__init__(self)
+
+        self.debug = debug
 
         for font_path in self.fonts:
             QFontDatabase.addApplicationFont(font_path)
@@ -137,7 +139,7 @@ class Main(Base, QWidget):
         self.dock.updates_clicked.connect(self.show_update_box)
         self.dock.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
         self.dock.queue_clicked.connect(self.show_queue_dialog)
-        self.dock.filters_clicked.connect(self.show_filters_dialog)
+        #self.dock.filters_clicked.connect(self.show_filters_dialog)
         self.dock.preferences_clicked.connect(self.show_preferences_dialog)
 
         self.tray = TrayIcon(self)

@@ -11,6 +11,7 @@ from PyQt4.QtWebKit import QWebView
 from PyQt4.QtWebKit import QWebPage
 from PyQt4.QtWebKit import QWebSettings
 
+from PyQt4.QtCore import Qt
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
@@ -32,6 +33,8 @@ class StatusesWebView(QWebView):
         page = self.page()
         page.setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         page.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
+        if not self.base.debug:
+            self.setContextMenuPolicy(Qt.NoContextMenu)
         self.setPage(page)
         self.status_template = self.__load_template('status.html')
 

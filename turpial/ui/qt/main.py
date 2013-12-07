@@ -602,6 +602,8 @@ class Main(Base, QWidget):
 
     def after_save_account(self):
         self.account_registered.emit()
+        if len(self.core.get_registered_accounts()) == 1:
+            self.update_container()
         self.update_dock()
 
     def after_load_account(self):

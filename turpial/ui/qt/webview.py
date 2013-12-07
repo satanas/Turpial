@@ -168,7 +168,7 @@ class StatusesWebView(QWebView):
     def update_conversation(self, status, status_root_id):
         status_rendered = self.__render_status(status, with_conversation=False)
         status_rendered = status_rendered.replace("\n", '')
-        status_rendered = status_rendered.replace('\'', '"')
+        status_rendered = status_rendered.replace('\'', '%27')
         conversation = """updateConversation('%s', '%s')""" % (status_root_id, status_rendered)
         self.execute_javascript(conversation)
 
@@ -182,7 +182,7 @@ class StatusesWebView(QWebView):
 
     def append_status(self, html, status_id):
         html = html.replace("\n", '')
-        html = html.replace('\'', '"')
+        html = html.replace('\'', '%27')
 
         fd = open('/tmp/turpial-update-column.html', 'w')
         fd.write(html.encode('ascii', 'ignore'))

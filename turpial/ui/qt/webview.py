@@ -90,6 +90,7 @@ class StatusesWebView(QWebView):
         hide_conversation = None
         message = status.text
         message = message.replace('\n', '<br/>')
+        message = message.replace('\'', '&apos;')
         timestamp = self.base.humanize_timestamp(status.timestamp)
 
         if status.entities:
@@ -168,7 +169,7 @@ class StatusesWebView(QWebView):
     def update_conversation(self, status, status_root_id):
         status_rendered = self.__render_status(status, with_conversation=False)
         status_rendered = status_rendered.replace("\n", '')
-        status_rendered = status_rendered.replace('\'', '%27')
+        status_rendered = status_rendered.replace('\'', '"')
         conversation = """updateConversation('%s', '%s')""" % (status_root_id, status_rendered)
         self.execute_javascript(conversation)
 
@@ -182,7 +183,7 @@ class StatusesWebView(QWebView):
 
     def append_status(self, html, status_id):
         html = html.replace("\n", '')
-        html = html.replace('\'', '%27')
+        html = html.replace('\'', '"')
 
         fd = open('/tmp/turpial-update-column.html', 'w')
         fd.write(html.encode('ascii', 'ignore'))

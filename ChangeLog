@@ -1,3 +1,25 @@
+v3.0-b2 (Dec 8, 2013):
+	* Fixed issue with closing action in tray icon menu
+	* Removed unneccessary fonts
+	* Updated TRANSLATORS file
+	* Added darker buttons for tweets
+	* Removed filters because they are causing tweets duplication
+	* Fixed welcome string after adding the first accounts
+	* Fixed issue with apostrophe in status text
+
+v3.0-b1 (Nov 29, 2013):
+	* Just update the tweets
+	* Improved setup.py
+	* Added startup screen while Turpial loads
+	* Sorted list of services
+	* Fixed tweet interaction from profile dialog
+	* Restored window geometry at startup
+	* Updated requirements.txt
+	* Added translations ca, de, eo, es, fr, it, ja, pt_BR, pt_PT, ru_RU, tr
+	* Fixed statuses duplication
+	* Fixed tray icon menu
+	* Minor fixes
+
 v2.9.6-a1 (Nov 20, 2013):
 	* New backend on top of libturpial
 	* Rewrite of the whole interface using Qt

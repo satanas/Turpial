@@ -63,7 +63,7 @@ class Turpial:
 
         # TODO: Override with any configurated value
         if options.interface in util.INTERFACES.keys():
-            self.ui = util.INTERFACES[options.interface]()
+            self.ui = util.INTERFACES[options.interface](debug=options.debug)
         else:
             print "'%s' is not a valid interface. Availables interfaces are %s" % (
             options.interface, util.available_interfaces())

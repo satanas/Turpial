@@ -1,125 +1,123 @@
 Turpial
 =======
 
-**Sumario:** Cliente Twitter escrito en Python. Ligero, funcional e integrado
-al escritorio del usuario
+**Summary:** Turpial is a light, fast and beautiful microblogging client 
+written in Python
 
-*Turpial* es un cliente alternativo para microblogging con multiples
-interfaces. Esta escrito en *Python* y tiene como meta ser una aplicacion con
-bajo consumo de recursos y que se integre al escritorio del usuario pero sin
-renunciar a ninguna funcionalidad.
+*Turpial* is an alternative client for microblogging with multiple interfaces.
+At the moment it supports Twitter and Identi.ca and works with Gtk and Qt 
+interfaces, but we are still working on more fancy features.
 
-Actualmente *Turpial* se encuentra en estado de desarrollo, por lo que 
-pueden presentarse errores y fallos inesperados. Es por esto que se invita a
-los usuarios que detecten algun fallo lo reporten en la siguiente direccion: 
+Currently  *Turpial* is in heavy development, so probably you will find bugs or 
+undesired behavior. In this cases please report issues at:
 
 http://dev.turpial.org.ve/projects/turpial/issues
 
-*Turpial*, las imagenes y los sonidos han sido publicados bajo una licencia 
-*GPL v3*. Vea el archivo ``COPYING`` para mas detalles o visite 
+We will be very graceful for your contributions.
+
+
+License
+-------
+
+*Turpial* source code, images and sounds have been released under the *GPL v3* 
+License. Please check the ``COPYING`` file for more details or visit 
 http://www.gnu.org/licenses/gpl-3.0.html
 
-Requisitos
-----------
 
-Turpial necesita los siguientes paquetes para funcionar correctamente:
+Requirements
+------------
+
+Turpial needs this packages to work properly:
 
  * ``python >= 2.5``
- * ``python-simplejson >= 1.9.2``
- * ``python-gtk2 >= 2.12``
- * ``python-notify >= 0.1.1``
- * ``python-gst0.10``
- * ``python-pybabel >= 0.9.1``
- * ``python-gtkspell >= 2.25.3``
- * ``python-webkit``
- * ``python-setuptools``
- * ``python-pkg-resources``
+ * ``libturpial >= 0.8.x``
+ * ``notify >= 0.1.1`` (python-notify)
+ * ``gst0.10`` (gstreamer0.10-python)
+ * ``pybabel >= 0.9.1`` (python-babel)
+ * ``webkit``  (pywebkitgtk)
+ * ``setuptools`` (python2-distribute)
+ * ``pkg-resources``
 
-Una instalacion estandar de *Python* (como la que viene en la mayoria de las
-distribuciones GNU/Linux) es mas que suficiente. El resto de los modulos se 
-pueden instalar en las distribuciones basadas en Debian con el siguiente 
-comando (como superusuario):
+Currently Turpial suports 3 different interfaces: Shell, Gtk and Qt. The shell 
+interface needs no more dependencies to work, but if you are planning to run 
+Gtk or Qt you will need to install a couple of more dependencies:
 
-    # aptitude install python-simplejson \
-                       python-gtk2 \
-                       python-notify \
-                       python-gst0.10 \
-                       python-pybabel \
-                       python-gtkspell \
-                       python-webkit \
-                       python-setuptools \
-                       python-pkg-resources
+For Gtk:
 
-o si dispone de ``sudo``::
+ * ``gtk2 >= 2.12`` (python-gtk2)
+ * ``gtkspell >= 2.25.3`` (python2-gtkspell)
 
-    $ sudo aptitude install python-simplejson \
-                            python-gtk2 \
-                            python-notify \
-                            python-gst0.10 \
-                            python-pybabel \
-                            python-gtkspell \
-                            python-webkit \
-                            python-setuptools \
-                            python-pkg-resources
+For Qt:
 
-También debe disponer de los módulos de gstreamer necesarios para su motor de
-sonidos (alsa, pulseaudio, sdl, etc). Puede ubicarlos (en Debian) con los 
-paquetes gstreamer0.10-alsa, gstreamer0.10-pulseaudio, gstreamer0.10-sdl
+ * ``pyqt4 >= 2.12`` (python-pyqt4)
 
-Instalacion
------------
 
-El proceso de instalacion de la aplicacion puede hacerlo de la siguiente
-manera (como superusuario)::
+Installation
+------------
+
+Turpial is available on most popular Linux distributions, so you should be able 
+to install it using your favorite package manager (aptitude, apt-get, pacman,
+yum). Please visit http://turpial.org.ve/downloads for more information.
+
+To install Turpial from sources you should go to source folder and 
+run (as superuser)::
 
     # python setup.py install
 
-o si dispone de ``sudo``::
+or using ``sudo``::
 
     $ sudo python setup.py install
 
-Ejecutar
---------
 
-Si desea ejecutar la aplicacion solo debe escribir el comando ``turpial``::
+Usage
+-----
 
-    $ turpial [OPCIONES]
+After installation just execute ``turpial`` in a shell::
 
-Por defecto, Turpial carga la interfaz ``gtk`` pero se pueden especificar los 
-siguientes parametros opcionales:
+    $ turpial [OPTIONS]
 
- * ``-d``: ejecuta Turpial en Modo Depuracion. 
- * ``-i interfaz``: para seleccionar la interfaz a cargar (``gtk`` | ``cmd``).
+Turpial will try to identify your desktop environment and load the interface 
+that best suit to it. If you use a Gtk based environment then Turpial will 
+load Gtk interface but in a non-Gtk based environment it will load the Qt 
+interface. However you can override this behavior using optional parameters:
 
-Si usted cumple con los requisitos para ejecutar *Turpial* pero no cuenta
-con los permisos necesarios para instalarlo, puede ejecutar los siguientes
-pasos desde el directorio ``Turpial``::
+ * ``-i interface``: You can choose between ``gtk`` and ``cmd``.
+ * ``-d``: runs Turpial in Debugging Mode.
 
-    $ export PYTHONPATH=$PWD
-    $ python turpial/main.py [OPCIONES]
 
-Para mas informacion visita la pagina de Preguntas y Respuestas Frecuentes:
+Further Information
+-------------------
 
-http://turpial.org.ve/faqs/
+For more information visit our FAQ page http://turpial.org.ve/faqs/
 
-Contacto
---------
 
-Puedes ponerte en contacto con el equipo de Turpial a través de cualquiera de 
-las siguientes direcciones (todas @gmail.com):
+Contact
+-------
 
- * wil.alejandro
- * milmazz
- * kstnshadows
- * petrizzo
+You can follow Turpial news from our official Twitter account:
 
-A través de Twitter:
+ * @TurpialVe
 
- * [@satanas82](http://twitter.com/satanas82)
- * [@milmazz](http://twitter.com/milmazz)
- * [@Azrael37](http://twitter.com/Azrael37)
- * [@petrizzo](http://twitter.com/petrizzo)
+Join to the official development mailing list:
 
-O a través de [@turpialve](http://twitter.com/turpialve) en Twitter para hacer recomendaciones, reportar bugs o 
-simplemente para mantenerte al día en el desarrollo y los cambios de Turpial
+http://groups.google.com/group/turpial-dev
+
+Or mail us to say what an awesome/crappy app Turpial is. Our contact info is
+in:
+
+http://turpial.org.ve/team
+
+
+Donate
+------
+
+You love Turpial and want to show us how gracefull you are? Buy us a coffee :)
+
+PayPal donations at:
+
+https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XUNXXJURA7FLW
+
+Flattr:
+
+http://flattr.com/thing/452623/Turpial
 

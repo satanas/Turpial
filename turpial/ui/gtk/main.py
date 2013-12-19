@@ -1,682 +1,532 @@
 # -*- coding: utf-8 -*-
 
-# Vista para Turpial en PyGTK
-#
-# Author: Wil Alvarez (aka Satanas)
-# Nov 08, 2009
+# GTK3 main view for Turpial
 
 import os
-import gtk
-import base64
-import logging
-import gobject
-import thread
+import urllib2
 
-from turpial.sound import Sound
-from turpial.ui import util as util
-from turpial.ui.gtk.home import Home
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
+from gi.repository import GdkPixbuf
+
+from turpial import DESC
+from turpial.ui.base import *
 from turpial.ui.gtk.dock import Dock
-from turpial.ui.base_ui import BaseGui
-from turpial.ui.gtk.follow import Follow
-from turpial.ui.gtk.login import LoginBox
-from turpial.ui.gtk.profile import Profile
-from turpial.notification import Notification
-from turpial.ui.gtk.updatebox import UpdateBox
+from turpial.ui.gtk.tray import TrayIcon
+from turpial.ui.gtk.worker import Worker
+from turpial.ui.gtk.container import Container
+from turpial.ui.gtk.imageview import ImageView
 from turpial.ui.gtk.indicator import Indicators
-from turpial.ui.gtk.oauthwin import OAuthWindow
-from turpial.ui.gtk.preferences import Preferences
-from turpial.ui.gtk.uploadpicbox import UploadPicBox
-from turpial.ui.gtk.conversation import ConversationBox
+from turpial.ui.gtk.factory import ImagesFactory
 
-gtk.gdk.set_program_class("Turpial")
-gtk.gdk.threads_init()
-gobject.threads_init()
+# Dialogs
+from turpial.ui.gtk.about import AboutDialog
+from turpial.ui.gtk.oauth import OAuthDialog
+from turpial.ui.gtk.search import SearchDialog
+from turpial.ui.gtk.updatebox import UpdateBox
+from turpial.ui.gtk.profiles import ProfileDialog
+from turpial.ui.gtk.accounts import AccountsDialog
+from turpial.ui.gtk.preferences import PreferencesDialog
 
-log = logging.getLogger('Gtk')
+#gtk.gdk.set_program_class("Turpial")
 
-class Main(BaseGui, gtk.Window):
-    __gsignals__ = dict(mykeypress=(gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (str,)))
+GObject.threads_init()
 
-    def __init__(self, controller, extend=False):
-        BaseGui.__init__(self, controller)
-        gtk.Window.__init__(self)
-        
-        self.extend = extend and extend_mode
-        
-        self.set_title('Turpial')
-        self.set_size_request(280, 350)
-        self.set_default_size(320, 480)
-        self.current_width = 320
-        self.current_height = 480
-        self.set_icon(self.load_image('turpial.png', True))
-        self.set_position(gtk.WIN_POS_CENTER)
-        self.set_gravity(gtk.gdk.GRAVITY_STATIC)
-        self.connect('delete-event', self.__close)
-        self.connect('size-request', self.size_request)
-        self.connect('configure-event', self.move_event)
+# TODO: Improve all splits for accounts_id with a common function
+class Main(Base, Gtk.Window):
+    def __init__(self, core):
+        Base.__init__(self, core)
+        Gtk.Window.__init__(self)
+
+        self.log = logging.getLogger('Gtk')
+        self.set_title(DESC)
+        self.set_size_request(250, 250)
+        self.set_default_size(300, 480)
+        self.set_icon(self.load_image('turpial.svg', True))
+        self.set_position(Gtk.WindowPosition.CENTER)
+        self.set_gravity(Gdk.Gravity.STATIC)
+        self.connect('delete-event', self.__on_close)
         self.connect('key-press-event', self.__on_key_press)
         self.connect('focus-in-event', self.__on_focus)
-        self.hnd_state = None
-        
-        self.mode = 0
-        self.vbox = None
-        self.contentbox = gtk.VBox(False)
-        
-        # Valores de config. por defecto
+        #self.connect('size-request', self.__size_request)
+
+        # Configuration
         self.showed = True
-        self.win_state = 'windowed'
         self.minimize = 'on'
-        self.workspace = 'single'
-        self.link_color = '#ff6633'
-        self.home_interval = -1
-        self.replies_interval = -1
-        self.directs_interval = -1
-        self.me = None
-        self.version = None
-        
-        self.home_timer = None
-        self.replies_timer = None
-        self.directs_timer = None
-        
-        self.sound = Sound(controller.no_sound)
-        self.notify = Notification(controller.no_notif)
+        self.is_fullscreen = False
+
+        self.timers = {}
+        self.updating = {}
+        self.columns = {}
+
         self.indicator = Indicators()
         self.indicator.connect('main-clicked', self.__on_main_indicator_clicked)
         self.indicator.connect('indicator-clicked', self.__on_indicator_clicked)
-        
-        self.home = Home(self, self.workspace)
-        self.profile = Profile(self)
-        self.contenido = self.home
-        self.updatebox = UpdateBox(self)
-        self.uploadpic = UploadPicBox(self)
-        self.replybox = ConversationBox(self)
-        self.oauthwin = OAuthWindow(self)
-        
-        if self.extend:
-            log.debug('Cargado modo GTK Extendido')
-        else:
-            log.debug('Cargado modo GTK Simple')
-        
-        self.dock = Dock(self, self.workspace)
-        self.__create_trayicon()
-        
-    def __create_trayicon(self):
-        if gtk.check_version(2, 10, 0) is not None:
-            log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
-            return
-        self.tray = gtk.StatusIcon()
-        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
-        self.tray.set_tooltip('Turpial')
-        self.tray.connect("activate", self.__on_trayicon_click)
+
+        self.openstatuses = {}
+
+        self.worker = Worker()
+        self.worker.set_timeout_callback(self.__worker_timeout_callback)
+        self.worker.start()
+
+        self.avatars_worker = Worker()
+        self.avatars_worker.set_timeout_callback(self.__worker_timeout_callback)
+        self.avatars_worker.start()
+
+        self.factory = ImagesFactory(self)
+
+        # Persistent dialogs
+        self.accounts_dialog = AccountsDialog(self)
+        self.profile_dialog = ProfileDialog(self)
+        self.update_box = UpdateBox(self)
+
+        self.imageview = ImageView(self)
+
+        self.tray = TrayIcon(self)
+        self.tray.connect("activate", self.__on_tray_click)
         self.tray.connect("popup-menu", self.__show_tray_menu)
-        
-    def __on_trayicon_click(self, widget):
+
+        self.dock = Dock(self)
+        self._container = Container(self)
+
+        vbox = Gtk.VBox()
+        vbox.pack_start(self._container, True, True, 0)
+        vbox.pack_start(self.dock, False, False, 0)
+        self.add(vbox)
+
+    def __on_close(self, widget, event=None):
+        if self.core.minimize_on_close():
+            self.showed = False
+            if self.unitylauncher.is_supported():
+                self.iconify()
+            else:
+                self.hide()
+        else:
+            self.main_quit(widget)
+        return True
+
+    def __on_key_press(self, widget, event):
+        keyname = Gdk.keyval_name(event.keyval)
+        if keyname.upper() == 'F' and event.state & Gdk.ModifierType.CONTROL_MASK:
+            self.__toogle_fullscreen()
+            return True
+        return False
+
+    def __toogle_fullscreen(self):
+        if self.is_fullscreen:
+            self.unfullscreen()
+            self.is_fullscreen = False
+        else:
+            self.fullscreen()
+            self.is_fullscreen = True
+
+    #================================================================
+    # Tray icon
+    #================================================================
+
+    def __on_tray_click(self, widget):
         if self.showed:
             self.showed = False
             self.hide()
         else:
             self.showed = True
             self.show()
-            if self.workspace == 'wide':
-                self.move(self.win_wide_pos[0], self.win_wide_pos[1])
-            else:
-                self.move(self.win_single_pos[0], self.win_single_pos[1])
-    
+
+    def __show_tray_menu(self, widget, button, activate_time):
+        return self.tray.popup(button, activate_time)
+
     def __on_main_indicator_clicked(self, indicator):
         self.showed = True
         self.show()
         self.present()
-        
+
     def __on_indicator_clicked(self, indicator, data):
         self.indicator.clean()
         self.__on_main_indicator_clicked(indicator)
-    
-    def __on_focus(self, widget, event):
-        self.tray.set_from_pixbuf(self.load_image('turpial-tray.png', True))
-    
-    def __on_key_press(self, widget, event):
-        keyname = gtk.gdk.keyval_name(event.keyval)
-        if (event.state & gtk.gdk.CONTROL_MASK) and keyname.lower() == 'n':
-            self.show_update_box()
-            return True
-        return False
-    
-    def __on_change_state(self, widget, event, data=None):
-        if event.type != gtk.gdk.WINDOW_STATE:
-            return False
-        
-        if event.new_window_state == gtk.gdk.WINDOW_STATE_ICONIFIED:
-            self.win_state = 'minimized'
-        elif event.new_window_state == gtk.gdk.WINDOW_STATE_MAXIMIZED:
-            self.win_state = 'maximized'
-        elif event.new_window_state == 0:
-            self.win_state = 'windowed'
-        
-    def __show_tray_menu(self, widget, button, activate_time):
-        menu = gtk.Menu()
-        tweet = gtk.MenuItem(_('Tweet'))
-        follow = gtk.MenuItem(_('Follow'))
-        exit = gtk.MenuItem(_('Exit'))
-        if self.mode == 2:
-            menu.append(tweet)
-            menu.append(follow)
-            menu.append(gtk.SeparatorMenuItem())
-        menu.append(exit)
-        
-        exit.connect('activate', self.main_quit)
-        tweet.connect('activate', self.__show_update_box_from_menu)
-        follow.connect('activate', self.__show_follow_box_from_menu)
-            
-        menu.show_all()
-        menu.popup(None, None, None, button, activate_time)
-        
-    def __show_update_box_from_menu(self, widget):
-        self.show_update_box()
-        
-    def __show_follow_box_from_menu(self, widget):
-        self.show_follow_box()
-        
-    def __close(self, widget, event=None):
-        if self.minimize == 'on':
-            self.showed = False
-            self.hide()
-        else:
-            self.quit(widget)
-        return True
-        
-    def __save_config(self):
-        if self.mode < 2: return
-        
-        wide_value = "%i, %i" % (self.wide_win_size[0], self.wide_win_size[1])
-        single_value = "%i, %i" % (self.single_win_size[0], self.single_win_size[1])
-        single_pos = "%i, %i" % (self.win_single_pos[0], self.win_single_pos[1])
-        wide_pos = "%i, %i" % (self.win_wide_pos[0], self.win_wide_pos[1])
-        visibility = 'show' if self.showed else 'hide'
-        log.debug('Guardando configuración de la ventana')
-        log.debug('--Single: %s' % single_value)
-        log.debug('--Wide: %s' % wide_value)
-        log.debug('--Single Position: %s' % single_pos)
-        log.debug('--Wide Position: %s' % wide_pos)
-        log.debug('--State: %s' % self.win_state)
-        
-        self.save_config({
-            'Window': {
-                'single-win-size': single_value,
-                'wide-win-size': wide_value, 
-                'window-single-position': single_pos,
-                'window-wide-position': wide_pos,
-                'window-state': self.win_state,
-                'window-visibility': visibility,
-            },
-            'Columns': {
-                'column1': self.home.timeline.get_combo_item(),
-                'column2': self.home.replies.get_combo_item(),
-                'column3': self.home.direct.get_combo_item(),
-            },
-        }, update=False)
-        
-    def _notify_new_tweets(self, column, tweets, last, count):
-        if count <= 0:
-            return
-        
-        tweet = None
-        for twt in tweets.items:
-            if twt.username != self.me:
-                if not util.has_tweet(last, twt):
-                    tweet = twt
-                    break
-        
-        if not tweet:
-            return
-        
-        if count == 1:
-            tobject = column.single_unit
-        else:
-            tobject = column.plural_unit
-        
-        p = self.parse_tweet(tweet)
-        icon = self.current_avatar_path(p.avatar)
-        twt = util.unescape_text(p.text)
-        text = "<b>@%s</b> %s" % (p.username, twt)
-        
-        self.notify.new_tweets(column.title, count, tobject, text, icon)
-        self.indicator.add_update(column.title, count)
-        
-        if self.read_config_value('Notifications', 'sound') == 'on':
-            if column.id == 'replies':
-                self.sound.replies()
-            elif column.id == 'directs':
-                self.sound.directs()
-            else:
-                self.sound.tweets()
-        
-        if not self.get_property('is-active'):
-            self.tray.set_from_pixbuf(self.load_image('turpial-tray-update.png', True))
-                
-    def load_image(self, path, pixbuf=False):
-        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            '..', '..', 'data', 'pixmaps', path))
-        pix = gtk.gdk.pixbuf_new_from_file(img_path)
-        if pixbuf: return pix
-        avatar = gtk.Image()
-        avatar.set_from_pixbuf(pix)
-        del pix
-        return avatar
-        
-    def load_avatar(self, dir, path, image=False):
-        img_path = os.path.join(dir, path)
-        pix = gtk.gdk.pixbuf_new_from_file(img_path)
-        if not image: return pix
-        avatar = gtk.Image()
-        avatar.set_from_pixbuf(pix)
-        del pix
-        return avatar
-    
-    def resize_avatar(self, pic):
-        ext = pic[-3:].lower()
-        fullname = os.path.join(self.imgdir, pic)
-        
-        orig = gtk.gdk.pixbuf_new_from_file(fullname)
-        pw, ph = orig.get_width(), orig.get_height()
-        
-        if pw >= ph:
-            ratio = float(ph) / pw
-            fw = util.AVATAR_SIZE
-            fh = int(fw * ratio)
-        else:
-            ratio = float(pw) / ph
-            fh = util.AVATAR_SIZE
-            fw = int(fh * ratio)
-            
-        dest = orig.scale_simple(fw, fh, gtk.gdk.INTERP_BILINEAR)
-        dest.save(fullname, 'png')
-        
-        del orig
-        del dest
-        
-    def request_conversation(self, twt_id, user):
-        self.replybox.show(twt_id, user)
-        BaseGui.request_conversation(self, twt_id, user)
-        
-    def get_user_avatar(self, user, pic_url):
-        pix = self.request_user_avatar(user, pic_url)
-        if pix:
-            # Try to load user avatar from file. If fail (by corrupt data, etc)
-            # then load default image
-            try:
-                return self.load_avatar(self.imgdir, pix)
-            except:
-                return self.load_image('unknown.png', pixbuf=True)
-        else:
-            return self.load_image('unknown.png', pixbuf=True)
-    
-    def get_gdk_color_from_base(self, key):
-        base_color = self.update_color[key]
-        r = int(base_color[1:3], 16)
-        g = int(base_color[3:5], 16)
-        b = int(base_color[5:7], 16)
-        #return r, g, b
-        return gtk.gdk.Color(r * 257, g * 257, b * 257)
 
-    def main_quit(self, widget=None):
-        self.__save_config()
+    def __on_focus(self, widget, event):
+        try:
+            self.set_urgency_hint(False)
+            self.unitylauncher.set_count_visible(False)
+            self.unitylauncher.set_count(0)
+        except Exception:
+            pass
+        self.tray.clear()
+
+    #================================================================
+    # Overrided methods
+    #================================================================
+
+    def main_loop(self):
+        try:
+            Gdk.threads_enter()
+            Gtk.main()
+            Gdk.threads_leave()
+        except Exception:
+            sys.exit(0)
+
+    def main_quit(self, widget=None, force=False):
+        self.log.debug('Exiting...')
+        self.unitylauncher.quit()
         self.destroy()
         self.tray = None
+        self.worker.quit()
+        self.worker.join()
+        self.avatars_worker.quit()
+        self.avatars_worker.join()
         if widget:
-            gtk.main_quit()
-        self.request_signout()
-        
-    def main_loop(self):
-        gtk.main()
-        
-    def show_login(self):
+            Gtk.main_quit()
+        if force:
+            sys.exit(0)
 
-        self.mode = 1
-        if self.vbox is not None: self.remove(self.vbox)
-        
-        self.vbox = LoginBox(self)
-        
-        self.add(self.vbox)
+    def show_main(self):
+        self.start()
         self.show_all()
-        
-    def cancel_login(self, error):
-        self.vbox.cancel_login(error)
-        
-    def show_oauth_pin_request(self, url):
-        gobject.idle_add(self.oauthwin.open, url)
-        
-    def show_main(self, config, global_cfg, p):
-        log.debug('Cargando ventana principal')
-        self.mode = 2
-        
-        self.update_config(config, global_cfg, True)
-        
-        gtk.gdk.threads_enter()
-        self.contentbox.add(self.contenido)
-        
-        self.statusbar = gtk.Statusbar()
-        self.statusbar.push(0, _('Wait a few seconds while I load everything...'))
-        if (self.vbox is not None): self.remove(self.vbox)
-        
-        self.vbox = gtk.VBox(False, 0)
-        self.vbox.pack_start(self.contentbox, True, True, 0)
-        self.vbox.pack_start(self.dock, False, False, 0)
-        self.vbox.pack_start(self.statusbar, False, False, 0)
-        
-        self.profile.set_user_profile(p)
-        self.me = p.username
-        title = 'Turpial - %s (%s)' % (self.me, self.get_current_protocol())
-        self.set_title(title)
-        self.tray.set_tooltip(title)
-        
-        if config.read('General', 'profile-color') == 'on':
-            self.link_color = p.profile_link_color
-        
-        self.add(self.vbox)
-        self.show_all()
-        
-        '''
-        if self.win_state == 'minimized':
-            self.iconify()
-        elif self.win_state == 'maximized':
-            self.maximize()
-        elif self.win_visibility == 'hide':
-            self.hide()
-        '''
-        
-        self.hnd_state = self.connect('window-state-event', self.__on_change_state)
-        
-        #if (self.win_pos[0] > 0 and self.win_pos[1] > 0):
-        #    self.move(self.win_pos[0], self.win_pos[1])
-        gtk.gdk.threads_leave()
-        
-        if config.read('Notifications', 'login') == 'on':
-            self.notify.login(p)
-            if config.read('Notifications', 'sound') == 'on':
-                self.sound.login()
-        
-        gobject.timeout_add(6 * 60 * 1000, self.download_rates)
-        gobject.timeout_add(12 * 60 * 1000, self.download_favorites)
-        gobject.timeout_add(15 * 60 * 1000, self.download_friends)
-        
-    def set_lists(self, lists, viewed):
-        self.columns_lists = lists
-        self.columns_viewed = viewed
-        self.home.set_viewed_columns(lists, viewed)
-        
-    def set_column_item(self, index, reset=False):
-        self.home.set_combo_item(index, reset)
-        
-    def show_home(self, widget):
-        self.contentbox.remove(self.contenido)
-        self.contenido = self.home
-        self.contentbox.add(self.contenido)
-        
-    def show_profile(self, widget):
-        self.contentbox.remove(self.contenido)
-        self.contenido = self.profile
-        self.contentbox.add(self.contenido)
-        
-    def show_update_box(self, text='', id='', user=''):
-        if self.updatebox.get_property('visible'): 
-            self.updatebox.present()
-            return
-        self.updatebox.show(text, id, user)
-        
-    def show_follow_box(self):
-        f = Follow(self)
-        
-    def show_uploadpic_box(self):
-        if self.uploadpic.get_property('visible'): 
-            self.uploadpic.present()
-            return
-        self.uploadpic.show()
-        
-    def show_preferences(self, widget, mode='user'):
-        prefs = Preferences(self, mode)
-        
-    def start_updating_column1(self):
-        self.home.timeline.start_update()
-        
-    def start_updating_column2(self):
-        self.home.replies.start_update()
-        
-    def start_updating_column3(self):
-        self.home.direct.start_update()
-        
-    def start_search(self):
-        self.profile.search.start_update()
-        
-    def update_column1(self, tweets):
-        gtk.gdk.threads_enter()
-        
-        last = self.home.timeline.statuslist.last
-        count = self.home.timeline.update_tweets(tweets)
-        column = self.request_viewed_columns()[0]
-        show_notif = self.read_config_value('Notifications', 'home')
-        
-        log.debug(u'Actualizando %s' % column.title)
-        if self.updating[0] and show_notif == 'on':
-            self._notify_new_tweets(column, tweets, last, count)
-            
-        gtk.gdk.threads_leave()
-        self.updating[0] = False
-        
-    def update_column2(self, tweets):
-        gtk.gdk.threads_enter()
-        
-        last = self.home.replies.statuslist.last
-        count = self.home.replies.update_tweets(tweets)
-        column = self.request_viewed_columns()[1]
-        show_notif = self.read_config_value('Notifications', 'replies')
-        
-        log.debug(u'Actualizando %s' % column.title)
-        if self.updating[1] and show_notif == 'on':
-            self._notify_new_tweets(column, tweets, last, count)
-        
-        gtk.gdk.threads_leave()
-        self.updating[1] = False
-        
-    def update_column3(self, tweets):
-        gtk.gdk.threads_enter()
-        
-        last = self.home.direct.statuslist.last
-        count = self.home.direct.update_tweets(tweets)
-        column = self.request_viewed_columns()[2]
-        show_notif = self.read_config_value('Notifications', 'directs')
-        
-        log.debug(u'Actualizando %s' % column.title)
-        if self.updating[2] and show_notif == 'on':
-            self._notify_new_tweets(column, tweets, last, count)
-            
-        gtk.gdk.threads_leave()
-        self.updating[2] = False
-        
-    def update_favorites(self, favs):
-        log.debug(u'Actualizando favoritos')
-        gtk.gdk.threads_enter()
-        #self.home.timeline.update_tweets(tweets)
-        #self.home.replies.update_tweets(replies)
-        self.profile.favorites.update_tweets(favs)
-        gtk.gdk.threads_leave()
-        
-    def update_user_profile(self, profile):
-        log.debug(u'Actualizando perfil del usuario')
-        gtk.gdk.threads_enter()
-        self.profile.set_user_profile(profile)
-        gtk.gdk.threads_leave()
-        
-    def update_follow(self, user, follow):
-        self.notify.following(user, follow)
-        
-    def update_rate_limits(self, val):
-        if val is None or val == []: return
-        gtk.gdk.threads_enter()
-        try:
-            self.statusbar.push(0, util.get_rates(val))
-        except TypeError:
-            log.debug(u'Error imprimiendo el mensaje en la barra de estado')
-        gtk.gdk.threads_leave()
-        
-    def update_search(self, val):
-        log.debug(u'Mostrando resultados de la búsqueda')
-        gtk.gdk.threads_enter()
-        self.profile.search.update_tweets(val)
-        gtk.gdk.threads_leave()
-        
-    def update_user_avatar(self, user, pic):
-        self.home.timeline.update_user_pic(user, pic)
-        self.home.replies.update_user_pic(user, pic)
-        self.home.direct.update_user_pic(user, pic)
-        self.profile.favorites.update_user_pic(user, pic)
-        self.profile.user_form.update_user_pic(user, pic)
-        self.profile.search.update_user_pic(user, pic)
-        
-    def update_in_reply_to(self, tweet):
-        gtk.gdk.threads_enter()
-        self.replybox.update([tweet])
-        gtk.gdk.threads_leave()
-        
-    def update_conversation(self, tweets):
-        gtk.gdk.threads_enter()
-        self.replybox.update(tweets)
-        gtk.gdk.threads_leave()
-        
-    def tweet_changed(self, timeline, replies, favs):
-        log.debug(u'Tweet modificado')
-        gtk.gdk.threads_enter()
-        log.debug(u'--Actualizando el timeline')
-        self.home.timeline.update_tweets(timeline)
-        log.debug(u'--Actualizando las replies')
-        self.home.replies.update_tweets(replies)
-        log.debug(u'--Actualizando favoritos')
-        self.profile.favorites.update_tweets(favs)
-        gtk.gdk.threads_leave()
-        
-    def tweet_done(self, tweets):
-        log.debug(u'Actualizando nuevo tweet')
-        gtk.gdk.threads_enter()
-        if tweets.type == 'status':
-            if self.updatebox.get_property('visible'):
-                self.updatebox.release()
-                self.updatebox.done()
-            if self.uploadpic.get_property('visible'): 
-                self.uploadpic.release()
-                self.uploadpic.done()
+        self.update_container()
+
+    def show_notice(self, message, type_):
+        pass
+
+    def show_media(self, url):
+        self.imageview.loading()
+        self.worker.register(self.core.get_media_content, (url, None),
+            self.__show_media_callback)
+
+    def show_user_avatar(self, account_id, user):
+        self.imageview.loading()
+        self.worker.register(self.core.get_profile_image, (account_id, user),
+            self.__show_user_avatar_callback)
+
+    def show_user_profile(self, account_id, user):
+        self.profile_dialog.loading()
+        self.worker.register(self.core.get_user_profile, (account_id, user),
+            self.__show_user_profile_callback)
+
+    def login(self, account_id):
+        #return
+        self.accounts_dialog.update()
+        self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
+
+
+    #================================================================
+    # Hooks definitions
+    #================================================================
+
+    def after_delete_account(self, deleted, err_msg=None):
+        self.accounts_dialog.done_delete()
+
+    def after_save_account(self, account_id, err_msg=None):
+        self.worker.register(self.core.login, (account_id), self.__login_callback, account_id)
+
+    def after_save_column(self, column, err_msg=None):
+        self._container.add_column(column)
+        self.dock.normal()
+        self.tray.normal()
+        self.download_stream(column)
+        self.__add_timer(column)
+
+    def after_delete_column(self, column_id, err_msg=None):
+        self._container.remove_column(column_id)
+        if len(self.get_registered_columns()) == 0:
+            self.dock.empty()
+            self.tray.empty()
+        self.__remove_timer(column_id)
+
+    def after_login(self):
+        #self.worker.register(self.core.load_all_friends_list, (), self.load_all_friends_response)
+        pass
+
+    def after_update_status(self, response, account_id):
+        if response.code > 0:
+            self.update_box.update_error(response.errmsg)
         else:
-            if self.updatebox.get_property('visible'):
-                self.updatebox.release(tweets.errmsg)
-            if self.uploadpic.get_property('visible'):
-                self.uploadpic.release()
-        gtk.gdk.threads_leave()
-        
-        self.update_timeline(tweets)
-        
-    def set_mode(self):
-        # Necesario para que se calculen bien los valores
-        # Solo debe llamarse UNA vez
-        self.show_all()
-        
-        cur_x, cur_y = self.get_position()
-        cur_w, cur_h = self.get_size()
-        
-        if self.workspace == 'wide':
-            size = self.wide_win_size
-            self.resize(size[0], size[1])
-            self.set_default_size(size[0], size[1])
-            if self.win_wide_pos[0] == -1 and self.win_wide_pos[1] == -1:
-                x = (size[0] - cur_w) / 2
-                self.move(cur_x - x, cur_y)
+            self.update_box.done()
+
+    def after_broadcast_status(self, response):
+        bad_acc = []
+        good_acc = []
+        error = False
+        for resp in response:
+            if resp.code > 0:
+                error = True
+                protocol = i18n.get(resp.account_id.split('-')[1])
+                bad_acc.append("%s (%s)" % (resp.account_id.split('-')[0], protocol))
             else:
-                self.move(self.win_wide_pos[0], self.win_wide_pos[1])
+                good_acc.append(resp.account_id)
+
+        if error:
+            self.update_box.broadcast_error(good_acc, bad_acc)
         else:
-            size = self.single_win_size
-            self.resize(size[0], size[1])
-            self.set_default_size(size[0], size[1])
-            if self.win_single_pos[0] == -1 and self.win_single_pos[1] == -1:
-                x = (cur_w - size[0]) / 2
-                self.move(cur_x + x, cur_y)
+            self.update_box.done()
+
+    def after_direct_message(self, response):
+        if response.code > 0:
+            self.update_box.update_error(response.errmsg)
+        else:
+            self.update_box.done()
+
+    def after_favorite(self, response, action):
+        # TODO: Check for errors
+        if action == self.ACTION_FAVORITE:
+            self._container.mark_status_favorite(response.items)
+        else:
+            self._container.unmark_status_favorite(response.items)
+
+    def after_repeat(self, response, action):
+        # TODO: Check for errors
+        if action == self.ACTION_REPEAT:
+            self._container.mark_status_repeat(response.items)
+        else:
+            self._container.unmark_status_repeat(response.items)
+
+    def after_delete_status(self, response):
+        if response.code > 0:
+            # show notice
+            # unlock status
+            pass
+        else:
+            self._container.delete_status(response.items)
+
+    def after_autoshort_url(self, response):
+        self.update_box.update_after_short_url(response)
+
+    #================================================================
+    # Own methods
+    #================================================================
+
+    def load_image(self, filename, pixbuf=False):
+        img_path = os.path.join(self.images_path, filename)
+        pix = GdkPixbuf.Pixbuf.new_from_file(img_path)
+        if pixbuf:
+            return pix
+        avatar = Gtk.Image()
+        avatar.set_from_pixbuf(pix)
+        del pix
+        return avatar
+
+    def show_about_dialog(self, widget=None):
+        about_dialog = AboutDialog(self)
+        about_dialog.show()
+
+    def show_accounts_dialog(self, widget=None):
+        self.accounts_dialog.show()
+
+    def show_preferences_dialog(self, widget=None):
+        preferences_dialog = PreferencesDialog(self)
+        preferences_dialog.show()
+
+    def show_search_dialog(self, widget=None):
+        search_dialog = SearchDialog(self)
+        search_dialog.show()
+
+    def show_update_box(self, widget=None, direct=False):
+        self.update_box.show()
+
+    def show_update_box_for_reply(self, in_reply_id, account_id, in_reply_user):
+        self.update_box.show_for_reply(in_reply_id, account_id, in_reply_user)
+
+    def show_update_box_for_reply_direct(self, in_reply_id, account_id, in_reply_user):
+        self.update_box.show_for_reply_direct(in_reply_id, account_id, in_reply_user)
+
+    def show_update_box_for_quote(self, message):
+        self.update_box.show_for_quote(message)
+
+    def show_confirm_dialog(self, message, callback, *args):
+        dialog = Gtk.MessageDialog(self, Gtk.DialogFlags.MODAL,
+            Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, message)
+        response = dialog.run()
+        dialog.destroy()
+        if response == Gtk.ResponseType.YES:
+            callback(*args)
+
+    def confirm_repeat_status(self, status):
+        self.show_confirm_dialog(i18n.get('do_you_want_to_repeat_status'),
+            self.repeat_status, status)
+
+    def confirm_unrepeat_status(self, status):
+        self.show_confirm_dialog(i18n.get('do_you_want_to_undo_repeat_status'),
+            self.unrepeat_status, status)
+
+    def confirm_favorite_status(self, status):
+        self.favorite_status(status)
+
+    def confirm_unfavorite_status(self, status):
+        self.unfavorite_status(status)
+
+    def confirm_delete_status(self, status):
+        self.show_confirm_dialog(i18n.get('do_you_want_to_delete_status'),
+            self.delete_status, status)
+
+    def update_column(self, arg, data):
+        column, notif, max_ = data
+
+        if arg.code > 0:
+            self._container.stop_updating(column.id_, arg.errmsg, 'error')
+            print arg.errmsg
+            return
+
+        # Notifications
+        # FIXME
+        count = len(arg.items)
+
+        if count > 0:
+            self.log.debug('Updated %s statuses in column %s' % (count, column.id_))
+            self._container.update_column(column.id_, arg.items)
+        else:
+            self.log.debug('Column %s not updated' % column.id_)
+            self._container.stop_updating(column.id_)
+        #    if notif and self.core.show_notifications_in_updates():
+        #        self.notify.updates(column, count)
+        #    if self.core.play_sounds_in_updates():
+        #        self.sound.updates()
+        #    if not self.is_active():
+        #        self.unitylauncher.increment_count(count)
+        #        self.unitylauncher.set_count_visible(True)
+        #    else:
+        #        self.unitylauncher.set_count_visible(False)
+        #column.inc_size(count)
+
+        # self.restore_open_tweets() ???
+
+    def update_container(self):
+        columns = self.get_registered_columns()
+        if len(columns) == 0:
+            self._container.empty()
+            self.dock.empty()
+            self.tray.empty()
+        else:
+            self._container.normal(self.get_accounts_list(), columns)
+            self.dock.normal()
+            self.tray.normal()
+
+    def fetch_status_avatar(self, status, callback):
+        self.worker.register(self.core.get_status_avatar, (status),
+            callback)
+
+    #================================================================
+    # Callbacks
+    #================================================================
+
+    def __login_callback(self, arg, account_id):
+        if arg.code > 0:
+            # FIXME: Implemente notice
+            # self.show_notice(arg.errmsg, 'error')
+            self.accounts_dialog.cancel_login(arg.errmsg)
+            return
+
+        self.accounts_dialog.status_message(i18n.get('authenticating'))
+        auth_obj = arg.items
+        if auth_obj.must_auth():
+            oauthwin = OAuthDialog(self, self.accounts_dialog.form, account_id)
+            oauthwin.connect('response', self.__oauth_callback)
+            oauthwin.connect('cancel', self.__cancel_callback)
+            oauthwin.open(auth_obj.url)
+        else:
+            self.__auth_callback(arg, account_id, False)
+
+    def __oauth_callback(self, widget, verifier, account_id):
+        self.accounts_dialog.status_message(i18n.get('authorizing'))
+        self.worker.register(self.core.authorize_oauth_token, (account_id, verifier), self.__auth_callback, account_id)
+
+    def __cancel_callback(self, widget, reason, account_id):
+        self.delete_account(account_id)
+        self.accounts_dialog.cancel_login(i18n.get(reason))
+
+    def __auth_callback(self, arg, account_id, register = True):
+        if arg.code > 0:
+            # FIXME: Implemente notice
+            #self.show_notice(msg, 'error')
+            self.accounts_dialog.cancel_login(arg.errmsg)
+        else:
+            self.worker.register(self.core.auth, (account_id), self.__done_callback, (account_id, register))
+
+    def __done_callback(self, arg, userdata):
+        (account_id, register) = userdata
+        if arg.code > 0:
+            self.core.change_login_status(account_id, LoginStatus.NONE)
+            self.accounts_dialog.cancel_login(arg.errmsg)
+            #self.show_notice(msg, 'error')
+        else:
+            if register:
+                account_id = self.core.name_as_id(account_id)
+
+            self.accounts_dialog.done_login()
+            self.accounts_dialog.update()
+
+            response = self.core.get_own_profile(account_id)
+            if response.code > 0:
+                #self.show_notice(response.errmsg, 'error')
+                pass
             else:
-                self.move(self.win_single_pos[0], self.win_single_pos[1])
-        
-        log.debug('Cambiando a modo %s %s' % (self.workspace, size))
-        self.dock.change_mode(self.workspace)
-        self.home.change_mode(self.workspace)
-        self.home.update_wrap(cur_w, self.workspace)
-        self.profile.change_mode(self.workspace)
-        
-    def update_config(self, config, global_cfg=None, thread=False):
-        log.debug('Actualizando configuracion')
-        self.minimize = config.read('General', 'minimize-on-close')
-        home_interval = int(config.read('General', 'home-update-interval'))
-        replies_interval = int(config.read('General', 'replies-update-interval'))
-        directs_interval = int(config.read('General', 'directs-update-interval'))
-        
-        if thread: 
-            self.version = global_cfg.read('App', 'version')
-            self.imgdir = config.imgdir
-            single_size = config.read('Window', 'single-win-size').split(',')
-            wide_size = config.read('Window', 'wide-win-size').split(',')
-            s_pos = config.read('Window', 'window-single-position').split(',')
-            w_pos = config.read('Window', 'window-wide-position').split(',')
-            self.win_state = config.read('Window', 'window-state')
-            self.win_visibility = config.read('Window', 'window-visibility')
-            self.single_win_size = (int(single_size[0]), int(single_size[1]))
-            self.wide_win_size = (int(wide_size[0]), int(wide_size[1]))
-            self.win_single_pos = (int(s_pos[0]), int(s_pos[1]))
-            self.win_wide_pos = (int(w_pos[0]), int(w_pos[1]))
-            gtk.gdk.threads_enter()
-        
-        if self.workspace <> config.read('General', 'workspace'):
-            self.workspace = config.read('General', 'workspace')
-        
-        self.set_mode()
-        
-        if (self.home_interval != home_interval):
-            if self.home_timer: gobject.source_remove(self.home_timer)
-            self.home_interval = home_interval
-            self.home_timer = gobject.timeout_add(self.home_interval * 60 * 1000, self.download_column1)
-            log.debug('--Creado timer de Timeline cada %i min' % self.home_interval)
-            
-        if (self.replies_interval != replies_interval):
-            if self.replies_timer: gobject.source_remove(self.replies_timer)
-            self.replies_interval = replies_interval
-            self.replies_timer = gobject.timeout_add(self.replies_interval * 60 * 1000, self.download_column2)
-            log.debug('--Creado timer de Replies cada %i min' % self.replies_interval)
-            
-        if (self.directs_interval != directs_interval):
-            if self.directs_timer: gobject.source_remove(self.directs_timer)
-            self.directs_interval = directs_interval
-            self.directs_timer = gobject.timeout_add(self.directs_interval * 60 * 1000, self.download_column3)
-            log.debug('--Creado timer de Directs cada %i min' % self.directs_interval)
-            
-        if thread: 
-            gtk.gdk.threads_leave()
-        
-    def size_request(self, widget, event, data=None):
-        """Callback when the window changes its sizes. We use it to set the
-        proper word-wrapping for the message column."""
-        if self.mode < 2: return
-        
-        w, h = self.get_size()
-        
-        if self.workspace == 'wide':
-            if (w, h) == self.wide_win_size: return
-            self.wide_win_size = (w, h)
-            self.win_wide_pos = self.get_position()
+                pass
+                #if self.core.show_notifications_in_login():
+                #    self.notify.login(response.items)
+
+            for col in self.get_registered_columns():
+                if col.account_id == account_id:
+                    self.download_stream(col, True)
+                    self.__add_timer(col)
+
+    def __show_media_callback(self, response):
+        if response.err:
+            self.imageview.error(response.errmsg)
         else:
-            if (w, h) == self.single_win_size: return
-            self.single_win_size = (w, h)
-            self.win_single_pos = self.get_position()
-        
-        self.contenido.update_wrap(w, self.workspace)
-        return
-    
-    def move_event(self, widget, event):
-        if self.workspace == 'wide':
-            self.win_wide_pos = self.get_position()
+            content_obj = response.response
+            if content_obj.is_image():
+                content_obj.save_content()
+                self.imageview.update(content_obj.path)
+            elif content_obj.is_video() or content_obj.is_map():
+                self.imageview.error('Media not supported yet')
+
+    def __show_user_avatar_callback(self, response):
+        if response.code > 0:
+            self.imageview.error(response.errmsg)
         else:
-            self.win_single_pos = self.get_position()
-        
-    def following_error(self, message, follow):
-        self.notify.following_error(message, follow)
+            self.imageview.update(response.items)
+
+    def __show_user_profile_callback(self, response):
+        if response.code > 0:
+            self.profile_dialog.error(response.errmsg)
+        else:
+            self.profile_dialog.update(response.items)
+
+    def __worker_timeout_callback(self, funct, arg, user_data):
+        if user_data:
+            GObject.timeout_add(Worker.TIMEOUT, funct, arg, user_data)
+        else:
+            GObject.timeout_add(Worker.TIMEOUT, funct, arg)
+
+    #================================================================
+    # Timer Methods
+    #================================================================
+
+    def __add_timer(self, column):
+        self.__remove_timer(column.id_)
+
+        interval = self.core.get_update_interval()
+        self.timers[column.id_] = GObject.timeout_add(interval * 60 * 1000,
+            self.download_stream, column)
+        self.log.debug('--Created timer for %s every %i min' % (column.id_, interval))
+
+    def __remove_timer(self, column_id):
+        if self.timers.has_key(column_id):
+            GObject.source_remove(self.timers[column_id])
+            self.log.debug('--Removed timer for %s' % column_id)
+
+    def download_stream(self, column, notif=True):
+        if self._container.is_updating(column.id_):
+            return True
+
+        last_id = self._container.start_updating(column.id_)
+        count = self.core.get_max_statuses_per_column()
+
+        self.worker.register(self.core.get_column_statuses, (column.account_id,
+            column.column_name, count, last_id), self.update_column,
+            (column, notif, count))
+        return True
+
+    def refresh_column(self, column_id):
+        for col in self.get_registered_columns():
+            if col.slug == column_id:
+                self.download_stream(col)

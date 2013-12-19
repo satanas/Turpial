@@ -1,111 +1,120 @@
 # -*- coding: utf-8 -*-
 
-# Dock para los botones principales del Turpial
-#
-# Author: Wil Alvarez (aka Satanas)
-# Dic 20, 2009
+# GTK3 dock for Turpial
 
-import gtk
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 
-from turpial.ui.gtk.about import About
+from turpial.ui.lang import i18n
 
-class Dock(gtk.Alignment):
-    def __init__(self, parent, mode='single'):
-        gtk.Alignment.__init__(self, 0.5, 0.5)
-        
-        self.mainwin = parent
-        
-        self.btn_home = gtk.Button()
-        self.btn_home.set_relief(gtk.RELIEF_NORMAL)
-        self.btn_home.set_tooltip_text(_('Timeline, replies and others'))
-        
-        self.btn_profile = gtk.Button()
-        self.btn_profile.set_relief(gtk.RELIEF_NONE)
-        self.btn_profile.set_tooltip_text(_('Profile, favorites, search'))
-        
-        self.btn_follow = gtk.Button()
-        self.btn_follow.set_relief(gtk.RELIEF_NONE)
-        self.btn_follow.set_tooltip_text(_('Follow People'))
-        
-        self.btn_update = gtk.Button()
-        self.btn_update.set_relief(gtk.RELIEF_NONE)
-        self.btn_update.set_tooltip_text(_('Update status'))
-        
-        self.btn_upload = gtk.Button()
-        self.btn_upload.set_relief(gtk.RELIEF_NONE)
-        self.btn_upload.set_tooltip_text(_('Upload image'))
-        
-        self.btn_settings = gtk.Button()
-        self.btn_settings.set_relief(gtk.RELIEF_NONE)
-        self.btn_settings.set_tooltip_text(_('Preferences'))
-        
-        self.btn_about = gtk.Button()
-        self.btn_about.set_relief(gtk.RELIEF_NONE)
-        self.btn_about.set_tooltip_text(_('About Turpial'))
-        
-        self.btn_home.connect('clicked', self.show_home)
-        self.btn_follow.connect('clicked', self.show_follow)
-        self.btn_update.connect('clicked', self.show_update)
-        self.btn_upload.connect('clicked', self.show_upload)
-        self.btn_profile.connect('clicked', self.show_profile)
-        self.btn_settings.connect('clicked', self.show_preferences)
-        self.btn_about.connect('clicked', self.__show_about)
-        
-        box = gtk.HBox()
-        box.pack_start(self.btn_home, False, False)
-        box.pack_start(self.btn_profile, False, False)
-        box.pack_start(self.btn_follow, False, False)
-        box.pack_start(self.btn_update, False, False)
-        box.pack_start(self.btn_upload, False, False)
-        box.pack_start(self.btn_settings, False, False)
-        box.pack_start(self.btn_about, False, False)
-        
-        self.change_mode(mode)
-        self.add(box)
-        self.show_all()
+from libturpial.common import ProtocolType
 
-    def __clean_background(self):
-        self.btn_home.set_relief(gtk.RELIEF_NONE)
-        self.btn_profile.set_relief(gtk.RELIEF_NONE)
-        self.btn_follow.set_relief(gtk.RELIEF_NONE)
-        self.btn_update.set_relief(gtk.RELIEF_NONE)
-        self.btn_upload.set_relief(gtk.RELIEF_NONE)
-        self.btn_settings.set_relief(gtk.RELIEF_NONE)
-        self.btn_about.set_relief(gtk.RELIEF_NONE)
+class Dock(Gtk.EventBox):
+    def __init__(self, base):
+        Gtk.EventBox.__init__(self)
 
-    def __update_buttons(self, widget):
-        self.__clean_background()
-        widget.set_relief(gtk.RELIEF_NORMAL)
-        
-    def __show_about(self, widget):
-        about = About(self.mainwin)
+        self.base = base
+        self.column_menu = None
+        self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(0, 0, 0))
 
-    def show_home(self, widget):
-        self.__update_buttons(widget)
-        self.mainwin.show_home(widget)
-        
-    def show_follow(self, widget):
-        self.mainwin.show_follow_box()
-        
-    def show_update(self, widget):
-        self.mainwin.show_update_box()
-        
-    def show_upload(self, widget):
-        self.mainwin.show_uploadpic_box()
+        self.btn_updates = DockButton(base, 'dock-updates.png', i18n.get('update_status'))
+        self.btn_messages = DockButton(base, 'dock-messages.png', i18n.get('direct_messages'))
+        self.btn_search = DockButton(base, 'dock-search.png', i18n.get('search'))
+        self.btn_stats = DockButton(base, 'dock-stats.png', i18n.get('statistics'))
+        self.btn_columns = DockButton(base, 'dock-columns.png', i18n.get('columns'))
+        self.btn_accounts = DockButton(base, 'dock-accounts.png', i18n.get('accounts'))
+        self.btn_preferences = DockButton(base, 'dock-preferences.png', i18n.get('preferences'))
+        self.btn_about = DockButton(base, 'dock-about.png', i18n.get('about'))
 
-    def show_profile(self, widget):
-        self.__update_buttons(widget)
-        self.mainwin.show_profile(widget)
+        self.btn_updates.connect('clicked', self.base.show_update_box)
+        self.btn_messages.connect('clicked', self.base.show_update_box, True)
+        self.btn_search.connect('clicked', self.base.show_search_dialog)
+        self.btn_columns.connect('clicked', self.show_columns_menu)
+        self.btn_accounts.connect('clicked', self.base.show_accounts_dialog)
+        self.btn_preferences.connect('clicked', self.base.show_preferences_dialog)
+        self.btn_about.connect('clicked', self.base.show_about_dialog)
 
-    def show_preferences(self, widget):
-        self.mainwin.show_preferences(widget)
-        
-    def change_mode(self, mode):
-        self.btn_home.set_image(self.mainwin.load_image('dock-home.png'))
-        self.btn_update.set_image(self.mainwin.load_image('dock-update.png'))
-        self.btn_follow.set_image(self.mainwin.load_image('dock-follow.png'))
-        self.btn_upload.set_image(self.mainwin.load_image('dock-uploadpic.png'))
-        self.btn_profile.set_image(self.mainwin.load_image('dock-profile.png'))
-        self.btn_settings.set_image(self.mainwin.load_image('dock-settings.png'))
-        self.btn_about.set_image(self.mainwin.load_image('dock-about.png'))
-        return
+        box = Gtk.HBox()
+        box.pack_end(self.btn_updates, False, False, 0)
+        box.pack_end(self.btn_messages, False, False, 0)
+        box.pack_end(self.btn_columns, False, False, 0)
+        box.pack_end(self.btn_accounts, False, False, 0)
+        box.pack_end(self.btn_search, False, False, 0)
+        box.pack_end(self.btn_stats, False, False, 0)
+        box.pack_end(self.btn_preferences, False, False, 0)
+        box.pack_end(self.btn_about, False, False, 0)
+
+        align = Gtk.Alignment()
+        align.set(1, -1, -1, -1)
+        align.add(box)
+
+        self.add(align)
+
+    def __save_column(self, widget, column_id):
+        self.base.save_column(column_id)
+
+    def empty(self):
+        self.btn_updates.hide()
+        self.btn_messages.hide()
+        self.btn_stats.hide()
+
+    def normal(self):
+        self.btn_updates.show()
+        self.btn_messages.show()
+        self.btn_stats.show()
+
+    def show_columns_menu(self, widget):
+        self.menu = Gtk.Menu()
+
+        empty = True
+        columns = self.base.get_all_columns()
+        reg_columns = self.base.get_registered_columns()
+
+        for acc in self.base.get_all_accounts():
+            name = "%s (%s)" % (acc.username, i18n.get(acc.protocol_id))
+            temp = Gtk.MenuItem(name)
+            if acc.logged_in:
+                # Build submenu for columns in each account
+                temp_menu = Gtk.Menu()
+                for key, col in columns[acc.id_].iteritems():
+                    item = Gtk.MenuItem(key)
+                    if col.id_ != "":
+                        item.set_sensitive(False)
+                    item.connect('activate', self.__save_column, col.build_id())
+                    temp_menu.append(item)
+                # Add public timeline
+                public_tl = Gtk.MenuItem(i18n.get('public_timeline').lower())
+                public_tl.connect('activate', self.__save_column, acc.id_ + '-public')
+                temp_menu.append(public_tl)
+
+                temp.set_submenu(temp_menu)
+
+                # Add view profile item
+                temp_menu.append(Gtk.SeparatorMenuItem())
+                item = Gtk.MenuItem(i18n.get('view_profile'))
+                item.connect('activate', self.__save_column, acc.id_)
+                temp_menu.append(item)
+            else:
+                temp.set_sensitive(False)
+            self.menu.append(temp)
+            empty = False
+
+        if empty:
+            empty_menu = Gtk.MenuItem(i18n.get('no_registered_accounts'))
+            empty_menu.set_sensitive(False)
+            self.menu.append(empty_menu)
+        else:
+            self.menu.append(Gtk.SeparatorMenuItem())
+        self.menu.show_all()
+        self.menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
+
+class DockButton(Gtk.Button):
+    def __init__(self, base, image, tooltip):
+        Gtk.Button.__init__(self)
+        self.set_image(base.load_image(image))
+        self.set_relief(Gtk.ReliefStyle.NONE)
+        self.set_tooltip_text(tooltip)
+        self.set_size_request(24, 24)
+        #self.btn_updates.set_default_size(24, 24)
+

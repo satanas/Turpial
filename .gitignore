@@ -1,6 +1,14 @@
 dist/
+build/
 turpial.egg-info/
 bitacora
 *.pyc
 *.pyo
 *.mo
+*.swp
+*.*~
+turpial/.DS_Store
+turpial/data/.DS_Store
+turpial/data/pixmaps/.DS_Store
+*.DS_Store
+setuptools*

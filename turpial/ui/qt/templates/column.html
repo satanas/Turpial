@@ -1,0 +1,143 @@
+<html>
+<head>
+    <link href='http://fonts.googleapis.com/css?family=Oxygen:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Pontano+Sans' rel='stylesheet' type='text/css'>
+    <style media='screen' type='text/css'>{{ stylesheet }}</style>
+</head>
+<body>
+<table id="notifications" class="alert">
+</table>
+<div id="statuses-container">
+    {{ content }}
+</div>
+</body>
+</html>
+<script language="javascript">
+    var favoriteTooltip = "{{ favorite_tooltip }}";
+    var unfavoriteTooltip = "{{ unfavorite_tooltip }}";
+
+    function addNotify(id, type, message) {
+        var notificationId = 'notification-' + new Date().getTime() + '-' + id;
+        var table = document.getElementById('notifications');
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        var cell = row.insertCell(0);
+        cell.textContent = message;
+        cell.setAttribute('class', type);
+        row.setAttribute('id', notificationId);
+        row.onclick = function () { removeNotify(notificationId); };
+        setTimeout(removeNotify, 5000, notificationId);
+    }
+
+    function removeNotify(notificationId) {
+        var table = document.getElementById('notifications');
+        var rowCount = table.rows.length;
+        for(var i = 0; i < rowCount; i++) {
+            var row = table.rows[i];
+            var rowId = row.getAttribute('id');
+            if (rowId == notificationId) {
+                table.deleteRow(i);
+                break;
+            }
+        }
+    }
+
+    function setFavorite(status_id) {
+        var command = document.getElementById(status_id + '-fav-cmd');
+        command.setAttribute('href', 'cmd:unfavorite:' + status_id);
+        command.setAttribute('title', unfavoriteTooltip);
+
+        var icon = document.getElementById(status_id + '-fav-mark');
+        icon.className = 'favorited';
+    }
+
+    function unsetFavorite(status_id) {
+        var command = document.getElementById(status_id + '-fav-cmd');
+        command.setAttribute('href', 'cmd:favorite:' + status_id);
+        command.setAttribute('title', favoriteTooltip);
+
+        var icon = document.getElementById(status_id + '-fav-mark');
+        icon.className = 'favorited hidden';
+    }
+
+    function setRepeated(status_id) {
+        var icon = document.getElementById(status_id + '-repeat-mark');
+        icon.className = 'repeated';
+    }
+
+    function removeStatus(status_id) {
+        var status_ = document.getElementById('status-' + status_id);
+        document.body.removeChild(status_);
+    }
+
+    function updateConversation(status_root_id, html) {
+        var conversation = document.getElementById(status_root_id + '-conversation');
+        var loadingCmd = document.getElementById(status_root_id + '-loading-conv-cmd');
+        var hideCmd = document.getElementById(status_root_id + '-hide-conv-cmd');
+        conversation.innerHTML = conversation.innerHTML + html;
+        conversation.className = 'conversation';
+        loadingCmd.className = 'in_reply_to hidden';
+        hideCmd.className = 'in_reply_to';
+    }
+
+    function viewConversation(status_root_id) {
+        var conversation = document.getElementById(status_root_id + '-conversation');
+        var viewCmd = document.getElementById(status_root_id + '-view-conv-cmd');
+        var loadingCmd = document.getElementById(status_root_id + '-loading-conv-cmd');
+        conversation.innerHTML = "";
+        loadingCmd.className = 'in_reply_to';
+        viewCmd.className = 'in_reply_to hidden';
+    }
+
+    function clearConversation(status_root_id) {
+        var conversation = document.getElementById(status_root_id + '-conversation');
+        var viewCmd = document.getElementById(status_root_id + '-view-conv-cmd');
+        var loadingCmd = document.getElementById(status_root_id + '-loading-conv-cmd');
+        var hideCmd = document.getElementById(status_root_id + '-hide-conv-cmd');
+        conversation.innerHTML = "";
+        viewCmd.className = 'in_reply_to';
+        hideCmd.className = 'in_reply_to hidden';
+        loadingCmd.className = 'in_reply_to hidden';
+    }
+
+    function lockStatus(status_id) {
+        var statusButtons = document.getElementById(status_id + '-buttons');
+        var operationLoader = document.getElementById(status_id + '-operation-loader');
+        statusButtons.className = 'buttons hidden';
+        operationLoader.className = 'operation-loader';
+    }
+
+    function releaseStatus(status_id) {
+        var statusButtons = document.getElementById(status_id + '-buttons');
+        var operationLoader = document.getElementById(status_id + '-operation-loader');
+        statusButtons.className = 'buttons';
+        operationLoader.className = 'operation-loader hidden';
+    }
+
+    function appendStatus(html_status, status_id) {
+        var status_object = document.getElementById(status_id);
+
+        if (status_object != null) {
+            return;
+        }
+
+        var table = document.getElementById('notifications');
+        var parser = new DOMParser();
+        var doc = document.createElement("div");
+        doc.innerHTML = html_status;
+
+        var container = document.getElementById('statuses-container');
+        var first = container.children[0];
+        var last = container.children[container.children.length - 1];
+        container.insertBefore(doc.firstChild, first);
+        container.removeChild(last);
+    }
+
+    function updateTimestamp(status_id, new_timestamp) {
+        var status_timestamp = document.getElementById(status_id + '-timestamp');
+        if (status_timestamp != null) {
+            status_timestamp.innerHTML = new_timestamp;
+        }
+    }
+
+</script>

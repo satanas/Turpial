@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import glob
-import os
-import re
-
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -12,24 +8,16 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-from distutils.command.build import build as _build
-from distutils.command.install import install as _install
 from babel.messages import frontend as babel
-from turpial.config import GLOBAL_CFG
+from distutils.command.build import build as _build
+
+from turpial import VERSION
 
 LONG_DESCRIPTION = """
-Turpial es un cliente alternativo para microblogging con multiples
-interfaces. Esta escrito en Python y tiene como meta ser una aplicacion con
-bajo consumo de recursos y que se integre al escritorio del usuario pero sin
-renunciar a ninguna funcionalidad
+Turpial is a light, fast and beautiful microblogging client written in Python
 """
 
 class build(_build):
-    #sub_commands = [('compile_catalog', None), ] + _build.sub_commands
-
-    #def run(self):
-    #    """Run all sub-commands"""
-    #    _build.run(self)
 
     def get_sub_commands(self):
         sub_commands = _build.get_sub_commands(self)
@@ -39,62 +27,50 @@ class build(_build):
 # TODO: Maybe find some better ways to do this
 # looking distutils's copy_tree method
 data_files=[
-    ('./', ['AUTHORS', 'TRANSLATORS']),
+    ('share/icons/scalable/apps', ['turpial/data/pixmaps/turpial.svg']),
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
     ('share/applications', ['turpial.desktop']),
-    ('share/doc/turpial', ['doc/turpial.png',
-                   'doc/turpial.dia',
-                   'ChangeLog',
-                   'README.rst',
-                   'COPYING']),
+    ('share/doc/turpial', ['ChangeLog', 'README.rst', 'AUTHORS', 'COPYING', 'TRANSLATORS', 'THANKS']),
 ]
 
-pattern = re.compile('turpial/i18n/')
-for root, dirs, files in os.walk(os.path.join('turpial', 'i18n')):
-    for filename in files:
-        if filename.endswith('.po'):
-            # Yes, it's an ugly hack to build list of files that do not exist yet
-            fullpath = os.path.join(root, filename[0:-2] + 'mo')
-            dest = os.path.join('share', 'locale', re.sub(pattern, '', root))
-            data_files.append((dest, [fullpath]))
-
 setup(name="turpial",
-      version=GLOBAL_CFG['App']['version'],
-      description="Cliente Twitter escrito en Python",
-      long_description=LONG_DESCRIPTION,
-      author="Wil Alvarez",
-      author_email="wil.alejandro@gmail.com",
-      maintainer="Wil Alvarez",
-      maintainer_email="wil.alejandro@gmail.com",
-      url="http://turpial.org.ve",
-      download_url="http://turpial.org.ve/downloads",
-      license="GPLv3",
-      keywords='twitter identi.ca microblogging turpial',
-      classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Environment :: X11 Applications :: GTK",
-        "Intended Audience :: End Users/Desktop",
-        "License :: OSI Approved :: GNU General Public License (GPL)",
-        "Operating System :: POSIX :: Linux",
-        "Programming Language :: Python",
-        "Topic :: Communications"
+    version=VERSION,
+    description="A light, beautiful and functional microblogging client",
+    long_description=LONG_DESCRIPTION,
+    author="Wil Alvarez",
+    author_email="wil.alejandro@gmail.com",
+    maintainer="Wil Alvarez",
+    maintainer_email="wil.alejandro@gmail.com",
+    url="http://turpial.org.ve",
+    download_url="http://turpial.org.ve/downloads",
+    license="GPLv3",
+    keywords='twitter identi.ca microblogging turpial',
+    classifiers=[
+      "Development Status :: 5 - Production/Stable",
+      "Environment :: X11 Applications :: Qt",
+      "Intended Audience :: End Users/Desktop",
+      "License :: OSI Approved :: GNU General Public License (GPL)",
+      "Operating System :: POSIX :: Linux",
+      "Programming Language :: Python",
+      "Topic :: Communications"
+    ],
+    include_package_data=True,
+    packages=find_packages(),
+    package_data={
+      'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/fonts/*', 'turpial/ui/qt/*',
+          'turpial/i18n/*', 'turpial/ui/qt/templates/*'],
+    },
+    entry_points={
+      'console_scripts': [
+          'turpial = turpial.main:main',
+          #'turpial-unity-daemon = turpial.ui.unity.daemon:main',
       ],
-      packages=find_packages(),
-      package_data={
-        'turpial': ['data/pixmaps/*', 'data/sounds/*', 'data/themes/default/*',
-            'certs/*']
-      },
-      entry_points={
-        'console_scripts': [
-            'turpial = turpial.main:Turpial',
-        ],
-      },
-      cmdclass={
-        'build': build,
+    },
+    cmdclass={
         'compile_catalog': babel.compile_catalog,
         'extract_messages': babel.extract_messages,
         'init_catalog': babel.init_catalog,
         'update_catalog': babel.update_catalog,
-      },
-      data_files=data_files,
+    },
+    data_files=data_files,
 )

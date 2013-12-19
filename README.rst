@@ -115,7 +115,8 @@ You love Turpial and want to show us how gracefull you are? Buy us a coffee :)
 
 PayPal donations at:
 
-https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XUNXXJURA7FLW
+https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3QDYV3JLXPQ7U
+
 
 Flattr:
 

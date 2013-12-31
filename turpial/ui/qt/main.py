@@ -53,6 +53,7 @@ class Main(Base, QWidget):
 
     def __init__(self, debug=False):
         self.app = QApplication(['Turpial'] + sys.argv)
+        #self.app.setQuitOnLastWindowClosed = False # not necessary yet, but to know it exists
 
         Base.__init__(self)
         QWidget.__init__(self)

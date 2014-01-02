@@ -748,7 +748,6 @@ class Main(Base, QWidget):
         if self.is_exception(profile):
             self.profile_dialog.error(i18n.get('could_not_block_user'))
         else:
-            self.core.remove_friend(profile.username)
             if self.core.get_notify_on_actions():
                 self.os_notifications.user_blocked(profile.username)
 
@@ -763,7 +762,6 @@ class Main(Base, QWidget):
         if self.is_exception(profile):
             self.profile_dialog.error(i18n.get('having_trouble_to_follow_user'))
         else:
-            self.core.add_friend(profile.username)
             self.profile_dialog.update_following(profile.username, True)
             if self.core.get_notify_on_actions():
                 self.os_notifications.user_followed(profile.username)
@@ -772,7 +770,6 @@ class Main(Base, QWidget):
         if self.is_exception(profile):
             self.profile_dialog.error(i18n.get('having_trouble_to_unfollow_user'))
         else:
-            self.core.remove_friend(profile.username)
             self.profile_dialog.update_following(profile.username, False)
             if self.core.get_notify_on_actions():
                 self.os_notifications.user_unfollowed(profile.username)

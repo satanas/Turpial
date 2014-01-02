@@ -75,19 +75,6 @@ class CoreWorker(QThread):
     def restart(self):
         self.register(self.login, (), self.__after_login, None)
 
-    def add_friend(self, username):
-        # FIXME: On libturpial
-        friends = self.core.config.load_friends()
-        friends.append(username)
-        self.core.config.save_friends(friends)
-
-    def remove_friend(self, username):
-        # FIXME: On libturpial
-        friends = self.core.config.load_friends()
-        if username in friends:
-            friends.remove(username)
-            self.core.config.save_friends(friends)
-
     def __get_from_queue(self, index=0):
         lines = open(self.queue_path).readlines()
         if not lines:
@@ -201,17 +188,11 @@ class CoreWorker(QThread):
         self.core.config.write('Notifications', key, notifications)
         return value
 
-    # FIXME: Fix this on libturpial
     def get_cache_size(self):
-        total_size = 0
-        for account in self.get_all_accounts():
-            total_size += account.get_cache_size()
-        return total_size
+        return self.core.get_cache_size()
 
-    # FIXME: Fix this on libturpial
     def delete_cache(self):
-        for account in self.get_all_accounts():
-            account.delete_cache()
+        self.core.delete_cache()
 
     def get_sound_on_login(self):
         sound_on_login = self.core.config.read('Sounds', 'login')
@@ -330,7 +311,6 @@ class CoreWorker(QThread):
 
     def save_account(self, account):
         account_id = self.core.register_account(account)
-        self.load_account(account_id, trigger_signal=False)
         self.__after_save_account()
 
     # FIXME: Remove this after implement this in libturpial

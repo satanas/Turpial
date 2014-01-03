@@ -580,6 +580,29 @@ class Main(Base, QWidget):
     def restore_config(self):
         self.core.restore_config()
 
+    #'General':{
+    #    'profile-color': 'on',
+    #    'minimize-on-close': 'on',
+    #},
+    #'Window': {
+    #    'size': '320,480',
+    #    'position': '-1,-1',
+    #    'state': 'windowed',
+    #    'visibility': 'show',
+    #},
+    #'Notifications':{
+    #    'updates': 'on',
+    #    'login': 'on',
+    #    'icon': 'on',
+    #},
+    #'Sounds':{
+    #    'updates': 'on',
+    #    'login': 'on',
+    #},
+    #'Browser':{
+    #    'cmd': ''
+    #},
+
     #================================================================
     # Hooks definitions
     #================================================================

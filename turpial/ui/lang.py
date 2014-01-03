@@ -212,7 +212,7 @@ STRINGS = {
     'try_again': _("Try again"),
     #'i_couldnt_update_status': _("Oh oh... I couldn't update your status"),
     #'couldnt_shrink_urls': _("Oops... I couldn't shrink all URLs"),
-    'view_hide': _("View / Hide"),
+    'show_hide': _("Show / Hide"),
 }
 
 class i18n:

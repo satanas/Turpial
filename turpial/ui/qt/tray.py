@@ -34,10 +34,10 @@ class TrayIcon(QSystemTrayIcon):
         self.show()
 
     def __build_header_menu(self):
-        view = QAction(i18n.get('view_hide'), self)
-        view.triggered.connect(self.__view_clicked)
+        show = QAction(i18n.get('show_hide'), self)
+        show.triggered.connect(self.__show_clicked)
 
-        self.menu.addAction(view)
+        self.menu.addAction(show)
         self.menu.addSeparator()
 
     def __build_common_menu(self):
@@ -60,7 +60,7 @@ class TrayIcon(QSystemTrayIcon):
     def __messages_clicked(self):
         self.messages_clicked.emit()
 
-    def __view_clicked(self):
+    def __show_clicked(self):
         self.toggled.emit()
 
     def __activated(self, reason):

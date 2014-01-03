@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Qt filters dislog for Turpial
+# Qt filters dialog for Turpial
 
 from PyQt4.QtGui import QLineEdit
 from PyQt4.QtGui import QListWidget
 from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QHBoxLayout
 from PyQt4.QtGui import QVBoxLayout
+
+from PyQt4.QtCore import Qt
 
 from turpial.ui.lang import i18n
 
@@ -17,6 +19,7 @@ class FiltersDialog(Window):
     def __init__(self, base):
         Window.__init__(self, base, i18n.get('filters'))
         self.setFixedSize(280, 360)
+        self.setAttribute(Qt.WA_QuitOnClose, False)
 
         self.expression = QLineEdit()
         self.expression.returnPressed.connect(self.__new_filter)

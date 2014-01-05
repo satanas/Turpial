@@ -107,12 +107,21 @@ class CoreWorker(QThread):
 
     def login(self):
         self.core = Core()
+        self.core.register_new_config_option('General', 'minimize-on-close', 'on')
+        self.core.register_new_config_option('Window', 'size', '320,480')
+        self.core.register_new_config_option('Notifications', 'updates', 'on')
+        self.core.register_new_config_option('Notifications', 'actions', 'on')
+        #self.core.register_new_config_option('Notifications', 'tray-icon', 'on')
+        self.core.register_new_config_option('Sounds', 'updates', 'on')
+        self.core.register_new_config_option('Sounds', 'login', 'on')
+        self.core.register_new_config_option('Browser', 'cmd', '')
+
         self.queue_path = os.path.join(self.core.config.basedir, 'queue')
         if not os.path.isfile(self.queue_path):
             open(self.queue_path, 'w').close()
 
     def get_default_browser(self):
-        return self.core.get_default_browser()
+        return self.core.config.read('Browser', 'cmd')
 
     def get_update_interval(self):
         return self.core.get_update_interval()
@@ -121,72 +130,69 @@ class CoreWorker(QThread):
         return self.core.get_max_statuses_per_column()
 
     def get_minimize_on_close(self):
-        return self.core.minimize_on_close()
+        return self.core.config.read('General', 'minimize-on-close')
 
-    # FIXME: Implement support on libturpial
-    def get_proxy_configuration(self):
-        return self.core.config.read_section('Proxy')
+    def get_proxy(self):
+        return self.core.get_proxy()
 
-    # FIXME: Implement support on libturpial
     def get_socket_timeout(self):
-        return int(self.core.config.read('Advanced', 'socket-timeout'))
+        return self.core.get_socket_timeout()
 
     def get_show_user_avatars(self):
-        show_avatars = self.core.config.read('Advanced', 'show-user-avatars')
-        return True if show_avatars == 'on' else False
+        return self.core.config.read('Advanced', 'show-user-avatars')
 
-    def get_update_interval_per_column(self, column_id):
-        column_key = self.__get_column_num_from_id(column_id)
+    #def get_update_interval_per_column(self, column_id):
+    #    column_key = self.__get_column_num_from_id(column_id)
 
-        key = "%s-update-interval" % column_key
-        interval = self.core.config.read('Intervals', key)
-        if not interval:
-            # FIXME: Fix in libturpial
-            config = self.core.config.read_all()
-            if not config.has_key('Intervals'):
-                config['Intervals'] = {key: 5}
-                self.core.config.save(config)
-            else:
-                self.core.config.write('Intervals', key, 5)
-            config = self.core.config.read_all()
-            interval = "5"
-        return int(interval)
+    #    key = "%s-update-interval" % column_key
+    #    interval = self.core.config.read('Intervals', key)
+    #    if not interval:
+    #        # FIXME: Fix in libturpial
+    #        config = self.core.config.read_all()
+    #        if not config.has_key('Intervals'):
+    #            config['Intervals'] = {key: 5}
+    #            self.core.config.save(config)
+    #        else:
+    #            self.core.config.write('Intervals', key, 5)
+    #        config = self.core.config.read_all()
+    #        interval = "5"
+    #    return int(interval)
 
-    def set_update_interval_in_column(self, column_id, interval):
-        column_key = self.__get_column_num_from_id(column_id)
+    #def set_update_interval_in_column(self, column_id, interval):
+    #    column_key = self.__get_column_num_from_id(column_id)
 
-        key = "%s-update-interval" % column_key
-        self.core.config.write('Intervals', key, interval)
-        return interval
+    #    key = "%s-update-interval" % column_key
+    #    self.core.config.write('Intervals', key, interval)
+    #    return interval
 
-    def get_show_notifications_in_column(self, column_id):
-        column_key = self.__get_column_num_from_id(column_id)
+    #def get_show_notifications_in_column(self, column_id):
+    #    column_key = self.__get_column_num_from_id(column_id)
 
-        key = "%s-notifications" % column_key
-        notifications = self.core.config.read('Notifications', key)
-        if not notifications:
-            # FIXME: Fix in libturpial
-            config = self.core.config.read_all()
-            if not config.has_key('Notifications'):
-                config['Notifications'] = {}
-                self.core.config.save(config)
-            self.core.config.write('Notifications', key, 'on')
-            notifications = 'on'
+    #    key = "%s-notifications" % column_key
+    #    notifications = self.core.config.read('Notifications', key)
+    #    if not notifications:
+    #        # FIXME: Fix in libturpial
+    #        config = self.core.config.read_all()
+    #        if not config.has_key('Notifications'):
+    #            config['Notifications'] = {}
+    #            self.core.config.save(config)
+    #        self.core.config.write('Notifications', key, 'on')
+    #        notifications = 'on'
 
-        if notifications == 'on':
-            return True
-        return False
+    #    if notifications == 'on':
+    #        return True
+    #    return False
 
-    def set_show_notifications_in_column(self, column_id, value):
-        column_key = self.__get_column_num_from_id(column_id)
+    #def set_show_notifications_in_column(self, column_id, value):
+    #    column_key = self.__get_column_num_from_id(column_id)
 
-        key = "%s-notifications" % column_key
-        if value:
-            notifications = 'on'
-        else:
-            notifications = 'off'
-        self.core.config.write('Notifications', key, notifications)
-        return value
+    #    key = "%s-notifications" % column_key
+    #    if value:
+    #        notifications = 'on'
+    #    else:
+    #        notifications = 'off'
+    #    self.core.config.write('Notifications', key, notifications)
+    #    return value
 
     def get_cache_size(self):
         return self.core.get_cache_size()
@@ -195,48 +201,16 @@ class CoreWorker(QThread):
         self.core.delete_cache()
 
     def get_sound_on_login(self):
-        sound_on_login = self.core.config.read('Sounds', 'login')
-        if sound_on_login is None:
-            self.core.config.write('Sounds', 'login', 'on')
-            return True
-        else:
-            if sound_on_login == 'on':
-                return True
-            return False
+        return self.core.config.read('Sounds', 'login')
 
     def get_sound_on_updates(self):
-        sound_on_update = self.core.config.read('Sounds', 'updates')
-        if sound_on_update is None:
-            self.core.config.write('Sounds', 'updates', 'on')
-            return True
-        else:
-            if sound_on_update == 'on':
-                return True
-            return False
+        return self.core.config.read('Sounds', 'updates')
 
     def get_notify_on_updates(self):
-        try:
-            notify_on_update = self.core.config.cfg.get('Notifications', 'updates', raw=True)
-            if notify_on_update == 'on':
-                return True
-            return False
-        except:
-            config = self.read_config()
-            config['Notifications']['on-updates'] = 'on'
-            self.core.save_all_config(config)
-            return True
+        return self.core.config.read('Notifications', 'updates')
 
     def get_notify_on_actions(self):
-        try:
-            notify_on_actions = self.core.config.cfg.get('Notifications', 'actions', raw=True)
-            if notify_on_actions == 'on':
-                return True
-            return False
-        except:
-            config = self.read_config()
-            config['Notifications']['actions'] = 'on'
-            self.core.save_all_config(config)
-            return True
+        return self.core.config.read('Notifications', 'actions')
 
     def get_queue_interval(self):
         try:
@@ -248,21 +222,21 @@ class CoreWorker(QThread):
             self.core.save_all_config(config)
             return config['General']['queue-interval']
 
-    def read_config(self):
-        config = {}
+    #def read_config(self):
+    #    config = {}
 
-        # FIXME: Implemen this on libturpial
-        for section in self.core.config.cfg.sections():
-            if not config.has_key(section):
-                config[section] = {}
+    #    # FIXME: Implemen this on libturpial
+    #    for section in self.core.config.cfg.sections():
+    #        if not config.has_key(section):
+    #            config[section] = {}
 
-            for item in self.core.config.cfg.items(section, raw=True):
-                for value in item:
-                    config[section][item[0]] = item[1]
-        return config
+    #        for item in self.core.config.cfg.items(section, raw=True):
+    #            for value in item:
+    #                config[section][item[0]] = item[1]
+    #    return config
 
     def update_config(self, new_config):
-        self.core.save_all_config(new_config)
+        self.core.config.save(new_config)
 
     def get_shorten_url_service(self):
         return self.core.get_shorten_url_service()
@@ -476,24 +450,19 @@ class CoreWorker(QThread):
     def save_filters(self, filters):
         self.core.save_filters(filters)
 
+    def read_config(self):
+        return self.core.config.read_all()
+
     def restore_config(self):
         self.core.delete_current_config()
 
     def get_window_size(self):
-        try:
-            size = self.core.config.cfg.get('Window', 'size', raw=True)
-            window_size = int(size.split(',')[0]), int(size.split(',')[1])
-            return window_size
-        except:
-            config = self.read_config()
-            config['Window']['size'] = "320,480"
-            self.core.save_all_config(config)
-            return config['Window']['size']
+        size = self.core.config.read('Window', 'size')
+        window_size = int(size.split(',')[0]), int(size.split(',')[1])
+        return window_size
 
     def set_window_size(self, width, height):
         window_size = "%s,%s" % (width, height)
-        #FIXME: Hack to avoid the libturpial error saving config
-        self.update_config(self.read_config())
         self.core.config.write('Window', 'size', window_size)
 
     #================================================================

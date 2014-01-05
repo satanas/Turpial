@@ -282,19 +282,19 @@ class ProxyPage(BasePage):
     def __init__(self, base):
         BasePage.__init__(self, i18n.get('proxy_tab_description'))
 
-        config = base.core.get_proxy_configuration()
-        if config['username'] != '':
+        config = base.core.get_proxy()
+        if config.username != '':
             default_authenticated = True
         else:
             default_authenticated = False
 
         self.protocol = ComboBox(i18n.get('type'), ['HTTP', 'HTTPS'], 'HTTP', expand_combo=True)
-        self.host = LineEdit(i18n.get('host'), default_value=config['server'])
-        self.port = LineEdit(i18n.get('port'), text_size=100, default_value=config['port'])
+        self.host = LineEdit(i18n.get('host'), default_value=config.host)
+        self.port = LineEdit(i18n.get('port'), text_size=100, default_value=config.port)
         self.authenticated = CheckBox(i18n.get('with_authentication'), checked=default_authenticated)
         self.authenticated.status_changed.connect(self.__on_click_authenticated)
-        self.username = LineEdit(i18n.get('username'), default_value=config['username'])
-        self.password = LineEdit(i18n.get('password'), default_value=config['password'])
+        self.username = LineEdit(i18n.get('username'), default_value=config.username)
+        self.password = LineEdit(i18n.get('password'), default_value=config.password)
 
         self.layout.addWidget(self.protocol)
         self.layout.addWidget(self.host)

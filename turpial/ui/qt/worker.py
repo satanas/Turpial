@@ -316,10 +316,10 @@ class CoreWorker(QThread):
     # FIXME: Remove this after implement this in libturpial
     def load_account(self, account_id, trigger_signal=True):
         if trigger_signal:
-            self.register(self.core.accman.load, (account_id),
+            self.register(self.core.account_manager.load, (account_id),
                 self.__after_load_account)
         else:
-            self.core.accman.load(account_id)
+            self.core.account_manager.load(account_id)
             self.__after_load_account()
 
     def delete_account(self, account_id):

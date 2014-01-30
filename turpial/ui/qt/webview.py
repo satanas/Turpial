@@ -110,7 +110,7 @@ class StatusesWebView(QWebView):
             # Highlight mentions
             for mention in status.entities['mentions']:
                 pretty_mention = "<a href='profile:%s'>%s</a>" % (mention.url, mention.display_text)
-                message = message.replace(mention.search_for, pretty_mention)
+                message = re.sub(mention.search_for, pretty_mention, message, flags=re.IGNORECASE)
 
         if status.repeated_by:
             repeated_by = "%s %s" % (i18n.get('retweeted_by'), status.repeated_by)

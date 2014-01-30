@@ -6,6 +6,7 @@ import os
 import logging
 
 from turpial.ui.lang import i18n
+from libturpial.common.tools import get_username_from
 
 NOTIFY = True
 
@@ -52,7 +53,7 @@ class OSNotificationSystem:
         else:
             message = i18n.get('new_tweet_updated')
 
-        title = " ".join([i18n.get('updated'), column.slug])
+        title = i18n.get('updated') % get_username_from(column.account_id)
         self.notify(title, message)
 
     def user_followed(self, username):

@@ -15,6 +15,7 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
+from turpial.ui.util import humanize_timestamp
 
 class StatusesWebView(QWebView):
 
@@ -91,7 +92,7 @@ class StatusesWebView(QWebView):
         message = status.text
         message = message.replace('\n', '<br/>')
         message = message.replace('\'', '&apos;')
-        timestamp = self.base.humanize_timestamp(status.timestamp)
+        timestamp = humanize_timestamp(status.timestamp)
 
         if status.entities:
             # Highlight URLs
@@ -194,7 +195,7 @@ class StatusesWebView(QWebView):
 
     def sync_timestamps(self, statuses):
         for status in statuses:
-            new_timestamp = self.base.humanize_timestamp(status.timestamp)
+            new_timestamp = humanize_timestamp(status.timestamp)
             cmd = """updateTimestamp('%s', '%s')""" % (status.id_, new_timestamp)
             self.execute_javascript(cmd)
 

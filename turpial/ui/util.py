@@ -54,3 +54,60 @@ def unescape_text(text):
     text = text.replace('\r\n', ' ')
     text = text.replace('\n', ' ')
     return text
+
+
+def humanize_size(self, size):
+    if size == 0:
+        return '0 B'
+
+    kbsize = size / 1024
+    if kbsize > 0:
+        mbsize = kbsize / 1024
+        if mbsize > 0:
+            gbsize = mbsize / 1024
+            if gbsize > 0:
+                return "%.2f GB" % (mbsize / 1024.0)
+            else:
+                return "%.2f MB" % (kbsize / 1024.0)
+        else:
+            return "%.2f KB" % (size / 1024.0)
+    else:
+        return "%.2f B" % size
+
+def humanize_timestamp(self, status_timestamp):
+	now = time.time()
+	# FIXME: Workaround to fix the timestamp
+	offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
+	seconds = now - status_timestamp + offset
+
+	minutes = seconds / 60.0
+	if minutes < 1.0:
+		timestamp = i18n.get('now')
+	else:
+		if minutes < 60.0:
+			timestamp = "%i m" % minutes
+		else:
+			hours = minutes / 60.0
+			if hours < 24.0:
+				timestamp = "%i h" % hours
+			else:
+				dt = time.localtime(status_timestamp)
+				month = time.strftime(u'%b', dt)
+				year = dt.tm_year
+
+				if year == time.localtime(now).tm_year:
+					timestamp = u"%i %s" % (dt.tm_mday, month)
+				else:
+					timestamp = u"%i %s %i" % (dt.tm_mday, month, year)
+	return timestamp
+
+def humanize_time_intervals(self, interval):
+	if interval > 1:
+		unit = i18n.get('minutes')
+	else:
+		unit = i18n.get('minute')
+	return " ".join([str(interval), unit])
+
+def get_shortcut_string(self, key):
+	return "+".join([self.shortcut_key, key])
+

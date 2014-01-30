@@ -20,6 +20,7 @@ from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
+from turpial.ui.util import get_shortcut_string
 from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.widgets import ImageButton, ErrorLabel
 
@@ -49,9 +50,9 @@ class UpdateBox(QWidget):
         self.char_count.setFont(font)
 
         self.update_button = QPushButton(i18n.get('update'))
-        self.update_button.setToolTip(self.base.get_shortcut_string('Enter'))
+        self.update_button.setToolTip(get_shortcut_string('Enter'))
         self.queue_button = QPushButton(i18n.get('add_to_queue'))
-        self.queue_button.setToolTip(self.base.get_shortcut_string('P'))
+        self.queue_button.setToolTip(get_shortcut_string('P'))
 
         self.accounts_combo = QComboBox()
 

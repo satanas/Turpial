@@ -20,6 +20,7 @@ from PyQt4.QtGui import (
 from PyQt4.QtCore import QTimer, pyqtSignal, QRect
 
 from turpial.ui.base import * #NOQA
+from turpial.ui.util import humanize_size
 from turpial.ui.sound import SoundSystem
 from turpial.ui.notification import OSNotificationSystem
 

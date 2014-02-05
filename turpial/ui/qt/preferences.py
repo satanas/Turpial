@@ -31,6 +31,7 @@ class PreferencesDialog(Window):
         Window.__init__(self, base, i18n.get('preferences'))
         self.setFixedSize(450, 360)
         self.current_config = self.base.get_config()
+        self.setAttribute(Qt.WA_QuitOnClose, False)
 
         self.tabbar = QTabWidget()
         self.tabbar.setTabsClosable(False)

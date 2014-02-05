@@ -134,7 +134,7 @@ class Dock(QStatusBar):
 
         self.settings_menu.addAction(accounts)
         self.settings_menu.addAction(columns)
-        #self.settings_menu.addAction(filters)
+        self.settings_menu.addAction(filters)
         self.settings_menu.addAction(queue)
         self.settings_menu.addSeparator()
         self.settings_menu.addAction(preferences)

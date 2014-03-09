@@ -171,6 +171,7 @@ STRINGS = {
     'delete_all_filters': _("Delete all filters"),
     'clear_filters_confirm': _('Do you want to clear all the filters?'),
     'error_loading_image': _("Error loading image"),
+    'error_saving_image': _("Error saving image"),
     'error_loading_conversation': _("Error loading conversation"),
     'error_updating_column': _("Error updating column"),
     'error_repeating_status': _("Error repeating status"),
@@ -190,6 +191,7 @@ STRINGS = {
     'new_tweets_updated': _("%s new tweets updated"),
     'test': _("Test"),
     'open': _("Open"),
+    'open_in_browser': _("Open in browser"),
     'update_frecuency_tooltip': _("Set how often are updated the columns"),
     'queue_frecuency_tooltip': _("Set how often are posted messages from the queue"),
     'minimize_on_close_tooltip': _("Send Turpial to system tray instead of closing"),
@@ -210,8 +212,10 @@ STRINGS = {
     'oh_oh': _("Uh oh..."),
     'something_terrible_happened': _("Something terrible happened, I could not reach the Internet"),
     'try_again': _("Try again"),
-    #'i_couldnt_update_status': _("Oh oh... I couldn't update your status"),
-    #'couldnt_shrink_urls': _("Oops... I couldn't shrink all URLs"),
+    'verify_image': _("Verify image"),
+    'copy_image_url': _("Copy image URL"),
+    'view_exif_info': _("View EXIF info"),
+    'exif_data_not_available': _('EXIF data not available'),
 }
 
 class i18n:

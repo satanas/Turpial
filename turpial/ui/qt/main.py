@@ -398,7 +398,7 @@ class Main(Base, QWidget):
         preview_service = get_preview_service_from_url(url)
         if preview_service:
             self.core.get_image_preview(preview_service, url)
-            self.image_view.start_loading()
+            self.image_view.start_loading(image_url=url)
         else:
             self.__open_in_browser(url)
 
@@ -815,7 +815,7 @@ class Main(Base, QWidget):
                     column_id, status_root_id)
 
     def after_get_profile_image(self, image_path):
-        self.image_view.loading_finished(str(image_path))
+        self.image_view.load_from_url(str(image_path))
 
     def update_profile_avatar(self, image_path, username):
         if not self.is_exception(image_path):
@@ -825,7 +825,7 @@ class Main(Base, QWidget):
         if self.is_exception(response):
             self.image_view.error()
         else:
-            self.image_view.loading_finished(str(response.path))
+            self.image_view.load_from_object(response)
 
     def after_push_status_to_queue(self, account_id):
         self.update_box.done()

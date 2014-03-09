@@ -20,6 +20,7 @@ from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import QString
 
 from turpial.ui.lang import i18n
+from turpial.ui.util import humanize_time_intervals
 from turpial.ui.qt.widgets import Window
 
 from libturpial.common.tools import get_protocol_from, get_username_from
@@ -116,7 +117,7 @@ class QueueDialog(Window):
         else:
             est_time = 0
 
-        humanized_est_time = self.base.humanize_time_intervals(est_time)
+        humanized_est_time = humanize_time_intervals(est_time)
         next_message = ' '.join([i18n.get('next_message_should_be_posted_in'), humanized_est_time])
 
         if len(self.base.core.list_statuses_queue()) == 0:
@@ -167,8 +168,8 @@ class QueueDialog(Window):
             model.setItem(row, 1, QStandardItem(QString.fromUtf8(status.text)))
             row += 1
 
-        humanized_interval = self.base.humanize_time_intervals(self.base.core.get_queue_interval())
-        humanized_est_time = self.base.humanize_time_intervals(est_time)
+        humanized_interval = humanize_time_intervals(self.base.core.get_queue_interval())
+        humanized_est_time = humanize_time_intervals(est_time)
 
         warning = i18n.get('messages_will_be_send') % humanized_interval
         next_message = ' '.join([i18n.get('next_message_should_be_posted_in'), humanized_est_time])

@@ -89,6 +89,7 @@ class ImageView(Window):
         self.local_file = url
         self.loader.setVisible(False)
         pix = self.base.load_image(url, True)
+
         if EXIF_SUPPORT:
             fd = open(url, 'rb')
             tags = exifread.process_file(fd)
@@ -108,7 +109,7 @@ class ImageView(Window):
                     exif_data += "%s: %s" % (key, data['key'])
             else:
                 exif_data = i18n.get('exif_data_not_available')
-        self.exif_data.setText(exif_data)
+            self.exif_data.setText(exif_data)
 
         self.view.setPixmap(pix)
         self.view.adjustSize()

@@ -216,6 +216,7 @@ STRINGS = {
     'copy_image_url': _("Copy image URL"),
     'view_exif_info': _("View EXIF info"),
     'exif_data_not_available': _('EXIF data not available'),
+    'show_hide': _("Show / Hide"),
 }
 
 class i18n:

@@ -33,6 +33,13 @@ class TrayIcon(QSystemTrayIcon):
         self.loading()
         self.show()
 
+    def __build_header_menu(self):
+        show = QAction(i18n.get('show_hide'), self)
+        show.triggered.connect(self.__show_clicked)
+
+        self.menu.addAction(show)
+        self.menu.addSeparator()
+
     def __build_common_menu(self):
         settings = QAction(i18n.get('settings'), self)
         settings.triggered.connect(self.__settings_clicked)
@@ -52,6 +59,9 @@ class TrayIcon(QSystemTrayIcon):
 
     def __messages_clicked(self):
         self.messages_clicked.emit()
+
+    def __show_clicked(self):
+        self.toggled.emit()
 
     def __activated(self, reason):
         if reason == QSystemTrayIcon.Trigger:
@@ -73,6 +83,8 @@ class TrayIcon(QSystemTrayIcon):
 
     def normal(self):
         self.menu = QMenu()
+
+        self.__build_header_menu()
 
         updates = QAction(i18n.get('update_status'), self)
         updates.triggered.connect(self.__updates_clicked)

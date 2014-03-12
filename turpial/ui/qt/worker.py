@@ -621,7 +621,7 @@ class CoreWorker(QThread):
         message = args[1]
         self.status_posted_from_queue.emit(response, account_id, message)
 
-    def __after_delete_cache(self):
+    def __after_delete_cache(self, response=None):
         self.cache_deleted.emit()
 
     #================================================================

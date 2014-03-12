@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Notification module for Turpial """
+# Notification module for Turpial
 
 import os
 import logging
 
 from turpial.ui.lang import i18n
-from libturpial.common.tools import get_username_from
+from libturpial.common import get_username_from
 
 NOTIFY = True
 
@@ -49,11 +49,11 @@ class OSNotificationSystem:
 
     def updates(self, column, count, filtered=0):
         if count > 1:
-            message = i18n.get('new_tweets_updated') % count
+            message = i18n.get('new_tweets') % count
         else:
-            message = i18n.get('new_tweet_updated')
+            message = i18n.get('new_tweet')
 
-        title = i18n.get('updated') % get_username_from(column.account_id)
+        title = "%s-%s %s" % (get_username_from(column.account_id), column.slug, i18n.get('has_been_updated'))
         self.notify(title, message)
 
     def user_followed(self, username):

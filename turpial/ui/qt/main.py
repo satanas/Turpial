@@ -313,6 +313,7 @@ class Main(Base, QWidget):
     def show_profile_menu(self, point, profile):
         self.profile_menu = QMenu(self)
 
+
         if profile.following:
             unfollow_menu = QAction(i18n.get('unfollow'), self)
             unfollow_menu.triggered.connect(partial(self.unfollow, profile.account_id,
@@ -348,6 +349,13 @@ class Main(Base, QWidget):
         spam_menu.triggered.connect(partial(self.report_as_spam, profile.account_id,
             profile.username))
 
+        # FIXME: Use the profile_url variable in libturpial's twitter.py
+        # Put this value on every profile object
+        user_profile_url = "http://twitter.com/%s" % (profile.username)
+        open_in_browser = QAction(i18n.get('open_in_browser'), self)
+        open_in_browser.triggered.connect(lambda x: self.__open_in_browser(user_profile_url))
+
+        self.profile_menu.addAction(open_in_browser)
         self.profile_menu.addAction(mute_menu)
         self.profile_menu.addAction(block_menu)
         self.profile_menu.addAction(spam_menu)

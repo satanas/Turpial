@@ -248,6 +248,29 @@ class CoreWorker(QThread):
             self.core.save_all_config(config)
             return config['General']['queue-interval']
 
+    def get_window_size(self):
+        try:
+            size = self.core.config.cfg.get('Window', 'size', raw=True)
+            window_size = int(size.split(',')[0]), int(size.split(',')[1])
+            return window_size
+        except:
+            config = self.read_config()
+            config['Window']['size'] = "320,480"
+            self.core.save_all_config(config)
+            return config['Window']['size']
+
+    def set_window_size(self, width, height):
+        window_size = "%s,%s" % (width, height)
+        #FIXME: Hack to avoid the libturpial error saving config
+        self.update_config(self.read_config())
+        self.core.config.write('Window', 'size', window_size)
+
+    def get_inline_preview(self):
+        return self.core.config.read('General', 'inline-preview', boolean=True)
+
+    def set_inline_preview(self, value):
+        self.core.config.write('General', 'inline-preview', value)
+
     def read_config(self):
         config = {}
 
@@ -263,6 +286,9 @@ class CoreWorker(QThread):
 
     def update_config(self, new_config):
         self.core.save_all_config(new_config)
+
+    def add_new_config_option(self, section, option, default_value):
+        self.core.register_new_config_option(section, option, default_value)
 
     def get_shorten_url_service(self):
         return self.core.get_shorten_url_service()
@@ -479,23 +505,6 @@ class CoreWorker(QThread):
 
     def restore_config(self):
         self.core.delete_current_config()
-
-    def get_window_size(self):
-        try:
-            size = self.core.config.cfg.get('Window', 'size', raw=True)
-            window_size = int(size.split(',')[0]), int(size.split(',')[1])
-            return window_size
-        except:
-            config = self.read_config()
-            config['Window']['size'] = "320,480"
-            self.core.save_all_config(config)
-            return config['Window']['size']
-
-    def set_window_size(self, width, height):
-        window_size = "%s,%s" % (width, height)
-        #FIXME: Hack to avoid the libturpial error saving config
-        self.update_config(self.read_config())
-        self.core.config.write('Window', 'size', window_size)
 
     #================================================================
     # Callbacks

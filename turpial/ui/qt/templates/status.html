@@ -23,6 +23,13 @@
             <div class='message'>{{ message }}</div>
         </td>
     </tr>
+    {% if media %}
+        {% for url in media %}
+        <tr>
+            <td colspan='2'><a href="{{ url }}"><img class="preview-image" src="{{ url }}" /></a></td>
+        </tr>
+        {% endfor %}
+    {% endif %}
     <tr>
         <td colspan='2' class='footer'>
             <div class='extra'>

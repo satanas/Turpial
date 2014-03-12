@@ -112,6 +112,7 @@ class GeneralPage(BasePage):
         queue_frecuency = base.core.get_queue_interval()
         statuses = base.core.get_statuses_per_column()
         minimize_on_close = base.core.get_minimize_on_close()
+        inline_preview = base.core.get_inline_preview()
 
         self.update_frecuency = Slider(i18n.get('update_frecuency'), unit='min',
             default_value=update_frecuency, tooltip=i18n.get('update_frecuency_tooltip'))
@@ -122,22 +123,27 @@ class GeneralPage(BasePage):
             tooltip=i18n.get('queue_frecuency_tooltip'))
         self.minimize_on_close = CheckBox(i18n.get('minimize_on_close'), checked=minimize_on_close,
             tooltip=i18n.get('minimize_on_close_tooltip'))
+        self.inline_preview = CheckBox(i18n.get('inline_preview'), checked=inline_preview,
+            tooltip=i18n.get('inline_preview_tooltip'))
 
         self.layout.addWidget(self.update_frecuency)
         self.layout.addWidget(self.queue_frecuency)
         self.layout.addWidget(self.statuses_per_column)
         self.layout.addSpacing(10)
         self.layout.addWidget(self.minimize_on_close)
+        self.layout.addWidget(self.inline_preview)
         self.layout.addStretch(1)
 
     def get_config(self):
         minimize = 'on' if self.minimize_on_close.get_value() else 'off'
+        inline_preview = 'on' if self.inline_preview.get_value() else 'off'
 
         return {
             'update-interval': self.update_frecuency.get_value(),
             'statuses': self.statuses_per_column.get_value(),
             'queue-interval': self.queue_frecuency.get_value(),
-            'minimize-on-close': minimize
+            'minimize-on-close': minimize,
+            'inline-preview': inline_preview,
         }
 
 class NotificationsPage(BasePage):

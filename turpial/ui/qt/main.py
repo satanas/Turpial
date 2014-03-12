@@ -629,6 +629,7 @@ class Main(Base, QWidget):
             self.turn_on_queue_timer()
             self.core.status = self.core.READY
 
+            self.core.add_new_config_option('General', 'inline-preview', 'off')
 
     def after_save_account(self):
         self.account_registered.emit()

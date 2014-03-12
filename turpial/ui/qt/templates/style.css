@@ -90,6 +90,11 @@ body {
     background-color: #fff;
 }
 
+.status .preview-image {
+  max-width: 90%;
+  margin: 10px;
+}
+
 .avatar-row {
     position: relative;
     width: 58px;

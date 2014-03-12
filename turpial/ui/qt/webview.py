@@ -15,6 +15,7 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
+from libturpial.common import is_preview_service_supported
 
 class StatusesWebView(QWebView):
 
@@ -93,11 +94,15 @@ class StatusesWebView(QWebView):
         message = message.replace('\'', '&apos;')
         timestamp = self.base.humanize_timestamp(status.timestamp)
 
+        media = []
         if status.entities:
             # Highlight URLs
             for url in status.entities['urls']:
                 pretty_url = "<a href='%s'>%s</a>" % (url.url, url.display_text)
                 message = message.replace(url.search_for, pretty_url)
+
+                if is_preview_service_supported(url.url) and self.base.core.get_inline_preview():
+                    media.append(url.url)
 
             # Highlight hashtags
             sorted_hashtags = {}
@@ -131,7 +136,7 @@ class StatusesWebView(QWebView):
                 'mark_as_favorite': i18n.get('mark_as_favorite'), 'delete': i18n.get('delete'),
                 'remove_from_favorites': i18n.get('remove_from_favorites'),
                 'conversation_id': conversation_id, 'in_progress': i18n.get('in_progress'), 
-                'loading': i18n.get('loading'), 'avatar': avatar}
+                'loading': i18n.get('loading'), 'avatar': avatar, 'media': media}
 
         return self.status_template.render(attrs)
 

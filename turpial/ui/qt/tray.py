@@ -19,6 +19,7 @@ class TrayIcon(QSystemTrayIcon):
     settings_clicked = pyqtSignal(QPoint)
     updates_clicked = pyqtSignal()
     messages_clicked = pyqtSignal()
+    quit_clicked = pyqtSignal()
     toggled = pyqtSignal()
 
     def __init__(self, base):
@@ -44,8 +45,7 @@ class TrayIcon(QSystemTrayIcon):
         settings = QAction(i18n.get('settings'), self)
         settings.triggered.connect(self.__settings_clicked)
         quit = QAction(i18n.get('quit'), self)
-        #FIXME: create a signal for this
-        quit.triggered.connect(self.base.main_quit)
+        quit.triggered.connect(lambda x: self.__quit_clicked)
 
         self.menu.addAction(settings)
         self.menu.addSeparator()
@@ -59,6 +59,9 @@ class TrayIcon(QSystemTrayIcon):
 
     def __messages_clicked(self):
         self.messages_clicked.emit()
+
+    def __quit_clicked(self):
+        self.quit_clicked.emit()
 
     def __show_clicked(self):
         self.toggled.emit()

@@ -141,12 +141,14 @@ class Main(Base, QWidget):
         self.dock.queue_clicked.connect(self.show_queue_dialog)
         self.dock.filters_clicked.connect(self.show_filters_dialog)
         self.dock.preferences_clicked.connect(self.show_preferences_dialog)
+        self.dock.quit_clicked.connect(self.main_quit)
 
         self.tray = TrayIcon(self)
         self.tray.toggled.connect(self.toggle_tray_icon)
         self.tray.updates_clicked.connect(self.show_update_box)
         self.tray.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
         self.tray.settings_clicked.connect(self.show_preferences_dialog)
+        self.tray.quit_clicked.connect(self.main_quit)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)

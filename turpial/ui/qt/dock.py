@@ -28,6 +28,7 @@ class Dock(QStatusBar):
     queue_clicked = pyqtSignal()
     filters_clicked = pyqtSignal()
     preferences_clicked = pyqtSignal()
+    quit_clicked = pyqtSignal()
 
     LOADING = -1
     EMPTY = 0
@@ -102,6 +103,9 @@ class Dock(QStatusBar):
     def __about_clicked(self):
         self.base.show_about_dialog()
 
+    def __quit_clicked(self):
+        self.quit_clicked.emit()
+
     def __settings_clicked(self):
         self.settings_menu = QMenu(self)
 
@@ -118,6 +122,8 @@ class Dock(QStatusBar):
         preferences.triggered.connect(partial(self.__preferences_clicked))
         about_turpial = QAction(i18n.get('about_turpial'), self)
         about_turpial.triggered.connect(partial(self.__about_clicked))
+        quit = QAction(i18n.get('quit'), self)
+        quit.triggered.connect(self.__quit_clicked)
 
         if self.status > self.EMPTY:
             columns_menu = self.base.build_columns_menu()
@@ -140,6 +146,7 @@ class Dock(QStatusBar):
         self.settings_menu.addAction(preferences)
         self.settings_menu.addSeparator()
         self.settings_menu.addAction(about_turpial)
+        self.settings_menu.addAction(quit)
         self.settings_menu.exec_(QCursor.pos())
 
     def loading(self):

@@ -472,10 +472,9 @@ class Main(Base, QWidget):
                     for column in available_columns[account.id_]:
                         item = QAction(column.slug, self)
                         if column.__class__.__name__ == 'List':
-                            #FIXME: Uncomment this after fixing the error with get_list_id in libturpial
-                            #column_id = "-".join([account.id_, column.id_])
-                            #item.triggered.connect(partial(self.add_column, column_id))
-                            continue
+                            column_id = "-".join([account.id_, column.slug])
+                            item.triggered.connect(partial(self.add_column, column_id))
+                            #continue
                         else:
                             item.triggered.connect(partial(self.add_column, column.id_))
                         available_columns_menu.addAction(item)

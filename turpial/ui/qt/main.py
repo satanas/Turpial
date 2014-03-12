@@ -404,7 +404,7 @@ class Main(Base, QWidget):
 
     def open_url(self, url):
         preview_service = get_preview_service_from_url(url)
-        if preview_service:
+        if preview_service and not self.core.get_show_images_in_browser():
             self.core.get_image_preview(preview_service, url)
             self.image_view.start_loading(image_url=url)
         else:
@@ -630,6 +630,7 @@ class Main(Base, QWidget):
             self.core.status = self.core.READY
 
             self.core.add_new_config_option('General', 'inline-preview', 'off')
+            self.core.add_new_config_option('General', 'show-images-in-browser', 'off')
 
     def after_save_account(self):
         self.account_registered.emit()

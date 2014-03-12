@@ -218,8 +218,10 @@ STRINGS = {
     'view_exif_info': _("View EXIF info"),
     'exif_data_not_available': _('EXIF data not available'),
     'show_hide': _("Show / Hide"),
-    'inline_preview': _('Inline preview'),
-    'inline_preview_tooltip': _('Show images preview inline'),
+    'inline_preview': _("Inline preview"),
+    'inline_preview_tooltip': _("Show images preview inline"),
+    'open_images_in_browser': _("Open images in browser"),
+    'open_images_in_browser_tooltip': _("Open all images in your web browser"),
 }
 
 class i18n:

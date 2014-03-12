@@ -271,6 +271,12 @@ class CoreWorker(QThread):
     def set_inline_preview(self, value):
         self.core.config.write('General', 'inline-preview', value)
 
+    def get_show_images_in_browser(self):
+        return self.core.config.read('General', 'show-images-in-browser', boolean=True)
+
+    def set_show_images_in_browser(self, value):
+        self.core.config.write('General', 'show-images-in-browser', value)
+
     def read_config(self):
         config = {}
 

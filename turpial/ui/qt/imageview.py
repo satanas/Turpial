@@ -7,6 +7,7 @@ import shutil
 
 from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QLabel
+from PyQt4.QtGui import QMovie
 from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QPixmap
@@ -77,6 +78,7 @@ class ImageView(Window):
 
     def __clear(self):
         self.resize(350, 350)
+        self.view.setMovie(None)
         self.view.setPixmap(QPixmap())
         self.menu = None
         self.source_url = None
@@ -111,7 +113,12 @@ class ImageView(Window):
                 exif_data = i18n.get('exif_data_not_available')
             self.exif_data.setText(exif_data)
 
-        self.view.setPixmap(pix)
+        if url.find('.gif') > 0:
+            movie = QMovie(url)
+            self.view.setMovie(movie)
+            movie.start()
+        else:
+            self.view.setPixmap(pix)
         self.view.adjustSize()
         self.resize(pix.width() + 2, pix.height() + 2)
         self.status = self.LOADED

@@ -50,8 +50,15 @@ class OSNotificationSystem:
     def updates(self, column, count, filtered=0):
         if count > 1:
             message = i18n.get('new_tweets') % count
-        else:
+        elif count == 1:
             message = i18n.get('new_tweet')
+        else:
+            message = i18n.get('no_new_tweets')
+
+        filtered = ''
+        if filtered > 0:
+            filtered = i18n.get('filtered') % filtered
+            message += "(%s)" % filtered
 
         title = "%s-%s %s" % (get_username_from(column.account_id), column.slug, i18n.get('has_been_updated'))
         self.notify(title, message)

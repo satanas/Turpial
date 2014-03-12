@@ -189,6 +189,8 @@ STRINGS = {
     'error_uploading_image': _("Error uploading image"),
     'new_tweet': _("1 new tweet"),
     'new_tweets': _("%s new tweets"),
+    'filtered': _("%s filtered"),
+    'no_new_tweets': _('No new tweets'),
     'has_been_updated': _("has been updated"),
     'test': _("Test"),
     'open': _("Open"),

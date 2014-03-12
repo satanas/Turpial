@@ -512,6 +512,9 @@ class CoreWorker(QThread):
     def restore_config(self):
         self.core.delete_current_config()
 
+    def filter_statuses(self, statuses):
+        return self.core.filter_statuses(statuses)
+
     #================================================================
     # Callbacks
     #================================================================

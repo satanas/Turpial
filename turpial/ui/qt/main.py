@@ -139,7 +139,7 @@ class Main(Base, QWidget):
         self.dock.updates_clicked.connect(self.show_update_box)
         self.dock.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
         self.dock.queue_clicked.connect(self.show_queue_dialog)
-        #self.dock.filters_clicked.connect(self.show_filters_dialog)
+        self.dock.filters_clicked.connect(self.show_filters_dialog)
         self.dock.preferences_clicked.connect(self.show_preferences_dialog)
 
         self.tray = TrayIcon(self)
@@ -668,12 +668,14 @@ class Main(Base, QWidget):
         else:
             count = len(response)
             if count > 0:
+                updates = self.core.filter_statuses(response)
+                filtered = count - len(updates)
                 if self.core.get_notify_on_updates():
-                    self.os_notifications.updates(column, count)
+                    self.os_notifications.updates(column, len(updates), filtered)
 
                 if self.core.get_sound_on_updates():
                     self.sounds.updates()
-                self._container.update_column(column.id_, response)
+                self._container.update_column(column.id_, updates)
             else:
                 self._container.update_timestamps(column.id_)
 

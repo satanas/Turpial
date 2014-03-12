@@ -45,7 +45,7 @@ class TrayIcon(QSystemTrayIcon):
         settings = QAction(i18n.get('settings'), self)
         settings.triggered.connect(self.__settings_clicked)
         quit = QAction(i18n.get('quit'), self)
-        quit.triggered.connect(lambda x: self.__quit_clicked)
+        quit.triggered.connect(self.__quit_clicked)
 
         self.menu.addAction(settings)
         self.menu.addSeparator()

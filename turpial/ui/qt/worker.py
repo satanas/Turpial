@@ -420,7 +420,8 @@ class CoreWorker(QThread):
             self.__after_get_status_from_conversation, (column_id, status_root_id))
 
     def get_profile_image(self, account_id, username):
-        self.register(self.core.get_profile_image, (account_id, username),
+        # FIXME: Try to improve cache
+        self.register(self.core.get_profile_image, (account_id, username, False),
             self.__after_get_profile_image)
 
     def get_avatar_from_status(self, status):

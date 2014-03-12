@@ -254,16 +254,7 @@ class StatusesColumn(QWidget):
         self.webview.update_statuses(statuses)
 
         # Filter repeated statuses
-        # FIXME: This should be done with list comprehension using comparation methods on status.py
-        unique_statuses = []
-        for s1 in statuses:
-            exist = False
-            for s2 in self.statuses:
-                if s1.id_ == s2.id_:
-                    exist = True
-                    break
-            if not exist:
-                unique_statuses.append(s1)
+        unique_statuses = [s1 for s1 in statuses if s1 not in self.statuses]
 
         # Remove old conversations
         to_remove = self.statuses[-(len(unique_statuses)):]

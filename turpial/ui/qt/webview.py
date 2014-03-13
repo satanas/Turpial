@@ -43,7 +43,11 @@ class StatusesWebView(QWebView):
         self.show()
 
     def __element_clicked(self, qurl):
-        url = str(qurl.toString())
+        try:
+            url = str(qurl.toString())
+        except UnicodeEncodeError:
+            return
+
         if url.startswith('http'):
             self.link_clicked.emit(url)
         elif url.startswith('hashtag'):

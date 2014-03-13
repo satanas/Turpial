@@ -620,11 +620,13 @@ class Main(Base, QWidget):
             self.core.add_new_config_option('Browser', 'cmd', '')
             self.core.add_new_config_option('Advanced', 'show-user-avatars', 'on')
 
-    def after_save_account(self):
+    def after_save_account(self, account_id):
         self.account_registered.emit()
         if len(self.core.get_registered_accounts()) == 1:
             self.update_container()
         self.update_dock()
+        timeline = "%s-timeline" % account_id
+        self.add_column(timeline)
 
     def after_load_account(self):
         self.account_loaded.emit()

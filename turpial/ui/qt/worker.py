@@ -28,7 +28,7 @@ class CoreWorker(QThread):
     message_deleted = pyqtSignal(object, str, str)
     message_sent = pyqtSignal(object, str)
     column_updated = pyqtSignal(object, tuple)
-    account_saved = pyqtSignal()
+    account_saved = pyqtSignal(str)
     account_loaded = pyqtSignal()
     account_deleted = pyqtSignal()
     column_saved = pyqtSignal(str)
@@ -285,7 +285,7 @@ class CoreWorker(QThread):
 
     def save_account(self, account):
         account_id = self.core.register_account(account)
-        self.__after_save_account()
+        self.__after_save_account(account_id)
 
     # FIXME: Remove this after implement this in libturpial
     def load_account(self, account_id, trigger_signal=True):
@@ -463,8 +463,8 @@ class CoreWorker(QThread):
     def __after_login(self, response):
         self.ready.emit(response)
 
-    def __after_save_account(self):
-        self.account_saved.emit()
+    def __after_save_account(self, account_id):
+        self.account_saved.emit(account_id)
 
     def __after_load_account(self, response=None):
         self.account_loaded.emit()

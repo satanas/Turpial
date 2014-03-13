@@ -589,29 +589,6 @@ class Main(Base, QWidget):
     def restore_config(self):
         self.core.restore_config()
 
-    #'General':{
-    #    'profile-color': 'on',
-    #    'minimize-on-close': 'on',
-    #},
-    #'Window': {
-    #    'size': '320,480',
-    #    'position': '-1,-1',
-    #    'state': 'windowed',
-    #    'visibility': 'show',
-    #},
-    #'Notifications':{
-    #    'updates': 'on',
-    #    'login': 'on',
-    #    'icon': 'on',
-    #},
-    #'Sounds':{
-    #    'updates': 'on',
-    #    'login': 'on',
-    #},
-    #'Browser':{
-    #    'cmd': ''
-    #},
-
     #================================================================
     # Hooks definitions
     #================================================================
@@ -631,8 +608,17 @@ class Main(Base, QWidget):
             self.turn_on_queue_timer()
             self.core.status = self.core.READY
 
+            self.core.add_new_config_option('General', 'minimize-on-close', 'off')
             self.core.add_new_config_option('General', 'inline-preview', 'off')
             self.core.add_new_config_option('General', 'show-images-in-browser', 'off')
+            self.core.add_new_config_option('General', 'queue-interval', 30)
+            self.core.add_new_config_option('Window', 'size', '320,480')
+            self.core.add_new_config_option('Notifications', 'actions', 'on')
+            self.core.add_new_config_option('Notifications', 'updates', 'on')
+            self.core.add_new_config_option('Sounds', 'updates', 'on')
+            self.core.add_new_config_option('Sounds', 'login', 'on')
+            self.core.add_new_config_option('Browser', 'cmd', '')
+            self.core.add_new_config_option('Advanced', 'show-user-avatars', 'on')
 
     def after_save_account(self):
         self.account_registered.emit()

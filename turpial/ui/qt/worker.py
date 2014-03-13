@@ -111,29 +111,66 @@ class CoreWorker(QThread):
         if not os.path.isfile(self.queue_path):
             open(self.queue_path, 'w').close()
 
-    def get_default_browser(self):
-        return self.core.get_default_browser()
-
     def get_update_interval(self):
         return self.core.get_update_interval()
 
     def get_statuses_per_column(self):
         return self.core.get_max_statuses_per_column()
 
-    def get_minimize_on_close(self):
-        return self.core.minimize_on_close()
-
     # FIXME: Implement support on libturpial
     def get_proxy_configuration(self):
         return self.core.config.read_section('Proxy')
 
-    # FIXME: Implement support on libturpial
     def get_socket_timeout(self):
-        return int(self.core.config.read('Advanced', 'socket-timeout'))
+        return self.core.get_socket_timeout()
+
+    # Custom config
+    def get_minimize_on_close(self):
+        return self.core.config.read('General', 'minimize-on-close', boolean=True)
+
+    def set_minimize_on_close(self, value):
+        self.core.config.read('General', 'minimize-on-close', value)
 
     def get_show_user_avatars(self):
-        show_avatars = self.core.config.read('Advanced', 'show-user-avatars')
-        return True if show_avatars == 'on' else False
+        return self.core.config.read('Advanced', 'show-user-avatars', boolean=True)
+
+    def get_sound_on_login(self):
+        return self.core.config.read('Sounds', 'login', boolean=True)
+
+    def get_sound_on_updates(self):
+        return self.core.config.read('Sounds', 'updates', boolean=True)
+
+    def get_notify_on_updates(self):
+        return self.core.config.read('Notifications', 'updates', boolean=True)
+
+    def get_notify_on_actions(self):
+        return self.core.config.read('Notifications', 'actions', boolean=True)
+
+    def get_window_size(self):
+        size = self.core.config.read('Window', 'size')
+        return int(size.split(',')[0]), int(size.split(',')[1])
+
+    def set_window_size(self, width, height):
+        window_size = "%s,%s" % (width, height)
+        self.core.config.write('Window', 'size', window_size)
+
+    def get_default_browser(self):
+        return self.core.config.read('Browser', 'cmd')
+
+    def get_queue_interval(self):
+        return int(self.core.config.read('General', 'queue-interval'))
+
+    def get_inline_preview(self):
+        return self.core.config.read('General', 'inline-preview', boolean=True)
+
+    def set_inline_preview(self, value):
+        self.core.config.write('General', 'inline-preview', value)
+
+    def get_show_images_in_browser(self):
+        return self.core.config.read('General', 'show-images-in-browser', boolean=True)
+
+    def set_show_images_in_browser(self, value):
+        self.core.config.write('General', 'show-images-in-browser', value)
 
     def get_update_interval_per_column(self, column_id):
         column_key = self.__get_column_num_from_id(column_id)
@@ -194,89 +231,6 @@ class CoreWorker(QThread):
     def delete_cache(self):
         self.core.delete_cache()
 
-    def get_sound_on_login(self):
-        sound_on_login = self.core.config.read('Sounds', 'login')
-        if sound_on_login is None:
-            self.core.config.write('Sounds', 'login', 'on')
-            return True
-        else:
-            if sound_on_login == 'on':
-                return True
-            return False
-
-    def get_sound_on_updates(self):
-        sound_on_update = self.core.config.read('Sounds', 'updates')
-        if sound_on_update is None:
-            self.core.config.write('Sounds', 'updates', 'on')
-            return True
-        else:
-            if sound_on_update == 'on':
-                return True
-            return False
-
-    def get_notify_on_updates(self):
-        try:
-            notify_on_update = self.core.config.cfg.get('Notifications', 'updates', raw=True)
-            if notify_on_update == 'on':
-                return True
-            return False
-        except:
-            config = self.read_config()
-            config['Notifications']['on-updates'] = 'on'
-            self.core.save_all_config(config)
-            return True
-
-    def get_notify_on_actions(self):
-        try:
-            notify_on_actions = self.core.config.cfg.get('Notifications', 'actions', raw=True)
-            if notify_on_actions == 'on':
-                return True
-            return False
-        except:
-            config = self.read_config()
-            config['Notifications']['actions'] = 'on'
-            self.core.save_all_config(config)
-            return True
-
-    def get_queue_interval(self):
-        try:
-            queue_interval = self.core.config.cfg.get('General', 'queue-interval', raw=True)
-            return int(queue_interval)
-        except:
-            config = self.read_config()
-            config['General']['queue-interval'] = 30
-            self.core.save_all_config(config)
-            return config['General']['queue-interval']
-
-    def get_window_size(self):
-        try:
-            size = self.core.config.cfg.get('Window', 'size', raw=True)
-            window_size = int(size.split(',')[0]), int(size.split(',')[1])
-            return window_size
-        except:
-            config = self.read_config()
-            config['Window']['size'] = "320,480"
-            self.core.save_all_config(config)
-            return config['Window']['size']
-
-    def set_window_size(self, width, height):
-        window_size = "%s,%s" % (width, height)
-        #FIXME: Hack to avoid the libturpial error saving config
-        self.update_config(self.read_config())
-        self.core.config.write('Window', 'size', window_size)
-
-    def get_inline_preview(self):
-        return self.core.config.read('General', 'inline-preview', boolean=True)
-
-    def set_inline_preview(self, value):
-        self.core.config.write('General', 'inline-preview', value)
-
-    def get_show_images_in_browser(self):
-        return self.core.config.read('General', 'show-images-in-browser', boolean=True)
-
-    def set_show_images_in_browser(self, value):
-        self.core.config.write('General', 'show-images-in-browser', value)
-
     def read_config(self):
         config = {}
 
@@ -321,19 +275,7 @@ class CoreWorker(QThread):
         return self.core.available_upload_media_services()
 
     def get_registered_columns(self):
-        i = 1
-        columns = []
-        while True:
-            column_num = "column%s" % i
-            column_id = self.core.config.read('Columns', column_num)
-            if column_id:
-                account_id = get_account_id_from(column_id)
-                column_slug = get_column_slug_from(column_id)
-                columns.append(Column(account_id, column_slug))
-                i += 1
-            else:
-                break
-        return columns
+        return self.core.registered_columns_by_order()
 
     def is_muted(self, username):
         return self.core.is_muted(username)
@@ -452,7 +394,6 @@ class CoreWorker(QThread):
             self.__after_get_status_from_conversation, (column_id, status_root_id))
 
     def get_profile_image(self, account_id, username):
-        # FIXME: Try to improve cache
         self.register(self.core.get_profile_image, (account_id, username, False),
             self.__after_get_profile_image)
 

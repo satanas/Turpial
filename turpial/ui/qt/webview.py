@@ -24,7 +24,7 @@ class StatusesWebView(QWebView):
     profile_clicked = pyqtSignal(str)
     cmd_clicked = pyqtSignal(str)
 
-    EMPTY_PAGE= '<html><head></head><body></body></html>'
+    EMPTY_PAGE = '<html><head></head><body></body></html>'
 
     def __init__(self, base, column_id):
         QWebView.__init__(self)
@@ -37,6 +37,7 @@ class StatusesWebView(QWebView):
         if not self.base.debug:
             self.setContextMenuPolicy(Qt.NoContextMenu)
         self.setPage(page)
+        self.setHtml(self.EMPTY_PAGE)
         self.status_template = self.__load_template('status.html')
 
         self.stylesheet = self.__load_stylesheet()

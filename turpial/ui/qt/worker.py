@@ -25,7 +25,7 @@ class CoreWorker(QThread):
     status_deleted_from_queue = pyqtSignal()
     queue_cleared = pyqtSignal()
     status_posted_from_queue = pyqtSignal(object, str, str)
-    message_deleted = pyqtSignal(object, str, str)
+    message_deleted = pyqtSignal(object, str, str, str)
     message_sent = pyqtSignal(object, str)
     column_updated = pyqtSignal(object, tuple)
     account_saved = pyqtSignal(str)
@@ -338,7 +338,7 @@ class CoreWorker(QThread):
 
     def delete_direct_message(self, column_id, account_id, status_id):
         self.register(self.core.destroy_direct_message, (account_id, status_id),
-            self.__after_delete_direct_message, (column_id, account_id))
+            self.__after_delete_direct_message, (column_id, account_id, status_id))
 
     def send_direct_message(self, account_id, username, message):
         self.register(self.core.send_direct_message, (account_id, username,
@@ -502,7 +502,8 @@ class CoreWorker(QThread):
     def __after_delete_direct_message(self, response, args):
         column_id = args[0]
         account_id = args[1]
-        self.message_deleted.emit(response, column_id, account_id)
+        status_id = args[2]
+        self.message_deleted.emit(response, column_id, account_id, status_id)
 
     def __after_send_direct_message(self, response, account_id):
         self.message_sent.emit(response, account_id)

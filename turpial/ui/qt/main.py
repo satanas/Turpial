@@ -707,9 +707,12 @@ class Main(Base, QWidget):
             self._container.remove_status(response.id_)
             self._container.notify_success(column_id, response.id_, i18n.get('status_deleted'))
 
-    def after_delete_message(self, response, column_id, account_id):
-        self._container.remove_status(response.id_)
-        self._container.notify_success(column_id, response.id_, i18n.get('direct_message_deleted'))
+    def after_delete_message(self, response, column_id, account_id, status_id):
+        if self.is_exception(response):
+            self._container.error_deleting_status(column_id, status_id)
+        else:
+            self._container.remove_status(response.id_)
+            self._container.notify_success(column_id, response.id_, i18n.get('direct_message_deleted'))
 
     def after_send_message(self, response, account_id):
         if self.is_exception(response):

@@ -198,6 +198,7 @@ class StatusesColumn(QWidget):
         confirmation = self.base.show_confirmation_message(i18n.get('confirm_delete'),
             i18n.get('do_you_want_to_delete_direct_message'))
         if confirmation:
+            self.lock_status(status.id_)
             self.base.delete_direct_message(self.id_, self.account_id, status)
 
     def __reply_direct_message(self, status):

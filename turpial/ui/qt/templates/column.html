@@ -67,7 +67,8 @@
 
     function removeStatus(status_id) {
         var status_ = document.getElementById('status-' + status_id);
-        document.body.removeChild(status_);
+        var container = document.getElementById('statuses-container');
+        container.removeChild(status_);
     }
 
     function updateConversation(status_root_id, html) {

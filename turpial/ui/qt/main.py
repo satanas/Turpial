@@ -847,7 +847,11 @@ class Main(Base, QWidget):
         else:
             self.turn_off_queue_timer()
             if self.core.get_notify_on_actions():
-                self.os_notifications.message_from_queue_posted()
+                # TODO: Create proper notifications for each case
+                if account_id == BROADCAST_ACCOUNT:
+                    self.os_notifications.message_from_queue_posted()
+                else:
+                    self.os_notifications.message_from_queue_posted()
 
     def after_delete_status_from_queue(self):
         self.queue_dialog.update()

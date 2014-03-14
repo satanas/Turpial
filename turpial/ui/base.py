@@ -15,7 +15,7 @@ from libturpial.common import OS_MAC
 from libturpial.common.tools import detect_os
 
 MIN_WINDOW_WIDTH = 250
-
+BROADCAST_ACCOUNT = 'broadcast'
 
 class Base(Singleton):
     ACTION_REPEAT = 'repeat'

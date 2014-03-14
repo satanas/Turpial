@@ -8,6 +8,8 @@ import Queue
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import pyqtSignal
 
+from turpial.ui.base import BROADCAST_ACCOUNT
+
 from libturpial.api.core import Core
 from libturpial.api.models.status import Status
 from libturpial.api.models.column import Column
@@ -438,8 +440,12 @@ class CoreWorker(QThread):
         self.__after_clear_queue()
 
     def post_status_from_queue(self, account_id, message):
-        self.register(self.core.update_status, (account_id, message),
-            self.__after_post_status_from_queue, (account_id, message))
+        if account_id == BROADCAST_ACCOUNT:
+            self.register(self.core.broadcast_status, (None, message),
+                self.__after_post_status_from_queue, (account_id, message))
+        else:
+            self.register(self.core.update_status, (account_id, message),
+                self.__after_post_status_from_queue, (account_id, message))
 
     def delete_cache(self):
         self.register(self.core.delete_cache, None, self.__after_delete_cache)

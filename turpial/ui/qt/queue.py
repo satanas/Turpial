@@ -21,6 +21,7 @@ from PyQt4.QtCore import QString
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import Window
+from turpial.ui.base import BROADCAST_ACCOUNT
 
 from libturpial.common.tools import get_protocol_from, get_username_from
 
@@ -52,7 +53,7 @@ class QueueDialog(Window):
         self.post_next_button = QPushButton(i18n.get('post_next'))
         self.post_next_button.setEnabled(False)
         self.post_next_button.setToolTip(i18n.get('post_next_tooltip'))
-        self.post_next_button.clicked.connect(self.base.update_status_from_queue)
+        self.post_next_button.clicked.connect(self.__post_next_message)
 
         self.clear_button = QPushButton(i18n.get('delete_all'))
         self.clear_button.setEnabled(False)
@@ -100,6 +101,9 @@ class QueueDialog(Window):
             return
         self.base.clear_queue()
 
+    def __post_next_message(self):
+        self.__disable()
+        self.base.update_status_from_queue()
 
     def __enable(self):
         self.list_.setEnabled(True)
@@ -169,9 +173,10 @@ class QueueDialog(Window):
         row = 0
         for status in self.base.core.list_statuses_queue():
             username = get_username_from(status.account_id)
-            protocol_image = "%s.png" % get_protocol_from(status.account_id)
             item = QStandardItem(QString.fromUtf8(username))
-            item.setIcon(QIcon(self.base.load_image(protocol_image, True)))
+            if status.account_id != BROADCAST_ACCOUNT:
+                protocol_image = "%s.png" % get_protocol_from(status.account_id)
+                item.setIcon(QIcon(self.base.load_image(protocol_image, True)))
             model.setItem(row, 0, item)
             model.setItem(row, 1, QStandardItem(QString.fromUtf8(status.text)))
             row += 1

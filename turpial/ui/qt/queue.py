@@ -49,6 +49,11 @@ class QueueDialog(Window):
         self.delete_button.setToolTip(i18n.get('delete_selected_message'))
         self.delete_button.clicked.connect(self.__delete_message)
 
+        self.post_next_button = QPushButton(i18n.get('post_next'))
+        self.post_next_button.setEnabled(False)
+        self.post_next_button.setToolTip(i18n.get('post_next_tooltip'))
+        self.post_next_button.clicked.connect(self.base.update_status_from_queue)
+
         self.clear_button = QPushButton(i18n.get('delete_all'))
         self.clear_button.setEnabled(False)
         self.clear_button.setToolTip(i18n.get('delete_all_messages_in_queue'))
@@ -56,6 +61,7 @@ class QueueDialog(Window):
 
         button_box = QHBoxLayout()
         button_box.addStretch(1)
+        button_box.addWidget(self.post_next_button)
         button_box.addWidget(self.clear_button)
         button_box.addWidget(self.delete_button)
 
@@ -100,13 +106,16 @@ class QueueDialog(Window):
         self.delete_button.setEnabled(False)
         if len(self.base.core.list_statuses_queue()) > 0:
             self.clear_button.setEnabled(True)
+            self.post_next_button.setEnabled(True)
         else:
             self.clear_button.setEnabled(False)
+            self.post_next_button.setEnabled(False)
 
     def __disable(self):
         self.list_.setEnabled(False)
         self.delete_button.setEnabled(False)
         self.clear_button.setEnabled(False)
+        self.post_next_button.setEnabled(False)
 
     def __on_timeout(self):
         now = int(time.time())

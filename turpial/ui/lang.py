@@ -224,6 +224,8 @@ STRINGS = {
     'inline_preview_tooltip': _("Show images preview inline"),
     'open_images_in_browser': _("Open images in browser"),
     'open_images_in_browser_tooltip': _("Open all images in your web browser"),
+    'post_next': _("Post next"),
+    'post_next_tooltip': _("Post next message in queue manually"),
 }
 
 class i18n:

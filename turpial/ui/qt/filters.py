@@ -97,6 +97,7 @@ class FiltersDialog(Window):
             return
         self.list_.clear()
         self.__save_filters()
+        self.raise_()
 
     def __enable(self, value):
         self.list_.setEnabled(value)

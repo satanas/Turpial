@@ -55,10 +55,13 @@ class OSNotificationSystem:
         else:
             message = i18n.get('no_new_tweets')
 
-        filtered = ''
-        if filtered > 0:
-            filtered = i18n.get('filtered') % filtered
-            message += "(%s)" % filtered
+        filtered_message = ''
+        if filtered == 1:
+            filtered_message = ''.join([' (', i18n.get('tweet_filtered'), ')'])
+        elif filtered > 1:
+            filtered_message = ''.join([' (', i18n.get('tweets_filtered') % filtered, ')'])
+
+        message += filtered_message
 
         title = "%s-%s %s" % (get_username_from(column.account_id), column.slug, i18n.get('has_been_updated'))
         self.notify(title, message)

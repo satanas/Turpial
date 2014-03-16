@@ -38,7 +38,7 @@ from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.preferences import PreferencesDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 
-from libturpial.common import ColumnType, get_preview_service_from_url
+from libturpial.common import ColumnType, get_preview_service_from_url, escape_list_name
 
 
 # Exceptions
@@ -474,9 +474,9 @@ class Main(Base, QWidget):
                     for column in available_columns[account.id_]:
                         item = QAction(column.slug, self)
                         if column.__class__.__name__ == 'List':
-                            column_id = "-".join([account.id_, column.slug])
+                            slug = escape_list_name(column.slug)
+                            column_id = "-".join([account.id_, slug])
                             item.triggered.connect(partial(self.add_column, column_id))
-                            #continue
                         else:
                             item.triggered.connect(partial(self.add_column, column.id_))
                         available_columns_menu.addAction(item)

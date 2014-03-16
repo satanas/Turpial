@@ -226,6 +226,8 @@ STRINGS = {
     'open_images_in_browser_tooltip': _("Open all images in your web browser"),
     'post_next': _("Post next"),
     'post_next_tooltip': _("Post next message in queue manually"),
+    'add_photo': _("Add photo"),
+    'remove_photo': _("Remove photo"),
 }
 
 class i18n:

@@ -491,6 +491,9 @@ class Main(Base, QWidget):
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.core.update_status(account_id, message, in_reply_to_id)
 
+    def update_status_with_media(self, account_id, message, in_reply_to_id=None, media=None):
+        self.core.update_status_with_media(account_id, message, in_reply_to_id, media)
+
     def broadcast_status(self, message):
         accounts = []
         for account in self.core.get_registered_accounts():

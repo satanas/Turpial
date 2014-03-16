@@ -328,6 +328,16 @@ class CoreWorker(QThread):
         self.register(self.core.update_status, (account_id,
             message, in_reply_to_id), self.__after_update_status, account_id)
 
+    def update_status_with_media(self, account_id, message, media, in_reply_to_id=None):
+        if self.get_upload_media_service() != 'pic.twitter.com':
+            media_url = self.core.upload_media(account_id, media)
+            message = "%s %s" % (message, media_url)
+            self.register(self.core.update_status, (account_id,
+                message, in_reply_to_id), self.__after_update_status, account_id)
+        else:
+            self.register(self.core.update_status, (account_id,
+                message, in_reply_to_id, media), self.__after_update_status, account_id)
+
     def broadcast_status(self, accounts, message):
         self.register(self.core.broadcast_status, (accounts, message),
             self.__after_broadcast_status)

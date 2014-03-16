@@ -6,6 +6,7 @@ from PyQt4.QtGui import QFont
 from PyQt4.QtGui import QIcon
 from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QComboBox
 from PyQt4.QtGui import QTextEdit
 from PyQt4.QtGui import QCompleter
@@ -20,6 +21,7 @@ from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
+from turpial.ui.base import BROADCAST_ACCOUNT
 from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.widgets import ImageButton, ErrorLabel
 
@@ -37,8 +39,8 @@ class UpdateBox(QWidget):
 
         self.text_edit = CompletionTextEdit()
 
-        self.upload_button = ImageButton(base, 'action-upload.png',
-                i18n.get('upload_image'))
+        self.upload_button = ImageButton(base, 'action-add-media.png',
+                i18n.get('add_photo'))
         self.short_button = ImageButton(base, 'action-shorten.png',
                 i18n.get('short_urls'))
 
@@ -69,10 +71,19 @@ class UpdateBox(QWidget):
 
         self.error_message = ErrorLabel()
 
+        self.media = None
+        self.preview_image = QLabel()
+        self.preview_image.setVisible(False)
+
+        text_edit_box = QHBoxLayout()
+        text_edit_box.addWidget(self.text_edit)
+        text_edit_box.addSpacing(5)
+        text_edit_box.addWidget(self.preview_image)
+
         self.update_button.clicked.connect(self.__update_status)
         self.queue_button.clicked.connect(self.__queue_status)
         self.short_button.clicked.connect(self.__short_urls)
-        self.upload_button.clicked.connect(self.__upload_image)
+        self.upload_button.clicked.connect(self.__media_clicked)
         self.text_edit.textChanged.connect(self.__update_count)
         self.text_edit.quit.connect(self.closeEvent)
         self.text_edit.activated.connect(self.__update_status)
@@ -80,7 +91,8 @@ class UpdateBox(QWidget):
 
         layout = QVBoxLayout()
         layout.setSpacing(0)
-        layout.addWidget(self.text_edit)
+        #layout.addWidget(self.text_edit)
+        layout.addLayout(text_edit_box)
         layout.addWidget(self.loader)
         layout.addSpacing(5)
         layout.addWidget(self.error_message)
@@ -95,13 +107,15 @@ class UpdateBox(QWidget):
         urls = [str(url) for url in get_urls(message) if len(url) > 23]
         for url in urls:
             message = message.replace(url, '0' * 23)
+        if self.media:
+            message += '0' * 23
         return MAX_CHAR - len(message)
 
     def __update_count(self):
         remaining_chars = self.__count_chars()
-        if remaining_chars <= 10:
+        if remaining_chars < 0:
             self.char_count.setStyleSheet("QLabel { color: #D40D12 }")
-        elif remaining_chars > 10 and remaining_chars <= 20:
+        elif remaining_chars <= 10:
             self.char_count.setStyleSheet("QLabel { color: #D4790D }")
         else:
             self.char_count.setStyleSheet("QLabel { color: #000000 }")
@@ -120,6 +134,12 @@ class UpdateBox(QWidget):
             self.error(i18n.get('message_too_long'))
             return False
 
+        index = self.accounts_combo.currentIndex()
+        account_id = str(self.accounts_combo.itemData(index).toPyObject())
+        if self.media and account_id == BROADCAST_ACCOUNT:
+            self.error(i18n.get('broadcast_status_with_media_not_supported'))
+            return False
+
         return True
 
     def __short_urls(self):
@@ -127,20 +147,34 @@ class UpdateBox(QWidget):
         message = unicode(self.text_edit.toPlainText())
         self.base.short_urls(message)
 
-    def __upload_image(self):
-        index = self.accounts_combo.currentIndex()
-        accounts = self.base.core.get_registered_accounts()
+    def __media_clicked(self):
+        if self.media:
+            self.__remove_media()
+        else:
+            self.__upload_media()
 
-        if index == 0 and len(accounts) > 1:
-            self.error(i18n.get('select_an_account_before_post'))
-            return False
-
-        account_id = str(self.accounts_combo.itemData(index).toPyObject())
+    def __upload_media(self):
         filename = str(QFileDialog.getOpenFileName(self, i18n.get('upload_image'),
             self.base.home_path))
+
         if filename != '':
-            self.enable(False)
-            self.base.upload_media(account_id, filename)
+            self.media = filename
+            pix = QPixmap(filename)
+            scaled_pix = pix.scaled(100, 100, Qt.KeepAspectRatio)
+            self.preview_image.setPixmap(scaled_pix)
+            self.preview_image.setVisible(True)
+            self.upload_button.change_icon('action-remove-media.png')
+            self.upload_button.setToolTip(i18n.get('remove_photo'))
+            self.queue_button.setEnabled(False)
+            self.__update_count()
+
+    def __remove_media(self):
+        self.media = None
+        self.preview_image.setPixmap(QPixmap())
+        self.preview_image.setVisible(False)
+        self.upload_button.change_icon('action-add-media.png')
+        self.upload_button.setToolTip(i18n.get('add_photo'))
+        self.queue_button.setEnabled(True)
 
     def __update_status(self):
         index = self.accounts_combo.currentIndex()
@@ -160,7 +194,11 @@ class UpdateBox(QWidget):
             if account_id == 'broadcast':
                 self.base.broadcast_status(message)
             else:
-                self.base.update_status(account_id, message, self.in_reply_to_id)
+                if self.media:
+                    self.base.update_status_with_media(account_id, message, self.media,
+                                                       self.in_reply_to_id)
+                else:
+                    self.base.update_status(account_id, message, self.in_reply_to_id)
 
     def __queue_status(self):
         index = self.accounts_combo.currentIndex()
@@ -182,11 +220,16 @@ class UpdateBox(QWidget):
         self.direct_message_to = None
         self.quoting = False
         self.message = None
+        self.media = None
         self.cursor_position = None
         self.text_edit.setText('')
         self.accounts_combo.setCurrentIndex(0)
         self.queue_button.setEnabled(True)
         self.loader.setVisible(False)
+        self.preview_image.setPixmap(QPixmap())
+        self.preview_image.setVisible(False)
+        self.upload_button.change_icon('action-add-media.png')
+        self.upload_button.setToolTip(i18n.get('add_photo'))
         self.error_message.setVisible(False)
         self.error_message.setText('')
         self.enable(True)

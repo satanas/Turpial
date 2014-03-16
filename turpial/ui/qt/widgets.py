@@ -14,10 +14,14 @@ from PyQt4.QtGui import QToolButton
 class ImageButton(QToolButton):
     def __init__(self, base, image, tooltip):
         QToolButton.__init__(self)
-        icon = QIcon(base.get_image_path(image))
-        self.setIcon(icon)
+        self.base = base
+        self.change_icon(image)
         self.setToolTip(tooltip)
         self.setMaximumSize(24, 24)
+
+    def change_icon(self, image):
+        icon = QIcon(self.base.get_image_path(image))
+        self.setIcon(icon)
 
 class HLine(QFrame):
     def __init__(self):

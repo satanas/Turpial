@@ -89,7 +89,7 @@ class OSNotificationSystem:
         self.notify(i18n.get('message_queued'), i18n.get('message_queued_successfully'))
 
     def message_from_queue_posted(self):
-        self.notify(i18n.get('message_updated'), i18n.get('message_from_queue_has_been_posted'))
+        self.notify(i18n.get('message_posted'), i18n.get('message_from_queue_has_been_posted'))
 
     def message_from_queue_broadcasted(self):
         self.notify(i18n.get('message_broadcasted'),

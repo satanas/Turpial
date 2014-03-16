@@ -63,7 +63,8 @@ class OSNotificationSystem:
 
         message += filtered_message
 
-        title = "%s-%s %s" % (get_username_from(column.account_id), column.slug, i18n.get('has_been_updated'))
+        title = "%s-%s %s" % (get_username_from(column.account_id),
+                              column.slug, i18n.get('has_been_updated'))
         self.notify(title, message)
 
     def user_followed(self, username):
@@ -84,8 +85,18 @@ class OSNotificationSystem:
     def user_unmuted(self, username):
         self.notify(i18n.get('unmute'), i18n.get('has_been_unmuted') % username)
 
+    def message_enqueued(self):
+        self.notify(i18n.get('message_enqueued'), i18n.get('message_enqueued_successfully'))
+
     def message_from_queue_posted(self):
-        self.notify(i18n.get('update_status'), i18n.get('message_from_queue_has_been_posted'))
+        self.notify(i18n.get('message_updated'), i18n.get('message_from_queue_has_been_posted'))
+
+    def message_from_queue_broadcasted(self):
+        self.notify(i18n.get('message_broadcasted'),
+                    i18n.get('message_from_queue_has_been_broadcasted'))
+
+    def message_enqueued_due_error(self):
+        self.notify(i18n.get('message_enqueued'), i18n.get('message_enqueued_due_error'))
 
     def following_error(self, message, follow):
         if follow:

@@ -247,7 +247,9 @@ class CoreWorker(QThread):
         return config
 
     def update_config(self, new_config):
-        self.core.save_all_config(new_config)
+        for section in new_config:
+            for option in new_config[section]:
+                self.core.write_config_value(section, option, new_config[section][option])
 
     def add_new_config_option(self, section, option, default_value):
         self.core.register_new_config_option(section, option, default_value)

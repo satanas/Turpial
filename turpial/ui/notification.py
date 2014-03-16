@@ -85,7 +85,7 @@ class OSNotificationSystem:
     def user_unmuted(self, username):
         self.notify(i18n.get('unmute'), i18n.get('has_been_unmuted') % username)
 
-    def message_enqueued(self):
+    def message_enqueued_successfully(self):
         self.notify(i18n.get('message_enqueued'), i18n.get('message_enqueued_successfully'))
 
     def message_from_queue_posted(self):

@@ -85,8 +85,8 @@ class OSNotificationSystem:
     def user_unmuted(self, username):
         self.notify(i18n.get('unmute'), i18n.get('has_been_unmuted') % username)
 
-    def message_enqueued_successfully(self):
-        self.notify(i18n.get('message_enqueued'), i18n.get('message_enqueued_successfully'))
+    def message_queued_successfully(self):
+        self.notify(i18n.get('message_queued'), i18n.get('message_queued_successfully'))
 
     def message_from_queue_posted(self):
         self.notify(i18n.get('message_updated'), i18n.get('message_from_queue_has_been_posted'))
@@ -95,8 +95,8 @@ class OSNotificationSystem:
         self.notify(i18n.get('message_broadcasted'),
                     i18n.get('message_from_queue_has_been_broadcasted'))
 
-    def message_enqueued_due_error(self):
-        self.notify(i18n.get('message_enqueued'), i18n.get('message_enqueued_due_error'))
+    def message_queued_due_error(self):
+        self.notify(i18n.get('message_queued'), i18n.get('message_queued_due_error'))
 
     def following_error(self, message, follow):
         if follow:

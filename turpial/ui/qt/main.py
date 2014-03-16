@@ -838,7 +838,7 @@ class Main(Base, QWidget):
         self.update_box.done()
         self.turn_on_queue_timer()
         if self.core.get_notify_on_actions():
-            self.os_notifications.message_enqueued_successfully()
+            self.os_notifications.message_queued_successfully()
 
     def after_pop_status_from_queue(self, status):
         if status:
@@ -847,8 +847,8 @@ class Main(Base, QWidget):
     def after_post_status_from_queue(self, response, account_id, message):
         if self.is_exception(response):
             if self.core.get_notify_on_actions():
-                self.os_notifications.message_enqueued_due_error()
-            print "+++Message enqueued again for error posting"
+                self.os_notifications.message_queued_due_error()
+            print "+++Message queued again for error posting"
             self.push_status_to_queue(account_id, message)
         else:
             self.turn_off_queue_timer()

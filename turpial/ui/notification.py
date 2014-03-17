@@ -6,24 +6,36 @@ import os
 import logging
 
 from turpial.ui.lang import i18n
-from libturpial.common import get_username_from
+from libturpial.common import OS_LINUX, OS_MAC
+from libturpial.common.tools import get_username_from, detect_os
 
-NOTIFY = True
+LINUX_NOTIFY = True
+OSX_NOTIFY = True
 
 try:
     import pynotify
 except ImportError:
-    NOTIFY = False
+    LINUX_NOTIFY = False
 
-class OSNotificationSystem:
-    def __init__(self, images_path, disable=False):
-        self.images_path = images_path
+try:
+    from Foundation import NSUserNotification
+    from Foundation import NSUserNotificationCenter
+except ImportError:
+    OSX_NOTIFY = False
+
+class NotificationSystem:
+    @staticmethod
+    def create(images_path):
+        current_os = detect_os()
+        if current_os == OS_LINUX:
+            return LinuxNotificationSystem(images_path)
+        elif current_os == OS_MAC:
+            return OsxNotificationSystem(images_path)
+
+class BaseNotification:
+    def __init__(self, disable=False):
         self.activate()
         self.disable = disable
-
-        if not NOTIFY:
-            self.disable = True
-            return
 
     def activate(self):
         self.active = True
@@ -32,20 +44,7 @@ class OSNotificationSystem:
         self.active = False
 
     def notify(self, title, message, icon=None):
-        if self.disable:
-            return
-
-        if self.active and not self.disable:
-            if pynotify.init("Turpial"):
-                if not icon:
-                    iconpath = os.path.join(self.images_path, 'turpial-notification.png')
-                    icon = os.path.realpath(iconpath)
-                icon = "file://%s" % icon
-                notification = pynotify.Notification(title, message, icon)
-                try:
-                    notification.show()
-                except Exception, e:
-                    print e
+        raise NotImplementedError
 
     def updates(self, column, count, filtered=0):
         if count > 1:
@@ -100,6 +99,46 @@ class OSNotificationSystem:
 
     def following_error(self, message, follow):
         if follow:
-            self.popup(i18n.get('turpial_follow'), message)
+            self.notify(i18n.get('turpial_follow'), message)
         else:
-            self.popup(i18n.get('turpial_unfollow'), message)
+            self.notify(i18n.get('turpial_unfollow'), message)
+
+class LinuxNotificationSystem(BaseNotification):
+    def __init__(self, images_path, disable=False):
+        BaseNotification.__init__(self, not LINUX_NOTIFY)
+        self.images_path = images_path
+
+    def notify(self, title, message, icon=None):
+        if self.disable:
+            return
+
+        if self.active and not self.disable:
+            if pynotify.init("Turpial"):
+                if not icon:
+                    iconpath = os.path.join(self.images_path, 'turpial-notification.png')
+                    icon = os.path.realpath(iconpath)
+                icon = "file://%s" % icon
+                notification = pynotify.Notification(title, message, icon)
+                try:
+                    notification.show()
+                except Exception, e:
+                    print e
+
+class OsxNotificationSystem(BaseNotification):
+    def __init__(self, images_path, disable=False):
+        BaseNotification.__init__(self, not OSX_NOTIFY)
+        self.images_path = images_path
+
+    def notify(self, title, message, icon=None):
+        if self.disable:
+            return
+
+        if self.active and not self.disable:
+            # TODO: Put the icon
+            notification = NSUserNotification.alloc().init()
+            notification.setTitle_(title)
+            notification.setInformativeText_(message)
+
+            center = NSUserNotificationCenter.defaultUserNotificationCenter()
+            center.scheduleNotification_(notification)
+            #center.deliverNotification_(notification)

@@ -21,7 +21,7 @@ from PyQt4.QtCore import QTimer, pyqtSignal, QRect
 
 from turpial.ui.base import * #NOQA
 from turpial.ui.sound import SoundSystem
-from turpial.ui.notification import OSNotificationSystem
+from turpial.ui.notification import NotificationSystem
 
 from turpial.ui.qt.dock import Dock
 from turpial.ui.qt.tray import TrayIcon
@@ -128,7 +128,7 @@ class Main(Base, QWidget):
 
         self._container = Container(self)
 
-        self.os_notifications = OSNotificationSystem(self.images_path)
+        self.os_notifications = NotificationSystem.create(self.images_path)
         self.sounds = SoundSystem(self.sounds_path)
 
         self.dock = Dock(self)

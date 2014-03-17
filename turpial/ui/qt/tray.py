@@ -14,6 +14,9 @@ from PyQt4.QtCore import pyqtSignal
 from turpial import DESC
 from turpial.ui.lang import i18n
 
+from libturpial.common import OS_MAC
+from libturpial.common.tools import detect_os
+
 class TrayIcon(QSystemTrayIcon):
 
     settings_clicked = pyqtSignal(QPoint)
@@ -26,7 +29,10 @@ class TrayIcon(QSystemTrayIcon):
         QSystemTrayIcon.__init__(self)
 
         self.base = base
-        icon = QIcon(base.get_image_path('turpial-tray.png'))
+        if detect_os() == OS_MAC:
+            icon = QIcon(base.get_image_path('turpial-tray-mono-dark.png'))
+        else:
+            icon = QIcon(base.get_image_path('turpial-tray.png'))
         self.setIcon(icon)
         self.setToolTip(DESC)
 

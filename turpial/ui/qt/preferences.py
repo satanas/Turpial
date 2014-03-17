@@ -108,20 +108,20 @@ class GeneralPage(BasePage):
     def __init__(self, base):
         BasePage.__init__(self, i18n.get('general_tab_description'))
 
-        update_frecuency = base.core.get_update_interval()
-        queue_frecuency = base.core.get_queue_interval()
+        update_frequency = base.core.get_update_interval()
+        queue_frequency = base.core.get_queue_interval()
         statuses = base.core.get_statuses_per_column()
         minimize_on_close = base.core.get_minimize_on_close()
         inline_preview = base.core.get_inline_preview()
         images_in_browser = base.core.get_show_images_in_browser()
 
-        self.update_frecuency = Slider(i18n.get('update_frecuency'), unit='min',
-            default_value=update_frecuency, tooltip=i18n.get('update_frecuency_tooltip'))
+        self.update_frequency = Slider(i18n.get('update_frequency'), unit='min',
+            default_value=update_frequency, tooltip=i18n.get('update_frequency_tooltip'))
         self.statuses_per_column = Slider(i18n.get('statuses_per_column'), minimum_value=20,
             maximum_value=200, default_value=statuses)
-        self.queue_frecuency = Slider(i18n.get('queue_frecuency'), minimum_value=5,
-            maximum_value=720, default_value=queue_frecuency, single_step=15, time=True,
-            tooltip=i18n.get('queue_frecuency_tooltip'))
+        self.queue_frequency = Slider(i18n.get('queue_frequency'), minimum_value=5,
+            maximum_value=720, default_value=queue_frequency, single_step=15, time=True,
+            tooltip=i18n.get('queue_frequency_tooltip'))
         self.minimize_on_close = CheckBox(i18n.get('minimize_on_close'), checked=minimize_on_close,
             tooltip=i18n.get('minimize_on_close_tooltip'))
         self.inline_preview = CheckBox(i18n.get('inline_preview'), checked=inline_preview,
@@ -129,8 +129,8 @@ class GeneralPage(BasePage):
         self.images_in_browser = CheckBox(i18n.get('open_images_in_browser'), checked=images_in_browser,
             tooltip=i18n.get('open_images_in_browser_tooltip'))
 
-        self.layout.addWidget(self.update_frecuency)
-        self.layout.addWidget(self.queue_frecuency)
+        self.layout.addWidget(self.update_frequency)
+        self.layout.addWidget(self.queue_frequency)
         self.layout.addWidget(self.statuses_per_column)
         self.layout.addSpacing(10)
         self.layout.addWidget(self.minimize_on_close)
@@ -144,9 +144,9 @@ class GeneralPage(BasePage):
         images_in_browser = 'on' if self.images_in_browser.get_value() else 'off'
 
         return {
-            'update-interval': self.update_frecuency.get_value(),
+            'update-interval': self.update_frequency.get_value(),
             'statuses': self.statuses_per_column.get_value(),
-            'queue-interval': self.queue_frecuency.get_value(),
+            'queue-interval': self.queue_frequency.get_value(),
             'minimize-on-close': minimize,
             'inline-preview': inline_preview,
             'show-images-in-browser': images_in_browser,

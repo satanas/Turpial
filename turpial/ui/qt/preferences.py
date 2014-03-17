@@ -29,7 +29,7 @@ from turpial.ui.qt.widgets import Window
 class PreferencesDialog(Window):
     def __init__(self, base):
         Window.__init__(self, base, i18n.get('preferences'))
-        self.setFixedSize(450, 360)
+        self.setFixedSize(500, 400)
         self.current_config = self.base.get_config()
         self.setAttribute(Qt.WA_QuitOnClose, False)
 

@@ -23,7 +23,7 @@ from turpial.ui.qt.widgets import ImageButton
 from turpial.ui.qt.loader import BarLoadIndicator
 from turpial.ui.qt.webview import StatusesWebView
 
-from libturpial.common import get_preview_service_from_url, OS_MAC
+from libturpial.common import get_preview_service_from_url, unescape_list_name, OS_MAC
 from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from,\
         get_username_from, detect_os
 
@@ -70,6 +70,7 @@ class StatusesColumn(QWidget):
         self.set_column_id(column_id)
         username = get_username_from(self.account_id)
         column_slug = get_column_slug_from(column_id)
+        column_slug = unescape_list_name(column_slug)
         column_slug = column_slug.replace('%23', '#')
         column_slug = column_slug.replace('%40', '@')
 

@@ -1,14 +1,14 @@
 # Translations template for turpial.
-# Copyright (C) 2013 Turpial
+# Copyright (C) 2014 Turpial
 # This file is distributed under the same license as the turpial project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: turpial 2.9.7-a1\n"
+"Project-Id-Version: turpial 3.5.9-dev\n"
 "Report-Msgid-Bugs-To: turpial-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-11-23 11:04-0300\n"
+"POT-Creation-Date: 2014-03-16 15:15-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -462,342 +462,443 @@ msgid "@%s has been unmuted"
 msgstr ""
 
 #: turpial/ui/lang.py:129
-msgid "Message from queue has been posted"
+msgid "Message posted"
 msgstr ""
 
 #: turpial/ui/lang.py:130
-msgid "Close"
+msgid "Message broadcasted"
 msgstr ""
 
 #: turpial/ui/lang.py:131
-msgid "General"
+msgid "Message queued"
 msgstr ""
 
-#: turpial/ui/lang.py:132 turpial/ui/gtk/preferences/tabs.py:88
-msgid "Notifications"
+#: turpial/ui/lang.py:132
+msgid "A message from queue has been posted"
 msgstr ""
 
 #: turpial/ui/lang.py:133
-msgid "Services"
+msgid "A message from queue has been broadcasted"
 msgstr ""
 
 #: turpial/ui/lang.py:134
-msgid "Web Browser"
+msgid "A message has been queued due to error posting"
 msgstr ""
 
-#: turpial/ui/lang.py:135 turpial/ui/lang.py:167
-msgid "Filters"
+#: turpial/ui/lang.py:135
+msgid "A message has been queued successfully"
 msgstr ""
 
 #: turpial/ui/lang.py:136
-msgid "Proxy"
+msgid "Close"
 msgstr ""
 
 #: turpial/ui/lang.py:137
-msgid "Advanced"
+msgid "General"
 msgstr ""
 
-#: turpial/ui/lang.py:138
-msgid "Adjust update frecuency and other general parameters"
+#: turpial/ui/lang.py:138 turpial/ui/gtk/preferences/tabs.py:88
+msgid "Notifications"
 msgstr ""
 
-#: turpial/ui/lang.py:139 turpial/ui/gtk/preferences/tabs.py:61
-msgid "Select the notifications you want to receive from Turpial"
+#: turpial/ui/lang.py:139
+msgid "Services"
 msgstr ""
 
 #: turpial/ui/lang.py:140
-msgid "Setup your favorite web browser to open links"
+msgid "Web Browser"
 msgstr ""
 
 #: turpial/ui/lang.py:141
-msgid "Select your preferred service to short URLs and upload images"
+msgid "Filters"
 msgstr ""
 
-#: turpial/ui/lang.py:142 turpial/ui/gtk/preferences/tabs.py:383
-msgid "Proxy settings for Turpial (Need Restart)"
+#: turpial/ui/lang.py:142
+msgid "Proxy"
 msgstr ""
 
 #: turpial/ui/lang.py:143
-msgid "Advanced options. Please, keep away unless you know what you are doing"
+msgid "Advanced"
 msgstr ""
 
 #: turpial/ui/lang.py:144
-msgid "Update frecuency"
+msgid "Adjust update frequency and other general parameters"
 msgstr ""
 
-#: turpial/ui/lang.py:145
-msgid "Queue frecuency"
+#: turpial/ui/lang.py:145 turpial/ui/gtk/preferences/tabs.py:61
+msgid "Select the notifications you want to receive from Turpial"
 msgstr ""
 
 #: turpial/ui/lang.py:146
-msgid "Statuses per column"
+msgid "Setup your favorite web browser to open links"
 msgstr ""
 
 #: turpial/ui/lang.py:147
-msgid "Minimize on close"
+msgid "Select your preferred service to short URLs and upload images"
 msgstr ""
 
-#: turpial/ui/lang.py:148
-msgid "Notify on updates"
+#: turpial/ui/lang.py:148 turpial/ui/gtk/preferences/tabs.py:383
+msgid "Proxy settings for Turpial (Need Restart)"
 msgstr ""
 
 #: turpial/ui/lang.py:149
-msgid "Notify on actions"
+msgid "Advanced options. Please, keep away unless you know what you are doing"
 msgstr ""
 
 #: turpial/ui/lang.py:150
-msgid "Sound on login"
+msgid "Update frequency"
 msgstr ""
 
 #: turpial/ui/lang.py:151
-msgid "Sound on updates"
+msgid "Queue frequency"
 msgstr ""
 
 #: turpial/ui/lang.py:152
-msgid "Use default browser"
+msgid "Statuses per column"
 msgstr ""
 
 #: turpial/ui/lang.py:153
-msgid "Set custom browser"
+msgid "Minimize on close"
 msgstr ""
 
-#: turpial/ui/lang.py:154 turpial/ui/gtk/preferences/tabs.py:232
-msgid "Command"
+#: turpial/ui/lang.py:154
+msgid "Notify on updates"
 msgstr ""
 
-#: turpial/ui/lang.py:155 turpial/ui/gtk/preferences/tabs.py:316
-msgid "Clean cache"
+#: turpial/ui/lang.py:155
+msgid "Notify on actions"
 msgstr ""
 
 #: turpial/ui/lang.py:156
-msgid "Delete all files in cache"
+msgid "Sound on login"
 msgstr ""
 
 #: turpial/ui/lang.py:157
-msgid "Restore configuration to default"
+msgid "Sound on updates"
 msgstr ""
 
-#: turpial/ui/lang.py:158 turpial/ui/gtk/preferences/tabs.py:324
-msgid "Restore config"
+#: turpial/ui/lang.py:158
+msgid "Use default browser"
 msgstr ""
 
 #: turpial/ui/lang.py:159
-msgid "Socket timeout"
+msgid "Set custom browser"
 msgstr ""
 
-#: turpial/ui/lang.py:160
-msgid "Show user avatars"
+#: turpial/ui/lang.py:160 turpial/ui/gtk/preferences/tabs.py:232
+msgid "Command"
 msgstr ""
 
-#: turpial/ui/lang.py:161
-msgid "Type"
+#: turpial/ui/lang.py:161 turpial/ui/gtk/preferences/tabs.py:316
+msgid "Clean cache"
 msgstr ""
 
 #: turpial/ui/lang.py:162
-msgid "Host"
+msgid "Delete all files in cache"
 msgstr ""
 
 #: turpial/ui/lang.py:163
-msgid "Port"
+msgid "Restore configuration to default"
 msgstr ""
 
-#: turpial/ui/lang.py:164
-msgid "With authentication"
+#: turpial/ui/lang.py:164 turpial/ui/gtk/preferences/tabs.py:324
+msgid "Restore config"
 msgstr ""
 
-#: turpial/ui/lang.py:165 turpial/ui/gtk/preferences/tabs.py:389
-msgid "Username"
+#: turpial/ui/lang.py:165
+msgid "Socket timeout"
 msgstr ""
 
-#: turpial/ui/lang.py:166 turpial/ui/gtk/preferences/tabs.py:390
-msgid "Password"
+#: turpial/ui/lang.py:166
+msgid "Show user avatars"
+msgstr ""
+
+#: turpial/ui/lang.py:167
+msgid "Type"
 msgstr ""
 
 #: turpial/ui/lang.py:168
-msgid "Add filter"
+msgid "Host"
 msgstr ""
 
 #: turpial/ui/lang.py:169
-msgid "Create a new filter"
+msgid "Port"
 msgstr ""
 
 #: turpial/ui/lang.py:170
-msgid "Delete selected filter"
+msgid "With authentication"
 msgstr ""
 
-#: turpial/ui/lang.py:171
-msgid "Delete all filters"
+#: turpial/ui/lang.py:171 turpial/ui/gtk/preferences/tabs.py:389
+msgid "Username"
 msgstr ""
 
-#: turpial/ui/lang.py:172
-msgid "Do you want to clear all the filters?"
+#: turpial/ui/lang.py:172 turpial/ui/gtk/preferences/tabs.py:390
+msgid "Password"
 msgstr ""
 
 #: turpial/ui/lang.py:173
-msgid "Error loading image"
+msgid "Add filter"
 msgstr ""
 
 #: turpial/ui/lang.py:174
-msgid "Error loading conversation"
+msgid "Create a new filter"
 msgstr ""
 
 #: turpial/ui/lang.py:175
-msgid "Error updating column"
+msgid "Delete selected filter"
 msgstr ""
 
 #: turpial/ui/lang.py:176
-msgid "Error repeating status"
+msgid "Delete all filters"
 msgstr ""
 
 #: turpial/ui/lang.py:177
-msgid "Error deleting status"
+msgid "Do you want to clear all the filters?"
 msgstr ""
 
 #: turpial/ui/lang.py:178
-msgid "Error marking status as favorite"
+msgid "Error loading image"
 msgstr ""
 
 #: turpial/ui/lang.py:179
-msgid "Error unmarking status as favorite"
+msgid "Error saving image"
 msgstr ""
 
 #: turpial/ui/lang.py:180
-msgid "Error posting status"
+msgid "Error loading conversation"
 msgstr ""
 
 #: turpial/ui/lang.py:181
-msgid "Problems loading user profile"
+msgid "Error updating column"
 msgstr ""
 
 #: turpial/ui/lang.py:182
-msgid "Having some troubles to follow this user"
+msgid "Error repeating status"
 msgstr ""
 
 #: turpial/ui/lang.py:183
-msgid "Having some troubles to unfollow this user"
+msgid "Error deleting status"
 msgstr ""
 
 #: turpial/ui/lang.py:184
-msgid "Uh oh, I could not block this user"
+msgid "Error marking status as favorite"
 msgstr ""
 
 #: turpial/ui/lang.py:185
-msgid "Having issues reporting this user as spam"
+msgid "Error unmarking status as favorite"
 msgstr ""
 
 #: turpial/ui/lang.py:186
-msgid "Can not send direct message"
+msgid "Error posting status"
 msgstr ""
 
 #: turpial/ui/lang.py:187
-msgid "Error shorting URL"
+msgid "Problems loading user profile"
 msgstr ""
 
 #: turpial/ui/lang.py:188
-msgid "Error uploading image"
+msgid "Having some troubles to follow this user"
 msgstr ""
 
 #: turpial/ui/lang.py:189
-msgid "1 new tweet updated"
+msgid "Having some troubles to unfollow this user"
 msgstr ""
 
 #: turpial/ui/lang.py:190
-#, python-format
-msgid "%s new tweets updated"
+msgid "Uh oh, I could not block this user"
 msgstr ""
 
-#: turpial/ui/lang.py:191 turpial/ui/gtk/preferences/tabs.py:236
-msgid "Test"
+#: turpial/ui/lang.py:191
+msgid "Having issues reporting this user as spam"
 msgstr ""
 
 #: turpial/ui/lang.py:192
-msgid "Open"
+msgid "Can not send direct message"
 msgstr ""
 
 #: turpial/ui/lang.py:193
-msgid "Set how often are updated the columns"
+msgid "Error shorting URL"
 msgstr ""
 
 #: turpial/ui/lang.py:194
-msgid "Set how often are posted messages from the queue"
+msgid "Error uploading image"
 msgstr ""
 
 #: turpial/ui/lang.py:195
-msgid "Send Turpial to system tray instead of closing"
+msgid "1 new tweet"
 msgstr ""
 
 #: turpial/ui/lang.py:196
-msgid "Display system notifications when you get updates"
+#, python-format
+msgid "%s new tweets"
 msgstr ""
 
 #: turpial/ui/lang.py:197
+msgid "1 tweet filtered"
+msgstr ""
+
+#: turpial/ui/lang.py:198
+#, python-format
+msgid "%s tweets filtered"
+msgstr ""
+
+#: turpial/ui/lang.py:199
+msgid "No new tweets"
+msgstr ""
+
+#: turpial/ui/lang.py:200
+msgid "has been updated"
+msgstr ""
+
+#: turpial/ui/lang.py:201 turpial/ui/gtk/preferences/tabs.py:236
+msgid "Test"
+msgstr ""
+
+#: turpial/ui/lang.py:202
+msgid "Open"
+msgstr ""
+
+#: turpial/ui/lang.py:203
+msgid "Open in browser"
+msgstr ""
+
+#: turpial/ui/lang.py:204
+msgid "Set how often are updated the columns"
+msgstr ""
+
+#: turpial/ui/lang.py:205
+msgid "Set how often are posted messages from the queue"
+msgstr ""
+
+#: turpial/ui/lang.py:206
+msgid "Send Turpial to system tray instead of closing"
+msgstr ""
+
+#: turpial/ui/lang.py:207
+msgid "Display system notifications when you get updates"
+msgstr ""
+
+#: turpial/ui/lang.py:208
 msgid ""
 "Display system notifications when you perform action like follow, block, "
 "etc"
 msgstr ""
 
-#: turpial/ui/lang.py:198
+#: turpial/ui/lang.py:209
 msgid "Play sounds at startup"
 msgstr ""
 
-#: turpial/ui/lang.py:199
+#: turpial/ui/lang.py:210
 msgid "Play sounds when you get updates"
 msgstr ""
 
-#: turpial/ui/lang.py:200
+#: turpial/ui/lang.py:211
 msgid "Set the timeout to wait before closing the connection"
 msgstr ""
 
-#: turpial/ui/lang.py:201
+#: turpial/ui/lang.py:212
 msgid ""
 "When selected Turpial show user avatars, Otherwise it will show a black "
 "box (recommended for slow or limited internet connections)"
 msgstr ""
 
-#: turpial/ui/lang.py:202
+#: turpial/ui/lang.py:213
 msgid "Confirm restore"
 msgstr ""
 
-#: turpial/ui/lang.py:203
+#: turpial/ui/lang.py:214
 msgid ""
 "Do you want to restore your configuration to default? Turpial will be "
 "closed and must be restarted after this operation"
 msgstr ""
 
-#: turpial/ui/lang.py:204
+#: turpial/ui/lang.py:215
 msgid "Configuration restored to default successfully. Please, restart Turpial"
 msgstr ""
 
-#: turpial/ui/lang.py:205
+#: turpial/ui/lang.py:216
 msgid "Wait! That account does not exist"
 msgstr ""
 
-#: turpial/ui/lang.py:206
+#: turpial/ui/lang.py:217
 msgid "Hi there!"
 msgstr ""
 
-#: turpial/ui/lang.py:207
+#: turpial/ui/lang.py:218
 msgid "Give me a minute, I am shaking my feathers and stretching my wings..."
 msgstr ""
 
-#: turpial/ui/lang.py:208
+#: turpial/ui/lang.py:219
 msgid "Confirm close"
 msgstr ""
 
-#: turpial/ui/lang.py:209
+#: turpial/ui/lang.py:220
 msgid "Do you want to close Turpial?"
 msgstr ""
 
-#: turpial/ui/lang.py:210
+#: turpial/ui/lang.py:221
 msgid "Uh oh..."
 msgstr ""
 
-#: turpial/ui/lang.py:211
+#: turpial/ui/lang.py:222
 msgid "Something terrible happened, I could not reach the Internet"
 msgstr ""
 
-#: turpial/ui/lang.py:212
+#: turpial/ui/lang.py:223
 msgid "Try again"
+msgstr ""
+
+#: turpial/ui/lang.py:224
+msgid "Verify image"
+msgstr ""
+
+#: turpial/ui/lang.py:225
+msgid "Copy image URL"
+msgstr ""
+
+#: turpial/ui/lang.py:226
+msgid "View EXIF info"
+msgstr ""
+
+#: turpial/ui/lang.py:227
+msgid "EXIF data not available"
+msgstr ""
+
+#: turpial/ui/lang.py:228
+msgid "Show / Hide"
+msgstr ""
+
+#: turpial/ui/lang.py:229
+msgid "Inline preview"
+msgstr ""
+
+#: turpial/ui/lang.py:230
+msgid "Show images preview inline"
+msgstr ""
+
+#: turpial/ui/lang.py:231
+msgid "Open images in browser"
+msgstr ""
+
+#: turpial/ui/lang.py:232
+msgid "Open all images in your web browser"
+msgstr ""
+
+#: turpial/ui/lang.py:233
+msgid "Post next"
+msgstr ""
+
+#: turpial/ui/lang.py:234
+msgid "Post next message in queue manually"
+msgstr ""
+
+#: turpial/ui/lang.py:235
+msgid "Add photo"
+msgstr ""
+
+#: turpial/ui/lang.py:236
+msgid "Remove photo"
 msgstr ""
 
 #: turpial/ui/gtk/statuswidget.py:73

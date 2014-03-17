@@ -227,8 +227,11 @@ class ProfileDialog(Window):
         self.avatar.setPixmap(self.base.load_image('unknown.png', True))
         self.bio.set_info(profile.bio)
         self.location.set_info(profile.location)
-        profile_url ="<a href='%s'>%s</a>" % (profile.url, profile.url)
-        self.web.set_info(profile_url)
+
+        if profile.url:
+            profile_url ="<a href='%s'>%s</a>" % (profile.url, profile.url)
+            self.web.set_info(profile_url)
+
         self.tweets.set_value(str(profile.statuses_count))
         self.following.set_value(str(profile.friends_count))
         self.followers.set_value(str(profile.followers_count))

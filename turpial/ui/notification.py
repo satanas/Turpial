@@ -55,12 +55,16 @@ class OSNotificationSystem:
         else:
             message = i18n.get('no_new_tweets')
 
-        filtered = ''
-        if filtered > 0:
-            filtered = i18n.get('filtered') % filtered
-            message += "(%s)" % filtered
+        filtered_message = ''
+        if filtered == 1:
+            filtered_message = ''.join([' (', i18n.get('tweet_filtered'), ')'])
+        elif filtered > 1:
+            filtered_message = ''.join([' (', i18n.get('tweets_filtered') % filtered, ')'])
 
-        title = "%s-%s %s" % (get_username_from(column.account_id), column.slug, i18n.get('has_been_updated'))
+        message += filtered_message
+
+        title = "%s-%s %s" % (get_username_from(column.account_id),
+                              column.slug, i18n.get('has_been_updated'))
         self.notify(title, message)
 
     def user_followed(self, username):
@@ -81,8 +85,18 @@ class OSNotificationSystem:
     def user_unmuted(self, username):
         self.notify(i18n.get('unmute'), i18n.get('has_been_unmuted') % username)
 
+    def message_queued_successfully(self):
+        self.notify(i18n.get('message_queued'), i18n.get('message_queued_successfully'))
+
     def message_from_queue_posted(self):
-        self.notify(i18n.get('update_status'), i18n.get('message_from_queue_has_been_posted'))
+        self.notify(i18n.get('message_posted'), i18n.get('message_from_queue_has_been_posted'))
+
+    def message_from_queue_broadcasted(self):
+        self.notify(i18n.get('message_broadcasted'),
+                    i18n.get('message_from_queue_has_been_broadcasted'))
+
+    def message_queued_due_error(self):
+        self.notify(i18n.get('message_queued'), i18n.get('message_queued_due_error'))
 
     def following_error(self, message, follow):
         if follow:

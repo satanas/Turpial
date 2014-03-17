@@ -38,7 +38,7 @@ from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.preferences import PreferencesDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 
-from libturpial.common import ColumnType, get_preview_service_from_url
+from libturpial.common import ColumnType, get_preview_service_from_url, escape_list_name
 
 
 # Exceptions
@@ -474,9 +474,9 @@ class Main(Base, QWidget):
                     for column in available_columns[account.id_]:
                         item = QAction(column.slug, self)
                         if column.__class__.__name__ == 'List':
-                            column_id = "-".join([account.id_, column.slug])
+                            slug = escape_list_name(column.slug)
+                            column_id = "-".join([account.id_, slug])
                             item.triggered.connect(partial(self.add_column, column_id))
-                            #continue
                         else:
                             item.triggered.connect(partial(self.add_column, column.id_))
                         available_columns_menu.addAction(item)
@@ -490,6 +490,9 @@ class Main(Base, QWidget):
 
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.core.update_status(account_id, message, in_reply_to_id)
+
+    def update_status_with_media(self, account_id, message, in_reply_to_id=None, media=None):
+        self.core.update_status_with_media(account_id, message, in_reply_to_id, media)
 
     def broadcast_status(self, message):
         accounts = []
@@ -834,6 +837,8 @@ class Main(Base, QWidget):
     def after_push_status_to_queue(self, account_id):
         self.update_box.done()
         self.turn_on_queue_timer()
+        if self.core.get_notify_on_actions():
+            self.os_notifications.message_queued_successfully()
 
     def after_pop_status_from_queue(self, status):
         if status:
@@ -841,15 +846,15 @@ class Main(Base, QWidget):
 
     def after_post_status_from_queue(self, response, account_id, message):
         if self.is_exception(response):
-            # TODO: OS Notification
-            print "+++Message enqueued again for error posting"
+            if self.core.get_notify_on_actions():
+                self.os_notifications.message_queued_due_error()
+            print "+++Message queued again for error posting"
             self.push_status_to_queue(account_id, message)
         else:
             self.turn_off_queue_timer()
             if self.core.get_notify_on_actions():
-                # TODO: Create proper notifications for each case
                 if account_id == BROADCAST_ACCOUNT:
-                    self.os_notifications.message_from_queue_posted()
+                    self.os_notifications.message_from_queue_broadcasted()
                 else:
                     self.os_notifications.message_from_queue_posted()
 

@@ -119,7 +119,6 @@ class CoreWorker(QThread):
     def get_statuses_per_column(self):
         return self.core.get_max_statuses_per_column()
 
-    # FIXME: Implement support on libturpial
     def get_proxy_configuration(self):
         return self.core.config.read_section('Proxy')
 
@@ -234,20 +233,12 @@ class CoreWorker(QThread):
         self.core.delete_cache()
 
     def read_config(self):
-        config = {}
-
-        # FIXME: Implemen this on libturpial
-        for section in self.core.config.cfg.sections():
-            if not config.has_key(section):
-                config[section] = {}
-
-            for item in self.core.config.cfg.items(section, raw=True):
-                for value in item:
-                    config[section][item[0]] = item[1]
-        return config
+        return self.core.get_config()
 
     def update_config(self, new_config):
-        self.core.save_all_config(new_config)
+        for section in new_config:
+            for option in new_config[section]:
+                self.core.write_config_value(section, option, new_config[section][option])
 
     def add_new_config_option(self, section, option, default_value):
         self.core.register_new_config_option(section, option, default_value)
@@ -307,8 +298,6 @@ class CoreWorker(QThread):
         self.__after_delete_account()
 
     def save_column(self, column_id):
-        #FIXME: Hack to avoid the libturpial error saving config
-        self.update_config(self.read_config())
         reg_column_id = self.core.register_column(column_id)
         self.__after_save_column(reg_column_id)
 
@@ -325,6 +314,16 @@ class CoreWorker(QThread):
     def update_status(self, account_id, message, in_reply_to_id=None):
         self.register(self.core.update_status, (account_id,
             message, in_reply_to_id), self.__after_update_status, account_id)
+
+    def update_status_with_media(self, account_id, message, media, in_reply_to_id=None):
+        if self.get_upload_media_service() != 'pic.twitter.com':
+            media_url = self.core.upload_media(account_id, media)
+            message = "%s %s" % (message, media_url)
+            self.register(self.core.update_status, (account_id,
+                message, in_reply_to_id), self.__after_update_status, account_id)
+        else:
+            self.register(self.core.update_status, (account_id,
+                message, in_reply_to_id, media), self.__after_update_status, account_id)
 
     def broadcast_status(self, accounts, message):
         self.register(self.core.broadcast_status, (accounts, message),

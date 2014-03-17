@@ -52,6 +52,9 @@ class ProfileDialog(Window):
         self.you_label = QLabel(i18n.get('this_is_you'))
         self.you_label.setVisible(False)
 
+        self.follows_you = QLabel(i18n.get('follows_you'))
+        self.follows_you.setVisible(False)
+
         info_line1 = QHBoxLayout()
         info_line1.setSpacing(5)
         info_line1.addWidget(self.username)
@@ -65,9 +68,13 @@ class ProfileDialog(Window):
         info_line2.addWidget(self.options)
         info_line2.addWidget(self.you_label)
 
+        info_line3 = QHBoxLayout()
+        info_line3.addWidget(self.follows_you)
+
         user_info = QVBoxLayout()
         user_info.addLayout(info_line1)
         user_info.addLayout(info_line2)
+        user_info.addLayout(info_line3)
 
         self.loader = BarLoadIndicator()
         self.loader.setVisible(False)
@@ -155,6 +162,7 @@ class ProfileDialog(Window):
         self.verified_icon.setVisible(False)
         self.protected_icon.setVisible(False)
         self.you_label.setVisible(False)
+        self.follows_you.setVisible(False)
         self.options.setVisible(False)
         self.loader.setVisible(False)
         self.error_message.setVisible(False)
@@ -210,6 +218,10 @@ class ProfileDialog(Window):
         else:
             self.you_label.setVisible(False)
             self.options.setVisible(True)
+
+        if profile.followed_by:
+            self.follows_you.setVisible(True)
+
         self.verified_icon.setVisible(profile.verified)
         self.protected_icon.setVisible(profile.protected)
         self.avatar.setPixmap(self.base.load_image('unknown.png', True))

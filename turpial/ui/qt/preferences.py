@@ -260,7 +260,7 @@ class BrowserPage(QWidget):
 
         self.setLayout(vbox)
 
-        if current_browser == '':
+        if current_browser == None:
             self.default_browser.set_value(True)
             self.command.setText('')
             self.__on_defaul_selected()

@@ -882,7 +882,7 @@ class Main(Base, QWidget):
         print '--Created timer for %s every %i sec' % (column.id_, interval)
 
     def remove_timer(self, column_id):
-        if self.timers.has_key(column_id):
+        if column_id in self.timers:
             self.timers[column_id].stop()
             del self.timers[column_id]
             print '--Removed timer for %s' % column_id
@@ -904,7 +904,7 @@ class Main(Base, QWidget):
 
     def turn_on_queue_timer(self, force=False):
         self.queue_dialog.update()
-        if len(self.core.list_statuses_queue()) > 0 and (not self.timers.has_key('queue') or force):
+        if (len(self.core.list_statuses_queue()) > 0 and 'queue' not in self.timers) or force:
             self.set_queue_timer()
             self.queue_dialog.update_timestamp()
 

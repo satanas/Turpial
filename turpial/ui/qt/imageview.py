@@ -22,8 +22,7 @@ from PyQt4.QtGui import QApplication
 from PyQt4.QtCore import Qt
 
 from turpial.ui.lang import i18n
-from turpial.ui.qt.widgets import Window
-from turpial.ui.qt.loader import BarLoadIndicator
+from turpial.ui.qt.widgets import Window, BarLoadIndicator
 
 GOOGLE_SEARCH_URL = 'https://www.google.com/searchbyimage?&image_url='
 

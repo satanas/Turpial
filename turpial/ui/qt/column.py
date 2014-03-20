@@ -19,8 +19,7 @@ from PyQt4.QtGui import QStyledItemDelegate
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from turpial.ui.lang import i18n
-from turpial.ui.qt.widgets import ImageButton
-from turpial.ui.qt.loader import BarLoadIndicator
+from turpial.ui.qt.widgets import ImageButton, BarLoadIndicator
 from turpial.ui.qt.webview import StatusesWebView
 
 from libturpial.common import get_preview_service_from_url, unescape_list_name, OS_MAC

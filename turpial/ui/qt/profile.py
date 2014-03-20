@@ -7,6 +7,7 @@ from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QTabWidget
+from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from PyQt4.QtCore import Qt
@@ -16,8 +17,8 @@ from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.column import StatusesColumn
-from turpial.ui.qt.loader import BarLoadIndicator
-from turpial.ui.qt.widgets import ImageButton, VLine, HLine, Window, ErrorLabel
+from turpial.ui.qt.webview import ProfileHeaderWebview
+from turpial.ui.qt.widgets import ImageButton, VLine, HLine, Window, ErrorLabel, BarLoadIndicator
 
 from libturpial.common.tools import get_username_from
 
@@ -28,81 +29,48 @@ class ProfileDialog(Window):
 
     def __init__(self, base):
         Window.__init__(self, base, i18n.get('user_profile'))
-
         self.account_id = None
-        self.setFixedSize(380, 450)
+        self.setFixedSize(380, 500)
 
-        self.username = QLabel('')
-        self.username.setTextFormat(Qt.RichText)
-
-        self.fullname = QLabel('')
-        self.options = ImageButton(base, 'action-status-menu.png', i18n.get(''))
-        self.options.clicked.connect(self.__options_clicked)
-
-        self.verified_icon = QLabel()
-        self.verified_icon.setPixmap(base.load_image('mark-verified.png', True))
-
-        self.protected_icon = QLabel()
-        self.protected_icon.setPixmap(base.load_image('mark-protected.png', True))
-
-        self.avatar = ClickableLabel()
-        self.avatar.setPixmap(base.load_image('unknown.png', True))
-        self.avatar.clicked.connect(self.__show_avatar)
-
-        self.you_label = QLabel(i18n.get('this_is_you'))
-        self.you_label.setVisible(False)
-
-        self.follows_you = QLabel(i18n.get('follows_you'))
-        self.follows_you.setVisible(False)
-
-        info_line1 = QHBoxLayout()
-        info_line1.setSpacing(5)
-        info_line1.addWidget(self.username)
-        info_line1.addSpacing(5)
-        info_line1.addWidget(self.verified_icon)
-        info_line1.addWidget(self.protected_icon)
-        info_line1.addStretch(0)
-
-        info_line2 = QHBoxLayout()
-        info_line2.addWidget(self.fullname, 1)
-        info_line2.addWidget(self.options)
-        info_line2.addWidget(self.you_label)
-
-        info_line3 = QHBoxLayout()
-        info_line3.addWidget(self.follows_you)
-
-        user_info = QVBoxLayout()
-        user_info.addLayout(info_line1)
-        user_info.addLayout(info_line2)
-        user_info.addLayout(info_line3)
+        self.this_is_you_label = QPushButton(i18n.get('this_is_you'))
+        self.this_is_you_label.setEnabled(False)
+        #self.this_is_you.setVisible(False)
 
         self.loader = BarLoadIndicator()
-        self.loader.setVisible(False)
+        #self.loader.setVisible(False)
+
+        self.header = ProfileHeader(base)
+
+        self.options_button = ImageButton(base, 'action-status-menu.png', i18n.get(''))
+        self.options_button.clicked.connect(self.__options_clicked)
+
+        self.follows_you_label = QPushButton(i18n.get('follows_you'))
+        self.follows_you_label.setEnabled(False)
+        #self.follows_you_label.setVisible(False)
 
         self.error_message = ErrorLabel()
-        self.error_message.setVisible(False)
+        #self.error_message.setVisible(False)
 
-        header = QHBoxLayout()
-        header.setContentsMargins(5, 10, 5, 0)
-        header.addWidget(self.avatar)
-        header.addSpacing(10)
-        header.addLayout(user_info)
+        self.follow_button = QPushButton()
 
-        # User Info
-        self.bio = UserField(base, 'bio', 'icon-bio.png')
-        self.bio.set_word_wrap(True)
-        self.bio.set_info('')
+        self.loading_label = QLabel(i18n.get('loading'))
 
-        self.location = UserField(base, 'location', 'icon-location.png')
-        self.location.set_info('')
+        options_box = QHBoxLayout()
+        options_box.setContentsMargins(5, 5, 5, 5)
+        options_box.setSpacing(5)
+        options_box.addWidget(self.options_button)
+        options_box.addStretch(1)
+        options_box.addWidget(self.error_message)
+        options_box.addWidget(self.follows_you_label)
+        options_box.addWidget(self.follow_button)
+        options_box.addWidget(self.this_is_you_label)
+        options_box.addWidget(self.loading_label)
 
-        self.web = UserField(base, 'web', 'icon-home.png')
-        self.web.set_info('')
+        self.last_statuses = StatusesColumn(self.base, None, False)
 
         self.tweets = StatInfoBox('tweets', '')
         self.following = StatInfoBox('following', '')
         self.followers = StatInfoBox('followers', '')
-        self.favorites = StatInfoBox('favorites', '')
 
         footer_layout = QHBoxLayout()
         footer_layout.setContentsMargins(0, 5, 0, 10)
@@ -112,45 +80,19 @@ class ProfileDialog(Window):
         footer_layout.addLayout(self.following)
         footer_layout.addWidget(VLine())
         footer_layout.addLayout(self.followers)
-        footer_layout.addWidget(VLine())
-        footer_layout.addLayout(self.favorites)
 
         footer = QWidget()
         footer.setLayout(footer_layout)
         footer.setStyleSheet("QWidget { background-color: #333; color: white; }")
 
-        body_layout = QVBoxLayout()
-        body_layout.setSpacing(15)
-        body_layout.setContentsMargins(0, 0, 0, 0)
-        body_layout.addLayout(self.bio)
-        body_layout.addLayout(self.location)
-        body_layout.addLayout(self.web)
-        body_layout.addWidget(footer)
-
-        body = QWidget()
-        body.setLayout(body_layout)
-
-        self.last_statuses = StatusesColumn(self.base, None, False)
-
-        self.tabs = QTabWidget(self)
-        self.tabs.setTabsClosable(False)
-        self.tabs.setMovable(False)
-        self.tabs.addTab(body, i18n.get('info'))
-        self.tabs.addTab(self.last_statuses, i18n.get('recent'))
-
-        self.hline = HLine()
-        self.hline.setMinimumHeight(2)
-
         layout = QVBoxLayout()
-        layout.addLayout(header)
-        layout.addSpacing(10)
-        layout.addWidget(self.hline)
-        layout.addWidget(self.loader)
-        layout.addWidget(self.error_message)
-        layout.addSpacing(10)
-        layout.addWidget(self.tabs, 1)
         layout.setSpacing(0)
-        layout.setContentsMargins(5, 5, 5, 5)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(self.loader)
+        layout.addWidget(self.header)
+        layout.addLayout(options_box)
+        layout.addWidget(self.last_statuses)
+        layout.addWidget(footer)
         self.setLayout(layout)
 
         self.__clear()
@@ -159,24 +101,19 @@ class ProfileDialog(Window):
         self.profile = None
         self.showed = False
         self.account_id = None
-        self.verified_icon.setVisible(False)
-        self.protected_icon.setVisible(False)
-        self.you_label.setVisible(False)
-        self.follows_you.setVisible(False)
-        self.options.setVisible(False)
         self.loader.setVisible(False)
+        self.options_button.setEnabled(False)
         self.error_message.setVisible(False)
-        self.avatar.setPixmap(self.base.load_image('unknown.png', True))
-        self.bio.set_info('')
-        self.location.set_info('')
-        self.web.set_info('')
+        self.follows_you_label.setVisible(False)
+        self.follow_button.setVisible(False)
+        self.this_is_you_label.setVisible(False)
+        self.loading_label.setVisible(False)
         self.tweets.set_value('')
         self.following.set_value('')
         self.followers.set_value('')
-        self.favorites.set_value('')
+        self.header.clear()
         self.last_statuses.id_ = None
         self.last_statuses.clear()
-        self.tabs.setCurrentIndex(0)
 
     def __options_clicked(self):
         self.options_clicked.emit(QCursor.pos(), self.profile)
@@ -196,10 +133,9 @@ class ProfileDialog(Window):
 
     def start_loading(self, profile_username):
         self.__clear()
-        self.hline.setVisible(False)
         self.loader.setVisible(True)
-        self.username.setText('<b>%s</b>' % profile_username)
-        self.fullname.setText(i18n.get('loading'))
+        self.loading_label.setVisible(True)
+        self.options_button.setEnabled(False)
         self.show()
         self.raise_()
         self.showed = True
@@ -208,35 +144,29 @@ class ProfileDialog(Window):
         self.profile = profile
         self.account_id = str(account_id)
         self.loader.setVisible(False)
-        self.hline.setVisible(False)
-        self.username.setText('<b>%s</b>' % profile.username)
-        self.fullname.setText(profile.fullname)
+        self.loading_label.setVisible(False)
+        it_is_you = get_username_from(account_id) == profile.username
 
-        if get_username_from(account_id) == profile.username:
-            self.you_label.setVisible(True)
-            self.options.setVisible(False)
+        if it_is_you:
+            self.this_is_you_label.setVisible(True)
+            self.follow_button.setVisible(False)
+            self.options_button.setEnabled(False)
         else:
-            self.you_label.setVisible(False)
-            self.options.setVisible(True)
+            self.this_is_you_label.setVisible(False)
+            self.follow_button.setVisible(True)
+            self.options_button.setEnabled(True)
 
-        if profile.followed_by:
-            self.follows_you.setVisible(True)
+        if profile.followed_by and not it_is_you:
+            self.follows_you_label.setVisible(True)
 
-        self.verified_icon.setVisible(profile.verified)
-        self.protected_icon.setVisible(profile.protected)
-        self.avatar.setPixmap(self.base.load_image('unknown.png', True))
-        self.bio.set_info(profile.bio)
-        self.location.set_info(profile.location)
-
-        if profile.url:
-            profile_url ="<a href='%s'>%s</a>" % (profile.url, profile.url)
-            self.web.set_info(profile_url)
+        #if profile.following:
+        #    self.follow_button.setVisible(True)
 
         self.tweets.set_value(str(profile.statuses_count))
         self.following.set_value(str(profile.friends_count))
         self.followers.set_value(str(profile.followers_count))
-        self.favorites.set_value(str(profile.favorites_count))
 
+        self.header.update_profile(profile)
         column_id = "%s-profile_recent" % self.account_id
         self.last_statuses.set_column_id(column_id)
         self.last_statuses.update_statuses(profile.recent_updates)
@@ -285,6 +215,21 @@ class ProfileDialog(Window):
     def error_loading_conversation(self, status_root_id):
         self.last_statuses.error_in_conversation(status_root_id)
         self.last_statuses.notify_error(self.base.random_id(), i18n.get('error_loading_conversation'))
+
+
+class ProfileHeader(QWidget):
+    def __init__(self, base):
+        QWidget.__init__(self)
+        self.setMinimumHeight(100)
+        self.setMaximumHeight(100)
+        self.setStyleSheet("QWidget { background-color: #fff; }")
+        self.webview = ProfileHeaderWebview(base)
+
+    def clear(self):
+        self.webview.clear()
+
+    def update_profile(self, profile):
+        self.webview.update_profile(profile)
 
 
 class UserField(QVBoxLayout):

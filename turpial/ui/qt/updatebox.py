@@ -22,8 +22,7 @@ from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
 from turpial.ui.base import BROADCAST_ACCOUNT
-from turpial.ui.qt.loader import BarLoadIndicator
-from turpial.ui.qt.widgets import ImageButton, ErrorLabel
+from turpial.ui.qt.widgets import ImageButton, ErrorLabel, BarLoadIndicator
 
 from libturpial.common.tools import get_urls
 from libturpial.common import get_username_from, get_protocol_from

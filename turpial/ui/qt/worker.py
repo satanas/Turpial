@@ -89,7 +89,7 @@ class CoreWorker(QThread):
         open(self.queue_path, 'w').writelines(lines)
         status = Status()
         status.account_id = account_id
-        status.text = message
+        status.text = self.__unescape_queue_message(message)
         return status
 
     def __get_column_num_from_id(self, column_id):
@@ -102,6 +102,14 @@ class CoreWorker(QThread):
             else:
                 i += 1
         return column_key
+
+    def __escape_queue_message(self, message):
+        message = message.replace('\n', '\0')
+        return message
+
+    def __unescape_queue_message(self, message):
+        message = message.replace('\0', '\n')
+        return message
 
     #================================================================
     # Core methods
@@ -408,6 +416,7 @@ class CoreWorker(QThread):
 
     def push_status_to_queue(self, account_id, message):
         fd = open(self.queue_path, 'a+')
+        message = self.__escape_queue_message(message)
         row = "%s\1%s\n" % (account_id, message)
         fd.write(row.encode('utf-8'))
         fd.close()
@@ -430,7 +439,7 @@ class CoreWorker(QThread):
             account_id, message = line.strip().split("\1")
             status = Status()
             status.account_id = account_id
-            status.text = message
+            status.text = self.__unescape_queue_message(message)
             statuses.append(status)
         return statuses
 

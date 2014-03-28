@@ -249,12 +249,12 @@ class ProfileDialog(Window):
         return False
 
     def update_avatar(self, image_path, username):
-        if username != self.profile.username or not self.showed:
+        if not self.profile or username != self.profile.username or not self.showed:
             return
         self.avatar.setPixmap(self.base.load_image(image_path, True))
 
     def update_following(self, username, following):
-        if username != self.profile.username or not self.showed:
+        if not self.profile or username != self.profile.username or not self.showed:
             return
         self.profile.following = following
 

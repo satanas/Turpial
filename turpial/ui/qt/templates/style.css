@@ -11,6 +11,8 @@ body {
     background-color: #b4bbc1;
 }
 
+pre { position:fixed; left:15em; right:1em; top:1em }
+
 /*::-webkit-scrollbar {
     background: transparent;
     overflow: visible;
@@ -92,7 +94,9 @@ body {
 
 .status .preview-image {
   max-width: 90%;
+  height: 150px;
   margin: 10px;
+  background-color: #ddd;
 }
 
 .avatar-row {

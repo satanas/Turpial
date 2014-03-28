@@ -169,6 +169,7 @@ class StatusesWebView(QWebView):
             for status in statuses_:
                 content = self.__render_status(status)
                 self.append_status(content, status.id_)
+            self.execute_javascript('restoreScrollPosition()')
 
     def clear(self):
         self.setHtml('')

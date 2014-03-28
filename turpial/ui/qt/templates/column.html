@@ -10,11 +10,14 @@
 <div id="statuses-container">
     {{ content }}
 </div>
+<pre></pre>
 </body>
 </html>
 <script language="javascript">
+    var elementAtScroll = null;
     var favoriteTooltip = "{{ favorite_tooltip }}";
     var unfavoriteTooltip = "{{ unfavorite_tooltip }}";
+    var pre = document.querySelector('pre');
 
     function addNotify(id, type, message) {
         var notificationId = 'notification-' + new Date().getTime() + '-' + id;
@@ -132,6 +135,7 @@
         var last = container.children[container.children.length - 1];
         container.insertBefore(doc.firstChild, first);
         container.removeChild(last);
+        restoreScrollPosition();
     }
 
     function updateTimestamp(status_id, new_timestamp) {
@@ -139,6 +143,53 @@
         if (status_timestamp != null) {
             status_timestamp.innerHTML = new_timestamp;
         }
+    }
+
+    function restoreScrollPosition() {
+        document.getElementsByTagName("body")[0].scrollTop = getScreenCoordinates(elementAtScroll).y;
+    }
+
+    function getScreenCoordinates(obj) {
+        var p = {};
+
+        if ((obj == null) || (obj == undefined)) {
+            p.x = 0;
+            p.y = 0;
+            return p;
+        }
+
+        p.x = obj.offsetLeft;
+        p.y = obj.offsetTop;
+        while (obj.offsetParent) {
+            p.x = p.x + obj.offsetParent.offsetLeft;
+            p.y = p.y + obj.offsetParent.offsetTop;
+            if (obj == document.getElementsByTagName("body")[0]) {
+                break;
+            }
+            else {
+                obj = obj.offsetParent;
+            }
+        }
+        return p;
+    }
+
+    function getStatusFromScrollPosition(top) {
+        var statuses = document.getElementsByClassName('status');
+        for (var i=0; i < statuses.length; i++) {
+            var table_top = getScreenCoordinates(statuses[i]).y;
+            var table_bottom = table_top + statuses[i].offsetHeight;
+            if ((top >= table_top) && (top < table_bottom)) {
+                return statuses[i];
+            }
+        }
+        return null;
+    }
+
+    window.onscroll = function() {
+        var doc = document.documentElement;
+        var scrollTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
+        elementAtScroll = getStatusFromScrollPosition(scrollTop);
+        /*pre.innerHTML = "scroll at: " + elementAtScroll.id;*/
     }
 
 </script>

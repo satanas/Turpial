@@ -26,7 +26,8 @@
     {% if media %}
         {% for url in media %}
         <tr>
-            <td colspan='2'><a href="{{ url }}"><img class="preview-image" src="{{ url }}" /></a></td>
+            <td></td>
+            <td><a href="{{ url }}"><div class="preview-image" style="background: url('{{ url }}') center"></div></a></td>
         </tr>
         {% endfor %}
     {% endif %}

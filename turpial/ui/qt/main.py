@@ -160,7 +160,7 @@ class Main(Base, QWidget):
         self.setLayout(layout)
 
 
-    def __open_in_browser(self, url):
+    def open_in_browser(self, url):
         browser = self.core.get_default_browser()
 
         if browser != '':
@@ -354,10 +354,10 @@ class Main(Base, QWidget):
         # FIXME: Use the profile_url variable in libturpial's twitter.py
         # Put this value on every profile object
         user_profile_url = "http://twitter.com/%s" % (profile.username)
-        open_in_browser = QAction(i18n.get('open_in_browser'), self)
-        open_in_browser.triggered.connect(lambda x: self.__open_in_browser(user_profile_url))
+        open_in_browser_menu = QAction(i18n.get('open_in_browser'), self)
+        open_in_browser_menu.triggered.connect(lambda x: self.open_in_browser(user_profile_url))
 
-        self.profile_menu.addAction(open_in_browser)
+        self.profile_menu.addAction(open_in_browser_menu)
         self.profile_menu.addAction(mute_menu)
         self.profile_menu.addAction(block_menu)
         self.profile_menu.addAction(spam_menu)
@@ -410,7 +410,7 @@ class Main(Base, QWidget):
             self.core.get_image_preview(preview_service, url)
             self.image_view.start_loading(image_url=url)
         else:
-            self.__open_in_browser(url)
+            self.open_in_browser(url)
 
     def load_image(self, filename, pixbuf=False):
         img_path = os.path.join(self.images_path, filename)

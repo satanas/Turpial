@@ -163,10 +163,10 @@ class ImageView(Window):
             view_info = QAction(i18n.get('view_exif_info'), self)
 
             if self.source_url:
-                open_.triggered.connect(lambda x: self.base._Main__open_in_browser(self.original_url))
+                open_.triggered.connect(lambda x: self.base.open_in_browser(self.original_url))
                 copy.triggered.connect(lambda x: self.__copy_to_clipboard(self.source_url))
                 verify_url = ''.join([GOOGLE_SEARCH_URL, self.source_url])
-                verify_image.triggered.connect(lambda x: self.base._Main__open_in_browser(verify_url))
+                verify_image.triggered.connect(lambda x: self.base.open_in_browser(verify_url))
             else:
                 open_.setEnabled(False)
                 copy.setEnabled(False)

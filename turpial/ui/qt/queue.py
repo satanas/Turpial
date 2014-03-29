@@ -162,6 +162,7 @@ class QueueDialog(Window):
         model.setHorizontalHeaderItem(0, QStandardItem(i18n.get('account')))
         model.setHorizontalHeaderItem(1, QStandardItem(i18n.get('message')))
         self.list_.setModel(model)
+        self.list_.resizeColumnToContents(1)
 
         now = int(time.time())
         interval = self.base.core.get_queue_interval() * 60
@@ -173,12 +174,17 @@ class QueueDialog(Window):
         row = 0
         for status in self.base.core.list_statuses_queue():
             username = get_username_from(status.account_id)
-            item = QStandardItem(QString.fromUtf8(username))
+            icon = QStandardItem(QString.fromUtf8(username))
+            icon.setEditable(False)
             if status.account_id != BROADCAST_ACCOUNT:
                 protocol_image = "%s.png" % get_protocol_from(status.account_id)
-                item.setIcon(QIcon(self.base.load_image(protocol_image, True)))
-            model.setItem(row, 0, item)
-            model.setItem(row, 1, QStandardItem(QString.fromUtf8(status.text)))
+                icon.setIcon(QIcon(self.base.load_image(protocol_image, True)))
+            model.setItem(row, 0, icon)
+
+            text = QStandardItem(QString.fromUtf8(status.text))
+            text.setEditable(False)
+            model.setItem(row, 1, text)
+            self.list_.resizeRowToContents(row)
             row += 1
 
         humanized_interval = self.base.humanize_time_intervals(self.base.core.get_queue_interval())

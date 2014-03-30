@@ -165,7 +165,7 @@ class AccountsDialog(ModalDialog):
                 print traceback.format_exc()
                 print err_msg
                 self.error(i18n.get('problems_registering_new_account'))
-                self.__enable(True)
+        self.__enable(True)
 
     def __relogin_account(self):
         self.__enable(False)

@@ -84,7 +84,6 @@ class StatusesColumn(QWidget):
             font2 = QFont('Monda', 10, QFont.Light, False)
 
         bg_style = "background-color: %s; color: %s;" % (self.base.bgcolor, self.base.fgcolor)
-        label = "%s : %s" % (username, column_slug)
         caption = QLabel(username)
         caption.setStyleSheet("QLabel { %s }" % bg_style)
         caption.setFont(font)

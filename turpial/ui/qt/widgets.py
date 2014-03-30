@@ -24,11 +24,11 @@ class ImageButton(QToolButton):
         self.setIcon(icon)
 
 class HLine(QFrame):
-    def __init__(self):
+    def __init__(self, height=20):
         QFrame.__init__(self)
         self.setFrameShape(QFrame.HLine)
         self.setFrameShadow(QFrame.Sunken)
-        self.setMinimumHeight(20)
+        self.setMinimumHeight(height)
 
 class VLine(QFrame):
     def __init__(self):

@@ -188,8 +188,14 @@
     window.onscroll = function() {
         var doc = document.documentElement;
         var scrollTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
-        elementAtScroll = getStatusFromScrollPosition(scrollTop);
-        /*pre.innerHTML = "scroll at: " + elementAtScroll.id;*/
+        if (scrollTop == 0) {
+            elementAtScroll = null;
+        } else {
+            elementAtScroll = getStatusFromScrollPosition(scrollTop);
+        }
+        pre.innerHTML = "scroll at: " + elementAtScroll.id +
+        '\nscroll top: ' + scrollTop;
+
     }
 
 </script>

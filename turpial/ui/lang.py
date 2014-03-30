@@ -32,6 +32,7 @@ STRINGS = {
     'accounts': _('Accounts'),
     'columns': _('Columns'),
     'authorize_turpial': _('Authorize Turpial'),
+    'authorize': _('Authorize'),
     'type_the_pin': _('Type the PIN'),
     'save': _('Save'),
     'copy_the_pin': _('Authorize Turpial and copy the PIN in the text box'),

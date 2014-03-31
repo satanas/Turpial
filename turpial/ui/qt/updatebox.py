@@ -39,9 +39,9 @@ class UpdateBox(QWidget):
         self.text_edit = CompletionTextEdit()
 
         self.upload_button = ImageButton(base, 'action-add-media.png',
-                i18n.get('add_photo'))
+                i18n.get('add_photo'), borders=True)
         self.short_button = ImageButton(base, 'action-shorten.png',
-                i18n.get('short_urls'))
+                i18n.get('short_urls'), borders=True)
 
         font = QFont()
         font.setPointSize(18)

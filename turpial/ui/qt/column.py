@@ -101,7 +101,6 @@ class StatusesColumn(QWidget):
 
         close_button = ImageButton(self.base, 'action-delete-shadowed.png', i18n.get('delete_column'))
         close_button.clicked.connect(self.__delete_column)
-        close_button.setStyleSheet("QToolButton { %s border: 0px solid %s;}" % (bg_style, self.base.bgcolor))
 
         header_layout = QHBoxLayout()
         header_layout.addLayout(caption_box, 1)

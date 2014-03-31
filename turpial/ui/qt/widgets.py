@@ -12,6 +12,7 @@ from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QToolButton
+from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QProgressBar
 
 class BarLoadIndicator(QProgressBar):
@@ -26,16 +27,28 @@ class BarLoadIndicator(QProgressBar):
         self.setTextVisible(False)
 
 class ImageButton(QToolButton):
-    def __init__(self, base, image, tooltip):
+    def __init__(self, base, image, tooltip, borders=False):
         QToolButton.__init__(self)
         self.base = base
         self.change_icon(image)
         self.setToolTip(tooltip)
         self.setMaximumSize(24, 24)
+        if not borders:
+            self.setStyleSheet("QToolButton { border: none; outline: none; }")
 
     def change_icon(self, image):
-        icon = QIcon(self.base.get_image_path(image))
-        self.setIcon(icon)
+        self.setIcon(QIcon(self.base.get_image_path(image)))
+        self.setIconSize(QSize(24, 24))
+
+class StyledLabel(QLabel):
+    def __init__(self, text, bg_color='#ccc', color='#000'):
+        QLabel.__init__(self)
+        style = "background-color:%s; color:%s; font-size:10px; border-radius:3px;" % (bg_color,
+                                                                                       color)
+        self.setText(text)
+        self.setContentsMargins(5, 0, 5, 0)
+        self.setStyleSheet("QLabel { %s }" % style)
+        self.setMinimumHeight(22)
 
 class HLine(QFrame):
     def __init__(self, minimum_height=20):

@@ -317,26 +317,10 @@ class Main(Base, QWidget):
 
 
         if profile.following:
-            unfollow_menu = QAction(i18n.get('unfollow'), self)
-            unfollow_menu.triggered.connect(partial(self.unfollow, profile.account_id,
-                profile.username))
             message_menu = QAction(i18n.get('send_direct_message'), self)
             message_menu.triggered.connect(partial(
                 self.show_update_box_for_send_direct, profile.account_id, profile.username))
-            self.profile_menu.addAction(unfollow_menu)
-            self.profile_menu.addSeparator()
             self.profile_menu.addAction(message_menu)
-        elif profile.follow_request:
-            follow_menu = QAction(i18n.get('follow_requested'), self)
-            follow_menu.setEnabled(False)
-            self.profile_menu.addAction(follow_menu)
-            self.profile_menu.addSeparator()
-        else:
-            follow_menu = QAction(i18n.get('follow'), self)
-            follow_menu.triggered.connect(partial(self.follow, profile.account_id,
-                profile.username))
-            self.profile_menu.addAction(follow_menu)
-            self.profile_menu.addSeparator()
 
         if self.core.is_muted(profile.username):
             mute_menu = QAction(i18n.get('unmute'), self)
@@ -882,7 +866,7 @@ class Main(Base, QWidget):
         print '--Created timer for %s every %i sec' % (column.id_, interval)
 
     def remove_timer(self, column_id):
-        if self.timers.has_key(column_id):
+        if column_id in self.timers:
             self.timers[column_id].stop()
             del self.timers[column_id]
             print '--Removed timer for %s' % column_id
@@ -904,7 +888,7 @@ class Main(Base, QWidget):
 
     def turn_on_queue_timer(self, force=False):
         self.queue_dialog.update()
-        if len(self.core.list_statuses_queue()) > 0 and (not self.timers.has_key('queue') or force):
+        if (len(self.core.list_statuses_queue()) > 0 and 'queue' not in self.timers) or force:
             self.set_queue_timer()
             self.queue_dialog.update_timestamp()
 

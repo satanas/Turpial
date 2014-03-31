@@ -235,6 +235,7 @@ STRINGS = {
     'post_next_tooltip': _("Post next message in queue manually"),
     'add_photo': _("Add photo"),
     'remove_photo': _("Remove photo"),
+    'follows_you': _("Follows you"),
 }
 
 class i18n:

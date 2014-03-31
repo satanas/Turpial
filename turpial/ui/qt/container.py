@@ -13,7 +13,7 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.column import StatusesColumn
-from turpial.ui.qt.loader import BarLoadIndicator
+from turpial.ui.qt.widgets import BarLoadIndicator
 
 from libturpial.common import OS_MAC
 from libturpial.common.tools import detect_os
@@ -123,7 +123,7 @@ class Container(QVBoxLayout):
         message.setWordWrap(True)
         message.setFont(font2)
 
-        loader = BarLoadIndicator()
+        loader = BarLoadIndicator(None)
 
         self.child = QVBoxLayout()
         self.child.addWidget(logo)

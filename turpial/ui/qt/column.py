@@ -19,8 +19,7 @@ from PyQt4.QtGui import QStyledItemDelegate
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from turpial.ui.lang import i18n
-from turpial.ui.qt.widgets import ImageButton
-from turpial.ui.qt.loader import BarLoadIndicator
+from turpial.ui.qt.widgets import ImageButton, BarLoadIndicator
 from turpial.ui.qt.webview import StatusesWebView
 
 from libturpial.common import get_preview_service_from_url, unescape_list_name, OS_MAC
@@ -101,7 +100,6 @@ class StatusesColumn(QWidget):
 
         close_button = ImageButton(self.base, 'action-delete-shadowed.png', i18n.get('delete_column'))
         close_button.clicked.connect(self.__delete_column)
-        close_button.setStyleSheet("QToolButton { %s border: 0px solid %s;}" % (bg_style, self.base.bgcolor))
 
         header_layout = QHBoxLayout()
         header_layout.addLayout(caption_box, 1)

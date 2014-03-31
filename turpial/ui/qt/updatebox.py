@@ -22,8 +22,7 @@ from PyQt4.QtCore import pyqtSignal
 
 from turpial.ui.lang import i18n
 from turpial.ui.base import BROADCAST_ACCOUNT
-from turpial.ui.qt.loader import BarLoadIndicator
-from turpial.ui.qt.widgets import ImageButton, ErrorLabel
+from turpial.ui.qt.widgets import ImageButton, ErrorLabel, BarLoadIndicator
 
 from libturpial.common.tools import get_urls
 from libturpial.common import get_username_from, get_protocol_from
@@ -40,9 +39,9 @@ class UpdateBox(QWidget):
         self.text_edit = CompletionTextEdit()
 
         self.upload_button = ImageButton(base, 'action-add-media.png',
-                i18n.get('add_photo'))
+                i18n.get('add_photo'), borders=True)
         self.short_button = ImageButton(base, 'action-shorten.png',
-                i18n.get('short_urls'))
+                i18n.get('short_urls'), borders=True)
 
         font = QFont()
         font.setPointSize(18)

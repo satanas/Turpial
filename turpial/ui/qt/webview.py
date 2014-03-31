@@ -103,7 +103,7 @@ class StatusesWebView(QWebView):
         if status.entities:
             # Highlight URLs
             for url in status.entities['urls']:
-                pretty_url = "<a href='%s'>%s</a>" % (url.url, url.display_text)
+                pretty_url = "<a href='%s' title='%s'>%s</a>" % (url.url, url.url, url.display_text)
                 message = message.replace(url.search_for, pretty_url)
 
                 if is_preview_service_supported(url.url) and self.base.core.get_inline_preview():
@@ -208,4 +208,3 @@ class StatusesWebView(QWebView):
             new_timestamp = self.base.humanize_timestamp(status.timestamp)
             cmd = """updateTimestamp('%s', '%s')""" % (status.id_, new_timestamp)
             self.execute_javascript(cmd)
-

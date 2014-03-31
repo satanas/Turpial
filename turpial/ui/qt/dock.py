@@ -50,6 +50,7 @@ class Dock(QStatusBar):
                 i18n.get('search'))
         self.settings_button = ImageButton(base, 'dock-preferences.png',
                 i18n.get('settings'))
+        self.settings_button.setStyleSheet("QPushButton { %s opacity: 128; }; QToolButton:hover { %s opacity: 255;}" % (style, style))
 
         self.updates_button.clicked.connect(self.__updates_clicked)
         self.messages_button.clicked.connect(self.__messages_clicked)
@@ -67,7 +68,7 @@ class Dock(QStatusBar):
         toolbar.addWidget(self.updates_button)
         toolbar.setMinimumHeight(30)
         toolbar.setContentsMargins(0, 0, 0, 0)
-        toolbar.setStyleSheet("QToolBar { %s }; QToolButton { %s opacity: 128; }; QToolButton:hover { %s opacity: 255;}" % (style, style, style))
+        toolbar.setStyleSheet("QToolBar { %s }" % style)
 
         self.addPermanentWidget(toolbar, 1)
         self.setSizeGripEnabled(False)

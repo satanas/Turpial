@@ -134,7 +134,6 @@ class OsxNotificationSystem(BaseNotification):
             return
 
         if self.active and not self.disable:
-            # TODO: Put the icon
             notification = NSUserNotification.alloc().init()
             notification.setTitle_(title)
             notification.setInformativeText_(message)

@@ -61,23 +61,34 @@ class Base(Singleton):
         #self.unitylauncher.show_menu()
 
     # TODO: Put this in util.py
-    def humanize_size(self, size):
+    def humanize_size(self, size, unit='B', decimals=2):
         if size == 0:
-            return '0 B'
+            rtn = '0 %s' % unit
+            return rtn.strip()
 
+        prefix = ''
         kbsize = size / 1024
         if kbsize > 0:
             mbsize = kbsize / 1024
             if mbsize > 0:
                 gbsize = mbsize / 1024
                 if gbsize > 0:
-                    return "%.2f GB" % (mbsize / 1024.0)
+                    prefix = 'G'
+                    amount = mbsize / 1024.0
                 else:
-                    return "%.2f MB" % (kbsize / 1024.0)
+                    prefix = 'M'
+                    amount = kbsize / 1024.0
             else:
-                return "%.2f KB" % (size / 1024.0)
+                prefix = 'K'
+                amount = size / 1024.0
         else:
-            return "%.2f B" % size
+            amount = size
+
+        if (prefix != ''):
+            amount = round(amount, decimals)
+
+        rtn = "%s %s%s" % (amount, prefix, unit)
+        return rtn.strip()
 
     def humanize_timestamp(self, status_timestamp):
         now = time.time()

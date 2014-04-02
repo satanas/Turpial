@@ -229,9 +229,9 @@ class ProfileDialog(Window):
             profile_url ="<a href='%s'>%s</a>" % (profile.url, profile.url)
             #self.web.set_info(profile_url)
 
-        self.tweets.set_value(str(profile.statuses_count))
-        self.following.set_value(str(profile.friends_count))
-        self.followers.set_value(str(profile.followers_count))
+        self.tweets.set_value(self.base.humanize_size(profile.statuses_count, '', decimals=1))
+        self.following.set_value(self.base.humanize_size(profile.friends_count, '', decimals=1))
+        self.followers.set_value(self.base.humanize_size(profile.followers_count, '', decimals=1))
 
         column_id = "%s-profile_recent" % self.account_id
         self.last_statuses.set_column_id(column_id)

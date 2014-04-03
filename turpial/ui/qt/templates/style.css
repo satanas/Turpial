@@ -97,6 +97,7 @@ pre { position:fixed; left:15em; right:1em; top:1em }
   height: 150px;
   margin: 10px;
   background-color: #ddd;
+  overflow: hidden;
 }
 
 .avatar-row {

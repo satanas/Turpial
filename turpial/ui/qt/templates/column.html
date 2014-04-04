@@ -178,8 +178,12 @@
         for (var i=0; i < statuses.length; i++) {
             var table_top = getScreenCoordinates(statuses[i]).y;
             var table_bottom = table_top + statuses[i].offsetHeight;
-            if ((top >= table_top) && (top < table_bottom)) {
+            var height = table_bottom - table_top;
+            var middle = table_top + (height / 2);
+            if ((top >= table_top) && (top < middle)) {
                 return statuses[i];
+            } else if ((top >= middle) && (top < table_bottom)) {
+                return statuses[i + 1];
             }
         }
         return null;
@@ -193,8 +197,7 @@
         } else {
             elementAtScroll = getStatusFromScrollPosition(scrollTop);
         }
-        pre.innerHTML = "scroll at: " + elementAtScroll.id +
-        '\nscroll top: ' + scrollTop;
+        /*pre.innerHTML = "scroll at: " + elementAtScroll.id + '\nscroll top: ' + scrollTop;*/
 
     }
 

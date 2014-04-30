@@ -200,6 +200,9 @@ class Main(Base, QWidget):
         current_position.moveCenter(self.app.desktop().availableGeometry().center())
         self.move(current_position.topLeft())
 
+    def get_screen_size(self):
+        return self.app.desktop().availableGeometry()
+
     def resizeEvent(self, event):
         if self.core.status > self.core.LOADING:
             self.core.set_window_size(event.size().width(), event.size().height())

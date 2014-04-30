@@ -20,6 +20,7 @@ from PyQt4.QtGui import QFileDialog
 from PyQt4.QtGui import QApplication
 
 from PyQt4.QtCore import Qt
+from PyQt4.QtCore import QSize
 
 from turpial.ui.lang import i18n
 from turpial.ui.qt.widgets import Window, BarLoadIndicator
@@ -43,19 +44,10 @@ class ImageView(Window):
         self.source_url = None
         self.original_url = None
         self.local_file = None
+        self.pixmap = None
         self.status = self.EMPTY
 
         self.view = QLabel()
-        self.view.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        self.view.setScaledContents(True)
-
-        scroll_area = QScrollArea()
-        scroll_area.setBackgroundRole(QPalette.Dark)
-        scroll_area.setWidget(self.view)
-        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll_area.setContextMenuPolicy(Qt.CustomContextMenu)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll_area.customContextMenuRequested.connect(self.__popup_menu)
 
         self.error_label = QLabel(i18n.get('error_loading_image'))
         self.error_label.setAlignment(Qt.AlignHCenter)
@@ -69,27 +61,35 @@ class ImageView(Window):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.loader)
         layout.addWidget(self.error_label)
-        layout.addWidget(scroll_area)
+        layout.addWidget(self.view)
         layout.addWidget(self.exif_data)
 
         self.setLayout(layout)
         self.__clear()
 
     def __clear(self):
-        self.resize(350, 350)
+        self.setFixedSize(350, 350)
         self.view.setMovie(None)
         self.view.setPixmap(QPixmap())
         self.menu = None
         self.source_url = None
         self.original_url = None
         self.local_file = None
+        self.pixmap = None
         self.exif_data.setVisible(False)
         self.status = self.EMPTY
 
     def __load(self, url):
         self.local_file = url
         self.loader.setVisible(False)
-        pix = self.base.load_image(url, True)
+        self.pixmap = self.base.load_image(url, True)
+        screen_size = self.base.get_screen_size()
+
+        if (screen_size.width() - 10 < self.pixmap.width() or screen_size.height() - 10 < self.pixmap.height()):
+            width = min(self.pixmap.width(), screen_size.width())
+            height = min(self.pixmap.height(), screen_size.height())
+            self.pixmap = self.pixmap.scaled(QSize(screen_size.width(), screen_size.height()), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.setFixedSize(self.pixmap.width(), self.pixmap.height())
 
         if EXIF_SUPPORT:
             fd = open(url, 'rb')
@@ -97,17 +97,17 @@ class ImageView(Window):
             if tags != {}:
                 data = {
                     'Camera': "%s %s" % (tags['Image Make'], tags['Image Model']),
-                    'Software': tags['Image Software'],
-                    'Original Datetime': tags['EXIF DateTimeOriginal'],
+                    'Software': '' if 'Image Software' not in tags else tags['Image Software'],
+                    'Original Datetime': '' if 'EXIF DateTimeOriginal' not in tags else tags['EXIF DateTimeOriginal'],
                     'Dimensions': "%s x %s" % (tags['EXIF ExifImageWidth'], tags['EXIF ExifImageLength']),
-                    'Copyright': '' if 'Image Copyright' not in tags['Image Copyright'] else tags['Image Copyright'],
-                    'Comment': tags['EXIF UserComment']
+                    'Copyright': '' if 'Image Copyright' not in tags else tags['Image Copyright'],
+                    'Comment': '' if 'EXIF UserComment' not in tags else tags['EXIF UserComment']
                 }
                 exif_data = ''
                 for key in ['Camera', 'Software', 'Original Datetime', 'Dimensions', 'Copyright', 'Comment']:
                     if exif_data != '':
                         exif_data += ' – '
-                    exif_data += "%s: %s" % (key, data['key'])
+                    exif_data += "%s: %s" % (key, data[key])
             else:
                 exif_data = i18n.get('exif_data_not_available')
             self.exif_data.setText(exif_data)
@@ -117,9 +117,8 @@ class ImageView(Window):
             self.view.setMovie(movie)
             movie.start()
         else:
-            self.view.setPixmap(pix)
+            self.view.setPixmap(self.pixmap)
         self.view.adjustSize()
-        self.resize(pix.width() + 2, pix.height() + 2)
         self.status = self.LOADED
         self.show()
 
@@ -214,3 +213,4 @@ class ImageView(Window):
     def error(self):
         self.loader.setVisible(False)
         self.error_label.setVisible(True)
+

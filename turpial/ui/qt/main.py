@@ -644,6 +644,7 @@ class Main(Base, QWidget):
         column, max_ = data
 
         if self.is_exception(response):
+            print 'Ble', response
             self._container.error_updating_column(column.id_)
         else:
             count = len(response)

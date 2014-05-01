@@ -11,7 +11,9 @@ from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QToolBar
 from PyQt4.QtGui import QStatusBar
 from PyQt4.QtGui import QSizePolicy
+from PyQt4.QtGui import QKeySequence
 
+from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QPoint
 from PyQt4.QtCore import pyqtSignal
 
@@ -56,6 +58,8 @@ class Dock(QStatusBar):
         self.messages_button.clicked.connect(self.__messages_clicked)
         self.search_button.clicked.connect(self.__search_clicked)
         self.settings_button.clicked.connect(self.__settings_clicked)
+
+        self.updates_button.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_T))
 
         separator = QWidget()
         separator.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)

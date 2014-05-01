@@ -29,6 +29,7 @@ from turpial.ui.qt.worker import CoreWorker
 from turpial.ui.qt.queue import QueueDialog
 from turpial.ui.qt.about import AboutDialog
 from turpial.ui.qt.search import SearchDialog
+from turpial.ui.qt.shortcuts import Shortcuts
 from turpial.ui.qt.updatebox import UpdateBox
 from turpial.ui.qt.container import Container
 from turpial.ui.qt.imageview import ImageView
@@ -39,6 +40,8 @@ from turpial.ui.qt.preferences import PreferencesDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 
 from libturpial.common import ColumnType, get_preview_service_from_url, escape_list_name
+from libturpial.common import OS_MAC
+from libturpial.common.tools import detect_os
 
 
 # Exceptions
@@ -86,6 +89,7 @@ class Main(Base, QWidget):
         self.profile_dialog.options_clicked.connect(self.show_profile_menu)
         self.image_view = ImageView(self)
         self.queue_dialog = QueueDialog(self)
+        self.shortcuts = Shortcuts(self)
 
         self.core = CoreWorker()
         self.core.ready.connect(self.after_core_initialized)
@@ -150,6 +154,8 @@ class Main(Base, QWidget):
         self.tray.settings_clicked.connect(self.show_preferences_dialog)
         self.tray.quit_clicked.connect(self.main_quit)
 
+        self.add_keyboard_shortcuts()
+
         layout = QVBoxLayout()
         layout.setSpacing(0)
         layout.setMargin(0)
@@ -169,6 +175,12 @@ class Main(Base, QWidget):
             subprocess.Popen(cmd)
         else:
             webbrowser.open(url)
+
+    def add_keyboard_shortcuts(self):
+        for key, shortcut in self.shortcuts:
+            if key == 'preferences' and detect_os() != OS_MAC:
+                continue
+            #self.setShortcut(shortcut.sequence)
 
     def toggle_tray_icon(self):
         if self.showed:

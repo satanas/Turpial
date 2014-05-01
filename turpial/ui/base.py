@@ -43,9 +43,11 @@ class Base(Singleton):
         self.home_path = os.path.expanduser('~')
 
         if detect_os() == OS_MAC:
-            self.shortcut_key = 'Cmd'
+            self.command_key_shortcut = u'⌘'
+            self.command_separator = ''
         else:
-            self.shortcut_key = 'Ctrl'
+            self.command_key_shortcut = 'Ctrl'
+            self.command_separator = '+'
 
         self.bgcolor = "#363636"
         self.fgcolor = "#fff"
@@ -124,8 +126,11 @@ class Base(Singleton):
             unit = i18n.get('minute')
         return " ".join([str(interval), unit])
 
-    def get_shortcut_string(self, key):
-        return "+".join([self.shortcut_key, key])
+    def get_shortcut_string(self, key, modifier=None):
+        if modifier:
+            return self.command_separator.join([self.command_key_shortcut, modifier, key])
+        else:
+            return self.command_separator.join([self.command_key_shortcut, key])
 
     #================================================================
     # Common methods to all interfaces

@@ -61,11 +61,7 @@ class Dock(QStatusBar):
         self.search_button.clicked.connect(self.__search_clicked)
         self.settings_button.clicked.connect(self.__settings_clicked)
 
-        self.updates_button.setToolTip(self.base.shortcuts.get('tweet').caption)
-        self.messages_button.setToolTip(self.base.shortcuts.get('message').caption)
-        self.search_button.setToolTip(self.base.shortcuts.get('search').caption)
-        if detect_os() == OS_MAC:
-            self.settings_button.setToolTip(self.base.shortcuts.get('preferences').caption)
+        # TODO: Set tooltip for doc buttons
 
         separator = QWidget()
         separator.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -122,31 +118,23 @@ class Dock(QStatusBar):
 
         accounts = QAction(i18n.get('accounts'), self)
         accounts.triggered.connect(partial(self.__accounts_clicked))
-        accounts.setShortcut(self.base.shortcuts.get('accounts').sequence)
 
         queue = QAction(i18n.get('messages_queue'), self)
         queue.triggered.connect(partial(self.__queue_clicked))
-        queue.setShortcut(self.base.shortcuts.get('queue').sequence)
 
         columns = QAction(i18n.get('columns'), self)
 
         filters = QAction(i18n.get('filters'), self)
         filters.triggered.connect(partial(self.__filters_clicked))
-        #filters.setToolTip(self.base.shortcuts.get('filters').caption)
-        filters.setShortcut(self.base.shortcuts.get('filters').sequence)
 
         preferences = QAction(i18n.get('preferences'), self)
         preferences.triggered.connect(partial(self.__preferences_clicked))
-        if detect_os() == OS_MAC:
-            preferences.setShortcut(self.base.shortcuts.get('preferences').sequence)
 
         about_turpial = QAction(i18n.get('about_turpial'), self)
         about_turpial.triggered.connect(partial(self.__about_clicked))
 
         quit = QAction(i18n.get('quit'), self)
         quit.triggered.connect(self.__quit_clicked)
-        quit.setShortcut(self.base.shortcuts.get('quit').sequence)
-
 
         if self.status > self.EMPTY:
             columns_menu = self.base.build_columns_menu()

@@ -14,10 +14,10 @@ from functools import partial
 
 from PyQt4.QtGui import (
     QMenu, QImage, QWidget, QAction, QPixmap, QDialog, QMessageBox,
-    QVBoxLayout, QApplication, QFontDatabase, QIcon, QDesktopWidget
+    QVBoxLayout, QApplication, QFontDatabase, QIcon, QDesktopWidget,
 )
 
-from PyQt4.QtCore import QTimer, pyqtSignal, QRect
+from PyQt4.QtCore import QTimer, pyqtSignal, QRect, Qt
 
 from turpial.ui.base import * #NOQA
 from turpial.ui.sound import SoundSystem
@@ -39,8 +39,7 @@ from turpial.ui.qt.accounts import AccountsDialog
 from turpial.ui.qt.preferences import PreferencesDialog
 from turpial.ui.qt.selectfriend import SelectFriendDialog
 
-from libturpial.common import ColumnType, get_preview_service_from_url, escape_list_name
-from libturpial.common import OS_MAC
+from libturpial.common import ColumnType, get_preview_service_from_url, escape_list_name, OS_MAC
 from libturpial.common.tools import detect_os
 
 
@@ -154,8 +153,6 @@ class Main(Base, QWidget):
         self.tray.settings_clicked.connect(self.show_preferences_dialog)
         self.tray.quit_clicked.connect(self.main_quit)
 
-        self.add_keyboard_shortcuts()
-
         layout = QVBoxLayout()
         layout.setSpacing(0)
         layout.setMargin(0)
@@ -164,7 +161,8 @@ class Main(Base, QWidget):
         layout.addWidget(self.dock)
 
         self.setLayout(layout)
-
+        self.setFocusPolicy(Qt.StrongFocus)
+        self.add_keyboard_shortcuts()
 
     def open_in_browser(self, url):
         browser = self.core.get_default_browser()
@@ -175,12 +173,6 @@ class Main(Base, QWidget):
             subprocess.Popen(cmd)
         else:
             webbrowser.open(url)
-
-    def add_keyboard_shortcuts(self):
-        for key, shortcut in self.shortcuts:
-            if key == 'preferences' and detect_os() != OS_MAC:
-                continue
-            #self.setShortcut(shortcut.sequence)
 
     def toggle_tray_icon(self):
         if self.showed:
@@ -193,6 +185,23 @@ class Main(Base, QWidget):
             self.showed = True
             self.show()
             self.raise_()
+
+    def add_keyboard_shortcuts(self):
+        for key, shortcut in self.shortcuts:
+            if detect_os() != OS_MAC and key == 'preferences':
+                continue
+            self.addAction(shortcut.action)
+
+        self.shortcuts.get('accounts').activated.connect(self.show_accounts_dialog)
+        self.shortcuts.get('filters').activated.connect(self.show_filters_dialog)
+        self.shortcuts.get('tweet').activated.connect(self.show_update_box)
+        self.shortcuts.get('message').activated.connect(self.show_friends_dialog_for_direct_message)
+        self.shortcuts.get('search').activated.connect(self.show_search_dialog)
+        self.shortcuts.get('queue').activated.connect(self.show_queue_dialog)
+        self.shortcuts.get('quit').activated.connect(self.closeEvent)
+
+        if detect_os() == OS_MAC:
+            self.shortcuts.get('preferences').activated.connect(self.show_preferences_dialog)
 
     def add_extra_friends_from_statuses(self, statuses):
         current_friends_list = self.load_friends_list()

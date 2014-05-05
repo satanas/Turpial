@@ -29,7 +29,7 @@ from turpial.ui.qt.widgets import Window
 class PreferencesDialog(Window):
     def __init__(self, base):
         Window.__init__(self, base, i18n.get('preferences'))
-        self.setFixedSize(500, 400)
+        self.setFixedSize(600, 370)
         self.current_config = self.base.get_config()
         self.setAttribute(Qt.WA_QuitOnClose, False)
 
@@ -93,8 +93,10 @@ class BasePage(QWidget):
     def __init__(self, caption):
         QWidget.__init__(self)
 
+        caption = "".join(["<b>", caption, "<b/>"])
         description = QLabel(caption)
         description.setWordWrap(True)
+        description.setTextFormat(Qt.RichText)
 
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(10, 10, 10, 10)
@@ -116,12 +118,13 @@ class GeneralPage(BasePage):
         images_in_browser = base.core.get_show_images_in_browser()
 
         self.update_frequency = Slider(i18n.get('default_update_frequency'), unit='min',
-            default_value=update_frequency, tooltip=i18n.get('default_update_frequency_tooltip'))
+            default_value=update_frequency, tooltip=i18n.get('default_update_frequency_tooltip'),
+            caption_size=150)
         self.statuses_per_column = Slider(i18n.get('statuses_per_column'), minimum_value=20,
-            maximum_value=200, default_value=statuses)
+            maximum_value=200, default_value=statuses, caption_size=150)
         self.queue_frequency = Slider(i18n.get('queue_frequency'), minimum_value=5,
             maximum_value=720, default_value=queue_frequency, single_step=15, time=True,
-            tooltip=i18n.get('queue_frequency_tooltip'))
+            tooltip=i18n.get('queue_frequency_tooltip'), caption_size=150)
         self.minimize_on_close = CheckBox(i18n.get('minimize_on_close'), checked=minimize_on_close,
             tooltip=i18n.get('minimize_on_close_tooltip'))
         self.inline_preview = CheckBox(i18n.get('inline_preview'), checked=inline_preview,
@@ -129,9 +132,9 @@ class GeneralPage(BasePage):
         self.images_in_browser = CheckBox(i18n.get('open_images_in_browser'), checked=images_in_browser,
             tooltip=i18n.get('open_images_in_browser_tooltip'))
 
-        self.layout.addWidget(self.update_frequency)
-        self.layout.addWidget(self.queue_frequency)
         self.layout.addWidget(self.statuses_per_column)
+        self.layout.addWidget(self.queue_frequency)
+        self.layout.addWidget(self.update_frequency)
         self.layout.addSpacing(10)
         self.layout.addWidget(self.minimize_on_close)
         self.layout.addWidget(self.inline_preview)
@@ -161,6 +164,8 @@ class NotificationsPage(BasePage):
         sound_on_login = base.core.get_sound_on_login()
         sound_on_updates = base.core.get_sound_on_updates()
 
+        self.notify_on_new = CheckBox(i18n.get('notify_on_updates'), checked=notify_on_updates,
+            tooltip=i18n.get('notify_on_updates_tooltip'))
         self.notify_on_actions = CheckBox(i18n.get('notify_on_actions'), checked=notify_on_actions,
             tooltip=i18n.get('notify_on_actions_toolip'))
         self.sound_on_login = CheckBox(i18n.get('sound_on_login'), checked=sound_on_login,
@@ -168,6 +173,8 @@ class NotificationsPage(BasePage):
         self.sound_on_updates = CheckBox(i18n.get('sound_on_updates'), checked=sound_on_updates,
             tooltip=i18n.get('sound_on_updates_tooltip'))
 
+        self.layout.addWidget(self.notify_on_new)
+        self.layout.addSpacing(15)
         self.layout.addWidget(self.notify_on_actions)
         self.layout.addSpacing(15)
         self.layout.addWidget(self.sound_on_login)
@@ -176,8 +183,8 @@ class NotificationsPage(BasePage):
 
     def get_config(self):
         notif = {
+            'updates': 'on' if self.notify_on_new.get_value() else 'off',
             'actions': 'on' if self.notify_on_actions.get_value() else 'off'
-
         }
         sound = {
             'login': 'on' if self.sound_on_login.get_value() else 'off',
@@ -210,14 +217,11 @@ class ServicesPage(BasePage):
             'upload-pic': self.upload_media.get_value()
         }
 
-class BrowserPage(QWidget):
+class BrowserPage(BasePage):
     def __init__(self, base):
-        QWidget.__init__(self)
+        BasePage.__init__(self, i18n.get('web_browser_tab_description'))
 
         current_browser = base.core.get_default_browser()
-
-        description = QLabel(i18n.get('web_browser_tab_description'))
-        description.setWordWrap(True)
 
         self.command = QLineEdit()
 
@@ -243,18 +247,11 @@ class BrowserPage(QWidget):
         self.button_group.addButton(self.custom_browser.radiobutton)
         self.button_group.setExclusive(True)
 
-        vbox = QVBoxLayout()
-        vbox.setSpacing(0)
-        vbox.setContentsMargins(5, 5, 5, 0)
-        vbox.addWidget(description)
-        vbox.addSpacing(15)
-        vbox.addWidget(self.default_browser)
-        vbox.addSpacing(10)
-        vbox.addWidget(self.custom_browser)
-        vbox.addLayout(command_box)
-        vbox.addStretch(1)
-
-        self.setLayout(vbox)
+        self.layout.addWidget(self.default_browser)
+        self.layout.addSpacing(10)
+        self.layout.addWidget(self.custom_browser)
+        self.layout.addLayout(command_box)
+        self.layout.addStretch(1)
 
         if current_browser == '' or current_browser is None:
             self.default_browser.set_value(True)
@@ -406,7 +403,7 @@ class Slider(QWidget):
         description.setWordWrap(True)
         description.setToolTip(tooltip)
         if caption_size:
-            description.setMaximumWidth(caption_size)
+            description.setFixedWidth(caption_size)
 
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setMaximum(maximum_value)

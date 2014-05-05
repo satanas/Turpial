@@ -202,7 +202,7 @@ STRINGS = {
     'test': _("Test"),
     'open': _("Open"),
     'open_in_browser': _("Open in browser"),
-    'default_update_frequency_tooltip': _("Set the update frequency by default for new columns"),
+    'default_update_frequency_tooltip': _("Set the default update frequency value for newly created columns"),
     'queue_frequency_tooltip': _("Set how often are posted messages from the queue"),
     'minimize_on_close_tooltip': _("Send Turpial to system tray instead of closing"),
     'notify_on_actions_toolip': _("Display system notifications when you perform action like follow, block, etc"),
@@ -240,6 +240,8 @@ STRINGS = {
     'update_frequency': _("Update frequency"),
     'update_frequency_tooltip': _("Set the update frequency for this column"),
     'column_options': _("Column options"),
+    'notify_on_updates': _("Default notification on updates"),
+    'notify_on_updates_tooltip': _("Set notifications preference for updates in newly created columns"),
 }
 
 class i18n:

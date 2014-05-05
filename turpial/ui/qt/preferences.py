@@ -115,8 +115,8 @@ class GeneralPage(BasePage):
         inline_preview = base.core.get_inline_preview()
         images_in_browser = base.core.get_show_images_in_browser()
 
-        self.update_frequency = Slider(i18n.get('update_frequency'), unit='min',
-            default_value=update_frequency, tooltip=i18n.get('update_frequency_tooltip'))
+        self.update_frequency = Slider(i18n.get('default_update_frequency'), unit='min',
+            default_value=update_frequency, tooltip=i18n.get('default_update_frequency_tooltip'))
         self.statuses_per_column = Slider(i18n.get('statuses_per_column'), minimum_value=20,
             maximum_value=200, default_value=statuses)
         self.queue_frequency = Slider(i18n.get('queue_frequency'), minimum_value=5,
@@ -161,8 +161,6 @@ class NotificationsPage(BasePage):
         sound_on_login = base.core.get_sound_on_login()
         sound_on_updates = base.core.get_sound_on_updates()
 
-        self.notify_on_updates = CheckBox(i18n.get('notify_on_updates'), checked=notify_on_updates,
-            tooltip=i18n.get('notify_on_updates_toolip'))
         self.notify_on_actions = CheckBox(i18n.get('notify_on_actions'), checked=notify_on_actions,
             tooltip=i18n.get('notify_on_actions_toolip'))
         self.sound_on_login = CheckBox(i18n.get('sound_on_login'), checked=sound_on_login,
@@ -170,7 +168,6 @@ class NotificationsPage(BasePage):
         self.sound_on_updates = CheckBox(i18n.get('sound_on_updates'), checked=sound_on_updates,
             tooltip=i18n.get('sound_on_updates_tooltip'))
 
-        self.layout.addWidget(self.notify_on_updates)
         self.layout.addWidget(self.notify_on_actions)
         self.layout.addSpacing(15)
         self.layout.addWidget(self.sound_on_login)
@@ -179,7 +176,6 @@ class NotificationsPage(BasePage):
 
     def get_config(self):
         notif = {
-            'updates': 'on' if self.notify_on_updates.get_value() else 'off',
             'actions': 'on' if self.notify_on_actions.get_value() else 'off'
 
         }
@@ -396,6 +392,8 @@ class AdvancedPage(BasePage):
 
 # TODO: Add tooltips
 class Slider(QWidget):
+    changed = pyqtSignal(int)
+
     def __init__(self, caption, default_value, minimum_value=1, maximum_value=60, single_step=1,
             page_step=6, caption_size=None, unit='', time=False, tooltip=''):
         QWidget.__init__(self)
@@ -443,9 +441,13 @@ class Slider(QWidget):
         else:
             text = "%s %s" % (self.value, self.unit)
         self.value_label.setText(text)
+        self.changed.emit(self.value)
 
     def get_value(self):
         return int(self.slider.value())
+
+    def set_value(self, value):
+        self.slider.setValue(value)
 
 class CheckBox(QWidget):
     status_changed = pyqtSignal(bool)

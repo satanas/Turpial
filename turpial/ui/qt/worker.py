@@ -117,6 +117,8 @@ class CoreWorker(QThread):
 
     def login(self):
         self.core = Core()
+        # FIXME: Dirty hack that must be fixed in libturpial
+        self.core.config.cfg.optionxform = str
         self.queue_path = os.path.join(self.core.config.basedir, 'queue')
         if not os.path.isfile(self.queue_path):
             open(self.queue_path, 'w').close()
@@ -182,57 +184,16 @@ class CoreWorker(QThread):
         self.core.config.write('General', 'show-images-in-browser', value)
 
     def get_update_interval_per_column(self, column_id):
-        column_key = self.__get_column_num_from_id(column_id)
+        return int(self.core.config.read('Updates', column_id))
 
-        key = "%s-update-interval" % column_key
-        interval = self.core.config.read('Intervals', key)
-        if not interval:
-            # FIXME: Fix in libturpial
-            config = self.core.config.read_all()
-            if not config.has_key('Intervals'):
-                config['Intervals'] = {key: 5}
-                self.core.config.save(config)
-            else:
-                self.core.config.write('Intervals', key, 5)
-            config = self.core.config.read_all()
-            interval = "5"
-        return int(interval)
-
-    def set_update_interval_in_column(self, column_id, interval):
-        column_key = self.__get_column_num_from_id(column_id)
-
-        key = "%s-update-interval" % column_key
-        self.core.config.write('Intervals', key, interval)
-        return interval
+    def set_update_interval_per_column(self, column_id, interval):
+        self.core.config.write('Updates', column_id, interval)
 
     def get_show_notifications_in_column(self, column_id):
-        column_key = self.__get_column_num_from_id(column_id)
-
-        key = "%s-notifications" % column_key
-        notifications = self.core.config.read('Notifications', key)
-        if not notifications:
-            # FIXME: Fix in libturpial
-            config = self.core.config.read_all()
-            if not config.has_key('Notifications'):
-                config['Notifications'] = {}
-                self.core.config.save(config)
-            self.core.config.write('Notifications', key, 'on')
-            notifications = 'on'
-
-        if notifications == 'on':
-            return True
-        return False
+        return self.core.config.read('Notifications', column_id, boolean=True)
 
     def set_show_notifications_in_column(self, column_id, value):
-        column_key = self.__get_column_num_from_id(column_id)
-
-        key = "%s-notifications" % column_key
-        if value:
-            notifications = 'on'
-        else:
-            notifications = 'off'
-        self.core.config.write('Notifications', key, notifications)
-        return value
+        self.core.config.write('Notifications', column_id, 'on' if value else 'off')
 
     def get_cache_size(self):
         return self.core.get_cache_size()
@@ -248,8 +209,62 @@ class CoreWorker(QThread):
             for option in new_config[section]:
                 self.core.write_config_value(section, option, new_config[section][option])
 
-    def add_new_config_option(self, section, option, default_value):
+    def write_config_option(self, section, option, value):
+        self.core.config.write(section, option, value)
+
+    def read_section(self, section):
+        return self.core.config.read_section(section)
+
+    def write_section(self, section, items):
+        self.core.config.write_section(section, items)
+
+    def add_config_option(self, section, option, default_value):
         self.core.register_new_config_option(section, option, default_value)
+
+    # TODO: Implement this in libturpial
+    def remove_config_option(self, section, option):
+        if section in self.core.config._ConfigBase__config:
+            if option in self.core.config._ConfigBase__config[section]:
+                del self.core.config._ConfigBase__config[section][option]
+
+        if section in self.core.config.extra_sections:
+            if option in self.core.config.extra_sections[section]:
+                del self.core.config.extra_sections[section][option]
+
+        self.core.config.cfg.remove_option(section, option)
+
+        _fd = open(self.core.config.configpath, 'w')
+        self.core.config.cfg.write(_fd)
+        _fd.close()
+
+    # TODO: Implement this in libturpial
+    def remove_section(self, section):
+        if section in self.core.config._ConfigBase__config:
+            del self.core.config._ConfigBase__config[section]
+
+        if section in self.core.config.extra_sections:
+            del self.core.config.extra_sections[section]
+
+        self.core.config.cfg.remove_section(section)
+
+        _fd = open(self.core.config.configpath, 'w')
+        self.core.config.cfg.write(_fd)
+        _fd.close()
+
+    def sanitize_search_columns(self):
+        i = 1
+        columns = []
+        while True:
+            column_num = "column%s" % i
+            column_id = self.core.config.read('Columns', column_num)
+            if column_id is None:
+                break
+            elif column_id is not None and column_id.find('search:') >= 0:
+                column_id = column_id.replace('search:', 'search>')
+                self.core.config.write('Columns', column_num, column_id)
+            columns.append(column_id)
+            i += 1
+        return columns
 
     def get_shorten_url_service(self):
         return self.core.get_shorten_url_service()
@@ -307,10 +322,15 @@ class CoreWorker(QThread):
 
     def save_column(self, column_id):
         reg_column_id = self.core.register_column(column_id)
+        notify = 'on' if self.get_notify_on_updates() else 'off'
+        self.write_config_option('Notifications', column_id, notify)
+        self.write_config_option('Updates', column_id, self.get_update_interval())
         self.__after_save_column(reg_column_id)
 
     def delete_column(self, column_id):
         deleted_column = self.core.unregister_column(column_id)
+        self.remove_config_option('Notifications', column_id)
+        self.remove_config_option('Updates', column_id)
         self.__after_delete_column(column_id)
 
     def get_column_statuses(self, column, last_id):

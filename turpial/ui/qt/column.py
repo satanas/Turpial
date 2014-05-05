@@ -7,10 +7,14 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QSize
 from PyQt4.QtCore import QRect
 from PyQt4.QtCore import QLine
+from PyQt4.QtCore import QTimer
 
 from PyQt4.QtGui import QFont
+from PyQt4.QtGui import QMenu
 from PyQt4.QtGui import QColor
 from PyQt4.QtGui import QLabel
+from PyQt4.QtGui import QCursor
+from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QMessageBox
@@ -19,8 +23,9 @@ from PyQt4.QtGui import QStyledItemDelegate
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 
 from turpial.ui.lang import i18n
-from turpial.ui.qt.widgets import ImageButton, BarLoadIndicator
 from turpial.ui.qt.webview import StatusesWebView
+from turpial.ui.qt.widgets import ImageButton, BarLoadIndicator
+from turpial.ui.qt.preferences import Slider
 
 from libturpial.common import get_preview_service_from_url, unescape_list_name, OS_MAC
 from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from,\
@@ -31,6 +36,7 @@ class StatusesColumn(QWidget):
     NOTIFICATION_SUCCESS = 'success'
     NOTIFICATION_WARNING = 'warning'
     NOTIFICATION_INFO = 'notice'
+    SLIDER_INTERVAL = 5000
 
     def __init__(self, base, column_id, include_header=True):
         QWidget.__init__(self)
@@ -47,6 +53,17 @@ class StatusesColumn(QWidget):
         self.loader = BarLoadIndicator()
         self.loader.setVisible(False)
 
+        self.slider = Slider('', 5, unit='m')
+        self.slider.changed.connect(self.__on_slider_update)
+        self.slider.hide()
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.__on_timeout)
+
+        sliderbox = QHBoxLayout()
+        sliderbox.setSpacing(8)
+        sliderbox.setContentsMargins(10, 5, 10, 0)
+
         self.webview = StatusesWebView(self.base, self.id_)
         self.webview.link_clicked.connect(self.__link_clicked)
         self.webview.hashtag_clicked.connect(self.__hashtag_clicked)
@@ -60,10 +77,24 @@ class StatusesColumn(QWidget):
         if include_header:
             header = self.__build_header(column_id)
             layout.addWidget(header)
+            layout.addWidget(self.slider)
             layout.addWidget(self.loader)
         layout.addWidget(self.webview, 1)
 
         self.setLayout(layout)
+
+    def __on_timeout(self):
+        current_value = self.base.get_column_update_interval(self.id_)
+        new_value = self.slider.get_value()
+        if current_value != new_value:
+            self.base.set_column_update_interval(self.id_, new_value)
+            column = self.base.get_column_from_id(self.id_)
+            self.base.add_timer(column)
+        self.hide_slider()
+
+    def __on_slider_update(self, value):
+        self.timer.stop()
+        self.timer.start(self.SLIDER_INTERVAL)
 
     def __build_header(self, column_id):
         self.set_column_id(column_id)
@@ -98,8 +129,8 @@ class StatusesColumn(QWidget):
         caption_box.addWidget(caption2)
         caption_box.addStretch(1)
 
-        close_button = ImageButton(self.base, 'action-delete-shadowed.png', i18n.get('delete_column'))
-        close_button.clicked.connect(self.__delete_column)
+        close_button = ImageButton(self.base, 'action-menu-shadowed.png', i18n.get('column_options'))
+        close_button.clicked.connect(self.__show_options_menu)
 
         header_layout = QHBoxLayout()
         header_layout.addLayout(caption_box, 1)
@@ -109,6 +140,33 @@ class StatusesColumn(QWidget):
         header.setStyleSheet("QWidget { %s }" % bg_style)
         header.setLayout(header_layout)
         return header
+
+    def __show_options_menu(self):
+        self.hide_slider()
+        self.options_menu = QMenu(self)
+
+        notifications = QAction(i18n.get('notifications'), self)
+        notifications.setCheckable(True)
+        notifications.setChecked(self.base.get_column_notification(self.id_))
+        notifications.triggered.connect(self.__toogle_notifications)
+        notifications.setToolTip(i18n.get('notifications_toolip'))
+
+        caption = "%s (%sm)" % (i18n.get('update_frequency'), self.base.get_column_update_interval(self.id_))
+        update = QAction(caption, self)
+        update.triggered.connect(self.show_slider)
+        update.setToolTip(i18n.get('update_frequency_tooltip'))
+
+        delete = QAction(i18n.get('delete'), self)
+        delete.triggered.connect(self.__delete_column)
+
+        self.options_menu.addAction(notifications)
+        self.options_menu.addAction(update)
+        self.options_menu.addAction(delete)
+        self.options_menu.exec_(QCursor.pos())
+
+    def __toogle_notifications(self):
+        notify = not self.base.get_column_notification(self.id_)
+        self.base.set_column_notification(self.id_, notify)
 
     def __delete_column(self):
         self.base.core.delete_column(self.id_)
@@ -226,6 +284,14 @@ class StatusesColumn(QWidget):
             self.last_id = statuses[0].original_status_id
         else:
             self.last_id = statuses[0].id_
+
+    def show_slider(self):
+        self.slider.set_value(self.base.get_column_update_interval(self.id_))
+        self.slider.show()
+        self.timer.start(self.SLIDER_INTERVAL)
+
+    def hide_slider(self):
+        self.slider.hide()
 
     def set_column_id(self, column_id):
         self.id_ = column_id

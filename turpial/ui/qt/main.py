@@ -390,7 +390,7 @@ class Main(Base, QWidget):
         self.core.save_column(column_id)
 
     def add_search_column(self, account_id, criteria):
-        column_id = "%s-%s:%s" % (account_id, ColumnType.SEARCH, urllib2.quote(criteria))
+        column_id = "%s-%s>%s" % (account_id, ColumnType.SEARCH, urllib2.quote(criteria))
         self.add_column(column_id)
 
     def get_column_from_id(self, column_id):
@@ -583,22 +583,27 @@ class Main(Base, QWidget):
 
     def update_config(self, new_config):
         current_config = self.core.read_config()
-        current_update_interval = int(current_config['General']['update-interval'])
         current_queue_interval = int(current_config['General']['queue-interval'])
 
         self.core.update_config(new_config)
 
-        if current_update_interval != new_config['General']['update-interval']:
-            columns = self.core.get_registered_columns()
-            for column in columns:
-                self.add_timer(column)
-
         if current_queue_interval != new_config['General']['queue-interval']:
             self.turn_on_queue_timer(force=True)
 
-
     def restore_config(self):
         self.core.restore_config()
+
+    def set_column_update_interval(self, column_id, interval):
+        self.core.set_update_interval_per_column(column_id, interval)
+
+    def get_column_update_interval(self, column_id):
+        return self.core.get_update_interval_per_column(column_id)
+
+    def set_column_notification(self, column_id, value):
+        self.core.set_show_notifications_in_column(column_id, value)
+
+    def get_column_notification(self, column_id):
+        return self.core.get_show_notifications_in_column(column_id)
 
     #================================================================
     # Hooks definitions
@@ -609,6 +614,42 @@ class Main(Base, QWidget):
             self.core.status = self.core.ERROR
             self._container.error()
         else:
+            self.core.add_config_option('General', 'minimize-on-close', 'off')
+            self.core.add_config_option('General', 'inline-preview', 'off')
+            self.core.add_config_option('General', 'show-images-in-browser', 'off')
+            self.core.add_config_option('General', 'queue-interval', 30)
+            self.core.add_config_option('Window', 'size', '320,480')
+            self.core.add_config_option('Notifications', 'actions', 'on')
+            self.core.add_config_option('Notifications', 'updates', 'on')
+            self.core.add_config_option('Sounds', 'updates', 'on')
+            self.core.add_config_option('Sounds', 'login', 'on')
+            self.core.add_config_option('Browser', 'cmd', '')
+            self.core.add_config_option('Advanced', 'show-user-avatars', 'on')
+
+            # This is for backwards compatibility
+            columns = self.core.sanitize_search_columns()
+            notifications = self.core.read_section('Notifications')
+            updates = self.core.read_section('Updates')
+
+            if updates is None:
+                updates = {}
+
+            for key in columns:
+                if key not in notifications.keys():
+                    notifications[key] = 'on' if self.core.get_notify_on_updates() else 'off'
+                if key not in updates.keys():
+                    updates[key] = self.core.get_update_interval()
+
+            self.core.write_section('Notifications', notifications)
+            self.core.write_section('Updates', updates)
+
+            # Remove deprecated config values
+            self.core.remove_config_option('Notifications', 'on-updates')
+            self.core.remove_config_option('Notifications', 'on-actions')
+            self.core.remove_config_option('Sounds', 'on-updates')
+            self.core.remove_config_option('Sounds', 'on-actions')
+            self.core.remove_config_option('Sounds', 'on-login')
+
             width, height = self.core.get_window_size()
             self.resize(width, height)
             self.center_on_screen()
@@ -618,18 +659,6 @@ class Main(Base, QWidget):
             self.update_container()
             self.turn_on_queue_timer()
             self.core.status = self.core.READY
-
-            self.core.add_new_config_option('General', 'minimize-on-close', 'off')
-            self.core.add_new_config_option('General', 'inline-preview', 'off')
-            self.core.add_new_config_option('General', 'show-images-in-browser', 'off')
-            self.core.add_new_config_option('General', 'queue-interval', 30)
-            self.core.add_new_config_option('Window', 'size', '320,480')
-            self.core.add_new_config_option('Notifications', 'actions', 'on')
-            self.core.add_new_config_option('Notifications', 'updates', 'on')
-            self.core.add_new_config_option('Sounds', 'updates', 'on')
-            self.core.add_new_config_option('Sounds', 'login', 'on')
-            self.core.add_new_config_option('Browser', 'cmd', '')
-            self.core.add_new_config_option('Advanced', 'show-user-avatars', 'on')
 
     def after_save_account(self, account_id):
         self.account_registered.emit()
@@ -672,7 +701,7 @@ class Main(Base, QWidget):
             if count > 0:
                 updates = self.core.filter_statuses(response)
                 filtered = count - len(updates)
-                if self.core.get_notify_on_updates():
+                if self.core.get_show_notifications_in_column(column.id_):
                     self.os_notifications.updates(column, len(updates), filtered)
 
                 if self.core.get_sound_on_updates():
@@ -885,7 +914,7 @@ class Main(Base, QWidget):
     def add_timer(self, column):
         self.remove_timer(column.id_)
 
-        interval = self.core.get_update_interval() * 60 * 1000
+        interval = self.core.get_update_interval_per_column(column.id_) * 60 * 1000
         timer = Timer(interval, column, self.download_stream)
         self.timers[column.id_] = timer
         print '--Created timer for %s every %i sec' % (column.id_, interval)

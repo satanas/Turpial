@@ -189,6 +189,15 @@
         return null;
     }
 
+    function clearNewMarks() {
+        var statuses = document.getElementsByTagName("table");
+        for(var i = 0; i < statuses.length; i++) {
+            if (statuses[i].className === "status new") {
+                statuses[i].className = "status";
+            }
+        }
+    }
+
     window.onscroll = function() {
         var doc = document.documentElement;
         var scrollTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);

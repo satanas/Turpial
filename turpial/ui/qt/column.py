@@ -311,6 +311,7 @@ class StatusesColumn(QWidget):
 
     def update_timestamps(self):
         self.webview.sync_timestamps(self.statuses)
+        self.webview.clear_new_marks()
 
     def update_statuses(self, statuses):
         self.__set_last_status_id(statuses)

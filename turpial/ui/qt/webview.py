@@ -164,6 +164,7 @@ class StatusesWebView(QWebView):
             fd.write(html.encode('ascii', 'ignore'))
             fd.close()
             self.setHtml(html)
+            self.clear_new_marks()
         else:
             statuses_.reverse()
             for status in statuses_:
@@ -208,3 +209,7 @@ class StatusesWebView(QWebView):
             new_timestamp = self.base.humanize_timestamp(status.timestamp)
             cmd = """updateTimestamp('%s', '%s')""" % (status.id_, new_timestamp)
             self.execute_javascript(cmd)
+
+    def clear_new_marks(self):
+        self.execute_javascript("clearNewMarks()")
+

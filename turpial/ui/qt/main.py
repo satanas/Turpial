@@ -43,10 +43,6 @@ from libturpial.common import ColumnType, get_preview_service_from_url, escape_l
 from libturpial.common.tools import detect_os
 
 
-# Exceptions
-#{u'errors': [{u'message': u'Sorry, you are not authorized to see this status.', u'code': 179}]}
-#Exception 'id'
-
 class Main(Base, QWidget):
 
     account_deleted = pyqtSignal()
@@ -147,7 +143,6 @@ class Main(Base, QWidget):
         self.dock.quit_clicked.connect(self.main_quit)
 
         self.tray = TrayIcon(self)
-        self.tray.toggled.connect(self.toggle_tray_icon)
         self.tray.updates_clicked.connect(self.show_update_box)
         self.tray.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
         self.tray.settings_clicked.connect(self.show_preferences_dialog)
@@ -694,8 +689,7 @@ class Main(Base, QWidget):
         column, max_ = data
 
         if self.is_exception(response):
-            print 'Ble', response
-            self._container.error_updating_column(column.id_)
+            self._container.error_updating_column(column.id_, response)
         else:
             count = len(response)
             if count > 0:
@@ -713,13 +707,13 @@ class Main(Base, QWidget):
 
     def after_update_status(self, response, account_id):
         if self.is_exception(response):
-            self.update_box.error(i18n.get('error_posting_status'))
+            self.update_box.error(i18n.get('error_posting_status'), response)
         else:
             self.update_box.done()
 
     def after_broadcast_status(self, response):
         if self.is_exception(response):
-            self.update_box.error(i18n.get('error_posting_status'))
+            self.update_box.error(i18n.get('error_posting_status'), response)
         else:
             self.update_box.done()
 
@@ -727,9 +721,9 @@ class Main(Base, QWidget):
         column_id = str(column_id)
         if self.is_exception(response):
             if self.profile_dialog.is_for_profile(column_id):
-                self.profile_dialog.error_repeating_status(status_id)
+                self.profile_dialog.error_repeating_status(status_id, response)
             else:
-                self._container.error_repeating_status(column_id, status_id)
+                self._container.error_repeating_status(column_id, status_id, response)
         else:
             message = i18n.get('status_repeated')
             self._container.mark_status_as_repeated(response.id_)
@@ -743,14 +737,14 @@ class Main(Base, QWidget):
 
     def after_delete_status(self, response, column_id, account_id, status_id):
         if self.is_exception(response):
-            self._container.error_deleting_status(column_id, status_id)
+            self._container.error_deleting_status(column_id, status_id, response)
         else:
             self._container.remove_status(response.id_)
             self._container.notify_success(column_id, response.id_, i18n.get('status_deleted'))
 
     def after_delete_message(self, response, column_id, account_id, status_id):
         if self.is_exception(response):
-            self._container.error_deleting_status(column_id, status_id)
+            self._container.error_deleting_status(column_id, status_id, response)
         else:
             self._container.remove_status(response.id_)
             self._container.notify_success(column_id, response.id_, i18n.get('direct_message_deleted'))
@@ -765,9 +759,9 @@ class Main(Base, QWidget):
         column_id = str(column_id)
         if self.is_exception(response):
             if self.profile_dialog.is_for_profile(column_id):
-                self.profile_dialog.error_marking_status_as_favorite(status_id)
+                self.profile_dialog.error_marking_status_as_favorite(status_id, response)
             else:
-                self._container.error_marking_status_as_favorite(column_id, status_id)
+                self._container.error_marking_status_as_favorite(column_id, status_id, response)
         else:
             message = i18n.get('status_marked_as_favorite')
             self._container.mark_status_as_favorite(response.id_)
@@ -783,9 +777,9 @@ class Main(Base, QWidget):
         column_id = str(column_id)
         if self.is_exception(response):
             if self.profile_dialog.is_for_profile(column_id):
-                self.profile_dialog.error_unmarking_status_as_favorite(status_id)
+                self.profile_dialog.error_unmarking_status_as_favorite(status_id, response)
             else:
-                self._container.error_unmarking_status_as_favorite(column_id, status_id)
+                self._container.error_unmarking_status_as_favorite(column_id, status_id, response)
         else:
             message = i18n.get('status_removed_from_favorites')
             self._container.unmark_status_as_favorite(response.id_)
@@ -846,9 +840,9 @@ class Main(Base, QWidget):
         column_id = str(column_id)
         if self.is_exception(response):
             if self.profile_dialog.is_for_profile(column_id):
-                self.profile_dialog.error_loading_conversation(status_root_id)
+                self.profile_dialog.error_loading_conversation(status_root_id, response)
             else:
-                self._container.error_loading_conversation(column_id, status_root_id)
+                self._container.error_loading_conversation(column_id, status_root_id, response)
         else:
             if self.profile_dialog.is_for_profile(column_id):
                 self.profile_dialog.last_statuses.update_conversation(response, status_root_id)

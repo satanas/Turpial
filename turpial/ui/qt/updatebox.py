@@ -352,7 +352,10 @@ class UpdateBox(QWidget):
         self.__clear()
         self.hide()
 
-    def error(self, message):
+    def error(self, message, response=None):
+        if response is not None:
+            message = self.base.get_error_message_from_response(response, message)
+
         self.enable(True)
         self.error_message.setText(message)
         self.error_message.setVisible(True)

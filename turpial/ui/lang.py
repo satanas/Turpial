@@ -242,6 +242,8 @@ STRINGS = {
     'column_options': _("Column options"),
     'notify_on_updates': _("Default notification on updates"),
     'notify_on_updates_tooltip': _("Set notifications preference for updates in newly created columns"),
+    'rate_limit_exceeded': _("Rate limit exceeded"),
+    'not_authorized_to_see_status': _("You are not authorized to see this status"),
 }
 
 class i18n:

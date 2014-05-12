@@ -132,6 +132,19 @@ class Base(Singleton):
         else:
             return self.command_separator.join([self.command_key_shortcut, key])
 
+    def get_error_message_from_response(self, response, default=None):
+        if response is None:
+            return default
+
+        if 'errors' in response:
+            if 'message' in reponse['errors']:
+                msg = response['errors']['message']
+                if msg.find('Rate limit exceeded') >= 0:
+                    return i18n.get('rate_limit_exceeded')
+                elif msg.find('you are not authorized to see') >= 0:
+                    return i18n.get('not_authorized_to_see_status')
+        return default
+
     #================================================================
     # Common methods to all interfaces
     #================================================================

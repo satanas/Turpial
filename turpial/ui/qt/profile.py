@@ -175,6 +175,10 @@ class ProfileDialog(Window):
                                                                      self.profile.username))
         self.follow_button.setEnabled(True)
 
+    def __show_error_in_column(self, status_id, message):
+        self.last_statuses.release_status(status_id)
+        self.last_statuses.notify_error(status_id, message)
+
     def closeEvent(self, event=None):
         if event:
             event.ignore()
@@ -266,21 +270,22 @@ class ProfileDialog(Window):
         self.show()
         self.raise_()
 
-    def error_marking_status_as_favorite(self, status_id):
-        self.last_statuses.release_status(status_id)
-        self.last_statuses.notify_error(status_id, i18n.get('error_marking_status_as_favorite'))
+    def error_marking_status_as_favorite(self, status_id, response):
+        message = self.base.get_error_message_from_response(response, i18n.get('error_marking_status_as_favorite'))
+        self.__show_error_in_column(status_id, message)
 
-    def error_unmarking_status_as_favorite(self, status_id):
-        self.last_statuses.release_status(status_id)
-        self.last_statuses.notify_error(status_id, i18n.get('error_unmarking_status_as_favorite'))
+    def error_unmarking_status_as_favorite(self, status_id, response):
+        message = self.base.get_error_message_from_response(response, i18n.get('error_unmarking_status_as_favorite'))
+        self.__show_error_in_column(status_id, message)
 
-    def error_repeating_status(self, status_id):
-        self.last_statuses.release_status(status_id)
-        self.last_statuses.notify_error(status_id, i18n.get('error_repeating_status'))
+    def error_repeating_status(self, status_id, response):
+        message = self.base.get_error_message_from_response(response, i18n.get('error_repeating_status'))
+        self.__show_error_in_column(status_id, message)
 
-    def error_loading_conversation(self, status_root_id):
+    def error_loading_conversation(self, status_root_id, response):
+        message = self.base.get_error_message_from_response(response, i18n.get('error_loading_conversation'))
         self.last_statuses.error_in_conversation(status_root_id)
-        self.last_statuses.notify_error(self.base.random_id(), i18n.get('error_loading_conversation'))
+        self.last_statuses.notify_error(status_id, message)
 
 
 class ProfileHeader(QWidget):

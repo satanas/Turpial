@@ -266,36 +266,41 @@ class Container(QVBoxLayout):
             if id_ == column_id:
                 column.update_conversation(status, status_root_id)
 
-    def error_loading_conversation(self, column_id, status_root_id):
+    def error_loading_conversation(self, column_id, status_root_id, response=None):
         for id_, column in self.columns.iteritems():
             if id_ == column_id:
                 column.error_in_conversation(status_root_id)
-        self.notify_error(column_id, self.base.random_id(), i18n.get('error_loading_conversation'))
+        message = self.base.get_error_message_from_response(response, i18n.get('error_loading_conversation'))
+        self.notify_error(column_id, self.base.random_id(), message)
 
-    def error_updating_column(self, column_id):
+    def error_updating_column(self, column_id, response=None):
         self.stop_updating(column_id)
-        self.notify_error(column_id, self.base.random_id(), i18n.get('error_updating_column'))
+        message = self.base.get_error_message_from_response(response, i18n.get('error_updating_column'))
+        self.notify_error(column_id, self.base.random_id(), message)
 
-    def error_repeating_status(self, column_id, status_id):
+    def error_repeating_status(self, column_id, status_id, response=None):
         for id_, column in self.columns.iteritems():
             column.release_status(status_id)
-        self.notify_error(column_id, status_id, i18n.get('error_repeating_status'))
+        message = self.base.get_error_message_from_response(response, i18n.get('error_repeating_status'))
+        self.notify_error(column_id, status_id, message)
 
-    def error_deleting_status(self, column_id, status_id):
+    def error_deleting_status(self, column_id, status_id, response=None):
         for id_, column in self.columns.iteritems():
             column.release_status(status_id)
-        self.notify_error(column_id, status_id, i18n.get('error_deleting_status'))
+        message = self.base.get_error_message_from_response(response, i18n.get('error_deleting_status'))
+        self.notify_error(column_id, status_id, message)
 
-    def error_marking_status_as_favorite(self, column_id, status_id):
+    def error_marking_status_as_favorite(self, column_id, status_id, response=None):
         for id_, column in self.columns.iteritems():
             column.release_status(status_id)
-        self.notify_error(column_id, status_id, i18n.get('error_marking_status_as_favorite'))
+        message = self.base.get_error_message_from_response(response, i18n.get('error_marking_status_as_favorite'))
+        self.notify_error(column_id, status_id, message)
 
-    def error_unmarking_status_as_favorite(self, column_id, status_id):
+    def error_unmarking_status_as_favorite(self, column_id, status_id, response=None):
         for id_, column in self.columns.iteritems():
             column.release_status(status_id)
-        self.notify_error(column_id, status_id, i18n.get('error_unmarking_status_as_favorite'))
-
+        message = self.base.get_error_message_from_response(response, i18n.get('error_unmarking_status_as_favorite'))
+        self.notify_error(column_id, status_id, message)
 
     def notify_error(self, column_id, id_, message):
         self.columns[str(column_id)].notify_error(id_, message)

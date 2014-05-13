@@ -32,7 +32,7 @@ class ProfileDialog(Window):
     def __init__(self, base):
         Window.__init__(self, base, i18n.get('user_profile'))
         self.account_id = None
-        self.setFixedSize(350, 500)
+        self.setFixedSize(370, 550)
 
         self.this_is_you_label = StyledLabel(i18n.get('this_is_you'))
         self.follows_you_label = StyledLabel(i18n.get('follows_you'))
@@ -43,9 +43,13 @@ class ProfileDialog(Window):
 
         self.username = QLabel('')
         self.username.setTextFormat(Qt.RichText)
+        self.username.setAlignment(Qt.AlignCenter)
         self.fullname = QLabel('')
         self.fullname.setTextFormat(Qt.RichText)
-        self.fullname.setStyleSheet("QLabel { font-size: 14px;}")
+        self.fullname.setStyleSheet("QLabel { font-size: 18px;}")
+        self.bio = QLabel('')
+        self.bio.setWordWrap(True)
+        self.bio.setAlignment(Qt.AlignCenter)
 
         self.verified_icon = QLabel()
         self.verified_icon.setPixmap(base.load_image('mark-verified.png', True))
@@ -66,15 +70,26 @@ class ProfileDialog(Window):
         fullname_box.addWidget(self.verified_icon)
         fullname_box.addWidget(self.protected_icon)
 
+        username_box = QHBoxLayout()
+        username_box.addWidget(self.username, 1)
+
+        bio_box = QHBoxLayout()
+        bio_box.addWidget(self.bio, 1)
+
         user_info_box = QVBoxLayout()
-        user_info_box.setContentsMargins(10, 10, 10, 10)
+        user_info_box.setContentsMargins(5, 10, 5, 10)
         user_info_box.setSpacing(5)
         user_info_box.addWidget(self.avatar, 0, Qt.AlignCenter)
-        user_info_box.addLayout(fullname_box)
-        user_info_box.addWidget(self.username, 0 , Qt.AlignCenter)
+        user_info_box.addLayout(fullname_box, 1)
+        #user_info_box.addWidget(self.username, 1, Qt.AlignCenter)
+        user_info_box.addLayout(username_box)
+        user_info_box.addLayout(bio_box)
+        user_info_box.setSpacing(5)
 
         header_box = QHBoxLayout()
-        header_box.addLayout(user_info_box, 1)
+        header_box.setContentsMargins(0, 0, 0, 0)
+        #header_box.addLayout(user_info_box, 1)
+        header_box.addLayout(user_info_box)
 
         options_box = QHBoxLayout()
         options_box.setContentsMargins(10, 0, 10, 5)
@@ -134,8 +149,8 @@ class ProfileDialog(Window):
         self.avatar.setPixmap(self.base.load_image('unknown.png', True))
         self.fullname.setText('')
         self.username.setText('')
-        #self.bio.set_info('')
-        #self.location.set_info('')
+        self.bio.setText('')
+        self.bio.setVisible(False)
         #self.web.set_info('')
         self.tweets.set_value('')
         self.following.set_value('')
@@ -190,8 +205,6 @@ class ProfileDialog(Window):
         self.loader.setVisible(True)
         self.loading_label.setVisible(True)
         self.options_button.setEnabled(False)
-        #self.follow_button.setVisible(True)
-        #self.follow_button.setText(i18n.get('loading'))
         self.show()
         self.raise_()
         self.showed = True
@@ -202,8 +215,18 @@ class ProfileDialog(Window):
         self.loader.setVisible(False)
         self.loading_label.setVisible(False)
         self.fullname.setText('<b>%s</b>' % profile.fullname)
-        self.username.setText('@%s' % profile.username)
         it_is_you = get_username_from(account_id) == profile.username
+
+        username = '@%s' % profile.username
+        if profile.location:
+            username = ' | '.join([username, profile.location])
+        self.username.setText(username)
+
+        if profile.bio:
+            self.bio.setText(profile.bio)
+            self.bio.setVisible(True)
+        else:
+            self.bio.setVisible(False)
 
         if it_is_you:
             self.this_is_you_label.setVisible(True)
@@ -226,7 +249,6 @@ class ProfileDialog(Window):
         self.verified_icon.setVisible(profile.verified)
         self.protected_icon.setVisible(profile.protected)
         self.avatar.setPixmap(self.base.load_image('unknown.png', True))
-        #self.bio.set_info(profile.bio)
         #self.location.set_info(profile.location)
 
         if profile.url:

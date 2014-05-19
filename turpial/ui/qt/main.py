@@ -147,6 +147,7 @@ class Main(Base, QWidget):
         self.tray.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
         self.tray.settings_clicked.connect(self.show_preferences_dialog)
         self.tray.quit_clicked.connect(self.main_quit)
+        self.tray.toggled.connect(self.toggle_tray_icon)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)

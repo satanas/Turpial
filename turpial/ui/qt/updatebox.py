@@ -332,8 +332,7 @@ class UpdateBox(QWidget):
 
         if event:
             event.ignore()
-        self.__clear()
-        self.hide()
+        self.done()
 
     def enable(self, value):
         self.text_edit.setEnabled(value)
@@ -472,10 +471,10 @@ class CompletionTextEdit(QTextEdit):
             return
 
         completionPrefix = self.textUnderCursor()
+        #print completionPrefix.decode('utf-8')
 
         if hasModifier or event.text().isEmpty() or not completionPrefix.startsWith('@'):
             self.completer.popup().hide()
-            #print 'me fui', event.key(), int(event.modifiers())
             return
 
         if completionPrefix.startsWith('@') and completionPrefix[1:] != self.completer.completionPrefix():

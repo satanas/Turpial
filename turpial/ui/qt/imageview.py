@@ -48,6 +48,8 @@ class ImageView(Window):
         self.status = self.EMPTY
 
         self.view = QLabel()
+        self.view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.view.customContextMenuRequested.connect(self.__popup_menu)
 
         self.error_label = QLabel(i18n.get('error_loading_image'))
         self.error_label.setAlignment(Qt.AlignHCenter)

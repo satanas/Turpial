@@ -195,6 +195,8 @@ class Main(Base, QWidget):
         self.shortcuts.get('search').activated.connect(self.show_search_dialog)
         self.shortcuts.get('queue').activated.connect(self.show_queue_dialog)
         self.shortcuts.get('quit').activated.connect(self.closeEvent)
+        self.shortcuts.get('move_column_right').activated.connect(self.focus_column_right)
+        self.shortcuts.get('move_column_left').activated.connect(self.focus_column_left)
 
         if detect_os() == OS_MAC:
             self.shortcuts.get('preferences').activated.connect(self.show_preferences_dialog)
@@ -219,6 +221,14 @@ class Main(Base, QWidget):
 
     def get_screen_size(self):
         return self.app.desktop().availableGeometry()
+
+    def focus_column_right(self):
+        widget = self._container.nextInFocusChain()
+        widget.webview.setFocus()
+
+    def focus_column_left(self):
+        widget = self._container.previousInFocusChain()
+        widget.webview.setFocus()
 
     def resizeEvent(self, event):
         if self.core.status > self.core.LOADING:

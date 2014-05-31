@@ -22,6 +22,8 @@ class Shortcuts:
             'queue': Shortcut(Qt.CTRL + Qt.Key_U, 'U'),
             'preferences': Shortcut(Qt.CTRL + Qt.Key_Comma, ','),
             'quit': Shortcut(Qt.CTRL + Qt.Key_Q, 'Q'),
+            'move_column_right': Shortcut(Qt.Key_Tab, 'Tab'),
+            'move_column_left': Shortcut(Qt.SHIFT + Qt.Key_Tab, 'Shift + Tab'),
         }
 
     def __iter__(self):

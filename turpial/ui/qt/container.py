@@ -25,6 +25,8 @@ class Container(QVBoxLayout):
         self.child = None
         self.columns = {}
         self.is_empty = None
+        self.column_indexes = []
+        self.focus_index = 0
         self.loading()
 
     def __link_clicked(self, url):
@@ -195,6 +197,7 @@ class Container(QVBoxLayout):
 
         self.columns = {}
         for column in columns:
+            self.column_indexes.append(column.id_)
             self.columns[column.id_] = StatusesColumn(self.base, column.id_)
             hbox.addWidget(self.columns[column.id_], 1)
 
@@ -207,6 +210,7 @@ class Container(QVBoxLayout):
 
         self.addWidget(self.child, 1)
         self.is_empty = False
+        self.columns[self.column_indexes[self.focus_index]].webview.setFocus()
 
     def start_updating(self, column_id):
         return self.columns[column_id].start_updating()
@@ -235,10 +239,12 @@ class Container(QVBoxLayout):
             viewport = self.child.widget()
             hbox = viewport.layout()
             self.columns[column_id] = StatusesColumn(self.base, column_id)
+            self.column_indexes.append(column_id)
             hbox.addWidget(self.columns[column_id], 1)
 
     def remove_column(self, column_id):
         self.columns[column_id].deleteLater()
+        self.column_indexes.remove(column_id)
         del self.columns[column_id]
 
     def mark_status_as_favorite(self, status_id):
@@ -312,3 +318,21 @@ class Container(QVBoxLayout):
 
     def notify_info(self, column_id, id_, message):
         self.columns[str(column_id)].notify_info(id_, message)
+
+    def focusWidget(self):
+        if len(self.columns) == 0:
+            return None
+        else:
+            return self.columns[self.column_indexes[self.focus_index]]
+
+    def nextInFocusChain(self):
+        self.focus_index += 1
+        if self.focus_index >= len(self.columns):
+            self.focus_index = 0
+        return self.columns[self.column_indexes[self.focus_index]]
+
+    def previousInFocusChain(self):
+        self.focus_index -= 1
+        if self.focus_index < 0:
+            self.focus_index = len(self.columns) - 1
+        return self.columns[self.column_indexes[self.focus_index]]

@@ -106,8 +106,10 @@ class StatusesWebView(QWebView):
                 pretty_url = "<a href='%s' title='%s'>%s</a>" % (url.url, url.url, url.display_text)
                 message = message.replace(url.search_for, pretty_url)
 
+                # Removed inline preview for instagram
                 if is_preview_service_supported(url.url) and self.base.core.get_inline_preview():
-                    media.append(url.url)
+                    if url.url.find('instagram') < 0:
+                        media.append(url.url)
 
             # Highlight hashtags
             sorted_hashtags = {}

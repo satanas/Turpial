@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2009 - 2014 <wil.alejandro@gmail.com> -->
+<application>
+ <id type="desktop">turpial.desktop</id>
+ <metadata_license>CC0-1.0</metadata_license>
+ <project_license>GPL-3.0</project_license>
+ <name>Turpial</name>
+ <summary>A light, beautiful and functional microblogging client</summary>
+ <description>
+  <p>
+   Turpial is a lightweight and beautiful microblogging client written in Python.
+  </p>
+  <p>Some of it amazing features:</p>
+  <ul>
+   <li>Beauty and minimalistic user interface</li>
+   <li>Support for multiple accounts and multiple columns</li>
+   <li>With filters to control your timeline content</li>
+   <li>Messages queue to post tweets while your "work"</li>
+   <li>Integrated to your desktop environment</li>
+   <li>Light and fast, with a low resources consumption</li>
+   <li>Support for more than 10 languagues</li>
+   <li>With image preview for lots of services</li>
+   <li>It doesn't harm the ozone layer</li>
+  </ul>
+ </description>
+ <screenshots>
+  <screenshot type="default" width="882" height="564">http://files.turpial.org.ve/others/screenshots/20140116-turpial-3.0-main.png</screenshot>
+  <screenshot width="496" height="432">http://files.turpial.org.ve/others/screenshots/20131118-turpial-3.0-preferences.png</screenshot>
+  <screenshot width="523" height="366">http://files.turpial.org.ve/others/screenshots/20131218-turpial-3.0-about.png</screenshots>
+ </screenshots>
+ <url type="homepage">http://turpial.org.ve</url>
+ <updatecontact>wil.alejandro@gmail.com</updatecontact>
+</application>

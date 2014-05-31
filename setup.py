@@ -29,7 +29,7 @@ class build(_build):
 data_files=[
     ('share/icons/scalable/apps', ['turpial/data/pixmaps/turpial.svg']),
     ('share/pixmaps', ['turpial/data/pixmaps/turpial.png']),
-    ('share/applications', ['turpial.desktop']),
+    ('share/applications', ['turpial.desktop', 'turpial.appdata.xml']),
     ('share/doc/turpial', ['ChangeLog', 'README.rst', 'AUTHORS', 'COPYING', 'TRANSLATORS', 'THANKS']),
 ]
 

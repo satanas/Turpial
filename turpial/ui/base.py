@@ -52,7 +52,7 @@ class Base(Singleton):
             self.command_key_shortcut = 'Ctrl'
             self.command_separator = '+'
 
-        fd = open(os.path.join(self.base_themes_path, 'light-theme.json'))
+        fd = open(os.path.join(self.base_themes_path, 'dark-theme.json'))
         raw = fd.read()
         fd.close()
         self.theme = json.loads(raw)

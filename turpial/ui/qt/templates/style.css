@@ -209,6 +209,15 @@ pre { position:fixed; left:15em; right:1em; top:1em }
     margin: 7px 10px 6px 10px;
 }
 
+.timestamp a {
+    color: #999;
+}
+
+.timestamp a:hover {
+    color: #666;
+    text-decoration: none;
+}
+
 .entity, a {
     color: #f5861c;
     text-decoration: none;
@@ -241,37 +250,37 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 }
 
 .action_reply {
-    width: 20px;
+    width: 18px;
     height: 20px;
     background: url("file://{{ action_reply_shadowed }}") no-repeat;
 }
 
 .action_reply_direct {
-    width: 20px;
+    width: 18px;
     height: 20px;
     background: url("file://{{ action_reply_direct_shadowed }}") no-repeat;
 }
 
 .action_repeat {
-    width: 20px;
+    width: 18px;
     height: 20px;
     background: url("file://{{ action_repeat_shadowed }}") no-repeat;
 }
 
 .action_quote {
-    width: 20px;
+    width: 18px;
     height: 20px;
     background: url("file://{{ action_quote_shadowed }}") no-repeat;
 }
 
 .action_favorite {
-    width: 20px;
+    width: 18px;
     height: 20px;
     background: url("file://{{ action_favorite_shadowed }}") no-repeat;
 }
 
 .action_delete {
-    width: 20px;
+    width: 18px;
     height: 20px;
     background: url("file://{{ action_delete_shadowed }}") no-repeat;
 }

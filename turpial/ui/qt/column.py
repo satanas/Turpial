@@ -18,6 +18,7 @@ from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QMessageBox
+from PyQt4.QtGui import QApplication
 from PyQt4.QtGui import QTextDocument
 from PyQt4.QtGui import QStyledItemDelegate
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
@@ -168,6 +169,22 @@ class StatusesColumn(QWidget):
         self.options_menu.addAction(delete)
         self.options_menu.exec_(QCursor.pos())
 
+    def __show_details_menu(self, status):
+        self.hide_slider()
+        self.details_menu = QMenu(self)
+
+        status_url = "https://twitter.com/%s/status/%s" % (status.username, status.id_)
+        print status_url
+        copy_url = QAction(i18n.get('copy_tweet_url'), self)
+        copy_url.triggered.connect(lambda: self.__copy_to_clipboard(status_url))
+
+        open_in_browser = QAction(i18n.get('open_in_browser'), self)
+        open_in_browser.triggered.connect(lambda: self.base.open_in_browser(status_url))
+
+        self.details_menu.addAction(copy_url)
+        self.details_menu.addAction(open_in_browser)
+        self.details_menu.exec_(QCursor.pos())
+
     def __toogle_notifications(self):
         notify = not self.base.get_column_notification(self.id_)
         self.base.set_column_notification(self.id_, notify)
@@ -237,6 +254,8 @@ class StatusesColumn(QWidget):
             self.__hide_conversation(status)
         elif cmd == 'show_avatar':
             self.__show_avatar(status)
+        elif cmd == 'details_menu':
+            self.__show_details_menu(status)
 
     def __reply_status(self, status):
         self.base.show_update_box_for_reply(self.account_id, status)
@@ -292,6 +311,10 @@ class StatusesColumn(QWidget):
             self.last_id = statuses[0].original_status_id
         else:
             self.last_id = statuses[0].id_
+
+    def __copy_to_clipboard(self, url):
+        clip = QApplication.clipboard()
+        clip.setText(url)
 
     def show_slider(self):
         self.slider.set_value(self.base.get_column_update_interval(self.id_))

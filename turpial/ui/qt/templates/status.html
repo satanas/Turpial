@@ -12,7 +12,7 @@
                     <a href="profile:{{ status.username }}">{{ status.username }}</a>
                 </div>
 
-                <div id="{{ status.id_ }}-timestamp" class='timestamp'>{{ timestamp }}</div>
+                <div id="{{ status.id_ }}-timestamp" class='timestamp'><a href="cmd:details_menu:{{ status.id_ }}">{{ timestamp }}</a></div>
 
                 <div id="{{ status.id_ }}-fav-mark" class='favorited {% if not status.is_favorite %} hidden {% endif %}'></div>
 

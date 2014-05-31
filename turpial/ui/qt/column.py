@@ -47,7 +47,7 @@ class StatusesColumn(QWidget):
         self.id_ = None
         #self.fgcolor = "#e3e3e3"
         #self.fgcolor = "#f9a231"
-        #self.updating = False
+        self.updating = False
         self.last_id = None
 
         self.loader = BarLoadIndicator()
@@ -156,11 +156,15 @@ class StatusesColumn(QWidget):
         update.triggered.connect(self.show_slider)
         update.setToolTip(i18n.get('update_frequency_tooltip'))
 
+        refresh = QAction(i18n.get('refresh'), self)
+        refresh.triggered.connect(self.__refresh_column)
+
         delete = QAction(i18n.get('delete'), self)
         delete.triggered.connect(self.__delete_column)
 
         self.options_menu.addAction(notifications)
         self.options_menu.addAction(update)
+        self.options_menu.addAction(refresh)
         self.options_menu.addAction(delete)
         self.options_menu.exec_(QCursor.pos())
 
@@ -170,6 +174,10 @@ class StatusesColumn(QWidget):
 
     def __delete_column(self):
         self.base.core.delete_column(self.id_)
+
+    def __refresh_column(self):
+        column = self.base.get_column_from_id(self.id_)
+        self.base.download_stream(column)
 
     def __link_clicked(self, url):
         url = str(url)
@@ -304,9 +312,11 @@ class StatusesColumn(QWidget):
 
     def start_updating(self):
         self.loader.setVisible(True)
+        self.updating = True
         return self.last_id
 
     def stop_updating(self):
+        self.updating = False
         self.loader.setVisible(False)
 
     def update_timestamps(self):

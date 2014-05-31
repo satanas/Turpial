@@ -46,8 +46,9 @@ class OAuthDialog(QDialog):
         widgets_box.addWidget(self.pin)
         widgets_box.addWidget(open_in_browser_btn)
         widgets_box.addWidget(authorize_btn)
-        style = "background-color: %s; border: 0px solid %s; color: #fff;" % (self.account_dialog.base.bgcolor,
-            self.account_dialog.base.bgcolor)
+        bgcolor = self.account_dialog.base.theme['header']['background_color']
+        fgcolor = self.account_dialog.base.theme['header']['text_color']
+        style = "background-color: %s; border: 0px solid %s; color: %s;" % (bgcolor, bgcolor, text_color)
         self.setStyleSheet("QDialog { %s }" % style)
 
         layout = QVBoxLayout()

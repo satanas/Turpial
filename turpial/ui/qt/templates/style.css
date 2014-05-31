@@ -13,19 +13,18 @@ body {
 
 pre { position:fixed; left:15em; right:1em; top:1em }
 
-/*::-webkit-scrollbar {
-    background: transparent;
-    overflow: visible;
-    width: 15px;
+::-webkit-scrollbar {
+    background: {{ scrollbar_background_color }};
+    border: 1px solid {{ scrollbar_border_color }};
+    width: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.15);
-    border: solid #fff;
-    min-height: 30px;
+    background: {{ scrollbar_handler_color }};
+    min-height: 20px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+/*::-webkit-scrollbar-thumb:hover {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
@@ -77,19 +76,20 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 
 .status {
     width: 100%;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid {{ status_border_color }};
     border-collapse: collapse;
-    background-color: #fff;
+    background-color: {{ status_background_color }};
+    color: {{ status_text_color }};
 }
 
 .status tr {
-    background-color: #fff;
+    background-color: {{ status_background_color }};
 }
 
 .status td {
     text-align: left;
     vertical-align: top;
-    background-color: #fff;
+    background-color: {{ status_background_color }};
 }
 
 .status .preview-image {
@@ -101,7 +101,7 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 }
 
 .status.new {
-  border-left: 3px solid #f6b26f;
+  border-left: 3px solid {{ entities_text_color }};
 }
 
 .avatar-row {
@@ -138,12 +138,12 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 }
 
 .username a, .username_protected a {
-    color: #000;
+    color: {{ username_text_color }};
     text-decoration: none;
 }
 
 .username a:hover, .username_protected a:hover {
-    color: #888;
+    color: {{ username_hover_text_color }};
 }
 
 .username_protected {
@@ -180,7 +180,7 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 .footer, .timestamp {
     font-family: 'Titillium Web';
     font-size: 12px;
-    color: #999;
+    color: {{ footer_text_color }};
 }
 
 .reposted {
@@ -210,21 +210,21 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 }
 
 .timestamp a {
-    color: #999;
+    color: {{ footer_text_color }};
 }
 
 .timestamp a:hover {
-    color: #666;
+    color: {{ footer_hover_text_color }};
     text-decoration: none;
 }
 
 .entity, a {
-    color: #f5861c;
+    color: {{ entities_text_color }};
     text-decoration: none;
 }
 
 .entity:hover, a:hover {
-    color: #f6b26f;
+    color: {{ entities_hover_text_color }};
 }
 
 .extra {
@@ -252,61 +252,61 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 .action_reply {
     width: 18px;
     height: 20px;
-    background: url("file://{{ action_reply_shadowed }}") no-repeat;
+    background: url("file://{{ action_reply }}") no-repeat;
 }
 
 .action_reply_direct {
     width: 18px;
     height: 20px;
-    background: url("file://{{ action_reply_direct_shadowed }}") no-repeat;
+    background: url("file://{{ action_reply_direct }}") no-repeat;
 }
 
 .action_repeat {
     width: 18px;
     height: 20px;
-    background: url("file://{{ action_repeat_shadowed }}") no-repeat;
+    background: url("file://{{ action_repeat }}") no-repeat;
 }
 
 .action_quote {
     width: 18px;
     height: 20px;
-    background: url("file://{{ action_quote_shadowed }}") no-repeat;
+    background: url("file://{{ action_quote }}") no-repeat;
 }
 
 .action_favorite {
     width: 18px;
     height: 20px;
-    background: url("file://{{ action_favorite_shadowed }}") no-repeat;
+    background: url("file://{{ action_favorite }}") no-repeat;
 }
 
 .action_delete {
     width: 18px;
     height: 20px;
-    background: url("file://{{ action_delete_shadowed }}") no-repeat;
+    background: url("file://{{ action_delete }}") no-repeat;
 }
 
 .action_reply:hover {
-    background: url("file://{{ action_reply }}") no-repeat;
+    background: url("file://{{ action_reply_shadowed }}") no-repeat;
 }
 
 .action_reply_direct:hover {
-    background: url("file://{{ action_reply_direct }}") no-repeat;
+    background: url("file://{{ action_reply_direct_shadowed }}") no-repeat;
 }
 
 .action_repeat:hover {
-    background: url("file://{{ action_repeat }}") no-repeat;
+    background: url("file://{{ action_repeat_shadowed }}") no-repeat;
 }
 
 .action_quote:hover {
-    background: url("file://{{ action_quote }}") no-repeat;
+    background: url("file://{{ action_quote_shadowed }}") no-repeat;
 }
 
 .action_favorite:hover {
-    background: url("file://{{ action_favorite }}") no-repeat;
+    background: url("file://{{ action_favorite_shadowed }}") no-repeat;
 }
 
 .action_delete:hover {
-    background: url("file://{{ action_delete }}") no-repeat;
+    background: url("file://{{ action_delete_shadowed }}") no-repeat;
 }
 
 .conversation table {

@@ -114,7 +114,8 @@ class StatusesColumn(QWidget):
             font = QFont('Maven Pro Light', 16, QFont.Light, False)
             font2 = QFont('Monda', 10, QFont.Light, False)
 
-        bg_style = "background-color: %s; color: %s;" % (self.base.bgcolor, self.base.fgcolor)
+        bg_style = "background-color: %s; color: %s;" % (self.base.theme['header']['background_color'],
+                                                         self.base.theme['header']['text_color'])
         caption = QLabel(username)
         caption.setStyleSheet("QLabel { %s }" % bg_style)
         caption.setFont(font)
@@ -174,7 +175,6 @@ class StatusesColumn(QWidget):
         self.details_menu = QMenu(self)
 
         status_url = "https://twitter.com/%s/status/%s" % (status.username, status.id_)
-        print status_url
         copy_url = QAction(i18n.get('copy_tweet_url'), self)
         copy_url.triggered.connect(lambda: self.__copy_to_clipboard(status_url))
 

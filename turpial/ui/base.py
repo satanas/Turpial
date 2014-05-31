@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
 # Base class for all the Turpial interfaces
-#
-# Author: Wil Alvarez (aka Satanas)
-# Oct 09, 2011
 
 import os
 import time
+import simplejson as json
 
 from turpial.ui.lang import i18n
 from turpial.singleton import Singleton
@@ -27,12 +25,18 @@ class Base(Singleton):
     def __init__(self):
         Singleton.__init__(self, 'turpial.pid')
 
+        self.home_path = os.path.expanduser('~')
+
         self.images_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), '..', 'data', 'pixmaps'))
         self.sounds_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), '..', 'data', 'sounds'))
         self.fonts_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), '..', 'data', 'fonts'))
+        self.base_themes_path = os.path.realpath(os.path.join(
+            os.path.dirname(__file__), 'themes'))
+        self.local_themes_path = os.path.realpath(os.path.join(
+            self.home_path, '.themes'))
         # Keep a list of installed app fonts to ease registration
         # in the toolkit side
         self.fonts = [
@@ -40,7 +44,6 @@ class Base(Singleton):
             for f in os.listdir(self.fonts_path)
         ]
 
-        self.home_path = os.path.expanduser('~')
 
         if detect_os() == OS_MAC:
             self.command_key_shortcut = u'⌘'
@@ -49,8 +52,11 @@ class Base(Singleton):
             self.command_key_shortcut = 'Ctrl'
             self.command_separator = '+'
 
-        self.bgcolor = "#363636"
-        self.fgcolor = "#fff"
+        fd = open(os.path.join(self.base_themes_path, 'light-theme.json'))
+        raw = fd.read()
+        fd.close()
+        self.theme = json.loads(raw)
+
 
         # Unity integration
         #self.unitylauncher = UnityLauncherFactory().create();

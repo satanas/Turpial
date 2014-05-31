@@ -85,6 +85,18 @@ class StatusesWebView(QWebView):
             'action_favorite_shadowed': os.path.join(self.base.images_path, 'action-favorite-shadowed.png'),
             'action_delete': os.path.join(self.base.images_path, 'action-delete.png'),
             'action_delete_shadowed': os.path.join(self.base.images_path, 'action-delete-shadowed.png'),
+            'scrollbar_background_color': self.base.theme['scrollbar']['background_color'],
+            'scrollbar_border_color': self.base.theme['scrollbar']['border_color'],
+            'scrollbar_handler_color': self.base.theme['scrollbar']['handler_color'],
+            'status_background_color': self.base.theme['status']['background_color'],
+            'status_border_color': self.base.theme['status']['border_color'],
+            'status_text_color': self.base.theme['status']['text_color'],
+            'username_text_color': self.base.theme['status']['username']['text_color'],
+            'username_hover_text_color': self.base.theme['status']['username']['hover_text_color'],
+            'entities_text_color': self.base.theme['entities']['text_color'],
+            'entities_hover_text_color': self.base.theme['entities']['hover_text_color'],
+            'footer_text_color': self.base.theme['footer']['text_color'],
+            'footer_hover_text_color': self.base.theme['footer']['hover_text_color'],
         }
         stylesheet = self.__load_template('style.css')
         return stylesheet.render(attrs)
@@ -98,6 +110,7 @@ class StatusesWebView(QWebView):
         message = message.replace('\n', '<br/>')
         message = message.replace('\'', '&apos;')
         timestamp = self.base.humanize_timestamp(status.timestamp)
+        timestamp = timestamp.replace(' ', '')
 
         media = []
         if status.entities:

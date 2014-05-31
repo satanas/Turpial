@@ -119,7 +119,9 @@ class ProfileDialog(Window):
 
         footer = QWidget()
         footer.setLayout(footer_layout)
-        footer.setStyleSheet("QWidget { background-color: #333; color: white; }")
+        style = "QWidget { background-color: %s; color: %s; }" % (self.base.theme['header']['background_color'],
+                self.base.theme['header']['text_color'])
+        footer.setStyleSheet(style)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)

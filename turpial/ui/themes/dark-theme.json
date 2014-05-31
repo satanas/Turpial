@@ -1,0 +1,31 @@
+{
+    "body": {
+        "background_color": "#b4bbc1"
+    },
+    "header": {
+        "background_color": "#313236",
+        "text_color": "#fff"
+    },
+    "scrollbar": {
+        "background_color": "#232428",
+        "border_color": "#3b3c3e",
+        "handler_color": "#666"
+    },
+    "status": {
+        "background_color": "#232428",
+        "border_color": "#3a3b3d",
+        "text_color": "#cecece",
+        "username": {
+            "text_color": "#cecece",
+            "hover_text_color": "#fff"
+        }
+    },
+    "entities": {
+        "text_color": "#f5861c",
+        "hover_text_color": "#f6b26f"
+    },
+    "footer": {
+        "text_color": "#999",
+        "hover_text_color": "#ddd"
+    }
+}

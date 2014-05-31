@@ -44,7 +44,8 @@ class Dock(QStatusBar):
         self.base = base
         self.status = self.LOADING
 
-        style = "background-color: %s; border: 0px solid %s;" % (self.base.bgcolor, self.base.bgcolor)
+        style = "background-color: %s; border: 0px solid %s;" % (self.base.theme['header']['background_color'],
+            self.base.theme['header']['background_color'])
 
         self.updates_button = ImageButton(base, 'dock-updates.png',
                 i18n.get('update_status'))

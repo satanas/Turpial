@@ -41,7 +41,7 @@ class StatusesColumn(QWidget):
     def __init__(self, base, column_id, include_header=True):
         QWidget.__init__(self)
         self.base = base
-        self.setMinimumWidth(280)
+        self.setMinimumWidth(320)
         self.statuses = []
         self.conversations = {}
         self.id_ = None

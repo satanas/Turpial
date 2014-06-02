@@ -38,10 +38,12 @@ class StatusesWebView(QWebView):
             self.setContextMenuPolicy(Qt.NoContextMenu)
         self.setPage(page)
         self.setHtml(self.EMPTY_PAGE)
-        self.status_template = self.__load_template('status.html')
 
-        self.stylesheet = self.__load_stylesheet()
+        self.status_template = self.__load_template('status.html')
+        self.load_style()
+
         self.show()
+
 
     def __element_clicked(self, qurl):
         try:
@@ -97,6 +99,7 @@ class StatusesWebView(QWebView):
             'entities_hover_text_color': self.base.theme['entities']['hover_text_color'],
             'footer_text_color': self.base.theme['footer']['text_color'],
             'footer_hover_text_color': self.base.theme['footer']['hover_text_color'],
+            'conversation_background_color': self.base.theme['conversation']['background_color'],
         }
         stylesheet = self.__load_template('style.css')
         return stylesheet.render(attrs)
@@ -227,4 +230,8 @@ class StatusesWebView(QWebView):
 
     def clear_new_marks(self):
         self.execute_javascript("clearNewMarks()")
+
+    def load_style(self):
+        self.stylesheet = self.__load_stylesheet()
+        self.setStyleSheet("QWidget { background-color: %s}" % self.base.theme['status']['background_color'])
 

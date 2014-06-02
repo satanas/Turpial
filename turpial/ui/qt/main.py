@@ -72,6 +72,7 @@ class Main(Base, QWidget):
         self.setWindowIcon(QIcon(self.get_image_path('turpial.svg')))
         self.resize(320, 480)
         self.center_on_screen()
+        self.load_theme()
 
         self.ignore_quit = True
         self.showed = True
@@ -611,6 +612,20 @@ class Main(Base, QWidget):
     def get_column_notification(self, column_id):
         return self.core.get_show_notifications_in_column(column_id)
 
+    def get_themes_list(self):
+        themes = ['light', 'dark']
+        for _, _, filenames in os.walk(self.local_themes_path):
+            for filename in filenames:
+                if filename.endswith('.json'):
+                    themes.append(filename.split('.')[0])
+        return themes
+
+    def reload_theme(self):
+        theme = self.core.get_theme()
+        self.load_theme(theme)
+        self.dock.load_style()
+        print self.get_themes_list()
+
     #================================================================
     # Hooks definitions
     #================================================================
@@ -624,6 +639,7 @@ class Main(Base, QWidget):
             self.core.add_config_option('General', 'inline-preview', 'off')
             self.core.add_config_option('General', 'show-images-in-browser', 'off')
             self.core.add_config_option('General', 'queue-interval', 30)
+            self.core.add_config_option('General', 'theme', 'light')
             self.core.add_config_option('Window', 'size', '320,480')
             self.core.add_config_option('Notifications', 'actions', 'on')
             self.core.add_config_option('Notifications', 'updates', 'on')
@@ -655,6 +671,8 @@ class Main(Base, QWidget):
             self.core.remove_config_option('Sounds', 'on-updates')
             self.core.remove_config_option('Sounds', 'on-actions')
             self.core.remove_config_option('Sounds', 'on-login')
+
+            self.reload_theme()
 
             width, height = self.core.get_window_size()
             self.resize(width, height)

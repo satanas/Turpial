@@ -20,6 +20,9 @@
             "hover_text_color": "#fff"
         }
     },
+    "conversation": {
+        "background_color": "#2a2b2c"
+    },
     "entities": {
         "text_color": "#f5861c",
         "hover_text_color": "#f6b26f"

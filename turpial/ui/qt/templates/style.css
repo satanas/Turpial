@@ -314,7 +314,7 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 }
 
 .conversation table td {
-    background-color: #f6f6f6;
+    background-color: {{ conversation_background_color }};
 }
 
 .operation-loader {

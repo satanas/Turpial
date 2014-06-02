@@ -244,8 +244,9 @@ STRINGS = {
     'notify_on_updates_tooltip': _("Set notifications preference for updates in newly created columns"),
     'rate_limit_exceeded': _("Rate limit exceeded"),
     'not_authorized_to_see_status': _("You are not authorized to see this status"),
-    'refresh': _('Refresh'),
-    'copy_tweet_url': _('Copy tweet URL'),
+    'refresh': _("Refresh"),
+    'copy_tweet_url': _("Copy tweet URL"),
+    'theme': _("Theme"),
 }
 
 class i18n:

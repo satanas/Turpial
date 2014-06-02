@@ -52,11 +52,6 @@ class Base(Singleton):
             self.command_key_shortcut = 'Ctrl'
             self.command_separator = '+'
 
-        fd = open(os.path.join(self.base_themes_path, 'dark-theme.json'))
-        raw = fd.read()
-        fd.close()
-        self.theme = json.loads(raw)
-
 
         # Unity integration
         #self.unitylauncher = UnityLauncherFactory().create();
@@ -67,6 +62,20 @@ class Base(Singleton):
         #self.unitylauncher.add_quicklist_button(self.show_preferences, i18n.get('preferences'), True)
         #self.unitylauncher.add_quicklist_button(self.main_quit, i18n.get('exit'), True)
         #self.unitylauncher.show_menu()
+
+    def load_theme(self, theme=None):
+        if theme is None:
+            theme = 'light'
+        theme_name = "%s.json" % theme
+        try:
+            fd = open(os.path.join(self.base_themes_path, theme_name))
+        except IOError:
+            fd = open(os.path.join(self.local_themes_path, theme_name))
+
+        raw = fd.read()
+        fd.close()
+        self.theme = json.loads(raw)
+
 
     # TODO: Put this in util.py
     def humanize_size(self, size, unit='B', decimals=2):

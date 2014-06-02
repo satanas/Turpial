@@ -336,3 +336,7 @@ class Container(QVBoxLayout):
         if self.focus_index < 0:
             self.focus_index = len(self.columns) - 1
         return self.columns[self.column_indexes[self.focus_index]]
+
+    def load_style(self):
+        for id_, column in self.columns.iteritems():
+            column.webview.load_style()

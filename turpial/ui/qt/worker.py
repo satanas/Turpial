@@ -195,6 +195,9 @@ class CoreWorker(QThread):
     def set_show_notifications_in_column(self, column_id, value):
         self.core.config.write('Notifications', column_id, 'on' if value else 'off')
 
+    def get_theme(self):
+        return self.core.config.read('General', 'theme')
+
     def get_cache_size(self):
         return self.core.get_cache_size()
 

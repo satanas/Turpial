@@ -44,8 +44,6 @@ class Dock(QStatusBar):
         self.base = base
         self.status = self.LOADING
 
-        style = "background-color: %s; border: 0px solid %s;" % (self.base.theme['header']['background_color'],
-            self.base.theme['header']['background_color'])
 
         self.updates_button = ImageButton(base, 'dock-updates.png',
                 i18n.get('update_status'))
@@ -55,7 +53,6 @@ class Dock(QStatusBar):
                 i18n.get('search'))
         self.settings_button = ImageButton(base, 'dock-preferences.png',
                 i18n.get('settings'))
-        self.settings_button.setStyleSheet("QPushButton { %s opacity: 128; }; QToolButton:hover { %s opacity: 255;}" % (style, style))
 
         self.updates_button.clicked.connect(self.__updates_clicked)
         self.messages_button.clicked.connect(self.__messages_clicked)
@@ -67,21 +64,20 @@ class Dock(QStatusBar):
         separator = QWidget()
         separator.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
 
-        toolbar = QToolBar()
-        toolbar.addWidget(self.settings_button)
-        toolbar.addWidget(separator)
-        toolbar.addWidget(self.search_button)
-        toolbar.addWidget(self.messages_button)
-        toolbar.addWidget(self.updates_button)
-        toolbar.setMinimumHeight(30)
-        toolbar.setContentsMargins(0, 0, 0, 0)
-        toolbar.setStyleSheet("QToolBar { %s }" % style)
+        self.toolbar = QToolBar()
+        self.toolbar.addWidget(self.settings_button)
+        self.toolbar.addWidget(separator)
+        self.toolbar.addWidget(self.search_button)
+        self.toolbar.addWidget(self.messages_button)
+        self.toolbar.addWidget(self.updates_button)
+        self.toolbar.setMinimumHeight(30)
+        self.toolbar.setContentsMargins(0, 0, 0, 0)
 
-        self.addPermanentWidget(toolbar, 1)
+        self.addPermanentWidget(self.toolbar, 1)
         self.setSizeGripEnabled(False)
 
         self.setContentsMargins(0, 0, 0, 0)
-        self.setStyleSheet("QStatusBar { %s }" % style)
+        self.load_style()
         self.loading()
 
     def __accounts_clicked(self):
@@ -182,3 +178,10 @@ class Dock(QStatusBar):
         self.messages_button.setEnabled(True)
         self.search_button.setEnabled(True)
         self.status = self.NORMAL
+
+    def load_style(self):
+        style = "background-color: %s; border: 0px solid %s;" % (self.base.theme['header']['background_color'],
+            self.base.theme['header']['background_color'])
+        self.toolbar.setStyleSheet("QToolBar { %s }" % style)
+        self.settings_button.setStyleSheet("QPushButton { %s opacity: 128; }; QToolButton:hover { %s opacity: 255;}" % (style, style))
+        self.setStyleSheet("QStatusBar { %s }" % style)

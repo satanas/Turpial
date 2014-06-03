@@ -198,6 +198,9 @@ class CoreWorker(QThread):
     def get_theme(self):
         return self.core.config.read('General', 'theme')
 
+    def get_font_size(self):
+        return int(self.core.config.read('General', 'font-size'))
+
     def get_cache_size(self):
         return self.core.get_cache_size()
 

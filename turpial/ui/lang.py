@@ -247,6 +247,7 @@ STRINGS = {
     'refresh': _("Refresh"),
     'copy_tweet_url': _("Copy tweet URL"),
     'theme': _("Theme"),
+    'font_size': _('Font size'),
 }
 
 class i18n:

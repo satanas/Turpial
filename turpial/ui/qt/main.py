@@ -49,6 +49,8 @@ class Main(Base, QWidget):
     account_loaded = pyqtSignal()
     account_registered = pyqtSignal()
 
+    DEFAULT_FONT_SIZE = 14
+
     def __init__(self, debug=False):
         self.app = QApplication(['Turpial'] + sys.argv)
 
@@ -56,6 +58,7 @@ class Main(Base, QWidget):
         QWidget.__init__(self)
 
         self.debug = debug
+        self.core = None
 
         for font_path in self.fonts:
             QFontDatabase.addApplicationFont(font_path)
@@ -620,6 +623,27 @@ class Main(Base, QWidget):
                     themes.append(filename.split('.')[0])
         return themes
 
+    def get_message_font_size(self):
+        if self.core is None:
+            return self.DEFAULT_FONT_SIZE
+        else:
+            return self.core.get_font_size()
+
+    def get_footer_font_size(self):
+        size = self.get_message_font_size()
+        size -= size * 0.14
+        return int(size)
+
+    def get_username_font_size(self):
+        size = self.get_message_font_size()
+        size += size * 0.14
+        return int(size)
+
+    def get_alert_font_size(self):
+        size = self.get_message_font_size()
+        size -= size * 0.7
+        return int(size)
+
     def reload_theme(self):
         theme = self.core.get_theme()
         self.load_theme(theme)
@@ -639,6 +663,7 @@ class Main(Base, QWidget):
             self.core.add_config_option('General', 'inline-preview', 'off')
             self.core.add_config_option('General', 'show-images-in-browser', 'off')
             self.core.add_config_option('General', 'queue-interval', 30)
+            self.core.add_config_option('General', 'font-size', '14')
             self.core.add_config_option('General', 'theme', 'light')
             self.core.add_config_option('Window', 'size', '320,480')
             self.core.add_config_option('Notifications', 'actions', 'on')

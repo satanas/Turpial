@@ -100,6 +100,10 @@ class StatusesWebView(QWebView):
             'footer_text_color': self.base.theme['footer']['text_color'],
             'footer_hover_text_color': self.base.theme['footer']['hover_text_color'],
             'conversation_background_color': self.base.theme['conversation']['background_color'],
+            'message_font_size': self.base.get_message_font_size(),
+            'footer_font_size': self.base.get_footer_font_size(),
+            'alert_font_size': self.base.get_alert_font_size(),
+            'username_font_size': self.base.get_username_font_size(),
         }
         stylesheet = self.__load_template('style.css')
         return stylesheet.render(attrs)

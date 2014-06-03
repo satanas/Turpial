@@ -35,7 +35,7 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 .alert {
     color: #555;
     font-family: 'Ubuntu';
-    font-size: 13px;
+    font-size: {{ alert_font_size }}px;
     position: fixed;
     top: 0px;
     left: 0px;
@@ -129,7 +129,7 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 .username, .username_protected {
     float: left;
     font-family: 'Titillium Web';
-    font-size: 16px;
+    font-size: {{ username_font_size }}px;
     font-weight: bold;
     margin-top: 5px;
     margin-bottom: 0px;
@@ -169,7 +169,7 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 
 .message {
     font-family: 'Open Sans';
-    font-size: 14px;
+    font-size: {{ message_font_size }}px;
     word-break: break-word;
     line-height: 1.3;
     margin-right: 10px;
@@ -179,7 +179,7 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 
 .footer, .timestamp {
     font-family: 'Titillium Web';
-    font-size: 12px;
+    font-size: {{ footer_font_size }}px;
     color: {{ footer_text_color }};
 }
 

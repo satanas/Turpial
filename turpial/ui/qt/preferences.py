@@ -29,7 +29,7 @@ from turpial.ui.qt.widgets import Window
 class PreferencesDialog(Window):
     def __init__(self, base):
         Window.__init__(self, base, i18n.get('preferences'))
-        self.setFixedSize(600, 370)
+        self.setFixedSize(550, 400)
         self.current_config = self.base.get_config()
         self.setAttribute(Qt.WA_QuitOnClose, False)
 
@@ -117,6 +117,7 @@ class GeneralPage(BasePage):
         inline_preview = base.core.get_inline_preview()
         images_in_browser = base.core.get_show_images_in_browser()
         current_theme = base.core.get_theme()
+        current_font_size = str(base.get_message_font_size())
 
         available_themes = base.get_themes_list()
 
@@ -134,8 +135,9 @@ class GeneralPage(BasePage):
             tooltip=i18n.get('inline_preview_tooltip'))
         self.images_in_browser = CheckBox(i18n.get('open_images_in_browser'), checked=images_in_browser,
             tooltip=i18n.get('open_images_in_browser_tooltip'))
-        self.theme = ComboBox(i18n.get('theme'), sorted(available_themes), current_theme,
-            expand_combo=True)
+        self.theme = ComboBox(i18n.get('theme'), sorted(available_themes), current_theme, fill=True)
+        self.font_size = ComboBox(i18n.get('font_size'), [str(x) for x in range(12, 17)], current_font_size,
+            fill=True)
 
         self.layout.addWidget(self.statuses_per_column)
         self.layout.addWidget(self.queue_frequency)
@@ -146,6 +148,7 @@ class GeneralPage(BasePage):
         self.layout.addWidget(self.images_in_browser)
         self.layout.addSpacing(10)
         self.layout.addWidget(self.theme)
+        self.layout.addWidget(self.font_size)
         self.layout.addStretch(1)
 
     def get_config(self):
@@ -161,6 +164,7 @@ class GeneralPage(BasePage):
             'inline-preview': inline_preview,
             'show-images-in-browser': images_in_browser,
             'theme': self.theme.get_value(),
+            'font-size': self.font_size.get_value(),
         }
 
 class NotificationsPage(BasePage):
@@ -207,12 +211,12 @@ class ServicesPage(BasePage):
         short_url_services = base.core.get_available_short_url_services()
         default_short_url_service = base.core.get_shorten_url_service()
         self.short_url = ComboBox(i18n.get('short_urls'), sorted(short_url_services), default_short_url_service,
-            expand_combo=True)
+            fill=True)
 
         upload_media_services = base.core.get_available_upload_media_services()
         default_upload_media_service = base.core.get_upload_media_service()
         self.upload_media = ComboBox(i18n.get('upload_image'), sorted(upload_media_services),
-                default_upload_media_service, expand_combo=True)
+                default_upload_media_service, fill=True)
 
         self.layout.addWidget(self.short_url)
         self.layout.addSpacing(5)
@@ -302,7 +306,7 @@ class ProxyPage(BasePage):
         else:
             default_authenticated = False
 
-        self.protocol = ComboBox(i18n.get('type'), ['HTTP', 'HTTPS'], 'HTTP', expand_combo=True)
+        self.protocol = ComboBox(i18n.get('type'), ['HTTP', 'HTTPS'], 'HTTP', fill=True)
         self.host = LineEdit(i18n.get('host'), default_value=config['server'])
         self.port = LineEdit(i18n.get('port'), text_size=100, default_value=config['port'])
         self.authenticated = CheckBox(i18n.get('with_authentication'), checked=default_authenticated)
@@ -485,7 +489,7 @@ class CheckBox(QWidget):
         return self.checkbox.isChecked()
 
 class ComboBox(QWidget):
-    def __init__(self, caption, values, default_value, caption_size=None, expand_combo=False):
+    def __init__(self, caption, values, default_value, caption_size=None, expand=False, fill=False):
         QWidget.__init__(self)
 
         self.values = values
@@ -507,10 +511,15 @@ class ComboBox(QWidget):
         hbox = QHBoxLayout()
         hbox.addWidget(description)
         hbox.addSpacing(10)
-        if expand_combo:
+
+        if expand:
             hbox.addWidget(self.combo, 1)
+        elif fill:
+            hbox.addWidget(self.combo)
+            hbox.addStretch(1)
         else:
             hbox.addWidget(self.combo)
+
         hbox.setMargin(0)
         self.setLayout(hbox)
         self.setContentsMargins(0, 0, 0, 0)

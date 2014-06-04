@@ -76,13 +76,16 @@ class StatusesColumn(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
 
         if include_header:
-            header = self.__build_header(column_id)
-            layout.addWidget(header)
+            self.header = self.__build_header(column_id)
+            layout.addWidget(self.header)
             layout.addWidget(self.slider)
             layout.addWidget(self.loader)
+        else:
+            self.header = None
         layout.addWidget(self.webview, 1)
 
         self.setLayout(layout)
+        self.load_style()
 
     def __on_timeout(self):
         current_value = self.base.get_column_update_interval(self.id_)
@@ -114,21 +117,17 @@ class StatusesColumn(QWidget):
             font = QFont('Maven Pro Light', 16, QFont.Light, False)
             font2 = QFont('Monda', 10, QFont.Light, False)
 
-        bg_style = "background-color: %s; color: %s;" % (self.base.theme['header']['background_color'],
-                                                         self.base.theme['header']['text_color'])
-        caption = QLabel(username)
-        caption.setStyleSheet("QLabel { %s }" % bg_style)
-        caption.setFont(font)
+        self.username = QLabel(username)
+        self.username.setFont(font)
 
-        caption2 = QLabel(column_slug)
-        caption2.setStyleSheet("QLabel { %s }" % bg_style)
-        caption2.setFont(font2)
-        caption2.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
+        self.column_slug = QLabel(column_slug)
+        self.column_slug.setFont(font2)
+        self.column_slug.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
 
         caption_box = QHBoxLayout()
         caption_box.setSpacing(8)
-        caption_box.addWidget(caption)
-        caption_box.addWidget(caption2)
+        caption_box.addWidget(self.username)
+        caption_box.addWidget(self.column_slug)
         caption_box.addStretch(1)
 
         close_button = ImageButton(self.base, 'action-menu-shadowed.png', i18n.get('column_options'))
@@ -139,7 +138,6 @@ class StatusesColumn(QWidget):
         header_layout.addWidget(close_button)
 
         header = QWidget()
-        header.setStyleSheet("QWidget { %s }" % bg_style)
         header.setLayout(header_layout)
         return header
 
@@ -413,6 +411,15 @@ class StatusesColumn(QWidget):
 
     def notify_info(self, id_, message):
         self.notify(id_, self.NOTIFICATION_INFO, message)
+
+    def load_style(self):
+        if self.header:
+            bg_style = "background-color: %s; color: %s;" % (self.base.theme['header']['background_color'],
+                                                             self.base.theme['header']['text_color'])
+            self.username.setStyleSheet("QLabel { %s }" % bg_style)
+            self.column_slug.setStyleSheet("QLabel { %s }" % bg_style)
+            self.header.setStyleSheet("QWidget { %s }" % bg_style)
+        self.webview.load_style()
 
     def redraw(self):
         self.webview.clear()

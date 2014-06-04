@@ -339,7 +339,7 @@ class Container(QVBoxLayout):
 
     def load_style(self):
         for id_, column in self.columns.iteritems():
-            column.webview.load_style()
+            column.load_style()
 
     def redraw(self):
         for id_, column in self.columns.iteritems():

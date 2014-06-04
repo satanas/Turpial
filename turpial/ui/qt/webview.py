@@ -173,7 +173,7 @@ class StatusesWebView(QWebView):
 
         current_page = self.page().currentFrame().toHtml()
 
-        if current_page == self.EMPTY_PAGE:
+        if current_page == self.EMPTY_PAGE or current_page == '':
             for status in statuses_:
                 content += self.__render_status(status)
             column = self.__load_template('column.html')
@@ -195,7 +195,7 @@ class StatusesWebView(QWebView):
             self.execute_javascript('restoreScrollPosition()')
 
     def clear(self):
-        self.setHtml('')
+        self.setHtml(self.EMPTY_PAGE)
 
     def execute_javascript(self, js_cmd):
         self.page().mainFrame().evaluateJavaScript(js_cmd)

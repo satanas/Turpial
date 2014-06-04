@@ -414,6 +414,9 @@ class StatusesColumn(QWidget):
     def notify_info(self, id_, message):
         self.notify(id_, self.NOTIFICATION_INFO, message)
 
+    def redraw(self):
+        self.webview.clear()
+        self.webview.update_statuses(self.statuses)
 
 class StatusDelegate(QStyledItemDelegate):
     FullnameRole = Qt.UserRole + 100

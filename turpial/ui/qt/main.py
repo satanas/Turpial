@@ -593,12 +593,19 @@ class Main(Base, QWidget):
 
     def update_config(self, new_config):
         current_config = self.core.read_config()
+        changed_font_size = self.get_message_font_size() != new_config['General']['font-size']
+        changed_theme = self.core.get_theme() != new_config['General']['theme']
+
         current_queue_interval = int(current_config['General']['queue-interval'])
 
         self.core.update_config(new_config)
 
         if current_queue_interval != new_config['General']['queue-interval']:
             self.turn_on_queue_timer(force=True)
+
+        if changed_font_size or changed_theme:
+            self.reload_theme()
+            self._container.redraw()
 
     def restore_config(self):
         self.core.restore_config()
@@ -647,8 +654,8 @@ class Main(Base, QWidget):
     def reload_theme(self):
         theme = self.core.get_theme()
         self.load_theme(theme)
+        self._container.load_style()
         self.dock.load_style()
-        print self.get_themes_list()
 
     #================================================================
     # Hooks definitions

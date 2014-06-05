@@ -36,7 +36,7 @@ class Base(Singleton):
         self.base_themes_path = os.path.realpath(os.path.join(
             os.path.dirname(__file__), 'themes'))
         self.local_themes_path = os.path.realpath(os.path.join(
-            self.home_path, '.themes'))
+            self.home_path, '.themes', 'turpial'))
         # Keep a list of installed app fonts to ease registration
         # in the toolkit side
         self.fonts = [

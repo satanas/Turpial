@@ -159,7 +159,7 @@ class StatusesColumn(QWidget):
         refresh = QAction(i18n.get('refresh'), self)
         refresh.triggered.connect(self.__refresh_column)
 
-        delete = QAction(i18n.get('delete'), self)
+        delete = QAction(i18n.get('close'), self)
         delete.triggered.connect(self.__delete_column)
 
         self.options_menu.addAction(notifications)

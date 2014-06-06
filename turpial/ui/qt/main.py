@@ -648,7 +648,7 @@ class Main(Base, QWidget):
 
     def get_alert_font_size(self):
         size = self.get_message_font_size()
-        size -= size * 0.7
+        size -= size * 0.07
         return int(size)
 
     def reload_theme(self):

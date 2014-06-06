@@ -421,9 +421,9 @@ class CompletionTextEdit(QTextEdit):
 
         tc = self.textCursor()
         extra = (completion.length() - self.completer.completionPrefix().length())
-        tc.movePosition(QTextCursor.StartOfWord)
-        tc.select(QTextCursor.WordUnderCursor)
-        tc.insertText(''.join([str(completion), ' ']))
+        for i in range(self.completer.completionPrefix().length()):
+            tc.deletePreviousChar()
+        tc.insertText("%s " % str(completion))
         self.setTextCursor(tc)
 
     def textUnderCursor(self):
@@ -446,7 +446,6 @@ class CompletionTextEdit(QTextEdit):
         QTextEdit.focusInEvent(self, event)
 
     def keyPressEvent(self, event):
-        #print self.completer
         if self.completer and self.completer.popup().isVisible():
             if event.key() in self.IGNORED_KEYS:
                 event.ignore()

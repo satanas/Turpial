@@ -106,6 +106,10 @@ class Window(QWidget):
         fy = cy - (geo2.height() / 2)
         self.setGeometry(fx,fy, geo2.width(), geo2.height())
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
     def show(self):
         QWidget.show(self)
         self.__center_on_parent()

@@ -83,12 +83,13 @@ class Main(Base, QWidget):
         self.timers = {}
         self.extra_friends = []
 
+        self.shortcuts = Shortcuts(self)
+
         self.update_box = UpdateBox(self)
         self.profile_dialog = ProfileDialog(self)
         self.profile_dialog.options_clicked.connect(self.show_profile_menu)
         self.image_view = ImageView(self)
         self.queue_dialog = QueueDialog(self)
-        self.shortcuts = Shortcuts(self)
 
         self.core = CoreWorker()
         self.core.ready.connect(self.after_core_initialized)
@@ -188,7 +189,7 @@ class Main(Base, QWidget):
 
     def add_keyboard_shortcuts(self):
         for key, shortcut in self.shortcuts:
-            if detect_os() != OS_MAC and key == 'preferences':
+            if (detect_os() != OS_MAC and key == 'preferences') or shortcut.ghost:
                 continue
             self.addAction(shortcut.action)
 
@@ -682,17 +683,21 @@ class Main(Base, QWidget):
 
             # This is for backwards compatibility
             columns = self.core.sanitize_search_columns()
-            notifications = self.core.read_section('Notifications')
-            updates = self.core.read_section('Updates')
-
-            if updates is None:
-                updates = {}
+            notifications = {}
+            updates = {}
 
             for key in columns:
-                if key not in notifications.keys():
+                notification = self.core.get_show_notifications_in_column(key)
+                update = self.core.get_update_interval_per_column(key)
+
+                if notification is None:
                     notifications[key] = 'on' if self.core.get_notify_on_updates() else 'off'
-                if key not in updates.keys():
+                else:
+                    notifications[key] = 'on' if notification else 'off'
+                if update is None:
                     updates[key] = self.core.get_update_interval()
+                else:
+                    updates[key] = update
 
             self.core.write_section('Notifications', notifications)
             self.core.write_section('Updates', updates)

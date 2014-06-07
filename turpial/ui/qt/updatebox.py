@@ -50,9 +50,9 @@ class UpdateBox(QWidget):
         self.char_count.setFont(font)
 
         self.update_button = QPushButton(i18n.get('update'))
-        self.update_button.setToolTip(self.base.get_shortcut_string('Enter'))
+        self.update_button.setToolTip(self.base.shortcuts.get('post').caption)
         self.queue_button = QPushButton(i18n.get('add_to_queue'))
-        self.queue_button.setToolTip(self.base.get_shortcut_string('P'))
+        self.queue_button.setToolTip(self.base.shortcuts.get('add_to_queue').caption)
 
         self.accounts_combo = QComboBox()
 
@@ -448,14 +448,13 @@ class CompletionTextEdit(QTextEdit):
     def keyPressEvent(self, event):
         if self.completer and self.completer.popup().isVisible():
             if event.key() in self.IGNORED_KEYS:
-                event.ignore()
+                #event.ignore()
                 return
 
         if event.key() == Qt.Key_Escape:
             self.quit.emit()
             return
 
-        QTextEdit.keyPressEvent(self, event)
 
         hasModifier = event.modifiers() != Qt.NoModifier
         enterKey = event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return
@@ -468,6 +467,8 @@ class CompletionTextEdit(QTextEdit):
         if hasModifier and event.modifiers() == Qt.ControlModifier and queueKey:
             self.enqueued.emit()
             return
+
+        QTextEdit.keyPressEvent(self, event)
 
         completionPrefix = self.textUnderCursor()
         #print completionPrefix.decode('utf-8')

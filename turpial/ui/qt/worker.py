@@ -119,6 +119,7 @@ class CoreWorker(QThread):
         self.core = Core()
         # FIXME: Dirty hack that must be fixed in libturpial
         self.core.config.cfg.optionxform = str
+        self.core.config.load()
         self.queue_path = os.path.join(self.core.config.basedir, 'queue')
         if not os.path.isfile(self.queue_path):
             open(self.queue_path, 'w').close()
@@ -184,7 +185,9 @@ class CoreWorker(QThread):
         self.core.config.write('General', 'show-images-in-browser', value)
 
     def get_update_interval_per_column(self, column_id):
-        return int(self.core.config.read('Updates', column_id))
+        interval = self.core.config.read('Updates', column_id)
+        print column_id, interval
+        return interval if interval is None else int(interval)
 
     def set_update_interval_per_column(self, column_id, interval):
         self.core.config.write('Updates', column_id, interval)

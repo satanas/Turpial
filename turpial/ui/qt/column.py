@@ -148,7 +148,7 @@ class StatusesColumn(QWidget):
         notifications = QAction(i18n.get('notifications'), self)
         notifications.setCheckable(True)
         notifications.setChecked(self.base.get_column_notification(self.id_))
-        notifications.triggered.connect(self.__toogle_notifications)
+        notifications.triggered.connect(self.__toggle_notifications)
         notifications.setToolTip(i18n.get('notifications_toolip'))
 
         caption = "%s (%sm)" % (i18n.get('update_frequency'), self.base.get_column_update_interval(self.id_))
@@ -183,7 +183,7 @@ class StatusesColumn(QWidget):
         self.details_menu.addAction(open_in_browser)
         self.details_menu.exec_(QCursor.pos())
 
-    def __toogle_notifications(self):
+    def __toggle_notifications(self):
         notify = not self.base.get_column_notification(self.id_)
         self.base.set_column_notification(self.id_, notify)
 

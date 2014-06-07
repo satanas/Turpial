@@ -44,14 +44,16 @@ class Base(Singleton):
             for f in os.listdir(self.fonts_path)
         ]
 
-
         if detect_os() == OS_MAC:
-            self.command_key_shortcut = u'⌘'
+            self.command_key = unichr(8984)
+            self.shift_key = unichr(8679)
+            self.alt_key = unichr(8997)
             self.command_separator = ''
         else:
-            self.command_key_shortcut = 'Ctrl'
+            self.command_key = 'Ctrl'
+            self.shift_key = 'Shift'
+            self.alt_key = 'Alt'
             self.command_separator = '+'
-
 
         # Unity integration
         #self.unitylauncher = UnityLauncherFactory().create();
@@ -140,12 +142,6 @@ class Base(Singleton):
         else:
             unit = i18n.get('minute')
         return " ".join([str(interval), unit])
-
-    def get_shortcut_string(self, key, modifier=None):
-        if modifier:
-            return self.command_separator.join([self.command_key_shortcut, modifier, key])
-        else:
-            return self.command_separator.join([self.command_key_shortcut, key])
 
     def get_error_message_from_response(self, response, default=None):
         if response is None:

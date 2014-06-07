@@ -44,15 +44,18 @@ class Dock(QStatusBar):
         self.base = base
         self.status = self.LOADING
 
+        updates_tooltip = "%s (%s)" % (i18n.get('update_status'), self.base.shortcuts.get('tweet').caption)
+        self.updates_button = ImageButton(base, 'dock-updates.png', updates_tooltip)
 
-        self.updates_button = ImageButton(base, 'dock-updates.png',
-                i18n.get('update_status'))
-        self.messages_button = ImageButton(base, 'dock-messages.png',
-                i18n.get('send_direct_message'))
-        self.search_button = ImageButton(base, 'dock-search.png',
-                i18n.get('search'))
-        self.settings_button = ImageButton(base, 'dock-preferences.png',
-                i18n.get('settings'))
+        messages_tooltip = "%s (%s)" % (i18n.get('send_direct_message'),
+                self.base.shortcuts.get('message').caption)
+        self.messages_button = ImageButton(base, 'dock-messages.png', messages_tooltip)
+
+        search_tooltip = "%s (%s)" % (i18n.get('search'), self.base.shortcuts.get('search').caption)
+        self.search_button = ImageButton(base, 'dock-search.png', search_tooltip)
+
+        settings_tooltip = "%s (%s)" % (i18n.get('settings'), self.base.shortcuts.get('preferences').caption)
+        self.settings_button = ImageButton(base, 'dock-preferences.png', settings_tooltip)
 
         self.updates_button.clicked.connect(self.__updates_clicked)
         self.messages_button.clicked.connect(self.__messages_clicked)
@@ -115,23 +118,28 @@ class Dock(QStatusBar):
 
         accounts = QAction(i18n.get('accounts'), self)
         accounts.triggered.connect(partial(self.__accounts_clicked))
+        accounts.setShortcut(self.base.shortcuts.get('accounts').sequence)
 
         queue = QAction(i18n.get('messages_queue'), self)
         queue.triggered.connect(partial(self.__queue_clicked))
+        queue.setShortcut(self.base.shortcuts.get('queue').sequence)
 
         columns = QAction(i18n.get('columns'), self)
 
         filters = QAction(i18n.get('filters'), self)
         filters.triggered.connect(partial(self.__filters_clicked))
+        filters.setShortcut(self.base.shortcuts.get('filters').sequence)
 
         preferences = QAction(i18n.get('preferences'), self)
         preferences.triggered.connect(partial(self.__preferences_clicked))
+        preferences.setShortcut(self.base.shortcuts.get('preferences').sequence)
 
         about_turpial = QAction(i18n.get('about_turpial'), self)
         about_turpial.triggered.connect(partial(self.__about_clicked))
 
         quit = QAction(i18n.get('quit'), self)
         quit.triggered.connect(self.__quit_clicked)
+        quit.setShortcut(self.base.shortcuts.get('quit').sequence)
 
         if self.status > self.EMPTY:
             columns_menu = self.base.build_columns_menu()

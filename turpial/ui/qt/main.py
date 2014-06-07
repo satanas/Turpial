@@ -683,7 +683,10 @@ class Main(Base, QWidget):
 
             # This is for backwards compatibility
             columns = self.core.sanitize_search_columns()
-            notifications = {}
+            notifications = {
+                'actions': self.core.get_notify_on_actions(),
+                'updates': self.core.get_notify_on_updates()
+            }
             updates = {}
 
             for key in columns:

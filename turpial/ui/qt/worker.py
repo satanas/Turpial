@@ -186,7 +186,6 @@ class CoreWorker(QThread):
 
     def get_update_interval_per_column(self, column_id):
         interval = self.core.config.read('Updates', column_id)
-        print column_id, interval
         return interval if interval is None else int(interval)
 
     def set_update_interval_per_column(self, column_id, interval):

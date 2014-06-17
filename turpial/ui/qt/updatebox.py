@@ -411,6 +411,7 @@ class CompletionTextEdit(QTextEdit):
             self.completer.activated.disconnect()
 
         self.completer = completer
+        self.completer.setCompletionMode(QCompleter.PopupCompletion)
         self.completer.setCaseSensitivity(Qt.CaseInsensitive)
         self.completer.setWidget(self)
         self.completer.activated.connect(self.insertCompletion)
@@ -448,10 +449,12 @@ class CompletionTextEdit(QTextEdit):
     def keyPressEvent(self, event):
         if self.completer and self.completer.popup().isVisible():
             if event.key() in self.IGNORED_KEYS:
-                #event.ignore()
+                event.ignore()
+                print 'UPDATEBOX ignoring'
                 return
 
         if event.key() == Qt.Key_Escape:
+            print 'UPDATEBOX quitting'
             self.quit.emit()
             return
 
@@ -461,30 +464,41 @@ class CompletionTextEdit(QTextEdit):
         queueKey = event.key() == Qt.Key_P
 
         if hasModifier and event.modifiers() == Qt.ControlModifier and enterKey:
+            print 'UPDATEBOX activated'
             self.activated.emit()
             return
 
         if hasModifier and event.modifiers() == Qt.ControlModifier and queueKey:
+            print 'UPDATEBOX queued'
             self.enqueued.emit()
             return
 
-        QTextEdit.keyPressEvent(self, event)
+        print 'event.key %s, event.count %s, event.modifiers %s' % (event.key(), event.count(), event.modifiers())
+        if event.count() > 1:
+            event.ignore()
+        else:
+            QTextEdit.keyPressEvent(self, event)
 
         completionPrefix = self.textUnderCursor()
         #print completionPrefix.decode('utf-8')
 
         if hasModifier or event.text().isEmpty() or not completionPrefix.startsWith('@'):
+            print 'UPDATEBOX hidding popup'
             self.completer.popup().hide()
-            return
+            #return
 
-        if completionPrefix.startsWith('@') and completionPrefix[1:] != self.completer.completionPrefix():
+        elif completionPrefix.startsWith('@') and completionPrefix[1:] != self.completer.completionPrefix():
             self.completer.setCompletionPrefix(completionPrefix[1:])
             popup = self.completer.popup()
             popup.setCurrentIndex(self.completer.completionModel().index(0, 0))
 
-        cursor_rect = self.cursorRect()
-        cursor_rect.setWidth(self.completer.popup().sizeHintForColumn(0)
-                + self.completer.popup().verticalScrollBar().sizeHint().width())
-        self.completer.complete(cursor_rect)
+            cursor_rect = self.cursorRect()
+            cursor_rect.setWidth(self.completer.popup().sizeHintForColumn(0)
+                    + self.completer.popup().verticalScrollBar().sizeHint().width())
+            self.completer.complete(cursor_rect)
+            print 'UPDATEBOX completing'
+            return
+        else:
+            QTextEdit.keyPressEvent(self, event)
 
 

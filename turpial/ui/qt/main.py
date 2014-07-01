@@ -8,6 +8,7 @@ import random
 import urllib2
 import webbrowser
 import subprocess
+import traceback
 
 
 from functools import partial
@@ -666,6 +667,8 @@ class Main(Base, QWidget):
 
     def after_core_initialized(self, response):
         if self.is_exception(response):
+            print response
+            print traceback.print_exc()
             self.core.status = self.core.ERROR
             self._container.error()
         else:

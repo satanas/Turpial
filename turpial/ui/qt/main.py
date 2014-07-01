@@ -85,16 +85,11 @@ class Main(Base, QWidget):
 
         self.shortcuts = Shortcuts(self)
 
-        print 'Shortcuts done'
         self.update_box = UpdateBox(self)
-        print 'UpdateBox done'
         self.profile_dialog = ProfileDialog(self)
         self.profile_dialog.options_clicked.connect(self.show_profile_menu)
-        print 'ProfileDialog done'
         self.image_view = ImageView(self)
-        print 'ImageView done'
         self.queue_dialog = QueueDialog(self)
-        print 'QueueDialog done'
 
         self.core = CoreWorker()
         self.core.ready.connect(self.after_core_initialized)
@@ -141,7 +136,6 @@ class Main(Base, QWidget):
         self.sounds = SoundSystem(self.sounds_path)
 
         self.dock = Dock(self)
-        print 'Creating dock'
 
         self.dock.accounts_clicked.connect(self.show_accounts_dialog)
         self.dock.columns_clicked.connect(self.show_column_menu)
@@ -152,16 +146,13 @@ class Main(Base, QWidget):
         self.dock.filters_clicked.connect(self.show_filters_dialog)
         self.dock.preferences_clicked.connect(self.show_preferences_dialog)
         self.dock.quit_clicked.connect(self.main_quit)
-        print 'Dock done'
 
-        print 'Creating systray'
         self.tray = TrayIcon(self)
         self.tray.updates_clicked.connect(self.show_update_box)
         self.tray.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
         self.tray.settings_clicked.connect(self.show_preferences_dialog)
         self.tray.quit_clicked.connect(self.main_quit)
         self.tray.toggled.connect(self.toggle_tray_icon)
-        print 'Systray done'
 
         layout = QVBoxLayout()
         layout.setSpacing(0)
@@ -465,6 +456,7 @@ class Main(Base, QWidget):
         accounts = self.core.get_registered_accounts()
         columns = self.core.get_registered_columns()
 
+        print 'updating container'
         if len(columns) == 0:
             if len(accounts) == 0:
                 self._container.empty(False)
@@ -481,6 +473,7 @@ class Main(Base, QWidget):
                 self.download_stream(column)
                 self.add_timer(column)
             self.fetch_friends_list()
+        print 'updated container'
 
     def build_columns_menu(self):
         columns_menu = QMenu(self)
@@ -722,6 +715,7 @@ class Main(Base, QWidget):
             self.core.remove_config_option('Sounds', 'on-login')
 
             self.reload_theme()
+            print 'Theme reloaded'
 
             width, height = self.core.get_window_size()
             self.resize(width, height)
@@ -729,9 +723,12 @@ class Main(Base, QWidget):
             if self.core.get_sound_on_login():
                 self.sounds.startup()
             self.queue_dialog.start()
+            print 'queue dialog started'
             self.update_container()
+            print 'updated container'
             self.turn_on_queue_timer()
             self.core.status = self.core.READY
+            print 'ready'
 
     def after_save_account(self, account_id):
         self.account_registered.emit()

@@ -714,6 +714,8 @@ class Main(Base, QWidget):
             self.core.remove_config_option('Sounds', 'on-actions')
             self.core.remove_config_option('Sounds', 'on-login')
 
+            print 'preparing theme'
+
             self.reload_theme()
             print 'Theme reloaded'
 

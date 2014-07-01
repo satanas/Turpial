@@ -85,11 +85,16 @@ class Main(Base, QWidget):
 
         self.shortcuts = Shortcuts(self)
 
+        print 'Shortcuts done'
         self.update_box = UpdateBox(self)
+        print 'UpdateBox done'
         self.profile_dialog = ProfileDialog(self)
         self.profile_dialog.options_clicked.connect(self.show_profile_menu)
+        print 'ProfileDialog done'
         self.image_view = ImageView(self)
+        print 'ImageView done'
         self.queue_dialog = QueueDialog(self)
+        print 'QueueDialog done'
 
         self.core = CoreWorker()
         self.core.ready.connect(self.after_core_initialized)
@@ -136,6 +141,7 @@ class Main(Base, QWidget):
         self.sounds = SoundSystem(self.sounds_path)
 
         self.dock = Dock(self)
+        print 'Creating dock'
 
         self.dock.accounts_clicked.connect(self.show_accounts_dialog)
         self.dock.columns_clicked.connect(self.show_column_menu)
@@ -146,13 +152,16 @@ class Main(Base, QWidget):
         self.dock.filters_clicked.connect(self.show_filters_dialog)
         self.dock.preferences_clicked.connect(self.show_preferences_dialog)
         self.dock.quit_clicked.connect(self.main_quit)
+        print 'Dock done'
 
+        print 'Creating systray'
         self.tray = TrayIcon(self)
         self.tray.updates_clicked.connect(self.show_update_box)
         self.tray.messages_clicked.connect(self.show_friends_dialog_for_direct_message)
         self.tray.settings_clicked.connect(self.show_preferences_dialog)
         self.tray.quit_clicked.connect(self.main_quit)
         self.tray.toggled.connect(self.toggle_tray_icon)
+        print 'Systray done'
 
         layout = QVBoxLayout()
         layout.setSpacing(0)

@@ -667,8 +667,8 @@ class Main(Base, QWidget):
 
     def after_core_initialized(self, response):
         if self.is_exception(response):
-            print response
-            print traceback.print_exc()
+            print 'response:', response
+            print 'traceback:', traceback.print_exc()
             self.core.status = self.core.ERROR
             self._container.error()
         else:

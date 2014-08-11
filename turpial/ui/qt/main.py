@@ -684,8 +684,8 @@ class Main(Base, QWidget):
             # This is for backwards compatibility
             columns = self.core.sanitize_search_columns()
             notifications = {
-                'actions': self.core.get_notify_on_actions(),
-                'updates': self.core.get_notify_on_updates()
+                'updates': 'on' if self.core.get_notify_on_updates() else 'off',
+                'actions': 'on' if self.core.get_notify_on_actions() else 'off'
             }
             updates = {}
 

@@ -136,7 +136,7 @@ class GeneralPage(BasePage):
         self.images_in_browser = CheckBox(i18n.get('open_images_in_browser'), checked=images_in_browser,
             tooltip=i18n.get('open_images_in_browser_tooltip'))
         self.theme = ComboBox(i18n.get('theme'), sorted(available_themes), current_theme, fill=True)
-        self.font_size = ComboBox(i18n.get('font_size'), [str(x) for x in range(12, 17)], current_font_size,
+        self.font_size = ComboBox(i18n.get('font_size'), [str(x) for x in range(12, 34)], current_font_size,
             fill=True)
 
         self.layout.addWidget(self.statuses_per_column)

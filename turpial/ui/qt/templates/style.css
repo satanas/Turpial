@@ -197,6 +197,9 @@ pre { position:fixed; left:15em; right:1em; top:1em }
 
 .quote_area {
     background-color: {{ quote_background_color }};
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
 }
 
 .footer, .timestamp {

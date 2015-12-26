@@ -137,18 +137,27 @@ pre { position:fixed; left:15em; right:1em; top:1em }
     text-overflow: ellipsis;
 }
 
-.username a, .username_protected a {
+.username a, .username_protected a, .quote_username a {
     color: {{ username_text_color }};
     text-decoration: none;
 }
 
-.username a:hover, .username_protected a:hover {
+.username a:hover, .username_protected a:hover, .quote_username a:hover {
     color: {{ username_hover_text_color }};
 }
 
 .username_protected {
     padding-left: 18px;
     background: url("file://{{ mark_protected }}") no-repeat 0px 5px;
+}
+
+.quote_username {
+    float: left;
+    color: {{ username_text_color }};
+    font-family: 'Titillium Web';
+    font-size: {{ username_font_size }}px;
+    font-weight: bold;
+    width: 100%;
 }
 
 .favorited {
@@ -175,6 +184,22 @@ pre { position:fixed; left:15em; right:1em; top:1em }
     margin-right: 10px;
     /* Space between message and footer */
     margin-bottom: 5px;
+}
+
+.quote_message {
+    font-family: 'Open Sans';
+    font-size: {{ message_font_size }}px;
+    word-break: break-word;
+    margin-right: 5px;
+    /* Space between message and footer */
+    margin-bottom: 2px;
+}
+
+.quote_area {
+    background-color: {{ quote_background_color }};
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
 }
 
 .footer, .timestamp {

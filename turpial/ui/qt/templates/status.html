@@ -34,6 +34,19 @@
         </tr>
         {% endfor %}
     {% endif %}
+    {% if quote_username %}
+    <tr>
+        <td></td>
+        <td>
+            <div class='quote_area'>
+                <div class='quote_username'>
+                    <a href="profile:{{ quote_username }}">{{ quote_username }}</a>
+                </div>
+                <div class='quote_message'>{{ quote_message }}</div>
+            </div>
+        </td>
+    </tr>
+    {% endif %}
     <tr>
         <td colspan='2' class='footer'>
             <div class='extra'>

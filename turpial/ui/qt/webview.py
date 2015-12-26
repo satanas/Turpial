@@ -91,6 +91,7 @@ class StatusesWebView(QWebView):
             'scrollbar_border_color': self.base.theme['scrollbar']['border_color'],
             'scrollbar_handler_color': self.base.theme['scrollbar']['handler_color'],
             'status_background_color': self.base.theme['status']['background_color'],
+            'quote_background_color': self.base.theme['status']['quote_background_color'],
             'status_border_color': self.base.theme['status']['border_color'],
             'status_text_color': self.base.theme['status']['text_color'],
             'username_text_color': self.base.theme['status']['username']['text_color'],
@@ -118,6 +119,8 @@ class StatusesWebView(QWebView):
         message = message.replace('\'', '&apos;')
         timestamp = self.base.humanize_timestamp(status.timestamp)
         timestamp = timestamp.replace(' ', '')
+        quote_username = None
+        quote_message = None
 
         media = []
         if status.entities:
@@ -130,6 +133,10 @@ class StatusesWebView(QWebView):
                 if is_preview_service_supported(url.url) and self.base.core.get_inline_preview():
                     if url.url.find('instagram') < 0:
                         media.append(url.url)
+
+                if status.is_quote_status:
+                    quote_username = status.quoted_status.username
+                    quote_message = status.quoted_status.text
 
             # Highlight hashtags
             sorted_hashtags = {}
@@ -163,7 +170,8 @@ class StatusesWebView(QWebView):
                 'mark_as_favorite': i18n.get('mark_as_favorite'), 'delete': i18n.get('delete'),
                 'remove_from_favorites': i18n.get('remove_from_favorites'),
                 'conversation_id': conversation_id, 'in_progress': i18n.get('in_progress'), 
-                'loading': i18n.get('loading'), 'avatar': avatar, 'media': media}
+                'loading': i18n.get('loading'), 'avatar': avatar, 'media': media,
+                'quote_username': quote_username, 'quote_message': quote_message}
 
         return self.status_template.render(attrs)
 

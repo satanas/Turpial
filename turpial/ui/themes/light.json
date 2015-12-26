@@ -13,6 +13,7 @@
     },
     "status": {
         "background_color": "#fff",
+        "quote_background_color": "#f7f7f7",
         "border_color": "#eee",
         "text_color": "#000",
         "username": {

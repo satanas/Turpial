@@ -29,7 +29,7 @@ Requirements
 
 Turpial needs this packages to work properly:
 
- * ``python >= 2.5``
+ * ``python >= 2.5, < 3.x``
  * ``libturpial >= 0.8.x``
  * ``notify >= 0.1.1`` (python-notify)
  * ``gst0.10`` (gstreamer0.10-python)

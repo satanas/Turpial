@@ -38,7 +38,7 @@ Turpial needs this packages to work properly:
  * ``setuptools`` (python2-distribute)
  * ``pkg-resources``
 
-Currently Turpial suports 3 different interfaces: Shell, Gtk and Qt. The shell 
+Currently Turpial supports 3 different interfaces: Shell, Gtk and Qt. The shell 
 interface needs no more dependencies to work, but if you are planning to run 
 Gtk or Qt you will need to install a couple of more dependencies:
 

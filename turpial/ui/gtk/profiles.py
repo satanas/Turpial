@@ -115,7 +115,7 @@ class ProfileBox(Gtk.VBox):
         self.base = base
         self.avatar = Gtk.Image()
         self.avatar.set_margin_right(AVATAR_MARGIN)
-        # This resize is to avoid bad redimentioning on parent window
+        # This resize is to avoid bad redimensioning on parent window
         self.set_size_request(300, -1)
         avatar_box = Gtk.Alignment()
         avatar_box.add(self.avatar)

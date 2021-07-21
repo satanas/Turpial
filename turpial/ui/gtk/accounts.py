@@ -219,7 +219,7 @@ class AccountsDialog(Gtk.Window):
             # Delete account if wasn't configured properly
             iter_ = self.model.get_iter_first()
             # If this is the first account you try to add delete it, else loop
-            # throught the model and see which ones are registered but are not
+            # through the model and see which ones are registered but are not
             # in the model
             if iter_ is None:
                 try:
